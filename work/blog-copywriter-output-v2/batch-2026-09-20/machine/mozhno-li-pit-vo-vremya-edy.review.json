@@ -1,0 +1,25 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "Codex editorial review",
+  "reviewed_at": "2026-09-20T02:49:04.898195+00:00",
+  "pack_sha256": "be9873c70f21180932f09353cc1e59cd98ac385a6cefb0511835c4f5db6101ac",
+  "draft_sha256": "d77fd9b58b2b199224b10c22356783ec75b7ddfebb8b97766bb710be48381174",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "rewrite_continuity",
+      "result": "pass",
+      "notes": "Exact full source, author position, examples and useful sequence retained; adaptation is limited to platform-tail removal, Markdown structure and local media."
+    },
+    {
+      "id": "semantic_facts",
+      "result": "pass",
+      "notes": "Full assembled draft reviewed. No level 3 conflict remains; all level 1 and level 2 findings are recorded separately in factcheck-notes.md and were not silently edited."
+    },
+    {
+      "id": "forbidden_claims",
+      "result": "pass",
+      "notes": "Full draft scanned: no platform CTA, request to comment, obsolete ad/erid or subscription tail remains; Pikabu is retained only where it is a fact of the running story."
+    }
+  ]
+}

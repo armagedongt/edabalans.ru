@@ -1,0 +1,10 @@
+{
+  "schema_version": "author-factcheck-hold-v1",
+  "slug": "hochesh-hudet-esh-kartoshku",
+  "status": "hold",
+  "blocking_excerpt": "Если вы едите адекватную порцию картофеля в составе сбалансированного приема пищи, то его гликемическим индексом можно пренебречь даже диабетикам",
+  "classification": "level_2_with_safety_risk",
+  "decision_needed": "Удалить слова «даже диабетикам» либо добавить согласованную медицинскую оговорку.",
+  "body_changed": false,
+  "details": "factcheck-notes.md"
+}

@@ -1,0 +1,9 @@
+{
+  "schema_version": "blog-copy-batch-validation-v1",
+  "status": "pass",
+  "article_count": 20,
+  "source_snapshot_count": 23,
+  "local_media_count": 124,
+  "publish_ready_count": 19,
+  "issues": []
+}

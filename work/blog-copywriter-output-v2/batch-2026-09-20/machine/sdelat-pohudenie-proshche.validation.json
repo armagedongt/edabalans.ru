@@ -1,0 +1,62 @@
+{
+  "schema_version": "author-validation-v1",
+  "status": "pass",
+  "pack_sha256": "faa9956a65ae8d18c007f253af0940a26757f12dc9768e5604e6c40b75488657",
+  "draft_sha256": "4b147624c457f8ec256a6bece77b12e81779690069a56a6856a5b3a46b19a62c",
+  "review_sha256": "6dce48067cdfb80ec49195a151c70cd2cd2789608d9baffedf6d3a6a149c7254",
+  "validated_at": "2026-09-20T02:49:11.760638+00:00",
+  "missing_verbatim": [],
+  "unresolved_placeholders": [],
+  "protected_layer_errors": [],
+  "inline_binding_review_required_once": null,
+  "proofread_change_review_required_once": null,
+  "rewrite_continuity_review_required_once": {
+    "goal": "Минимальная редактура: сохранить авторские формулировки и фактуру, убрать площадочные хвосты, структурировать Markdown, сохранить медиа.",
+    "preserve": [
+      "central thesis",
+      "author position",
+      "examples",
+      "media",
+      "recognizable voice"
+    ],
+    "comparison_texts": [],
+    "source_characters": 4797,
+    "draft_characters": 5253
+  },
+  "semantic_fact_review_required_once": [],
+  "forbidden_claims_to_check_once": [
+    "Площадочный CTA",
+    "Просьба писать комментарии",
+    "Старая реклама или erid"
+  ],
+  "preservation_metrics": {
+    "source_significant_tokens": 658,
+    "token_coverage": 0.9513677811550152,
+    "source_visible_characters": 4788,
+    "draft_visible_characters": 5222,
+    "visible_length_ratio": 1.090643274853801
+  },
+  "pending_manual_reviews": [
+    {
+      "id": "rewrite_continuity",
+      "instruction": "Confirm that the source argument, author position, and useful examples remain continuous."
+    },
+    {
+      "id": "semantic_facts",
+      "instruction": "Review the entire assembled draft, including claims introduced by the writer, for materially false or invented facts. Classify conflicts using source-integration-pass-v1.md and do not edit the draft. Record level 1 while owner calibration is active and always record level 2; pass means the review is complete and no level 3 conflict remains.",
+      "fact_check_profile": "editorial_materiality",
+      "items": []
+    },
+    {
+      "id": "forbidden_claims",
+      "instruction": "Confirm that none of the forbidden claims is present.",
+      "items": [
+        "Площадочный CTA",
+        "Просьба писать комментарии",
+        "Старая реклама или erid"
+      ]
+    }
+  ],
+  "manual_review_errors": [],
+  "fact_review_expires_at": null
+}

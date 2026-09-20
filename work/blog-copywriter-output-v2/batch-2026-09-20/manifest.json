@@ -1,0 +1,1969 @@
+{
+  "schema_version": "blog-editorial-batch-v2",
+  "items": [
+    {
+      "source_id": "11277666",
+      "slug": "skrytye-zapory-i-banalnyy-syuzhet",
+      "title": "Скрытые запоры и банальный сюжет",
+      "category": "Ну, типа... ЗОЖ",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Почему попытка просто добавить побольше клетчатки иногда делает ситуацию только неприятнее — и что полезно проверить в питании сначала.",
+      "file": "articles/skrytye-zapory-i-banalnyy-syuzhet.md",
+      "sources": [
+        "https://pikabu.ru/story/skryityie_zaporyi_i_banalnyiy_syuzhet_vozmozhno_u_vas_tozhe_11277666"
+      ],
+      "source_external_ids": [
+        "11277666"
+      ],
+      "source_sha256": [
+        "9bbf1c9374b9c7a9a5f5f9ceaeb7d8d55985fb2f6dfdaa26d94654704a5863dd"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/skrytye-zapory-i-banalnyy-syuzhet/01.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2024/03/27/11/1711569015154859201.jpg",
+          "sha256": "89ffc750dada37739899c2a2084db1568c46aee5c7603cb06d6a06317b01ba6a",
+          "width": 922,
+          "height": 743,
+          "alt": "Иллюстрация к материалу «Скрытые запоры и банальный сюжет»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/skrytye-zapory-i-banalnyy-syuzhet/02.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2024/03/28/1/1711578277161170.jpg",
+          "sha256": "ff07da2762e7209213a58171f94704652e457a12bfc780862e70d6d884656d29",
+          "width": 1369,
+          "height": 1651,
+          "alt": "Иллюстрация к материалу «Скрытые запоры и банальный сюжет»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/skrytye-zapory-i-banalnyy-syuzhet/card.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2024/03/28/1/1711578277161170.jpg",
+          "sha256": "d034341ef603f294b6ea62c80b56ff860838cbc65dff723557453d00950e23f6",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Скрытые запоры и банальный сюжет»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Мой телеграм-канал → там пишу о формировании сбалансированного питания и отношений с едой вообще и для сражений с лишним весом в частности (пост оттуда).",
+        "*Напомню, что плюс - это поддержка авторских постов на Пикабу, а подписка - желание читать их чаще (вдруг кто-то забыл).",
+        "Ещё посты на Пикабу:",
+        "Хочу отказаться от сладкого — ничего не получается!!",
+        "ПП рецепты — это плохо И вот почему! (там, кстати, про клетчатку немного говорю)",
+        "\"Что я ем за день, при снижении веса, едим сытно!\" - говорили они...",
+        "\"Гликемический индекс — это лишнее!\"",
+        "\"Последний жир в области живота. План действий\""
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "mozhno-li-pit-vo-vremya-edy",
+        "pravila-bezopasnosti-za-shvedskim-stolom",
+        "glikemicheskiy-indeks-eto-lishnee"
+      ]
+    },
+    {
+      "source_id": "11494317",
+      "slug": "dieta-sryv-i-matematika",
+      "title": "Диета. Срыв. И математика",
+      "category": "Похудение",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Почему один незапланированный продукт не отменяет похудение — и как обычная математика помогает не превращать отклонение от плана в недельный срыв.",
+      "file": "articles/dieta-sryv-i-matematika.md",
+      "sources": [
+        "https://pikabu.ru/story/dieta_sryiv_i_matematika_11494317"
+      ],
+      "source_external_ids": [
+        "11494317"
+      ],
+      "source_sha256": [
+        "09ad28646f33c4e34f15ce4566c4bdd092adc1ddd78348cedeee841c3a8fd658"
+      ],
+      "media": [],
+      "hero": null,
+      "card": null,
+      "removed_platform_tail": [
+        "Больше о питании и похудении пишу в своем телеграме, а в боте можно забрать подборку статей и пройти интерактивный тест «О комфорте похудения».",
+        "→ Sergey Vorontsov",
+        "Другие посты на Пикабу:",
+        "→ Похудение начинается не с похудения!",
+        "→ Ответ на пост «Чтобы похудеть — НАДО ЕСТЬ»",
+        "→ Лучшие продукты для завтрака",
+        "→ В своем уме, что ли? Фрукты... ограничивать...",
+        "→ Внимание! Вы употребляете огромную дозу Е948 каждый день!"
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "tri-oshibki-v-nachale-pohudeniya",
+        "sdelat-pohudenie-proshche",
+        "net-vremeni-obyasnyat-prosto-hudey"
+      ]
+    },
+    {
+      "source_id": "11522121",
+      "slug": "eti-dolbannye-10000-shagov",
+      "title": "Эти долбанные 10 000 шагов",
+      "category": "Тренировки",
+      "cta": "intensive",
+      "visibility": "public",
+      "excerpt": "Откуда взялись 10 000 шагов, почему это не магическая норма и как подобрать полезный объём ходьбы под себя.",
+      "file": "articles/eti-dolbannye-10000-shagov.md",
+      "sources": [
+        "https://pikabu.ru/story/yeti_dolbannyie_10_000_shagov_11522121"
+      ],
+      "source_external_ids": [
+        "11522121"
+      ],
+      "source_sha256": [
+        "9b9b7a865b5a677cb2e4fd704430e8f12a69f38f0e06aa97377707f0472756dc"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/eti-dolbannye-10000-shagov/01.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/06/17/7/171862006713147721.png",
+          "sha256": "2f2a66627b9155882c47d69bef7049af206eaa97bc798929728c0b3cb9dca921",
+          "width": 944,
+          "height": 934,
+          "alt": "Иллюстрация к материалу «Эти долбанные 10 000 шагов»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/eti-dolbannye-10000-shagov/02.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/06/17/0/1718573225183845168.png",
+          "sha256": "e6ad1ef0a4e47a812ea385437a619585694b1ec75f9b628a8dce3b81b6d289cd",
+          "width": 825,
+          "height": 540,
+          "alt": "Иллюстрация к материалу «Эти долбанные 10 000 шагов»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/eti-dolbannye-10000-shagov/03.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/06/17/7/1718623598168550705.png",
+          "sha256": "9200341b6b3e9f58e226bf025e86f30c64636e34642e48fc5f31066c2c0f4816",
+          "width": 1280,
+          "height": 527,
+          "alt": "Иллюстрация к материалу «Эти долбанные 10 000 шагов»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/eti-dolbannye-10000-shagov/card.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/06/17/7/1718623598168550705.png",
+          "sha256": "f6e10d927d37b64cb0c684f7ccf582a7cd09c2b9493c953fb473401b45a95925",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Эти долбанные 10 000 шагов»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Всего голосов:",
+        "Хочу пройти 100 000 шагов в эту субботу",
+        "И приглашаю вас присоединиться, чтобы каждый накрутил столько, сколько сможет в этот день, возможно поставите свой личный рекорд.",
+        "На этой неделе летнее солнцестояние, мне показалось, что будет прикольно провести один из самых длинных дней в году на открытом воздухе от восхода до заката, а чтобы было не скучно — посмотреть сколько шагов у меня получится навернуть. Про эту затею ещё будет отдельный пост либо тут либо в тг.",
+        "Ходите шаги, придумывайте себе развлечения на ровном месте, будьте здоровы, всех обнял!",
+        "Телеграм → Sergey Vorontsov. Там пишу о питании и похудении, в тг-боте есть рассылка статей, интерактивный тест и всякое интересное.",
+        "Другие посты на Пикабу:",
+        "→ Похудение начинается не с похудения!",
+        "→ Диета. Срыв. И математика",
+        "→ Лучшие продукты для завтрака",
+        "→ Ответ на пост «Чтобы похудеть — НАДО ЕСТЬ»",
+        "→ Внимание! Вы употребляете огромную дозу Е948 каждый день!",
+        "p.s. Спасибо всем, кто отметился в комментариях, очень приятно видеть, такую активность (я про шаги)."
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "intensive",
+      "related_candidates": [
+        "hodit-chtoby-hudet",
+        "kak-nachat-trenirovki-i-ne-brosit",
+        "kak-ya-100000-shagov-reshil-proyti"
+      ]
+    },
+    {
+      "source_id": "11762932",
+      "slug": "professionalnyy-edok",
+      "title": "Профессиональный едок",
+      "category": "Ну, типа... ЗОЖ",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Как участники соревнований по скоростному поеданию умудряются поглощать десятки тысяч килокалорий — и почему это совсем не инструкция для обычной жизни.",
+      "file": "articles/professionalnyy-edok.md",
+      "sources": [
+        "https://pikabu.ru/story/professionalnyiy_edok_11762932"
+      ],
+      "source_external_ids": [
+        "11762932"
+      ],
+      "source_sha256": [
+        "8b625d7d786701ad63e81ca099c4073d8033357ba77a0d7ed111b5ec1a37990b"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/professionalnyy-edok/01.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/08/30/11/1725043008284128702.png",
+          "sha256": "83658ee6ab41d56ab625a77f9a97d833d2748ebc013b6a02a3816f17efb0a89f",
+          "width": 1200,
+          "height": 675,
+          "alt": "Иллюстрация к материалу «Профессиональный едок»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/professionalnyy-edok/02.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/08/30/11/1725043160191574298.png",
+          "sha256": "51ad1d9971c330f52057fb9eb894041924d6043b5c3a001f3ef95d97a0afad72",
+          "width": 717,
+          "height": 772,
+          "alt": "Иллюстрация к материалу «Профессиональный едок»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/professionalnyy-edok/03.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/08/30/11/1725044816173262097.jpg",
+          "sha256": "892681f42835797dced14f848091120a6c23755279a5bf8a48571cf5c5604b32",
+          "width": 570,
+          "height": 381,
+          "alt": "Иллюстрация к материалу «Профессиональный едок»"
+        },
+        {
+          "name": "04.webp",
+          "path": "media/professionalnyy-edok/04.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/08/30/11/1725042827194494724.png",
+          "sha256": "892681f42835797dced14f848091120a6c23755279a5bf8a48571cf5c5604b32",
+          "width": 570,
+          "height": 381,
+          "alt": "Иллюстрация к материалу «Профессиональный едок»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/professionalnyy-edok/card.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/08/30/11/1725042827194494724.png",
+          "sha256": "055f0b7f1d093adc91c1eae8bba2ab94e7df3323f978965f1f77111715252395",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Профессиональный едок»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Больше постов тут в профиле и в телеграме → Сергей Воронцов | Похудение — это есть!"
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "pravila-bezopasnosti-za-shvedskim-stolom",
+        "pp-recepty-eto-ploho",
+        "dieta-sryv-i-matematika"
+      ]
+    },
+    {
+      "source_id": "12296286",
+      "slug": "net-vremeni-obyasnyat-prosto-hudey",
+      "title": "Нет времени объяснять. Просто худей!",
+      "category": "Похудение",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Четыре сферы жизни, которые определяют, будет похудение посильным процессом или очередной короткой диетой на силе воли.",
+      "file": "articles/net-vremeni-obyasnyat-prosto-hudey.md",
+      "sources": [
+        "https://pikabu.ru/story/net_vremeni_obyasnyat_prosto_khudey_12296286"
+      ],
+      "source_external_ids": [
+        "12296286"
+      ],
+      "source_sha256": [
+        "823dc29029a91e77d5381a555032e07705e96655836f0ae6f2274c029e0ea472"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/net-vremeni-obyasnyat-prosto-hudey/01.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2025/01/25/6/1737798565157363834.png",
+          "sha256": "27fe6e9c578cf7ef965d00808836c135928074e126aa03bee5217bf837bdf9bf",
+          "width": 735,
+          "height": 562,
+          "alt": "Иллюстрация к материалу «Нет времени объяснять. Просто худей!»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/net-vremeni-obyasnyat-prosto-hudey/02.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2025/01/22/11/1737568857132742440.webp",
+          "sha256": "8c3062f968a583609de004df5e2c5cc595b6f1ec34b4a6d26e121eae9658e69e",
+          "width": 570,
+          "height": 267,
+          "alt": "Иллюстрация к материалу «Нет времени объяснять. Просто худей!»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/net-vremeni-obyasnyat-prosto-hudey/03.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2025/01/25/7/173780314618592719.jpg",
+          "sha256": "fdf559682d9348b3cd5e641f9052e6c67246f3873f905aac144e57a752ecb2b6",
+          "width": 1800,
+          "height": 1517,
+          "alt": "Иллюстрация к материалу «Нет времени объяснять. Просто худей!»"
+        },
+        {
+          "name": "04.webp",
+          "path": "media/net-vremeni-obyasnyat-prosto-hudey/04.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2025/01/25/7/1737800256157099235.png",
+          "sha256": "fdf559682d9348b3cd5e641f9052e6c67246f3873f905aac144e57a752ecb2b6",
+          "width": 1800,
+          "height": 1517,
+          "alt": "Иллюстрация к материалу «Нет времени объяснять. Просто худей!»"
+        },
+        {
+          "name": "05.webp",
+          "path": "media/net-vremeni-obyasnyat-prosto-hudey/05.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2025/01/22/11/1737573514140414213.jpg",
+          "sha256": "a5527b1ff20135592eab8ca019410662a582e1114d306894f308d217997e8aee",
+          "width": 1520,
+          "height": 855,
+          "alt": "Иллюстрация к материалу «Нет времени объяснять. Просто худей!»"
+        },
+        {
+          "name": "06.webp",
+          "path": "media/net-vremeni-obyasnyat-prosto-hudey/06.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2025/01/25/7/1737803263159874244.png",
+          "sha256": "54c3593ba75717fdcfe0a90b6d3c499a2104a448a33747f09474463bd39b7aad",
+          "width": 650,
+          "height": 539,
+          "alt": "Иллюстрация к материалу «Нет времени объяснять. Просто худей!»"
+        },
+        {
+          "name": "07.webp",
+          "path": "media/net-vremeni-obyasnyat-prosto-hudey/07.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2025/01/25/7/17378033111549355.png",
+          "sha256": "fedf0d65135db10b3d7a19f643ae7c0ed13d466a23016d707423464f48ce5435",
+          "width": 1483,
+          "height": 964,
+          "alt": "Иллюстрация к материалу «Нет времени объяснять. Просто худей!»"
+        },
+        {
+          "name": "08.webp",
+          "path": "media/net-vremeni-obyasnyat-prosto-hudey/08.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2025/01/25/7/1737799735155257443.png",
+          "sha256": "f3adab15ac064cee2d62c0097e15e48b270ae7d614e2ea32fb48f5c2b684f315",
+          "width": 1600,
+          "height": 924,
+          "alt": "Иллюстрация к материалу «Нет времени объяснять. Просто худей!»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/net-vremeni-obyasnyat-prosto-hudey/card.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2025/01/25/7/1737799735155257443.png",
+          "sha256": "d50b43451a266c802a4061a72b5118eeae84184336230084b3a19a56e559bbda",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Нет времени объяснять. Просто худей!»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Пикабу",
+        "●",
+        "00:17",
+        "Осторожно, некоторые есть на Пикабу, а некоторые только в телеге - по ссылке сразу вся подборка.",
+        "Запись стрима \"Вредная\" еда (телеграм)",
+        "Долбанная бедность",
+        "Почему успешное похудение начинается не с похудения",
+        "«Тяжесть в животе, а руки тянулись, пожевать что-то ещё» (телеграм)",
+        "Если телефон прилип к руке (телеграм)",
+        "Почему японцы худые, а ты нет?",
+        "Ответ на пост «Борьба с лишним весом» и на эту тему моя история в тг.",
+        "Как мы считаем калории неправильно (телеграм)",
+        "50 оттенков сытости (видео в тг)",
+        "Сергей Воронцов. Пишу об адекватном отношении к питанию и похудению, чтобы вы менялись!",
+        "→ Телеграм: «Похудение — это есть!»"
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "sdelat-pohudenie-proshche",
+        "tri-oshibki-v-nachale-pohudeniya",
+        "poterya-myshc-pri-pohudenii"
+      ]
+    },
+    {
+      "source_id": "13436070",
+      "slug": "poterya-myshc-pri-pohudenii",
+      "title": "Потеря мышц при похудении",
+      "category": "Похудение",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Правда ли, что при дефиците организм первым делом уничтожает мышцы, и что действительно помогает сохранить мышечную массу.",
+      "file": "articles/poterya-myshc-pri-pohudenii.md",
+      "sources": [
+        "https://pikabu.ru/story/poterya_myishts_pri_pokhudenii_13436070"
+      ],
+      "source_external_ids": [
+        "13436070"
+      ],
+      "source_sha256": [
+        "4e3814f7cee4e83dc55a057c792abc7dd474097e4614714ffe1466b50459e17a"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/poterya-myshc-pri-pohudenii/01.webp",
+          "source_url": "https://cs18.pikabu.ru/s/2025/10/01/17/aiabd74m.webp",
+          "sha256": "40a1df43076f78c3e46f3531c28ac08cdf2408eaa04a4b1c830902012371dee7",
+          "width": 700,
+          "height": 779,
+          "alt": "Иллюстрация к материалу «Потеря мышц при похудении»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/poterya-myshc-pri-pohudenii/02.webp",
+          "source_url": "https://cs18.pikabu.ru/s/2025/10/01/17/aiabd74m_lg.jpg",
+          "sha256": "80a2c45d143f84e8bf247927e771cb463e1ae25fd022430e89ec6c19342accd5",
+          "width": 948,
+          "height": 1055,
+          "alt": "Иллюстрация к материалу «Потеря мышц при похудении»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/poterya-myshc-pri-pohudenii/03.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2025/10/01/16/fgqexls3.webp",
+          "sha256": "2fbbda93be0a5d77556b0a7e899302934e492a4d66f0b156c054e721961fc6f7",
+          "width": 700,
+          "height": 1204,
+          "alt": "Иллюстрация к материалу «Потеря мышц при похудении»"
+        },
+        {
+          "name": "04.webp",
+          "path": "media/poterya-myshc-pri-pohudenii/04.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2025/10/01/16/fgqexls3_lg.jpg",
+          "sha256": "8d12557af4f9b57c4fec339e049587c8e435df6fe336fb2820658f7ba3dbfb7b",
+          "width": 785,
+          "height": 1350,
+          "alt": "Иллюстрация к материалу «Потеря мышц при похудении»"
+        },
+        {
+          "name": "05.webp",
+          "path": "media/poterya-myshc-pri-pohudenii/05.webp",
+          "source_url": "https://cs17.pikabu.ru/s/2025/10/01/16/wq3flcuv_lg.png",
+          "sha256": "f4a9b3196e53b77b00d8070f0c0661f26296ae9b422cf67523b7cc06334547c6",
+          "width": 760,
+          "height": 507,
+          "alt": "Иллюстрация к материалу «Потеря мышц при похудении»"
+        },
+        {
+          "name": "06.webp",
+          "path": "media/poterya-myshc-pri-pohudenii/06.webp",
+          "source_url": "https://cs12.pikabu.ru/post_img/big/2022/09/27/7/1664277409167491570.jpg",
+          "sha256": "f4a9b3196e53b77b00d8070f0c0661f26296ae9b422cf67523b7cc06334547c6",
+          "width": 760,
+          "height": 507,
+          "alt": "Иллюстрация к материалу «Потеря мышц при похудении»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/poterya-myshc-pri-pohudenii/card.webp",
+          "source_url": "https://cs12.pikabu.ru/post_img/big/2022/09/27/7/1664277409167491570.jpg",
+          "sha256": "f08f31aa9bed9af55fd8f399a160d6a02c831a405820aeb1b949da2572bceccf",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Потеря мышц при похудении»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Сергей Воронцов, тренер по питанию. Телеграм-канал «Похудение — это есть!»",
+        "Последние посты в канале про «Маленькие эксперименты» — принцип, с которым менять образ жизни не больно, как комарик укусит. Читайте, применяйте, меняйтесь!",
+        "А в закрепленном сообщении (ссылка ведет туда) бесплатная рассылка в четырех частях «Последнее похудение». Это опыт 500+ дневников питания, с которыми я работал! А если брезгуете переходить по ссылкам, листайте мой профиль на Пикабу, тут уже 140+ постов."
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "kak-nachat-trenirovki-i-ne-brosit",
+        "sdelat-pohudenie-proshche",
+        "hodit-chtoby-hudet"
+      ]
+    },
+    {
+      "source_id": "13785403",
+      "slug": "tri-oshibki-v-nachale-pohudeniya",
+      "title": "Три ошибки в начале похудения",
+      "category": "Похудение",
+      "cta": "intensive",
+      "visibility": "public",
+      "excerpt": "Три решения, которые выглядят логично в первый день похудения, но заметно повышают шанс быстро всё бросить.",
+      "file": "articles/tri-oshibki-v-nachale-pohudeniya.md",
+      "sources": [
+        "https://pikabu.ru/story/tri_oshibki_v_nachale_pokhudeniya_13785403"
+      ],
+      "source_external_ids": [
+        "13785403"
+      ],
+      "source_sha256": [
+        "457f4c8a48924fd3109cd16966d0579e45d8e615052efd03b62f1a0f87a0ce2e"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/tri-oshibki-v-nachale-pohudeniya/01.webp",
+          "source_url": "https://cs18.pikabu.ru/s/2026/03/15/09/xkebdmiw.webp",
+          "sha256": "e6663d3e7bf4a74b8896068273f6900534ec2f069bfe0117865d0da01289fb4b",
+          "width": 700,
+          "height": 615,
+          "alt": "Иллюстрация к материалу «Три ошибки в начале похудения»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/tri-oshibki-v-nachale-pohudeniya/02.webp",
+          "source_url": "https://cs18.pikabu.ru/s/2026/03/15/09/xkebdmiw_lg.png",
+          "sha256": "ed31e53a7102e6d848a0dedf3a840227a26f7405c9c65cb38e19c4b79557d2fc",
+          "width": 1432,
+          "height": 1258,
+          "alt": "Иллюстрация к материалу «Три ошибки в начале похудения»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/tri-oshibki-v-nachale-pohudeniya/03.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2026/03/15/09/xoeewbjc.webp",
+          "sha256": "0a185f64354b2f2011df6ac2879da0096e18a76e04e3245799aba1c0c0ef9e03",
+          "width": 700,
+          "height": 521,
+          "alt": "Иллюстрация к материалу «Три ошибки в начале похудения»"
+        },
+        {
+          "name": "04.webp",
+          "path": "media/tri-oshibki-v-nachale-pohudeniya/04.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2026/03/15/09/xoeewbjc_lg.png",
+          "sha256": "c0383e670f5d88ab8d86a31f8d4107adec1a994e01075e735d71b070aa94859e",
+          "width": 1332,
+          "height": 992,
+          "alt": "Иллюстрация к материалу «Три ошибки в начале похудения»"
+        },
+        {
+          "name": "05.webp",
+          "path": "media/tri-oshibki-v-nachale-pohudeniya/05.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2026/03/15/09/xseew7tw.webp",
+          "sha256": "9129cdc7f3bc8e71632c5f77ddfe19045736e54d0d43f963cd01e6a08e693771",
+          "width": 700,
+          "height": 431,
+          "alt": "Иллюстрация к материалу «Три ошибки в начале похудения»"
+        },
+        {
+          "name": "06.webp",
+          "path": "media/tri-oshibki-v-nachale-pohudeniya/06.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2026/03/15/09/xweexpdm_lg.png",
+          "sha256": "529491b1302675a3266ea01cf59e6c5b3ff2f5d475679480330f43539b2d7a07",
+          "width": 1281,
+          "height": 664,
+          "alt": "Иллюстрация к материалу «Три ошибки в начале похудения»"
+        },
+        {
+          "name": "07.webp",
+          "path": "media/tri-oshibki-v-nachale-pohudeniya/07.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2026/03/15/12/auaewgp7.jpg",
+          "sha256": "529491b1302675a3266ea01cf59e6c5b3ff2f5d475679480330f43539b2d7a07",
+          "width": 1281,
+          "height": 664,
+          "alt": "Иллюстрация к материалу «Три ошибки в начале похудения»"
+        },
+        {
+          "name": "08.webp",
+          "path": "media/tri-oshibki-v-nachale-pohudeniya/08.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2026/03/19/16/iqp2wgot_lg.jpg",
+          "sha256": "14435367d65bb4c995733cf7bc6eb3a028dd5d9b8ffb46eb705d9754a827aade",
+          "width": 600,
+          "height": 432,
+          "alt": "Иллюстрация к материалу «Три ошибки в начале похудения»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/tri-oshibki-v-nachale-pohudeniya/card.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2026/03/19/16/iqp2wgot_lg.jpg",
+          "sha256": "cdfc493cf07f0451e35f977fe315e6228a05008bb76076f2ef1e1c94d3f166ad",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Три ошибки в начале похудения»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "У меня в тг канале есть цикл статей в четырех частях как раз об этом подготовительном этапе в похудении.",
+        "В первой части — план похудения из семи этапов и как сбалансировать питание так, чтобы за те же калори лучше насыщаться! Во второй — как вести дневник питания (не калории) и менять свои пищевые привычки. В третей — про \"вредную\" еду, а в четвертой — про калории и тренировки.",
+        "Телеграм канал — Сергей Воронцов (ссылка открывается только с включенным ВПН)",
+        "Реклама. ИП Воронцов С.С. ИНН: 230409966750, erid: 2Vtzqxc4B2u"
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "intensive",
+      "related_candidates": [
+        "net-vremeni-obyasnyat-prosto-hudey",
+        "sdelat-pohudenie-proshche",
+        "hodit-chtoby-hudet"
+      ]
+    },
+    {
+      "source_id": "14021584",
+      "slug": "sdelat-pohudenie-proshche",
+      "title": "Сделать похудение проще",
+      "category": "Похудение",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Похудение не обязано состоять из бесконечного списка запретов. Разбираемся, какие действия действительно дают основную часть результата.",
+      "file": "articles/sdelat-pohudenie-proshche.md",
+      "sources": [
+        "https://pikabu.ru/story/sdelat_pokhudenie_proshche_14021584"
+      ],
+      "source_external_ids": [
+        "14021584"
+      ],
+      "source_sha256": [
+        "6319472e05580b33dc89c50c6424331cda81f7613f4df777112f3ba2935bf3f0"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/sdelat-pohudenie-proshche/01.webp",
+          "source_url": "https://cs16.pikabu.ru/s/2026/05/30/19/zgxx2564.webp",
+          "sha256": "477a5fa5e5e73e1f41f43dfdd756e16223555cd85abb8f364fe4b25af1804051",
+          "width": 620,
+          "height": 424,
+          "alt": "Иллюстрация к материалу «Сделать похудение проще»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/sdelat-pohudenie-proshche/02.webp",
+          "source_url": "https://cs16.pikabu.ru/s/2026/05/30/20/uehx3vpf.webp",
+          "sha256": "af08f9f55b9f29b963a6e6ed51078995585f6fbb0169c440b6b264430a7de44f",
+          "width": 600,
+          "height": 451,
+          "alt": "Иллюстрация к материалу «Сделать похудение проще»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/sdelat-pohudenie-proshche/03.webp",
+          "source_url": "https://cs16.pikabu.ru/s/2026/05/31/13/e5hh2atb.webp",
+          "sha256": "1cb4fb1a9e0e7d00ce876f1ec865d05de59c443ee32fd49aa7377aa04620c565",
+          "width": 499,
+          "height": 355,
+          "alt": "Иллюстрация к материалу «Сделать похудение проще»"
+        },
+        {
+          "name": "04.webp",
+          "path": "media/sdelat-pohudenie-proshche/04.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2026/05/31/12/vppcogku.jpg",
+          "sha256": "769e8997f86a581b351fafb8b9cdf87adb05f0ebabdb141a3cc265e6bc12e81c",
+          "width": 424,
+          "height": 226,
+          "alt": "Иллюстрация к материалу «Сделать похудение проще»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/sdelat-pohudenie-proshche/card.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2026/05/31/12/vppcogku.jpg",
+          "sha256": "f476b9ff6218484d4eeaf7a04917ec7f2fc8386d0e95614a80dbe9fb198d8789",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Сделать похудение проще»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Ваши варианты, как сделать похудение проще — пишите в комментариях =)",
+        "Сергей Воронцов — пишу о питании и похудении так, чтобы вы менялись. Телеграм-канал «Похудение — это есть!» (ссылка без ВПН не открывается, канала в максе нет).",
+        "*Ссылки ведут на закреп с подборкой бесплатных материалов."
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "tri-oshibki-v-nachale-pohudeniya",
+        "net-vremeni-obyasnyat-prosto-hudey",
+        "hodit-chtoby-hudet"
+      ]
+    },
+    {
+      "source_id": "14102926",
+      "slug": "hodit-chtoby-hudet",
+      "title": "Ходить, чтобы худеть",
+      "category": "Тренировки",
+      "cta": "intensive",
+      "visibility": "public",
+      "excerpt": "Почему ходьба помогает похудению, сколько энергии она действительно расходует и где заканчивается польза идеи «просто больше ходить».",
+      "file": "articles/hodit-chtoby-hudet.md",
+      "sources": [
+        "https://pikabu.ru/story/khodit_chtobyi_khudet_14102926"
+      ],
+      "source_external_ids": [
+        "14102926"
+      ],
+      "source_sha256": [
+        "ca7d25a7f226b91cc7e9bbec93a6de91ac5bc6880432678a237c7d4be5f463e5"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/hodit-chtoby-hudet/01.webp",
+          "source_url": "https://cs18.pikabu.ru/s/2026/06/28/15/ytnbeolo.webp",
+          "sha256": "854abf6e7af2c55bb07a07b408939068801637d399b150f51f33401e72ed07c3",
+          "width": 700,
+          "height": 693,
+          "alt": "Иллюстрация к материалу «Ходить, чтобы худеть»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/hodit-chtoby-hudet/02.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/2023/08/31/8/1693484018186191233.webp",
+          "sha256": "61620ac85b8033bf1f2d6327f623559ac2dafc4b33d9f57dc16c31a89749e63e",
+          "width": 570,
+          "height": 294,
+          "alt": "Иллюстрация к материалу «Ходить, чтобы худеть»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/hodit-chtoby-hudet/03.webp",
+          "source_url": "https://cs18.pikabu.ru/s/2026/06/28/16/linrehoc.jpg",
+          "sha256": "2bfad04107c76b344ce6cdd16d9b76fa89d9d221b819d1ee062992a21045a9a2",
+          "width": 400,
+          "height": 500,
+          "alt": "Иллюстрация к материалу «Ходить, чтобы худеть»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/hodit-chtoby-hudet/card.webp",
+          "source_url": "https://cs18.pikabu.ru/s/2026/06/28/16/linrehoc.jpg",
+          "sha256": "50b3888c0de8bb792d2f8127f04c5b16a74ca9956e748bea30d1945c9e45d512",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Ходить, чтобы худеть»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Сергей Воронцов. Телеграм-канал «Похудение — это есть!»"
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "intensive",
+      "related_candidates": [
+        "eti-dolbannye-10000-shagov",
+        "poterya-myshc-pri-pohudenii",
+        "kak-nachat-trenirovki-i-ne-brosit"
+      ]
+    },
+    {
+      "source_id": "14183275",
+      "slug": "hochesh-hudet-esh-kartoshku",
+      "title": "Хочешь худеть? Заткнись и ешь картошку!",
+      "category": "Качество питания",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Почему обычная картошка может оказаться удобным продуктом для похудения, если не путать её с фритюром и тазиком масла.",
+      "file": "articles/hochesh-hudet-esh-kartoshku.md",
+      "sources": [
+        "https://pikabu.ru/story/khochesh_khudet_zatknis_i_esh_kartoshku_14183275"
+      ],
+      "source_external_ids": [
+        "14183275"
+      ],
+      "source_sha256": [
+        "38d590cc78fd16c4d05346ae858f8fbf24dcdc89e4f723c1a4d5560cfcf5f6dd"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/hochesh-hudet-esh-kartoshku/01.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2026/07/23/13/yhncpzvk.webp",
+          "sha256": "2986a743e5c10403f8af006a3a074b64de27dcbbc2ebd59db84b4fd85f4f47a0",
+          "width": 576,
+          "height": 484,
+          "alt": "Иллюстрация к материалу «Хочешь худеть? Заткнись и ешь картошку!»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/hochesh-hudet-esh-kartoshku/02.webp",
+          "source_url": "https://cs18.pikabu.ru/s/2026/07/23/13/klbreual.webp",
+          "sha256": "c2abf64bc58797bf70ee951d0fe757f80e597eee526412ad9cb51202d11fc49d",
+          "width": 364,
+          "height": 590,
+          "alt": "Иллюстрация к материалу «Хочешь худеть? Заткнись и ешь картошку!»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/hochesh-hudet-esh-kartoshku/03.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2026/07/23/14/5qbsol67.jpg",
+          "sha256": "8e724c26c4381b042bdf30faf8d38dd1abe662a298d1d2e73e41989d4c0a6ad2",
+          "width": 437,
+          "height": 319,
+          "alt": "Иллюстрация к материалу «Хочешь худеть? Заткнись и ешь картошку!»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/hochesh-hudet-esh-kartoshku/card.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2026/07/23/14/5qbsol67.jpg",
+          "sha256": "aecd87850add27e83a40d1fb5dc22037ecadf9cacc87ed9e0ad9f7c8d6a284de",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Хочешь худеть? Заткнись и ешь картошку!»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "***По мотивам комментариев от людей, кто лично на себе такого не замечал — написал закрепленный комментарий под постом, проверяйте.",
+        "Если есть другие претензии к бульбе — добро пожаловать в комментарии, обсудим.",
+        "Ваши варианты пишите в комментариях, но на мой взгляд — это винегрет! И вот почему:",
+        "Сергей Воронцов. Телеграм-канал «Похудение — это есть! (ссылка не открывается без ВПН).",
+        "Всем похудения, всех обнял <3"
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "manual_review_required",
+      "review_status": "hold",
+      "publish_ready": false,
+      "editorial_status": "factcheck_hold",
+      "hold_reason": "Универсальный совет для людей с диабетом требует решения владельца.",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "glikemicheskiy-indeks-eto-lishnee",
+        "pp-recepty-eto-ploho",
+        "pravila-bezopasnosti-za-shvedskim-stolom"
+      ]
+    },
+    {
+      "source_id": "CHernovik-08-18-3",
+      "slug": "kak-sdelat-celnozernovoy-ris-sedobnym",
+      "title": "Как сделать цельнозерновой рис съедобным",
+      "category": "Качество питания",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Простой способ приготовить цельнозерновой рис так, чтобы его хотелось есть не из чувства долга, а потому что получилось вкусно.",
+      "file": "articles/kak-sdelat-celnozernovoy-ris-sedobnym.md",
+      "sources": [
+        "https://telegra.ph/CHernovik-08-18-3"
+      ],
+      "source_external_ids": [
+        "CHernovik-08-18-3"
+      ],
+      "source_sha256": [
+        "16d2cd491aab0e6c6ebb754a0734e1df57d2734f3218f906b070f5093bc06183"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/kak-sdelat-celnozernovoy-ris-sedobnym/01.webp",
+          "source_url": "https://telegra.ph/file/7fd08bc1db5557fe5718a.jpg",
+          "sha256": "84a5e885ce015f9a94c020700d73b5e6e6daa8cc652b46c3deaac4bbcd8e2378",
+          "width": 1108,
+          "height": 600,
+          "alt": "Иллюстрация к материалу «Как сделать цельнозерновой рис съедобным»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/kak-sdelat-celnozernovoy-ris-sedobnym/02.webp",
+          "source_url": "https://telegra.ph/file/6ab3a39b14c43a216b580.jpg",
+          "sha256": "fe8285cdda004e89d10a1c7ebdd9f4275a698073beda212a25aa34efa87b0169",
+          "width": 1347,
+          "height": 1800,
+          "alt": "Иллюстрация к материалу «Как сделать цельнозерновой рис съедобным»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/kak-sdelat-celnozernovoy-ris-sedobnym/03.webp",
+          "source_url": "https://telegra.ph/file/7f756cdaa23239d1b04fa.jpg",
+          "sha256": "3cc374b03742155dd8a5510d2b6592cc4f0536333ada88382481cd4793131f00",
+          "width": 1212,
+          "height": 1800,
+          "alt": "Иллюстрация к материалу «Как сделать цельнозерновой рис съедобным»"
+        },
+        {
+          "name": "04.webp",
+          "path": "media/kak-sdelat-celnozernovoy-ris-sedobnym/04.webp",
+          "source_url": "https://telegra.ph/file/598e2b77a1c421133c267.jpg",
+          "sha256": "6ef7b4205359531e27a2aa81b8e90595f1ea9121ccea5bb9a169b1adaabd8929",
+          "width": 1783,
+          "height": 1800,
+          "alt": "Иллюстрация к материалу «Как сделать цельнозерновой рис съедобным»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/kak-sdelat-celnozernovoy-ris-sedobnym/card.webp",
+          "source_url": "https://telegra.ph/file/598e2b77a1c421133c267.jpg",
+          "sha256": "eba7b8dc2ca9773af75edd8c5b89ced99571d381dfb97b36e103e4be11d4a281",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Как сделать цельнозерновой рис съедобным»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "dva-sousa-krasnoe-i-beloe",
+        "pp-recepty-eto-ploho",
+        "hochesh-hudet-esh-kartoshku"
+      ]
+    },
+    {
+      "source_id": "Dva-sousa-Krasnoe-i-beloe-03-18",
+      "slug": "dva-sousa-krasnoe-i-beloe",
+      "title": "Два соуса. Красное и белое",
+      "category": "Качество питания",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Два быстрых домашних соуса: красный томатный и белый йогуртовый. Без сложной готовки и с понятным составом.",
+      "file": "articles/dva-sousa-krasnoe-i-beloe.md",
+      "sources": [
+        "https://telegra.ph/Dva-sousa-Krasnoe-i-beloe-03-18"
+      ],
+      "source_external_ids": [
+        "Dva-sousa-Krasnoe-i-beloe-03-18"
+      ],
+      "source_sha256": [
+        "4f15c567332764664350977c9b654f9c94e5c23d9994cd9c5f8692a52b5e9bce"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/dva-sousa-krasnoe-i-beloe/01.webp",
+          "source_url": "https://principled-cuticle-21b.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F5eb568ce-19be-43b8-90eb-3a00ab9af308%2F1b37f56e-93e9-482f-9cce-518ec093ced1%2FFrame_3323.jpg?table=block&id=13f58521-3bab-8065-98d8-c93bef2e0a27&spaceId=5eb568ce-19be-43b8-90eb-3a00ab9af308&width=1410&userId=&cache=v2",
+          "sha256": "96a5b24a29df5de56f4a47aaafecd4101a444668d9d196e46c3bfc0ac026097e",
+          "width": 1177,
+          "height": 684,
+          "alt": "Иллюстрация к материалу «Два соуса. Красное и белое»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/dva-sousa-krasnoe-i-beloe/02.webp",
+          "source_url": "https://principled-cuticle-21b.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F5eb568ce-19be-43b8-90eb-3a00ab9af308%2F7c56d3ee-dd87-4d13-bbd3-8f63aa74b4f0%2Fimage.png?table=block&id=13f58521-3bab-806c-97d2-f7ce9a075179&spaceId=5eb568ce-19be-43b8-90eb-3a00ab9af308&width=1410&userId=&cache=v2",
+          "sha256": "c10dc4314096c741b34004cd5fb20f4cbcbb220dfbe96f02ebaec5b92fd8a141",
+          "width": 1000,
+          "height": 1000,
+          "alt": "Иллюстрация к материалу «Два соуса. Красное и белое»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/dva-sousa-krasnoe-i-beloe/03.webp",
+          "source_url": "https://principled-cuticle-21b.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F5eb568ce-19be-43b8-90eb-3a00ab9af308%2F7e2999c4-d80e-4531-8bf5-10afd7560748%2Fimage.png?table=block&id=16458521-3bab-806a-b15d-dff41941f500&spaceId=5eb568ce-19be-43b8-90eb-3a00ab9af308&width=1350&userId=&cache=v2",
+          "sha256": "f189512b879dc140634cf4247cd8f19f1223e12c2c9ffac26f12447c92dc5541",
+          "width": 691,
+          "height": 364,
+          "alt": "Иллюстрация к материалу «Два соуса. Красное и белое»"
+        },
+        {
+          "name": "04.webp",
+          "path": "media/dva-sousa-krasnoe-i-beloe/04.webp",
+          "source_url": "https://principled-cuticle-21b.notion.site/image/attachment%3A668c31df-0be0-4854-a377-2b5293274793%3Aimage.png?table=block&id=18a58521-3bab-8027-85bb-d0b790035d7f&spaceId=5eb568ce-19be-43b8-90eb-3a00ab9af308&width=990&userId=&cache=v2",
+          "sha256": "44cb6fe8dc55fac3c2332bb6c3f3af3f7d55c86227c77744f20d8a4df697f236",
+          "width": 512,
+          "height": 545,
+          "alt": "Иллюстрация к материалу «Два соуса. Красное и белое»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/dva-sousa-krasnoe-i-beloe/card.webp",
+          "source_url": "https://principled-cuticle-21b.notion.site/image/attachment%3A668c31df-0be0-4854-a377-2b5293274793%3Aimage.png?table=block&id=18a58521-3bab-8027-85bb-d0b790035d7f&spaceId=5eb568ce-19be-43b8-90eb-3a00ab9af308&width=990&userId=&cache=v2",
+          "sha256": "ad4cecb5517aa76529cdd432a14df449d4934eda16a1691ce43b3dc04bebfa0b",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Два соуса. Красное и белое»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "kak-sdelat-celnozernovoy-ris-sedobnym",
+        "pp-recepty-eto-ploho",
+        "pravila-bezopasnosti-za-shvedskim-stolom"
+      ]
+    },
+    {
+      "source_id": "12857458",
+      "slug": "pravila-bezopasnosti-za-shvedskim-stolom",
+      "title": "Правила безопасности за шведским столом",
+      "category": "Качество питания",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Как отдохнуть в отеле со шведским столом, не превращая каждый приём пищи в соревнование и не привозя домой лишние килограммы.",
+      "file": "articles/pravila-bezopasnosti-za-shvedskim-stolom.md",
+      "sources": [
+        "https://pikabu.ru/story/pravila_bezopasnosti_za_shvedskim_stolom_12857458"
+      ],
+      "source_external_ids": [
+        "12857458"
+      ],
+      "source_sha256": [
+        "3d32d1cfe629a3a3be89644ea93475560261bafe4099d43c5926f53b2186984f"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/pravila-bezopasnosti-za-shvedskim-stolom/01.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2025/06/18/19/igon4lnw.webp",
+          "sha256": "5293d95ce1893cb48fd39259109e31b1d7d81ec3406462ba03797f32c0355eb5",
+          "width": 700,
+          "height": 700,
+          "alt": "Иллюстрация к материалу «Правила безопасности за шведским столом»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/pravila-bezopasnosti-za-shvedskim-stolom/02.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2025/06/18/19/igon4lnw_lg.jpg",
+          "sha256": "35af355d3f45b21907575530ddac4f4285d44b599c106ea8b3a853e0cdbc5358",
+          "width": 1080,
+          "height": 1080,
+          "alt": "Иллюстрация к материалу «Правила безопасности за шведским столом»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/pravila-bezopasnosti-za-shvedskim-stolom/03.webp",
+          "source_url": "https://cs16.pikabu.ru/s/2025/06/18/19/igociqe4.webp",
+          "sha256": "ef482afecc40f4d7743146bbd8f1ed54d3de086b2d5e23b59dc73f4be949ca4f",
+          "width": 629,
+          "height": 610,
+          "alt": "Иллюстрация к материалу «Правила безопасности за шведским столом»"
+        },
+        {
+          "name": "04.webp",
+          "path": "media/pravila-bezopasnosti-za-shvedskim-stolom/04.webp",
+          "source_url": "https://cs18.pikabu.ru/s/2025/06/18/19/fkqbcftr.webp",
+          "sha256": "0317967fa268b3a833a5cda1841f3a485bf92c49c1224560a63a2ee69f7d9897",
+          "width": 700,
+          "height": 1069,
+          "alt": "Иллюстрация к материалу «Правила безопасности за шведским столом»"
+        },
+        {
+          "name": "05.webp",
+          "path": "media/pravila-bezopasnosti-za-shvedskim-stolom/05.webp",
+          "source_url": "https://cs18.pikabu.ru/s/2025/06/18/19/fkqbcftr_lg.jpg",
+          "sha256": "e73e831f752f4f63046ca2e1168fa8b0172b442b5f5e42e3afe7063ba046db38",
+          "width": 838,
+          "height": 1280,
+          "alt": "Иллюстрация к материалу «Правила безопасности за шведским столом»"
+        },
+        {
+          "name": "06.webp",
+          "path": "media/pravila-bezopasnosti-za-shvedskim-stolom/06.webp",
+          "source_url": "https://cs16.pikabu.ru/s/2025/06/18/21/ti5cis3s_lg.jpg",
+          "sha256": "e778a68e82e3edd2f1a452e01e690eb2b646094d80998476481c3f51a3cca941",
+          "width": 1080,
+          "height": 1592,
+          "alt": "Иллюстрация к материалу «Правила безопасности за шведским столом»"
+        },
+        {
+          "name": "07.webp",
+          "path": "media/pravila-bezopasnosti-za-shvedskim-stolom/07.webp",
+          "source_url": "https://cs17.pikabu.ru/s/2025/06/18/19/qs5vkpyd.jpg",
+          "sha256": "e778a68e82e3edd2f1a452e01e690eb2b646094d80998476481c3f51a3cca941",
+          "width": 1080,
+          "height": 1592,
+          "alt": "Иллюстрация к материалу «Правила безопасности за шведским столом»"
+        },
+        {
+          "name": "08.webp",
+          "path": "media/pravila-bezopasnosti-za-shvedskim-stolom/08.webp",
+          "source_url": "https://cs17.pikabu.ru/s/2025/06/19/02/xifvl6h3_lg.jpg",
+          "sha256": "983c49304c0b0115ccf031331f9f3eafb683bb663703ddd9652f557978c41d9e",
+          "width": 600,
+          "height": 450,
+          "alt": "Иллюстрация к материалу «Правила безопасности за шведским столом»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/pravila-bezopasnosti-za-shvedskim-stolom/card.webp",
+          "source_url": "https://cs17.pikabu.ru/s/2025/06/19/02/xifvl6h3_lg.jpg",
+          "sha256": "0c37149fc740411226679591792936dbb4a9d47507c94dfb2eac66035d2ebd80",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Правила безопасности за шведским столом»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Остальное зависит от страны, места и ассортимента в супермаркетах. Предлагайте свои варианты в комментариях — я присоединюсь к обсуждению.",
+        "Вот несколько статей на Пикабу в тему:",
+        "Почему успешное похудение начинается не с похудения",
+        "Нет времени объяснять. Просто худей!",
+        "Почему японцы худые, а ты нет?",
+        "Самый здоровый человек на планете",
+        "Сергей Воронцов. Пишу об адекватном отношении к питанию и похудению, чтобы вы менялись!",
+        "→ Телеграм: «Похудение — это есть!» По ссылке ещё подборка постов."
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "pp-recepty-eto-ploho",
+        "dva-sousa-krasnoe-i-beloe",
+        "mozhno-li-pit-vo-vremya-edy"
+      ]
+    },
+    {
+      "source_id": "693339",
+      "slug": "mozhno-li-pit-vo-vremya-edy",
+      "title": "Можно ли пить во время еды?",
+      "category": "Ну, типа... ЗОЖ",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Разбавляет ли вода желудочный сок, вредно ли есть всухомятку и когда напитки во время еды действительно могут иметь значение.",
+      "file": "articles/mozhno-li-pit-vo-vremya-edy.md",
+      "sources": [
+        "https://vc.ru/flood/693339-tak-mozhno-pit-vo-vremya-edy-ili-net-a-vsuhomyatku-tochno-vredno"
+      ],
+      "source_external_ids": [
+        "693339"
+      ],
+      "source_sha256": [
+        "05c62f3079c14cfd5f2e4514c047fe17e736a777f650aed805dfb506bcca4959"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/mozhno-li-pit-vo-vremya-edy/01.webp",
+          "source_url": "https://leonardo.osnova.io/ad4cd058-ba2d-5fae-8ff4-917b3782fe0e/-/scale_crop/592x/",
+          "sha256": "8af3c8870e2fce02d63b5b8ddbefae6e13c3660a2964e604cfc8a9b335d7921a",
+          "width": 592,
+          "height": 379,
+          "alt": "Иллюстрация к материалу «Можно ли пить во время еды?»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/mozhno-li-pit-vo-vremya-edy/card.webp",
+          "source_url": "https://leonardo.osnova.io/ad4cd058-ba2d-5fae-8ff4-917b3782fe0e/-/scale_crop/592x/",
+          "sha256": "dc89788eea2e859db3c5ff347e09b6c69e15efeead1a2e714af3ffaf899936d5",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Можно ли пить во время еды?»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Веду телеграм Fitness_Talks, там пишу заметки покороче, не вот это вот «делай одно упражнение и бока уйдут», а нормальные.",
+        "Сюда планирую выкладывать более объёмные статьи."
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "skrytye-zapory-i-banalnyy-syuzhet",
+        "pravila-bezopasnosti-za-shvedskim-stolom",
+        "saharozamenitel-vyzyvaet-rak-net"
+      ]
+    },
+    {
+      "source_id": "Sahar-09-18",
+      "slug": "saharozamenitel-vyzyvaet-rak-net",
+      "title": "Сахарозаменитель в диетических напитках вызывает рак? Нет",
+      "category": "Качество питания",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Что на самом деле означала классификация аспартама как возможного канцерогена и почему слово «возможно» нельзя читать отдельно от дозы.",
+      "file": "articles/saharozamenitel-vyzyvaet-rak-net.md",
+      "sources": [
+        "https://telegra.ph/Sahar-09-18"
+      ],
+      "source_external_ids": [
+        "Sahar-09-18"
+      ],
+      "source_sha256": [
+        "67375ce6b528b13aa57d1b355ef9f8bf41d158e494dafa469287d7410c30f9b0"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/saharozamenitel-vyzyvaet-rak-net/01.webp",
+          "source_url": "https://telegra.ph/file/3c8a5e3e47b3b61448be2.jpg",
+          "sha256": "c971b87a547510a4dd3c3287a7d299c01e1cd9eb0664c9ffe6b925e7db9321f3",
+          "width": 700,
+          "height": 521,
+          "alt": "Иллюстрация к материалу «Сахарозаменитель в диетических напитках вызывает рак? Нет»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/saharozamenitel-vyzyvaet-rak-net/02.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/2023/06/30/10/1688147664283326713.jpg",
+          "sha256": "c971b87a547510a4dd3c3287a7d299c01e1cd9eb0664c9ffe6b925e7db9321f3",
+          "width": 700,
+          "height": 521,
+          "alt": "Иллюстрация к материалу «Сахарозаменитель в диетических напитках вызывает рак? Нет»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/saharozamenitel-vyzyvaet-rak-net/card.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/2023/06/30/10/1688147664283326713.jpg",
+          "sha256": "97782426e5cc008827755be1ff4b8af2701e379e87c95ccbec305cac0cdc8a0b",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Сахарозаменитель в диетических напитках вызывает рак? Нет»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Телеграмм канал —  Fitness_Talks",
+        "Мастер-класс по организации качественного питания и здоровых отношений с едой! →  @Fitness_Talks_bot"
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "glikemicheskiy-indeks-eto-lishnee",
+        "pp-recepty-eto-ploho",
+        "mozhno-li-pit-vo-vremya-edy"
+      ]
+    },
+    {
+      "source_id": "11553382",
+      "slug": "kak-ya-100000-shagov-reshil-proyti",
+      "title": "Как я 100 000 шагов решил пройти",
+      "category": "Личное",
+      "cta": "telegram",
+      "visibility": "internal",
+      "excerpt": "Личная история попытки пройти 100 000 шагов за сутки — с подготовкой, ошибками, ночёвкой в лесу и честным итогом.",
+      "file": "articles/kak-ya-100000-shagov-reshil-proyti.md",
+      "sources": [
+        "https://pikabu.ru/story/kak_ya_100_000_shagov_reshil_proyti_11553382"
+      ],
+      "source_external_ids": [
+        "11553382"
+      ],
+      "source_sha256": [
+        "470788d5345bc88fb209e9a50af8a59ccef949d3410e46b0cd6f313ea2480136"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/kak-ya-100000-shagov-reshil-proyti/01.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/06/28/9/1719588866199410226.jpg",
+          "sha256": "978eb8ac0e08e70301a3ea326bca931c32ce55d74574a75e41374887ba5f3011",
+          "width": 1012,
+          "height": 1800,
+          "alt": "Иллюстрация к материалу «Как я 100 000 шагов решил пройти»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/kak-ya-100000-shagov-reshil-proyti/02.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/06/27/9/1719502182130789860.jpg",
+          "sha256": "4eacb4e67b5cee2cacf905153641f1a9cfc796ee1c080a9b264c7aa964321fd4",
+          "width": 1305,
+          "height": 711,
+          "alt": "Иллюстрация к материалу «Как я 100 000 шагов решил пройти»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/kak-ya-100000-shagov-reshil-proyti/03.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/06/27/9/1719503994161279097.jpg",
+          "sha256": "dacce4cff8be6abd67cec047a8b18c60b75e3550a44900598240b6d41bb8e27d",
+          "width": 1411,
+          "height": 1549,
+          "alt": "Иллюстрация к материалу «Как я 100 000 шагов решил пройти»"
+        },
+        {
+          "name": "04.webp",
+          "path": "media/kak-ya-100000-shagov-reshil-proyti/04.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/06/27/9/1719502877121256404.jpg",
+          "sha256": "1f61ffe384257f675df5bab5051004ed8c054b10fabb690e8c1d613b400efd76",
+          "width": 754,
+          "height": 394,
+          "alt": "Иллюстрация к материалу «Как я 100 000 шагов решил пройти»"
+        },
+        {
+          "name": "05.webp",
+          "path": "media/kak-ya-100000-shagov-reshil-proyti/05.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/06/27/10/1719505472120710030.jpg",
+          "sha256": "1f61ffe384257f675df5bab5051004ed8c054b10fabb690e8c1d613b400efd76",
+          "width": 754,
+          "height": 394,
+          "alt": "Иллюстрация к материалу «Как я 100 000 шагов решил пройти»"
+        },
+        {
+          "name": "06.webp",
+          "path": "media/kak-ya-100000-shagov-reshil-proyti/06.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/06/27/10/1719506534196384685.jpg",
+          "sha256": "e71b81ee81825c4f67c41ff824b3e106144a1d62070e182a09395f3be8fb0479",
+          "width": 1692,
+          "height": 858,
+          "alt": "Иллюстрация к материалу «Как я 100 000 шагов решил пройти»"
+        },
+        {
+          "name": "07.webp",
+          "path": "media/kak-ya-100000-shagov-reshil-proyti/07.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/06/28/9/1719589806115054658.jpg",
+          "sha256": "ee23987f6c5cb9d69f4656dc07296a7e67dd33bff6e8ab90db0b2ad4b52642bd",
+          "width": 1800,
+          "height": 1067,
+          "alt": "Иллюстрация к материалу «Как я 100 000 шагов решил пройти»"
+        },
+        {
+          "name": "08.webp",
+          "path": "media/kak-ya-100000-shagov-reshil-proyti/08.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/06/27/11/1719513999155527924.jpg",
+          "sha256": "3c84037992709be80795f7cd63822debc8566feaca4e1da99ae237a8422a8aca",
+          "width": 1800,
+          "height": 856,
+          "alt": "Иллюстрация к материалу «Как я 100 000 шагов решил пройти»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/kak-ya-100000-shagov-reshil-proyti/card.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/06/27/11/1719513999155527924.jpg",
+          "sha256": "d7fef2e1e30cc1cfecb5291d8721fb860fd63aabd5f10ad062849c460f975a82",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Как я 100 000 шагов решил пройти»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Пикабу",
+        "●",
+        "02:50",
+        "Пикабу",
+        "●",
+        "02:57",
+        "Уперся в ограничение по фотографиям, поэтому фото часов с количеством шагов, закину в комментарии. Спасибо, что дочитали, всех обнял =)",
+        "Телеграм → Sergey Vorontsov. Там, да и тут на Пикабу я в основном пишу о питании и похудении, но сейчас, летом, не могу удержаться от описания вылазок на природу.",
+        "Другие мои посты тему:",
+        "→ Эти долбанные 10 000 шагов",
+        "→ Мама, с днем рождения!!!",
+        "→ Сходил в горы — радуюсь!",
+        "→ Похудение начинается не с похудения!"
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "telegram",
+      "related_candidates": [
+        "eti-dolbannye-10000-shagov",
+        "hodit-chtoby-hudet",
+        "kak-nachat-trenirovki-i-ne-brosit"
+      ]
+    },
+    {
+      "source_id": "11207593",
+      "slug": "glikemicheskiy-indeks-eto-lishnee",
+      "title": "Гликемический индекс — это лишнее!",
+      "category": "Качество питания",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Почему гликемический индекс отдельного продукта редко помогает принимать решения о реальном приёме пищи и похудении.",
+      "file": "articles/glikemicheskiy-indeks-eto-lishnee.md",
+      "sources": [
+        "https://pikabu.ru/story/glikemicheskiy_indeks__yeto_lishnee_11207593"
+      ],
+      "source_external_ids": [
+        "11207593"
+      ],
+      "source_sha256": [
+        "4c59de85bd33069c63f2685397519e4206c92af98989542098af2fee21d0daa7"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/glikemicheskiy-indeks-eto-lishnee/01.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/03/09/7/1709978441127581699.jpg",
+          "sha256": "f79082dd60a3362b5df9025fd73cb9c08c8e1c86d90d649bd1ebd2e7004d92c8",
+          "width": 1130,
+          "height": 607,
+          "alt": "Иллюстрация к материалу «Гликемический индекс — это лишнее!»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/glikemicheskiy-indeks-eto-lishnee/02.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/03/09/6/1709977098184521883.jpg",
+          "sha256": "982d591d07a553879a34127664636e46b290ac4b5f7b3d5d7753d107876e1814",
+          "width": 1800,
+          "height": 1039,
+          "alt": "Иллюстрация к материалу «Гликемический индекс — это лишнее!»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/glikemicheskiy-indeks-eto-lishnee/03.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/2024/03/09/7/1709981011265598745.webp",
+          "sha256": "86af1dea971824de12246214e7fe900f85c10cc9e833621d58cd7f76487bfcc5",
+          "width": 503,
+          "height": 427,
+          "alt": "Иллюстрация к материалу «Гликемический индекс — это лишнее!»"
+        },
+        {
+          "name": "04.webp",
+          "path": "media/glikemicheskiy-indeks-eto-lishnee/04.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2024/03/09/6/1709977679118283290.jpg",
+          "sha256": "eb188381d9245c30e98e9c60cac1cf2d1a62eb5e12e3591d493cb1398de6aa35",
+          "width": 1796,
+          "height": 1800,
+          "alt": "Иллюстрация к материалу «Гликемический индекс — это лишнее!»"
+        },
+        {
+          "name": "05.webp",
+          "path": "media/glikemicheskiy-indeks-eto-lishnee/05.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2024/03/09/7/1709980029154939813.jpg",
+          "sha256": "eb188381d9245c30e98e9c60cac1cf2d1a62eb5e12e3591d493cb1398de6aa35",
+          "width": 1796,
+          "height": 1800,
+          "alt": "Иллюстрация к материалу «Гликемический индекс — это лишнее!»"
+        },
+        {
+          "name": "06.webp",
+          "path": "media/glikemicheskiy-indeks-eto-lishnee/06.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/2024/03/09/7/170998029211986878.jpg",
+          "sha256": "73a0c4ce09be08062f857114acd4a50e69357d87d91a0cd4833068e90a9fe4fe",
+          "width": 1200,
+          "height": 551,
+          "alt": "Иллюстрация к материалу «Гликемический индекс — это лишнее!»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/glikemicheskiy-indeks-eto-lishnee/card.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/2024/03/09/7/170998029211986878.jpg",
+          "sha256": "ecf762cc1489f313af3e2f23a71f524003fdb51bb7fc848a2a792a5f8b1c68b5",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Гликемический индекс — это лишнее!»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "*Более точное определение в этом комментарии, если вас перекорежило.",
+        "Мой телеграм-канал → там подробнее рассказываю о питании/похудении вообще и о формировании сбалансированного рациона в частности. Потому что кто блин не знает все эти банальные правила? Все знают! А кто их соблюдает? Вот то-то же... с этим и работаем.",
+        "*Напомню, что плюс - это поддержка авторских постов на Пикабу, а подписка - желание читать их чаще (вдруг кто-то забыл).",
+        "Другие посты на Пикабу:",
+        "\"Сколько пользы РЕАЛЬНО остается в молоке, которое мы пьем?!?\"",
+        "\"Последний жир в области живота. План действий\"",
+        "\"Как похудеть этой зимой!\" - сюрприз, но те советы подойдут в любое время года)))",
+        "Похудеть не получается... какая самая частая причина?"
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "hochesh-hudet-esh-kartoshku",
+        "saharozamenitel-vyzyvaet-rak-net",
+        "pp-recepty-eto-ploho"
+      ]
+    },
+    {
+      "source_id": "10999474",
+      "slug": "pp-recepty-eto-ploho",
+      "title": "ПП-рецепты — это плохо. И вот почему",
+      "category": "Качество питания",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Как ярлык «ПП» заставляет переоценивать полезность блюда и почему рецепт лучше оценивать по задаче, составу и порции.",
+      "file": "articles/pp-recepty-eto-ploho.md",
+      "sources": [
+        "https://pikabu.ru/story/pp_retseptyi__yeto_plokho_i_vot_pochemu_10999474"
+      ],
+      "source_external_ids": [
+        "10999474"
+      ],
+      "source_sha256": [
+        "6ca7aba7ecfec08012fba0f6c0122ce4ad4b4236f2d06905a91856c82f615796"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/pp-recepty-eto-ploho/01.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/2024/01/07/6/1704615738221844529.webp",
+          "sha256": "ea24e5e077204569d9aacaf15042c9a7eec2c780083c490609bb9c7ebc6aac0f",
+          "width": 600,
+          "height": 336,
+          "alt": "Иллюстрация к материалу «ПП-рецепты — это плохо. И вот почему»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/pp-recepty-eto-ploho/02.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/01/07/6/1704615621144358533.png",
+          "sha256": "a64622c428ff3c60490854c640f5ccd0aa0fd71b64f98c9eca9f0c114c2b1ec2",
+          "width": 1800,
+          "height": 1012,
+          "alt": "Иллюстрация к материалу «ПП-рецепты — это плохо. И вот почему»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/pp-recepty-eto-ploho/03.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/01/07/6/1704615881142648312.png",
+          "sha256": "b76f307b05ac573acd8a395cf53438fa6fbd736037f394964e183ce62e133281",
+          "width": 1800,
+          "height": 874,
+          "alt": "Иллюстрация к материалу «ПП-рецепты — это плохо. И вот почему»"
+        },
+        {
+          "name": "04.webp",
+          "path": "media/pp-recepty-eto-ploho/04.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/01/07/6/170461591517357713.png",
+          "sha256": "ac1084f55804c8023d41f218d428d6861db719bb174f039e1cb8a089276bbcfa",
+          "width": 1800,
+          "height": 450,
+          "alt": "Иллюстрация к материалу «ПП-рецепты — это плохо. И вот почему»"
+        },
+        {
+          "name": "05.webp",
+          "path": "media/pp-recepty-eto-ploho/05.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2024/01/07/6/1704615935130945585.png",
+          "sha256": "24a3dc98bf479c2e87a14ecbbe9a7cc5c5e95d58fdb3ceeb91b2cc67b814a685",
+          "width": 1800,
+          "height": 865,
+          "alt": "Иллюстрация к материалу «ПП-рецепты — это плохо. И вот почему»"
+        },
+        {
+          "name": "06.webp",
+          "path": "media/pp-recepty-eto-ploho/06.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/01/07/6/1704615962167886265.png",
+          "sha256": "24a3dc98bf479c2e87a14ecbbe9a7cc5c5e95d58fdb3ceeb91b2cc67b814a685",
+          "width": 1800,
+          "height": 865,
+          "alt": "Иллюстрация к материалу «ПП-рецепты — это плохо. И вот почему»"
+        },
+        {
+          "name": "07.webp",
+          "path": "media/pp-recepty-eto-ploho/07.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2024/01/07/6/1704616029129970668.png",
+          "sha256": "a30ec26d1dd32407cd96dd52bdd4b5614fbf543dbe805f12394f4e625f1ef88a",
+          "width": 1290,
+          "height": 530,
+          "alt": "Иллюстрация к материалу «ПП-рецепты — это плохо. И вот почему»"
+        },
+        {
+          "name": "08.webp",
+          "path": "media/pp-recepty-eto-ploho/08.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/01/07/6/1704616059158811358.png",
+          "sha256": "971eb2765d9e79ed9e6fbc8159315c38091b7f6b0f7c75a3444bd1e4a74a9bb6",
+          "width": 1800,
+          "height": 996,
+          "alt": "Иллюстрация к материалу «ПП-рецепты — это плохо. И вот почему»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/pp-recepty-eto-ploho/card.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/01/07/6/1704616059158811358.png",
+          "sha256": "339f90c8c625442ac31526bdc764159ea523549b477e80c9e718e4be04f01add",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «ПП-рецепты — это плохо. И вот почему»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Напишите в комментариях, если у вас есть идеи, я хз... Если кому-то нравится вкус, да ради бога, но навязывать это как высокие стандарты питания, у-у перебор…",
+        "Телеграм канал Sergey Vorontsov | FitnessTalks, заходите, если что.",
+        "Ещё моих постов на Пикабу:",
+        "\"Как похудеть этой зимой!\"",
+        "\"13 правил для организации домашних тренировок\"",
+        "\"Лимонная, блин, вода... поговорим о святом!\"",
+        "\"Последний жир в области живота. План действий\""
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "glikemicheskiy-indeks-eto-lishnee",
+        "hochesh-hudet-esh-kartoshku",
+        "dva-sousa-krasnoe-i-beloe"
+      ]
+    },
+    {
+      "source_id": "training-combined-2023",
+      "slug": "kak-nachat-trenirovki-i-ne-brosit",
+      "title": "Как начать тренировки и не бросить",
+      "category": "Тренировки",
+      "cta": "intensive",
+      "visibility": "public",
+      "excerpt": "История короткого бегового челленджа с Pikabu и практическая инструкция: как начать тренироваться, не перегореть и превратить активность в устойчивую привычку.",
+      "combined": [
+        "10276321",
+        "10779442",
+        "752179"
+      ],
+      "file": "articles/kak-nachat-trenirovki-i-ne-brosit.md",
+      "sources": [
+        "https://pikabu.ru/story/otvet_na_post_chellendzh_30_dney_bega_2_den_10276321",
+        "https://pikabu.ru/story/kak_nachat_trenirovki_i_ne_brosit_chellendzhinstruktsiya_10779442",
+        "https://vc.ru/flood/752179-8-sovetov-tem-kto-hochet-nachat-begat"
+      ],
+      "source_external_ids": [
+        "10276321",
+        "10779442",
+        "752179"
+      ],
+      "source_sha256": [
+        "d87212723d4f9bf04cb92867d4749d22341101c514f639f864604b5da0935d83",
+        "da4d597d0b51a33ef928c9e795bb7bf948dfcacbb96efe06adbac03fdb3415e9",
+        "0461943da5f9f65ea7081e79bee747167e762f53a4dbb560a58aae56b47ab148"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/kak-nachat-trenirovki-i-ne-brosit/01.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2023/05/28/5/1685257975125871560.jpg",
+          "sha256": "67b859a4420932027e292ebb797de67731b23cb5eff1ec4034effe5b922c160a",
+          "width": 1800,
+          "height": 1800,
+          "alt": "Иллюстрация к материалу «Как начать тренировки и не бросить»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/kak-nachat-trenirovki-i-ne-brosit/02.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/2023/05/28/5/1685259032267615669.webp",
+          "sha256": "45d3a44518283c1d95b5a48385a83d3e19afff7dcc86cef466afad39679771ec",
+          "width": 700,
+          "height": 109,
+          "alt": "Иллюстрация к материалу «Как начать тренировки и не бросить»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/kak-nachat-trenirovki-i-ne-brosit/03.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2023/05/28/5/1685259208184854865.jpg",
+          "sha256": "7d060bc4cb3986ded97c7d3698cced26fd8b201e7c5f7b03bb2b73eb2d634258",
+          "width": 1799,
+          "height": 1800,
+          "alt": "Иллюстрация к материалу «Как начать тренировки и не бросить»"
+        },
+        {
+          "name": "04.webp",
+          "path": "media/kak-nachat-trenirovki-i-ne-brosit/04.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2023/05/28/5/1685259238151776452.jpg",
+          "sha256": "8e8ca0d668473dc4a9934e138e19b346f5c3b4c0490d0b0d44415ccc947e6f12",
+          "width": 1800,
+          "height": 1800,
+          "alt": "Иллюстрация к материалу «Как начать тренировки и не бросить»"
+        },
+        {
+          "name": "05.webp",
+          "path": "media/kak-nachat-trenirovki-i-ne-brosit/05.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2023/10/29/5/1698563879115695297.jpg",
+          "sha256": "b5bf7ed3d1654d082a22b9641a0bde37d2efb448e53ce8e93d6a2fcb3ef54c4f",
+          "width": 1472,
+          "height": 876,
+          "alt": "Иллюстрация к материалу «Как начать тренировки и не бросить»"
+        },
+        {
+          "name": "06.webp",
+          "path": "media/kak-nachat-trenirovki-i-ne-brosit/06.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/2023/10/28/11/1698520513299627892.jpg",
+          "sha256": "50a4d7b913e1f7142eb21a9efb874f8a9b3d63b5b86785f2b2a8732779afde77",
+          "width": 700,
+          "height": 462,
+          "alt": "Иллюстрация к материалу «Как начать тренировки и не бросить»"
+        },
+        {
+          "name": "07.webp",
+          "path": "media/kak-nachat-trenirovki-i-ne-brosit/07.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/2023/10/28/11/1698520513232014436.jpg",
+          "sha256": "99a91e7976f754eb01cde61d98c85bc9018f89105329523f1e14e64011d5ee5f",
+          "width": 700,
+          "height": 250,
+          "alt": "Иллюстрация к материалу «Как начать тренировки и не бросить»"
+        },
+        {
+          "name": "08.webp",
+          "path": "media/kak-nachat-trenirovki-i-ne-brosit/08.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/2023/10/28/11/169852051321490725.jpg",
+          "sha256": "d39b08d7ed3ff549587fed26dbb356de21a8de31a73650b9689f8d6a5a0e4bd4",
+          "width": 700,
+          "height": 399,
+          "alt": "Иллюстрация к материалу «Как начать тренировки и не бросить»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/kak-nachat-trenirovki-i-ne-brosit/card.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/2023/10/28/11/169852051321490725.jpg",
+          "sha256": "9f57e43724fa334ad5a5b5b0f1f0a701f3cb00b4c095021ddb7cec8fa7049fd7",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «Как начать тренировки и не бросить»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Веду телеграм FitnessTalks, там пишу заметки намного чаще, а на Пикабу планирую выкладывать более объёмные статьи, например:",
+        "\"Так можно пить во время еды или нет?\"",
+        "\"10 000 и 1 шаг. Сказка про ЗОЖ\"",
+        "Ответ на пост «Правильное питания на работе»",
+        "Ответ на пост «Как работает дефицит калорий?»",
+        "Задача на сегодня: оценить, с какой интенсивностью вы проводите тренировки и насколько это соответствует вашим целям, делитесь выводами!",
+        "Всего голосов:",
+        "Завтра подведу итоги первой недели и двинем дальше. Как я и сказал, пришло время обратить внимание на мотивацию и самоорганизацию. Мотивацию бегать я подпитываю самостоятельно, а вот мотивация писать питается только плюсами =) Если было полезно, или хотя бы интересно, поставь плюс!",
+        "Ещё посты на Пикабу:",
+        "\"13 правил для организации домашних тренировок\"",
+        "\"Лимонная, блин, вода... поговорим о святом!\"",
+        "\"Маршрут в Сванетии. Один день 20 км\"",
+        "\"Последний жир в области живота. План действий\"",
+        "\"Что вы НЕ понимаете о формировании привычек\"",
+        "Телеграм: Sergey Vorontsov | FitnessTalks",
+        "Веду телеграм Fitness_Talks, там пишу заметки питании, тренировках и подходу к здоровому образу жизни в целом, не вот это вот «делай одно упражнение и бока уйдут», а нормально.",
+        "Недавние посты:",
+        "«‎13 правил для организации домашних тренировок»‎",
+        "«‎Мы все един фрукты (не) правильно»‎",
+        "«‎Борьба с режимом (сна)»‎",
+        "Сюда планирую выкладывать более объёмные статьи, например:",
+        "1. Так можно пить во время еды или нет? ⁠⁠ А всухомятку точно вредно?",
+        "2. Перекусы худеть мешают или помогают?",
+        "В прошлом посте мне накидали в панамку, мол чего это за ерунда на VC... отвечу комментарием.А если и это не аргумент, то я все-равно пишу в оффтоп и никого читать не заставляю."
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "intensive",
+      "related_candidates": [
+        "hodit-chtoby-hudet",
+        "eti-dolbannye-10000-shagov",
+        "poterya-myshc-pri-pohudenii"
+      ]
+    },
+    {
+      "source_id": "12922345",
+      "slug": "a-mne-trener-posovetoval",
+      "title": "А мне тренер посоветовал…",
+      "category": "Тренировки",
+      "cta": "masterclass",
+      "visibility": "public",
+      "excerpt": "Почему уверенный совет тренера по питанию ещё не становится правильным — и по каким признакам отличать опыт от компетентности.",
+      "file": "articles/a-mne-trener-posovetoval.md",
+      "sources": [
+        "https://pikabu.ru/story/a_mne_trener_posovetoval_12922345"
+      ],
+      "source_external_ids": [
+        "12922345"
+      ],
+      "source_sha256": [
+        "eb757031d04c7e9c8b3f8d0bd51a8acc869fe3ce2a4173259880c9b785be0c9c"
+      ],
+      "media": [
+        {
+          "name": "01.webp",
+          "path": "media/a-mne-trener-posovetoval/01.webp",
+          "source_url": "https://cs17.pikabu.ru/s/2025/07/04/18/zizfkebg.webp",
+          "sha256": "ca72890c80c2df7801412f855b4de57fbe9157c9361c99fb8bc928fff4ad2daa",
+          "width": 600,
+          "height": 432,
+          "alt": "Иллюстрация к материалу «А мне тренер посоветовал…»"
+        },
+        {
+          "name": "02.webp",
+          "path": "media/a-mne-trener-posovetoval/02.webp",
+          "source_url": "https://cs16.pikabu.ru/s/2025/07/04/18/kndcjs6o.webp",
+          "sha256": "afe94861ee113d0b2c24b2ff1e926ef4f1952647ba577014136e06a00811492b",
+          "width": 524,
+          "height": 196,
+          "alt": "Иллюстрация к материалу «А мне тренер посоветовал…»"
+        },
+        {
+          "name": "03.webp",
+          "path": "media/a-mne-trener-posovetoval/03.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2025/07/05/11/cgsngvcy.webp",
+          "sha256": "41b86cde6afd370a3132d84834e1c061b0b60fc2bd9decb879234ee0ce980e85",
+          "width": 700,
+          "height": 364,
+          "alt": "Иллюстрация к материалу «А мне тренер посоветовал…»"
+        },
+        {
+          "name": "04.webp",
+          "path": "media/a-mne-trener-posovetoval/04.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2025/07/04/19/zkx2xerf.webp",
+          "sha256": "10745afee1fd41bc6130dbf303130f0d6fe585ed0ab0c5c64c8edc58a6084c24",
+          "width": 700,
+          "height": 700,
+          "alt": "Иллюстрация к материалу «А мне тренер посоветовал…»"
+        },
+        {
+          "name": "05.webp",
+          "path": "media/a-mne-trener-posovetoval/05.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2025/07/04/19/zkx2xerf_lg.png",
+          "sha256": "8f2e19249c8d9309ed9fa3cc4abc53bbf207f3b03802175f134ef7f0133c0380",
+          "width": 800,
+          "height": 800,
+          "alt": "Иллюстрация к материалу «А мне тренер посоветовал…»"
+        },
+        {
+          "name": "06.webp",
+          "path": "media/a-mne-trener-posovetoval/06.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2025/07/04/19/2ockwysy_lg.png",
+          "sha256": "7f4e12e91a8508bce98a45769299e2207719e65944c54d902a67a16b0e9d3c32",
+          "width": 880,
+          "height": 320,
+          "alt": "Иллюстрация к материалу «А мне тренер посоветовал…»"
+        },
+        {
+          "name": "07.webp",
+          "path": "media/a-mne-trener-posovetoval/07.webp",
+          "source_url": "https://cs16.pikabu.ru/s/2025/07/05/11/zgxsizvv_lg.png",
+          "sha256": "7f4e12e91a8508bce98a45769299e2207719e65944c54d902a67a16b0e9d3c32",
+          "width": 880,
+          "height": 320,
+          "alt": "Иллюстрация к материалу «А мне тренер посоветовал…»"
+        },
+        {
+          "name": "08.webp",
+          "path": "media/a-mne-trener-posovetoval/08.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2025/07/04/20/xif2wzkp.jpg",
+          "sha256": "f37185037cd7623e55bd51938f2e9e905a78525c70a4de5bee49f34a461ddf25",
+          "width": 1800,
+          "height": 1202,
+          "alt": "Иллюстрация к материалу «А мне тренер посоветовал…»"
+        },
+        {
+          "name": "card.webp",
+          "path": "media/a-mne-trener-posovetoval/card.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2025/07/04/20/xif2wzkp.jpg",
+          "sha256": "28ba26c3c4b9c16ef2148b0e3f8bb586460cf841ec215c9abb112a0935d4d252",
+          "width": 1280,
+          "height": 720,
+          "alt": "Обложка материала «А мне тренер посоветовал…»",
+          "derived": "16:9 card crop"
+        }
+      ],
+      "hero": "01.webp",
+      "card": "card.webp",
+      "removed_platform_tail": [
+        "Пикабу",
+        "●",
+        "00:11",
+        "→ Телеграм: «Похудение — это есть!»По ссылке сразу подборка основных постов из канала.",
+        "А вот несколько постов с Пикабу ещё:",
+        "Почему успешное похудение начинается не с похудения",
+        "Нет времени объяснять. Просто худей!",
+        "Почему японцы худые, а ты нет?",
+        "Самый здоровый человек на планете",
+        "Всех обнял, худейте с улыбкой, до встречи в новых постах!"
+      ],
+      "validation": "pending",
+      "review": "pending",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
+      "suggested_cta": "masterclass",
+      "related_candidates": [
+        "kak-nachat-trenirovki-i-ne-brosit",
+        "poterya-myshc-pri-pohudenii",
+        "sdelat-pohudenie-proshche"
+      ]
+    }
+  ],
+  "finalized_at": "2026-09-20T02:51:44.922378+00:00",
+  "summary": {
+    "total": 20,
+    "public_candidates": 19,
+    "internal": 1,
+    "publish_ready": 19,
+    "factcheck_hold": 1
+  }
+}
