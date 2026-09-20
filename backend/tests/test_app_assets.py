@@ -1381,7 +1381,7 @@ def test_strength_new_user_can_start_and_manage_own_workouts() -> None:
     assert "body.email =\n      app.email;" in text
     assert "Редактировать план" in text
     assert "Начать тренировку" in text
-    assert "        'Шаблон '+i+" in text
+    assert "Редактировать шаблон '+i+" in text
     assert "Тренировка №" in text
     assert "Новая тренировка" in text
     assert "createNextSession:function" in text
