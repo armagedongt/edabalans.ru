@@ -1,5 +1,5 @@
 {
-  "package_version": "2.7.0-20260917",
+  "package_version": "2.7.1-20260920",
   "files": [
     {
       "path": "content/author-voice/skill/edabalans-writer/SKILL.md",
@@ -19,7 +19,7 @@
     },
     {
       "path": "docs/knowledge-base/ARTICLE_STANDARD.md",
-      "sha256": "77f15bb8722b715c972edafa10ccc2a0e2354bbd4297de50b69a5c7ff8c505df"
+      "sha256": "d441dc4299af271bb9c40ec39a91246e07478b1a023dcf70953d7c929ad215bf"
     },
     {
       "path": "content/author-voice/product-fact-router.md",
