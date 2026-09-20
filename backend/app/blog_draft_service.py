@@ -50,6 +50,7 @@ MAX_IMAGE_PIXELS = 25_000_000
 MEDIA_NAME_RE = re.compile(r"[a-z0-9][a-z0-9_-]{0,91}\.(?:png|jpg|webp)")
 MEDIA_MIME = {"png": "image/png", "jpg": "image/jpeg", "webp": "image/webp"}
 PIL_FORMAT = {"png": "PNG", "jpg": "JPEG", "webp": "WEBP"}
+CARD_FITS = {"cover", "contain"}
 BLOG_CTA_RE = re.compile(
     r"\n*blog_cta\(\s*\n\s*[a-z0-9_-]+\s*\n\)",
     re.MULTILINE,
@@ -71,6 +72,14 @@ def _media_source(item: dict) -> str:
     if item.get("storage") == "git":
         return f"/blog/media/{item['name']}"
     return f"/media/{item['name']}"
+
+
+def _validate_card(card: str | None, card_fit: str, media: list[dict]) -> tuple[str | None, str]:
+    if card is not None and card not in {item["name"] for item in media}:
+        raise _invalid("Обложка должна ссылаться на изображение этой статьи")
+    if card_fit not in CARD_FITS:
+        raise _invalid("Режим обложки должен быть cover или contain")
+    return card, card_fit
 
 
 def _validate_markdown(markdown: str, media: list[dict]) -> str:
@@ -209,6 +218,22 @@ def prepare_package(slug: str, source: dict) -> dict:
     hero = source.get("hero")
     if hero is not None and hero not in seen:
         raise _invalid("Hero должен ссылаться на изображение из пакета")
+    manifest_article = load_blog_catalog().by_slug(slug)
+    manifest_card = manifest_article.card.file if manifest_article is not None else None
+    requested_card = source.get("card")
+    selected_card = requested_card or (manifest_card if manifest_card in seen else hero)
+    selected_fit = source.get("card_fit")
+    if selected_fit is None:
+        selected_fit = (
+            manifest_article.card.fit
+            if manifest_article is not None and selected_card == manifest_card
+            else "cover"
+        )
+    card, card_fit = _validate_card(
+        selected_card,
+        str(selected_fit),
+        media,
+    )
     markdown = str(source.get("markdown") or "")
     markdown_sha256 = _validate_markdown(markdown, media)
     source_id = source.get("source_id")
@@ -227,6 +252,8 @@ def prepare_package(slug: str, source: dict) -> dict:
         "sources": normalized_sources,
         "source_id": str(source_id).strip() if source_id is not None else None,
         "hero": hero,
+        "card": card,
+        "card_fit": card_fit,
         "media": media,
         "metadata": deepcopy(metadata),
     }
@@ -290,6 +317,8 @@ def _git_seed_payload(slug: str) -> dict:
         "sources": [f"content://blog/{article.source_id}"],
         "source_id": article.source_id,
         "hero": article.hero.file,
+        "card": article.card.file,
+        "card_fit": article.card.fit,
         "media": media,
         "metadata": {
             "body_file": article.body_file,
@@ -348,6 +377,11 @@ def effective_article_payload(version: ManagedDocumentVersion) -> dict:
     seed["markdown"] = version.payload["markdown"]
     seed["markdown_sha256"] = version.payload["markdown_sha256"]
     seed["visibility"] = version.payload.get("visibility", "public")
+    selected_card = version.payload.get("card", seed["card"])
+    selected_fit = version.payload.get("card_fit", seed["card_fit"])
+    seed["card"], seed["card_fit"] = _validate_card(
+        selected_card, selected_fit, seed["media"]
+    )
     return seed
 
 
@@ -355,10 +389,17 @@ def publication_status(db: Session, version: ManagedDocumentVersion) -> tuple[st
     published = _published_article(db, version.document_key)
     if published is not None:
         payload = effective_article_payload(version)
+        defaults = _git_seed_payload(version.document_key)
         return (
             "published"
-            if published.payload.get("markdown_sha256")
-            == payload.get("markdown_sha256")
+            if (
+                published.payload.get("markdown_sha256")
+                == payload.get("markdown_sha256")
+                and published.payload.get("card", defaults.get("card"))
+                == payload.get("card")
+                and published.payload.get("card_fit", defaults.get("card_fit"))
+                == payload.get("card_fit")
+            )
             else "moderation",
             published.version_no,
         )
@@ -418,12 +459,25 @@ def save_package(
 
 
 def update_text(
-    db: Session, *, slug: str, markdown: str, expected_version: int, admin: str
+    db: Session,
+    *,
+    slug: str,
+    markdown: str,
+    card: str | None = None,
+    card_fit: str | None = None,
+    expected_version: int,
+    admin: str,
 ) -> ManagedDocumentVersion:
     current = active_article(db, slug)
     payload = deepcopy(effective_article_payload(current))
     payload["markdown_sha256"] = _validate_markdown(markdown, payload["media"])
     payload["markdown"] = markdown
+    if card is not None or card_fit is not None:
+        payload["card"], payload["card_fit"] = _validate_card(
+            card if card is not None else payload.get("card"),
+            card_fit if card_fit is not None else payload.get("card_fit", "cover"),
+            payload["media"],
+        )
     payload["editorial_status"] = "moderation"
     return publish_document(
         db,
@@ -482,6 +536,8 @@ def serialize_article(version: ManagedDocumentVersion, *, source: bool, db: Sess
         "source_id": payload.get("source_id"),
         "sources": payload["sources"],
         "hero": payload.get("hero"),
+        "card": payload.get("card"),
+        "card_fit": payload.get("card_fit", "cover"),
         "metadata": payload["metadata"],
         "markdown_sha256": payload["markdown_sha256"],
         "media": media,
@@ -557,6 +613,11 @@ def publish_article(
     public_payload["markdown_sha256"] = _validate_markdown(
         draft_payload["markdown"], public_payload["media"]
     )
+    public_payload["card"], public_payload["card_fit"] = _validate_card(
+        draft_payload.get("card"),
+        draft_payload.get("card_fit", "cover"),
+        public_payload["media"],
+    )
     current = _published_article(db, slug)
     if current is None:
         version = ManagedDocumentVersion(
@@ -597,4 +658,32 @@ def public_payload(db: Session, slug: str) -> dict | None:
     payload = _git_seed_payload(slug)
     payload["markdown"] = published.payload["markdown"]
     payload["markdown_sha256"] = published.payload["markdown_sha256"]
+    payload["card"], payload["card_fit"] = _validate_card(
+        published.payload.get("card", payload["card"]),
+        published.payload.get("card_fit", payload["card_fit"]),
+        payload["media"],
+    )
     return payload
+
+
+def published_card_overrides(db: Session) -> dict[str, tuple[str, str]]:
+    catalog = load_blog_catalog()
+    articles = {article.slug: article for article in catalog.published}
+    rows = db.scalars(
+        select(ManagedDocumentVersion).where(
+            ManagedDocumentVersion.document_type == PUBLISHED_DOCUMENT_TYPE,
+            ManagedDocumentVersion.is_active.is_(True),
+            ManagedDocumentVersion.document_key.in_(articles),
+        )
+    )
+    result: dict[str, tuple[str, str]] = {}
+    for row in rows:
+        article = articles.get(row.document_key)
+        if article is None:
+            continue
+        allowed = {article.hero.file, article.card.file, *article.media}
+        card = row.payload.get("card")
+        fit = row.payload.get("card_fit", "cover")
+        if card in allowed and fit in CARD_FITS:
+            result[row.document_key] = (card, fit)
+    return result

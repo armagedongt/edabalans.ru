@@ -362,8 +362,23 @@ def test_confirmed_static_batch_is_published_and_excluded_stories_are_not_public
     assert excluded_slugs.isdisjoint(slugs)
     for slug in excluded_slugs:
         assert client.get(f"/blog/articles/{slug}").status_code == 404
+    excluded_source_ids = {
+        "10197439",
+        "11528528",
+        "11553382",
+        "CHernovik-08-18-3",
+        "Dva-sousa-Krasnoe-i-beloe-03-18",
+    }
+    assert excluded_source_ids.isdisjoint({article.source_id for article in catalog.published})
     manifest_path = Path(__file__).resolve().parents[2] / "content" / "blog" / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    published_provenance_ids = {
+        str(source_id)
+        for article in manifest["articles"]
+        if article["status"] == "published"
+        for source_id in article.get("source_provenance", {}).get("external_ids", [])
+    }
+    assert excluded_source_ids.isdisjoint(published_provenance_ids)
     manifest_by_slug = {article["slug"]: article for article in manifest["articles"]}
     for slug, source_id in batch_sources.items():
         article = manifest_by_slug[slug]
@@ -382,3 +397,15 @@ def test_confirmed_static_batch_is_published_and_excluded_stories_are_not_public
     assert diet is not None
     assert diet.hero.file != diet.card.file
     assert "exact source" in diet.hero.provenance
+
+
+def test_manifest_card_fit_is_rendered_without_destructive_crop() -> None:
+    catalog = load_blog_catalog()
+    article = catalog.by_slug("temperatura-vody-dlya-priema-vnutr")
+    assert article is not None
+    assert article.card.fit == "contain"
+    page = client.get("/blog")
+    assert (
+        f'class="card-image card-image--contain" src="/blog/media/{article.card.file}"'
+        in page.text
+    )

@@ -4,12 +4,16 @@
   var slug = match ? decodeURIComponent(match[1]) : '';
   var state = null;
   var dirty = false;
+  var draftCard = '';
+  var draftCardFit = 'cover';
   var source = document.querySelector('#draft-markdown');
   var status = document.querySelector('#draft-status');
   var save = document.querySelector('#draft-save');
   var publish = document.querySelector('#draft-publish');
   var error = document.querySelector('#draft-error');
   var notice = document.querySelector('#draft-notice');
+  var coverPreview = document.querySelector('#draft-cover-preview');
+  var coverOptions = document.querySelector('#draft-cover-options');
 
   function endpoint(suffix) { return '/admin/api/blog/articles/' + encodeURIComponent(slug) + (suffix || ''); }
   function request(value, method) {
@@ -37,6 +41,45 @@
     document.querySelector('#draft-meta').textContent = (article.visibility === 'internal' ? 'Служебная' : 'Публичная') + ' · ' + (article.editorial_status === 'published' ? 'Опубликована' : 'На модерации') + ' · версия ' + article.version;
     document.querySelector('#open-preview').href = '/blog/drafts/' + encodeURIComponent(slug);
   }
+  function updateCoverPreview() {
+    var selected = state && state.media.find(function (item) { return item.name === draftCard; });
+    if (!selected) return;
+    coverPreview.src = selected.url;
+    coverPreview.alt = selected.alt || 'Предпросмотр выбранной обложки';
+    coverPreview.style.objectFit = draftCardFit;
+    coverOptions.querySelectorAll('[data-card-name]').forEach(function (button) {
+      button.setAttribute('aria-pressed', button.dataset.cardName === draftCard ? 'true' : 'false');
+    });
+    document.querySelectorAll('input[name="card-fit"]').forEach(function (input) {
+      input.checked = input.value === draftCardFit;
+    });
+  }
+  function renderCoverPicker(article) {
+    draftCard = article.card || article.hero || (article.media[0] && article.media[0].name) || '';
+    draftCardFit = article.card_fit || 'cover';
+    coverOptions.replaceChildren();
+    article.media.forEach(function (item) {
+      var button = document.createElement('button');
+      var image = document.createElement('img');
+      var label = document.createElement('span');
+      button.type = 'button';
+      button.className = 'draft-cover-option';
+      button.dataset.cardName = item.name;
+      button.setAttribute('aria-pressed', 'false');
+      image.src = item.url;
+      image.alt = item.alt || '';
+      image.loading = 'lazy';
+      label.textContent = item.name + (item.width && item.height ? ' · ' + item.width + '×' + item.height : '');
+      button.append(image, label);
+      button.addEventListener('click', function () {
+        draftCard = item.name;
+        updateCoverPreview();
+        setDirty(true);
+      });
+      coverOptions.appendChild(button);
+    });
+    updateCoverPreview();
+  }
   function preview(preserveNotice) {
     if (preserveNotice) error.hidden = true;
     else clearMessages();
@@ -57,6 +100,7 @@
       state = result.article;
       source.value = state.markdown;
       showMeta(state);
+      renderCoverPicker(state);
       setDirty(false);
       return preview();
     }).catch(showError);
@@ -66,10 +110,12 @@
     clearMessages();
     status.textContent = 'Сохраняю…';
     var submitted = source.value;
-    request({ path: '/text', body: { expected_version: state.version, markdown: submitted } }, 'PATCH').then(function (result) {
+    var submittedCard = draftCard;
+    var submittedFit = draftCardFit;
+    request({ path: '/text', body: { expected_version: state.version, markdown: submitted, card: submittedCard, card_fit: submittedFit } }, 'PATCH').then(function (result) {
       state = result.article;
       showMeta(state);
-      if (source.value === submitted) setDirty(false);
+      if (source.value === submitted && draftCard === submittedCard && draftCardFit === submittedFit) setDirty(false);
       else setDirty(true);
       notice.hidden = false;
       notice.textContent = 'Редакция сохранена на модерации. Публичный блог не изменился.';
@@ -101,6 +147,13 @@
   }
 
   source.addEventListener('input', function () { setDirty(true); });
+  document.querySelectorAll('input[name="card-fit"]').forEach(function (input) {
+    input.addEventListener('change', function () {
+      draftCardFit = input.value;
+      updateCoverPreview();
+      setDirty(true);
+    });
+  });
   document.querySelector('#draft-preview').addEventListener('click', function () {
     preview().then(function () {
       notice.hidden = false;

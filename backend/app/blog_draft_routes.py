@@ -141,6 +141,8 @@ class DraftPackage(BaseModel):
     sources: list[str] = Field(min_length=1, max_length=20)
     source_id: str | None = Field(default=None, max_length=160)
     hero: str | None = Field(default=None, max_length=100)
+    card: str | None = Field(default=None, max_length=100)
+    card_fit: Literal["cover", "contain"] | None = None
     media: list[DraftMedia] = Field(default_factory=list, max_length=8)
     metadata: dict = Field(default_factory=dict)
 
@@ -149,6 +151,8 @@ class DraftTextUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
     expected_version: int = Field(ge=1)
     markdown: str = Field(min_length=1, max_length=250_000)
+    card: str | None = Field(default=None, max_length=100)
+    card_fit: Literal["cover", "contain"] | None = None
 
 
 class DraftPreview(BaseModel):
@@ -261,6 +265,8 @@ def patch_draft_text(
         db,
         slug=slug,
         markdown=body.markdown,
+        card=body.card,
+        card_fit=body.card_fit,
         expected_version=body.expected_version,
         admin=admin,
     )

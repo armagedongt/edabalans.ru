@@ -101,9 +101,10 @@
         "provenance": "https://cs15.pikabu.ru/post_img/big/2024/06/17/7/171862006713147721.png"
       },
       "card": {
-        "file": "11522121/card.webp",
+        "file": "11522121/02.webp",
         "alt": "Обложка карточки «Эти долбанные 10 000 шагов»",
-        "provenance": "https://cs13.pikabu.ru/post_img/big/2024/06/17/7/1718623598168550705.png"
+        "provenance": "https://pikabu.ru/story/yeti_dolbannyie_10_000_shagov_11522121",
+        "fit": "contain"
       },
       "related_source_ids": [
         "14102926",
@@ -192,9 +193,10 @@
         "provenance": "https://cs15.pikabu.ru/post_img/big/2025/01/25/6/1737798565157363834.png"
       },
       "card": {
-        "file": "12296286/card.webp",
+        "file": "12296286/01.webp",
         "alt": "Обложка карточки «Нет времени объяснять. Просто худей!»",
-        "provenance": "https://cs15.pikabu.ru/post_img/big/2025/01/25/7/1737799735155257443.png"
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2025/01/25/6/1737798565157363834.png",
+        "fit": "contain"
       },
       "related_source_ids": [
         "14021584",
@@ -340,9 +342,10 @@
         "provenance": "https://cs16.pikabu.ru/s/2026/05/30/19/zgxx2564.webp"
       },
       "card": {
-        "file": "14021584/card.webp",
+        "file": "14021584/01.webp",
         "alt": "Обложка карточки «Сделать похудение проще»",
-        "provenance": "https://cs20.pikabu.ru/s/2026/05/31/12/vppcogku.jpg"
+        "provenance": "https://cs16.pikabu.ru/s/2026/05/30/19/zgxx2564.webp",
+        "fit": "contain"
       },
       "related_source_ids": [
         "13785403",
@@ -613,9 +616,10 @@
         "provenance": "https://cs13.pikabu.ru/post_img/big/2024/03/09/7/1709978441127581699.jpg"
       },
       "card": {
-        "file": "11207593/card.webp",
+        "file": "11207593/01.webp",
         "alt": "Обложка карточки «Гликемический индекс — это лишнее!»",
-        "provenance": "https://cs13.pikabu.ru/post_img/2024/03/09/7/170998029211986878.jpg"
+        "provenance": "https://cs13.pikabu.ru/post_img/big/2024/03/09/7/1709978441127581699.jpg",
+        "fit": "contain"
       },
       "related_source_ids": [
         "14183275",
@@ -661,9 +665,9 @@
         "provenance": "https://cs13.pikabu.ru/post_img/2024/01/07/6/1704615738221844529.webp"
       },
       "card": {
-        "file": "10999474/card.webp",
+        "file": "10999474/01.webp",
         "alt": "Обложка карточки «ПП-рецепты — это плохо. И вот почему»",
-        "provenance": "https://cs13.pikabu.ru/post_img/big/2024/01/07/6/1704616059158811358.png"
+        "provenance": "https://cs13.pikabu.ru/post_img/2024/01/07/6/1704615738221844529.webp"
       },
       "related_source_ids": [
         "11207593",
@@ -979,7 +983,8 @@
       "card": {
         "file": "11269472/03.jpg",
         "alt": "Мем о температуре горячего напитка — 65 градусов",
-        "provenance": "https://cs14.pikabu.ru/post_img/2024/03/28/8/17116299861126500.jpg"
+        "provenance": "https://cs14.pikabu.ru/post_img/2024/03/28/8/17116299861126500.jpg",
+        "fit": "contain"
       },
       "related_source_ids": [
         "12237133",
@@ -1216,9 +1221,10 @@
         "provenance": "https://static.tildacdn.com/tild3634-3962-4366-a131-313064316563/image.png"
       },
       "card": {
-        "file": "tilda-67280331/tilda-02.png",
-        "alt": "Схемы измерения биоимпеданса между точками тела",
-        "provenance": "https://static.tildacdn.com/tild3361-3365-4563-a435-393539646438/image.png"
+        "file": "tilda-67280331/tilda-01-v2-body.webp",
+        "alt": "Мем: стрелка весов и скорость похудения",
+        "provenance": "https://static.tildacdn.com/tild3634-3962-4366-a131-313064316563/image.png",
+        "fit": "contain"
       },
       "related_source_ids": [
         "11401696",

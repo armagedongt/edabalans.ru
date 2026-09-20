@@ -7,9 +7,10 @@ module_id: platform.blog
 # Блог: редактирование и выпуск существующих статей
 
 Контур позволяет править и выпускать без deploy все статьи, зарегистрированные
-в `content/blog/manifest.json`. Manifest остаётся владельцем
-slug, SEO, рубрики, hero/card, CTA, related и разрешённых media. PostgreSQL
-хранит отдельно черновую и опубликованную версии чистого Markdown.
+в `content/blog/manifest.json`. Manifest остаётся владельцем slug, SEO, рубрики,
+hero, CTA, related, набора разрешённых media и обложки по умолчанию. PostgreSQL
+хранит отдельно черновую и опубликованную версии Markdown, выбранной обложки и
+режима её кадрирования.
 
 Редакция открывается после обычного входа администратора через пункт «Блог»
 или напрямую на `https://edabalans.ru/blog`. Она намеренно находится на домене
@@ -25,23 +26,26 @@ slug, SEO, рубрики, hero/card, CTA, related и разрешённых med
 1. При первом открытии редакции backend идемпотентно создаёт draft из текущего
    Git Markdown каждой manifest-статьи. Из тела извлекается единственная CTA:
    она по-прежнему добавляется surface adapter-ом из manifest.
-2. Сергей открывает статью, меняет Markdown и нажимает «Сохранить».
+2. Сергей открывает статью, меняет Markdown, выбирает обложку из изображений
+   этой статьи, проверяет её в рамке `16:9` и нажимает «Сохранить».
 3. Сохранение создаёт новую draft version со статусом «На модерации». Публичная
    страница не меняется.
 4. «Предпросмотр» собирает текущий текст в реальном оформлении блога без записи.
 5. «Опубликовать» после отдельного подтверждения копирует именно сохранённую
    expected version в `blog-article-published`.
-6. Публичный URL читает Markdown из published snapshot; SEO, media, CTA и
-   related каждый раз берутся из актуального manifest. До первого выпуска
-   сохраняется Git fallback. Следующая черновая правка снова не видна до нового
-   выпуска.
+6. Публичный URL читает Markdown и выбранную обложку из published snapshot;
+   SEO, разрешённые media, CTA и related каждый раз берутся из актуального
+   manifest. До первого выпуска сохраняется Git fallback и обложка по умолчанию.
+   Следующая черновая правка снова не видна до нового выпуска.
 
 ## Формат исходника
 
 Для совместимости full PUT JSON хранит `slug`, `title`, `excerpt`, `category`, `visibility`,
-`editorial_status`, `cta`, `sources`, `source_id`, `hero`, `media`. Все остальные
-поля сохраняются как непрозрачная `metadata`, поэтому evidence, хеши и сведения
-о версии источника не теряются.
+`editorial_status`, `cta`, `sources`, `source_id`, `hero`, `card`, `card_fit`,
+`media`. Все остальные поля сохраняются как непрозрачная `metadata`, поэтому
+evidence, хеши и сведения о версии источника не теряются. `card` обязан быть
+одним из разрешённых изображений статьи; `card_fit` принимает `cover` или
+`contain`.
 
 `visibility` имеет два значения:
 
@@ -70,7 +74,7 @@ Markdown с media из manifest. Серверное добавление/зам�
 | `GET` | `/admin/api/blog/articles` | Список активных редакций |
 | `GET` | `/admin/api/blog/articles/{slug}` | Exact Markdown, metadata, media manifest и история |
 | `PUT` | `/admin/api/blog/articles/{slug}` | Создать или целиком заменить пакет |
-| `PATCH` | `/admin/api/blog/articles/{slug}/text` | Сохранить только Markdown, не теряя metadata/media |
+| `PATCH` | `/admin/api/blog/articles/{slug}/text` | Сохранить Markdown и выбранную обложку, не теряя metadata/media |
 | `POST` | `/admin/api/blog/articles/{slug}/preview` | Проверить и собрать предпросмотр без сохранения |
 | `POST` | `/admin/api/blog/articles/{slug}/publish` | Выпустить сохранённую expected version после `confirm=true` |
 
@@ -105,8 +109,8 @@ python backend/scripts/publish_blog_draft.py `
 
 ## Текущие ограничения
 
-- редактор правит только Markdown; hero/card, media, SEO, CTA и related остаются
-  manifest-backed;
+- редактор правит Markdown и выбирает обложку из разрешённых media; hero, сам
+  набор media, SEO, CTA и related остаются manifest-backed;
 - нет WYSIWYG, автоматического related, popup и blog-аналитики;
 - закрытые материалы не попадают в sitemap, публичный каталог или поиск;
 - неизвестные slug и кнопка «Новая статья» не поддерживаются.
@@ -116,5 +120,7 @@ python backend/scripts/publish_blog_draft.py `
 Интеграционные тесты проверяют seed всех manifest slug, статью с 39 media
 без base64-копий, неизвестный slug, точечную правку, конфликт версий, retention,
 анонимный отказ, Git fallback и цепочку save → explicit publish → новая draft
-правка без утечки в public. Browser test проверяет редактор и выпуск на
-360/430/768/1440 и входит в production CI.
+правка без утечки в public. Отдельно проверяются выбор обложки, режим
+`cover`/`contain` и отсутствие случайно выпущенных материалов. Browser test
+проверяет редактор и выпуск на мобильных, пограничных и широких экранах и входит
+в production CI.

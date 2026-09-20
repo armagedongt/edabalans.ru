@@ -36,6 +36,7 @@ class BlogHero:
     file: str
     alt: str
     provenance: str
+    fit: str = "cover"
 
 
 @dataclass(frozen=True)
@@ -123,6 +124,7 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
             file=_required_text(card_raw, "file"),
             alt=_required_text(card_raw, "alt"),
             provenance=_required_text(card_raw, "provenance"),
+            fit=str(card_raw.get("fit") or "cover"),
         )
         related_raw = raw.get("related_source_ids")
         media_raw = raw.get("media", [])
@@ -172,6 +174,8 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
             raise ValueError(f"unknown blog category: {article.category}")
         if article.status not in {"draft", "published"}:
             raise ValueError(f"unknown blog status: {article.status}")
+        if article.card.fit not in {"cover", "contain"}:
+            raise ValueError(f"unknown blog card fit: {article.card.fit}")
         if public_cta(article.cta) is None:
             raise ValueError(f"unknown public CTA: {article.cta}")
         if not _safe_relative_file(article.body_file) or not (catalog.content_dir / "articles" / article.body_file).is_file():
@@ -266,26 +270,59 @@ def render_article_body(catalog: BlogCatalog, article: BlogArticle) -> tuple[str
     return add_heading_anchors(rendered)
 
 
-def card_html(article: BlogArticle, *, heading_level: int = 2) -> str:
+def card_html(
+    article: BlogArticle,
+    *,
+    heading_level: int = 2,
+    card_file: str | None = None,
+    card_fit: str | None = None,
+) -> str:
     if heading_level not in {2, 3}:
         raise ValueError("blog card heading level must be 2 or 3")
+    selected_file = card_file or article.card.file
+    selected_fit = card_fit or article.card.fit
+    if selected_fit not in {"cover", "contain"}:
+        raise ValueError("blog card fit must be cover or contain")
+    fit_class = " card-image--contain" if selected_fit == "contain" else ""
+    selected_alt = (
+        article.card.alt
+        if selected_file == article.card.file
+        else article.hero.alt
+        if selected_file == article.hero.file
+        else article.title
+    )
     return (
         f'<article class="article-card" data-category="{escape(article.category, quote=True)}">'
         f'<a class="card-link" href="/articles/{escape(article.slug, quote=True)}">'
         '<div class="card-visual">'
-        f'<img src="/blog/media/{escape(article.card.file, quote=True)}" '
-        f'alt="{escape(article.card.alt, quote=True)}" loading="lazy" decoding="async"></div>'
+        f'<img class="card-image{fit_class}" src="/blog/media/{escape(selected_file, quote=True)}" '
+        f'alt="{escape(selected_alt, quote=True)}" loading="lazy" decoding="async"></div>'
         f'<div class="card-body"><span class="card-tag">{escape(article.category)}</span>'
         f'<h{heading_level} class="card-title">{escape(article.title)}</h{heading_level}>'
         f'<p class="card-copy">{escape(article.excerpt)}</p></div></a></article>'
     )
 
 
-def related_cards_html(catalog: BlogCatalog, article: BlogArticle) -> str:
+def related_cards_html(
+    catalog: BlogCatalog,
+    article: BlogArticle,
+    *,
+    card_overrides: dict[str, tuple[str, str]] | None = None,
+) -> str:
     related = [catalog.by_source_id(source_id) for source_id in article.related_source_ids]
     if any(item is None for item in related):
         raise ValueError(f"blog article {article.source_id} has unresolved related items")
-    return "".join(card_html(item, heading_level=3) for item in related if item is not None)
+    overrides = card_overrides or {}
+    return "".join(
+        card_html(
+            item,
+            heading_level=3,
+            card_file=overrides.get(item.slug, (item.card.file, item.card.fit))[0],
+            card_fit=overrides.get(item.slug, (item.card.file, item.card.fit))[1],
+        )
+        for item in related
+        if item is not None
+    )
 
 
 def toc_html(toc: tuple[tuple[str, str], ...], *, mobile: bool) -> str:

@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/blog/assets/blog.css?v=20260920a">
   <link rel="stylesheet" href="/blog/assets/article-typography.css?v=20260920a">
   <link rel="stylesheet" href="/blog/assets/article-note.css?v=20260920a">
-  <link rel="stylesheet" href="/blog/assets/draft-editor.css?v=20260920b">
+  <link rel="stylesheet" href="/blog/assets/draft-editor.css?v=20260920d">
   <title>Редактор статьи · Похудение — это есть</title>
 </head>
 <body class="draft-editor-page">
@@ -24,10 +24,26 @@
       <button id="draft-publish" class="publish" type="button" disabled>Опубликовать</button>
       <span id="draft-status">Загрузка…</span>
     </section>
+    <section class="draft-cover-picker" aria-labelledby="draft-cover-title">
+      <div class="draft-cover-current">
+        <div>
+          <p class="eyebrow">Карточка в каталоге</p>
+          <h2 id="draft-cover-title">Обложка статьи</h2>
+          <p>Выберите изображение статьи и сразу проверьте, как оно войдёт в формат 16:9.</p>
+        </div>
+        <div class="draft-cover-frame"><img id="draft-cover-preview" alt="Предпросмотр обложки"></div>
+        <fieldset class="draft-cover-fit">
+          <legend>Как показать изображение</legend>
+          <label><input type="radio" name="card-fit" value="cover" checked> Заполнить карточку</label>
+          <label><input type="radio" name="card-fit" value="contain"> Показать целиком</label>
+        </fieldset>
+      </div>
+      <div id="draft-cover-options" class="draft-cover-options" aria-label="Изображения статьи"></div>
+    </section>
     <div class="draft-workspace">
       <section class="draft-result"><h2>Как в блоге</h2><div class="draft-preview"><article id="article" class="article"></article></div></section>
       <section class="draft-source"><h2>Markdown</h2><textarea id="draft-markdown" spellcheck="true" aria-label="Markdown статьи"></textarea></section>
     </div>
   </main>
-  <script src="/blog/assets/draft-editor.js?v=20260920c"></script>
+  <script src="/blog/assets/draft-editor.js?v=20260920d"></script>
 </body></html>

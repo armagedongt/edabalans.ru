@@ -160,6 +160,7 @@ html[data-theme="dark"] .theme-toggle .moon { display: block; }
 .card-link { height: 100%; display: flex; flex-direction: column; text-decoration: none; }
 .card-visual { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--surface-soft); }
 .card-visual img { width: 100%; height: 100%; object-fit: cover; transition: transform .24s ease; }
+.card-visual img.card-image--contain { object-fit: contain; padding: 8px; background: var(--surface-soft); }
 .card-link:hover .card-visual img { transform: scale(1.025); }
 .card-tag { width: max-content; max-width: 100%; display: inline-flex; padding: 6px 10px; border: 1px solid color-mix(in srgb, var(--blue) 32%, var(--border)); border-radius: 7px; background: var(--cloud); color: var(--blue); font-size: 12px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; }
 html[data-theme="dark"] .card-tag { background: var(--cloud); color: #fff; }

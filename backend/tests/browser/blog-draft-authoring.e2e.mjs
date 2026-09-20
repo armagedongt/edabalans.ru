@@ -31,7 +31,7 @@ try {
     moderation: inventory.filter(article => article.editorial_status === 'moderation').length,
   };
   if (output) await mkdir(output, { recursive: true });
-  for (const width of [360, 430, 768, 1440]) {
+  for (const width of [360, 430, 768, 899, 901, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto(`${baseURL}/blog`, { waitUntil: 'networkidle' });
     await page.locator('#owner-title').waitFor();
@@ -74,6 +74,8 @@ try {
     }
     const editorOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
     assert.equal(editorOverflow, false, `draft editor overflows at ${width}px`);
+    assert.ok(await page.locator('.draft-cover-option').count() > 1, `cover choices at ${width}px`);
+    assert.equal(await page.locator('#draft-cover-preview').isVisible(), true);
     if (output) await page.screenshot({ path: path.join(output, `draft-editor-${width}.png`), fullPage: true });
     await page.locator('#draft-preview').click();
     await page.locator('#draft-notice').getByText('Предпросмотр обновлён по сохранённой версии.', { exact: true }).waitFor();
@@ -88,6 +90,14 @@ try {
   const successfulMarker = `Успешная E2E-правка ${Date.now()}.`;
   const successfulEdit = `${await textarea.inputValue()}\n\n${successfulMarker}`;
   await textarea.fill(successfulEdit);
+  const alternativeCover = page.locator('.draft-cover-option').nth(1);
+  const alternativeName = await alternativeCover.getAttribute('data-card-name');
+  await alternativeCover.click();
+  assert.match(await page.locator('#draft-cover-preview').getAttribute('src'), new RegExp(alternativeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  const previewRatio = await page.locator('.draft-cover-frame').evaluate(frame => frame.clientWidth / frame.clientHeight);
+  assert.ok(Math.abs(previewRatio - (16 / 9)) < 0.02, `cover preview ratio is ${previewRatio}`);
+  await page.locator('input[name="card-fit"][value="contain"]').check();
+  assert.equal(await page.locator('#draft-cover-preview').evaluate(image => getComputedStyle(image).objectFit), 'contain');
   await page.locator('#draft-preview').click();
   await page.locator('#article').getByText(successfulMarker, { exact: true }).waitFor();
   await page.locator('#draft-notice').getByText('Предпросмотр обновлён. Изменения пока не сохранены.', { exact: true }).waitFor();
@@ -110,6 +120,15 @@ try {
   const publicResponse = await context.request.get(`${baseURL}/blog/articles/${slug}`);
   assert.equal(publicResponse.status(), 200);
   assert.match(await publicResponse.text(), new RegExp(successfulMarker));
+  const publicCatalog = await context.request.get(`${baseURL}/blog`);
+  const publicCatalogHtml = await publicCatalog.text();
+  assert.match(publicCatalogHtml, new RegExp(`card-image card-image--contain[^>]+${alternativeName}`));
+  await page.goto(`${baseURL}/blog`, { waitUntil: 'networkidle' });
+  const publishedCard = page.locator(`img.card-image--contain[src$="${alternativeName}"]`);
+  await publishedCard.waitFor({ state: 'attached' });
+  assert.equal(await publishedCard.evaluate(image => getComputedStyle(image).objectFit), 'contain');
+  await page.goto(`${baseURL}/blog/drafts/${slug}/edit`, { waitUntil: 'networkidle' });
+  await textarea.waitFor();
 
   await page.route(`**/admin/api/blog/articles/${slug}/text`, route => route.fulfill({
     status: 409,

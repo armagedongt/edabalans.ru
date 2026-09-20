@@ -19,6 +19,7 @@ from sqlalchemy.pool import StaticPool
 from starlette.requests import Request
 
 from app.blog_draft_routes import (
+    DraftPackage,
     optional_blog_admin,
     require_blog_admin,
     require_blog_mutation,
@@ -176,6 +177,8 @@ def test_real_markdown_package_round_trip_and_owner_preview(authoring) -> None:
     assert reopened.status_code == 200
     article = reopened.json()["article"]
     assert article["markdown"] == original["markdown"]
+    assert article["card"] == original["hero"]
+    assert article["card_fit"] == "cover"
     assert article["metadata"]["source_sha256"] == original["metadata"]["source_sha256"]
     assert [item["name"] for item in article["media"]] == ["01.webp", "02.webp", "03.webp"]
     assert "content_base64" not in article["media"][0]
@@ -217,6 +220,23 @@ def test_real_markdown_package_round_trip_and_owner_preview(authoring) -> None:
         assert response.headers["x-content-type-options"] == "nosniff"
 
 
+def test_legacy_full_put_inherits_manifest_card_and_fit_when_available(monkeypatch) -> None:
+    source = _real_package()
+    legacy_body = DraftPackage.model_validate(source).model_dump()
+    assert legacy_body["card"] is None
+    assert legacy_body["card_fit"] is None
+    manifest_article = SimpleNamespace(
+        card=SimpleNamespace(file="02.webp", fit="contain")
+    )
+    monkeypatch.setattr(
+        "app.blog_draft_service.load_blog_catalog",
+        lambda: SimpleNamespace(by_slug=lambda _: manifest_article),
+    )
+    payload = prepare_package(SLUG, legacy_body)
+    assert payload["card"] == "02.webp"
+    assert payload["card_fit"] == "contain"
+
+
 @pytest.mark.parametrize(
     "first_media",
     [
@@ -251,6 +271,7 @@ def test_text_update_preserves_package_and_conflict_preserves_active_version(aut
     assert after["markdown"] == changed
     assert after["media"] == before["media"]
     assert after["metadata"] == before["metadata"]
+    assert after["card"] == before["card"]
 
     stale = client.patch(
         f"/admin/api/blog/articles/{SLUG}/text",
@@ -261,6 +282,87 @@ def test_text_update_preserves_package_and_conflict_preserves_active_version(aut
     assert stale.headers["x-robots-tag"] == "noindex, nofollow"
     assert stale.headers["x-content-type-options"] == "nosniff"
     assert client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]["markdown"] == changed
+
+
+def test_cover_selection_is_versioned_and_published_to_catalog(authoring) -> None:
+    client, _ = authoring
+    seeded = client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]
+    selected = next(item["name"] for item in seeded["media"] if item["name"] != seeded["card"])
+
+    invalid = client.patch(
+        f"/admin/api/blog/articles/{SLUG}/text",
+        json={
+            "expected_version": seeded["version"],
+            "markdown": seeded["markdown"],
+            "card": "missing.webp",
+            "card_fit": "cover",
+        },
+    )
+    assert invalid.status_code == 422
+
+    saved = client.patch(
+        f"/admin/api/blog/articles/{SLUG}/text",
+        json={
+            "expected_version": seeded["version"],
+            "markdown": seeded["markdown"],
+            "card": selected,
+            "card_fit": "contain",
+        },
+    )
+    assert saved.status_code == 200, saved.text
+    article = saved.json()["article"]
+    assert article["card"] == selected
+    assert article["card_fit"] == "contain"
+    assert article["editorial_status"] == "moderation"
+    assert f'src="/blog/media/{selected}"' not in client.get("/blog").text
+
+    published = client.post(
+        f"/admin/api/blog/articles/{SLUG}/publish",
+        json={"expected_version": article["version"], "confirm": True},
+    )
+    assert published.status_code == 200, published.text
+    home = client.get("/blog")
+    assert f'class="card-image card-image--contain" src="/blog/media/{selected}"' in home.text
+
+
+def test_legacy_published_snapshot_inherits_manifest_contain_fit(authoring) -> None:
+    client, factory = authoring
+    catalog = load_blog_catalog()
+    manifest_article = catalog.by_slug("temperatura-vody-dlya-priema-vnutr")
+    assert manifest_article is not None
+    assert manifest_article.card.fit == "contain"
+    slug = manifest_article.slug
+    seeded = client.get(f"/admin/api/blog/articles/{slug}").json()["article"]
+    saved = client.patch(
+        f"/admin/api/blog/articles/{slug}/text",
+        json={"expected_version": seeded["version"], "markdown": seeded["markdown"]},
+    ).json()["article"]
+    published = client.post(
+        f"/admin/api/blog/articles/{slug}/publish",
+        json={"expected_version": saved["version"], "confirm": True},
+    )
+    assert published.status_code == 200, published.text
+    with factory() as db:
+        stored = db.scalar(
+            select(ManagedDocumentVersion).where(
+                ManagedDocumentVersion.document_type == PUBLISHED_DOCUMENT_TYPE,
+                ManagedDocumentVersion.document_key == slug,
+                ManagedDocumentVersion.is_active.is_(True),
+            )
+        )
+        legacy_payload = deepcopy(stored.payload)
+        legacy_payload.pop("card", None)
+        legacy_payload.pop("card_fit", None)
+        stored.payload = legacy_payload
+        db.commit()
+    legacy_editor = client.get(f"/admin/api/blog/articles/{slug}").json()["article"]
+    assert legacy_editor["editorial_status"] == "published"
+    assert legacy_editor["card"] == manifest_article.card.file
+    assert legacy_editor["card_fit"] == "contain"
+    assert (
+        f'class="card-image card-image--contain" src="/blog/media/{manifest_article.card.file}"'
+        in client.get("/blog").text
+    )
 
 
 def test_existing_article_seed_publish_and_later_draft_do_not_leak(authoring) -> None:
@@ -306,8 +408,28 @@ def test_existing_article_seed_publish_and_later_draft_do_not_leak(authoring) ->
     assert repeated.status_code == 200
     assert repeated.json()["published_version"] == 1
 
-    # The stored snapshot owns the body only. Manifest-controlled CTA/media/SEO
-    # must stay fresh even if an old row contains stale metadata.
+    # Production rows created before card selection existed have neither field.
+    # They must keep using the manifest default without changing publication status.
+    with factory() as db:
+        stored = db.scalar(
+            select(ManagedDocumentVersion).where(
+                ManagedDocumentVersion.document_type == PUBLISHED_DOCUMENT_TYPE,
+                ManagedDocumentVersion.document_key == SLUG,
+                ManagedDocumentVersion.is_active.is_(True),
+            )
+        )
+        legacy_payload = deepcopy(stored.payload)
+        legacy_payload.pop("card", None)
+        legacy_payload.pop("card_fit", None)
+        stored.payload = legacy_payload
+        db.commit()
+    legacy_editor = client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]
+    assert legacy_editor["editorial_status"] == "published"
+    assert legacy_editor["card"] == article["card"]
+    assert f'src="/blog/media/{article["card"]}"' in client.get("/blog").text
+
+    # The stored snapshot owns the body and selected card only. Other
+    # manifest-controlled CTA/media/SEO must stay fresh with stale metadata.
     with factory() as db:
         stored = db.scalar(
             select(ManagedDocumentVersion).where(

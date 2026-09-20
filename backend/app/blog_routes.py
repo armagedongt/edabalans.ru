@@ -18,7 +18,7 @@ from app.blog_content import (
     toc_html,
 )
 from app.blog_draft_routes import optional_blog_admin, owner_cards_html, PRIVATE_HEADERS
-from app.blog_draft_service import public_payload, render_article
+from app.blog_draft_service import public_payload, published_card_overrides, render_article
 from app.database import get_db
 from sqlalchemy.orm import Session
 
@@ -61,6 +61,7 @@ def blog_home(
     db: Session = Depends(get_db),
 ) -> HTMLResponse:
     catalog = load_blog_catalog()
+    card_overrides = published_card_overrides(db)
     categories = "".join(
         f'<li><button type="button" data-category-filter="{escape(category, quote=True)}">{escape(category)}</button></li>'
         for category in BLOG_CATEGORIES
@@ -68,7 +69,17 @@ def blog_home(
     rendered = (
         _template("index.html")
         .replace("<!-- BLOG_CATEGORIES -->", categories)
-        .replace("<!-- BLOG_CARDS -->", "".join(card_html(article) for article in catalog.published))
+        .replace(
+            "<!-- BLOG_CARDS -->",
+            "".join(
+                card_html(
+                    article,
+                    card_file=card_overrides.get(article.slug, (article.card.file, article.card.fit))[0],
+                    card_fit=card_overrides.get(article.slug, (article.card.file, article.card.fit))[1],
+                )
+                for article in catalog.published
+            ),
+        )
         .replace("<!-- BLOG_OWNER_PANEL -->", owner_cards_html(db) if identity else "")
     )
     response = _html_response(rendered)
@@ -102,6 +113,7 @@ def favicon_test_page(variant: str) -> HTMLResponse:
 @router.get("/blog/articles/{slug}", include_in_schema=False)
 def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
     catalog = load_blog_catalog()
+    card_overrides = published_card_overrides(db)
     article = catalog.by_slug(slug)
     if article is None:
         raise HTTPException(status_code=404, detail="article not found")
@@ -137,7 +149,9 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         "{{ARTICLE_BODY}}": body,
         "{{TOC_DESKTOP}}": toc_html(toc, mobile=False),
         "{{TOC_MOBILE}}": toc_html(toc, mobile=True),
-        "{{RELATED_CARDS}}": related_cards_html(catalog, article),
+        "{{RELATED_CARDS}}": related_cards_html(
+            catalog, article, card_overrides=card_overrides
+        ),
         "{{STRUCTURED_DATA}}": structured_data,
     }
     rendered = _template("article.html")
