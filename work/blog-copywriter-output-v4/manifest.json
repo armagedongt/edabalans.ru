@@ -1,0 +1,1126 @@
+{
+  "schema_version": "blog-editorial-manifest-v1",
+  "project": "Похудение — это есть.рф",
+  "author": "Сергей Воронцов",
+  "adaptation_mode": "full_source",
+  "items": [
+    {
+      "external_id": "11210930",
+      "catalog_key": "pikabu-11210930",
+      "file": "11210930-nutriciolog-ili-dietolog-komu-verit.md",
+      "title": "Нутрициолог или диетолог — кому верить?",
+      "slug": "nutriciolog-ili-dietolog-komu-verit",
+      "category": "Качество питания",
+      "visibility": "public",
+      "excerpt": "Диплом сам по себе не защищает от глупостей. Разбираю, чем отличаются врач-диетолог и нутрициолог — и как выбирать специалиста по содержанию его работы.",
+      "source_url": "https://pikabu.ru/story/otvet_na_post_nutritsiolog_vs_dietolog_11210930",
+      "source_published_at": "2024-03-10 13:28:13+00:00",
+      "source_text_sha256": "49681d0e636e8bc776a2a2c5b0e8cac930dde20f9d2e02938eb60960de031a8f",
+      "hero": null,
+      "media": [],
+      "source_media": [
+        {
+          "type": "video",
+          "position": 0,
+          "source_url": "https://cs13.pikabu.ru/video/2024/03/10/1710074947261938579_3417ded6_406x720.webm",
+          "preview_url": null
+        },
+        {
+          "type": "video",
+          "position": 1,
+          "source_url": "https://pikabu.ru/video/story/otvet_na_post_nutritsiolog_vs_dietolog_11210930/942549",
+          "preview_url": null
+        },
+        {
+          "type": "video",
+          "position": 2,
+          "source_url": "https://cs14.pikabu.ru/video/2024/03/10/1710072505248625346_b2a30b49_1280x720.webm",
+          "preview_url": null
+        },
+        {
+          "type": "video",
+          "position": 3,
+          "source_url": "https://pikabu.ru/video/story/otvet_na_post_nutritsiolog_vs_dietolog_11210930/942511",
+          "preview_url": null
+        },
+        {
+          "type": "video",
+          "position": 4,
+          "source_url": "https://cs14.pikabu.ru/video/2024/03/10/1710075394227853795_fd25e5e4_1080x1920.webm",
+          "preview_url": null
+        },
+        {
+          "type": "video",
+          "position": 5,
+          "source_url": "https://pikabu.ru/video/story/otvet_na_post_nutritsiolog_vs_dietolog_11210930/942556",
+          "preview_url": null
+        }
+      ],
+      "suggested_cta": "Мастер-класс: показать границы работы тренера по питанию и практическую систему изменения рациона.",
+      "related_candidates": [
+        "Почему японцы худые, а ты нет?",
+        "Гликемический индекс — это лишнее!",
+        "Мусорная рыба или мусорные нутрициологи?"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "11534645",
+      "catalog_key": "pikabu-11534645",
+      "file": "11534645-sladkoezhka-uvelichte-dozu-vitaminov.md",
+      "title": "«Сладкоежка — увеличьте дозу витаминов!»",
+      "slug": "sladkoezhka-uvelichte-dozu-vitaminov",
+      "category": "Качество питания",
+      "visibility": "public",
+      "excerpt": "Почему избыток сахара нельзя исправить коробкой БАДов и что на самом деле стоит менять в рационе.",
+      "source_url": "https://pikabu.ru/story/sladkoezhka__uvelichte_dozu_vitaminov_11534645",
+      "source_published_at": "2024-06-22 13:29:06+00:00",
+      "source_text_sha256": "b8597db0b3a2943ad4bf0025f788b1493989060e8517fd9ef0c37771e121169f",
+      "hero": "media/11534645/01.webp",
+      "media": [
+        {
+          "file": "media/11534645/01.webp",
+          "public_path": "/blog/media/11534645/01.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/22/7/1719054877165775730.webp",
+          "width": 500,
+          "height": 899,
+          "bytes": 27350
+        },
+        {
+          "file": "media/11534645/02.webp",
+          "public_path": "/blog/media/11534645/02.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/22/7/1719054803177831767.jpg",
+          "width": 413,
+          "height": 142,
+          "bytes": 5432
+        },
+        {
+          "file": "media/11534645/03.webp",
+          "public_path": "/blog/media/11534645/03.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/22/8/1719060491131746051.jpg",
+          "width": 700,
+          "height": 339,
+          "bytes": 38066
+        },
+        {
+          "file": "media/11534645/04.webp",
+          "public_path": "/blog/media/11534645/04.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/2024/06/22/8/1719060308161151396.jpg",
+          "width": 700,
+          "height": 362,
+          "bytes": 28334
+        },
+        {
+          "file": "media/11534645/05.webp",
+          "public_path": "/blog/media/11534645/05.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/22/8/1719060253197810811.jpg",
+          "width": 700,
+          "height": 648,
+          "bytes": 24632
+        },
+        {
+          "file": "media/11534645/06.webp",
+          "public_path": "/blog/media/11534645/06.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/06/22/8/1719060815145923828.jpg",
+          "width": 1280,
+          "height": 720,
+          "bytes": 25328
+        }
+      ],
+      "source_media": [
+        {
+          "type": "image",
+          "position": 0,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/22/7/1719054877165775730.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 1,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/22/7/1719054877165775730.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 2,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/22/7/1719054803177831767.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 3,
+          "source_url": "https://pikabu.ru/story/sladkoezhka__uvelichte_dozu_vitaminov_11534645",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 4,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/22/8/1719060491131746051.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 5,
+          "source_url": "https://cs13.pikabu.ru/post_img/2024/06/22/8/1719060308161151396.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 6,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/22/8/1719060253197810811.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 7,
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/06/22/8/1719060815145923828.jpg",
+          "preview_url": null
+        }
+      ],
+      "suggested_cta": "Мастер-класс: перейти от покупки добавок к системной работе с качеством питания.",
+      "related_candidates": [
+        "10 дебильных фактов о вредных продуктах",
+        "Неприятная правда про мёд",
+        "ПП-рецепты — это плохо. И вот почему!"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "11833079",
+      "catalog_key": "pikabu-11833079",
+      "file": "11833079-10-debilnyh-faktov-o-vrednyh-produktah.md",
+      "title": "10 дебильных фактов о вредных продуктах для похудения",
+      "slug": "10-debilnyh-faktov-o-vrednyh-produktah",
+      "category": "Качество питания",
+      "visibility": "public",
+      "excerpt": "Картофель, чипсы, майонез, колбаса и другие продукты, которым приписывают не тот вред — и не по тем причинам.",
+      "source_url": "https://pikabu.ru/story/10_debilnyikh_faktov_o_vrednyikh_produktakh_dlya_pokhudeniya_11833079",
+      "source_published_at": "2024-09-22 08:44:18+00:00",
+      "source_text_sha256": "ac0915ee5b787d0d6bb8c184aa800bc970e8d7941f579779d14ef27a6115e9e6",
+      "hero": "media/11833079/01.webp",
+      "media": [
+        {
+          "file": "media/11833079/01.webp",
+          "public_path": "/blog/media/11833079/01.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/09/21/10/172693476913174839.webp",
+          "width": 700,
+          "height": 394,
+          "bytes": 28810
+        },
+        {
+          "file": "media/11833079/02.webp",
+          "public_path": "/blog/media/11833079/02.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/09/21/11/1726945091187460917.webp",
+          "width": 606,
+          "height": 156,
+          "bytes": 6376
+        },
+        {
+          "file": "media/11833079/03.webp",
+          "public_path": "/blog/media/11833079/03.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/09/21/11/1726943877196156145.webp",
+          "width": 520,
+          "height": 390,
+          "bytes": 16274
+        },
+        {
+          "file": "media/11833079/04.webp",
+          "public_path": "/blog/media/11833079/04.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/09/21/11/1726944272139832694.png",
+          "width": 1600,
+          "height": 923,
+          "bytes": 100436
+        },
+        {
+          "file": "media/11833079/05.webp",
+          "public_path": "/blog/media/11833079/05.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/09/21/11/172694261418971631.jpg",
+          "width": 600,
+          "height": 600,
+          "bytes": 22526
+        },
+        {
+          "file": "media/11833079/06.webp",
+          "public_path": "/blog/media/11833079/06.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/09/22/6/1726994404181123195.jpg",
+          "width": 1478,
+          "height": 1113,
+          "bytes": 111448
+        }
+      ],
+      "source_media": [
+        {
+          "type": "image",
+          "position": 0,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/09/21/10/172693476913174839.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 1,
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/09/21/10/172693476913174839.png",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 2,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/09/21/11/1726945091187460917.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 3,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/09/21/11/1726945091187460917.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 4,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/09/21/11/1726943877196156145.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 5,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/09/21/11/1726943877196156145.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 6,
+          "source_url": "https://pikabu.ru/story/10_debilnyikh_faktov_o_vrednyikh_produktakh_dlya_pokhudeniya_11833079",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 7,
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/09/21/11/1726944272139832694.png",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 8,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/09/21/11/172694261418971631.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 9,
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/09/22/6/1726994404181123195.jpg",
+          "preview_url": null
+        }
+      ],
+      "suggested_cta": "Мастер-класс: научиться оценивать рацион целиком, а не жить по списку запрещённых продуктов.",
+      "related_candidates": [
+        "Какая самая вредная диета?",
+        "Гликемический индекс — это лишнее!",
+        "Хочешь худеть? Заткнись и ешь картошку!"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "11857250",
+      "catalog_key": "pikabu-11857250",
+      "file": "11857250-borba-s-lishnim-vesom-pochemu-shagov-nedostatochno.md",
+      "title": "Борьба с лишним весом: почему одних шагов недостаточно",
+      "slug": "borba-s-lishnim-vesom-pochemu-shagov-nedostatochno",
+      "category": "Похудение",
+      "visibility": "public",
+      "excerpt": "Шаги полезны, но сами по себе не учат удерживать вес. Разбираю, где заканчивается польза активности и начинается попытка убежать от питания.",
+      "source_url": "https://pikabu.ru/story/otvet_na_post_borba_s_lishnim_vesom_11857250",
+      "source_published_at": "2024-09-29 11:01:39+00:00",
+      "source_text_sha256": "cb0fd6d6b604b71c7e82454c15ea8735c597484232855717bf8997e3fe5ba825",
+      "hero": null,
+      "media": [
+        {
+          "file": "media/11857250/01.webp",
+          "public_path": "/blog/media/11857250/01.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/09/22/7/1727001641131663781.webp",
+          "width": 700,
+          "height": 198,
+          "bytes": 15844
+        }
+      ],
+      "source_media": [
+        {
+          "type": "image",
+          "position": 0,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/09/22/7/1727001641131663781.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 1,
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/09/22/7/1727001641131663781.png",
+          "preview_url": null
+        }
+      ],
+      "suggested_cta": "Бесплатный интенсив: начать с устойчивого плана питания и активности.",
+      "related_candidates": [
+        "Ходить, чтобы худеть",
+        "Эти долбаные 10 000 шагов",
+        "Потеря мышц при похудении"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "13327360",
+      "catalog_key": "pikabu-13327360",
+      "file": "13327360-ukolol-i-pohudel-ozempik-semavik-nyuansy.md",
+      "title": "Уколол и похудел: Оземпик, Семавик и нюансы",
+      "slug": "ukolol-i-pohudel-ozempik-semavik-nyuansy",
+      "category": "Похудение",
+      "visibility": "public",
+      "excerpt": "Препарат может стать полезным костылём или способом ничего не менять. Пять вопросов, которые стоит обсудить с врачом и самим собой.",
+      "source_url": "https://pikabu.ru/story/ukolol_i_pokhudel_ozempik_semavik_nyuansyi_13327360",
+      "source_published_at": "2025-10-25 14:51:23+00:00",
+      "source_text_sha256": "d3bf1404dbfe3c864428c3e6f8189203228c29ddddf1c81500059db2ec96d639",
+      "hero": null,
+      "media": [
+        {
+          "file": "media/13327360/01.webp",
+          "public_path": "/blog/media/13327360/01.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2025/10/24/17/sjsuw3n5.webp",
+          "width": 700,
+          "height": 298,
+          "bytes": 8856
+        },
+        {
+          "file": "media/13327360/02.webp",
+          "public_path": "/blog/media/13327360/02.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2025/10/24/17/2kcexyk7.webp",
+          "width": 700,
+          "height": 446,
+          "bytes": 19950
+        }
+      ],
+      "source_media": [
+        {
+          "type": "image",
+          "position": 0,
+          "source_url": "https://cs19.pikabu.ru/s/2025/10/24/17/sjsuw3n5.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 1,
+          "source_url": "https://cs19.pikabu.ru/s/2025/10/24/17/sjsuw3n5_lg.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 2,
+          "source_url": "https://cs19.pikabu.ru/s/2025/10/24/17/2kcexyk7.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 3,
+          "source_url": "https://cs19.pikabu.ru/s/2025/10/24/17/2kcexyk7_lg.jpg",
+          "preview_url": null
+        }
+      ],
+      "suggested_cta": "Мастер-класс: использовать период сниженного аппетита для освоения устойчивых навыков питания.",
+      "related_candidates": [
+        "Почему люди худеют и снова набирают вес",
+        "Потеря мышц при похудении",
+        "Сколько времени нужно на похудение?"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "13355824",
+      "catalog_key": "pikabu-13355824",
+      "file": "13355824-o-yarlykah.md",
+      "title": "О ярлыках",
+      "slug": "o-yarlykah",
+      "category": "Похудение",
+      "visibility": "public",
+      "excerpt": "Как ярлык «я худею» делает еду чёрно-белой и почему добавление нормальной еды часто полезнее очередного запрета.",
+      "source_url": "https://pikabu.ru/story/o_yarlyikakh_13355824",
+      "source_published_at": "2025-11-02 12:57:11+00:00",
+      "source_text_sha256": "0898d005cfebf9827f6a1a1168723054f56c377fef26d4ca71ec7a7c0cd7e2f5",
+      "hero": "media/13355824/01.webp",
+      "media": [
+        {
+          "file": "media/13355824/01.webp",
+          "public_path": "/blog/media/13355824/01.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2025/11/02/14/mrwuw7mu.webp",
+          "width": 700,
+          "height": 508,
+          "bytes": 23500
+        }
+      ],
+      "source_media": [
+        {
+          "type": "image",
+          "position": 0,
+          "source_url": "https://cs19.pikabu.ru/s/2025/11/02/14/mrwuw7mu.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 1,
+          "source_url": "https://cs19.pikabu.ru/s/2025/11/02/14/mrwuw7mu.jpg",
+          "preview_url": null
+        }
+      ],
+      "suggested_cta": "Бесплатный интенсив: начать менять питание через добавление, а не через тотальные запреты.",
+      "related_candidates": [
+        "Сделать похудение проще",
+        "ПП-рецепты — это плохо. И вот почему!",
+        "Что вы не понимаете о формировании привычек?"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "d1baceb9e2b6b72013b6",
+      "catalog_key": "telegraph-d1baceb9e2b6b72013b6",
+      "file": "d1baceb9e2b6b72013b6-glavnye-oshibki-v-pohudenii-do-goloda.md",
+      "title": "Главные ошибки в похудении: что нужно знать до того, как испытывать голод",
+      "slug": "glavnye-oshibki-v-pohudenii-do-goloda",
+      "category": "Похудение",
+      "visibility": "public",
+      "excerpt": "Восемь ошибок, которые превращают похудение в короткий приступ силы воли: от неправильного ПП до попытки решить всё тренировками.",
+      "source_url": "https://telegra.ph/Plan-06-26-5",
+      "source_published_at": null,
+      "source_text_sha256": "9d609f77af5d81b27abb5467f3aae64d507f3e8c808c2801d8b1fd70e3d4c6d2",
+      "hero": "media/d1baceb9e2b6b72013b6/01.webp",
+      "media": [
+        {
+          "file": "media/d1baceb9e2b6b72013b6/01.webp",
+          "public_path": "/blog/media/d1baceb9e2b6b72013b6/01.webp",
+          "source_url": "https://optim.tildacdn.com/tild3536-3763-4064-b739-333335313931/-/format/webp/image.png.webp",
+          "width": 1332,
+          "height": 992,
+          "bytes": 65178
+        },
+        {
+          "file": "media/d1baceb9e2b6b72013b6/02.webp",
+          "public_path": "/blog/media/d1baceb9e2b6b72013b6/02.webp",
+          "source_url": "https://optim.tildacdn.com/tild6332-3131-4632-a661-343462626563/-/format/webp/Frame_492445044.jpg.webp",
+          "width": 1139,
+          "height": 1458,
+          "bytes": 108654
+        },
+        {
+          "file": "media/d1baceb9e2b6b72013b6/03.webp",
+          "public_path": "/blog/media/d1baceb9e2b6b72013b6/03.webp",
+          "source_url": "https://optim.tildacdn.com/tild3134-3337-4038-a430-623463663235/-/format/webp/Frame_492445134.jpg.webp",
+          "width": 1483,
+          "height": 964,
+          "bytes": 90084
+        },
+        {
+          "file": "media/d1baceb9e2b6b72013b6/04.webp",
+          "public_path": "/blog/media/d1baceb9e2b6b72013b6/04.webp",
+          "source_url": "https://principled-cuticle-21b.notion.site/image/attachment%3A571dfeb8-6722-406d-a9af-ccde8de696e4%3Aimage.png?table=block&id=21e58521-3bab-80b8-8823-f508bd9b81d3&spaceId=5eb568ce-19be-43b8-90eb-3a00ab9af308&width=1420&userId=&cache=v2",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 97728
+        },
+        {
+          "file": "media/d1baceb9e2b6b72013b6/05.webp",
+          "public_path": "/blog/media/d1baceb9e2b6b72013b6/05.webp",
+          "source_url": "https://telegra.ph/file/1787088e423487dff845c.png",
+          "width": 641,
+          "height": 183,
+          "bytes": 14560
+        },
+        {
+          "file": "media/d1baceb9e2b6b72013b6/06.webp",
+          "public_path": "/blog/media/d1baceb9e2b6b72013b6/06.webp",
+          "source_url": "https://optim.tildacdn.com/tild6539-3335-4435-b062-313237396631/-/format/webp/Frame_4989.jpg.webp",
+          "width": 665,
+          "height": 509,
+          "bytes": 51818
+        },
+        {
+          "file": "media/d1baceb9e2b6b72013b6/07.webp",
+          "public_path": "/blog/media/d1baceb9e2b6b72013b6/07.webp",
+          "source_url": "https://optim.tildacdn.com/tild3431-3630-4138-b062-346434663963/-/format/webp/Frame_492445250_1.jpg.webp",
+          "width": 1600,
+          "height": 1045,
+          "bytes": 128080
+        },
+        {
+          "file": "media/d1baceb9e2b6b72013b6/08.webp",
+          "public_path": "/blog/media/d1baceb9e2b6b72013b6/08.webp",
+          "source_url": "https://optim.tildacdn.com/tild6232-3764-4133-b461-646239663461/-/format/webp/photo_2025-06-24_14-.jpg.webp",
+          "width": 1280,
+          "height": 907,
+          "bytes": 148134
+        }
+      ],
+      "source_media": [
+        {
+          "type": "image",
+          "position": 0,
+          "source_url": "https://optim.tildacdn.com/tild3536-3763-4064-b739-333335313931/-/format/webp/image.png.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 1,
+          "source_url": "https://optim.tildacdn.com/tild6332-3131-4632-a661-343462626563/-/format/webp/Frame_492445044.jpg.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 2,
+          "source_url": "https://optim.tildacdn.com/tild3332-6166-4130-a636-303532643366/-/format/webp/image.png.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 3,
+          "source_url": "https://optim.tildacdn.com/tild6131-6162-4739-b265-623138646634/-/format/webp/image.png.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 4,
+          "source_url": "https://optim.tildacdn.com/tild3134-3337-4038-a430-623463663235/-/format/webp/Frame_492445134.jpg.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 5,
+          "source_url": "https://principled-cuticle-21b.notion.site/image/attachment%3A571dfeb8-6722-406d-a9af-ccde8de696e4%3Aimage.png?table=block&id=21e58521-3bab-80b8-8823-f508bd9b81d3&spaceId=5eb568ce-19be-43b8-90eb-3a00ab9af308&width=1420&userId=&cache=v2",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 6,
+          "source_url": "/file/1787088e423487dff845c.png",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 7,
+          "source_url": "https://optim.tildacdn.com/tild6539-3335-4435-b062-313237396631/-/format/webp/Frame_4989.jpg.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 8,
+          "source_url": "https://optim.tildacdn.com/tild6266-3036-4666-a663-613766383165/-/format/webp/image.png.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 9,
+          "source_url": "https://optim.tildacdn.com/tild3431-3630-4138-b062-346434663963/-/format/webp/Frame_492445250_1.jpg.webp",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 10,
+          "source_url": "https://optim.tildacdn.com/tild6232-3764-4133-b461-646239663461/-/format/webp/photo_2025-06-24_14-.jpg.webp",
+          "preview_url": null
+        }
+      ],
+      "suggested_cta": "Мастер-класс: сначала подготовить питание и навыки, а потом создавать дефицит.",
+      "related_candidates": [
+        "Три ошибки в начале похудения",
+        "Похудение начинается не с похудения!",
+        "Сделать похудение проще"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "30e4d208f2cbd8e57201",
+      "catalog_key": "telegraph-30e4d208f2cbd8e57201",
+      "file": "30e4d208f2cbd8e57201-pochemu-lyudi-hudeyut-i-snova-nabirayut-ves.md",
+      "title": "Почему люди худеют и снова набирают вес",
+      "slug": "pochemu-lyudi-hudeyut-i-snova-nabirayut-ves",
+      "category": "Похудение",
+      "visibility": "public",
+      "excerpt": "Большинство людей умеют терпеть диету, но не умеют жить в новом весе. Разница — в навыках, которые остаются после похудения.",
+      "source_url": "https://telegra.ph/Prezentaciya-02-02-3",
+      "source_published_at": null,
+      "source_text_sha256": "fff5ad400bfce85ae81af09995e076179378abd6d7095864f2a2529eab018333",
+      "hero": null,
+      "media": [],
+      "source_media": [],
+      "suggested_cta": "Мастер-класс: осваивать навыки питания вместо очередного периода терпения.",
+      "related_candidates": [
+        "Сколько времени нужно на похудение?",
+        "Похудение начинается не с похудения!",
+        "Что вы не понимаете о формировании привычек?"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "2e269fdc52d600a64753",
+      "catalog_key": "telegraph-2e269fdc52d600a64753",
+      "file": "2e269fdc52d600a64753-kak-ya-reshil-proyti-100000-shagov.md",
+      "title": "Как я решил пройти 100 000 шагов за один день",
+      "slug": "kak-ya-reshil-proyti-100000-shagov",
+      "category": "Личное",
+      "visibility": "internal",
+      "excerpt": "Семьдесят пять километров, ночь в лесу, отсутствие воды и очень наглядная цена идеи пройти сто тысяч шагов за сутки.",
+      "source_url": "https://telegra.ph/100-000-06-28",
+      "source_published_at": null,
+      "source_text_sha256": "0df360f45e4a42bcff438dc8126193dfe23bb7cacb977a87b97af1bf63c44106",
+      "hero": "media/2e269fdc52d600a64753/01.webp",
+      "media": [
+        {
+          "file": "media/2e269fdc52d600a64753/01.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/01.webp",
+          "source_url": "https://telegra.ph/file/d2e03401d96ba2f577e1c.jpg",
+          "width": 1600,
+          "height": 2841,
+          "bytes": 960810
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/02.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/02.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/9/1719502182130789860.jpg",
+          "width": 700,
+          "height": 381,
+          "bytes": 22750
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/03.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/03.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/9/1719503994161279097.jpg",
+          "width": 700,
+          "height": 768,
+          "bytes": 48542
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/04.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/04.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/9/1719502877121256404.jpg",
+          "width": 700,
+          "height": 366,
+          "bytes": 25850
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/05.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/05.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/10/1719505472120710030.jpg",
+          "width": 700,
+          "height": 355,
+          "bytes": 46088
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/06.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/06.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/10/1719506534196384685.jpg",
+          "width": 700,
+          "height": 415,
+          "bytes": 88316
+        },
+        {
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/10/1719507187176569973.jpg",
+          "error": "HTTP Error 404: Not Found"
+        },
+        {
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/10/171950716715882013.jpg",
+          "error": "HTTP Error 404: Not Found"
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/09.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/09.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/1719513999155527924.jpg",
+          "width": 700,
+          "height": 394,
+          "bytes": 46146
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/10.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/10.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/10/1719511195187936680.jpg",
+          "width": 700,
+          "height": 415,
+          "bytes": 87220
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/11.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/11.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/1719512054140795251.jpg",
+          "width": 700,
+          "height": 415,
+          "bytes": 57312
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/12.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/12.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/1719517258114585405.jpg",
+          "width": 700,
+          "height": 394,
+          "bytes": 84850
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/13.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/13.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/1719516539115629244.jpg",
+          "width": 700,
+          "height": 415,
+          "bytes": 74478
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/14.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/14.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/1719515094167636497.jpg",
+          "width": 700,
+          "height": 415,
+          "bytes": 90784
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/15.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/15.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/171951519618182297.jpg",
+          "width": 700,
+          "height": 394,
+          "bytes": 71868
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/16.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/16.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/1719515447166342985.jpg",
+          "width": 700,
+          "height": 415,
+          "bytes": 47824
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/17.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/17.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/171951571915516244.jpg",
+          "width": 700,
+          "height": 394,
+          "bytes": 48692
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/18.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/18.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/2024/06/27/11/1719515823129972159.jpg",
+          "width": 700,
+          "height": 622,
+          "bytes": 104612
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/19.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/19.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/2024/06/28/8/1719577493172981407.jpg",
+          "width": 700,
+          "height": 401,
+          "bytes": 53352
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/20.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/20.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/28/8/1719578331110027713.jpg",
+          "width": 700,
+          "height": 398,
+          "bytes": 79936
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/21.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/21.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/2024/06/28/8/1719579103166486521.jpg",
+          "width": 700,
+          "height": 625,
+          "bytes": 96996
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/22.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/22.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/28/8/1719579324184577330.jpg",
+          "width": 605,
+          "height": 1068,
+          "bytes": 16424
+        },
+        {
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/28/8/1719582308149850042.jpg",
+          "error": "HTTP Error 404: Not Found"
+        },
+        {
+          "file": "media/2e269fdc52d600a64753/24.webp",
+          "public_path": "/blog/media/2e269fdc52d600a64753/24.webp",
+          "source_url": "https://cs8.pikabu.ru/post_img/2016/10/06/2/147571444017495603.jpg",
+          "width": 600,
+          "height": 332,
+          "bytes": 12914
+        }
+      ],
+      "source_media": [
+        {
+          "type": "image",
+          "position": 0,
+          "source_url": "/file/d2e03401d96ba2f577e1c.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 1,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/9/1719502182130789860.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 2,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/9/1719503994161279097.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 3,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/9/1719502877121256404.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 4,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/10/1719505472120710030.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 5,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/10/1719506534196384685.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 6,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/10/1719507187176569973.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 7,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/10/171950716715882013.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 8,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/1719513999155527924.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 9,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/10/1719511195187936680.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 10,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/1719512054140795251.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 11,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/1719517258114585405.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 12,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/1719516539115629244.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 13,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/1719515094167636497.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 14,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/171951519618182297.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 15,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/1719515447166342985.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 16,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/27/11/171951571915516244.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 17,
+          "source_url": "https://cs13.pikabu.ru/post_img/2024/06/27/11/1719515823129972159.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 18,
+          "source_url": "https://cs13.pikabu.ru/post_img/2024/06/28/8/1719577493172981407.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 19,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/28/8/1719578331110027713.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 20,
+          "source_url": "https://cs13.pikabu.ru/post_img/2024/06/28/8/1719579103166486521.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 21,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/28/8/1719579324184577330.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 22,
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/06/28/8/1719582308149850042.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 23,
+          "source_url": "https://cs8.pikabu.ru/post_img/2016/10/06/2/147571444017495603.jpg",
+          "preview_url": null
+        }
+      ],
+      "suggested_cta": "Не добавлять продуктовый CTA; это служебный личный материал.",
+      "related_candidates": [
+        "Эти долбаные 10 000 шагов",
+        "Один небольшой прыжок — большие перемены в жизни",
+        "Ходить, чтобы худеть"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "0d583f6ad1cea0eef750",
+      "catalog_key": "telegraph-0d583f6ad1cea0eef750",
+      "file": "0d583f6ad1cea0eef750-odin-nebolshoy-pryzhok-bolshie-peremeny.md",
+      "title": "Один небольшой прыжок — большие перемены в жизни",
+      "slug": "odin-nebolshoy-pryzhok-bolshie-peremeny",
+      "category": "Личное",
+      "visibility": "internal",
+      "excerpt": "Один неудачный прыжок на велосипеде, травма колена и жизнь, которая после этого пошла совсем по другой дороге.",
+      "source_url": "https://telegra.ph/story-09-01-3",
+      "source_published_at": null,
+      "source_text_sha256": "57a351d30b5c450745530870b9d0833708b9ff8342bc0a65580bde49d9790cc4",
+      "hero": "media/0d583f6ad1cea0eef750/01.webp",
+      "media": [
+        {
+          "file": "media/0d583f6ad1cea0eef750/01.webp",
+          "public_path": "/blog/media/0d583f6ad1cea0eef750/01.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/2023/05/01/10/1682963002189961844.jpg",
+          "width": 700,
+          "height": 415,
+          "bytes": 58566
+        },
+        {
+          "file": "media/0d583f6ad1cea0eef750/02.webp",
+          "public_path": "/blog/media/0d583f6ad1cea0eef750/02.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/2023/05/01/10/168295893517441394.jpg",
+          "width": 453,
+          "height": 365,
+          "bytes": 13238
+        },
+        {
+          "file": "media/0d583f6ad1cea0eef750/03.webp",
+          "public_path": "/blog/media/0d583f6ad1cea0eef750/03.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/2023/05/01/10/1682962105124261415.jpg",
+          "width": 423,
+          "height": 960,
+          "bytes": 92942
+        },
+        {
+          "file": "media/0d583f6ad1cea0eef750/04.webp",
+          "public_path": "/blog/media/0d583f6ad1cea0eef750/04.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/2023/05/01/10/1682958877110972807.jpg",
+          "width": 700,
+          "height": 260,
+          "bytes": 28276
+        },
+        {
+          "file": "media/0d583f6ad1cea0eef750/05.webp",
+          "public_path": "/blog/media/0d583f6ad1cea0eef750/05.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/2023/05/01/10/1682961968198491001.jpg",
+          "width": 700,
+          "height": 466,
+          "bytes": 35336
+        }
+      ],
+      "source_media": [
+        {
+          "type": "image",
+          "position": 0,
+          "source_url": "https://cs14.pikabu.ru/post_img/2023/05/01/10/1682963002189961844.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 1,
+          "source_url": "https://cs14.pikabu.ru/post_img/2023/05/01/10/168295893517441394.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 2,
+          "source_url": "https://cs13.pikabu.ru/post_img/2023/05/01/10/1682962105124261415.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 3,
+          "source_url": "https://cs14.pikabu.ru/post_img/2023/05/01/10/1682958877110972807.jpg",
+          "preview_url": null
+        },
+        {
+          "type": "image",
+          "position": 4,
+          "source_url": "https://cs13.pikabu.ru/post_img/2023/05/01/10/1682961968198491001.jpg",
+          "preview_url": null
+        }
+      ],
+      "suggested_cta": "Не добавлять продуктовый CTA; это служебный личный материал.",
+      "related_candidates": [
+        "Как я решил пройти 100 000 шагов",
+        "Как начать тренироваться и не бросить",
+        "А мне тренер посоветовал..."
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    }
+  ],
+  "blocked": [
+    {
+      "requested_title": "12 простых изменений в вашем питании и образе жизни",
+      "status": "exact-source-not-found",
+      "reason": "Точного самостоятельного источника с этим заголовком нет в серверном снимке, Pikabu-каталоге и локальных cards. Ближайшая Telegraph-запись Razberites-s-ehtim-DO-pohudeniya-05-06 является склейкой материалов интенсива и не может подменять статью."
+    }
+  ]
+}

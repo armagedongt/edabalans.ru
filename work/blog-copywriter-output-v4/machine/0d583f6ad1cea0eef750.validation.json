@@ -1,0 +1,66 @@
+{
+  "schema_version": "author-validation-v1",
+  "status": "pass",
+  "pack_sha256": "a334ca293d19631c97b85ea8e25d47bfded04f7e11d65d67f2f4107dc83265be",
+  "draft_sha256": "cb3dd5900f822d124e7911414317f995c96959b24fc1f306903c497cb45acfbb",
+  "review_sha256": "6f5d67b317ba06fed9e57357c7512a0621e47c6ec6672a99933027386c923f5e",
+  "validated_at": "2026-09-20T22:44:47.575797+00:00",
+  "missing_verbatim": [],
+  "unresolved_placeholders": [],
+  "protected_layer_errors": [],
+  "inline_binding_review_required_once": null,
+  "proofread_change_review_required_once": null,
+  "rewrite_continuity_review_required_once": {
+    "goal": "Сохранить авторский смысл, голос, примеры и фактуру; убрать только площадочную навигацию, рекламу, старые CTA и служебные вставки. Не менять научные утверждения без решения владельца.",
+    "preserve": [
+      "central thesis",
+      "required facts",
+      "author position",
+      "useful examples",
+      "links and media unless explicitly allowed"
+    ],
+    "comparison_texts": [],
+    "source_characters": 7788,
+    "draft_characters": 9215
+  },
+  "semantic_fact_review_required_once": [
+    "Центральный тезис и авторские примеры сохранены.",
+    "Численные и медицинские утверждения не исправлены молча."
+  ],
+  "forbidden_claims_to_check_once": [
+    "Новый медицинский вывод, отсутствующий в источнике.",
+    "Старый CTA на площадку, комментарии, бот или Telegram."
+  ],
+  "preservation_metrics": {
+    "source_significant_tokens": 1114,
+    "token_coverage": 1.0,
+    "source_visible_characters": 7582,
+    "draft_visible_characters": 9147,
+    "visible_length_ratio": 1.2064099182273806
+  },
+  "pending_manual_reviews": [
+    {
+      "id": "rewrite_continuity",
+      "instruction": "Confirm that the source argument, author position, and useful examples remain continuous."
+    },
+    {
+      "id": "semantic_facts",
+      "instruction": "Review the entire assembled draft, including claims introduced by the writer, for materially false or invented facts. Classify conflicts using source-integration-pass-v1.md and do not edit the draft. Record level 1 while owner calibration is active and always record level 2; pass means the review is complete and no level 3 conflict remains.",
+      "fact_check_profile": "editorial_materiality",
+      "items": [
+        "Центральный тезис и авторские примеры сохранены.",
+        "Численные и медицинские утверждения не исправлены молча."
+      ]
+    },
+    {
+      "id": "forbidden_claims",
+      "instruction": "Confirm that none of the forbidden claims is present.",
+      "items": [
+        "Новый медицинский вывод, отсутствующий в источнике.",
+        "Старый CTA на площадку, комментарии, бот или Telegram."
+      ]
+    }
+  ],
+  "manual_review_errors": [],
+  "fact_review_expires_at": "2026-09-21T22:44:47.543122+00:00"
+}
