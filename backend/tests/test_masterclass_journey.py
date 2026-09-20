@@ -926,7 +926,7 @@ def test_questionnaire_autosaves_each_answer_and_submit_is_idempotent():
     client, factory = setup()
     opened = client.get("/api/masterclass/questionnaires/onboarding?email=member@example.test")
     assert opened.status_code == 200
-    assert len(opened.json()["questions"]) == 15
+    assert len(opened.json()["questions"]) == 17
     with factory() as db:
         user_id = db.scalar(select(User.id))
         db.add(MessengerAccount(
@@ -979,6 +979,62 @@ def test_onboarding_questionnaire_does_not_queue_personal_data_without_linked_me
     assert submitted.json()["messenger_platform"] is None
     with factory() as db:
         assert db.scalar(select(func.count(MasterclassNotification.id))) == 0
+
+
+def test_questionnaire_voice_choice_completes_without_sending_empty_answers():
+    client, factory = setup()
+
+    chosen = client.post(
+        "/api/masterclass/questionnaires/onboarding/skip",
+        json={"email": "member@example.test"},
+    )
+
+    assert chosen.status_code == 200
+    assert chosen.json()["status"] == "skipped"
+    conflicting = client.post(
+        "/api/masterclass/questionnaires/onboarding/submit",
+        json={"email": "member@example.test"},
+    )
+    assert conflicting.status_code == 409
+    with factory() as db:
+        run = db.scalar(
+            select(QuestionnaireRun).where(QuestionnaireRun.kind == "onboarding")
+        )
+        assert run is not None
+        assert run.status == "skipped"
+        assert db.scalar(select(func.count(QuestionnaireAnswer.id))) == 0
+        assert db.scalar(select(func.count(MasterclassNotification.id))) == 0
+        assert db.scalar(select(func.count(MasterclassEvent.id))) == 1
+
+
+def test_all_voice_choices_with_linked_messenger_never_queue_empty_questionnaires():
+    client, factory = setup()
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        db.add(MessengerAccount(
+            user_id=user_id,
+            platform="telegram",
+            platform_user_id="telegram-member-42",
+            username="member",
+            linked_at=datetime.now(timezone.utc),
+            source="test",
+        ))
+        db.commit()
+
+    for kind in ("onboarding", "current-diet", "closing-review"):
+        chosen = client.post(
+            f"/api/masterclass/questionnaires/{kind}/skip",
+            json={"email": "member@example.test"},
+        )
+        assert chosen.status_code == 200
+        assert chosen.json()["status"] == "skipped"
+
+    with factory() as db:
+        assert set(db.scalars(select(QuestionnaireRun.status))) == {"skipped"}
+        assert db.scalar(select(func.count(QuestionnaireRun.id))) == 3
+        assert db.scalar(select(func.count(QuestionnaireAnswer.id))) == 0
+        assert db.scalar(select(func.count(MasterclassNotification.id))) == 0
+        assert db.scalar(select(func.count(MasterclassEvent.id))) == 3
 
 
 def test_current_diet_questionnaire_saves_categories_and_queues_one_telegram_result():
@@ -2924,13 +2980,28 @@ def test_crm_card_contains_masterclass_answers_events_and_offer_windows():
 
 def test_masterclass_article_media_route_serves_only_registered_image_tree() -> None:
     client, _ = setup()
-    image = client.get(
+    legacy_image = client.get(
         "/course-assets/masterclass/media/55-store-food-without-cooking/"
         "lavka-cutlets-turkey-dietary-2026-08-30.png"
     )
-    assert image.status_code == 200
-    assert image.headers["content-type"] == "image/png"
-    assert image.headers["cache-control"] == "public, max-age=86400"
+    assert legacy_image.status_code == 200
+    assert legacy_image.headers["content-type"] == "image/png"
+    assert legacy_image.headers["cache-control"] == "public, max-age=86400"
+
+    editorial_image = client.get(
+        "/course-assets/masterclass/media/01-food-diary/"
+        "max-channel-collage-2026-09-20.png"
+    )
+    assert editorial_image.status_code == 200
+    assert editorial_image.headers["content-type"] == "image/png"
+    assert editorial_image.headers["cache-control"] == "public, max-age=86400"
+
+    second_editorial_image = client.get(
+        "/course-assets/masterclass/media/01-food-diary/"
+        "telegram-channel-collage-2026-09-20.png"
+    )
+    assert second_editorial_image.status_code == 200
+    assert second_editorial_image.headers["content-type"] == "image/png"
 
     escaped = client.get(
         "/course-assets/masterclass/media/%2E%2E/course/course.json"

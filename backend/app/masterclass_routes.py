@@ -80,7 +80,9 @@ ONBOARDING_QUESTIONS = [
     ("diet_history", "Диеты и подходы", "Какие диеты или подходы в питании и похудении вы пробовали раньше и каковы были результаты?"),
     ("courses_history", "Другие программы", "Есть ли опыт прохождения других курсов, программ или марафонов по похудению? Что вы оттуда почерпнули, если опыт был позитивным, и что не понравилось, если он был негативным?"),
     ("mentoring", "Опыт наставничества", "Был ли опыт работы один на один с наставником в сфере здоровья: тренером, нутрициологом, диетологом, психологом или психотерапевтом? Что больше всего понравилось в сотрудничестве?"),
-    ("attribution", "Откуда вы обо мне узнали", "Как попали в Telegram-канал? Какой пост, видео или отдельная мысль из открытого канала вас больше всего зацепили и почему вы выбрали мой подход к похудению?"),
+    ("reading_history", "Как долго вы меня читаете", "Давно ли вы на меня подписаны? Неделя, две, пару месяцев или уже пару лет?"),
+    ("attribution", "Откуда вы обо мне узнали", "Вы пришли с Пикабу, с Ютуба, по рекомендации от друзей или по случайной рекламе в интернете?"),
+    ("content_reason", "Какой материал вас зацепил", "Какой пост, видео или отдельная мысль из открытого канала вас больше всего зацепили и почему вы выбрали мой подход к похудению?"),
 ]
 
 CLOSING_QUESTIONS = [
@@ -1171,7 +1173,10 @@ def finish_questionnaire(
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
     run = get_run(db, user.id, kind)
-    run.status = "submitted" if action == "submit" else "skipped"
+    target_status = "submitted" if action == "submit" else "skipped"
+    if run.status in {"submitted", "skipped"} and run.status != target_status:
+        raise HTTPException(409, "questionnaire choice is already completed")
+    run.status = target_status
     run.submitted_at = now
     event_type = {
         "onboarding": "onboarding_questionnaire_completed",
@@ -1183,15 +1188,13 @@ def finish_questionnaire(
     if not event:
         event = MasterclassEvent(user_id=user.id, event_key=event_key, event_type=event_type, details={"run_id": str(run.id), "status": run.status})
         db.add(event); db.flush()
-    course_step_completed = False
-    if action == "submit":
-        course_step_completed = complete_questionnaire_course_step(
-            db,
-            user,
-            kind,
-            now,
-            course_context(db),
-        )
+    course_step_completed = complete_questionnaire_course_step(
+        db,
+        user,
+        kind,
+        now,
+        course_context(db),
+    )
     messenger_account = db.scalar(
         select(MessengerAccount)
         .where(

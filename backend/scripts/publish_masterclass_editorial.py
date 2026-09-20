@@ -90,7 +90,7 @@ def compile_manifest(
         for item in editorial_day["materials"]:
             step = current_steps.get(item["step_id"])
             if step is None:
-                if item["step_id"] in {"day-07-store-food", "day-03-practice"}:
+                if item["type"] == "article" and item.get("new_step"):
                     step = new_article_step(item, next_version=next_version)
                 elif item["step_id"] == "day-17-article-04":
                     step = new_placeholder_step(item, next_version=next_version)
@@ -135,7 +135,7 @@ def editorial_body(path) -> str:
     text = re.sub(r"\A> Тип:.*?\n+", "", text, count=1)
     text = text.replace("Статус: `draft_for_editing`\n\n", "")
     return re.sub(
-        r"(!\[[^]]*]\()assets/",
+        r"(!\[[^]]*]\()(?:assets/|\.\./assets/)",
         rf"\1{MEDIA_PREFIX}",
         text,
     ).strip() + "\n"
@@ -172,11 +172,19 @@ def questionnaire_definition(path) -> dict:
         prompt_html = render_material(prompt.strip(), "markdown") if prompt.strip() else ""
         rows.append({"code": code, "title": title.strip(), "prompt": article_plain_text(prompt_html), "promptHtml": prompt_html})
     after = body.split("## После анкеты", 1)[1]
-    button = re.search(r"^Кнопка: (.+)$", after, flags=re.MULTILINE)
-    if not button:
-        raise ValueError(f"Нет текста кнопки: {path.name}")
-    note = after[:button.start()].strip()
-    return {"questions": rows, "button": button.group(1).strip(), "noteHtml": render_material(note, "markdown") if note else ""}
+    send_button = re.search(
+        r"^(?:Кнопка отправки|Кнопка): (.+)$", after, flags=re.MULTILINE
+    )
+    voice_button = re.search(r"^Кнопка голосового: (.+)$", after, flags=re.MULTILINE)
+    if not send_button or not voice_button:
+        raise ValueError(f"Нет текстов двух кнопок анкеты: {path.name}")
+    note = after[:send_button.start()].strip()
+    return {
+        "questions": rows,
+        "button": send_button.group(1).strip(),
+        "voiceButton": voice_button.group(1).strip(),
+        "noteHtml": render_material(note, "markdown") if note else "",
+    }
 
 
 def day_sections(path) -> dict[str, str]:

@@ -41,7 +41,10 @@ def material_service(course_code: str):
 
 
 router = APIRouter(tags=["course-material-publisher"])
-MASTERCLASS_MEDIA_ROOT = (COURSE_CONTENT_ROOT / "source-current" / "assets").resolve()
+MASTERCLASS_MEDIA_ROOTS = (
+    (COURSE_CONTENT_ROOT / "editorial" / "assets").resolve(),
+    (COURSE_CONTENT_ROOT / "source-current" / "assets").resolve(),
+)
 MASTERCLASS_MEDIA_SUFFIXES = {".gif", ".jpeg", ".jpg", ".png", ".webp"}
 
 
@@ -51,14 +54,15 @@ def component_asset(*parts: str) -> str:
 
 @router.get("/course-assets/masterclass/media/{asset_path:path}", include_in_schema=False)
 def masterclass_article_media(asset_path: str) -> FileResponse:
-    path = (MASTERCLASS_MEDIA_ROOT / asset_path).resolve()
-    if (
-        not path.is_relative_to(MASTERCLASS_MEDIA_ROOT)
-        or path.suffix.casefold() not in MASTERCLASS_MEDIA_SUFFIXES
-        or not path.is_file()
-    ):
-        raise HTTPException(404, "Изображение материала не найдено")
-    return FileResponse(path, headers={"Cache-Control": "public, max-age=86400"})
+    for root in MASTERCLASS_MEDIA_ROOTS:
+        path = (root / asset_path).resolve()
+        if (
+            path.is_relative_to(root)
+            and path.suffix.casefold() in MASTERCLASS_MEDIA_SUFFIXES
+            and path.is_file()
+        ):
+            return FileResponse(path, headers={"Cache-Control": "public, max-age=86400"})
+    raise HTTPException(404, "Изображение материала не найдено")
 
 
 @router.get("/course-assets/masterclass/article-components.css", include_in_schema=False)

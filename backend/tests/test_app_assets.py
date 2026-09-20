@@ -611,11 +611,11 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "А какая у вас сейчас «диета»?" in course.text
     assert "Каждый ответ сохраняется отдельно и автоматически" in course.text
     assert "Отправить в мессенджер" in course.text
-    assert "который вы привязали к личному кабинету" in course.text
-    assert "После заполнения обязательно нажмите «Отправить в Telegram и продолжить»" in course.text
-    assert "Получить саморевью в Telegram" in course.text
-    assert "Как проходит консультация" in course.text
-    assert "Эта анкета нужна не только перед консультацией" in course.text
+    assert "questionnaireSubmit.id='q-submit'" in course.text
+    assert "questionnaireVoice.id='q-voice'" in course.text
+    assert "document.querySelector('#questionnaire-prev').textContent='← Назад'" in course.text
+    assert "questionnaireContinue.id='questionnaire-continue'" in course.text
+    assert "Я оставлю в дневнике голосовое" in course.text
     assert "id=\"q-later\"" not in course.text
     assert "Как отвечать" not in course.text
     assert "materialMetaHtml" in course.text
@@ -629,6 +629,11 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "saveQuestionnaire('submit')" in course.text
     assert "Promise.all(questionnaireSavesForDay(d))" in course.text
     assert "syncTaskAfterConflict" in course.text
+    assert "saveQuestionnaire('skip')" in course.text
+    assert "else if(action==='skip')request=api" in course.text
+    assert "document.querySelector('#q-submit').disabled=completed" in course.text
+    assert "if(!completedSuccessfully&&currentStep===step" in course.text
+    assert "questionnaires/'+kind+'/'+action" not in course.text
     assert "openEmbeddedApp('onboarding-questionnaire'" not in course.text
     assert "disposeInlineMaterial();advanceCourseStep" in course.text
     assert "К заданиям ↓" in course.text
@@ -815,9 +820,10 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     assert "messenger-links/status" in course_html
     assert "if(messengerConfirmed)advanceCourseStep" in course_html
     assert "Персональная ссылка для подключения действует 15 минут" not in course_html
-    assert "var next=action==='submit'?nextVisibleStep(d,step):-1" in course_html
     assert "pendingQuestionnaireSaves[key]=request.then" in course_html
-    assert "if(next>=0)openCourseStep(d,next)" in course_html
+    assert "document.querySelector('#questionnaire-continue').disabled=false" in course_html
+    assert "advanceCourseStep(d,currentStep,false)" in course_html
+    assert "state.steps[key]=true" not in course_html
     assert "if(!step.hidden&&step.contentAsset)" in course_html
     assert "loadPublishedMaterials" not in course_html
     assert "'&step_id='+encodeURIComponent(step.id)" in course_html

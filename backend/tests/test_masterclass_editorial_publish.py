@@ -196,7 +196,7 @@ def test_special_material_prelude_uses_markdown_before_embed_only() -> None:
         ROOT / "content" / "masterclass" / "editorial" / "materials"
         / "01-05-что-еще-вам-может-понадобиться.md"
     )
-    assert special_prelude(empty, "offer") == ""
+    assert "мини-курсы и дополнительные программы" in special_prelude(empty, "offer")
 
 
 def test_step_progress_follows_stable_id_when_program_reorders_steps() -> None:
@@ -255,6 +255,29 @@ def test_editorial_body_rewrites_local_article_images_to_public_media_route() ->
     assert "> Тип:" not in body
 
 
+def test_editorial_body_rewrites_obsidian_visible_article_images_to_public_media_route() -> None:
+    path = (
+        ROOT
+        / "content"
+        / "masterclass"
+        / "editorial"
+        / "materials"
+        / "01-02-как-вести-дневник-питания.md"
+    )
+
+    body = editorial_body(path)
+
+    assert "](../assets/" not in body
+    assert (
+        "](/course-assets/masterclass/media/01-food-diary/"
+        "telegram-channel-collage-2026-09-20.png)"
+    ) in body
+    assert (
+        "](/course-assets/masterclass/media/01-food-diary/"
+        "max-channel-collage-2026-09-20.png)"
+    ) in body
+
+
 def test_tutorial_body_omits_working_status_metadata() -> None:
     body = editorial_body(
         ROOT / "content/masterclass/editorial/materials/01-01-как-устроен-мастер-класс.md"
@@ -270,17 +293,20 @@ def test_questionnaire_markdown_defines_existing_questions_and_button() -> None:
     assert definition["questions"][0]["code"] == "whole_grains"
     assert definition["questions"][0]["prompt"] == ""
     assert definition["button"]
+    assert definition["voiceButton"] == "Я оставлю в дневнике голосовое"
     assert "question_codes" not in special_prelude(path, "questionnaire")
-    assert "Кнопка:" not in special_prelude(path, "questionnaire")
+    assert "Кнопка отправки:" not in special_prelude(path, "questionnaire")
+    assert "Кнопка голосового:" not in special_prelude(path, "questionnaire")
 
 
 def test_questionnaire_markdown_preserves_help_format_and_rejects_ambiguous_codes(tmp_path) -> None:
     path = tmp_path / "form.md"
-    text = "<!-- question_codes: a, b -->\n## Вопросы\n1. Первый\n\n**Подсказка**\n\n2. Второй\n\n> [!NOTE]\n> Помощь\n\n## После анкеты\n\nКнопка: Отправить\n"
+    text = "<!-- question_codes: a, b -->\n## Вопросы\n1. Первый\n\n**Подсказка**\n\n2. Второй\n\n> [!NOTE]\n> Помощь\n\n## После анкеты\n\nКнопка отправки: Отправить\nКнопка голосового: Оставлю голосовое\n"
     path.write_text(text, encoding="utf-8")
     definition = questionnaire_definition(path)
     assert "<strong>Подсказка</strong>" in definition["questions"][0]["promptHtml"]
     assert "article-note-accent" in definition["questions"][1]["promptHtml"]
+    assert definition["voiceButton"] == "Оставлю голосовое"
     path.write_text(text.replace("a, b", "a, a"), encoding="utf-8")
     with pytest.raises(ValueError, match="неоднозначны"):
         questionnaire_definition(path)

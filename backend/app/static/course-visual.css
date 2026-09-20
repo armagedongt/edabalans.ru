@@ -297,6 +297,8 @@ button, a { font: inherit; }
 .messenger-popup-actions { margin-top: 24px; }
 .messenger-popup-actions .disabled { opacity: 0.48; cursor: not-allowed; }
 @media (max-width: 900px) {
+.q-actions { display: grid; }
+.q-actions button { width: 100%; }
 .sidebar { transform: translateX(-102%); transition: 0.22s; }
 .sidebar.open { transform: none; }
 .close-menu { display: block; }

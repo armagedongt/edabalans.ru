@@ -133,6 +133,7 @@ def parse_program() -> tuple[list[dict], dict[str, dict]]:
             "duration": int(material_match.group(3)),
             "step_id": meta.group(1),
             "type": meta.group(2),
+            "new_step": "new_step: true" in lines[index + 1],
         }
         if item["title"].endswith("."):
             raise ValueError(f"Точка в конце названия материала: {item['title']}")
