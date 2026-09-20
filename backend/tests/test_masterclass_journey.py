@@ -1089,8 +1089,10 @@ def test_current_diet_questionnaire_saves_categories_and_queues_one_telegram_res
     "questionnaire_kind",
     ["onboarding", "current-diet", "closing-review"],
 )
-def test_questionnaire_submit_atomically_completes_open_course_step(
+@pytest.mark.parametrize("action", ["submit", "skip"])
+def test_questionnaire_choice_atomically_completes_open_course_step(
     questionnaire_kind: str,
+    action: str,
 ):
     client, factory = setup()
     with factory() as db:
@@ -1132,17 +1134,17 @@ def test_questionnaire_submit_atomically_completes_open_course_step(
         )
         db.commit()
 
-    submitted = client.post(
-        f"/api/masterclass/questionnaires/{questionnaire_kind}/submit",
+    chosen = client.post(
+        f"/api/masterclass/questionnaires/{questionnaire_kind}/{action}",
         json={"email": "member@example.test"},
     )
     repeated = client.post(
-        f"/api/masterclass/questionnaires/{questionnaire_kind}/submit",
+        f"/api/masterclass/questionnaires/{questionnaire_kind}/{action}",
         json={"email": "member@example.test"},
     )
 
-    assert submitted.status_code == repeated.status_code == 200
-    assert submitted.json()["course_step_completed"] is True
+    assert chosen.status_code == repeated.status_code == 200
+    assert chosen.json()["course_step_completed"] is True
     assert repeated.json()["course_step_completed"] is True
     with factory() as db:
         assert (
