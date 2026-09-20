@@ -33,7 +33,34 @@ const paymentQueries = [];
 let failNextPaymentRequest = false;
 let errorAttempts = 0;
 let libraryErrorAttempts = 0;
-const sampleUser = { id:"u1", display_name:"Анна", email:"anna@example.com", telegram:"anna", purchase_count:2, ltv_rub:12000, estimated_ltv_rub:0, last_purchase_at:"2026-09-18T12:00:00Z", accompaniment_status:"active", accesses:["MASTERCLASS"] };
+const sampleUser = { id:"u1", display_name:"Анна", email:"anna@example.com", telegram:"anna", purchase_count:2, ltv_rub:12000, estimated_ltv_rub:0, first_seen_at:"2026-08-01T12:00:00Z", first_purchase_at:"2026-08-02T12:00:00Z", last_purchase_at:"2026-09-18T12:00:00Z", first_source:"telegram", accompaniment_status:"active", initial_tariff:"Стандарт", accesses:["ACCESS_MASTERCLASS", "ACCESS_DQS"], note_count:1, messengers:[{platform:"telegram",platform_user_id:"101",username:"anna",first_seen_at:"2026-08-01T12:00:00Z",main_scenario_seen_at:"2026-08-01T12:00:00Z",subscription_status:"subscribed"},{platform:"max",platform_user_id:"max-202",username:"maxanna",first_seen_at:"2026-08-04T12:00:00Z",main_scenario_seen_at:"2026-08-04T12:00:00Z",subscription_status:"active"}] };
+const sampleUserDetail = {
+  id:"u1", display_name:"Анна", status:"active", data_origin:"native", accompaniment_status:"active", first_seen_at:"2026-08-01T12:00:00Z",
+  access_review_status:"not_required", access_review_note:"", tilda_access_status:"not_required", tilda_membership:null,
+  emails:[{email:"anna@example.com",primary:true,verification_status:"verified"}],
+  credential:{exists:false,password_available:false,password_version:null,issued_via:null,updated_at:null},
+  messengers:[{platform:"telegram",platform_user_id:"101",username:"anna",first_name:"Анна",subscription_status:"active",main_scenario_seen_at:null},{platform:"max",platform_user_id:"max-202",username:"maxanna",first_name:"Анна",subscription_status:"active",main_scenario_seen_at:"2026-08-04T12:00:00Z"}], phones:[],
+  purchase_count:2, ltv_rub:12000, estimated_ltv_rub:0, total_ltv_rub:12000,
+  payments:[
+    {id:"p2",product_code:"DQS",product_name:"Diet Quality Score",product_name_raw:"DQS",tariff:"Дополнение",amount:3000,amount_is_estimated:false,currency:"RUB",status:"paid",review_status:"ok",source:"robokassa",payment_system:"Robokassa",external_order_id:"2",paid_at:"2026-09-18T12:00:00Z",source_event_at:"2026-09-18T12:00:00Z"},
+    {id:"p1",product_code:"MASTERCLASS_STANDARD",product_name:"Мастер-класс",product_name_raw:"Мастер-класс",tariff:"Стандарт",amount:9000,amount_is_estimated:false,currency:"RUB",status:"paid",review_status:"ok",source:"robokassa",payment_system:"Robokassa",external_order_id:"1",paid_at:"2026-08-02T12:00:00Z",source_event_at:"2026-08-02T12:00:00Z"}
+  ],
+  purchased_products:[
+    {product_code:"DQS",product_name:"Diet Quality Score",tariff:"Дополнение",purchased_at:"2026-09-18T12:00:00Z"},
+    {product_code:"MASTERCLASS_STANDARD",product_name:"Мастер-класс",tariff:"Стандарт",purchased_at:"2026-08-02T12:00:00Z"}
+  ],
+  accesses:[
+    {code:"ACCESS_MASTERCLASS",name:"Мастер-класс",granted_at:"2026-08-02T12:00:00Z",expires_at:null,revoked_at:null,paused_at:null},
+    {code:"ACCESS_DQS",name:"Diet Quality Score",granted_at:"2026-09-18T12:00:00Z",expires_at:null,revoked_at:null,paused_at:null}
+  ],
+  attribution:[{event_type:"first_seen",source:"telegram",utm_source:null,utm_campaign:null,landing_url:null,occurred_at:"2026-08-01T12:00:00Z"}],
+  product_progress:[
+    {code:"masterclass",name:"Мастер-класс",completed:12,total:20,percent:60,legacy_assumed_complete:false},
+    {code:"dqs",name:"Diet Quality Score",completed:8,total:30,percent:27,legacy_assumed_complete:false}
+  ],
+  tags:[{id:"t1",name:"Мастер-класс",category:"purchase"}], notes:[{body:"Обсудить следующий этап",author:"Сергей",created_at:"2026-09-19T12:00:00Z"}],
+  masterclass:{questionnaires:[],events:[],offers:[]}
+};
 
 function json(response, payload) {
   response.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
@@ -55,6 +82,10 @@ const server = createServer((request, response) => {
   if (url.pathname === "/admin") {
     response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
     return response.end(readFileSync(path.join(staticRoot, "crm.html")));
+  }
+  if (url.pathname === "/favicon.png") {
+    response.writeHead(200, { "Content-Type": "image/png" });
+    return response.end(readFileSync(path.join(staticRoot, "brand/favicon.png")));
   }
   if (url.pathname === "/finance") {
     response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
@@ -95,10 +126,11 @@ const server = createServer((request, response) => {
     "/admin/static/product-catalog-editor.css": "product-catalog-editor.css",
     "/crm/crm.css": "crm.css",
     "/crm/crm.js": "crm.js",
+    "/assets/max-logo.png": "max-logo.png",
   };
   if (assets[url.pathname]) {
     const name = assets[url.pathname];
-    response.writeHead(200, { "Content-Type": name.endsWith(".css") ? "text/css" : "text/javascript" });
+    response.writeHead(200, { "Content-Type": name.endsWith(".css") ? "text/css" : name.endsWith(".png") ? "image/png" : "text/javascript" });
     return response.end(readFileSync(path.join(staticRoot, name)));
   }
   if (["/assets/article-typography.css", "/assets/article-note.css", "/assets/course-visual.css", "/course-assets/masterclass/article-components.css"].includes(url.pathname)) {
@@ -125,6 +157,20 @@ const server = createServer((request, response) => {
     const delay = q === "a" ? 600 : q === "anna" ? 20 : 0;
     return setTimeout(() => json(response, [q === "a" ? {...sampleUser, display_name:"Устаревший ответ"} : sampleUser]), delay);
   }
+  if (url.pathname === "/admin/api/users/u1") return json(response, sampleUserDetail);
+  if (url.pathname === "/admin/api/resources") return json(response, [
+    {code:"ACCESS_MASTERCLASS",name:"Мастер-класс"},
+    {code:"ACCESS_DQS",name:"Diet Quality Score"},
+    {code:"ACCESS_RECIPES",name:"Рецепты"},
+    {code:"ACCESS_CALORIES",name:"Курс о калориях"},
+    {code:"ACCESS_STRENGTH",name:"Приложение тренировок"},
+    {code:"ACCESS_CONSULTATION",name:"Консультация"},
+    {code:"ACCESS_COACHING",name:"Сопровождение"}
+  ]);
+  if (url.pathname === "/admin/api/users/u1/modules") return json(response, {modules:{
+    dqs:{exists:true,has_access:true}, strength:{exists:false,has_access:false}, metabolism:{exists:false,has_access:false}, telegram:{exists:true,has_access:true}
+  }});
+  if (url.pathname === "/admin/api/users/u1/personal-access-links") return json(response, {links:[]});
   if (url.pathname === "/admin/api/payments") {
     paymentQueries.push(new URLSearchParams(url.searchParams));
     if (failNextPaymentRequest) {
@@ -136,7 +182,7 @@ const server = createServer((request, response) => {
     paymentOffsets.push(offset);
     paymentSnapshots.push(url.searchParams.get("snapshot_at"));
     const count = offset === 0 ? 100 : 1;
-    return json(response, Array.from({length:count}, (_, index) => ({ id:`p${offset + index}`, user_id:"u1", display_name:offset === 0 ? `Первая оплата ${index + 1}` : "Оплата 101", email:"anna@example.com", product_name:"Мастер-класс", status:"paid", amount:12000, amount_is_estimated:false, paid_at:"2026-09-18T12:00:00Z", snapshot_at:"2026-09-19T12:00:00Z" })));
+    return json(response, Array.from({length:count}, (_, index) => ({ id:`p${offset + index}`, user_id:"u1", display_name:offset === 0 ? `Первая оплата ${index + 1}` : "Оплата 101", email:"anna@example.com", product_name:"Мастер-класс", status:"paid", source:"robokassa", payment_system:"Robokassa", external_order_id:String(offset + index + 1), amount:12000, amount_is_estimated:false, paid_at:"2026-09-18T12:00:00Z", snapshot_at:"2026-09-19T12:00:00Z" })));
   }
   if (url.pathname === "/admin/api/access-reviews") return json(response, []);
   if (url.pathname === "/admin/api/content/authoring/summary") return json(response, { manifestations: 24, families: 18, candidate_groups: 2 });
@@ -158,8 +204,13 @@ const server = createServer((request, response) => {
   response.end("not found");
 });
 
-await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+const requestedPort = Number(process.env.ADMIN_SHELL_PREVIEW_PORT || 0);
+await new Promise((resolve) => server.listen(requestedPort, "127.0.0.1", resolve));
 const { port } = server.address();
+if (process.env.ADMIN_SHELL_PREVIEW_ONLY === "1") {
+  console.log(`admin shell preview: http://127.0.0.1:${port}/crm`);
+  await new Promise(() => {});
+}
 const browser = await chromium.launch({ headless: true });
 const evidence = process.env.ADMIN_SHELL_EVIDENCE_DIR;
 
@@ -167,6 +218,7 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
   const page = await browser.newPage({ viewport: { width, height: 900 } });
   await page.goto(`http://127.0.0.1:${port}/admin`);
   await page.getByRole("link", { name: "Финансовая модель" }).waitFor();
+  assert.ok(await page.locator(".admin-brand img").evaluate((node) => node.complete && node.naturalWidth > 0));
   assert.equal(await page.getByText("Служебное", { exact: true }).count(), 1);
   assert.equal(await page.getByText("База знаний", { exact: true }).count(), 1);
   for (const category of ["Клиенты", "Приложения", "Маркетинг", "Курсы", "Коммерция", "Служебное", "База знаний"]) {
@@ -201,11 +253,11 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
     assert.ok(sidebarBox.x + sidebarBox.width <= 1, JSON.stringify(sidebarBox));
   } else {
     await page.waitForTimeout(220);
-    await assertDesktopGeometry(page, 252);
+    await assertDesktopGeometry(page, 270);
     await page.getByRole("button", { name: "Свернуть меню" }).click();
     assert.equal(await page.locator("body").evaluate((node) => node.classList.contains("admin-shell-collapsed")), true);
     await page.waitForTimeout(220);
-    await assertDesktopGeometry(page, 72);
+    await assertDesktopGeometry(page, 74);
     const compactLabels = await page.locator(".admin-shell-nav .admin-nav-icon").allTextContents();
     assert.equal(new Set(compactLabels).size, compactLabels.length);
     assert.equal(await page.locator(".admin-shell-logout .admin-nav-icon").isVisible(), true);
@@ -220,7 +272,7 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
     await page.getByRole("button", { name: "Показать меню" }).click();
     assert.equal(await page.locator("body").evaluate((node) => node.classList.contains("admin-shell-hidden")), false);
     await page.waitForTimeout(220);
-    await assertDesktopGeometry(page, 252);
+    await assertDesktopGeometry(page, 270);
   }
   if (evidence && [360, 430, 768, 1440].includes(width)) {
     await page.screenshot({ path: path.join(evidence, `admin-shell-${width}.png`), fullPage: true });
@@ -271,6 +323,24 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.equal(await search.evaluate((node) => document.activeElement === node), true);
       assert.match(await page.locator("#crm-user-results").textContent(), /Анна/);
       assert.doesNotMatch(await page.locator("#crm-user-results").textContent(), /Устаревший ответ/);
+      assert.equal(await page.locator(".crm-head > .crm-tabs").count(), 1);
+      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Email", "Мессенджеры", "Источник", "Тариф", "Итого", "Статус", "В боте", "Подписка"]);
+      await page.getByRole("button", { name:"Показать мессенджеры: Анна" }).hover();
+      await page.locator(".crm-popover:visible .crm-popover-title", { hasText:"Мессенджеры" }).waitFor();
+      assert.match(await page.locator(".crm-popover:visible").textContent(), /Telegram.*подписан/s);
+      assert.ok(await page.locator(".crm-people-table tbody tr[data-user-id] .crm-contact-cell .crm-messenger-icon").count() >= 2);
+      assert.match(await page.locator(".crm-people-table tbody").textContent(), /с 01\.08\.2026.*первая покупка 02\.08\.2026.*Подписан/s);
+      await page.getByRole("button", { name:"Показать тариф и доступы: Анна" }).hover();
+      await page.getByText("Доступно", { exact:true }).waitFor();
+      assert.match(await page.locator(".crm-popover:visible").textContent(), /Мастер-класс.*Стандарт.*02\.08\.2026.*Доступно.*Diet Quality Score.*Прогресс курсов.*12 из 20/s);
+      assert.doesNotMatch(await page.locator(".crm-popover:visible").textContent(), /Позже куплено/);
+      await page.getByRole("button", { name:"Показать оплаты: Анна" }).hover();
+      await page.locator(".crm-popover:visible .crm-popover-title", { hasText:"Оплаты" }).waitFor();
+      assert.match(await page.locator(".crm-popover:visible").textContent(), /3\s000 ₽.*Diet Quality Score.*9\s000 ₽.*Мастер-класс.*Прогресс курсов.*12 из 20/s);
+      assert.doesNotMatch(await page.locator(".crm-popover:visible").textContent(), /Robokassa/);
+      await page.getByRole("button", { name:"Показать статус и прогресс: Анна" }).hover();
+      await page.getByText(/Покупатель · прогресс/).waitFor();
+      assert.match(await page.locator(".crm-popover:visible").textContent(), /Мастер-класс.*12 из 20/s);
       assert.ok(userQueries.includes("a") && userQueries.includes("anna"));
       await search.fill("error");
       await page.waitForTimeout(380);
@@ -281,17 +351,59 @@ for (const [name, route] of Object.entries(integratedPages)) {
       await page.getByRole("button", { name:"Повторить" }).click();
       await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
       assert.equal(userQueries.filter((query) => query === "error").length, 2);
+      await page.getByRole("button", { name:"Лиды", exact:true }).click();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
+      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Email", "Мессенджеры", "Источник", "В боте", "Подписка", "Статус", "Заметки"]);
+      assert.match(await page.locator(".crm-people-table tbody").textContent(), /Подписан/);
       await page.getByRole("button", { name:"Есть МК" }).click();
       await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
       assert.equal(userAccessFilters.at(-1), "true");
       await page.getByRole("button", { name:"Сопровождение", exact:true }).click();
       await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
       assert.equal(userAccompanimentFilters.at(-1), "active");
+      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Email", "Мессенджеры", "Источник", "Итого", "Подписка", "Статус", "Заметки"]);
       await page.locator(".crm-filters summary").click();
       assert.match(await page.locator(".crm-filter-help").textContent(), /Тег.*не подтверждает оплату/s);
       assert.match(await page.locator(".crm-filter-help").textContent(), /Проблемы доступа.*очередь/s);
+      await page.getByRole("button", { name:"Показать оплаты: Анна" }).hover();
+      await page.locator(".crm-popover:visible .crm-popover-title", { hasText:"Оплаты" }).waitFor();
+      assert.match(await page.locator(".crm-popover:visible").textContent(), /Мастер-класс/);
+      await page.locator(".crm-person-email").click();
+      await page.locator(".crm-profile-head").waitFor();
+      assert.match(await page.locator(".crm-profile-head").textContent(), /Анна/);
+      assert.equal(await page.getByText("Покупки и тарифы", { exact:true }).count(), 1);
+      assert.equal(await page.getByText("Купленные продукты и тарифы", { exact:true }).count(), 0);
+      assert.equal(await page.getByText("История покупок", { exact:true }).count(), 0);
+      assert.equal(await page.locator(".crm-purchase-item").count(), 2);
+      assert.equal(await page.locator(".crm-profile-contacts").count(), 0);
+      assert.equal(await page.locator(".crm-profile-messengers .crm-contact-button--telegram").count(), 1);
+      assert.equal(await page.locator(".crm-profile-messengers .crm-contact-button--max").count(), 1);
+      assert.equal(await page.locator(".crm-profile-messengers a.crm-contact-button--telegram[href='https://t.me/anna']").count(), 1);
+      assert.equal(await page.locator(".crm-profile-messengers a.crm-contact-button--max").count(), 0);
+      assert.match(await page.locator(".crm-note-card").textContent(), /Обсудить следующий этап/);
+      assert.ok((await page.locator(".crm-apps-card").boundingBox()).y < (await page.locator(".crm-note-card").boundingBox()).y);
+      assert.equal(await page.locator(".crm-foot").count(), 0);
+      assert.equal(await page.getByText("Tilda Members Area", { exact:true }).count(), 0);
+      assert.equal(await page.locator("#review-form").count(), 0);
+      assert.equal(await page.locator("#resource-code option", { hasText:"Курс о калориях" }).count(), 1);
+      assert.equal(await page.locator("#resource-code option", { hasText:"Приложение тренировок" }).count(), 1);
+      assert.equal(await page.locator(".crm-card-title", { hasText:"Этапы рассылки" }).count(), 1);
+      assert.equal(await page.locator(".crm-avatar").count(), 0);
+      assert.match(await page.locator(".crm-profile-summary").textContent(), /Первая оплата.*02\.08\.2026.*через 1 дн\. после старта бота/s);
+      assert.equal(await page.locator(".crm-purchases-card .crm-inline-access").count(), 1);
+      assert.equal(await page.locator(".crm-purchases-card .crm-inline-access").getAttribute("open"), "");
+      assert.equal(await page.locator(".crm-course-progress-card").count(), 0);
+      assert.equal(await page.locator(".crm-purchases-card .crm-inline-personal").count(), 1);
+      assert.equal(await page.locator(".crm-purchases-card .crm-inline-personal").getAttribute("open"), null);
+      assert.doesNotMatch(await page.locator("body").textContent(), /Просмотр и смена записываются в журнал админки/);
+      await page.getByRole("button", { name:"Показать прогресс: Diet Quality Score" }).hover();
+      await page.getByText(/Покупатель · прогресс/).waitFor();
+      assert.match(await page.locator(".crm-popover:visible").textContent(), /Мастер-класс.*12 из 20/s);
+      if (evidence) await page.screenshot({ path: path.join(evidence, "admin-crm-profile-1440.png"), fullPage:true });
+      await page.getByRole("button", { name:"← Назад" }).click();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
       failNextPaymentRequest = true;
-      await page.getByRole("button", { name:"Оплаты" }).click();
+      await page.getByRole("button", { name:"Оплаты", exact:true }).click();
       await page.getByText("CRM не загрузилась", { exact:true }).waitFor();
       assert.match(await page.locator(".crm-error").textContent(), /test payment error/);
       await page.getByRole("button", { name:"Повторить" }).click();
@@ -301,6 +413,8 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.equal(paymentQueries.at(-1).has("product_code"), false);
       assert.equal(paymentQueries.at(-1).get("amount_kind"), "all");
       assert.match(await page.locator(".crm-table tbody").textContent(), /Первая оплата 1/);
+      assert.deepEqual(await page.locator(".crm-table th").allTextContents(), ["Дата", "Человек", "Что куплено", "Сумма"]);
+      assert.doesNotMatch(await page.locator(".crm-table tbody").textContent(), /Robokassa/);
       await page.locator("#payment-next").click();
       await page.waitForTimeout(80);
       assert.deepEqual(paymentOffsets.slice(-2), [0, 100]);
@@ -331,7 +445,7 @@ for (const [name, route] of Object.entries(integratedPages)) {
     }
     if (width > 760) {
       await page.waitForTimeout(220);
-      await assertDesktopGeometry(page, 252);
+      await assertDesktopGeometry(page, 270);
     }
     if (width <= 760) {
       const burgerBox = await page.getByRole("button", { name: "Открыть меню" }).boundingBox();
@@ -353,6 +467,20 @@ for (const [name, route] of Object.entries(integratedPages)) {
     if (evidence) await page.screenshot({ path: path.join(evidence, `admin-${name}-${width}.png`), fullPage: false });
     await page.close();
   }
+}
+
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 560 } });
+  await page.goto(`http://127.0.0.1:${port}/crm`);
+  await page.getByRole("link", { name: "Продукты и описания" }).waitFor();
+  await page.locator(".admin-shell-nav").evaluate((node) => { node.scrollTop = 220; });
+  await page.waitForTimeout(30);
+  const before = await page.locator(".admin-shell-nav").evaluate((node) => node.scrollTop);
+  await page.goto(`http://127.0.0.1:${port}/admin/products`);
+  await page.getByRole("heading", { name: "Продукты и описания" }).waitFor();
+  const after = await page.locator(".admin-shell-nav").evaluate((node) => node.scrollTop);
+  assert.ok(before > 100 && Math.abs(after - before) <= 2, JSON.stringify({before,after}));
+  await page.close();
 }
 
 await browser.close();

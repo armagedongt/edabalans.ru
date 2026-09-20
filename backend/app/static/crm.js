@@ -4,7 +4,7 @@
   const root = document.getElementById("crm-app");
   const state = {
     view: "users", query: "", summary: null, users: [], payments: [], tags: [], offset: 0,
-    paymentOffset: 0, paymentSnapshotAt: null, userProducts: null, userTags: null, userRequest: null,
+    paymentOffset: 0, paymentSnapshotAt: null, userProducts: null, userTags: null, userRequest: null, userDetails: new Map(),
     paymentFilters: { q: "", product_code: "", date_from: "", date_to: "", amount_kind: "all" }, userFilters: { buyer_kind: "all", product_code: "", first_seen_from: "", first_seen_to: "", masterclass_access: "", accompaniment_status: "all", tag_id: "" }
   };
   const pageSize = 100;
@@ -70,11 +70,11 @@
       <div class="crm-top">
         <div class="crm-head">
           <div class="crm-title">CRM</div>
-        </div>
-        <div class="crm-tabs">
-          <button class="crm-tab ${active === "users" || active === "buyers" ? "active" : ""}" data-view="users">Люди</button>
-          <button class="crm-tab ${active === "payments" ? "active" : ""}" data-view="payments">Оплаты</button>
-          <button class="crm-tab ${active === "tags" ? "active" : ""}" data-view="tags">Теги</button>
+          <div class="crm-tabs" aria-label="Раздел CRM">
+            <button class="crm-tab ${active === "users" || active === "buyers" ? "active" : ""}" data-view="users">Люди</button>
+            <button class="crm-tab ${active === "payments" ? "active" : ""}" data-view="payments">Оплаты</button>
+            <button class="crm-tab ${active === "tags" ? "active" : ""}" data-view="tags">Теги</button>
+          </div>
         </div>
       </div>`;
   }
@@ -98,29 +98,240 @@
       </div>`;
   }
 
-  function accessTags(accesses) {
-    if (!accesses || !accesses.length) return '<span class="crm-tag empty">доступов нет</span>';
-    return accesses.map((code) => `<span class="crm-tag">${esc(code.replace("ACCESS_", ""))}</span>`).join("");
+  function loadUserDetail(id) {
+    if (!state.userDetails.has(id)) {
+      const request = api(`/admin/api/users/${id}`).catch((error) => {
+        state.userDetails.delete(id);
+        throw error;
+      });
+      state.userDetails.set(id, request);
+    }
+    return state.userDetails.get(id);
   }
 
-  function userRow(user) {
-    const buyer = user.purchase_count > 0;
-    return `
+  function botAge(value) {
+    if (!value) return "не запускал";
+    const started = new Date(value);
+    if (Number.isNaN(started.getTime())) return "—";
+    const days = Math.max(0, Math.floor((Date.now() - started.getTime()) / 86400000));
+    return days === 0 ? "сегодня" : `${days} дн.`;
+  }
+
+  function telegramPlaneIcon() {
+    return `<svg viewBox="190 270 580 510" aria-hidden="true"><path fill="currentColor" d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z"/></svg>`;
+  }
+
+  function messengerIcon(platform) {
+    const body = platform === "telegram"
+      ? telegramPlaneIcon()
+      : platform === "max"
+        ? '<img src="/assets/max-logo.png" alt="">'
+        : "MSG";
+    return `<span class="crm-messenger-icon is-${esc(platform || "other")}" aria-label="${esc(platform || "messenger")}">${body}</span>`;
+  }
+
+  function botStart(user) {
+    const starts = (user.messengers || [])
+      .map((item) => item.main_scenario_seen_at || item.first_seen_at || (item.platform === "telegram" ? user.first_seen_at : null))
+      .filter(Boolean)
+      .sort();
+    return starts[0] || null;
+  }
+
+  function channelState(user) {
+    const statuses = (user.messengers || []).map((item) => item.subscription_status).filter(Boolean);
+    if (statuses.some((value) => ["active", "subscribed"].includes(value))) return { label: "Подписан", tone: "is-positive" };
+    if (statuses.some((value) => ["inactive", "unsubscribed", "left", "blocked"].includes(value))) return { label: "Не подписан", tone: "is-negative" };
+    return { label: "Не проверено", tone: "is-unknown" };
+  }
+
+  function accessCodes(user) {
+    return (user.accesses || []).map((item) => typeof item === "string" ? item : item.code);
+  }
+
+  function clientStage(user) {
+    const accesses = accessCodes(user);
+    if (accesses.includes("ACCESS_COACHING")) return { code:"support", label:"Сопровождение" };
+    if (accesses.includes("ACCESS_CONSULTATION")) return { code:"consultation", label:"Консультация" };
+    if ((user.purchase_count || 0) > 0) return { code:"buyer", label:"Покупатель" };
+    return { code:"lead", label:"Лид" };
+  }
+
+  function messengerContact(user, platform) {
+    const account = (user.messengers || []).find((item) => item.platform === platform);
+    const username = account && account.username || (platform === "telegram" ? user.telegram : null);
+    const handle = username && !/^https?:\/\//i.test(username) ? username.replace(/^@/, "") : username;
+    const value = platform === "max"
+      ? account && account.platform_user_id ? account.platform_user_id : handle ? `@${handle}` : "—"
+      : handle ? `@${handle}` : account && account.platform_user_id ? account.platform_user_id : "—";
+    if (platform === "telegram" && handle) return `<a class="crm-contact-link" href="https://t.me/${encodeURIComponent(handle)}" target="_blank" rel="noopener">${esc(value)}</a>`;
+    if (platform === "max" && username && /^https:\/\/max\.ru\/u\//i.test(username)) return `<a class="crm-contact-link" href="${esc(username)}" target="_blank" rel="noopener">MAX</a>`;
+    return `<span class="crm-contact-plain">${esc(value)}</span>`;
+  }
+
+  function profileMessengerButton(user, platform) {
+    const account = (user.messengers || []).find((item) => item.platform === platform);
+    if (!account) return "";
+    const username = account.username || "";
+    const telegramHandle = username && !/^https?:\/\//i.test(username) ? username.replace(/^@/, "") : "";
+    const isPublicMax = /^https:\/\/max\.ru\/u\//i.test(username);
+    const tag = platform === "telegram" && telegramHandle ? "a" : platform === "max" && isPublicMax ? "a" : "span";
+    const href = platform === "telegram" && telegramHandle
+      ? ` href="https://t.me/${encodeURIComponent(telegramHandle)}" target="_blank" rel="noopener"`
+      : platform === "max" && isPublicMax ? ` href="${esc(username)}" target="_blank" rel="noopener"` : "";
+    const title = platform === "max" && account.platform_user_id ? ` title="MAX: ${esc(account.platform_user_id)}"` : "";
+    const body = platform === "telegram" ? `${telegramPlaneIcon()}<span>Telegram</span>` : `<img src="/assets/max-logo.png" alt=""><span>MAX</span>`;
+    return `<${tag} class="crm-contact-button crm-contact-button--${platform}"${href}${title}>${body}</${tag}>`;
+  }
+
+  function courseProgressPreview(user) {
+    const progress = user.product_progress || [];
+    if (!progress.length) return "";
+    return `<div class="crm-popover-section-title">Прогресс курсов</div>${progress.map((item) => `<div class="crm-progress-item"><div><strong>${esc(item.name)}</strong><span>${item.legacy_assumed_complete ? "пройдено полностью" : `${item.completed} из ${item.total}`}</span></div><div class="crm-progress-track"><i style="width:${Math.max(0, Math.min(100, item.percent || 0))}%"></i></div></div>`).join("")}`;
+  }
+
+  function paymentDelayFromBot(user, payment) {
+    const startedAt = botStart(user);
+    if (!startedAt || !payment || !(payment.paid_at || payment.source_event_at)) return "срок не определён";
+    const started = new Date(startedAt).getTime();
+    const paid = new Date(payment.paid_at || payment.source_event_at).getTime();
+    if (Number.isNaN(started) || Number.isNaN(paid) || paid < started) return "срок не определён";
+    const days = Math.floor((paid - started) / 86400000);
+    return days === 0 ? "в день старта бота" : `через ${days} дн. после старта бота`;
+  }
+
+  function previewTrigger(kind, user, label) {
+    const descriptions = { tariff: "тариф и доступы", payments: "оплаты", accesses: "доступы", messengers: "мессенджеры", notes: "заметки", progress: "статус и прогресс" };
+    return `<div class="crm-preview" data-preview-kind="${kind}" data-preview-user="${esc(user.id)}">
+      <button class="crm-preview-trigger ${kind}" type="button" aria-expanded="false" aria-label="Показать ${descriptions[kind]}: ${esc(user.display_name || user.email || "человек")}">${label}</button>
+      <div class="crm-popover" role="tooltip"><div class="crm-popover-loading">Загружаю…</div></div>
+    </div>`;
+  }
+
+  function previewContent(kind, user) {
+    if (kind === "messengers") {
+      const messengers = user.messengers || [];
+      if (!messengers.length) return '<div class="crm-popover-empty">Мессенджер не привязан</div>';
+      return `<div class="crm-popover-title">Мессенджеры</div>${messengers.map((item) => `<div class="crm-popover-item"><strong>${messengerIcon(item.platform)} ${esc(item.platform === "telegram" ? "Telegram" : item.platform === "max" ? "MAX" : item.platform)}</strong><span>${item.username ? `@${esc(item.username)} · ` : ""}в боте ${botAge(item.main_scenario_seen_at || item.first_seen_at)} · ${channelState({ messengers: [item] }).label.toLowerCase()}</span></div>`).join("")}`;
+    }
+    if (kind === "notes") {
+      const notes = user.notes || [];
+      if (!notes.length) return '<div class="crm-popover-empty">Заметок пока нет</div>';
+      return `<div class="crm-popover-title">Последние заметки</div>${notes.slice(0, 4).map((item) => `<div class="crm-popover-item"><strong>${esc(item.body)}</strong><span>${date(item.created_at, false)} · ${esc(item.author)}</span></div>`).join("")}${notes.length > 4 ? `<div class="crm-popover-note">Ещё ${notes.length - 4} — в карточке</div>` : ""}`;
+    }
+    if (kind === "tariff") {
+      const products = [...(user.purchased_products || [])].sort((left, right) => String(left.purchased_at || "").localeCompare(String(right.purchased_at || "")));
+      const initial = products[0];
+      const accesses = (user.accesses || []).filter((item) => typeof item !== "string" && !item.revoked_at);
+      const purchase = initial
+        ? `<div class="crm-popover-line"><strong>${esc(initial.product_name || "Продукт")}</strong><span>${esc(initial.tariff || "Основной")}${initial.purchased_at ? ` · ${date(initial.purchased_at, false)}` : ""}</span></div>`
+        : '<div class="crm-popover-empty">Подтверждённый тариф не найден</div>';
+      const accessList = accesses.length
+        ? `<div class="crm-popover-line crm-popover-accesses"><strong>Доступно</strong><span>${accesses.map((item) => `${esc(item.name || item.code)}${item.paused_at ? " (приостановлен)" : ""}`).join(" · ")}</span></div>`
+        : '<div class="crm-popover-note">Активных доступов нет</div>';
+      return `${purchase}${accessList}${courseProgressPreview(user)}`;
+    }
+    if (kind === "payments") {
+      const payments = (user.payments || []).filter((item) => ["paid", "confirmed"].includes(item.status));
+      if (!payments.length) return '<div class="crm-popover-empty">Подтверждённых покупок нет</div>';
+      return `<div class="crm-popover-title">Оплаты</div>${payments.slice(0, 8).map((item) => `<div class="crm-popover-payment"><strong>${item.amount_is_estimated ? "≈ " : ""}${money(item.amount)}</strong><span>${esc(item.product_name || item.product_name_raw || "Продукт")}${item.tariff ? ` · ${esc(item.tariff)}` : ""} · ${date(item.paid_at || item.source_event_at, false)}</span></div>`).join("")}${payments.length > 8 ? `<div class="crm-popover-note">Ещё ${payments.length - 8} — в карточке</div>` : ""}${courseProgressPreview(user)}`;
+    }
+    if (kind === "progress") {
+      const stage = clientStage(user);
+      if (stage.code === "lead") {
+        const source = (user.attribution || []).find((item) => item.source || item.utm_source);
+        const events = (user.attribution || []).slice(-4).reverse();
+        return `<div class="crm-popover-title">Путь лида</div><div class="crm-popover-item"><strong>${esc((source && (source.source || source.utm_source)) || "Источник не определён")}</strong><span>первое появление ${date(user.first_seen_at, false)}</span></div>${(user.messengers || []).map((item) => `<div class="crm-popover-item"><strong>${messengerIcon(item.platform)} ${esc(item.platform)}</strong><span>старт ${date(item.main_scenario_seen_at || item.first_seen_at, false)} · ${channelState({messengers:[item]}).label.toLowerCase()}</span></div>`).join("")}${events.map((item) => `<div class="crm-popover-item"><strong>${esc(item.event_type || "Событие")}</strong><span>${date(item.occurred_at, false)}</span></div>`).join("")}`;
+      }
+      const progress = user.product_progress || [];
+      return `<div class="crm-popover-title">${esc(stage.label)} · прогресс</div>${progress.map((item) => `<div class="crm-progress-item"><div><strong>${esc(item.name)}</strong><span>${item.legacy_assumed_complete ? "пройдено полностью" : `${item.completed} из ${item.total}`}</span></div><div class="crm-progress-track"><i style="width:${Math.max(0, Math.min(100, item.percent || 0))}%"></i></div></div>`).join("") || '<div class="crm-popover-empty">Прогресс по продуктам пока не зафиксирован</div>'}`;
+    }
+    const accesses = (user.accesses || []).filter((item) => !item.revoked_at);
+    if (!accesses.length) return '<div class="crm-popover-empty">Действующих доступов нет</div>';
+    return `<div class="crm-popover-title">Доступы</div>${accesses.map((item) => `<div class="crm-popover-item"><strong>${esc(item.name || item.code)}</strong><span>${item.paused_at ? "На паузе" : "Действует"}${item.expires_at ? ` · до ${date(item.expires_at, false)}` : " · без срока"}</span></div>`).join("")}`;
+  }
+
+  function bindUserPreviews() {
+    root.querySelectorAll(".crm-preview").forEach((preview) => {
+      let loaded = false;
+      const trigger = preview.querySelector(".crm-preview-trigger");
+      const popover = preview.querySelector(".crm-popover");
+      const place = () => {
+        const triggerRect = trigger.getBoundingClientRect();
+        const popoverRect = popover.getBoundingClientRect();
+        const left = Math.max(10, Math.min(triggerRect.left, window.innerWidth - popoverRect.width - 10));
+        const below = triggerRect.bottom + 7;
+        const top = below + popoverRect.height <= window.innerHeight - 10
+          ? below
+          : Math.max(10, triggerRect.top - popoverRect.height - 7);
+        popover.style.left = `${left}px`;
+        popover.style.top = `${top}px`;
+      };
+      const load = async () => {
+        trigger.setAttribute("aria-expanded", "true");
+        requestAnimationFrame(place);
+        if (loaded) return;
+        try {
+          const user = await loadUserDetail(preview.dataset.previewUser);
+          popover.innerHTML = previewContent(preview.dataset.previewKind, user);
+          loaded = true;
+          requestAnimationFrame(place);
+        } catch (error) {
+          popover.innerHTML = `<div class="crm-popover-empty">${esc(error.message)}</div>`;
+        }
+      };
+      preview.addEventListener("pointerenter", load);
+      preview.addEventListener("focusin", load);
+      preview.addEventListener("pointerleave", () => trigger.setAttribute("aria-expanded", "false"));
+      preview.addEventListener("focusout", (event) => { if (!preview.contains(event.relatedTarget)) trigger.setAttribute("aria-expanded", "false"); });
+      trigger.addEventListener("click", (event) => { event.stopPropagation(); load(); });
+    });
+  }
+
+  function peopleMode() {
+    if (["active", "former"].includes(state.userFilters.accompaniment_status)) return "support";
+    if (state.userFilters.buyer_kind === "non_buyers") return "leads";
+    if (state.userFilters.buyer_kind === "buyers") return "buyers";
+    return "all";
+  }
+
+  function messengerCell(user) {
+    const messengers = user.messengers || [];
+    const label = messengers.length
+      ? `<span class="crm-messenger-icons">${messengers.map((item) => messengerIcon(item.platform)).join("")}</span>`
+      : '<span class="crm-no-messenger">—</span>';
+    return previewTrigger("messengers", user, label);
+  }
+
+  function userRow(user, mode) {
+    const stage = clientStage(user);
+    const source = esc(user.first_source || "—");
+    const commonStart = `
       <tr data-user-id="${esc(user.id)}" tabindex="0" role="link" aria-label="Открыть карточку: ${esc(user.display_name || user.email || user.telegram || "Без имени")}">
-        <td><strong>${esc(user.display_name || user.email || user.telegram || "Без имени")}</strong><div class="crm-email">${esc(user.email || "email не указан")}${user.telegram ? ` · @${esc(user.telegram)}` : ""}</div></td>
-        <td><span class="crm-status ${buyer ? "st-buyer" : "st-lead"}">${buyer ? "Покупатель" : "Лид"}</span>${user.accompaniment_status === "active" ? '<span class="crm-status st-support">Сопровождение</span>' : user.accompaniment_status === "former" ? '<span class="crm-status st-former">Бывшее</span>' : ""}</td>
-        <td class="crm-money">${money(user.ltv_rub)}${user.estimated_ltv_rub ? `<div class="crm-row-meta">+ ≈ ${money(user.estimated_ltv_rub)}</div>` : ""}</td>
-        <td>${user.purchase_count}</td>
-        <td>${date(user.last_purchase_at, false)}</td>
-        <td><div class="crm-tags compact">${accessTags(user.accesses)}</div></td>
-      </tr>`;
+        <td class="crm-person-name"><strong>${esc(user.display_name || user.email || user.telegram || "Без имени")}</strong></td>
+        <td class="crm-person-email">${esc(user.email || "—")}</td>
+        <td class="crm-contact-cell">${messengerCell(user)}</td>
+        <td class="crm-source-cell">${source}</td>`;
+    const startedAt = botStart(user);
+    const bot = `<td class="crm-bot-age"><strong>${startedAt ? `с ${date(startedAt, false)} · ${botAge(startedAt)}` : "не запускал"}</strong><span>${user.first_purchase_at ? `первая покупка ${date(user.first_purchase_at, false)}` : "покупки ещё нет"}</span></td>`;
+    const subscription = `<td><span class="crm-channel-state ${channelState(user).tone}">${channelState(user).label}</span></td>`;
+    const progress = `<td>${previewTrigger("progress", user, `<span class="crm-stage is-${stage.code}">${esc(stage.label)}</span>`)}</td>`;
+    const paid = `<td class="crm-money">${previewTrigger("payments", user, `<strong>${money(user.ltv_rub)}</strong>${user.estimated_ltv_rub ? `<span class="crm-estimated">+ ≈ ${money(user.estimated_ltv_rub)}</span>` : ""}`)}</td>`;
+    if (mode === "leads") {
+      return `${commonStart}${bot}${subscription}${progress}<td>${previewTrigger("notes", user, `<strong>${user.note_count || 0}</strong>`)}</td></tr>`;
+    }
+    if (mode === "support") {
+      return `${commonStart}${paid}${subscription}${progress}<td>${previewTrigger("notes", user, `<strong>${user.note_count || 0}</strong>`)}</td></tr>`;
+    }
+    return `${commonStart}<td>${previewTrigger("tariff", user, esc(user.initial_tariff || "—"))}</td>${paid}${progress}${bot}${subscription}</tr>`;
   }
 
   function bindUserCards() {
     root.querySelectorAll("[data-user-id]").forEach((item) => {
-      item.addEventListener("click", () => openUser(item.dataset.userId));
+      item.addEventListener("click", (event) => { if (!event.target.closest(".crm-preview, a")) openUser(item.dataset.userId); });
       item.addEventListener("keydown", (event) => {
         if (event.key !== "Enter" && event.key !== " ") return;
+        if (event.target.closest(".crm-preview, a")) return;
         event.preventDefault();
         openUser(item.dataset.userId);
       });
@@ -150,9 +361,17 @@
     const current = document.getElementById("crm-user-results");
     if (!current) return;
     current.classList.remove("is-loading");
-    current.innerHTML = `<div class="crm-table-wrap"><table class="crm-table crm-people-table"><thead><tr><th>Человек</th><th>Сегмент</th><th>Оплачено</th><th>Покупок</th><th>Последняя</th><th>Доступы</th></tr></thead><tbody>${state.users.map(userRow).join("") || '<tr><td colspan="6" class="crm-empty">Ничего не найдено</td></tr>'}</tbody></table></div>
+    const mode = peopleMode();
+    const headings = mode === "leads"
+      ? ["Имя", "Email", "Мессенджеры", "Источник", "В боте", "Подписка", "Статус", "Заметки"]
+      : mode === "support"
+        ? ["Имя", "Email", "Мессенджеры", "Источник", "Итого", "Подписка", "Статус", "Заметки"]
+        : ["Имя", "Email", "Мессенджеры", "Источник", "Тариф", "Итого", "Статус", "В боте", "Подписка"];
+    const columnClass = (heading) => `crm-col-${({"Имя":"name","Email":"email","Мессенджеры":"messengers","Источник":"source","Тариф":"tariff","Итого":"total","Статус":"status","В боте":"bot","Подписка":"channel","Заметки":"notes"})[heading] || "default"}`;
+    current.innerHTML = `<div class="crm-table-wrap"><table class="crm-table crm-people-table crm-people-${mode}"><colgroup>${headings.map((heading) => `<col class="${columnClass(heading)}">`).join("")}</colgroup><thead><tr>${headings.map((heading) => `<th>${heading}</th>`).join("")}</tr></thead><tbody>${state.users.map((user) => userRow(user, mode)).join("") || `<tr><td colspan="${headings.length}" class="crm-empty">Ничего не найдено</td></tr>`}</tbody></table></div>
       <div class="crm-pager"><button class="crm-btn alt small" id="crm-prev" ${state.offset === 0 ? "disabled" : ""}>← Предыдущие</button><span>${state.users.length ? `${state.offset + 1}–${state.offset + state.users.length}` : "0"}</span><button class="crm-btn alt small" id="crm-next" ${state.users.length < pageSize ? "disabled" : ""}>Следующие →</button></div>`;
     bindUserCards();
+    bindUserPreviews();
     document.getElementById("crm-prev").addEventListener("click", () => { state.offset = Math.max(0, state.offset - pageSize); loadUserRows().catch(showError); });
     document.getElementById("crm-next").addEventListener("click", () => { state.offset += pageSize; loadUserRows().catch(showError); });
   }
@@ -170,10 +389,9 @@
         <input class="crm-search" id="crm-search" placeholder="Поиск по имени, email или Telegram" value="${esc(state.query)}">
         <button class="crm-btn alt" id="crm-refresh">Обновить</button>
       </div>
-      <div class="crm-quick-filters" aria-label="Быстрые фильтры"><button class="crm-chip ${filters.buyer_kind === "all" && filters.masterclass_access === "" && filters.accompaniment_status === "all" ? "active" : ""}" data-people-all>Все</button><button class="crm-chip ${filters.buyer_kind === "buyers" ? "active" : ""}" data-buyer-kind="buyers">Покупатели</button><button class="crm-chip ${filters.buyer_kind === "non_buyers" ? "active" : ""}" data-buyer-kind="non_buyers">Без покупок</button><button class="crm-chip ${filters.accompaniment_status === "active" ? "active" : ""}" data-accompaniment="active">Сопровождение</button><button class="crm-chip ${filters.accompaniment_status === "former" ? "active" : ""}" data-accompaniment="former">Бывшее сопровождение</button><button class="crm-chip ${filters.masterclass_access === "true" ? "active" : ""}" data-masterclass-access="true">Есть МК</button><button class="crm-chip ${filters.masterclass_access === "false" ? "active" : ""}" data-masterclass-access="false">Нет МК</button><button class="crm-chip" data-view="access">Проблемы доступа</button></div>
+      <div class="crm-quick-filters" aria-label="Быстрые фильтры"><button class="crm-chip ${filters.buyer_kind === "all" && filters.masterclass_access === "" && filters.accompaniment_status === "all" ? "active" : ""}" data-people-all>Все</button><button class="crm-chip ${filters.buyer_kind === "buyers" ? "active" : ""}" data-buyer-kind="buyers">Покупатели</button><button class="crm-chip ${filters.buyer_kind === "non_buyers" ? "active" : ""}" data-buyer-kind="non_buyers">Лиды</button><button class="crm-chip ${filters.accompaniment_status === "active" ? "active" : ""}" data-accompaniment="active">Сопровождение</button><button class="crm-chip ${filters.accompaniment_status === "former" ? "active" : ""}" data-accompaniment="former">Бывшее сопровождение</button><button class="crm-chip ${filters.masterclass_access === "true" ? "active" : ""}" data-masterclass-access="true">Есть МК</button><button class="crm-chip ${filters.masterclass_access === "false" ? "active" : ""}" data-masterclass-access="false">Нет МК</button><button class="crm-chip" data-view="access">Проблемы доступа</button></div>
       <details class="crm-card crm-filters"><summary>Другие фильтры</summary><form class="crm-payment-toolbar" id="crm-user-filters"><label><span>Первое появление с</span><input class="crm-input" name="first_seen_from" type="date" value="${esc(filters.first_seen_from)}"></label><label><span>по</span><input class="crm-input" name="first_seen_to" type="date" value="${esc(filters.first_seen_to)}"></label><select class="crm-input" id="crm-product-filter" name="product_code"><option value="">Любой продукт</option>${products.map((item) => `<option value="${esc(item.code)}" ${filters.product_code === item.code ? "selected" : ""}>${esc(item.name)}</option>`).join("")}</select><select class="crm-input" name="masterclass_access"><option value="">Доступ к МК: любой</option><option value="true" ${filters.masterclass_access === "true" ? "selected" : ""}>Доступ к МК есть</option><option value="false" ${filters.masterclass_access === "false" ? "selected" : ""}>Нет доступа к МК</option></select><select class="crm-input" id="crm-tag-filter" name="tag_id"><option value="">Любой тег</option>${tags.map((item) => `<option value="${esc(item.id)}" ${filters.tag_id === item.id ? "selected" : ""}>${esc(item.name)}</option>`).join("")}</select><button class="crm-btn small">Применить</button><button class="crm-btn alt small" type="button" id="crm-reset-filters">Сбросить</button></form><div class="crm-filter-help"><p><b>Первое появление</b> — самая ранняя известная запись человека в CRM, а не обязательно вход из Telegram или сайта.</p><p><b>Тег</b> — метка для отбора; он сам по себе не подтверждает оплату и не выдаёт доступ.</p><p><b>Проблемы доступа</b> — очередь спорных исторических случаев. Действующие права меняются в карточке человека.</p></div></details>
-      <div id="crm-user-results" class="crm-results"><div class="crm-loading inline">Загружаю людей…</div></div>
-      <div class="crm-foot">PostgreSQL — единый источник данных этой админки</div>`;
+      <div id="crm-user-results" class="crm-results"><div class="crm-loading inline">Загружаю людей…</div></div>`;
     bindTop();
     const search = document.getElementById("crm-search");
     let timer;
@@ -187,9 +405,9 @@
     document.getElementById("crm-reset-filters").addEventListener("click", () => { state.userFilters = { buyer_kind: "all", product_code: "", first_seen_from: "", first_seen_to: "", masterclass_access: "", accompaniment_status: "all", tag_id: "" }; state.offset = 0; renderUsers(false).catch(showError); });
     document.getElementById("crm-refresh").addEventListener("click", () => loadUserRows().catch(showError));
     root.querySelector("[data-people-all]").addEventListener("click", () => { state.userFilters.buyer_kind = "all"; state.userFilters.masterclass_access = ""; state.userFilters.accompaniment_status = "all"; state.offset = 0; renderUsers(false).catch(showError); });
-    root.querySelectorAll("[data-buyer-kind]").forEach((button) => button.addEventListener("click", () => { state.userFilters.buyer_kind = button.dataset.buyerKind; state.offset = 0; renderUsers(false).catch(showError); }));
+    root.querySelectorAll("[data-buyer-kind]").forEach((button) => button.addEventListener("click", () => { state.userFilters.buyer_kind = button.dataset.buyerKind; state.userFilters.accompaniment_status = "all"; state.offset = 0; renderUsers(false).catch(showError); }));
     root.querySelectorAll("[data-masterclass-access]").forEach((button) => button.addEventListener("click", () => { state.userFilters.masterclass_access = button.dataset.masterclassAccess; state.offset = 0; renderUsers(false).catch(showError); }));
-    root.querySelectorAll("[data-accompaniment]").forEach((button) => button.addEventListener("click", () => { state.userFilters.accompaniment_status = button.dataset.accompaniment; state.offset = 0; renderUsers(false).catch(showError); }));
+    root.querySelectorAll("[data-accompaniment]").forEach((button) => button.addEventListener("click", () => { state.userFilters.accompaniment_status = button.dataset.accompaniment; state.userFilters.buyer_kind = "all"; state.offset = 0; renderUsers(false).catch(showError); }));
     await loadUserRows();
     if (referenceRequest) referenceRequest.then((loadedReferences) => {
       if (!loadedReferences) return;
@@ -334,9 +552,8 @@
       <tr ${payment.user_id ? `data-user-id="${esc(payment.user_id)}"` : ""}>
         <td>${date(payment.paid_at || payment.source_event_at, true)}</td>
         <td><strong>${esc(payment.display_name || payment.payer_name || "Без имени")}</strong><div class="crm-email">${esc(payment.email || (payment.user_id ? "" : "ещё не привязан к карточке"))}</div></td>
-        <td>${esc(payment.product_name || "Продукт не определён")}</td>
-        <td><span class="crm-status ${["paid","confirmed"].includes(payment.status) ? "st-paid" : "st-processing"}">${esc(payment.status)}</span>${payment.review_status === "pending" ? '<div class="crm-row-meta">нужна проверка</div>' : ""}</td>
-        <td class="crm-money">${payment.amount_is_estimated ? "≈ " : ""}${money(payment.amount)}<div class="crm-row-meta">${payment.amount_is_estimated ? "оценка" : "факт"}</div></td>
+        <td>${esc(payment.product_name || "Продукт не определён")}${payment.external_order_id ? `<div class="crm-row-meta">№ ${esc(payment.external_order_id)}</div>` : ""}${payment.review_status === "pending" || !["paid","confirmed"].includes(payment.status) ? `<div class="crm-payment-warning">${payment.review_status === "pending" ? "нужна проверка" : esc(payment.status)}</div>` : ""}</td>
+        <td class="crm-money crm-payment-amount">${payment.amount_is_estimated ? "≈ " : ""}${money(payment.amount)}</td>
       </tr>`).join("");
     root.innerHTML = top("payments") + `<form class="crm-payment-toolbar" id="payment-filters">
         <input class="crm-input" id="payment-q" placeholder="Человек, email или продукт" value="${esc(filters.q)}">
@@ -347,11 +564,10 @@
         <button class="crm-btn" type="submit">Показать</button>
       </form>
       <div class="crm-table-wrap"><table class="crm-table">
-        <thead><tr><th>Дата</th><th>Человек</th><th>Продукт</th><th>Статус</th><th>Сумма</th></tr></thead>
-        <tbody>${rows || '<tr><td colspan="5" class="crm-empty">Оплат пока нет</td></tr>'}</tbody>
+        <thead><tr><th>Дата</th><th>Человек</th><th>Что куплено</th><th>Сумма</th></tr></thead>
+        <tbody>${rows || '<tr><td colspan="4" class="crm-empty">Оплат пока нет</td></tr>'}</tbody>
       </table></div>
-      <div class="crm-pager"><button class="crm-btn alt small" id="payment-prev" ${state.paymentOffset === 0 ? "disabled" : ""}>← Предыдущие</button><span>${state.payments.length ? `${state.paymentOffset + 1}–${state.paymentOffset + state.payments.length}` : "0"}</span><button class="crm-btn alt small" id="payment-next" ${state.payments.length < paymentPageSize ? "disabled" : ""}>Следующие →</button></div>
-      <div class="crm-foot">Лента оплат неизменяема · повторный webhook не создаёт дубль</div>`;
+      <div class="crm-pager"><button class="crm-btn alt small" id="payment-prev" ${state.paymentOffset === 0 ? "disabled" : ""}>← Предыдущие</button><span>${state.payments.length ? `${state.paymentOffset + 1}–${state.paymentOffset + state.payments.length}` : "0"}</span><button class="crm-btn alt small" id="payment-next" ${state.payments.length < paymentPageSize ? "disabled" : ""}>Следующие →</button></div>`;
     bindTop();
     bindUserCards();
     document.getElementById("payment-filters").addEventListener("submit", (event) => {
@@ -409,18 +625,22 @@
     bindTop();
   }
 
-  function paymentRow(item) {
-    return `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.product_name || "Продукт не определён")}</span><strong>${item.amount_is_estimated ? "≈ " : ""}${money(item.amount)}</strong></div>
-      <div class="crm-row-meta">${date(item.paid_at || item.source_event_at, true)} · ${esc(item.status)}${item.product_code ? ` · ${esc(item.product_code)}` : ""}</div></div>`;
-  }
-
-  function purchasedProductRow(item) {
-    return `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.product_name)}</span>${item.tariff ? `<strong>${esc(item.tariff)}</strong>` : ""}</div></div>`;
+  function purchaseCard(item, user) {
+    const code = String(item.product_code || "").toUpperCase();
+    const tone = /CONSULT|COACHING/.test(code) ? "is-service" : /DQS|ADDON|RECIPE/.test(code) || item.tariff === "Дополнение" ? "is-addon" : "is-core";
+    const details = [
+      date(item.paid_at || item.purchased_at || item.source_event_at, false),
+      item.external_order_id ? `№ ${item.external_order_id}` : "",
+    ].filter(Boolean).join(" · ");
+    const amount = item.amount === undefined || item.amount === null
+      ? ""
+      : `<strong class="crm-purchase-amount">${item.amount_is_estimated ? "≈ " : ""}${money(item.amount)}</strong>`;
+    return `<div class="crm-preview crm-purchase-preview" data-preview-kind="progress" data-preview-user="${esc(user.id)}"><button class="crm-preview-trigger crm-purchase-item ${tone}" type="button" aria-expanded="false" aria-label="Показать прогресс: ${esc(item.product_name || "продукт")}"><span class="crm-purchase-main"><span><strong>${esc(item.product_name || "Продукт не определён")}</strong>${item.tariff ? `<span class="crm-purchase-tariff">${esc(item.tariff)}</span>` : ""}</span>${amount}</span>${details && details !== "—" ? `<span class="crm-row-meta">${esc(details)}</span>` : ""}</button><div class="crm-popover" role="tooltip"><div class="crm-popover-loading">Загружаю…</div></div></div>`;
   }
 
   async function openUser(id) {
     root.innerHTML = top("") + '<div class="crm-loading">Открываю карточку…</div>';
-    const user = await api(`/admin/api/users/${id}`);
+    const user = await loadUserDetail(id);
     const resources = await api("/admin/api/resources");
     const [moduleResult, personalLinkResult] = await Promise.all([
       api(`/admin/api/users/${id}/modules`),
@@ -431,65 +651,56 @@
     let botState = null;
     try { botState = await api(`/bot-api/users/${id}`); } catch (_) { /* Telegram may not be connected yet. */ }
     const primaryEmail = user.emails[0] && user.emails[0].email;
-    const telegram = user.messengers.find((item) => item.platform === "telegram");
-    const firstSource = user.attribution.find((item) => item.source || item.utm_source || item.utm_campaign);
-    const origin = user.data_origin === "native" ? "Новая система" : "История";
-    const tilda = user.tilda_membership;
-    const purchaseTags = user.tags.filter((item) => item.category === "purchase");
+    const stage = clientStage(user);
     const otherTags = user.tags.filter((item) => item.category !== "purchase");
-    const masterclass = user.masterclass || { questionnaires: [], events: [], offers: [] };
+    const purchasedByCode = new Map((user.purchased_products || []).map((item) => [item.product_code, item]));
+    const confirmedPayments = (user.payments || []).filter((item) => ["paid", "confirmed"].includes(item.status));
+    const purchaseHistory = confirmedPayments.length
+      ? confirmedPayments.map((item) => ({ ...purchasedByCode.get(item.product_code), ...item, tariff: item.tariff || (purchasedByCode.get(item.product_code) || {}).tariff }))
+      : (user.purchased_products || []);
+    const firstPayment = [...confirmedPayments].sort((left, right) => String(left.paid_at || left.source_event_at || "").localeCompare(String(right.paid_at || right.source_event_at || "")))[0];
     const accessByCode = Array.from(user.accesses.filter((item) => !item.revoked_at).reduce((groups, item) => {
       const current = groups.get(item.code);
       if (!current || (current.paused_at && !item.paused_at)) groups.set(item.code, item);
       return groups;
     }, new Map()).values());
-    const questionnaireName = (kind) => kind === "onboarding" ? "Анкета перед началом" : kind === "closing-review" ? "Саморевью" : kind;
     root.innerHTML = `
       <div class="crm-profile-head">
         <div class="crm-profile-id">
           <button class="crm-back" id="crm-back">← Назад</button>
-          <div class="crm-avatar">${esc((user.display_name || primaryEmail || "?").charAt(0).toUpperCase())}</div>
-          <div><div class="crm-name">${esc(user.display_name || primaryEmail || "Без имени")}</div>
-          <div class="crm-email">${esc(primaryEmail || "email не указан")}${telegram && telegram.username ? ` · @${esc(telegram.username)}` : ""}</div></div>
+          <div class="crm-profile-identity"><div class="crm-name">${esc(user.display_name || primaryEmail || "Без имени")}</div>
+          <span class="crm-profile-email">${esc(primaryEmail || "email не указан")}</span><span class="crm-profile-messengers">${profileMessengerButton(user, "telegram")}${profileMessengerButton(user, "max")}</span></div>
         </div>
-        <div class="crm-badges"><span class="crm-origin ${user.data_origin === "native" ? "origin-native" : "origin-legacy"}">${origin}</span><span class="crm-status ${user.purchase_count ? "st-buyer" : "st-lead"}">${user.purchase_count ? "Покупатель" : "Лид"}</span></div>
       </div>
-      <div class="crm-kpis">
-        <div class="crm-stat"><div class="crm-k">ОПЛАЧЕНО ПО ФАКТУ</div><div class="crm-v">${money(user.ltv_rub)}</div>${user.estimated_ltv_rub ? `<div class="crm-s">Оценка отдельно: ≈ ${money(user.estimated_ltv_rub)}</div>` : ""}</div>
-        <div class="crm-stat"><div class="crm-k">ПОКУПОК</div><div class="crm-v">${user.purchase_count}</div></div>
-        <div class="crm-stat"><div class="crm-k">ДОСТУПОВ</div><div class="crm-v">${accessByCode.filter((item) => !item.paused_at).length}</div></div>
-        <div class="crm-stat"><div class="crm-k">ПЕРВОЕ ПОЯВЛЕНИЕ</div><div class="crm-v" style="font-size:15px">${date(user.first_seen_at, false)}</div></div>
-      </div>
-      <section class="crm-card"><div class="crm-card-title">Покупки <span class="crm-card-sub">простые ярлыки для вас и бота</span></div>
-        <div class="crm-tags">${purchaseTags.map((item) => `<span class="crm-tag">${esc(item.name)}</span>`).join("") || '<span class="crm-tag empty">покупки не определены</span>'}</div>
-      </section>
-      <section class="crm-card crm-apps-card"><div class="crm-card-title">Человек в системе <span class="crm-card-sub">тот же user_id во всех разделах</span></div>
+      <section class="crm-card crm-apps-card"><div class="crm-card-title">Человек в системе</div>
         <div class="crm-app-links">
-          <a class="crm-app-link available" href="/crm?user=${user.id}"><strong>CRM</strong><span>текущая карточка</span></a>
           <a class="crm-app-link ${modules.dqs.exists || modules.dqs.has_access ? "available" : "disabled"}" href="${modules.dqs.exists || modules.dqs.has_access ? `/admin/dqs?user=${user.id}` : "#"}"><strong>DQS</strong><span>${modules.dqs.exists ? "открыть аналитику" : modules.dqs.has_access ? "доступ есть, данных нет" : "нет доступа"}</span></a>
           <a class="crm-app-link ${modules.strength.exists || modules.strength.has_access ? "available" : "disabled"}" href="${modules.strength.exists || modules.strength.has_access ? `/admin/strength?user=${user.id}` : "#"}"><strong>Силовые</strong><span>${modules.strength.exists ? "открыть тренировки" : modules.strength.has_access ? "открыть приложение" : "нет доступа"}</span></a>
           <a class="crm-app-link ${modules.metabolism.exists || modules.metabolism.has_access ? "available" : "disabled"}" href="${modules.metabolism.exists || modules.metabolism.has_access ? `/admin/metabolism?user=${user.id}` : "#"}"><strong>Метаболизм</strong><span>${modules.metabolism.exists ? "открыть расчёт" : modules.metabolism.has_access ? "открыть приложение" : "нет доступа"}</span></a>
-          <a class="crm-app-link ${modules.telegram.exists ? "available" : "disabled"}" href="${modules.telegram.exists ? `/bot?view=contacts&user=${user.id}` : "#"}"><strong>Telegram</strong><span>${modules.telegram.exists ? "открыть контакт" : "аккаунт не связан"}</span></a>
         </div>
       </section>
-      <div class="crm-grid">
-        <div>
-          <section class="crm-card"><div class="crm-card-title">Контакты <span class="crm-card-sub">единый user_id</span></div>
-            <form class="crm-form" id="name-form"><label><div class="crm-k">ИМЯ</div><input class="crm-input" id="display-name" value="${esc(user.display_name || "")}"></label>
-              <button class="crm-btn small" type="submit">Сохранить имя</button></form>
-            ${user.emails.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.email)}</span><span>${item.primary ? "основной" : ""}</span></div></div>`).join("") || `<form class="crm-two" id="email-form"><input class="crm-input" id="link-email" type="email" placeholder="Email после регистрации в ЛК"><button class="crm-btn small">Связать</button></form>`}
-            ${user.phones.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.phone)}</span><span>телефон</span></div></div>`).join("")}
-            ${user.messengers.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.platform)}</span><strong>${esc(item.username ? `@${item.username}` : item.platform_user_id || "без ID")}</strong></div></div>`).join("")}
-            <div class="crm-row"><div class="crm-k">ВХОД В ЛИЧНЫЙ КАБИНЕТ</div><div class="crm-row-main"><span>${user.credential.exists ? `Версия пароля ${esc(user.credential.password_version)}` : "Пароль ещё не создан"}</span><code id="account-password-value">••••••••</code></div><div class="crm-row-meta">Просмотр и смена записываются в журнал админки.</div><div class="crm-two" style="margin-top:10px"><button class="crm-btn small" id="reveal-account-password" type="button" ${user.credential.password_available ? "" : "disabled"}>Показать пароль</button><button class="crm-btn small" id="reset-account-password" type="button">${user.credential.exists ? "Задать новый" : "Создать пароль"}</button></div>${user.credential.exists && !user.credential.password_available ? '<div class="crm-row-meta" style="margin-top:8px">Старый пароль создан до включения просмотра. Чтобы он появился здесь, один раз задайте новый.</div>' : ""}</div>
-          </section>
-          <section class="crm-card"><div class="crm-card-title">Купленные продукты и тарифы</div>${(user.purchased_products || []).map(purchasedProductRow).join("") || '<div class="crm-empty">Подтверждённых продуктов пока нет</div>'}</section>
-          <section class="crm-card"><div class="crm-card-title">История покупок</div>${user.payments.map(paymentRow).join("") || '<div class="crm-empty">Покупок пока нет</div>'}</section>
-          <section class="crm-card"><div class="crm-card-title">Ручная проверка доступов <span class="crm-card-sub">${esc(user.access_review_status)}</span></div>
-            <div class="crm-tags">${accessByCode.map((item)=>`<span class="crm-tag ${item.paused_at ? "empty" : ""}">${esc(item.name)}${item.paused_at ? " · на паузе" : ""} <button class="${item.paused_at ? "resume-access" : "pause-access"}" data-code="${esc(item.code)}" type="button">${item.paused_at ? "вернуть" : "пауза"}</button> <button class="revoke-access" data-code="${esc(item.code)}" type="button">×</button></span>`).join("") || '<span class="crm-tag empty">доступов нет</span>'}</div>
-            <form class="crm-two" id="grant-form" style="margin-top:10px"><select class="crm-input" id="resource-code">${resources.map((r)=>`<option value="${esc(r.code)}">${esc(r.name)}</option>`).join("")}</select><button class="crm-btn small">Выдать</button></form>
-            <form class="crm-form" id="review-form" style="margin-top:10px"><select class="crm-input" id="review-status"><option value="waiting_registration">Ждём регистрацию</option><option value="pending">Проверить</option><option value="completed">Проверено</option><option value="conflict">Конфликт</option><option value="not_required">Не требуется</option></select><select class="crm-input" id="tilda-status"><option value="not_checked">Tilda не проверена</option><option value="pending">Tilda проверить</option><option value="granted">Tilda доступ открыт</option><option value="not_required">Tilda не требуется</option></select><textarea class="crm-textarea" id="review-note" placeholder="Что проверить">${esc(user.access_review_note || "")}</textarea><button class="crm-btn small">Сохранить проверку</button></form>
-          </section>
-          <section class="crm-card"><div class="crm-card-title">Персональная ссылка <span class="crm-card-sub">бесплатно или с оплатой</span></div>
+      <div class="crm-profile-summary">
+        <div><span>Первое появление</span><strong>${date(user.first_seen_at, false)}</strong></div>
+        <div><span>Первая оплата</span><strong>${firstPayment ? date(firstPayment.paid_at || firstPayment.source_event_at, false) : "—"}</strong><em>${paymentDelayFromBot(user, firstPayment)}</em></div>
+        <div><span>Оплачено</span>${previewTrigger("payments", user, `<strong>${money(user.ltv_rub)}</strong>`)}</div>
+        <div><span>Статус и прогресс</span>${previewTrigger("progress", user, `<span class="crm-stage is-${stage.code}">${esc(stage.label)}</span>`)}</div>
+        <div><span>Подписка</span><span class="crm-channel-state ${channelState(user).tone}">${channelState(user).label}</span></div>
+      </div>
+      <section class="crm-card crm-note-card"><div class="crm-card-title">Заметки</div>
+        <div class="crm-note-layout"><form class="crm-form" id="note-form"><textarea class="crm-textarea" id="note-body" placeholder="Добавить комментарий о клиенте"></textarea><button class="crm-btn small" type="submit">Сохранить заметку</button></form>
+        <div class="crm-note-history">${user.notes.slice(0, 3).map((item) => `<div class="crm-row"><div>${esc(item.body)}</div><div class="crm-row-meta">${date(item.created_at, true)} · ${esc(item.author)}</div></div>`).join("") || '<div class="crm-empty">Заметок пока нет</div>'}${user.notes.length > 3 ? `<div class="crm-row-meta">Ещё ${user.notes.length - 3} заметок</div>` : ""}</div></div>
+      </section>
+      <div class="crm-profile-main-grid">
+        <section class="crm-card crm-purchases-card"><div class="crm-card-title">Покупки и тарифы</div>
+          <div class="crm-purchase-grid">${purchaseHistory.map((item) => purchaseCard(item, user)).join("") || '<div class="crm-empty">Подтверждённых покупок пока нет</div>'}</div>
+          <details class="crm-inline-access" open><summary><strong>Управление доступами</strong><span>${accessByCode.filter((item)=>!item.paused_at).length} активных</span></summary>
+            <div class="crm-access-heading">Текущие доступы</div>
+            <div class="crm-access-list">${accessByCode.map((item)=>`<div class="crm-access-row"><div><strong>${esc(item.name)}</strong><span>${item.paused_at ? "Приостановлен" : "Действует"}</span></div><div><button class="crm-btn alt small ${item.paused_at ? "resume-access" : "pause-access"}" data-code="${esc(item.code)}" type="button">${item.paused_at ? "Возобновить" : "Приостановить"}</button><button class="crm-btn alt small revoke-access" data-code="${esc(item.code)}" type="button">Отозвать</button></div></div>`).join("") || '<div class="crm-empty">Доступов нет</div>'}</div>
+            <div class="crm-access-heading">Выдать доступ</div>
+            <form class="crm-two" id="grant-form"><select class="crm-input" id="resource-code"><option value="" selected disabled>Выберите доступ</option>${resources.map((r)=>`<option value="${esc(r.code)}">${esc(r.name)}</option>`).join("")}</select><button class="crm-btn small">Выдать</button></form>
+            <div class="crm-access-explainer">Приостановить — временно закрыть, сохранив запись. Возобновить — вернуть её. Отозвать — окончательно закрыть текущую выдачу.</div>
+          </details>
+          <details class="crm-inline-personal"><summary><strong>Персональная ссылка на доступ</strong></summary>
             <form class="crm-form" id="personal-link-form">
               <div class="crm-resource-grid">${resources.map((r)=>`<label><input type="checkbox" name="personal-resource" value="${esc(r.code)}"> <span>${esc(r.name)}</span></label>`).join("")}</div>
               <div class="crm-two-fields"><label><div class="crm-k">ОБЫЧНАЯ СТОИМОСТЬ</div><input class="crm-input" id="personal-standard" type="number" min="0" step="1" placeholder="например 10800"></label><label><div class="crm-k">ИТОГО</div><input class="crm-input" id="personal-final" type="number" min="0" step="1" value="0"></label></div>
@@ -498,48 +709,40 @@
             </form>
             <div id="personal-link-result"></div>
             ${personalLinks.length ? `<div class="crm-card-sub" style="margin-top:14px">Последние ссылки</div>${personalLinks.slice(0,5).map((item)=>`<div class="crm-row"><div class="crm-row-main"><span>${item.mode==='free'?'Бесплатно':money(item.final_amount)}</span><strong>${esc(item.status)}</strong></div><div class="crm-row-meta">${esc(item.resources.join(', '))} · до ${date(item.expires_at,true)}</div></div>`).join("")}` : ""}
-          </section>
-          <section class="crm-card"><div class="crm-card-title">Tilda Members Area <span class="crm-card-sub">${tilda ? esc(tilda.account_status || "импортировано") : "нет в выгрузке"}</span></div>
-            ${tilda ? `<div class="crm-tags">${tilda.groups.map((group)=>`<span class="crm-tag">${esc(group)}</span>`).join("") || '<span class="crm-tag empty">групп нет</span>'}</div><div class="crm-row-meta" style="margin-top:10px">Регистрация: ${date(tilda.member_created_at, true)} · последняя активность: ${date(tilda.last_active_at, true)}</div>` : '<div class="crm-row-meta">Этот email не найден в последней каноничной выгрузке Tilda.</div>'}
-          </section>
-          <section class="crm-card"><div class="crm-card-title">Мастер-класс <span class="crm-card-sub">анкеты, события и предложения</span></div>
-            ${masterclass.questionnaires.map((run)=>`<details class="crm-row"><summary><strong>${esc(questionnaireName(run.kind))}</strong> · ${esc(run.status)}</summary><div style="margin-top:10px">${run.answers.filter((answer)=>answer.answer).map((answer)=>`<div class="crm-row"><div class="crm-k">${esc(answer.title)}</div><div style="white-space:pre-wrap;margin-top:4px">${esc(answer.answer)}</div></div>`).join("") || '<div class="crm-empty">Ответов пока нет</div>'}</div></details>`).join("") || '<div class="crm-empty">Анкеты ещё не открывались</div>'}
-            ${masterclass.offers.length ? `<div class="crm-card-sub" style="margin-top:12px">Окна предложений</div>${masterclass.offers.map((offer)=>`<div class="crm-row"><div class="crm-row-main"><span>${esc(offer.stage)}</span><strong>${esc(offer.status)}</strong></div><div class="crm-row-meta">${date(offer.started_at,true)} → ${date(offer.expires_at,true)}</div></div>`).join("")}` : ""}
-            ${masterclass.events.length ? `<div class="crm-card-sub" style="margin-top:12px">Последние события</div>${masterclass.events.slice(0,10).map((event)=>`<div class="crm-row"><div class="crm-row-main"><span>${esc(event.type)}</span><strong>${date(event.occurred_at,true)}</strong></div>${event.placement?`<div class="crm-row-meta">${esc(event.placement)}</div>`:""}</div>`).join("")}` : ""}
+          </details>
+        </section>
+        <div>
+          <section class="crm-card"><div class="crm-card-title">Контакты</div>
+            <form class="crm-form" id="name-form"><label><div class="crm-k">ИМЯ</div><input class="crm-input" id="display-name" value="${esc(user.display_name || "")}"></label>
+              <button class="crm-btn small" type="submit">Сохранить имя</button></form>
+            ${user.emails.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.email)}</span><span>${item.primary ? "основной" : ""}</span></div></div>`).join("") || `<form class="crm-two" id="email-form"><input class="crm-input" id="link-email" type="email" placeholder="Email после регистрации в ЛК"><button class="crm-btn small">Связать</button></form>`}
+            ${user.phones.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.phone)}</span><span>телефон</span></div></div>`).join("")}
+            <div class="crm-row"><div class="crm-k">ВХОД В ЛИЧНЫЙ КАБИНЕТ</div><div class="crm-row-main"><span>${user.credential.exists ? "Пароль создан" : "Пароль ещё не создан"}</span><code id="account-password-value">••••••••</code></div><div class="crm-two" style="margin-top:10px"><button class="crm-btn small" id="reveal-account-password" type="button" ${user.credential.password_available ? "" : "disabled"}>Показать пароль</button><button class="crm-btn small" id="reset-account-password" type="button">${user.credential.exists ? "Задать новый" : "Создать пароль"}</button></div></div>
           </section>
         </div>
-        <div>
-          <section class="crm-card"><div class="crm-card-title">Telegram-рассылка <span class="crm-card-sub">${botState ? esc(botState.run_status || "без цепочки") : "не подключён"}</span></div>
+      </div>
+      <div class="crm-grid">
+        <section class="crm-card"><div class="crm-card-title">Этапы рассылки <span class="crm-card-sub">${botState ? esc(botState.run_status || "без цепочки") : "не подключена"}</span></div>
             ${botState ? `<div class="crm-row-meta">Шаг: ${esc(botState.current_step || "—")} · отправлено ${botState.sent} из ${botState.total}</div>
               <div style="height:8px;background:#edf1ea;border-radius:8px;overflow:hidden;margin:10px 0"><div style="height:100%;width:${botState.total ? Math.min(100, botState.sent / botState.total * 100) : 0}%;background:#2f6b47"></div></div>
               ${botState.error ? `<div class="crm-row-meta" style="color:#a24b38">${esc(botState.error)}</div>` : ""}
               <form class="crm-form" id="telegram-message-form"><textarea class="crm-textarea" id="telegram-message" placeholder="Написать этому клиенту в Telegram"></textarea><button class="crm-btn small" type="submit">Отправить сообщение</button></form>` : '<div class="crm-row-meta">У клиента пока нет связанного аккаунта тестового Telegram-бота.</div>'}
-          </section>
-          <section class="crm-card"><div class="crm-card-title">Источник</div>
-            <div class="crm-source"><div class="crm-k">ПЕРВЫЙ ИЗВЕСТНЫЙ</div><strong>${esc((firstSource && (firstSource.source || firstSource.utm_source)) || "Не указан")}</strong>
-            <div class="crm-row-meta">${esc((firstSource && firstSource.utm_campaign) || "")}</div></div>
-          </section>
-          <section class="crm-card"><div class="crm-card-title">Теги</div><div class="crm-tags">${otherTags.map((item) => `<span class="crm-tag">${esc(item.name)}</span>`).join("") || '<span class="crm-tag empty">тегов нет</span>'}</div>
+        </section>
+        <section class="crm-card"><div class="crm-card-title">Теги</div><div class="crm-tags">${otherTags.map((item) => `<span class="crm-tag">${esc(item.name)}</span>`).join("") || '<span class="crm-tag empty">тегов нет</span>'}</div>
             <form class="crm-two" id="tag-form" style="margin-top:10px"><input class="crm-input" id="tag-name" placeholder="Например: рассылка 100"><button class="crm-btn small" type="submit">Добавить</button></form>
-          </section>
-          <section class="crm-card"><div class="crm-card-title">Заметки</div>
-            <form class="crm-form" id="note-form"><textarea class="crm-textarea" id="note-body" placeholder="Добавить комментарий о клиенте"></textarea><button class="crm-btn small" type="submit">Сохранить заметку</button></form>
-            <div style="margin-top:10px">${user.notes.map((item) => `<div class="crm-row"><div>${esc(item.body)}</div><div class="crm-row-meta">${date(item.created_at, true)} · ${esc(item.author)}</div></div>`).join("") || '<div class="crm-empty">Заметок нет</div>'}</div>
-          </section>
-        </div>
-      </div><div class="crm-foot">Карточка объединяет связанные таблицы PostgreSQL, а не копирует клиента в одну гигантскую строку</div>`;
+        </section>
+      </div>`;
 
+    bindTop();
+    bindUserPreviews();
     document.getElementById("crm-back").addEventListener("click", () => showView(state.view));
     document.getElementById("name-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       await api(`/admin/api/users/${id}`, { method: "PATCH", body: JSON.stringify({ display_name: document.getElementById("display-name").value }) });
-      await openUser(id);
+      await refreshUser(id);
     });
     const emailForm = document.getElementById("email-form");
-    if (emailForm) emailForm.addEventListener("submit", async (event) => { event.preventDefault(); await api(`/admin/api/users/${id}/email`, {method:"POST", body:JSON.stringify({email:document.getElementById("link-email").value})}); await openUser(id); });
-    document.getElementById("review-status").value = user.access_review_status;
-    document.getElementById("tilda-status").value = user.tilda_access_status;
-    document.getElementById("review-form").addEventListener("submit", async (event) => { event.preventDefault(); await api(`/admin/api/users/${id}/access-review`, {method:"PATCH", body:JSON.stringify({status:document.getElementById("review-status").value,tilda_status:document.getElementById("tilda-status").value,note:document.getElementById("review-note").value})}); await openUser(id); });
+    if (emailForm) emailForm.addEventListener("submit", async (event) => { event.preventDefault(); await api(`/admin/api/users/${id}/email`, {method:"POST", body:JSON.stringify({email:document.getElementById("link-email").value})}); await refreshUser(id); });
     document.getElementById("reveal-account-password").addEventListener("click", async () => {
       const result = await api(`/admin/api/users/${id}/credential/reveal`, {method:"POST"});
       document.getElementById("account-password-value").textContent = result.password;
@@ -549,7 +752,7 @@
       const result = await api(`/admin/api/users/${id}/credential/reset`, {method:"POST"});
       document.getElementById("account-password-value").textContent = result.password;
     });
-    document.getElementById("grant-form").addEventListener("submit", async (event) => { event.preventDefault(); await api(`/admin/api/users/${id}/accesses`, {method:"POST", body:JSON.stringify({resource_code:document.getElementById("resource-code").value})}); await openUser(id); });
+    document.getElementById("grant-form").addEventListener("submit", async (event) => { event.preventDefault(); await api(`/admin/api/users/${id}/accesses`, {method:"POST", body:JSON.stringify({resource_code:document.getElementById("resource-code").value})}); await refreshUser(id); });
     document.getElementById("personal-link-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       const resourceCodes = Array.from(root.querySelectorAll('input[name="personal-resource"]:checked')).map((input) => input.value);
@@ -559,22 +762,22 @@
       document.getElementById("personal-link-result").innerHTML = `<textarea class="crm-textarea" id="personal-ready-text" readonly>${esc(result.telegram_text)}</textarea><button class="crm-btn small" id="copy-personal-text" type="button">Скопировать сообщение</button>`;
       document.getElementById("copy-personal-text").onclick = async () => { await navigator.clipboard.writeText(result.telegram_text); document.getElementById("copy-personal-text").textContent = "Скопировано"; };
     });
-    root.querySelectorAll(".revoke-access").forEach((button)=>button.addEventListener("click", async()=>{ if (!window.confirm("Закрыть этот доступ?")) return; await api(`/admin/api/users/${id}/accesses/${button.dataset.code}`, {method:"DELETE"}); await openUser(id); }));
-    root.querySelectorAll(".pause-access").forEach((button)=>button.addEventListener("click", async()=>{ await api(`/admin/api/users/${id}/accesses/${button.dataset.code}/pause`, {method:"POST"}); await openUser(id); }));
-    root.querySelectorAll(".resume-access").forEach((button)=>button.addEventListener("click", async()=>{ await api(`/admin/api/users/${id}/accesses/${button.dataset.code}/resume`, {method:"POST"}); await openUser(id); }));
+    root.querySelectorAll(".revoke-access").forEach((button)=>button.addEventListener("click", async()=>{ if (!window.confirm("Закрыть этот доступ?")) return; await api(`/admin/api/users/${id}/accesses/${button.dataset.code}`, {method:"DELETE"}); await refreshUser(id); }));
+    root.querySelectorAll(".pause-access").forEach((button)=>button.addEventListener("click", async()=>{ await api(`/admin/api/users/${id}/accesses/${button.dataset.code}/pause`, {method:"POST"}); await refreshUser(id); }));
+    root.querySelectorAll(".resume-access").forEach((button)=>button.addEventListener("click", async()=>{ await api(`/admin/api/users/${id}/accesses/${button.dataset.code}/resume`, {method:"POST"}); await refreshUser(id); }));
     document.getElementById("tag-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       const name = document.getElementById("tag-name").value.trim();
       if (!name) return;
       await api(`/admin/api/users/${id}/tags`, { method: "POST", body: JSON.stringify({ name }) });
-      await openUser(id);
+      await refreshUser(id);
     });
     document.getElementById("note-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       const body = document.getElementById("note-body").value.trim();
       if (!body) return;
       await api(`/admin/api/users/${id}/notes`, { method: "POST", body: JSON.stringify({ body }) });
-      await openUser(id);
+      await refreshUser(id);
     });
     const telegramForm = document.getElementById("telegram-message-form");
     if (telegramForm) telegramForm.addEventListener("submit", async (event) => {
@@ -585,6 +788,11 @@
       document.getElementById("telegram-message").value = "";
       event.submitter.textContent = "Отправлено";
     });
+  }
+
+  async function refreshUser(id) {
+    state.userDetails.delete(id);
+    await openUser(id);
   }
 
   async function loadHome(view) {

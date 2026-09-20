@@ -31,6 +31,9 @@ from app.models import (
     UserOffer,
     AccountCredential,
     AccountSession,
+    CourseStageProgress,
+    DqsState,
+    MasterclassDayProgress,
 )
 from app.account_security import decrypt_password, encrypt_password, generate_password, password_hash
 from app.config import Settings
@@ -145,13 +148,19 @@ def _user_scalar_subqueries():
         .correlate(User)
         .scalar_subquery()
     )
+    first_purchase = (
+        select(func.min(func.coalesce(Payment.paid_at, Payment.source_event_at, Payment.created_at)))
+        .where(Payment.user_id == User.id, Payment.payment_status.in_(CONFIRMED_PAYMENT_STATUSES))
+        .correlate(User)
+        .scalar_subquery()
+    )
     last_purchase = (
         select(func.max(Payment.paid_at))
         .where(Payment.user_id == User.id, Payment.payment_status.in_(CONFIRMED_PAYMENT_STATUSES))
         .correlate(User)
         .scalar_subquery()
     )
-    return email, telegram, purchases, actual_ltv, estimated_ltv, last_purchase
+    return email, telegram, purchases, actual_ltv, estimated_ltv, first_purchase, last_purchase
 
 
 def list_users(
@@ -164,7 +173,36 @@ def list_users(
     limit: int = 100,
     offset: int = 0,
 ) -> list[dict]:
-    email, telegram, purchases, actual_ltv, estimated_ltv, last_purchase = _user_scalar_subqueries()
+    email, telegram, purchases, actual_ltv, estimated_ltv, first_purchase, last_purchase = _user_scalar_subqueries()
+    initial_product_code = (
+        select(Product.code)
+        .join(Payment, Payment.product_id == Product.id)
+        .where(
+            Payment.user_id == User.id,
+            Payment.payment_status.in_(CONFIRMED_PAYMENT_STATUSES),
+        )
+        .order_by(func.coalesce(Payment.paid_at, Payment.source_event_at, Payment.created_at).asc())
+        .limit(1)
+        .correlate(User)
+        .scalar_subquery()
+    )
+    first_source = (
+        select(func.coalesce(AttributionEvent.utm_source, AttributionEvent.source_raw))
+        .where(
+            AttributionEvent.user_id == User.id,
+            or_(
+                AttributionEvent.utm_source.is_not(None),
+                AttributionEvent.source_raw.is_not(None),
+            ),
+        )
+        .order_by(
+            AttributionEvent.occurred_at.asc().nullslast(),
+            AttributionEvent.created_at.asc(),
+        )
+        .limit(1)
+        .correlate(User)
+        .scalar_subquery()
+    )
     active_accompaniment = exists(
         select(RecurringSubscription.id).where(
             RecurringSubscription.user_id == User.id,
@@ -194,7 +232,10 @@ def list_users(
             purchases.label("purchase_count"),
             actual_ltv.label("ltv_rub"),
             estimated_ltv.label("estimated_ltv_rub"),
+            first_purchase.label("first_purchase_at"),
             last_purchase.label("last_purchase_at"),
+            initial_product_code.label("initial_product_code"),
+            first_source.label("first_source"),
             case(
                 (active_accompaniment, "active"),
                 (paid_accompaniment, "former"),
@@ -230,8 +271,16 @@ def list_users(
             )
         )
     rows = db.execute(stmt).mappings().all()
+    tariff_by_product_code = {
+        code: tariff_name(db, code) or "Основной"
+        for code in {row["initial_product_code"] for row in rows if row["initial_product_code"]}
+    }
     user_ids = [row["id"] for row in rows]
     access_by_user: dict[uuid.UUID, list[str]] = {user_id: [] for user_id in user_ids}
+    messengers_by_user: dict[uuid.UUID, list[dict]] = {
+        user_id: [] for user_id in user_ids
+    }
+    note_count_by_user: dict[uuid.UUID, int] = {user_id: 0 for user_id in user_ids}
     if user_ids:
         access_rows = db.execute(
             select(UserAccess.user_id, Resource.code)
@@ -247,6 +296,39 @@ def list_users(
         ).all()
         for user_id, code in access_rows:
             access_by_user[user_id].append(code)
+        messenger_rows = db.execute(
+            select(
+                MessengerAccount.user_id,
+                MessengerAccount.platform,
+                MessengerAccount.platform_user_id,
+                MessengerAccount.username,
+                MessengerAccount.first_seen_at,
+                MessengerAccount.last_seen_at,
+                MessengerAccount.main_scenario_seen_at,
+                MessengerAccount.subscription_status,
+            )
+            .where(MessengerAccount.user_id.in_(user_ids))
+            .order_by(MessengerAccount.created_at.asc())
+        ).mappings().all()
+        for messenger in messenger_rows:
+            messengers_by_user[messenger["user_id"]].append(
+                {
+                    "platform": messenger["platform"],
+                    "platform_user_id": messenger["platform_user_id"],
+                    "username": messenger["username"],
+                    "first_seen_at": messenger["first_seen_at"],
+                    "last_seen_at": messenger["last_seen_at"],
+                    "main_scenario_seen_at": messenger["main_scenario_seen_at"],
+                    "subscription_status": messenger["subscription_status"],
+                }
+            )
+        note_rows = db.execute(
+            select(ClientNote.user_id, func.count(ClientNote.id))
+            .where(ClientNote.user_id.in_(user_ids))
+            .group_by(ClientNote.user_id)
+        ).all()
+        for user_id, note_count in note_rows:
+            note_count_by_user[user_id] = note_count
     return [
         {
             "id": str(row["id"]),
@@ -259,12 +341,17 @@ def list_users(
             "ltv_rub": money(row["ltv_rub"]),
             "estimated_ltv_rub": money(row["estimated_ltv_rub"]),
             "total_ltv_rub": money(row["ltv_rub"]) + money(row["estimated_ltv_rub"]),
+            "first_purchase_at": row["first_purchase_at"],
             "last_purchase_at": row["last_purchase_at"],
+            "initial_tariff": tariff_by_product_code.get(row["initial_product_code"]),
+            "first_source": row["first_source"],
             "accompaniment_status": row["accompaniment_status"],
             "first_seen_at": row["first_seen_at"],
             "access_review_status": row["access_review_status"],
             "tilda_access_status": row["tilda_access_status"],
             "accesses": access_by_user[row["id"]],
+            "messengers": messengers_by_user[row["id"]],
+            "note_count": note_count_by_user[row["id"]],
         }
         for row in rows
     ]
@@ -340,6 +427,9 @@ def list_payments(
             "currency": payment.currency,
             "status": payment.payment_status,
             "review_status": payment.review_status,
+            "source": payment.source,
+            "payment_system": payment.payment_system,
+            "external_order_id": payment.external_order_id,
             "paid_at": payment.paid_at,
             "source_event_at": payment.source_event_at,
             "snapshot_at": snapshot,
@@ -429,6 +519,98 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
         .order_by(LegacyImportRecord.created_at.desc())
         .limit(1)
     )
+    active_access_codes = {
+        code
+        for access, code, _ in accesses
+        if access.revoked_at is None
+        and access.paused_at is None
+        and (access.expires_at is None or access.expires_at > datetime.now(timezone.utc))
+    }
+    masterclass_progress = list(
+        db.scalars(
+            select(MasterclassDayProgress)
+            .where(MasterclassDayProgress.user_id == user_id)
+            .order_by(MasterclassDayProgress.day_number.asc())
+        )
+    )
+    calorie_progress = list(
+        db.scalars(
+            select(CourseStageProgress)
+            .where(
+                CourseStageProgress.user_id == user_id,
+                CourseStageProgress.course_code == "calories",
+            )
+            .order_by(CourseStageProgress.stage_number.asc())
+        )
+    )
+    dqs_state = db.scalar(select(DqsState).where(DqsState.user_id == user_id))
+    active_coaching = bool(
+        db.scalar(
+            select(
+                exists(
+                    select(RecurringSubscription.id).where(
+                        RecurringSubscription.user_id == user_id,
+                        RecurringSubscription.product_code == "COACHING",
+                        RecurringSubscription.status.in_(("active", "charging")),
+                    )
+                )
+            )
+        )
+    )
+    paid_coaching = bool(
+        db.scalar(
+            select(
+                exists(
+                    select(RecurringSubscription.id).where(
+                        RecurringSubscription.user_id == user_id,
+                        RecurringSubscription.product_code == "COACHING",
+                        RecurringSubscription.successful_payments > 0,
+                        RecurringSubscription.status != "test_paid",
+                    )
+                )
+            )
+        )
+    )
+    product_progress: list[dict] = []
+    if "ACCESS_MASTERCLASS" in active_access_codes:
+        completed = sum(item.completed_at is not None for item in masterclass_progress)
+        legacy_complete = bool(tilda_snapshot and not masterclass_progress)
+        product_progress.append(
+            {
+                "code": "masterclass",
+                "name": "Мастер-класс",
+                "completed": 20 if legacy_complete else completed,
+                "total": 20,
+                "percent": 100 if legacy_complete else round(completed / 20 * 100),
+                "legacy_assumed_complete": legacy_complete,
+            }
+        )
+    if "ACCESS_CALORIES" in active_access_codes:
+        completed = sum(item.completed_at is not None for item in calorie_progress)
+        legacy_complete = bool(tilda_snapshot and not calorie_progress)
+        product_progress.append(
+            {
+                "code": "calories",
+                "name": "Калорийный курс",
+                "completed": 5 if legacy_complete else completed,
+                "total": 5,
+                "percent": 100 if legacy_complete else round(completed / 5 * 100),
+                "legacy_assumed_complete": legacy_complete,
+            }
+        )
+    if "ACCESS_DQS" in active_access_codes:
+        completed = min(len(dqs_state.days or {}), 30) if dqs_state is not None else 0
+        legacy_complete = bool(tilda_snapshot and dqs_state is None)
+        product_progress.append(
+            {
+                "code": "dqs",
+                "name": "Diet Quality Score",
+                "completed": 30 if legacy_complete else completed,
+                "total": 30,
+                "percent": 100 if legacy_complete else round(completed / 30 * 100),
+                "legacy_assumed_complete": legacy_complete,
+            }
+        )
     questionnaire_runs = list(
         db.scalars(
             select(QuestionnaireRun)
@@ -479,6 +661,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
         "display_name": user.display_name,
         "status": user.status,
         "data_origin": user.data_origin,
+        "accompaniment_status": "active" if active_coaching else "former" if paid_coaching else "none",
         "first_seen_at": user.first_seen_at,
         "access_review_status": user.access_review_status,
         "access_review_note": user.access_review_note,
@@ -490,6 +673,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             "last_active_at": (tilda_snapshot.raw_payload or {}).get("last_active_at"),
             "source": tilda_snapshot.source,
         } if tilda_snapshot else None,
+        "product_progress": product_progress,
         "emails": [
             {
                 "email": item.email_original,
@@ -536,6 +720,9 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
                 "currency": payment.currency,
                 "status": payment.payment_status,
                 "review_status": payment.review_status,
+                "source": payment.source,
+                "payment_system": payment.payment_system,
+                "external_order_id": payment.external_order_id,
                 "paid_at": payment.paid_at,
                 "source_event_at": payment.source_event_at,
             }
@@ -777,7 +964,7 @@ def merge_tag(db: Session, source_tag_id: uuid.UUID, target_name: str) -> bool:
 
 
 def list_access_reviews(db: Session, limit: int = 1000) -> list[dict]:
-    email, telegram, purchases, _, _ = _user_scalar_subqueries()
+    email, telegram, purchases, _, _, _, _ = _user_scalar_subqueries()
     rows = db.execute(
         select(
             User.id, User.display_name, User.access_review_status, User.access_review_note,

@@ -16,6 +16,7 @@
     knowledge: "База знаний"
   };
   const stateKey = "edabalans-admin-shell-state";
+  const scrollKey = "edabalans-admin-shell-scroll";
 
   function esc(value) {
     return String(value == null ? "" : value).replace(/[&<>"']/g, function (char) {
@@ -41,9 +42,10 @@
     const disabled = moduleId === "messaging.telegram.engine";
     const iconClass = moduleId === "platform.crm" ? " admin-nav-icon-crm" : "";
     const copy = `<span class="admin-nav-icon${iconClass}">${esc(icon)}</span><span class="admin-nav-copy"><b>${esc(item.label)}</b>${disabled ? '<small>редактируется через Codex</small>' : ""}</span>`;
-    if (disabled) return `<span class="admin-nav-disabled" title="${esc(item.description)}" aria-label="${esc(item.label)}" aria-disabled="true">${copy}</span>`;
+    const category = esc(item.category || "service");
+    if (disabled) return `<span class="admin-nav-disabled" data-admin-category="${category}" title="${esc(item.description)}" aria-label="${esc(item.label)}" aria-disabled="true">${copy}</span>`;
     const external = /^https:\/\//.test(item.url) && new URL(item.url).origin !== location.origin;
-    return `<a href="${esc(item.url)}" title="${esc(item.label)}" aria-label="${esc(item.label)}"${selected(item) ? ' class="active" aria-current="page"' : ""}${external ? ' target="_blank" rel="noopener"' : ""}>${copy}</a>`;
+    return `<a href="${esc(item.url)}" data-admin-category="${category}" title="${esc(item.label)}" aria-label="${esc(item.label)}"${selected(item) ? ' class="active" aria-current="page"' : ""}${external ? ' target="_blank" rel="noopener"' : ""}>${copy}</a>`;
   }
 
   function render(modules) {
@@ -71,8 +73,12 @@
     }).filter(function (group) { return group.items.length; });
     const nav = document.querySelector(".admin-shell-nav");
     nav.innerHTML = groups.map(function (group) {
-      return `<span>${categoryNames[group.category]}</span>` + group.items.map(function (item) { return itemMarkup(item, item.module_id, uniqueIcon(item)); }).join("");
+      return `<span data-admin-category="${group.category}">${categoryNames[group.category]}</span>` + group.items.map(function (item) {
+        return itemMarkup(Object.assign({category: group.category}, item), item.module_id, uniqueIcon(item));
+      }).join("");
     }).join("");
+    const rememberedScroll = Number(sessionStorage.getItem(scrollKey) || 0);
+    requestAnimationFrame(function () { nav.scrollTop = rememberedScroll; });
   }
 
   let sidebar = document.querySelector(".admin-sidebar");
@@ -83,14 +89,14 @@
   }
   sidebar.innerHTML = `
     <div class="admin-shell-brand-row">
-      <a class="admin-brand" href="/admin"><b>е</b><span>edabalans<small>единая админка</small></span></a>
+      <a class="admin-brand" href="/admin"><img src="/favicon.png" alt=""><span>Похудение — это есть.рф<small>админка</small></span></a>
       <div class="admin-shell-controls">
         <button class="admin-shell-control" data-action="collapse" type="button" title="Свернуть меню" aria-label="Свернуть меню">‹</button>
         <button class="admin-shell-control" data-action="hide" type="button" title="Скрыть меню" aria-label="Скрыть меню">×</button>
       </div>
     </div>
     <nav class="admin-nav admin-shell-nav" aria-label="Разделы админки"><a href="/crm"><span class="admin-nav-icon">👥</span><span class="admin-nav-copy"><b>CRM</b></span></a></nav>
-    <div class="admin-shell-footer"><button class="admin-shell-logout" type="button"><span class="admin-nav-icon">↪</span><span>Выйти</span></button></div>`;
+    <div class="admin-shell-footer"><a class="admin-shell-account" href="/lk"><span class="admin-nav-icon">⌂</span><span>Личный кабинет</span></a><button class="admin-shell-logout" type="button"><span class="admin-nav-icon">↪</span><span>Выйти</span></button></div>`;
 
   const backdrop = document.createElement("div");
   backdrop.className = "admin-shell-backdrop";
@@ -107,6 +113,10 @@
   mobileOpen.textContent = "☰";
   body.append(backdrop, open, mobileOpen);
   const collapseButton = sidebar.querySelector('[data-action="collapse"]');
+  const shellNav = sidebar.querySelector(".admin-shell-nav");
+  shellNav.addEventListener("scroll", function () {
+    sessionStorage.setItem(scrollKey, String(Math.round(shellNav.scrollTop)));
+  }, {passive: true});
 
   function setState(next) {
     body.classList.toggle("admin-shell-collapsed", next === "collapsed");

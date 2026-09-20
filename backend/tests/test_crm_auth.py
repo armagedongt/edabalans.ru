@@ -154,9 +154,9 @@ def test_unified_admin_requires_authentication() -> None:
     assert 'id="login-form"' in response.text
 
 
-def test_admin_surfaces_use_the_lightning_favicon() -> None:
+def test_admin_surfaces_use_the_brain_favicon() -> None:
     client = make_client()
-    favicon_link = '<link rel="icon" type="image/svg+xml" href="/admin/static/admin-favicon.svg">'
+    favicon_link = '<link rel="icon" type="image/png" href="/favicon.png">'
 
     login_page = client.get("/admin")
     assert favicon_link in login_page.text
@@ -164,7 +164,7 @@ def test_admin_surfaces_use_the_lightning_favicon() -> None:
     favicon = client.get("/admin/static/admin-favicon.svg")
     assert favicon.status_code == 200
     assert favicon.headers["content-type"].startswith("image/svg+xml")
-    assert "⚡" in favicon.text
+    assert "🧠" in favicon.text
 
     assert client.post(
         "/admin/api/login",

@@ -322,7 +322,7 @@
     loading();
     const result = await api(`/admin/api/apps/users?app_code=${code}`);
     root.innerHTML = `
-      <div class="admin-app-directory-head"><div><h1>${esc(labels[code])}</h1><p>${esc(descriptions[code])}. Сначала люди с данными, затем с доступом.</p></div><label><span>Найти любого человека</span><input id="admin-app-directory-search" type="search" placeholder="Имя или email"></label></div>
+      <div class="admin-app-directory-head"><h1>${esc(labels[code])}</h1><label><input id="admin-app-directory-search" type="search" aria-label="Поиск человека" placeholder="Имя или email"></label></div>
       <div class="admin-app-directory-list">${applicationUserRows(code, result.users || [])}</div>`;
     const list = root.querySelector(".admin-app-directory-list");
     const input = document.getElementById("admin-app-directory-search");
