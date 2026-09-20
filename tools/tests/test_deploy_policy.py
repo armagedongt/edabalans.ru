@@ -208,7 +208,10 @@ class DeployPolicyTests(unittest.TestCase):
         self.assertEqual(source.count("if: steps.impact.outputs.backend == 'true'"), 3)
         self.assertEqual(source.count("if: steps.impact.outputs.telegram == 'true'"), 2)
         self.assertIn("if: steps.impact.outputs.migration == 'true'", source)
-        self.assertIn("run test:blog-draft-authoring", source)
+        self.assertIn(
+            "BLOG_QA_BASE_URL=http://127.0.0.1:8790 npm --prefix backend/tests/browser run test:blog-draft-authoring",
+            source,
+        )
         self.assertIn("Base.metadata.create_all(engine)", source)
 
     @unittest.skipUnless(shutil.which("bash"), "deploy classifier requires bash")
