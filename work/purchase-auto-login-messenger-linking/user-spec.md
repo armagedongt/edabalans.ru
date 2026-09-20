@@ -87,9 +87,10 @@ type: feature
 
 ### 3. Обязательный материал первого дня
 
-1. Для покупок, подтверждённых после release cutoff, структура первого дня
-   содержит обычный обязательный материал подключения мессенджера: после
-   материала о дневнике и до взвешивания и анкеты.
+1. Для пользователя, впервые получившего доступ к Мастер-классу после release
+   cutoff, структура первого дня содержит обычный обязательный материал
+   подключения мессенджера: после материала о дневнике и до взвешивания и анкеты.
+   Повторная покупка человека, имевшего доступ до cutoff, не меняет его policy.
 2. Материал и верхняя панель ЛК используют один серверный компонент/контракт и
    показывают четыре состояния:
    - не подключён ни один мессенджер — требуется Telegram или MAX;
@@ -97,8 +98,8 @@ type: feature
      предлагается как необязательный;
    - подключены оба и основной определён — показывается выбранный канал;
    - подключены оба без основного — требуется выбрать основной.
-3. Нажатие «Подключить Telegram» или «Подключить MAX» создаёт независимую
-   ограниченную по времени попытку и открывает соответствующего бота. Связь
+3. Нажатие «Подключить Telegram» или «Подключить MAX» создаёт независимый
+   одноразовый token на 15 минут и открывает соответствующего бота. Связь
    считается созданной только после server-side consume токена и сохранения
    `MessengerAccount`; первоначальный клик не является завершением шага.
 4. Бот подтверждает связь и даёт кнопку возврата в точный материал/панель.
@@ -228,6 +229,9 @@ type: feature
 - [ ] Впервые созданный пароль доступен Сергею через существующий защищённый
       административный reveal-path в карточке клиента и совпадает с отправленным
       email; пароль не появляется в обычных API, URL или логах.
+- [ ] Временная или окончательная ошибка SMTP не отменяет оплаченный доступ и
+      часовую browser-bound кнопку входа. Временная ошибка повторяется штатным
+      email worker, а окончательный статус доставки сохраняется для поддержки.
 - [ ] T123 продолжает содержать только существующий `/homepage.js`; реальный
       checkout использует server-owned first-party handoff без ручного изменения
       Tilda и без второй копии JavaScript.
@@ -267,7 +271,8 @@ type: feature
 - [ ] Явная кнопка Telegram/MAX отправляет материал в названную платформу один раз;
       если платформа не связана, обычный `/start <token>` одновременно привязывает
       account и ставит материал в отправку; неиспользованный/истёкший token ничего
-      не отправляет, повторное нажатие безопасно создаёт новый.
+      не отправляет, 15-минутный срок проверяется сервером, повторное нажатие
+      безопасно создаёт новый token и инвалидирует предыдущий.
 - [ ] Канонический реестр содержит каждый proactive user-level producer, его
       `content_kind` и Telegram/MAX-renderers; незарегистрированный producer или
       отсутствие renderer блокируют выпуск, а platform-local reactive replies,
@@ -291,6 +296,9 @@ type: feature
   bot payload или browser grant.
 - Raw grant/link tokens не хранятся в базе и после выпуска не возвращаются status
   endpoint; используются hash, HttpOnly/Secure/SameSite cookie и ограниченные TTL.
+  Обычный messenger deep-link token живёт 15 минут, как текущий course-link
+  contract; это срок безопасности ссылки, а не отдельное пользовательское
+  ожидание или фоновая очередь.
 - Pre-payment cookie должна жить не меньше checkout TTL плюс 60 минут, а право
   обмена после оплаты — 60 минут от `paid_at`.
 - Создание credential, access, browser session, messenger link, preferred и
@@ -375,16 +383,20 @@ type: feature
 
 ## Testing
 
-**Unit tests:** нужны. Покрыть TTL от `paid_at`, hash/grant validation,
-детерминированный session token, credential branching, preferred resolver,
+**Unit tests:** нужны как минимальная граница для чистых детерминированных правил
+без БД и внешней сети. Покрыть расчёт TTL от `paid_at`, hash/grant validation,
+детерминированный session token, ветвление credential, preferred resolver,
 exact identity selection, proactive producer registry, platform renderer/length
-rules, идемпотентный consume link-token intent и course policy cutoff.
+rules и course policy cutoff.
 
-**Integration tests:** нужны. Проверить транзакции payment callback → access →
-credential/email; browser grant state machine; единственную сессию при гонке;
-Telegram/MAX link attempts; commit-before-confirmation; миграцию preferred;
-user-scoped sequence с callback старого Contact и следующим шагом в новом;
-suppressed/retry-until-expiry/failed delivery states; `/stop` и producer registry.
+**Integration tests:** нужны как минимальная надёжная граница для транзакций,
+ограничений схемы, очередей и нескольких сервисных компонентов. Проверить payment
+callback → access → credential → email-outbox, включая SMTP retry/final failure и
+независимость browser grant; grant state machine и единственную сессию при гонке;
+Telegram/MAX link attempts и идемпотентный consume 15-минутного token intent;
+commit-before-confirmation; миграцию preferred; user-scoped sequence с callback
+старого Contact и следующим шагом в новом; suppressed/retry-until-expiry/failed
+delivery states; `/stop` и producer registry.
 
 **E2E tests:** нужны. Browser tests проходят первую и повторную покупку,
 success/expired/wrong-browser, 45-дневную cookie, четыре состояния панели,
