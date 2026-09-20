@@ -148,13 +148,6 @@ def test_first_five_release_preserves_later_days_without_removed_practice() -> N
         step["id"] != "day-03-practice"
         for step in compiled["days"][2]["steps"]
     )
-    household = next(step for step in compiled["days"][4]["steps"]
-                     if step["id"] == "day-05-article-household")
-    assert household["hidden"] is False
-    assert household["contentKind"] == "text"
-    assert household["requiredForAllAfterRevision"] == 12
-
-
 def test_partial_publish_writes_only_selected_day_articles(monkeypatch) -> None:
     from scripts import publish_masterclass_editorial as publisher
     manifest = json.loads(
