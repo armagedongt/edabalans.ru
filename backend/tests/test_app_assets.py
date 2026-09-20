@@ -1406,14 +1406,14 @@ def test_strength_new_user_can_start_and_manage_own_workouts() -> None:
     assert "position:sticky;top:0" in text
     assert "renderEntryControls()+renderJournal()" in text
     assert "'<button class=\"active train\" onclick=\"ST.finishWorkout()\">Завершить тренировку</button>'" in text
-    assert "if(app.entryMode === 'train'){\n    return '';" in text
+    assert "function renderActions(){\n  return '';" in text
     assert "st-finish-bottom\"><button" in text
     assert "Тренировку 1 и Тренировку 2" not in text
     assert "Шаблон '+items[i].type+' · тренировка №" in text
     assert "st-modern-comment" in text
     assert "field.scrollHeight" in text
     assert "Как пользоваться" in text
-    assert ">Редактировать</button>" in text
+    assert "Редактировать шаблон '+i+" in text
     assert "Изменения применяются сразу" in text
     assert "undoManagerChange:function" in text
     assert "↶ Отменить" in text
