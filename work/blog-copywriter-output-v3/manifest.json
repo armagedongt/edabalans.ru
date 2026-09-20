@@ -1,0 +1,551 @@
+{
+  "schema_version": "blog-editorial-manifest-v1",
+  "project": "Похудение — это есть.рф",
+  "author": "Сергей Воронцов",
+  "adaptation_mode": "full_source",
+  "items": [
+    {
+      "external_id": "habits-formation-and-one-percent",
+      "catalog_id": "tilda-intensive-fpvaefo9e1",
+      "file": "habits-formation-and-one-percent-chto-vy-ne-ponimaete-o-formirovanii-privychek.md",
+      "source_url": "https://похудение-это-есть.рф/intensiv/tpost/fpvaefo9e1-kak-formiruyutsya-privichki-i-pravilo-1",
+      "title": "Что вы не понимаете о формировании привычек?",
+      "slug": "chto-vy-ne-ponimaete-o-formirovanii-privychek",
+      "category": "Похудение",
+      "excerpt": "Почему правило «21 дня» мало помогает со сложными изменениями — и как заменить героическое терпение привычкой улучшать питание хотя бы на 1%.",
+      "hero": "media/habits-formation-and-one-percent/01.webp",
+      "media": [
+        {
+          "file": "media/habits-formation-and-one-percent/01.webp",
+          "public_path": "/blog/media/habits-formation-and-one-percent/01.webp",
+          "source_url": "https://static.tildacdn.com/tild3639-3638-4139-a531-383964313937/image.png",
+          "width": 1280,
+          "height": 720,
+          "bytes": 65288
+        },
+        {
+          "file": "media/habits-formation-and-one-percent/02.webp",
+          "public_path": "/blog/media/habits-formation-and-one-percent/02.webp",
+          "source_url": "https://static.tildacdn.com/tild3963-3137-4533-b035-323539353165/image.png",
+          "width": 768,
+          "height": 768,
+          "bytes": 13674
+        },
+        {
+          "file": "media/habits-formation-and-one-percent/03.webp",
+          "public_path": "/blog/media/habits-formation-and-one-percent/03.webp",
+          "source_url": "https://static.tildacdn.com/tild6563-3363-4264-b930-303534666161/image.png",
+          "width": 856,
+          "height": 499,
+          "bytes": 37512
+        }
+      ],
+      "source_text_sha256": "c49868a9c9ac9c0231aef1b4066e17e5f45db3d815f270f0aadceac016ce7b0f",
+      "suggested_cta": "Предложить Мастер-класс как последовательную практику изменения питания и пищевых привычек.",
+      "related_candidates": [
+        "Похудение начинается не с похудения!",
+        "Три ошибки в начале похудения",
+        "Как начать тренироваться и не бросить"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "11339712",
+      "catalog_id": "A051",
+      "file": "11339712-kakaya-samaya-vrednaya-dieta.md",
+      "source_url": "https://pikabu.ru/story/kakaya_samaya_vrednaya_dieta_11339712",
+      "title": "Какая самая вредная диета?",
+      "slug": "kakaya-samaya-vrednaya-dieta",
+      "category": "Качество питания",
+      "excerpt": "Самая вредная диета не обязательно выглядит опасной. Иногда она просто отнимает силы, ничего не даёт и убеждает человека, что нормальное питание вообще не работает.",
+      "hero": "media/11339712/01.webp",
+      "media": [
+        {
+          "file": "media/11339712/01.webp",
+          "public_path": "/blog/media/11339712/01.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2024/03/28/6/1711617357162397936.jpg",
+          "width": 1051,
+          "height": 790,
+          "bytes": 47460
+        },
+        {
+          "file": "media/11339712/02.webp",
+          "public_path": "/blog/media/11339712/02.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2024/03/28/6/1711618116162380938.jpg",
+          "width": 1153,
+          "height": 750,
+          "bytes": 83732
+        },
+        {
+          "file": "media/11339712/03.webp",
+          "public_path": "/blog/media/11339712/03.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2024/03/28/6/1711619088118441458.jpg",
+          "width": 1287,
+          "height": 1024,
+          "bytes": 199296
+        },
+        {
+          "file": "media/11339712/04.webp",
+          "public_path": "/blog/media/11339712/04.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/03/28/7/1711625507185237847.png",
+          "width": 720,
+          "height": 405,
+          "bytes": 26790
+        },
+        {
+          "file": "media/11339712/05.webp",
+          "public_path": "/blog/media/11339712/05.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/big/2024/03/28/7/1711626516174917720.jpg",
+          "width": 918,
+          "height": 909,
+          "bytes": 62806
+        },
+        {
+          "file": "media/11339712/06.webp",
+          "public_path": "/blog/media/11339712/06.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/2024/03/28/7/1711626959186348806.jpg",
+          "width": 506,
+          "height": 633,
+          "bytes": 14178
+        },
+        {
+          "file": "media/11339712/07.webp",
+          "public_path": "/blog/media/11339712/07.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/03/28/8/1711627421166553185.jpg",
+          "width": 908,
+          "height": 273,
+          "bytes": 25002
+        }
+      ],
+      "source_text_sha256": "02cb62b5f74f8dbb0ddffca766a5dc046c493c17a723c551f39493bc6f98655c",
+      "suggested_cta": "Предложить Мастер-класс как способ выстроить питание без бессмысленных запретов и таблиц совместимости.",
+      "related_candidates": [
+        "ПП-рецепты — это плохо. И вот почему!",
+        "Гликемический индекс — это лишнее!",
+        "Неприятная правда про мёд"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "intuitivnoe-pitanie-04-27-2",
+      "catalog_id": "A233",
+      "file": "intuitivnoe-pitanie-04-27-2-intuitivnoe-pitanie-vy-vse-nepravilno-ponyali.md",
+      "source_url": "https://telegra.ph/intuitivnoe-pitanie-04-27-2",
+      "title": "Интуитивное питание — вы всё неправильно поняли",
+      "slug": "intuitivnoe-pitanie-vy-vse-nepravilno-ponyali",
+      "category": "Похудение",
+      "excerpt": "Интуитивное питание не обязано само по себе снижать вес. Его задача — вернуть нормальные отношения с едой, чтобы дальше можно было выбирать подходящий способ похудения.",
+      "hero": "media/intuitivnoe-pitanie-04-27-2/01.webp",
+      "media": [
+        {
+          "file": "media/intuitivnoe-pitanie-04-27-2/01.webp",
+          "public_path": "/blog/media/intuitivnoe-pitanie-04-27-2/01.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/2024/04/27/10/171423750412834217.jpg",
+          "width": 533,
+          "height": 494,
+          "bytes": 45786
+        },
+        {
+          "file": "media/intuitivnoe-pitanie-04-27-2/02.webp",
+          "public_path": "/blog/media/intuitivnoe-pitanie-04-27-2/02.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/04/26/8/1714138292132961752.png",
+          "width": 779,
+          "height": 194,
+          "bytes": 9844
+        },
+        {
+          "file": "media/intuitivnoe-pitanie-04-27-2/03.webp",
+          "public_path": "/blog/media/intuitivnoe-pitanie-04-27-2/03.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/04/26/10/1714152265144029823.jpg",
+          "width": 873,
+          "height": 750,
+          "bytes": 62856
+        },
+        {
+          "file": "media/intuitivnoe-pitanie-04-27-2/04.webp",
+          "public_path": "/blog/media/intuitivnoe-pitanie-04-27-2/04.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/04/26/11/1714161158119296127.jpg",
+          "width": 1207,
+          "height": 531,
+          "bytes": 56146
+        },
+        {
+          "file": "media/intuitivnoe-pitanie-04-27-2/05.webp",
+          "public_path": "/blog/media/intuitivnoe-pitanie-04-27-2/05.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/2024/04/27/10/1714239520118519670.jpg",
+          "width": 650,
+          "height": 569,
+          "bytes": 23884
+        },
+        {
+          "file": "media/intuitivnoe-pitanie-04-27-2/06.webp",
+          "public_path": "/blog/media/intuitivnoe-pitanie-04-27-2/06.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/2024/04/27/10/1714239281142781006.jpg",
+          "width": 570,
+          "height": 314,
+          "bytes": 31582
+        }
+      ],
+      "source_text_sha256": "adc03f62d89394f7960acdaa8c31262abde184624ab0d238748ec5e5883f01a5",
+      "suggested_cta": "Предложить Мастер-класс как способ натренировать пищевую интуицию на практике, а не полагаться на неё вслепую.",
+      "related_candidates": [
+        "Похудение начинается не с похудения!",
+        "Какая самая вредная диета?",
+        "Три ошибки в начале похудения"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "11665295",
+      "catalog_id": "A066",
+      "file": "11665295-musornaya-ryba-ili-musornye-nutriciologi.md",
+      "source_url": "https://pikabu.ru/story/musornaya_ryiba_ili_musornyie_nutritsiologi_11665295",
+      "title": "Мусорная рыба или мусорные нутрициологи?",
+      "slug": "musornaya-ryba-ili-musornye-nutriciologi",
+      "category": "Качество питания",
+      "excerpt": "Тилапию и пангасиуса регулярно называют «грязной рыбой». Разбираю три популярных претензии: условия выращивания, загрязнения и пищевую ценность.",
+      "hero": "media/11665295/01.webp",
+      "media": [
+        {
+          "file": "media/11665295/01.webp",
+          "public_path": "/blog/media/11665295/01.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/17223368731707616.png",
+          "width": 1600,
+          "height": 1154,
+          "bytes": 110266
+        },
+        {
+          "file": "media/11665295/02.webp",
+          "public_path": "/blog/media/11665295/02.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/1722336936198348081.png",
+          "width": 1600,
+          "height": 1069,
+          "bytes": 137008
+        },
+        {
+          "file": "media/11665295/03.webp",
+          "public_path": "/blog/media/11665295/03.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/1722336959132474331.png",
+          "width": 1600,
+          "height": 1060,
+          "bytes": 206496
+        },
+        {
+          "file": "media/11665295/04.webp",
+          "public_path": "/blog/media/11665295/04.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/1722336986135489986.png",
+          "width": 1600,
+          "height": 1200,
+          "bytes": 287434
+        },
+        {
+          "file": "media/11665295/05.webp",
+          "public_path": "/blog/media/11665295/05.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/1722337014135656316.png",
+          "width": 1600,
+          "height": 1078,
+          "bytes": 141682
+        },
+        {
+          "file": "media/11665295/06.webp",
+          "public_path": "/blog/media/11665295/06.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/172233706213491868.png",
+          "width": 1326,
+          "height": 1328,
+          "bytes": 45904
+        },
+        {
+          "file": "media/11665295/07.webp",
+          "public_path": "/blog/media/11665295/07.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/1722337600132978419.jpg",
+          "width": 1470,
+          "height": 802,
+          "bytes": 71812
+        },
+        {
+          "file": "media/11665295/08.webp",
+          "public_path": "/blog/media/11665295/08.webp",
+          "source_url": "https://cs13.pikabu.ru/post_img/big/2024/07/30/7/1722337265279320808.png",
+          "width": 1600,
+          "height": 1061,
+          "bytes": 119714
+        }
+      ],
+      "source_text_sha256": "c8d6760f9e99df97bda064fbd8e95cee935778dc7aa72ac43a186d8e7c272430",
+      "suggested_cta": "Предложить Мастер-класс как способ оценивать питание по рациону целиком, а не по страшилкам об одном продукте.",
+      "related_candidates": [
+        "Неприятная правда про мёд",
+        "Какая самая вредная диета?",
+        "Гликемический индекс — это лишнее!"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "12109482",
+      "catalog_id": "A081",
+      "file": "12109482-zadacha-pohudet-uroven-slozhnosti-zima.md",
+      "source_url": "https://pikabu.ru/story/zadacha__pokhudet_uroven_slozhnosti__zima_12109482",
+      "title": "Задача — похудеть. Уровень сложности — ЗИМА",
+      "slug": "zadacha-pohudet-uroven-slozhnosti-zima",
+      "category": "Похудение",
+      "excerpt": "Зимой мы меньше двигаемся, реже едим овощи и фрукты и легче проваливаемся в праздничное «дожиралово». Вот что можно сделать без героизма.",
+      "hero": "media/12109482/01.webp",
+      "media": [
+        {
+          "file": "media/12109482/01.webp",
+          "public_path": "/blog/media/12109482/01.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/12/07/9/1733583500193130408.jpg",
+          "width": 754,
+          "height": 439,
+          "bytes": 34706
+        },
+        {
+          "file": "media/12109482/02.webp",
+          "public_path": "/blog/media/12109482/02.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/12/07/8/1733576927181583272.jpg",
+          "width": 962,
+          "height": 683,
+          "bytes": 97480
+        },
+        {
+          "file": "media/12109482/03.webp",
+          "public_path": "/blog/media/12109482/03.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/12/07/9/1733581833172516978.png",
+          "width": 748,
+          "height": 377,
+          "bytes": 39364
+        },
+        {
+          "file": "media/12109482/04.webp",
+          "public_path": "/blog/media/12109482/04.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/12/07/8/1733577177113392097.jpg",
+          "width": 960,
+          "height": 960,
+          "bytes": 34594
+        },
+        {
+          "file": "media/12109482/05.webp",
+          "public_path": "/blog/media/12109482/05.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/12/07/8/173357884017695120.jpg",
+          "width": 550,
+          "height": 400,
+          "bytes": 30482
+        },
+        {
+          "file": "media/12109482/06.webp",
+          "public_path": "/blog/media/12109482/06.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/2024/12/07/10/1733588109164646938.jpg",
+          "width": 700,
+          "height": 718,
+          "bytes": 136022
+        },
+        {
+          "file": "media/12109482/07.webp",
+          "public_path": "/blog/media/12109482/07.webp",
+          "source_url": "https://cs15.pikabu.ru/post_img/big/2024/12/07/10/1733587994145941933.png",
+          "width": 749,
+          "height": 155,
+          "bytes": 10768
+        }
+      ],
+      "source_text_sha256": "ec3243c52f3e7d569774f39dbb12b3c82f4e0e5218d408768a4ce71d2826cce8",
+      "suggested_cta": "Предложить бесплатный интенсив как спокойный первый шаг к изменениям без ожидания идеального сезона.",
+      "related_candidates": [
+        "Сколько времени нужно на похудение?",
+        "Три ошибки в начале похудения",
+        "Так можно пить во время еды или нет?"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "13178972",
+      "catalog_id": "A090",
+      "file": "13178972-izmeryaem-vashu-zhirnost.md",
+      "source_url": "https://pikabu.ru/story/izmeryaem_vashu_zhirnost_13178972",
+      "title": "Измеряем вашу жирность",
+      "slug": "izmeryaem-vashu-zhirnost",
+      "category": "ЗОЖ",
+      "excerpt": "Как примерно оценить процент жира дома, зачем знать диапазон нормы и почему одна цифра не должна превращаться в приговор или стандарт красоты.",
+      "hero": "media/13178972/01.webp",
+      "media": [
+        {
+          "file": "media/13178972/01.webp",
+          "public_path": "/blog/media/13178972/01.webp",
+          "source_url": "https://cs18.pikabu.ru/s/2025/09/13/12/an6rdg3z_lg.jpg",
+          "width": 842,
+          "height": 1112,
+          "bytes": 54028
+        },
+        {
+          "file": "media/13178972/02.webp",
+          "public_path": "/blog/media/13178972/02.webp",
+          "source_url": "https://cs17.pikabu.ru/s/2025/09/13/13/vnqvlywh_lg.png",
+          "width": 762,
+          "height": 261,
+          "bytes": 21394
+        },
+        {
+          "file": "media/13178972/03.webp",
+          "public_path": "/blog/media/13178972/03.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2025/09/13/13/4ovuxgxa_lg.png",
+          "width": 900,
+          "height": 540,
+          "bytes": 33942
+        },
+        {
+          "file": "media/13178972/04.webp",
+          "public_path": "/blog/media/13178972/04.webp",
+          "source_url": "https://cs18.pikabu.ru/s/2025/09/13/13/46vrclil_lg.png",
+          "width": 900,
+          "height": 540,
+          "bytes": 40172
+        },
+        {
+          "file": "media/13178972/05.webp",
+          "public_path": "/blog/media/13178972/05.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2025/09/13/13/wszuxg4j_lg.jpg",
+          "width": 737,
+          "height": 876,
+          "bytes": 22446
+        },
+        {
+          "file": "media/13178972/06.webp",
+          "public_path": "/blog/media/13178972/06.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2025/09/13/14/te5ewcr5_lg.png",
+          "width": 1500,
+          "height": 424,
+          "bytes": 53086
+        },
+        {
+          "file": "media/13178972/07.webp",
+          "public_path": "/blog/media/13178972/07.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2025/09/13/14/hffkxm5g_lg.jpg",
+          "width": 1600,
+          "height": 1063,
+          "bytes": 97816
+        },
+        {
+          "file": "media/13178972/08.webp",
+          "public_path": "/blog/media/13178972/08.webp",
+          "source_url": "https://cs19.pikabu.ru/s/2025/09/13/13/ng7ux2oa.jpg",
+          "width": 225,
+          "height": 225,
+          "bytes": 7950
+        },
+        {
+          "file": "media/13178972/09.webp",
+          "public_path": "/blog/media/13178972/09.webp",
+          "source_url": "https://cs14.pikabu.ru/post_img/2022/03/17/4/164749310517523076.jpg",
+          "width": 604,
+          "height": 372,
+          "bytes": 13644
+        },
+        {
+          "file": "media/13178972/10.webp",
+          "public_path": "/blog/media/13178972/10.webp",
+          "source_url": "https://cs17.pikabu.ru/s/2025/09/13/14/dn4vlmgi_lg.jpg",
+          "width": 1406,
+          "height": 2532,
+          "bytes": 334208
+        },
+        {
+          "file": "media/13178972/11.webp",
+          "public_path": "/blog/media/13178972/11.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2025/09/13/14/aiakwkqi_lg.png",
+          "width": 800,
+          "height": 450,
+          "bytes": 36412
+        },
+        {
+          "file": "media/13178972/12.webp",
+          "public_path": "/blog/media/13178972/12.webp",
+          "source_url": "https://cs18.pikabu.ru/s/2025/09/13/14/rkibcpwr_lg.png",
+          "width": 762,
+          "height": 261,
+          "bytes": 21064
+        }
+      ],
+      "source_text_sha256": "e5fe37842151ef30605281efb2469a0d7502644ef414659eb88a0331ce351a53",
+      "suggested_cta": "Предложить Мастер-класс как следующий шаг для постепенного изменения питания после оценки исходной точки.",
+      "related_candidates": [
+        "Сколько времени нужно на похудение?",
+        "Потеря мышц при похудении",
+        "Похудение начинается не с похудения!"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "13762311",
+      "catalog_id": "A098",
+      "file": "13762311-velikiy-post-pohudenie-i-zdorove.md",
+      "source_url": "https://pikabu.ru/story/velikiy_post_pokhudenie_i_zdorove_13762311",
+      "title": "Великий пост, похудение и здоровье",
+      "slug": "velikiy-post-pohudenie-i-zdorove",
+      "category": "Качество питания",
+      "excerpt": "Пост может быть духовной практикой, но для питания это серьёзное ограничение. Разбираю белок, дефициты, похудение и разумные послабления.",
+      "hero": "media/13762311/01.webp",
+      "media": [
+        {
+          "file": "media/13762311/01.webp",
+          "public_path": "/blog/media/13762311/01.webp",
+          "source_url": "https://cs20.pikabu.ru/s/2026/03/07/19/cgskx3tn_lg.png",
+          "width": 1280,
+          "height": 720,
+          "bytes": 31840
+        },
+        {
+          "file": "media/13762311/02.webp",
+          "public_path": "/blog/media/13762311/02.webp",
+          "source_url": "https://cs17.pikabu.ru/s/2026/03/07/20/zezfldbg_lg.png",
+          "width": 1023,
+          "height": 417,
+          "bytes": 16028
+        }
+      ],
+      "source_text_sha256": "03f915f794b9c4887960c81450a31b69f58d4e90b009b6f5b772748592e065c4",
+      "suggested_cta": "Предложить Мастер-класс как способ сохранить структуру и качество питания при любых ограничениях.",
+      "related_candidates": [
+        "Мусорная рыба или мусорные нутрициологи?",
+        "ПП-рецепты — это плохо. И вот почему!",
+        "Похудение начинается не с похудения!"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    },
+    {
+      "external_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
+      "catalog_id": "A165",
+      "file": "Minus-12-kilogramm-za-2-mesyaca-07-13-minus-12-kilogrammov-za-2-mesyaca.md",
+      "source_url": "https://telegra.ph/Minus-12-kilogramm-za-2-mesyaca-07-13",
+      "title": "Минус 12 килограммов за 2 месяца",
+      "slug": "minus-12-kilogrammov-za-2-mesyaca",
+      "category": "Похудение",
+      "excerpt": "Что на практике потребуется от обычного человека, чтобы сбросить 12 килограммов за два месяца, и почему сначала полезнее проверить реалистичность цели.",
+      "hero": null,
+      "media": [],
+      "source_text_sha256": "0bdec25cf130d46f1d20e1d40b212eb59ce2fba01392aa4c2510b88e6b86a0fd",
+      "suggested_cta": "Предложить бесплатный интенсив как способ начать с реалистичного плана вместо экстремальной калорийности.",
+      "related_candidates": [
+        "Сколько времени нужно на похудение?",
+        "Похудение начинается не с похудения!",
+        "Три ошибки в начале похудения"
+      ],
+      "validation": "pass",
+      "review": "pass",
+      "factcheck": "owner-review-required"
+    }
+  ]
+}

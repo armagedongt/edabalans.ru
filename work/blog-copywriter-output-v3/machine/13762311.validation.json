@@ -1,0 +1,68 @@
+{
+  "schema_version": "author-validation-v1",
+  "status": "pass",
+  "pack_sha256": "e1de8f8edf6133b5ad6722c31541fdbca049d6adec4c947758f1289bbb7ee00b",
+  "draft_sha256": "0996672f42c6fc52e1984877d43809e07fbf0e401a75bd64252e0a4e4df5a6d3",
+  "review_sha256": "42b45b1b84bd6f06636b32838bd7f25ab0e80319f7a51c343d2f9d119a07a50c",
+  "validated_at": "2026-09-20T22:15:33.950502+00:00",
+  "missing_verbatim": [],
+  "unresolved_placeholders": [],
+  "protected_layer_errors": [],
+  "inline_binding_review_required_once": null,
+  "proofread_change_review_required_once": null,
+  "rewrite_continuity_review_required_once": {
+    "goal": "Сохранить полный авторский смысл, фактуру, голос, примеры и медиа; убрать только навигацию, рекламу и хвост исходной площадки; не добавлять CTA и не исправлять научную фактуру без решения владельца.",
+    "preserve": [
+      "central thesis",
+      "required facts",
+      "author position",
+      "useful examples",
+      "links and media unless explicitly allowed"
+    ],
+    "comparison_texts": [],
+    "source_characters": 11023,
+    "draft_characters": 11898
+  },
+  "semantic_fact_review_required_once": [
+    "Центральный тезис выбранного полного источника сохранён без подмены.",
+    "Авторские примеры и численные утверждения не были тихо переписаны.",
+    "Платформенные хвосты отделены от самостоятельного текста статьи."
+  ],
+  "forbidden_claims_to_check_once": [
+    "Новый медицинский вывод, отсутствующий в полном источнике.",
+    "Призыв писать в комментарии, подписываться на площадку или переходить в старый бот."
+  ],
+  "preservation_metrics": {
+    "source_significant_tokens": 1382,
+    "token_coverage": 0.9638205499276411,
+    "source_visible_characters": 10979,
+    "draft_visible_characters": 11710,
+    "visible_length_ratio": 1.0665816558885144
+  },
+  "pending_manual_reviews": [
+    {
+      "id": "rewrite_continuity",
+      "instruction": "Confirm that the source argument, author position, and useful examples remain continuous."
+    },
+    {
+      "id": "semantic_facts",
+      "instruction": "Review the entire assembled draft, including claims introduced by the writer, for materially false or invented facts. Classify conflicts using source-integration-pass-v1.md and do not edit the draft. Record level 1 while owner calibration is active and always record level 2; pass means the review is complete and no level 3 conflict remains.",
+      "fact_check_profile": "editorial_materiality",
+      "items": [
+        "Центральный тезис выбранного полного источника сохранён без подмены.",
+        "Авторские примеры и численные утверждения не были тихо переписаны.",
+        "Платформенные хвосты отделены от самостоятельного текста статьи."
+      ]
+    },
+    {
+      "id": "forbidden_claims",
+      "instruction": "Confirm that none of the forbidden claims is present.",
+      "items": [
+        "Новый медицинский вывод, отсутствующий в полном источнике.",
+        "Призыв писать в комментарии, подписываться на площадку или переходить в старый бот."
+      ]
+    }
+  ],
+  "manual_review_errors": [],
+  "fact_review_expires_at": "2026-09-21T22:15:33.924057+00:00"
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "Codex full-source editorial review",
+  "reviewed_at": "2026-09-20T22:15:33.924057+00:00",
+  "pack_sha256": "e1de8f8edf6133b5ad6722c31541fdbca049d6adec4c947758f1289bbb7ee00b",
+  "draft_sha256": "0996672f42c6fc52e1984877d43809e07fbf0e401a75bd64252e0a4e4df5a6d3",
+  "fact_sources": [
+    {
+      "name": "Exact selected source",
+      "fingerprint": "03f915f794b9c4887960c81450a31b69f58d4e90b009b6f5b772748592e065c4"
+    }
+  ],
+  "checks": [
+    {
+      "id": "rewrite_continuity",
+      "result": "pass",
+      "notes": "Сопоставлены exact full source и Markdown. Сохранены тезис, порядок аргумента, авторские примеры, числа и голос; изменения ограничены заголовками, локальными медиа и удалением площадочной навигации/промо. Научные риски не исправлялись молча и вынесены в отдельный factcheck-notes.md."
+    },
+    {
+      "id": "semantic_facts",
+      "result": "pass",
+      "notes": "Сопоставлены exact full source и Markdown. Сохранены тезис, порядок аргумента, авторские примеры, числа и голос; изменения ограничены заголовками, локальными медиа и удалением площадочной навигации/промо. Научные риски не исправлялись молча и вынесены в отдельный factcheck-notes.md."
+    },
+    {
+      "id": "forbidden_claims",
+      "result": "pass",
+      "notes": "Сопоставлены exact full source и Markdown. Сохранены тезис, порядок аргумента, авторские примеры, числа и голос; изменения ограничены заголовками, локальными медиа и удалением площадочной навигации/промо. Научные риски не исправлялись молча и вынесены в отдельный factcheck-notes.md."
+    }
+  ]
+}
