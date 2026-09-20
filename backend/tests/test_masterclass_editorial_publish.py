@@ -129,11 +129,11 @@ def test_day_markdown_supplies_runtime_day_copy_and_checks() -> None:
     assert "<p>" in day["intro"]
 
     first = compiled["days"][0]
-    assert "достаточно одной галочки" in first["intro"]
+    assert "организационными вопросами" in first["intro"]
     assert first["afterText"] == ""
 
 
-def test_first_five_release_preserves_later_days_and_adds_practice() -> None:
+def test_first_five_release_preserves_later_days_without_removed_practice() -> None:
     manifest = json.loads(
         (ROOT / "content" / "masterclass" / "course" / "course.json").read_text(
             encoding="utf-8"
@@ -144,11 +144,15 @@ def test_first_five_release_preserves_later_days_and_adds_practice() -> None:
     days, _ = parse_program()
     apply_day_copy(compiled, days, through_day=5)
     assert compiled["days"][5:] == manifest["days"][5:]
-    practice = next(step for step in compiled["days"][2]["steps"]
-                    if step["id"] == "day-03-practice")
-    assert practice["hidden"] is False
-    assert practice["contentKind"] == "text"
-    assert practice["requiredForAllAfterRevision"] == 12
+    assert all(
+        step["id"] != "day-03-practice"
+        for step in compiled["days"][2]["steps"]
+    )
+    household = next(step for step in compiled["days"][4]["steps"]
+                     if step["id"] == "day-05-article-household")
+    assert household["hidden"] is False
+    assert household["contentKind"] == "text"
+    assert household["requiredForAllAfterRevision"] == 12
 
 
 def test_partial_publish_writes_only_selected_day_articles(monkeypatch) -> None:
