@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-09-21",
+  "module_id": "platform.content",
+  "purpose": "Канонический редакционный выбор исходной основы для будущих статей блога без изменения исходного каталога проявлений.",
+  "rules": {
+    "family": "Одна смысловая работа автора, опубликованная или развитая на нескольких площадках.",
+    "preferred_basis": "Полный авторский источник, от которого начинается перенос в Markdown. Он не удаляет и не подменяет остальные проявления семьи.",
+    "supplementary_source": "Авторский источник с уникальным блоком, который проверяется при подготовке статьи и может быть добавлен без переписывания остального текста.",
+    "previous_version": "Более ранняя или менее полная редакция той же работы.",
+    "platform_variant": "Практически тот же текст, приспособленный к другой площадке.",
+    "platform_variant_of_previous_version": "Площадочный вариант предыдущей редакции.",
+    "shortened_platform_variant": "Сокращённый вариант выбранной основы для другой площадки.",
+    "selection_policy": "Полнота и качество текста важнее формально более поздней даты публикации. Площадочные хвосты не считаются полезной полнотой."
+  },
+  "families": [
+    {
+      "family_id": "habits-formation-and-one-percent",
+      "title": "Что вы не понимаете о формировании привычек",
+      "owner_decision": "prepare_for_blog",
+      "preferred_basis": "tilda-intensive-fpvaefo9e1",
+      "preparation_mode": "full_source_with_author_supplement",
+      "rationale": "Сергей указал старый интенсив как обязательную полную основу. В нём находится самостоятельный прикладной блок «Правило 1%», которого нет в площадочных версиях. Telegraph-версия сохраняется как дополнительный авторский источник для более общего разбора сложных привычек.",
+      "members": [
+        {
+          "catalog_id": "tilda-intensive-fpvaefo9e1",
+          "source": "tilda",
+          "external_id": "fpvaefo9e1",
+          "title": "Как формируются привычки и «Правило 1%»",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/fpvaefo9e1-kak-formiruyutsya-privichki-i-pravilo-1",
+          "published_at": "2026-02-03T00:00:00+03:00",
+          "role": "preferred_basis",
+          "provenance": {
+            "source_basis": "exact_live_full_source",
+            "html_sha256": "83033276dac180486c96529d3a4fdbb610285a1f9b29349b84bc02bd996288cf",
+            "retrieved_at": "2026-09-21",
+            "private_snapshot_path": "C:\\private\\edabalans-content-authoring\\source-snapshots\\tilda-intensive-fpvaefo9e1.md",
+            "private_snapshot_sha256": "c49868a9c9ac9c0231aef1b4066e17e5f45db3d815f270f0aadceac016ce7b0f",
+            "immutable_library_status": "pending_registration",
+            "note": "Полная живая страница прочитана и сохранена вне Git в приватном корпусе. Регистрация knowledge:// URI остаётся отдельной синхронизацией Библиотекаря."
+          }
+        },
+        {
+          "catalog_id": "A243",
+          "source": "telegraph",
+          "external_id": "privichka-ne-volk-04-03",
+          "title": "Вот что мы забываем при формировании привычек!",
+          "url": "https://telegra.ph/privichka-ne-volk-04-03",
+          "published_at": "2024-04-03T21:06:55+03:00",
+          "role": "supplementary_source",
+          "content_item": "content://item/1b02c0f2-646f-48ce-911d-29ff5b5a60ec",
+          "text_sha256": "c89fcf301e24339b5022d8170ebbe092b4fdeff2045021fcd8aad90d5f09309f"
+        },
+        {
+          "catalog_id": "A028",
+          "source": "pikabu",
+          "external_id": "10757775",
+          "title": "Что вы НЕ понимаете о формировании привычек",
+          "url": "https://pikabu.ru/story/chto_vyi_ne_ponimaete_o_formirovanii_privyichek_10757775",
+          "published_at": "2023-10-21T18:23:43+03:00",
+          "role": "previous_version",
+          "content_item": "content://item/8f2abd8d-bc6a-437c-acfc-5f8ffc47198f",
+          "text_sha256": "d97a0710ce05427baccd4282a5257fb27bac9ba404ba78886a1f296f43f9f804"
+        },
+        {
+          "catalog_id": "A280",
+          "source": "vc.ru",
+          "external_id": "895597",
+          "title": "Что вы НЕ понимаете о формировании привычек",
+          "url": "https://vc.ru/flood/895597-chto-vy-ne-ponimaete-o-formirovanii-privychek",
+          "published_at": "2023-10-29",
+          "role": "platform_variant",
+          "text_sha256": "0b1401cbb126acb0af831180e1d3a288bd4114dc58dde2c3a7294292b278a858"
+        }
+      ]
+    },
+    {
+      "family_id": "most-harmful-diet",
+      "title": "Какая самая вредная диета?",
+      "owner_decision": "prepare_for_blog",
+      "preferred_basis": "A051",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Pikabu-версия опубликована позже и примерно на 900 знаков полнее; в ней развёрнут вывод о вреде бесполезных диет. Удаляются только площадочные CTA и навигация.",
+      "members": [
+        {"catalog_id": "A051", "source": "pikabu", "external_id": "11339712", "title": "Какая самая вредная диета?", "url": "https://pikabu.ru/story/kakaya_samaya_vrednaya_dieta_11339712", "published_at": "2024-04-20T12:04:26+03:00", "role": "preferred_basis", "content_item": "content://item/8e50ecd8-d9b7-4f12-a5a1-e438883e7bf5", "text_sha256": "32028d531a5c4e51d6e030ab6136b90b5b23f23ba045e04916f44bfa260c3f7f"},
+        {"catalog_id": "A245", "source": "telegraph", "external_id": "razdelno-04-07", "title": "Какая самая вредная диета?", "url": "https://telegra.ph/razdelno-04-07", "published_at": "2024-04-07T20:08:13+03:00", "role": "previous_version", "content_item": "content://item/152649fa-894f-428b-9f18-e90ecf386a61", "text_sha256": "375dd9869b03e17986237d9c07daf791f349aad1e569719c27ecc574cba75b41"}
+      ]
+    },
+    {
+      "family_id": "intuitive-eating",
+      "title": "Интуитивное питание — вы всё неправильно поняли",
+      "owner_decision": "prepare_for_blog",
+      "preferred_basis": "A233",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Telegraph-версия немного полнее и содержит цельное вступление и полный переход к исследованиям; публикация Pikabu на следующий день является почти тем же текстом с площадочным хвостом.",
+      "members": [
+        {"catalog_id": "A233", "source": "telegraph", "external_id": "intuitivnoe-pitanie-04-27-2", "title": "Интуитивное питание — вы всё НЕправильно поняли!!", "url": "https://telegra.ph/intuitivnoe-pitanie-04-27-2", "published_at": "2024-04-27T21:23:05+03:00", "role": "preferred_basis", "content_item": "content://item/a4e1b0be-3e91-464a-a473-bc43472fa495", "text_sha256": "adc03f62d89394f7960acdaa8c31262abde184624ab0d238748ec5e5883f01a5"},
+        {"catalog_id": "A052", "source": "pikabu", "external_id": "11364273", "title": "Интуитивное питание — вы всё НЕправильно поняли!!", "url": "https://pikabu.ru/story/intuitivnoe_pitanie__vyi_vsyo_nepravilno_ponyali_11364273", "published_at": "2024-04-28T13:04:43+03:00", "role": "platform_variant", "content_item": "content://item/2f60beb5-5510-4e33-b4d1-89e641cc8ce6", "text_sha256": "6a0acb33ce97afdb2b9e05fc8d4b901ccedc5eb5bd74143dc55ec5ee3e66e06c"}
+      ]
+    },
+    {
+      "family_id": "trash-fish",
+      "title": "Мусорная рыба или мусорные нутрициологи?",
+      "owner_decision": "prepare_for_blog",
+      "preferred_basis": "A066",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Pikabu-версия вышла позже и содержит содержательные уточнения и более завершённый вывод. Telegraph остаётся предыдущей редакцией, хотя формально чуть длиннее из-за отдельных формулировок и ссылки на мем.",
+      "members": [
+        {"catalog_id": "A066", "source": "pikabu", "external_id": "11665295", "title": "Мусорная рыба или мусорные нутрициологи?", "url": "https://pikabu.ru/story/musornaya_ryiba_ili_musornyie_nutritsiologi_11665295", "published_at": "2024-08-02T18:00:24+03:00", "role": "preferred_basis", "content_item": "content://item/d5c8d671-fc41-4e8f-9054-2c334fa25364", "text_sha256": "3a37902bc97a33376c508c9c73fba75122e6523ca0daf8324eb8669740268a50"},
+        {"catalog_id": "A257", "source": "telegraph", "external_id": "tilapia-03-17", "title": "Мусорная рыба или мусорные нутрициологи?", "url": "https://telegra.ph/tilapia-03-17", "published_at": "2024-03-17T14:03:35+03:00", "role": "previous_version", "content_item": "content://item/ade7eee4-10c1-4939-a06e-3352a95ae65b", "text_sha256": "f7965e32061835602f68de605c0ca061201c5f99b72e031c3f192753cb79e2a6"}
+      ]
+    },
+    {
+      "family_id": "winter-weight-loss",
+      "title": "Задача — похудеть. Уровень сложности — ЗИМА",
+      "owner_decision": "prepare_for_blog",
+      "preferred_basis": "A081",
+      "preparation_mode": "full_source_light_cleanup",
+      "relationship": "replacement_revision_not_sequel",
+      "rationale": "Редакция 2024 года сохраняет общий каркас статьи 2023 года, но обновляет расчёты, примеры и практические советы. Это новая редакция одной статьи, а не продолжение.",
+      "members": [
+        {"catalog_id": "A081", "source": "pikabu", "external_id": "12109482", "title": "Задача — похудеть. Уровень сложности — ЗИМА", "url": "https://pikabu.ru/story/zadacha__pokhudet_uroven_slozhnosti__zima_12109482", "published_at": "2024-12-07T18:37:00+03:00", "role": "preferred_basis", "content_item": "content://item/0742303d-364b-410d-bb87-633ffff5f8a9", "text_sha256": "5a1d00a53a0c128ec3995f29f38ba5e42c35eeefde97709a677436d297f63a42"},
+        {"catalog_id": "A036", "source": "pikabu", "external_id": "10954982", "title": "Как похудеть этой зимой!", "url": "https://pikabu.ru/story/kak_pokhudet_yetoy_zimoy_10954982", "published_at": "2023-12-24T10:00:54+03:00", "role": "previous_version", "content_item": "content://item/b8d3b663-40d4-4161-96c2-eefa60f12d31", "text_sha256": "aba5fffdc9d4c8f6162ca7898e06daabc78faca71052825cf5f8b122ee0a66c0"},
+        {"catalog_id": "A282", "source": "vc.ru", "external_id": "965046", "title": "Как НЕ набрать вес этой зимой!", "url": "https://vc.ru/flood/965046-kak-ne-nabrat-ves-etoi-zimoi", "published_at": "2023-12-24", "role": "platform_variant_of_previous_version", "text_sha256": "a3ba8b4c72053723a8a7de4bd33ddbb70edc2f12d3bee0ea11e49abfd30fc145"}
+      ]
+    },
+    {
+      "family_id": "measuring-body-fat",
+      "title": "Измеряем вашу жирность",
+      "owner_decision": "prepare_for_blog",
+      "preferred_basis": "A090",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Pikabu-версия примерно на 900 знаков полнее. VC опубликован на следующий день, но является сокращённой площадочной версией.",
+      "members": [
+        {"catalog_id": "A090", "source": "pikabu", "external_id": "13178972", "title": "Измеряем вашу жирность", "url": "https://pikabu.ru/story/izmeryaem_vashu_zhirnost_13178972", "published_at": "2025-09-13T15:43:04+03:00", "role": "preferred_basis", "content_item": "content://item/e8c7620c-cf0b-4d3e-aec1-a6fd75776f11", "text_sha256": "f90935d7a25b85f9b1e10de242d1de89218f212a4120ca39b1b33a6a38d8013b"},
+        {"catalog_id": "A274", "source": "vc.ru", "external_id": "2213930", "title": "Измеряем вашу жирность", "url": "https://vc.ru/flood/2213930-izmerenie-protsenta-zhira-v-organizme", "published_at": "2025-09-14", "role": "shortened_platform_variant", "text_sha256": "8634dc298cfc11eecaa64c1ac9d1717a6201eb094ba92d3403dced23899650a1"}
+      ]
+    },
+    {
+      "family_id": "great-lent-weight-loss-health",
+      "title": "Великий пост, похудение и здоровье",
+      "owner_decision": "prepare_for_blog",
+      "preferred_basis": "A098",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Один полноценный найденный источник; семейных дублей не обнаружено.",
+      "members": [
+        {"catalog_id": "A098", "source": "pikabu", "external_id": "13762311", "title": "Великий пост, похудение и здоровье", "url": "https://pikabu.ru/story/velikiy_post_pokhudenie_i_zdorove_13762311", "published_at": "2026-03-07T21:17:52+03:00", "role": "preferred_basis", "content_item": "content://item/7b56622c-c4a8-4935-bf36-366db14c291c", "text_sha256": "03f915f794b9c4887960c81450a31b69f58d4e90b009b6f5b772748592e065c4"}
+      ]
+    },
+    {
+      "family_id": "minus-12-kg-in-two-months",
+      "title": "Минус 12 килограмм за 2 месяца",
+      "owner_decision": "prepare_for_blog",
+      "preferred_basis": "A165",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Один полноценный найденный источник; семейных дублей не обнаружено.",
+      "members": [
+        {"catalog_id": "A165", "source": "telegraph", "external_id": "Minus-12-kilogramm-za-2-mesyaca-07-13", "title": "Минус 12 килограмм за 2 месяца", "url": "https://telegra.ph/Minus-12-kilogramm-za-2-mesyaca-07-13", "published_at": "2025-07-13T21:37:34+03:00", "role": "preferred_basis", "content_item": "content://item/25b8b9de-9d65-4ab6-8023-a5d1f7214864", "text_sha256": "0bdec25cf130d46f1d20e1d40b212eb59ce2fba01392aa4c2510b88e6b86a0fd"}
+      ]
+    }
+  ],
+  "routing_decisions": [
+    {"catalog_id": "A080", "title": "Никому не рассказывайте", "decision": "defer", "reason": "Владелец явно исключил из текущего пакета."},
+    {"catalog_id": "A230", "title": "Похудеть не получается... какая самая частая причина?", "decision": "owner_review_later", "reason": "Владелец пока не помнит материал и отложил решение."},
+    {"catalog_id": "A222", "title": "Читмилы и другие формы «расслабления» на диете", "decision": "masterclass_only"},
+    {"catalog_id": "A234", "title": "Прикладные способы усилить насыщение ничего не меняя в тарелке (ну почти)", "decision": "masterclass_only"},
+    {"catalog_id": "A249", "title": "Способы сокращения вреда от сладкого", "decision": "masterclass_only"},
+    {"catalog_id": "A251", "title": "Срывы и зажоры", "decision": "masterclass_only"},
+    {"catalog_id": "A189", "title": "Привычки для увеличения удовольствия", "decision": "masterclass_only"},
+    {"catalog_id": "A216", "title": "Взгляд в будущее", "decision": "masterclass_only"},
+    {"catalog_id": "A212", "title": "Витамин N", "decision": "draft_only"}
+  ]
+}

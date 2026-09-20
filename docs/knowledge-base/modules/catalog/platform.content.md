@@ -142,6 +142,11 @@ MCP-доступ принадлежат `platform.knowledge`; этот моду�
 PostgreSQL content tables, `docs/CONTENT_CATALOG.md`,
 `docs/knowledge-base/ARTICLE_STANDARD.md`, importers и перечисленные в
 `docs/modules.toml` канонические файлы `content/author-voice/`.
+Выбор полной основы для следующей статьи блога хранится в
+`content/author-voice/source-selection/blog-source-families.json`; он фиксирует
+старшую редакционную основу, предыдущие площадочные версии и дополнительные
+авторские источники, не стирая provenance и равноправную историю проявлений в
+серверном каталоге.
 Основной порядок составления и согласования материалов с Codex задаёт
 `docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md`. Технический каталог и
 админки сохраняются полностью и могут использоваться Сергеем как дополнительные
