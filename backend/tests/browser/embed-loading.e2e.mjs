@@ -184,6 +184,7 @@ try {
     const native = await browser.newPage({viewport:{width:delays.width||1440,height:1000},reducedMotion:'reduce'})
     const requests = {account:0,session:0,step:0,corpus:0,answers:[],submitted:0,completed:0}
     const completedSteps=new Set((delays.progress||progress).days[0].completed_steps)
+    const questionnaireStepIndex=(delays.manifest||manifest).days[0].steps.findIndex(step=>step.kind==='questionnaire')
     const faults = []
     await native.addInitScript(()=>{
       window.loaderCounts=[]
@@ -234,13 +235,15 @@ try {
       if(path==='/api/masterclass/course')return route.fulfill({json:delays.progress||progress})
       if(/\/steps\/\d+\/complete$/.test(path)){
         const index=Number(path.match(/\/steps\/(\d+)\/complete$/)[1])
-        if(path.includes('/days/1/')&&index===5&&!completedSteps.has(3))return route.fulfill({status:409,json:{detail:{reason:'previous_step_not_completed'}}})
+        if(path.includes('/days/1/')&&index>questionnaireStepIndex&&!completedSteps.has(questionnaireStepIndex))return route.fulfill({status:409,json:{detail:{reason:'previous_step_not_completed'}}})
         completedSteps.add(index);requests.completed++;
         const updated=structuredClone(delays.progress||progress)
         updated.days[0].completed_steps=[...completedSteps]
         return route.fulfill({json:updated})
       }
       if(path.endsWith('/task/open')){
+        requests.taskOpened=(requests.taskOpened||0)+1
+        if(!completedSteps.has(questionnaireStepIndex))return route.fulfill({status:409,json:{detail:{reason:'materials_not_completed'}}})
         const updated=structuredClone(delays.progress||progress)
         updated.days[0].completed_steps=[...completedSteps]
         updated.days[0].task_opened=true
@@ -257,7 +260,13 @@ try {
           if(delays.answerSave&&requests.answers.length===1)await delays.answerSave.promise
           return route.fulfill({status:delays.failAnswer?500:200,json:delays.failAnswer?{detail:'Save failed'}:{ok:true}})
         }
-        if(path.endsWith('/submit')){requests.submitted++;return route.fulfill({json:{ok:true,messenger_link_status:'queued'}})}
+        if(path.endsWith('/submit')){
+          requests.submitted++
+          if(delays.questionnaireSubmit)await delays.questionnaireSubmit.promise
+          const courseStepCompleted=delays.questionnaireCourseStepCompleted!==false
+          if(courseStepCompleted)completedSteps.add(questionnaireStepIndex)
+          return route.fulfill({json:{ok:true,messenger_link_status:'queued',course_step_completed:courseStepCompleted}})
+        }
         if(delays.questionnaire)await delays.questionnaire.promise
         return route.fulfill({json:{questions:delays.questions||[],answers:[],copy:delays.questionnaireCopy,personFields:delays.personFields||[],personParameters:delays.personParameters||{}}})
       }
@@ -503,18 +512,37 @@ try {
   assert.equal(await fastForm.native.locator('#questionnaire').isVisible(),false)
   assert.equal(fastForm.requests.submitted,0)
   assert.equal(fastForm.requests.completed,0)
+  assert.equal(fastForm.requests.taskOpened||0,0,'Checklist opening must wait for the questionnaire transaction')
   assert.equal(fastForm.requests.answers.filter(item=>item.question_code==='main_request').length,1,'Final snapshot of each field waits until its own old autosave completes')
   assert.equal(await fastForm.native.locator('#inline-app-view').isVisible(),true)
   await fastForm.native.locator('#inline-app-next').click()
   assert.equal(await fastForm.native.locator('[data-check]').first().isDisabled(),true)
   answerSave.release()
-  await waitUntil(()=>fastForm.requests.completed===2)
+  await waitUntil(()=>(fastForm.requests.taskOpened||0)===1)
   await fastForm.native.waitForFunction(()=>!document.querySelector('[data-check]').disabled)
+  assert.equal(fastForm.requests.completed,1,'Atomic questionnaire submit must not send a second step-completion request')
   assert.deepEqual(fastForm.requests.answers.filter(item=>item.question_code==='main_request').map(item=>item.answer_text),['Старый ответ','Промежуточный ответ','Последний ответ'])
   assert.equal(fastForm.requests.answers.filter(item=>item.question_code==='person_weight').at(-1).answer_text,'81.5','Submit flushes the latest structured field even with an old answer save in flight')
   assert.equal(fastForm.requests.submitted,1)
   assert.deepEqual(fastForm.faults,[])
   await fastForm.native.close()
+
+  const conflictDialogs=[]
+  const conflictForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{
+    progress:unanswered,questionnaireCourseStepCompleted:false,
+    questions:[{code:'main_request',title:'Главный запрос',prompt:'',answer:'Ответ'}],
+  })
+  conflictForm.native.on('dialog',async dialog=>{conflictDialogs.push(dialog.message());await dialog.dismiss()})
+  await waitForReveal(conflictForm.native)
+  await conflictForm.native.locator('#q-done').click()
+  await conflictForm.native.locator('#day').waitFor({state:'visible'})
+  await conflictForm.native.waitForFunction(()=>!location.search.includes('course_material='))
+  assert.equal(conflictForm.requests.submitted,1)
+  assert.equal(conflictForm.requests.completed,0,'A rejected questionnaire step must cancel optimistic completion of following materials')
+  assert.equal(conflictForm.requests.taskOpened||0,0)
+  assert.deepEqual(conflictDialogs,[],'Progress conflicts must not expose internal reason codes')
+  assert.deepEqual(conflictForm.faults,[])
+  await conflictForm.native.close()
 
   const failedSave=barrier(),saveErrors=[]
   const failedForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{

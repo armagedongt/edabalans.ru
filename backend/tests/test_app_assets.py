@@ -627,6 +627,8 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "advanceCourseStep(d,currentStep,true)" in course.text
     assert "advanceCourseStep(days[state.day-1],currentStep,false)" in course.text
     assert "saveQuestionnaire('submit')" in course.text
+    assert "Promise.all(questionnaireSavesForDay(d))" in course.text
+    assert "syncTaskAfterConflict" in course.text
     assert "openEmbeddedApp('onboarding-questionnaire'" not in course.text
     assert "disposeInlineMaterial();advanceCourseStep" in course.text
     assert "К заданиям ↓" in course.text

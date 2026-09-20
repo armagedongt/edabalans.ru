@@ -22,6 +22,7 @@ from app.app_auth import create_placement_token  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.main import app  # noqa: E402
 import app.main as main_module  # noqa: E402
+import app.masterclass_routes as masterclass_routes_module  # noqa: E402
 from app.masterclass_routes import current_required_step_ids  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.masterclass_offer_catalog import OFFER_CARD_COPY, OFFER_PRODUCTS  # noqa: E402
@@ -1026,6 +1027,198 @@ def test_current_diet_questionnaire_saves_categories_and_queues_one_telegram_res
                 MasterclassEvent.event_type == "current_diet_questionnaire_completed"
             )
         ) == 1
+
+
+@pytest.mark.parametrize(
+    "questionnaire_kind",
+    ["onboarding", "current-diet", "closing-review"],
+)
+def test_questionnaire_submit_atomically_completes_open_course_step(
+    questionnaire_kind: str,
+):
+    client, factory = setup()
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        context = course_context(db)
+        target = next(
+            (day, index, step)
+            for day in range(1, context.last_day + 1)
+            for index, step in enumerate(context.days[day]["steps"])
+            if (
+                step.get("kind") == "closing-review"
+                and questionnaire_kind == "closing-review"
+            )
+            or (
+                step.get("kind") == "questionnaire"
+                and (step.get("questionnaireKind") or "onboarding")
+                == questionnaire_kind
+            )
+        )
+        day, step_index, step = target
+        required_ids = current_required_step_ids(context, day)
+        db.add(
+            MasterclassDayProgress(
+                user_id=user_id,
+                day_number=day,
+                required_step_ids=required_ids,
+            )
+        )
+        db.add_all(
+            MasterclassStepProgress(
+                user_id=user_id,
+                day_number=day,
+                step_index=index,
+                step_kind=previous["kind"],
+                completed_at=datetime.now(timezone.utc),
+            )
+            for index, previous in enumerate(context.days[day]["steps"][:step_index])
+            if previous["id"] in required_ids
+        )
+        db.commit()
+
+    submitted = client.post(
+        f"/api/masterclass/questionnaires/{questionnaire_kind}/submit",
+        json={"email": "member@example.test"},
+    )
+    repeated = client.post(
+        f"/api/masterclass/questionnaires/{questionnaire_kind}/submit",
+        json={"email": "member@example.test"},
+    )
+
+    assert submitted.status_code == repeated.status_code == 200
+    assert submitted.json()["course_step_completed"] is True
+    assert repeated.json()["course_step_completed"] is True
+    with factory() as db:
+        assert (
+            db.scalar(
+                select(func.count(MasterclassStepProgress.id)).where(
+                    MasterclassStepProgress.day_number == day,
+                    MasterclassStepProgress.step_index == step_index,
+                    MasterclassStepProgress.step_kind == step["kind"],
+                )
+            )
+            == 1
+        )
+
+    if questionnaire_kind == "current-diet":
+        opened_task = client.post(
+            f"/api/masterclass/course/days/{day}/task/open",
+            json={"email": "member@example.test"},
+        )
+        assert opened_task.status_code == 200
+        assert opened_task.json()["days"][day - 1]["task_opened"] is True
+
+
+def test_questionnaire_submit_does_not_bypass_previous_required_materials():
+    client, factory = setup()
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        context = course_context(db)
+        day, step_index, step = next(
+            (day_number, index, candidate)
+            for day_number in range(1, context.last_day + 1)
+            for index, candidate in enumerate(context.days[day_number]["steps"])
+            if candidate.get("kind") == "questionnaire"
+            and candidate.get("questionnaireKind") == "current-diet"
+        )
+        db.add(
+            MasterclassDayProgress(
+                user_id=user_id,
+                day_number=day,
+                required_step_ids=current_required_step_ids(context, day),
+            )
+        )
+        db.commit()
+
+    submitted = client.post(
+        "/api/masterclass/questionnaires/current-diet/submit",
+        json={"email": "member@example.test"},
+    )
+
+    assert submitted.status_code == 200
+    assert submitted.json()["course_step_completed"] is False
+    with factory() as db:
+        assert db.scalar(
+            select(QuestionnaireRun.status).where(
+                QuestionnaireRun.user_id == user_id,
+                QuestionnaireRun.kind == "current-diet",
+            )
+        ) == "submitted"
+        assert db.scalar(
+            select(func.count(MasterclassStepProgress.id)).where(
+                MasterclassStepProgress.user_id == user_id,
+                MasterclassStepProgress.day_number == day,
+                MasterclassStepProgress.step_index == step_index,
+                MasterclassStepProgress.step_kind == step["kind"],
+            )
+        ) == 0
+
+
+def test_questionnaire_submit_rolls_back_run_when_course_step_write_fails(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    client, factory = setup()
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        context = course_context(db)
+        day, step_index, step = next(
+            (day_number, index, candidate)
+            for day_number in range(1, context.last_day + 1)
+            for index, candidate in enumerate(context.days[day_number]["steps"])
+            if candidate.get("kind") == "questionnaire"
+            and (candidate.get("questionnaireKind") or "onboarding") == "onboarding"
+        )
+        required_ids = current_required_step_ids(context, day)
+        db.add(
+            MasterclassDayProgress(
+                user_id=user_id,
+                day_number=day,
+                required_step_ids=required_ids,
+            )
+        )
+        db.add_all(
+            MasterclassStepProgress(
+                user_id=user_id,
+                day_number=day,
+                step_index=index,
+                step_kind=previous["kind"],
+                completed_at=datetime.now(timezone.utc),
+            )
+            for index, previous in enumerate(context.days[day]["steps"][:step_index])
+            if previous["id"] in required_ids
+        )
+        db.commit()
+
+    def fail_course_event(*_args, **_kwargs):
+        raise RuntimeError("simulated course-step event failure")
+
+    monkeypatch.setattr(
+        masterclass_routes_module,
+        "course_event",
+        fail_course_event,
+    )
+
+    with pytest.raises(RuntimeError, match="simulated course-step event failure"):
+        client.post(
+            "/api/masterclass/questionnaires/onboarding/submit",
+            json={"email": "member@example.test"},
+        )
+
+    with factory() as db:
+        assert db.scalar(
+            select(QuestionnaireRun.id).where(
+                QuestionnaireRun.user_id == user_id,
+                QuestionnaireRun.kind == "onboarding",
+            )
+        ) is None
+        assert db.scalar(
+            select(func.count(MasterclassStepProgress.id)).where(
+                MasterclassStepProgress.user_id == user_id,
+                MasterclassStepProgress.day_number == day,
+                MasterclassStepProgress.step_index == step_index,
+                MasterclassStepProgress.step_kind == step["kind"],
+            )
+        ) == 0
 
 
 def test_admin_offer_client_preview_searches_by_email_then_reads_by_user_id_without_writes():

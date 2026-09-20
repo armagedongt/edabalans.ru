@@ -752,6 +752,83 @@ def course_step_event(
     return "masterclass_step_completed", None
 
 
+def questionnaire_kind_for_step(step: dict) -> str | None:
+    if step.get("kind") == "closing-review":
+        return "closing-review"
+    if step.get("kind") != "questionnaire":
+        return None
+    return str(step.get("questionnaireKind") or "onboarding")
+
+
+def complete_questionnaire_course_step(
+    db: Session,
+    user: User,
+    kind: str,
+    now: datetime,
+    context: CourseContext,
+) -> bool:
+    """Complete an opened questionnaire step in the questionnaire transaction.
+
+    Questionnaire endpoints can also be opened outside the course shell, so a
+    missing day or an out-of-order step keeps the saved questionnaire intact but
+    does not bypass course progression.
+    """
+    target = next(
+        (
+            (day, index, step)
+            for day in range(1, context.last_day + 1)
+            for index, step in enumerate(context.days[day].get("steps", []))
+            if not step.get("hidden", False)
+            and not step.get("locked", False)
+            and questionnaire_kind_for_step(step) == kind
+        ),
+        None,
+    )
+    if target is None:
+        return False
+    day, index, step = target
+    progress = day_progress(db, user.id, day)
+    if progress is None:
+        return False
+    completed = completed_step_indexes(db, user.id, day)
+    if index in completed:
+        return True
+    required_ids = set(effective_required_step_ids(context, progress, day))
+    required_before = [
+        previous_index
+        for previous_index, previous in enumerate(
+            context.days[day].get("steps", [])[:index]
+        )
+        if previous["id"] in required_ids
+    ]
+    if any(previous not in completed for previous in required_before):
+        return False
+    db.add(
+        MasterclassStepProgress(
+            user_id=user.id,
+            day_number=day,
+            step_index=index,
+            step_kind=step["kind"],
+            completed_at=now,
+        )
+    )
+    event_type, placement = course_step_event(context, day, index, step)
+    course_event(
+        db,
+        user.id,
+        f"course:day:{day}:step:{index}:completed",
+        event_type,
+        placement=placement,
+        details={
+            "day": day,
+            "step_index": index,
+            "step_id": step["id"],
+            "step_kind": step["kind"],
+        },
+    )
+    return True
+
+
 @router.get("/course")
 def course_state(
     email: str,
@@ -1091,9 +1168,11 @@ def finish_questionnaire(
     if action not in {"submit", "skip"}: raise HTTPException(404, "action not found")
     questions(kind, db)
     user = resolve_masterclass_user(request, db, body.email, settings)
+    db.execute(select(User.id).where(User.id == user.id).with_for_update())
+    now = datetime.now(timezone.utc)
     run = get_run(db, user.id, kind)
     run.status = "submitted" if action == "submit" else "skipped"
-    run.submitted_at = datetime.now(timezone.utc)
+    run.submitted_at = now
     event_type = {
         "onboarding": "onboarding_questionnaire_completed",
         "current-diet": "current_diet_questionnaire_completed",
@@ -1104,6 +1183,15 @@ def finish_questionnaire(
     if not event:
         event = MasterclassEvent(user_id=user.id, event_key=event_key, event_type=event_type, details={"run_id": str(run.id), "status": run.status})
         db.add(event); db.flush()
+    course_step_completed = False
+    if action == "submit":
+        course_step_completed = complete_questionnaire_course_step(
+            db,
+            user,
+            kind,
+            now,
+            course_context(db),
+        )
     messenger_account = db.scalar(
         select(MessengerAccount)
         .where(
@@ -1116,7 +1204,6 @@ def finish_questionnaire(
         .order_by(MessengerAccount.linked_at.desc(), MessengerAccount.id.desc())
     )
     if kind == "onboarding" and action == "submit" and messenger_account:
-        now = datetime.now(timezone.utc)
         notification_payload = {
             "questionnaire_kind": kind,
             "run_id": str(run.id),
@@ -1166,6 +1253,7 @@ def finish_questionnaire(
     return {
         "ok": True,
         "status": run.status,
+        "course_step_completed": course_step_completed,
         "messenger_link_status": (
             ("queued" if messenger_account else "not_linked")
             if action == "submit" and kind == "onboarding"
