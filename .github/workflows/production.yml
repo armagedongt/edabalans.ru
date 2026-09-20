@@ -118,8 +118,10 @@ jobs:
           docker run --detach --rm --name edabalans-browser-backend \
             --publish 8790:8000 \
             --env DATABASE_URL=sqlite:////tmp/direct-intensive-e2e.sqlite \
+            --env ADMIN_USERNAME=qa-owner \
+            --env ADMIN_PASSWORD=qa-password \
             edabalans-backend-test \
-            uvicorn app.main:app --host 0.0.0.0 --port 8000
+            sh -c "python -c 'from app.database import Base, engine; import app.models; Base.metadata.create_all(engine)' && uvicorn app.main:app --host 0.0.0.0 --port 8000"
           for _ in {1..20}; do
             if curl --fail --silent http://127.0.0.1:8790/health >/dev/null; then
               break
@@ -134,6 +136,7 @@ jobs:
           npm --prefix backend/tests/browser run test:embed-loading
           npm --prefix backend/tests/browser run test:video-player
           npm --prefix backend/tests/browser run test:admin-shell
+          npm --prefix backend/tests/browser run test:blog-draft-authoring
 
       - name: Stop browser-test backend
         if: always() && steps.impact.outputs.backend == 'true'

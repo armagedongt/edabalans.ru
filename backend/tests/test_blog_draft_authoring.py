@@ -23,7 +23,14 @@ from app.blog_draft_routes import (
     require_blog_admin,
     require_blog_mutation,
 )
-from app.blog_draft_service import DOCUMENT_TYPE, prepare_package, save_package, update_text
+from app.blog_content import load_blog_catalog
+from app.blog_draft_service import (
+    DOCUMENT_TYPE,
+    PUBLISHED_DOCUMENT_TYPE,
+    prepare_package,
+    save_package,
+    update_text,
+)
 from app.database import Base, get_db
 from app.main import app
 from app.models import ManagedDocumentVersion
@@ -31,7 +38,8 @@ from scripts.publish_blog_draft import build_package, upload
 
 
 FIXTURE = Path(__file__).parent / "fixtures" / "blog-draft-real"
-SLUG = "vse-znayut-nikto-ne-delaet"
+FIXTURE_SLUG = "vse-znayut-nikto-ne-delaet"
+SLUG = "skolko-vremeni-nuzhno-na-pohudenie"
 
 
 def _real_package(*, expected_version: int = 0, visibility: str = "public") -> dict:
@@ -72,7 +80,7 @@ def test_cli_package_builder_preserves_exact_source_and_provenance() -> None:
         FIXTURE / "media",
         0,
     )
-    assert slug == SLUG
+    assert slug == FIXTURE_SLUG
     assert package["markdown"] == (FIXTURE / "real-article.md").read_text(encoding="utf-8")
     assert package["metadata"]["source_sha256"] == "b47661efb2f9d8b895f2097b4f8e3663b50df229366ff4415d41283172000ea9"
     assert [item["name"] for item in package["media"]] == ["01.webp", "02.webp", "03.webp"]
@@ -178,9 +186,10 @@ def test_real_markdown_package_round_trip_and_owner_preview(authoring) -> None:
     assert history[0]["updated_by"] == "owner"
     assert history[0]["active"] is True
     listing = client.get("/admin/api/blog/articles").json()["articles"]
-    assert len(listing) == 1
-    assert "markdown" not in listing[0]
-    assert "content_base64" not in json.dumps(listing[0])
+    assert len(listing) == len(load_blog_catalog().published)
+    listed = next(item for item in listing if item["slug"] == SLUG)
+    assert "markdown" not in listed
+    assert "content_base64" not in json.dumps(listing)
 
     media = client.get(f"/blog/drafts/{SLUG}/media/02.webp")
     assert media.status_code == 200
@@ -252,6 +261,228 @@ def test_text_update_preserves_package_and_conflict_preserves_active_version(aut
     assert stale.headers["x-robots-tag"] == "noindex, nofollow"
     assert stale.headers["x-content-type-options"] == "nosniff"
     assert client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]["markdown"] == changed
+
+
+def test_existing_article_seed_publish_and_later_draft_do_not_leak(authoring) -> None:
+    client, factory = authoring
+    seeded = client.get(f"/admin/api/blog/articles/{SLUG}")
+    assert seeded.status_code == 200
+    article = seeded.json()["article"]
+    assert article["version"] == 1
+    assert article["editorial_status"] == "published"
+    assert "blog_cta(" not in article["markdown"]
+    assert all("content_base64" not in item for item in article["media"])
+
+    marker = "Проверка публикации существующей статьи."
+    changed = article["markdown"] + f"\n\n## Проверка выпуска\n\n{marker}\n"
+    git_fallback = client.get(f"/blog/articles/{SLUG}")
+    assert "Мне надолго запомнился звонок женщины" in git_fallback.text
+    saved = client.patch(
+        f"/admin/api/blog/articles/{SLUG}/text",
+        json={"expected_version": 1, "markdown": changed},
+    )
+    assert saved.status_code == 200
+    assert saved.json()["article"]["editorial_status"] == "moderation"
+    assert marker not in client.get(f"/blog/articles/{SLUG}").text
+
+    published = client.post(
+        f"/admin/api/blog/articles/{SLUG}/publish",
+        json={"expected_version": 2, "confirm": True},
+    )
+    assert published.status_code == 200, published.text
+    assert published.json()["article"]["editorial_status"] == "published"
+    assert published.json()["public_url"].startswith("https://blog.")
+    assert published.json()["public_url"].endswith(f"/articles/{SLUG}")
+    public_page = client.get(f"/blog/articles/{SLUG}")
+    assert marker in public_page.text
+    assert public_page.text.count('data-component="blog-cta"') == 1
+    assert 'data-tracking-key="blog_intensive"' in public_page.text
+    assert f'<link rel="canonical" href="https://blog.' in public_page.text
+
+    repeated = client.post(
+        f"/admin/api/blog/articles/{SLUG}/publish",
+        json={"expected_version": 2, "confirm": True},
+    )
+    assert repeated.status_code == 200
+    assert repeated.json()["published_version"] == 1
+
+    # The stored snapshot owns the body only. Manifest-controlled CTA/media/SEO
+    # must stay fresh even if an old row contains stale metadata.
+    with factory() as db:
+        stored = db.scalar(
+            select(ManagedDocumentVersion).where(
+                ManagedDocumentVersion.document_type == PUBLISHED_DOCUMENT_TYPE,
+                ManagedDocumentVersion.document_key == SLUG,
+                ManagedDocumentVersion.is_active.is_(True),
+            )
+        )
+        stale_payload = deepcopy(stored.payload)
+        stale_payload["cta"] = "telegram"
+        stored.payload = stale_payload
+        db.commit()
+    refreshed_public_page = client.get(f"/blog/articles/{SLUG}")
+    assert marker in refreshed_public_page.text
+    assert 'data-tracking-key="blog_intensive"' in refreshed_public_page.text
+    assert 'data-tracking-key="blog_telegram"' not in refreshed_public_page.text
+
+    next_marker = "Эта строка пока только на модерации."
+    next_saved = client.patch(
+        f"/admin/api/blog/articles/{SLUG}/text",
+        json={"expected_version": 2, "markdown": changed + f"\n{next_marker}\n"},
+    )
+    assert next_saved.status_code == 200
+    assert next_saved.json()["article"]["editorial_status"] == "moderation"
+    public_page = client.get(f"/blog/articles/{SLUG}")
+    assert marker in public_page.text
+    assert next_marker not in public_page.text
+    stale_publish = client.post(
+        f"/admin/api/blog/articles/{SLUG}/publish",
+        json={"expected_version": 2, "confirm": True},
+    )
+    assert stale_publish.status_code == 409
+    after_conflict = client.get(f"/blog/articles/{SLUG}")
+    assert marker in after_conflict.text
+    assert next_marker not in after_conflict.text
+    with factory() as db:
+        published_rows = list(db.scalars(
+            select(ManagedDocumentVersion).where(
+                ManagedDocumentVersion.document_type == PUBLISHED_DOCUMENT_TYPE
+            )
+        ))
+        assert len(published_rows) == 1
+        assert marker in published_rows[0].payload["markdown"]
+        assert next_marker not in published_rows[0].payload["markdown"]
+        assert db.scalar(
+            select(func.count()).select_from(ManagedDocumentVersion).where(
+                ManagedDocumentVersion.document_type == PUBLISHED_DOCUMENT_TYPE
+            )
+        ) == 1
+
+
+def test_publish_api_requires_literal_confirmation(authoring) -> None:
+    client, factory = authoring
+    seeded = client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]
+    for payload in (
+        {"expected_version": seeded["version"], "confirm": False},
+        {"expected_version": seeded["version"]},
+    ):
+        response = client.post(
+            f"/admin/api/blog/articles/{SLUG}/publish",
+            json=payload,
+        )
+        assert response.status_code == 422
+    with factory() as db:
+        assert db.scalar(
+            select(func.count()).select_from(ManagedDocumentVersion).where(
+                ManagedDocumentVersion.document_type == PUBLISHED_DOCUMENT_TYPE
+            )
+        ) == 0
+
+
+def test_manifest_managed_draft_refreshes_canonical_fields_before_publish(authoring) -> None:
+    client, factory = authoring
+    seeded = client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]
+    with factory() as db:
+        draft = db.scalar(
+            select(ManagedDocumentVersion).where(
+                ManagedDocumentVersion.document_type == DOCUMENT_TYPE,
+                ManagedDocumentVersion.document_key == SLUG,
+                ManagedDocumentVersion.is_active.is_(True),
+            )
+        )
+        stale = deepcopy(draft.payload)
+        stale["title"] = "Старый заголовок"
+        stale["cta"] = "telegram"
+        stale["media"] = []
+        draft.payload = stale
+        db.commit()
+
+    reopened = client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]
+    canonical = load_blog_catalog().by_slug(SLUG)
+    assert reopened["title"] == canonical.title
+    assert reopened["cta"] == canonical.cta
+    assert reopened["media"]
+
+    marker = "Редакция после обновления manifest."
+    saved = client.patch(
+        f"/admin/api/blog/articles/{SLUG}/text",
+        json={
+            "expected_version": seeded["version"],
+            "markdown": reopened["markdown"] + f"\n\n{marker}\n",
+        },
+    )
+    assert saved.status_code == 200, saved.text
+    published = client.post(
+        f"/admin/api/blog/articles/{SLUG}/publish",
+        json={"expected_version": 2, "confirm": True},
+    )
+    assert published.status_code == 200, published.text
+    public_page = client.get(f"/blog/articles/{SLUG}")
+    assert marker in public_page.text
+    assert 'data-tracking-key="blog_intensive"' in public_page.text
+
+
+def test_unknown_slug_cannot_be_created(authoring) -> None:
+    client, factory = authoring
+    response = client.put(
+        "/admin/api/blog/articles/novaya-statya",
+        json=_real_package(),
+    )
+    assert response.status_code == 404
+    with factory() as db:
+        assert db.scalar(select(func.count()).select_from(ManagedDocumentVersion)) == 0
+
+
+def test_internal_existing_draft_cannot_be_published(authoring) -> None:
+    client, _ = authoring
+    package = _real_package(visibility="internal")
+    assert _put(client, package).status_code == 200
+    response = client.post(
+        f"/admin/api/blog/articles/{SLUG}/publish",
+        json={"expected_version": 1, "confirm": True},
+    )
+    assert response.status_code == 422
+    assert "Служебный" in response.text
+
+
+def test_existing_publish_keeps_manifest_media_contract(authoring) -> None:
+    client, factory = authoring
+    assert _put(client, _real_package()).status_code == 200
+    response = client.post(
+        f"/admin/api/blog/articles/{SLUG}/publish",
+        json={"expected_version": 1, "confirm": True},
+    )
+    assert response.status_code == 422
+    assert "media" in response.text
+    public_page = client.get(f"/blog/articles/{SLUG}")
+    assert "Мне надолго запомнился звонок женщины" in public_page.text
+    assert 'data-tracking-key="blog_intensive"' in public_page.text
+    with factory() as db:
+        assert db.scalar(
+            select(func.count()).select_from(ManagedDocumentVersion).where(
+                ManagedDocumentVersion.document_type == PUBLISHED_DOCUMENT_TYPE
+            )
+        ) == 0
+
+
+def test_largest_existing_article_seeds_without_inline_media(authoring) -> None:
+    client, _ = authoring
+    slug = "samyy-zdorovyy-chelovek-na-planete"
+    article = client.get(f"/admin/api/blog/articles/{slug}").json()["article"]
+    assert len(article["media"]) == 39
+    assert "content_base64" not in json.dumps(article)
+
+
+def test_existing_seed_is_idempotent(authoring) -> None:
+    client, factory = authoring
+    assert len(client.get("/admin/api/blog/articles").json()["articles"]) == 9
+    assert len(client.get("/admin/api/blog/articles").json()["articles"]) == 9
+    with factory() as db:
+        assert db.scalar(
+            select(func.count()).select_from(ManagedDocumentVersion).where(
+                ManagedDocumentVersion.document_type == DOCUMENT_TYPE
+            )
+        ) == 9
 
 
 @pytest.mark.parametrize(
@@ -472,7 +703,7 @@ def test_owner_catalog_is_private_and_public_catalog_stays_git_backed(authoring)
     assert "data-owner-visibility=\"internal\"" in owner_page.text
     assert owner_page.headers["x-robots-tag"] == "noindex, nofollow"
     sitemap = client.get("/blog/sitemap.xml")
-    assert SLUG not in sitemap.text
+    assert SLUG in sitemap.text
 
     app.dependency_overrides[optional_blog_admin] = lambda: None
     public_page = client.get("/blog")

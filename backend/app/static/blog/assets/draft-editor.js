@@ -7,6 +7,7 @@
   var source = document.querySelector('#draft-markdown');
   var status = document.querySelector('#draft-status');
   var save = document.querySelector('#draft-save');
+  var publish = document.querySelector('#draft-publish');
   var error = document.querySelector('#draft-error');
   var notice = document.querySelector('#draft-notice');
 
@@ -28,11 +29,12 @@
   function setDirty(value) {
     dirty = value;
     save.disabled = !state || !dirty;
+    publish.disabled = !state || dirty || state.editorial_status === 'published';
     status.textContent = dirty ? 'Есть несохранённые изменения' : state ? 'Версия ' + state.version + ' сохранена' : 'Загрузка…';
   }
   function showMeta(article) {
     document.querySelector('#draft-title').textContent = article.title;
-    document.querySelector('#draft-meta').textContent = (article.visibility === 'internal' ? 'Служебная' : 'Публичная') + ' · На модерации · версия ' + article.version;
+    document.querySelector('#draft-meta').textContent = (article.visibility === 'internal' ? 'Служебная' : 'Публичная') + ' · ' + (article.editorial_status === 'published' ? 'Опубликована' : 'На модерации') + ' · версия ' + article.version;
     document.querySelector('#open-preview').href = '/blog/drafts/' + encodeURIComponent(slug);
   }
   function preview(preserveNotice) {
@@ -79,6 +81,25 @@
     });
   }
 
+  function publishText() {
+    if (!state || dirty || state.editorial_status === 'published') return;
+    if (!window.confirm('Опубликовать сохранённую версию статьи в блоге?')) return;
+    clearMessages();
+    publish.disabled = true;
+    status.textContent = 'Публикую…';
+    request({ path: '/publish', body: { expected_version: state.version, confirm: true } }, 'POST').then(function (result) {
+      state = result.article;
+      showMeta(state);
+      setDirty(false);
+      notice.hidden = false;
+      notice.textContent = 'Статья опубликована. Публичная страница обновлена без deploy.';
+    }).catch(function (value) {
+      showError(value);
+      setDirty(false);
+      status.textContent = value && value.status === 409 ? 'Конфликт версий — обновите страницу' : 'Не удалось опубликовать';
+    });
+  }
+
   source.addEventListener('input', function () { setDirty(true); });
   document.querySelector('#draft-preview').addEventListener('click', function () {
     preview().then(function () {
@@ -89,6 +110,7 @@
     }).catch(function () {});
   });
   save.addEventListener('click', saveText);
+  publish.addEventListener('click', publishText);
   window.addEventListener('beforeunload', function (event) { if (dirty) { event.preventDefault(); event.returnValue = ''; } });
   load();
 }());
