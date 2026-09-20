@@ -1424,7 +1424,11 @@
 
 /* Compact admin-sheet controls and the exercise outline. */
 .st-ex-row{border:3px solid var(--st-exercise-tone,#e7e7ef);border-radius:11px}.st-ex-row-head{background:var(--st-exercise-tone,#fff)}.st-ex-tools{display:none}.st-group-plan{gap:4px}.st-copy-forward{grid-column:auto;width:auto;min-height:24px;padding:0 6px;font-size:9px;line-height:1}.st-note:not(.has-note){min-height:34px;padding:5px 8px;color:var(--st-muted)}.st-note:not(.has-note) .st-note-title{font-size:10px;font-weight:700}.st-note:not(.has-note) .st-note-preview{font-size:10px;margin-top:0}
-</style>
+
+/* Focused strength header and compact exercise controls. */
+.st-top{grid-template-columns:1fr 42px}.st-title-actions{display:flex;align-items:center;gap:12px}.st-top-stats{border:0;background:transparent;color:var(--st-purple);font-size:13px;font-weight:800;text-decoration:underline;text-underline-offset:3px}.st-types{grid-template-columns:repeat(3,1fr)}.st-type-cell{display:grid;grid-template-columns:minmax(0,1fr) 30px;gap:2px;align-items:stretch}.st-type-edit{border:0;border-radius:8px;background:transparent;color:#737784;font-size:15px;font-weight:900}.st-type-cell:has(.st-type.active) .st-type-edit{background:#fff;color:var(--st-purple);box-shadow:0 2px 6px rgba(0,0,0,.05)}.st-nav{grid-template-columns:42px minmax(0,1fr) auto}.st-nav-end{display:flex;gap:8px;align-items:center}.st-new-session-inline{width:auto;min-height:40px;margin:0;padding:0 12px;font-size:11px;white-space:nowrap}.st-ex-row-head{align-items:center}.st-ex-row-name{flex:1}.st-ex-row-tools{display:flex;align-items:center;gap:5px}.st-exercise-stats{display:inline-grid;width:24px;height:24px;place-items:center;padding:0;border:1px solid rgba(111,61,232,.2);border-radius:50%;background:#f6f3ff;color:var(--st-purple);font-size:14px;font-weight:900}.st-plan-label{border-color:#c4e1c9;background:#eff8f0;color:#39704b}.st-plan-inputs{border-color:#c4e1c9;background:#eff8f0}.st-plan-inputs input{border-color:#c4e1c9;background:#fff}.st-copy-forward{border:0;background:transparent;color:#39704b;text-decoration:underline;text-underline-offset:2px}.st-plan-field.has-value,.plan-up,.plan-down{background:#eff8f0!important;border-color:#c4e1c9}.st-note:not(.has-note){grid-template-columns:minmax(0,1fr) 13px}.st-note:not(.has-note) .st-note-preview{overflow:visible;text-overflow:clip;white-space:normal}.st-note.has-note{grid-template-columns:23px minmax(0,1fr) 13px}.st-note.has-note .st-note-symbol{background:#eeeaf9;color:var(--st-purple)}
+@media(max-width:700px){.st-title-actions{gap:8px}.st-top-stats,.st-help{font-size:12px}.st-nav{grid-template-columns:34px minmax(0,1fr) auto}.st-nav-end{gap:5px}.st-new-session-inline{padding:0 7px;font-size:9px}.st-type-cell{grid-template-columns:minmax(0,1fr) 26px}.st-type-edit{font-size:14px}}
+.st-mobile-undo{display:none}.st-exercise-button-label{display:none}.st-plan-copy-label{display:none}.st-title-block{min-width:0}.st-header-user{display:flex;align-items:baseline;gap:8px;margin-top:4px;color:var(--st-muted);font-size:11px;line-height:1.25}.st-header-user span:first-child{font-weight:800;color:#565968}.st-mobile-client-head{display:none}.st-nav-end .st-header-undo{display:flex;margin:0;gap:4px}.st-header-undo button{width:30px;height:30px;font-size:16px}.st-ex-row-tools .st-admin-exercise-info,.st-ex-row-tools .st-admin-exercise-stats{width:auto;height:30px;display:inline-flex;align-items:center;gap:5px;padding:0 9px;border-radius:8px;font-size:11px}.st-ex-row-tools .st-admin-exercise-info{margin-left:0}.st-ex-row-tools .st-admin-exercise-stats{font-size:11px}.st-group-plan .st-copy-forward,.st-group-plan .st-group-title{min-height:0;margin:0;padding:0;border:0;background:transparent;color:#647080;font-size:11px;font-weight:800;line-height:1.2}.st-group-plan .st-copy-forward{cursor:pointer;text-decoration:underline;text-underline-offset:2px}.st-note:not(.has-note){grid-template-columns:minmax(0,1fr) 13px}.st-note-empty{font-size:10px;font-weight:700;color:var(--st-muted)}@media(min-width:701px){.st-modern-exercise .st-exercise-info,.st-modern-exercise .st-exercise-stats{width:auto;height:30px;display:inline-flex;align-items:center;gap:5px;padding:0 9px;border-radius:8px;font-size:11px;vertical-align:middle}.st-modern-exercise .st-exercise-button-label,.st-ex-row-tools .st-exercise-button-label{display:inline}.st-modern-exercise .st-modern-copy{display:none}.st-plan-copy-label{display:inline;margin:0 6px 0 0;padding:0;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:2px}.st-plan-label>span{white-space:nowrap}}@media(max-width:700px){.st-title-row{align-items:flex-start}.st-title{font-size:20px}.st-title-actions{flex-direction:column;align-items:flex-end;gap:3px}.st-new-session-inline{width:34px;padding:0;font-size:0}.st-new-session-inline::after{content:'＋';font-size:17px}}@media(max-width:700px){.st-header-user{display:none}.st-mobile-client-head{display:block}}@media(max-width:700px){.st-types{padding:3px;gap:2px}.st-type-cell{grid-template-columns:minmax(0,1fr) 22px;gap:0}.st-type{min-height:32px;padding:0 2px;font-size:12px;white-space:nowrap}.st-type-edit{padding:0;font-size:12px}.st-nav{grid-template-columns:30px minmax(0,1fr) auto;gap:4px}.st-arrow{height:32px;font-size:20px}.st-nav-title{font-size:15px;line-height:1.1}.st-nav-sub{margin-top:1px;font-size:10px}.st-nav-status{display:none}.st-undo-controls,.st-nav-end .st-header-undo{display:none}.st-modern-set-actions{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px}.st-modern-set-actions button{min-width:0;padding:0 5px;font-size:11px}.st-mobile-undo{display:contents}.st-mobile-undo button{font-size:18px}}</style>
 
 <script>
 (function(){
@@ -3083,8 +3087,10 @@ function commonHeader(){
     '<div class="st-card st-header">'+
       '<div class="st-top">'+
         '<div class="st-title-row">'+
-          '<div class="st-title">Силовые тренировки</div>'+
-          '<button class="st-help" onclick="ST.openTutorial()">Как пользоваться</button>'+
+          '<div class="st-title-block"><div class="st-title">Силовые тренировки</div>'+
+            (app.selectedUser ? '<div class="st-header-user"><span>'+esc(app.selectedUser.display_name || 'Пользователь')+'</span><span>'+esc(app.selectedUser.email || '')+'</span></div>' : '')+
+          '</div>'+
+          '<div class="st-title-actions">'+(app.mainTab === 'stats' ? '<button class="st-top-stats" onclick="ST.setMainTab(\'training\')">← К тренировкам</button>' : '<button class="st-top-stats" onclick="ST.setMainTab(\'stats\')">Статистика</button>')+'<button class="st-help" onclick="ST.openTutorial()">Как пользоваться</button></div>'+
         '</div>'+
         (MANAGED_TARGET ? '<a class="st-profile ed-app-account-link" href="/admin/strength" aria-label="Вернуться в админку" title="Вернуться в админку">'+
           '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">'+
@@ -3213,7 +3219,7 @@ function renderClient(){
     commonHeader();
 
   html +=
-    '<div class="st-client-head">'+
+    '<div class="st-client-head st-mobile-client-head">'+
       '<div class="st-client-name">'+
         esc(
           app.selectedUser
@@ -3237,7 +3243,6 @@ function renderClient(){
   }
 
   html +=
-    renderMainTabs()+
     renderTypes();
 
   if(
@@ -3340,106 +3345,34 @@ function renderMainTabs(){
 
 function renderTypes(){
 
-  var html =
-    '<div class="st-types">';
+  var html = '<div class="st-types">';
 
-  for(
-    var i=1;
-    i<=3;
-    i++
-  ){
-
-    html +=
-      '<button class="st-type '+
-      (
-        app.workoutType === i
-        ?
-        'active'
-        :
-        ''
-      )+
-      '" onclick="ST.setWorkoutType('+i+')">'+
-        'Шаблон '+i+
-      '</button>';
-
+  for(var i=1;i<=3;i++){
+    html += '<div class="st-type-cell"><button class="st-type '+(app.workoutType === i ? 'active' : '')+'" onclick="ST.setWorkoutType('+i+')">Шаблон '+i+'</button><button class="st-type-edit" onclick="ST.openManager('+i+')" aria-label="Редактировать шаблон '+i+'" title="Редактировать шаблон">✎</button></div>';
   }
 
-  html += '</div>';
-
-  return html;
+  return html+'</div>';
 
 }
 
 
 function renderJournalHeader(){
 
-  var sessions =
-    currentWorkout()
-      .sessions;
+  var sessions = currentWorkout().sessions;
 
   if(!sessions.length){
-
-    return (
-      '<div class="st-empty">'+
-        (
-          activeCatalog().length
-          ? 'В этом шаблоне пока нет тренировок.'
-          : 'В этом шаблоне пока нет упражнений. Нажмите «Редактировать» и добавьте нужные.'
-        )+
-      '</div>'+
-      (
-        activeCatalog().length
-        ? '<button class="st-new-session" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Создать первую тренировку')+'</button>'
-        : ''
-      )
-    );
-
+    return '<div class="st-empty">'+(activeCatalog().length ? 'В этом шаблоне пока нет тренировок.' : 'В этом шаблоне пока нет упражнений. Нажмите значок редактирования у шаблона и добавьте нужные.')+'</div>'+(activeCatalog().length ? '<button class="st-new-session" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Создать первую тренировку')+'</button>' : '');
   }
 
-  var session =
-    sessions[
-      app.selectedIndex
-    ];
+  var session = sessions[app.selectedIndex];
+  var canCreate = app.entryMode === 'edit' && app.selectedIndex === sessions.length-1;
 
-  return (
-    '<div class="st-nav">'+
-      '<button class="st-arrow" onclick="ST.prevSession()" '+(app.selectedIndex>0?'':'disabled')+' aria-label="Предыдущая тренировка">‹</button>'+
-      '<div class="st-nav-center">'+
-        '<div class="st-nav-title">Тренировка №'+
-          session.number+
-        '</div>'+
-        '<div class="st-nav-sub">'+
-          'Шаблон '+Number(session.workoutType || app.workoutType)+' · '+(
-            isFilled(session)
-            ?
-            'заполнена'
-            :
-            'не заполнена'
-          )+
-        '</div>'+
-      '</div>'+
-      '<button class="st-arrow" onclick="ST.nextSession()" '+(app.selectedIndex<sessions.length-1?'':'disabled')+' aria-label="Следующая тренировка">›</button>'+
+  return '<div class="st-nav">'+
+    '<button class="st-arrow" onclick="ST.prevSession()" '+(app.selectedIndex>0?'':'disabled')+' aria-label="Предыдущая тренировка">‹</button>'+
+    '<div class="st-nav-center"><div class="st-nav-title">Тренировка №'+session.number+'</div><div class="st-nav-sub"><span class="st-nav-template">Шаблон '+Number(session.workoutType || app.workoutType)+'</span><span class="st-nav-status"> · '+(isFilled(session)?'заполнена':'не заполнена')+'</span></div></div>'+
+    '<div class="st-nav-end"><button class="st-arrow" onclick="ST.nextSession()" '+(app.selectedIndex<sessions.length-1?'':'disabled')+' aria-label="Следующая тренировка">›</button><div class="st-undo-controls st-header-undo"><button onclick="ST.undo()" '+(app.undoStack.length?'':'disabled')+' aria-label="Отменить действие">↶</button><button onclick="ST.redo()" '+(app.redoStack.length?'':'disabled')+' aria-label="Повторить действие">↷</button></div>'+(canCreate ? '<button class="st-new-session st-new-session-inline" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Новая тренировка')+'</button>' : '')+'</div>'+
     '</div>'+
-    (
-      app.entryMode === 'edit' && app.selectedIndex === sessions.length-1
-      ? '<button class="st-new-session" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Новая тренировка')+'</button>'
-      : ''
-    )+
-    '<div class="st-undo-controls"><button onclick="ST.undo()" '+(app.undoStack.length?'':'disabled')+' aria-label="Отменить действие">↶</button><button onclick="ST.redo()" '+(app.redoStack.length?'':'disabled')+' aria-label="Повторить действие">↷</button></div>'+
-    '<div id="st-save-state" class="st-saving'+(app.saveError?' error':'')+'">'+
-      (
-        app.saveError
-        ?
-        'Ошибка сохранения: '+esc(app.saveError)
-        :
-        app.saving
-        ?
-        'Сохраняю…'
-        :
-        ''
-      )+
-    '</div>'
-  );
+    '<div id="st-save-state" class="st-saving'+(app.saveError?' error':'')+'">'+(app.saveError ? 'Ошибка сохранения: '+esc(app.saveError) : app.saving ? 'Сохраняю…' : '')+'</div>';
 
 }
 
@@ -3468,16 +3401,7 @@ function renderEntryControls(){
 
 
 function renderActions(){
-  if(app.entryMode === 'train'){
-    return '';
-  }
-
-  return (
-    '<div class="st-actions st-template-actions">'+
-      '<button class="st-action st-manage" onclick="ST.openManager()">Редактировать</button>'+
-    '</div>'
-  );
-
+  return '';
 }
 
 
@@ -3576,7 +3500,7 @@ function renderAdminSheet(){
   var sheet = adminSheetSessions();
   var first = sheet.visible[0] && sheet.visible[0].session;
   var last = sheet.visible[sheet.visible.length-1] && sheet.visible[sheet.visible.length-1].session;
-  return '<section class="st-admin-sheet"><div class="st-admin-sheet-title">План и факт по тренировкам</div><div class="st-admin-sheet-sub">Три последовательные тренировки. Листайте всю историю по одной тренировке.</div><div class="st-admin-window-nav"><button onclick="ST.prevSession()" '+(app.selectedIndex > 0 ? '' : 'disabled')+'>← Предыдущие</button><div class="st-admin-window-range">'+(first ? '№'+esc(first.number) : '')+(last ? ' — №'+esc(last.number) : '')+'</div><button onclick="ST.nextSession()" '+(app.selectedIndex < currentWorkout().sessions.length-1 ? '' : 'disabled')+'>Следующие →</button></div><div class="st-admin-sheet-scroll"><div class="st-admin-sheet-grid">'+renderDayHeads(sheet.visible)+renderExerciseRows(sheet.visible)+'</div></div></section>';
+  return '<section class="st-admin-sheet"><div class="st-admin-sheet-title">План и факт по тренировкам</div><div class="st-admin-window-nav"><button onclick="ST.prevSession()" '+(app.selectedIndex > 0 ? '' : 'disabled')+'>← Предыдущие</button><div class="st-admin-window-range">'+(first ? '№'+esc(first.number) : '')+(last ? ' — №'+esc(last.number) : '')+'</div><button onclick="ST.nextSession()" '+(app.selectedIndex < currentWorkout().sessions.length-1 ? '' : 'disabled')+'>Следующие →</button></div><div class="st-admin-sheet-scroll"><div class="st-admin-sheet-grid">'+renderDayHeads(sheet.visible)+renderExerciseRows(sheet.visible)+'</div></div></section>';
 }
 
 
@@ -3675,21 +3599,29 @@ function renderCurrentExercises(){
     }
     html += '<article class="st-modern-exercise ex'+(i%6)+'">'+
       '<header class="st-modern-head">'+
-        '<div class="st-modern-title"><strong>'+esc(exercise.name)+'</strong>'+(exerciseInfo && exerciseInfo.source === 'base' ? '<button class="st-exercise-info" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Как выполнять упражнение" title="Об упражнении">i</button>' : '')+'</div>'+
+        '<div class="st-modern-title"><strong>'+esc(exercise.name)+'</strong>'+(exerciseInfo && exerciseInfo.source === 'base' ? '<button class="st-exercise-info st-modern-exercise-info" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Как выполнять упражнение" title="Об упражнении"><span>i</span><span class="st-exercise-button-label">Информация</span></button>' : '')+'</div>'+
         '<div class="st-modern-tools">'+
+        '<button class="st-exercise-stats st-modern-exercise-stats" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseStats(this.dataset.exerciseId)" aria-label="Статистика упражнения" title="Статистика упражнения"><span>↗</span><span class="st-exercise-button-label">Статистика</span></button>'+
         (app.entryMode === 'edit' ? '<button class="st-modern-copy" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId)" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">⇢</button>' : '')+
-        (app.entryMode === 'edit' && !isFilled(session) ? '<button class="st-modern-remove" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.hideExerciseFromSession(this.dataset.exerciseId,'+app.selectedIndex+')" aria-label="Скрыть из этой тренировки">×</button>' : '')+'</div>'+
+        '</div>'+
       '</header>'+
       '<section class="st-modern-editor">'+
         '<div class="st-modern-labels '+app.entryMode+'">'+
-          (app.entryMode === 'edit' ? '<span></span>' : '')+'<span class="st-plan-label">План<br><small>вес · разы</small></span>'+
+          (app.entryMode === 'edit' ? '<span></span>' : '')+'<span class="st-plan-label">'+(app.entryMode === 'edit' ? '<button class="st-plan-copy-label" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId)" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">Копировать</button>' : '')+'<span>План</span><br><small>вес · разы</small></span>'+
           (app.entryMode === 'train' ? '<span>✓</span>' : '')+'<span class="st-fact-label">Факт<br><small>вес · разы</small></span><span>Усилие</span>'+
         '</div>';
     for(var setIndex=0;setIndex<exercise.sets.length;setIndex++){
       html += renderModernSet(app.selectedIndex,exercise,setIndex,exercise.sets[setIndex]);
     }
-    html += '<div class="st-modern-set-actions"><button data-exercise-id="'+esc(exercise.id)+'" onclick="ST.addSet(this.dataset.exerciseId)">＋ Подход</button><button data-exercise-id="'+esc(exercise.id)+'" onclick="ST.removeSet(this.dataset.exerciseId)">− Подход</button></div>'+
-      '<label class="st-modern-comment"><span>Комментарий</span><textarea data-exercise-id="'+esc(exercise.id)+'" rows="1" placeholder="Добавить комментарий" oninput="ST.autoGrow(this)" onchange="ST.changeNote(this.dataset.exerciseId,this.value)">'+esc(exercise.note||'')+'</textarea></label>'+
+    html += '<div class="st-modern-set-actions">'+
+      '<button data-exercise-id="'+esc(exercise.id)+'" onclick="ST.addSet(this.dataset.exerciseId)">＋ Подход</button>'+
+      '<button data-exercise-id="'+esc(exercise.id)+'" onclick="ST.removeSet(this.dataset.exerciseId)">− Подход</button>'+
+      (app.entryMode === 'edit' ? '<span class="st-mobile-undo">'+
+        '<button onclick="ST.undo()" '+(app.undoStack.length?'':'disabled')+' aria-label="Отменить действие">↶</button>'+
+        '<button onclick="ST.redo()" '+(app.redoStack.length?'':'disabled')+' aria-label="Повторить действие">↷</button>'+
+      '</span>' : '')+
+      '</div>'+
+      '<label class="st-modern-comment '+(String(exercise.note||'').trim() ? 'has-note' : '')+'">'+(String(exercise.note||'').trim() ? '<span>Комментарий</span>' : '')+'<textarea data-exercise-id="'+esc(exercise.id)+'" rows="1" placeholder="Добавить примечание" oninput="ST.autoGrow(this)" onchange="ST.changeNote(this.dataset.exerciseId,this.value)">'+esc(exercise.note||'')+'</textarea></label>'+
       '</section></article>';
   }
 
@@ -3842,11 +3774,10 @@ function renderExerciseRows(
       '<section class="st-ex-row" style="--st-exercise-tone:var(--ex'+(c%6+1)+')">'+
       '<header class="st-ex-row-head">'+
       '<div class="st-ex-row-name">'+esc(catalog[c].exercise_name)+'</div>'+
-      (
-        currentExercise && !isFilled(currentSession)
-        ? '<button class="st-row-hide" data-exercise-id="'+esc(id)+'" onclick="ST.hideExerciseFromSession(this.dataset.exerciseId,'+app.selectedIndex+')">Скрыть из этой тренировки</button>'
-        : ''
-      )+
+      '<div class="st-ex-row-tools">'+
+        ((catalogItemById(id) || {}).source === 'base' ? '<button class="st-exercise-info st-admin-exercise-info" data-exercise-id="'+esc(id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Информация об упражнении" title="Информация об упражнении"><span>i</span><span class="st-exercise-button-label">Информация</span></button>' : '')+
+        '<button class="st-exercise-stats st-admin-exercise-stats" data-exercise-id="'+esc(id)+'" onclick="ST.openExerciseStats(this.dataset.exerciseId)" aria-label="Статистика упражнения" title="Статистика упражнения"><span>↗</span><span class="st-exercise-button-label">Статистика</span></button>'+
+      '</div>'+
       '</header><div class="st-ex-row-days">';
 
     for(
@@ -3942,7 +3873,7 @@ function renderExerciseDay(
 
   html +=
     '<div class="st-groups">'+
-      '<div class="st-group-plan"><button class="st-copy-forward" data-exercise-id="'+esc(id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId,'+item.index+')" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">Копировать</button><span>План</span></div>'+
+      '<div class="st-group-plan"><button class="st-copy-forward" data-exercise-id="'+esc(id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId,'+item.index+')" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">Копировать</button><span class="st-group-title">План</span></div>'+
       '<div class="st-group-fact">Факт</div>'+
     '</div>'+
     '<div class="st-set-head">'+
@@ -4063,24 +3994,9 @@ function renderNote(
         : ''
       )+
       '<div>'+
-        '<div class="st-note-title">Примечание</div>'+
-        '<div class="st-note-preview">'+
-          (
-            has
-            ?
-            esc(note)
-            :
-            (
-              app.isAdmin
-              ?
-              'Примечаний нет'
-              :
-              'Добавить примечание'
-            )
-          )+
-        '</div>'+
+        (has ? '<div class="st-note-title">Примечание</div><div class="st-note-preview">'+esc(note)+'</div>' : '<div class="st-note-empty">Добавить примечание</div>')+
       '</div>'+
-      '<div>›</div>'+
+      (has ? '<div>›</div>' : '')+
     '</div>'
   );
 
@@ -4592,7 +4508,7 @@ function statsHistory(
 function renderAnalysis(){
 
   var catalog =
-    activeCatalog();
+    displayExercises();
 
   if(!catalog.length){
 
@@ -6370,7 +6286,14 @@ window.ST = {
   },
 
 
-  openManager:function(){
+  openManager:function(type){
+
+    if(type && app.workouts[Number(type)]){
+      app.workoutType = Number(type);
+      var sessions = currentWorkout().sessions;
+      app.selectedIndex = sessions.length ? sessions.length-1 : 0;
+      app.statsExerciseId = '';
+    }
 
     app.managerDraft = copyCatalog(templateWorkout().catalog);
     app.managerUndoStack = [];
@@ -6921,6 +6844,14 @@ window.ST = {
 
     render();
 
+  },
+
+
+  openExerciseStats:function(id){
+    app.statsExerciseId = id;
+    app.mainTab = 'stats';
+    app.modal = null;
+    render();
   },
 
 

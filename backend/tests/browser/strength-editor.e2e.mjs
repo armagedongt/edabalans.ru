@@ -198,11 +198,18 @@ for (const width of [360, 430, 768, 1440]) {
     return { workouts: Object.fromEntries(Object.keys(workouts).map((type) => [type, globalWorkoutForType(workouts, Number(type))])) };
   })());
   await page.goto(pathToFileURL(appPath).href);
-  await page.getByText("Редактировать", { exact: true }).waitFor();
+  await page.locator(".st-type-edit").first().waitFor();
 
-  assert.equal(await page.getByText("Шаблон 1", { exact: true }).count(), 1);
+  assert.equal(await page.getByRole("button", { name: "Шаблон 1", exact: true }).count(), 1);
   assert.equal(await page.getByText("Как пользоваться", { exact: true }).count(), 1);
   assert.ok(await page.locator("#strength-app").evaluate((node) => node.scrollWidth <= node.clientWidth));
+  assert.equal(await page.locator(".st-modern-comment textarea").first().getAttribute("placeholder"), "Добавить примечание");
+  if (width < 701) {
+    assert.equal(await page.locator(".st-header-undo").isVisible(), false);
+    assert.equal(await page.locator(".st-modern-set-actions .st-mobile-undo button").first().isVisible(), true);
+  } else {
+    assert.equal(await page.locator(".st-mobile-undo").first().isVisible(), false);
+  }
   if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-closed-${width}.png`), fullPage: false });
 
   await page.getByText("Как пользоваться", { exact: true }).click();
@@ -210,7 +217,14 @@ for (const width of [360, 430, 768, 1440]) {
   if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-tutorial-${width}.png`), fullPage: false });
   await page.getByText("Понятно", { exact: true }).click();
 
-  await page.getByText("Редактировать", { exact: true }).click();
+  await page.locator(".st-top-stats").click();
+  await page.getByText("← К тренировкам", { exact: true }).click();
+  await page.locator(".st-nav-title").waitFor();
+
+  await page.locator(".st-type-edit").nth(1).click();
+  assert.equal(await page.getByText("Редактировать · Шаблон 2", { exact: true }).count(), 1);
+  await page.getByText("Закрыть", { exact: true }).click();
+  await page.locator(".st-type-edit").first().click();
   assert.equal(await page.getByText("Редактировать · Шаблон 1", { exact: true }).count(), 1);
   assert.equal(await page.getByText("Добавить своё", { exact: true }).count(), 1);
   assert.equal(await page.getByText("Добавить", { exact: true }).count() > 0, true);
@@ -266,7 +280,7 @@ for (const width of [360, 430, 768, 1440]) {
   assert.equal(await page.evaluate(() => document.body.style.overflow), "");
   assert.equal((await page.evaluate(() => window.__saveActions)).includes("saveExerciseCatalog"), true);
   await page.getByText("Шаблон 2", { exact: true }).click();
-  await page.getByText("Редактировать", { exact: true }).click();
+  await page.locator(".st-type-edit").nth(1).click();
   await page.locator("#st-manager-save-state").getByText("Сохранено", { exact: true }).waitFor({ timeout: 5000 });
   const customRow = page.locator(".st-manager-row", { has: page.locator(".st-manager-name", { hasText: "Моё переименованное упражнение" }) });
   assert.equal(await customRow.count(), 1);
@@ -285,7 +299,7 @@ for (const width of [360, 430, 768, 1440]) {
   assert.equal(await page.getByText("Закрыть", { exact: true }).count(), 1);
   await page.getByText("Закрыть", { exact: true }).click();
   await page.locator("#st-save-state").getByText("Сохранено", { exact: true }).waitFor({ timeout: 5000 });
-  await page.getByText("Редактировать", { exact: true }).waitFor();
+  await page.locator(".st-type-edit").first().waitFor();
   await page.getByText(/Тренировка №(25|26)/, { exact: true }).waitFor();
   const expectedDate = await page.evaluate(() => {
     const date = new Date();
@@ -311,9 +325,9 @@ for (const width of [360, 430, 768, 1440]) {
   await firstPlanInput.blur();
   await page.waitForFunction(() => window.__saveBodies.some((body) => body?.action === "saveSession" && body.session?.session_number === 27 && body.session.exercises.some((exercise) => exercise.exercise_id === "bench-press" && String(exercise.sets[0].plan_weight) === "55")));
   await page.locator("#st-save-state").getByText("Сохранено", { exact: true }).waitFor({ timeout: 5000 });
-  await page.getByRole("button", { name: "Отменить действие" }).click();
+  await page.getByRole("button", { name: "Отменить действие" }).first().click();
   assert.equal(await page.locator(".st-modern-set.edit input").first().inputValue(), "");
-  await page.getByRole("button", { name: "Повторить действие" }).click();
+  await page.getByRole("button", { name: "Повторить действие" }).first().click();
   assert.equal(await page.locator(".st-modern-set.edit input").first().inputValue(), "55");
   await page.locator("#strength-app").click({ position: { x: 4, y: 4 } });
   await page.keyboard.press("Control+Z");
@@ -323,7 +337,7 @@ for (const width of [360, 430, 768, 1440]) {
   const savesBeforeNavigation = await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveSession").length);
   await page.getByRole("button", { name: "Предыдущая тренировка" }).click();
   await page.getByText("Тренировка №26", { exact: true }).waitFor();
-  await page.locator(".st-modern-copy").first().click();
+  await page.locator(width < 701 ? ".st-modern-copy" : ".st-plan-copy-label").first().click();
   await page.waitForFunction(() => window.__saveBodies.some((body) => body?.action === "saveSession" && body.session?.session_number === 27 && body.session.exercises.some((exercise) => exercise.exercise_id === "bench-press" && String(exercise.sets[0].plan_weight) === "40")));
   const copiedPlan = await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveSession" && body.session?.session_number === 27).at(-1));
   const destinationBench = copiedPlan.session.exercises.filter((exercise) => exercise.exercise_id === "bench-press");
@@ -335,7 +349,7 @@ for (const width of [360, 430, 768, 1440]) {
   assert.ok(await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveSession").length) > savesBeforeNavigation);
 
   await page.getByText("Шаблон 3", { exact: true }).click();
-  await page.getByText("Редактировать", { exact: true }).click();
+  await page.locator(".st-type-edit").nth(2).click();
   const firstExercise = page.locator(".st-manager-row").first();
   await firstExercise.getByText("Добавить", { exact: true }).click();
   await page.getByText("Закрыть", { exact: true }).click();
@@ -412,12 +426,12 @@ for (const width of [768, 1440]) {
   assert.ok(await page.locator(".st-admin-sheet .st-divider").count() > 0);
   const unsafeId = "custom-x');window.__strengthXss=1;//";
   const unsafeHandlers = await page.locator(".st-admin-sheet").evaluate((sheet, exerciseId) => {
-    const selectors = { hide: ".st-row-hide", plan: ".st-plan-field", fact: ".st-fact-field", rpe: ".st-fact-rpe", note: ".st-note" };
+    const selectors = { plan: ".st-plan-field", fact: ".st-fact-field", rpe: ".st-fact-rpe", note: ".st-note" };
     return Object.fromEntries(Object.entries(selectors).map(([name, selector]) => [name, Array.from(sheet.querySelectorAll(selector))
       .filter((node) => node.dataset.exerciseId === exerciseId)
       .map((node) => `${node.getAttribute("onclick") || ""} ${node.getAttribute("onchange") || ""}`)]));
   }, unsafeId);
-  const expectedHandlerCounts = { hide: 1, plan: 6, fact: 6, rpe: 3, note: 3 };
+  const expectedHandlerCounts = { plan: 6, fact: 6, rpe: 3, note: 3 };
   for (const [name, handlers] of Object.entries(unsafeHandlers)) {
     assert.equal(handlers.length, expectedHandlerCounts[name]);
     handlers.forEach((handler) => {
@@ -436,20 +450,7 @@ for (const width of [768, 1440]) {
   await factField.blur();
   await page.waitForFunction(() => window.__saveBodies.some((body) => body?.action === "saveSession" && body.session?.session_number === 3 && body.session.exercises.some((exercise) => exercise.sets.some((set) => set.fact_weight === 37))));
 
-  const customExerciseRow = page.locator(".st-admin-sheet .st-ex-row", { hasText: "Пользовательское упражнение" });
-  await customExerciseRow.locator(".st-row-hide").click();
-  await page.waitForFunction((exerciseId) => window.__saveBodies.some((body) => body?.action === "saveSession" && body.session?.session_number === 5 && !body.session.exercises.some((exercise) => exercise.exercise_id === exerciseId)), unsafeId);
-  assert.equal(await customExerciseRow.locator(".st-ex-day").nth(0).locator(".st-set").count() > 0, true, "скрытие из №5 не затрагивает историческую №3");
-  assert.equal(await customExerciseRow.locator(".st-ex-day").nth(1).locator(".st-set").count() > 0, true, "скрытие из №5 не затрагивает историческую №4");
-  assert.equal(await customExerciseRow.locator(".st-ex-day").nth(2).locator(".st-set").count(), 0, "упражнение исчезает из выбранной №5 сразу после скрытия");
-  await page.getByRole("button", { name: "Отменить действие" }).click();
-  await page.waitForFunction((exerciseId) => window.__saveBodies.some((body) => body?.action === "saveSession" && body.session?.session_number === 5 && body.session.exercises.some((exercise) => exercise.exercise_id === exerciseId)), unsafeId);
-  assert.ok(await customExerciseRow.locator(".st-ex-day").nth(2).locator(".st-set").count() > 0, "отмена сразу возвращает упражнение в выбранную №5");
-  await page.getByRole("button", { name: "Предыдущая тренировка" }).click();
-  await page.getByText("Тренировка №4", { exact: true }).waitFor();
-  assert.equal(await page.locator(".st-admin-sheet .st-row-hide").count(), 0, "у заполненной тренировки нет кнопки скрытия");
-  await page.getByRole("button", { name: "Следующая тренировка" }).click();
-  await page.getByText("Тренировка №5", { exact: true }).waitFor();
+  assert.equal(await page.locator(".st-admin-sheet .st-row-hide").count(), 0, "скрытие упражнения доступно только в редакторе шаблона");
 
   assert.equal(await page.locator(".st-admin-window-nav button").count(), 2);
   await page.getByText("← Предыдущие", { exact: true }).click();
@@ -484,7 +485,7 @@ for (const width of [768, 1440]) {
   assert.ok(await page.evaluate(() => window.__saveBodies.some((body) => body?.action === "saveSession" && body.session?.session_number === 6)));
   await page.getByRole("button", { name: "Предыдущая тренировка" }).click();
   await page.getByText("Тренировка №5", { exact: true }).waitFor();
-  assert.ok(await page.locator(".st-admin-sheet .st-row-hide").count() > 0, "выбранная незаполненная тренировка сохраняет одну кнопку скрытия даже при существующей следующей");
+  assert.equal(await page.locator(".st-admin-sheet .st-row-hide").count(), 0, "в рабочей таблице нет кнопки скрытия упражнения");
   await page.getByRole("button", { name: "Следующая тренировка" }).click();
   await page.getByText("Тренировка №6", { exact: true }).waitFor();
 
