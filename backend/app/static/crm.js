@@ -81,7 +81,7 @@
 
   function bindTop() {
     root.querySelectorAll("[data-view]").forEach((button) => {
-      button.addEventListener("click", () => showView(button.dataset.view));
+      button.addEventListener("click", () => showView(button.dataset.view).catch(showError));
     });
   }
 
@@ -322,7 +322,8 @@
     root.innerHTML = top("payments") + '<div class="crm-loading">Загружаю оплаты…</div>';
     bindTop();
     const filters = state.paymentFilters;
-    const params = new URLSearchParams({ limit: String(paymentPageSize), offset: String(state.paymentOffset), ...filters });
+    const params = new URLSearchParams({ limit: String(paymentPageSize), offset: String(state.paymentOffset) });
+    Object.entries(filters).forEach(([key, value]) => { if (value !== "") params.set(key, value); });
     if (state.paymentSnapshotAt) params.set("snapshot_at", state.paymentSnapshotAt);
     const productRequest = state.userProducts ? Promise.resolve(state.userProducts) : api("/admin/api/payment-products").catch(() => null);
     const payments = await api(`/admin/api/payments?${params}`);

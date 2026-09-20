@@ -29,6 +29,8 @@ const userAccessFilters = [];
 const userAccompanimentFilters = [];
 const paymentOffsets = [];
 const paymentSnapshots = [];
+const paymentQueries = [];
+let failNextPaymentRequest = false;
 let errorAttempts = 0;
 let libraryErrorAttempts = 0;
 const sampleUser = { id:"u1", display_name:"Анна", email:"anna@example.com", telegram:"anna", purchase_count:2, ltv_rub:12000, estimated_ltv_rub:0, last_purchase_at:"2026-09-18T12:00:00Z", accompaniment_status:"active", accesses:["MASTERCLASS"] };
@@ -124,6 +126,12 @@ const server = createServer((request, response) => {
     return setTimeout(() => json(response, [q === "a" ? {...sampleUser, display_name:"Устаревший ответ"} : sampleUser]), delay);
   }
   if (url.pathname === "/admin/api/payments") {
+    paymentQueries.push(new URLSearchParams(url.searchParams));
+    if (failNextPaymentRequest) {
+      failNextPaymentRequest = false;
+      response.writeHead(500, { "Content-Type": "application/json" });
+      return response.end(JSON.stringify({detail:"test payment error"}));
+    }
     const offset = Number(url.searchParams.get("offset") || 0);
     paymentOffsets.push(offset);
     paymentSnapshots.push(url.searchParams.get("snapshot_at"));
@@ -278,8 +286,16 @@ for (const [name, route] of Object.entries(integratedPages)) {
       await page.locator(".crm-filters summary").click();
       assert.match(await page.locator(".crm-filter-help").textContent(), /Тег.*не подтверждает оплату/s);
       assert.match(await page.locator(".crm-filter-help").textContent(), /Проблемы доступа.*очередь/s);
+      failNextPaymentRequest = true;
       await page.getByRole("button", { name:"Оплаты" }).click();
+      await page.getByText("CRM не загрузилась", { exact:true }).waitFor();
+      assert.match(await page.locator(".crm-error").textContent(), /test payment error/);
+      await page.getByRole("button", { name:"Повторить" }).click();
       await page.locator("#payment-next:not([disabled])").waitFor();
+      assert.equal(paymentQueries.at(-1).has("date_from"), false);
+      assert.equal(paymentQueries.at(-1).has("date_to"), false);
+      assert.equal(paymentQueries.at(-1).has("product_code"), false);
+      assert.equal(paymentQueries.at(-1).get("amount_kind"), "all");
       assert.match(await page.locator(".crm-table tbody").textContent(), /Первая оплата 1/);
       await page.locator("#payment-next").click();
       await page.waitForTimeout(80);
