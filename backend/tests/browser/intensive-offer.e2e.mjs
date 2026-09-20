@@ -41,10 +41,18 @@ try {
     contentType: 'application/json',
     body: JSON.stringify({ok: true}),
   }))
+  await page.route('https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/**', route => route.fulfill({
+    contentType: 'text/html',
+    body: '<!doctype html><title>Masterclass checkout target</title>',
+  }))
 
   await page.goto(`${baseUrl}/intensive/day-4`, { waitUntil: 'domcontentloaded' })
   const cta = page.locator('.masterclass-cta')
   await cta.waitFor({state: 'attached'})
+  await page.waitForFunction(() => {
+    const value = document.querySelector('.masterclass-cta')?.href
+    return value?.includes('/mk1') && !value.includes('intensive_offer=')
+  })
   await page.waitForTimeout(250)
   if (offerRequests !== 0) {
     throw new Error(`Offer started before the day-four CTA entered the viewport: ${offerRequests}`)
@@ -56,11 +64,11 @@ try {
     throw new Error(`Offer started by reading or scrolling to the day-four CTA: ${offerRequests}`)
   }
 
-  await cta.click()
-  const href = await page.waitForFunction(() => {
-    const value = document.querySelector('.masterclass-cta')?.href
-    return value?.includes('intensive_offer=offer-scroll-test') ? value : null
-  }).then(handle => handle.jsonValue())
+  await Promise.all([
+    page.waitForURL(url => url.href.includes('intensive_offer=offer-scroll-test')),
+    cta.click(),
+  ])
+  const href = page.url()
   if (offerRequests !== 1) {
     throw new Error(`Offer endpoint called an unexpected number of times: ${offerRequests}`)
   }
