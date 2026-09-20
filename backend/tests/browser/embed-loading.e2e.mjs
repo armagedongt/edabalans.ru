@@ -359,6 +359,41 @@ try {
   assert.deepEqual(navigation.faults,[])
   await navigation.native.close()
 
+  // Selection and completion are independent: revisiting a completed day keeps
+  // the active orange treatment and the completion checkmark at the same time.
+  const completedSelectedProgress=structuredClone(progress)
+  completedSelectedProgress.current_day=2
+  completedSelectedProgress.days[0].completed=true
+  completedSelectedProgress.days[0].completed_at=new Date().toISOString()
+  const completedSelected=await nativePage('?course_day=2&theme=light',{progress:completedSelectedProgress})
+  await completedSelected.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('#days .day-button[data-day="2"]')?.classList.contains('active'))
+  await waitForReveal(completedSelected.native)
+  const completedSelectedDay=completedSelected.native.locator('#days .day-button[data-day="1"]')
+  assert.equal(await completedSelectedDay.evaluate(element=>element.classList.contains('done')),true,'The earlier day is already completed before revisiting it')
+  assert.equal(await completedSelectedDay.evaluate(element=>element.classList.contains('active')),false,'A completed day is not active before the user selects it')
+  assert.equal(await completedSelected.native.locator('#days .day-button.active').count(),1,'Only the currently selected day is active before revisiting')
+  await completedSelectedDay.click()
+  await completedSelected.native.mouse.move(1200,500)
+  for(const width of [360,430,768,1440]){
+    await completedSelected.native.setViewportSize({width,height:1000})
+    if(width<=900&&!await completedSelected.native.locator('#sidebar').evaluate(element=>element.classList.contains('open')))await completedSelected.native.locator('#menu').click()
+    assert.equal(await completedSelected.native.locator('#days .day-button.active').count(),1,'Exactly one day remains active at '+width+'px')
+    assert.equal(await completedSelectedDay.evaluate(element=>element.classList.contains('active')),true,'A revisited completed day remains selected at '+width+'px')
+    assert.equal(await completedSelectedDay.evaluate(element=>element.classList.contains('done')),true,'The selected day retains its completed state at '+width+'px')
+    assert.match(await completedSelectedDay.evaluate(element=>getComputedStyle(element).backgroundColor),/^rgba\(17, 142, 216, 0\.(27|32)\)$/,'The selected completed day keeps the active or active-hover card background at '+width+'px')
+    const selectedNumberBackground=await completedSelectedDay.locator('.day-number').evaluate(element=>getComputedStyle(element).backgroundImage)
+    assert.match(selectedNumberBackground,/linear-gradient\(/,'The selected completed day keeps a gradient number at '+width+'px')
+    assert.match(selectedNumberBackground,/rgb\(255, 194, 90\)/,'The selected completed day keeps the agreed gold start color at '+width+'px')
+    assert.match(selectedNumberBackground,/rgb\(243, 154, 47\)/,'The selected completed day keeps the agreed gold end color at '+width+'px')
+    assert.equal(await completedSelectedDay.locator('.day-state').evaluate(element=>getComputedStyle(element,'::after').content),'"✓"','The selected completed day keeps its checkmark at '+width+'px')
+    if(process.env.QA_OUT){
+      await mkdir(process.env.QA_OUT,{recursive:true})
+      await completedSelected.native.screenshot({path:process.env.QA_OUT+'/course-completed-selected-day-'+width+'.png'})
+    }
+  }
+  assert.deepEqual(completedSelected.faults,[])
+  await completedSelected.native.close()
+
   // A deep link prefetches the course before mounting it; dashboard entry mounts it
   // before the first course fetch. Both must expose exactly the same visual system.
   const courseSkin = native => native.evaluate(() => {
