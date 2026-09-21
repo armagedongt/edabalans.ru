@@ -27,6 +27,7 @@ router = APIRouter()
 BLOG_DIR = Path(__file__).resolve().parent / "static" / "blog"
 BLOG_FONT_FILES = {"inter-cyrillic.woff2", "inter-latin.woff2", "manrope-cyrillic.woff2", "manrope-latin.woff2"}
 BLOG_ARTICLE_STYLES = {"article-typography.css": "typography.css", "article-note.css": "note.css"}
+BLOG_BRAND_ASSETS = {"brain-logo.png": "favicon-no-outline.png"}
 BLOG_ASSET_FILES = {
     "blog.css",
     "blog.js",
@@ -200,6 +201,11 @@ def blog_asset(asset_name: str) -> FileResponse:
     if asset_name in BLOG_ARTICLE_STYLES:
         path = Path(__file__).resolve().parents[2] / "content" / "article-components" / BLOG_ARTICLE_STYLES[asset_name]
         response = FileResponse(path, media_type="text/css")
+        response.headers["Cache-Control"] = "public, max-age=86400"
+        return response
+    if asset_name in BLOG_BRAND_ASSETS:
+        path = Path(__file__).resolve().parent / "static" / "brand" / BLOG_BRAND_ASSETS[asset_name]
+        response = FileResponse(path, media_type="image/png")
         response.headers["Cache-Control"] = "public, max-age=86400"
         return response
     if asset_name not in BLOG_ASSET_FILES:

@@ -97,7 +97,13 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert "https://edabalans.ru/cookie-notice.js" in response.text
     assert "/blog/assets/blog.css" in response.text
     assert 'href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>' in response.text
-    assert '>Мастер-класс</a>' not in response.text
+    assert 'href="https://похудение-это-есть.рф/">Мастер-класс</a>' in response.text
+    assert '>Главная</a>' not in response.text
+    assert 'src="/blog/assets/brain-logo.png?v=20260921b"' in response.text
+    public_header = response.text.split('<header class="site-header site-header--public">', 1)[1].split("</header>", 1)[0]
+    assert public_header.index('>Блог</a>') < public_header.index('>Мастер-класс</a>')
+    assert public_header.index('>Мастер-класс</a>') < public_header.index('>Бесплатный интенсив</a>')
+    assert public_header.index('>Бесплатный интенсив</a>') < public_header.index('class="nav-contact"')
     assert 'class="nav-contact-trigger"' in response.text
     assert 'href="#contacts">Контакты</a>' not in response.text
     assert 'href="https://t.me/FitnessSergey"' in response.text
@@ -157,7 +163,9 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
     assert 'loading="eager" decoding="async" fetchpriority="high"' in article_hero
     assert 'loading="lazy" decoding="async"' in response.text
     assert 'href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>' in response.text
-    assert '>Мастер-класс</a>' not in response.text
+    assert 'href="https://похудение-это-есть.рф/">Мастер-класс</a>' in response.text
+    assert '>Главная</a>' not in response.text
+    assert 'src="/blog/assets/brain-logo.png?v=20260921b"' in response.text
     assert 'class="nav-contact-trigger"' in response.text
 
 
@@ -173,6 +181,7 @@ def test_blog_assets_and_fonts_are_whitelisted() -> None:
     black_favicon = client.get("/blog/assets/favicon-test-black.svg")
     blue_favicon = client.get("/blog/assets/favicon-test-blue.svg")
     face_favicon = client.get("/blog/assets/favicon-test-face.png")
+    brain_logo = client.get("/blog/assets/brain-logo.png")
 
     assert font.status_code == 200
     assert font.headers["content-type"] == "font/woff2"
@@ -191,6 +200,9 @@ def test_blog_assets_and_fonts_are_whitelisted() -> None:
     assert re.search(r"\.card-tag \{[^}]*border-radius: 7px;[^}]*background: var\(--cloud\);[^}]*\}", stylesheet.text)
     assert re.search(r"\.card-copy \{[^}]*overflow: hidden;[^}]*-webkit-line-clamp: 4;[^}]*\}", stylesheet.text)
     assert re.search(r"\.theme-toggle:hover \{[^}]*border-color: var\(--blue\);[^}]*color: var\(--blue\);[^}]*\}", stylesheet.text)
+    assert re.search(r"\.header-inner \{[^}]*grid-template-columns: minmax\(215px, 1fr\) auto minmax\(215px, 1fr\);[^}]*\}", stylesheet.text)
+    assert re.search(r"\.nav \{[^}]*justify-content: center;[^}]*\}", stylesheet.text)
+    assert re.search(r"\.brand-copy strong \{[^}]*color: var\(--brand-blue\);[^}]*\}", stylesheet.text)
     assert re.search(r"\.article-layout \{[^}]*width: min\(760px, 100%\);[^}]*\}", stylesheet.text)
     assert re.search(r"\.article-hero \{[^}]*width: min\(760px, 100%\);[^}]*\}", stylesheet.text)
     assert re.search(r"\.toc-dock \{[^}]*position: fixed;[^}]*\}", stylesheet.text)
@@ -215,6 +227,11 @@ def test_blog_assets_and_fonts_are_whitelisted() -> None:
     assert blue_favicon.headers["content-type"] == "image/svg+xml"
     assert face_favicon.status_code == 200
     assert face_favicon.headers["content-type"] == "image/png"
+    assert brain_logo.status_code == 200
+    assert brain_logo.headers["content-type"] == "image/png"
+    assert brain_logo.content == (
+        Path(__file__).resolve().parents[1] / "app" / "static" / "brand" / "favicon-no-outline.png"
+    ).read_bytes()
     assert client.get("/blog/fonts/unknown.woff2").status_code == 404
     assert client.get("/blog/assets/unknown.js").status_code == 404
 
