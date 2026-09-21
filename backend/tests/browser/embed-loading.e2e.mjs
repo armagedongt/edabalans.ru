@@ -524,7 +524,8 @@ try {
   // The explicit continuation waits for the atomic questionnaire transaction; final answers win over old autosaves.
   const answerSave=barrier()
   const unanswered=structuredClone(progress)
-  unanswered.days[0].completed_steps=[0,1,2]
+  const questionnaireIndex=manifest.days[0].steps.findIndex(step=>step.kind==='questionnaire')
+  unanswered.days[0].completed_steps=Array.from({length:questionnaireIndex},(_,index)=>index)
   const fastForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{
     answerSave,progress:unanswered,questions:[{code:'main_request',title:'Главный запрос',prompt:'',answer:''}],
     personFields:[{key:'weight',code:'person_weight',title:'Вес, кг',min:10,max:500,step:0.1}],personParameters:{weight:80},
