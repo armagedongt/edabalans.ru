@@ -32,12 +32,24 @@ body.ed-admin-shell.admin-shell-hidden{padding-left:0}
 .admin-shell-nav>[data-admin-category="commerce"]{--admin-accent:#ffb4a8}
 .admin-shell-nav>[data-admin-category="service"]{--admin-accent:#aebbc6}
 .admin-shell-nav>[data-admin-category="knowledge"]{--admin-accent:#8ee5dd}
+.admin-shell-nav>[data-admin-category="external"]{--admin-accent:#f4aed0}
 .admin-shell-nav>span[data-admin-category="clients"]{color:#9dd8ff!important}
 .admin-shell-nav>span[data-admin-category="applications"]{color:#b7eca3!important}
 .admin-shell-nav>span[data-admin-category="marketing"]{color:#ffd090!important}
 .admin-shell-nav>span[data-admin-category="courses"]{color:#c9b4ff!important}
 .admin-shell-nav>span[data-admin-category="commerce"]{color:#ffb4a8!important}
 .admin-shell-nav>span[data-admin-category="knowledge"]{color:#8ee5dd!important}
+.admin-nav-external{display:block;margin:16px 0 0;color:#bdcbc1}
+.admin-nav-external summary{display:flex;align-items:center;gap:10px;min-height:39px;padding:9px 10px;cursor:pointer;list-style:none;color:#f4aed0;font-size:12px}
+.admin-nav-external summary::-webkit-details-marker{display:none}
+.admin-nav-external summary::after{content:"›";margin-left:auto;color:#b9c7bd;font-size:17px;line-height:1;transition:transform .16s ease}
+.admin-nav-external[open] summary::after{transform:rotate(90deg)}
+.admin-nav-external summary:hover{border-radius:10px;background:#ffffff17;color:#fff}
+.admin-nav-external-icon{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;font-size:24px;line-height:1;filter:drop-shadow(0 3px 5px #08171042)}
+.admin-nav-external-items{display:grid;gap:2px;padding:1px 0 0 14px}
+.admin-shell-nav .admin-nav-external-items>a{display:flex;align-items:center;gap:10px;min-height:39px;padding:9px 10px;border-radius:10px;color:#bdcbc1}
+.admin-shell-nav .admin-nav-external-items>a:hover{color:#fff;background:#ffffff17}
+.admin-shell-nav .admin-nav-external-items>a.active{color:#fff;background:linear-gradient(100deg,#ffffff24,#ffffff0d);box-shadow:inset 3px 0 0 var(--admin-accent),0 8px 20px #0c211826}
 .admin-shell-nav .admin-nav-icon{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;background:transparent;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;font-size:27px;line-height:1;font-weight:400;filter:drop-shadow(0 3px 5px #08171042)}
 .admin-shell-nav .admin-nav-icon-crm{background:transparent}
 .admin-shell-nav .admin-nav-copy{min-width:0;display:grid;gap:1px}
@@ -59,6 +71,7 @@ body.ed-admin-shell.admin-shell-hidden{padding-left:0}
 .admin-shell-collapsed .admin-shell-control[data-action="hide"]{display:none}
 .admin-shell-collapsed .admin-brand{justify-content:center;padding:6px 0}
 .admin-shell-collapsed .admin-shell-nav>a,.admin-shell-collapsed .admin-shell-nav>.admin-nav-disabled,.admin-shell-collapsed .admin-shell-account,.admin-shell-collapsed .admin-shell-logout{justify-content:center;padding-left:0;padding-right:0}
+.admin-shell-collapsed .admin-nav-external{display:none}
 .admin-shell-collapsed .admin-shell-footer{padding-top:8px}
 .admin-shell-collapsed .admin-sidebar{padding-left:10px;padding-right:10px}
 .ed-admin-shell .admin-main{min-width:0}
@@ -99,6 +112,7 @@ body.ed-admin-shell.admin-shell-hidden{padding-left:0}
   .admin-shell-collapsed .admin-brand span,.admin-shell-collapsed .admin-shell-nav>span,.admin-shell-collapsed .admin-nav-copy,.admin-shell-collapsed .admin-shell-account>span:last-child,.admin-shell-collapsed .admin-shell-logout>span:last-child{display:block!important}
   .ed-admin-shell.admin-shell-collapsed .admin-brand{display:flex;justify-content:flex-start;padding:6px}
   .admin-shell-collapsed .admin-shell-nav>a,.admin-shell-collapsed .admin-shell-nav>.admin-nav-disabled,.admin-shell-collapsed .admin-shell-account,.admin-shell-collapsed .admin-shell-logout{justify-content:flex-start;padding:9px 10px}
+  .admin-shell-collapsed .admin-nav-external{display:block}
   .admin-shell-control[data-action="collapse"],.admin-shell-control[data-action="hide"]{display:none}
   .admin-shell-mobile-opened .admin-shell-mobile-open{left:min(calc(86vw - 54px),256px)}
   .admin-shell-brand-row{padding-right:36px}

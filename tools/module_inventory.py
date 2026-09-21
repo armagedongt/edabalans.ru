@@ -28,6 +28,7 @@ ADMIN_CATALOG_CATEGORIES = {
     "commerce",
     "service",
     "knowledge",
+    "external",
 }
 RELATION_TYPES = ("reads_from", "writes_to", "depends_on", "events_in", "events_out")
 HTTP_METHODS = {"get", "post", "put", "patch", "delete", "options", "head", "api_route"}

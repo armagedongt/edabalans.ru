@@ -837,6 +837,7 @@ owns_files = ["docs/ADMIN_ARCHITECTURE.md"]
 
 [[modules]]
 id = "admin.control"
+admin_catalog = [{ category = "external", order = 10, url = "/weather/", label = "Погода", icon = "🌦️", description = "Личный погодный экран и карта." }, { category = "external", order = 20, url = "/game/", label = "Игра для Серёжи и Сонечки", icon = "💗", description = "Отдельная личная игра для двоих." }, { category = "external", order = 30, url = "https://app.edabalans.ru/sherbakova/", label = "Сайт Щербаковой", icon = "🌿", description = "Изолированный preview стороннего сайта." }]
 parent = "admin"
 card = "docs/knowledge-base/modules/catalog/admin.control.md"
 owns_files = [
@@ -994,7 +995,7 @@ card = "docs/knowledge-base/modules/catalog/marketing.md"
 
 [[modules]]
 id = "marketing.analytics"
-admin_catalog = [{ category = "marketing", order = 10, url = "/admin/marketing", label = "Путь лида", icon = "📈", description = "Таблица пользователей, источников, действий и конверсий бесплатного интенсива." }]
+admin_catalog = [{ category = "marketing", order = 10, url = "/admin/marketing", label = "Аналитика", icon = "📈", description = "Воронка, источники, действия и конверсии бесплатного интенсива." }]
 parent = "marketing"
 card = "docs/knowledge-base/modules/catalog/marketing.analytics.md"
 owns_files = [

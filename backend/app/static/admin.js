@@ -692,7 +692,7 @@
   }
 
   async function marketingDashboard() {
-    setHeading("Путь лида", "МАРКЕТИНГ И РЕКЛАМА");
+    setHeading("Аналитика", "МАРКЕТИНГ И ВОРОНКА");
     loading();
     const params = new URLSearchParams(location.search);
     const from = params.get("from") || "2025-12-01";

@@ -5,7 +5,7 @@
 
   const body = document.body;
   body.classList.add("ed-admin-shell");
-  const categoryOrder = ["clients", "applications", "marketing", "courses", "commerce", "service", "knowledge"];
+  const categoryOrder = ["clients", "applications", "marketing", "courses", "commerce", "service", "knowledge", "external"];
   const categoryNames = {
     clients: "Клиенты",
     applications: "Приложения",
@@ -13,7 +13,8 @@
     courses: "Курсы",
     commerce: "Коммерция",
     service: "Служебное",
-    knowledge: "База знаний"
+    knowledge: "База знаний",
+    external: "Сторонние проекты"
   };
   const stateKey = "edabalans-admin-shell-state";
   const scrollKey = "edabalans-admin-shell-scroll";
@@ -73,10 +74,21 @@
     }).filter(function (group) { return group.items.length; });
     const nav = document.querySelector(".admin-shell-nav");
     nav.innerHTML = groups.map(function (group) {
-      return `<span data-admin-category="${group.category}">${categoryNames[group.category]}</span>` + group.items.map(function (item) {
+      const links = group.items.map(function (item) {
         return itemMarkup(Object.assign({category: group.category}, item), item.module_id, uniqueIcon(item));
       }).join("");
+      if (group.category === "external") {
+        const isCurrent = group.items.some(selected);
+        return `<details class="admin-nav-external" data-admin-category="external"${isCurrent ? " open" : ""}><summary><span class="admin-nav-external-icon" aria-hidden="true">🧩</span><b>${categoryNames.external}</b></summary><div class="admin-nav-external-items">${links}</div></details>`;
+      }
+      return `<span data-admin-category="${group.category}">${categoryNames[group.category]}</span>${links}`;
     }).join("");
+    nav.querySelectorAll(".admin-nav-external").forEach(function (details) {
+      details.addEventListener("toggle", function () {
+        if (!details.open) return;
+        requestAnimationFrame(function () { details.scrollIntoView({block: "nearest"}); });
+      });
+    });
     const rememberedScroll = Number(sessionStorage.getItem(scrollKey) || 0);
     requestAnimationFrame(function () { nav.scrollTop = rememberedScroll; });
   }

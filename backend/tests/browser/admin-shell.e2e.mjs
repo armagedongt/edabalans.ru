@@ -236,6 +236,7 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
   assert.ok(await page.locator(".admin-brand img").evaluate((node) => node.complete && node.naturalWidth > 0));
   assert.equal(await page.getByText("Служебное", { exact: true }).count(), 1);
   assert.equal(await page.getByText("База знаний", { exact: true }).count(), 1);
+  assert.equal(await page.getByText("Сторонние проекты", { exact: true }).count(), 1);
   for (const category of ["Клиенты", "Приложения", "Маркетинг", "Курсы", "Коммерция", "Служебное", "База знаний"]) {
     assert.equal(await page.getByText(category, { exact: true }).count(), 1, category);
   }
@@ -247,6 +248,16 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
   assert.equal(await page.getByRole("link", { name: "Силовые" }).locator(".admin-nav-icon").textContent(), "💪");
   assert.equal(await page.getByRole("link", { name: "Метаболизм" }).locator(".admin-nav-icon").textContent(), "🔥");
   assert.equal(await page.getByRole("link", { name: "Определитель допродаж" }).locator(".admin-nav-icon").textContent(), "🎯");
+  assert.equal(await page.getByRole("link", { name: "Аналитика" }).count(), 1);
+  async function openExternalProjects() {
+    const externalProjects = page.locator(".admin-nav-external");
+    assert.equal(await externalProjects.getAttribute("open"), null);
+    await externalProjects.locator("summary").click();
+    await page.getByRole("link", { name: "Погода" }).waitFor();
+    assert.equal(await page.getByRole("link", { name: "Погода" }).isVisible(), true);
+    assert.equal(await page.getByRole("link", { name: "Игра для Серёжи и Сонечки" }).getAttribute("href"), "/game/");
+    assert.equal(await page.getByRole("link", { name: "Сайт Щербаковой" }).getAttribute("href"), "https://app.edabalans.ru/sherbakova/");
+  }
   const offerCategory = await page.getByRole("link", { name: "Определитель допродаж" }).evaluate((node) => { let current = node.previousElementSibling; while (current && current.tagName !== "SPAN") current = current.previousElementSibling; return current?.textContent.trim(); });
   const contentCategory = await page.getByRole("link", { name: "Каталог материалов" }).evaluate((node) => { let current = node.previousElementSibling; while (current && current.tagName !== "SPAN") current = current.previousElementSibling; return current?.textContent.trim(); });
   assert.equal(offerCategory, "Коммерция");
@@ -256,6 +267,7 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
     const burger = page.getByRole("button", { name: "Открыть меню" });
     await burger.click();
     assert.equal(await page.locator("body").evaluate((node) => node.classList.contains("admin-shell-mobile-opened")), true);
+    await openExternalProjects();
     await page.waitForTimeout(220);
     const openBurgerBox = await burger.boundingBox();
     const brandBox = await page.locator(".admin-brand").boundingBox();
@@ -269,6 +281,7 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
   } else {
     await page.waitForTimeout(220);
     await assertDesktopGeometry(page, 270);
+    await openExternalProjects();
     await page.getByRole("button", { name: "Свернуть меню" }).click();
     assert.equal(await page.locator("body").evaluate((node) => node.classList.contains("admin-shell-collapsed")), true);
     await page.waitForTimeout(220);
