@@ -224,9 +224,13 @@ if (process.env.ADMIN_SHELL_PREVIEW_ONLY === "1") {
 }
 const browser = await chromium.launch({ headless: true });
 const evidence = process.env.ADMIN_SHELL_EVIDENCE_DIR;
+const pageOptions = (viewport) => ({
+  viewport,
+  permissions: ["clipboard-read", "clipboard-write"],
+});
 
 for (const width of [360, 430, 759, 761, 768, 1440]) {
-  const page = await browser.newPage({ viewport: { width, height: 900 } });
+  const page = await browser.newPage(pageOptions({ width, height: 900 }));
   await page.goto(`http://127.0.0.1:${port}/admin`);
   await page.getByRole("link", { name: "Финансовая модель" }).waitFor();
   assert.ok(await page.locator(".admin-brand img").evaluate((node) => node.complete && node.naturalWidth > 0));
@@ -292,7 +296,7 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
 }
 
 for (const width of [360, 430, 768, 1440]) {
-  const page = await browser.newPage({ viewport: { width, height: 900 } });
+  const page = await browser.newPage(pageOptions({ width, height: 900 }));
   await page.goto(`http://127.0.0.1:${port}/finance`);
   await page.getByRole("link", { name: "Финансовая модель" }).waitFor();
   await page.getByRole("heading", { name: "Параметры" }).waitFor();
@@ -321,7 +325,7 @@ const integratedPages = {
 };
 for (const [name, route] of Object.entries(integratedPages)) {
   for (const width of [360, 430, 768, 1440]) {
-    const page = await browser.newPage({ viewport: { width, height: 900 } });
+    const page = await browser.newPage(pageOptions({ width, height: 900 }));
     await page.goto(`http://127.0.0.1:${port}${route}`);
     await page.getByRole("link", { name: "CRM" }).waitFor();
     if (name === "crm" && width === 1440) {
@@ -346,8 +350,12 @@ for (const [name, route] of Object.entries(integratedPages)) {
       await page.getByText("Нажмите значок копирования справа от имени, чтобы скопировать адрес.").waitFor();
       assert.match(await page.locator(".crm-popover:visible").textContent(), /anna@example\.com/);
       assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").count(), 1);
-      await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").click();
-      assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").getAttribute("aria-label"), "Email скопирован");
+      const copyEmailButton = page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email");
+      await copyEmailButton.click();
+      await page.waitForFunction(
+        () => document.querySelector(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email")?.getAttribute("aria-label") === "Email скопирован",
+      );
+      assert.equal(await copyEmailButton.getAttribute("aria-label"), "Email скопирован");
       assert.equal(await page.locator(".crm-table-wrap").evaluate((node) => node.scrollWidth > node.clientWidth), true);
       assert.equal(await page.locator(".crm-table-scrollbar").evaluate((node) => node.scrollWidth > node.clientWidth), true);
       assert.match(await page.locator(".crm-people-table tbody").textContent(), /с 01\.08\.2026.*первая покупка 02\.08\.2026.*Подписан/s);
@@ -491,7 +499,7 @@ for (const [name, route] of Object.entries(integratedPages)) {
 }
 
 {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 560 } });
+  const page = await browser.newPage(pageOptions({ width: 1440, height: 560 }));
   await page.goto(`http://127.0.0.1:${port}/crm`);
   await page.getByRole("link", { name: "Продукты и описания" }).waitFor();
   await page.locator(".admin-shell-nav").evaluate((node) => { node.scrollTop = 220; });
