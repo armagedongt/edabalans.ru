@@ -363,6 +363,7 @@ def test_telegram_miniapp_creates_same_native_session_only_for_linked_entitled_u
         json={"init_data": telegram_init_data(999999), "app_code": "strength"},
     )
     assert rejected.status_code == 403
+    assert rejected.json()["detail"] == "Telegram не подключён к личному кабинету"
 
     tampered = telegram_init_data(123456).replace("123456", "654321")
     invalid = client.post(
@@ -432,6 +433,7 @@ def test_max_miniapp_creates_same_native_session_only_for_linked_entitled_user()
         json={"init_data": max_init_data(999999), "app_code": "dqs"},
     )
     assert rejected.status_code == 403
+    assert rejected.json()["detail"] == "MAX не подключён к личному кабинету"
 
     duplicated = max_init_data(654321) + "&hash=second"
     invalid = client.post(

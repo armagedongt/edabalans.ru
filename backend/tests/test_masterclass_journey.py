@@ -2295,6 +2295,10 @@ def test_account_offer_entry_prioritises_selected_product_without_resetting_wind
         "Разбор дневника питания, определение плана действий и ответы на любые вопросы."
     )
     assert consultation_payload["offers"][0]["price"] >= 7000
+    consultation_presentation = consultation_payload["product_presentations"]["consultation"]
+    assert consultation_presentation["canonical_version"] == 1
+    assert "До консультации" in consultation_presentation["canonical_html"]
+    assert "presentation_intro" not in consultation_presentation["canonical_html"]
     ordinary = client.get(
         "/api/masterclass/account-offers?email=member@example.test"
     )

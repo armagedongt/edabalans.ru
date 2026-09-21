@@ -544,7 +544,7 @@
     if (hasTelegramInitData) {
       telegramMiniAppSession(sessionAppCode).then(function (telegramSession) {
         if (!telegramSession || !validEmail(telegramSession.email)) {
-          showStandaloneAccessError(mounts[0], 'Telegram не привязан к личному кабинету');
+          showStandaloneAccessError(mounts[0], 'Telegram не подключён к личному кабинету');
           return;
         }
         rememberNative(normalizeEmail(telegramSession.email));
@@ -557,7 +557,7 @@
     if (hasMaxInitData) {
       maxMiniAppSession(sessionAppCode).then(function (maxSession) {
         if (!maxSession || !validEmail(maxSession.email)) {
-          showStandaloneAccessError(mounts[0], 'MAX не привязан к личному кабинету');
+          showStandaloneAccessError(mounts[0], 'MAX не подключён к личному кабинету');
           return;
         }
         rememberNative(normalizeEmail(maxSession.email));

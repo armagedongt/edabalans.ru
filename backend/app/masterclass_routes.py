@@ -2245,7 +2245,7 @@ def build_offers(
         }
         for product_code in visible_product_codes
     }
-    for product_code in ("recipes", "calories", "training"):
+    for product_code in ("recipes", "calories", "training", "consultation"):
         if product_code not in product_presentations:
             continue
         canonical_document = serialize_public_site_rendered_document(

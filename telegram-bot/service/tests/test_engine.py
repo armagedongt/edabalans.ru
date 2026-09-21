@@ -371,12 +371,23 @@ def test_seed_adds_editable_disabled_postpurchase_module(tmp_path):
         )
         assert all(step.delay_seconds is None for step in steps)
         assert session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_postpurchase_identity")).find("{{questionnaire_formatted}}") >= 0
-        assert "{{questionnaire_formatted}}" not in session.scalar(
-            select(ContentItem.body_source).where(ContentItem.code == "tpl_postpurchase_questionnaire")
+        questionnaire_item = session.scalar(
+            select(ContentItem).where(ContentItem.code == "tpl_postpurchase_questionnaire")
         )
+        assert "{{questionnaire_formatted}}" not in questionnaire_item.body_source
+        assert questionnaire_item.body_source.startswith("Мессенджер подключён.")
         assert "{{current_diet_formatted}}" in session.scalar(
             select(ContentItem.body_source).where(ContentItem.code == "tpl_postpurchase_current_diet")
         )
+
+        # A previously seeded phrase is migrated, while arbitrary owner edits stay protected.
+        questionnaire_item.body_source = (
+            "Мессенджер привязан.\n\n"
+            "Если в почте, тарифе или других данных выше есть ошибка, напишите мне — я всё поправлю.\n\n"
+            "👆 Перешлите мне в личные сообщения сообщение выше с вашими данными и анкетой. Если мессенджер разделил длинную анкету на несколько сообщений, перешлите все части."
+        )
+        seed_defaults(session, "TetrisgfgfgfBot")
+        assert questionnaire_item.body_source.startswith("Мессенджер подключён.")
 
         # Re-running seed must not create another draft version or duplicate slots.
         seed_defaults(session, "TetrisgfgfgfBot")

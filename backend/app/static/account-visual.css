@@ -162,3 +162,39 @@ html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app
 #account-app .application-send-links { justify-content: center; }
 #account-app .application-resend, #account-app .application-resend-status { max-width: none; text-align: center; }
 }
+
+@media (min-width: 761px) and (max-width: 900px) {
+#account-app .application-grid { grid-template-columns: 1fr; }
+}
+
+/* Компактная шапка ЛК и единая точка управления подключёнными мессенджерами. */
+#account-app .account-head { max-width: none; margin-bottom: 24px; padding-bottom: 20px; }
+#account-app .account-title-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 18px; }
+#account-app .account-title-row h1 { flex: 0 1 auto; }
+#account-app .account-title-row .account-session { margin: 0; }
+#account-app .account-messengers { margin-top: 12px; padding: 0; overflow: hidden; }
+#account-app .account-messengers-summary { display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 8px 14px; width: 100%; min-height: 46px; padding: 9px 12px; border: 0; border-radius: inherit; background: transparent; color: #17191e; text-align: left; cursor: pointer; }
+#account-app .account-messengers-summary:hover { background: rgba(17,142,216,.06); }
+#account-app .account-messengers-summary:focus-visible { outline: 3px solid rgba(17,142,216,.32); outline-offset: -3px; }
+#account-app .account-messengers-heading { font-size: 13px; font-weight: 800; white-space: nowrap; }
+#account-app .account-messengers .account-messengers-line { min-width: 0; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#account-app .account-messengers-chevron { margin: 0; color: #087dbd; font-size: 22px; line-height: 1; }
+#account-app .messenger-editor { padding: 13px 15px 14px; }
+
+@media (max-width: 760px) {
+#account-app .account-shell { padding-top: 20px; }
+#account-app .account-head { margin-bottom: 20px; padding-bottom: 16px; }
+#account-app .account-kicker { margin-bottom: 8px; }
+#account-app .account-title-row { align-items: center; gap: 4px 10px; }
+#account-app .account-title-row h1 { font-size: clamp(30px,9vw,38px); letter-spacing: -0.055em; }
+#account-app .account-title-row .account-session { flex: 1 1 170px; font-size: 12px; line-height: 1.35; text-align: right; }
+#account-app .account-messengers { margin-top: 10px; border-radius: 12px; }
+#account-app .account-messengers-summary { display: flex; min-height: 42px; padding: 8px 11px; }
+#account-app .account-messengers-heading { flex: 1; font-size: 13px; }
+#account-app .account-messengers .account-messengers-line { display: none; }
+#account-app .account-messengers-chevron { flex: 0 0 auto; }
+}
+
+@media (max-width: 430px) {
+#account-app .account-title-row .account-session { flex-basis: 100%; text-align: left; }
+}

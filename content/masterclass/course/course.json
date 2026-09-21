@@ -73,7 +73,7 @@
         },
         {
           "id": "day-1-check-4",
-          "text": "Привязать Telegram или MAX для уведомлений.",
+          "text": "Подключить Telegram или MAX для уведомлений.",
           "required": false,
           "hidden": true
         }

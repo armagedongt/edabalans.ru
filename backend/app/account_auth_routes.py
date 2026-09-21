@@ -344,7 +344,7 @@ def telegram_miniapp_login(
     )
     user = db.get(User, messenger.user_id) if messenger else None
     if user is None:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "Telegram не привязан к личному кабинету")
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Telegram не подключён к личному кабинету")
     resource_codes: str | tuple[str, ...] = {
         "dqs": "dqs",
         "strength": "strength",
@@ -384,7 +384,7 @@ def max_miniapp_login(
     )
     user = db.get(User, messenger.user_id) if messenger else None
     if user is None or user.status != "active" or user.merged_into_user_id is not None:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "MAX не привязан к личному кабинету")
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "MAX не подключён к личному кабинету")
     resource_codes: str | tuple[str, ...] | None = {
         "account": None,
         "dqs": "dqs",

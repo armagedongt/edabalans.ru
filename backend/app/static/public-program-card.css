@@ -1,4 +1,4 @@
-.edb-program-card{display:block!important;color:#20252b}
+.edb-program-card{display:block!important;color:#20252b;font-family:Manrope,Arial,sans-serif}
 .edb-program-card>p{margin:0 0 18px;color:#4f5965;font-size:16px;font-weight:600;line-height:1.62}
 .edb-program-card>p:first-child{margin-bottom:20px;color:#20252b;font-size:18px;line-height:1.45}
 .edb-program-card>blockquote{margin:14px 0;padding:20px 22px;border:1px solid #dbe9f2;border-left:4px solid #26afff;border-radius:16px;background:#f8fcff;box-shadow:0 10px 28px -25px rgba(25,78,111,.6)}

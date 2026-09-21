@@ -69,6 +69,26 @@ html[data-account-theme="dark"] #account-app .account-messengers :is(span,p){col
 html[data-account-theme="dark"] #account-app .account-messengers :is(button,a){background:#263442;color:var(--account-theme-blue);border-color:var(--account-theme-border)}
 html[data-account-theme="dark"] #account-app .account-messengers :is(button,a):hover:not(:disabled){background:#324859}
 html[data-account-theme="dark"] #account-app .account-messengers .messenger-state{background:#214d38;color:#9ce8b4}
+html[data-account-theme="dark"] #account-app .application-send-links,
+html[data-account-theme="dark"] #account-app .application-resend-status{color:var(--account-theme-muted)}
+
+/* Additional offers stay inside the same light/dark cabinet theme. */
+html[data-account-theme="dark"] .mc.mc-offer-page{--ink:var(--account-theme-ink);--muted:var(--account-theme-muted);--paper:var(--account-theme-bg);--card:var(--account-theme-card);--line:var(--account-theme-border);color:var(--account-theme-ink)}
+html[data-account-theme="dark"] .mc.mc-offer-page>h1,
+html[data-account-theme="dark"] .mc.mc-offer-page :is(.mc-offer-card h2,.mc-product-sheet h1,.mc-offer-includes-title,.mc-offer-includes li strong){color:var(--account-theme-ink)}
+html[data-account-theme="dark"] .mc.mc-offer-page>.lead,
+html[data-account-theme="dark"] .mc.mc-offer-page :is(.mc-offer-card p,.mc-product-sheet>.lead,.mc-product-intro,.mc-product-action p){color:var(--account-theme-muted)}
+html[data-account-theme="dark"] .mc.mc-offer-page .mc-offer-card{background:var(--account-theme-card);border-color:var(--account-theme-border);box-shadow:none}
+html[data-account-theme="dark"] .mc.mc-offer-page .mc-offer-card.is-featured{background:linear-gradient(135deg,#222831 65%,#413124);border-color:#815f3e}
+html[data-account-theme="dark"] .mc.mc-offer-page .mc-owned{background:#20382d;border-color:#37614b;color:#d8f4e1}
+html[data-account-theme="dark"] .mc.mc-offer-page .mc-owned-title{color:#9ce8b4}
+html[data-account-theme="dark"] .mc.mc-offer-page :is(.mc-offer-includes,.mc-offer-terms,.mc-product-action,.mc-product-section){border-color:var(--account-theme-border)}
+html[data-account-theme="dark"] .mc.mc-offer-page .edb-program-card{color:var(--account-theme-ink)}
+html[data-account-theme="dark"] .mc.mc-offer-page .edb-program-card>:is(p,h2){color:var(--account-theme-ink)!important}
+html[data-account-theme="dark"] .mc.mc-offer-page .edb-program-card__section{background:var(--account-theme-card);border-color:var(--account-theme-border);box-shadow:none}
+html[data-account-theme="dark"] .mc.mc-offer-page .edb-program-card__section :is(p,li){color:var(--account-theme-muted)}
+html[data-account-theme="dark"] .mc.mc-offer-page .edb-program-card>blockquote{background:#263442;border-color:var(--account-theme-border);border-left-color:var(--account-theme-blue);box-shadow:none}
+html[data-account-theme="dark"] .mc.mc-offer-page .edb-program-card>blockquote p{color:var(--account-theme-muted)}
 
 /* Outline: identical row behavior, only the surface changes. */
 html[data-account-theme="dark"] #masterclass-course-app .sidebar{background:linear-gradient(160deg,#282c33,#202329 55%,#1b1e24)!important;box-shadow:8px 0 30px -20px #000}

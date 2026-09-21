@@ -475,7 +475,7 @@ def _postpurchase_messages() -> list[dict]:
         (
             "postpurchase_questionnaire",
             "02 · После анкеты — что сделать дальше",
-            "Мессенджер привязан.\n\n"
+            "Мессенджер подключён.\n\n"
             "Если в почте, тарифе или других данных выше есть ошибка, напишите мне — я всё поправлю.\n\n"
             "👆 Перешлите мне в личные сообщения сообщение выше с вашими данными и анкетой. Если мессенджер разделил длинную анкету на несколько сообщений, перешлите все части.",
             None,
@@ -674,11 +674,18 @@ def seed_defaults(
                 "<b>Личный кабинет:</b> <a href=\"{{account_url}}\">открыть ЛК</a>\n\n"
                 "👉 <b>Анкета участника</b>\n\n{{questionnaire_formatted}}"
             )
-            previous_questionnaire = (
-                "Telegram привязан.\n\n"
-                "Если в почте, тарифе или других данных выше есть ошибка, напишите мне — я всё поправлю.\n\n"
-                "👆 Перешлите мне в личные сообщения сообщение выше с вашими данными и анкетой. Если Telegram разделил длинную анкету на несколько сообщений, перешлите все части."
-            )
+            previous_questionnaire_bodies = {
+                (
+                    "Telegram привязан.\n\n"
+                    "Если в почте, тарифе или других данных выше есть ошибка, напишите мне — я всё поправлю.\n\n"
+                    "👆 Перешлите мне в личные сообщения сообщение выше с вашими данными и анкетой. Если Telegram разделил длинную анкету на несколько сообщений, перешлите все части."
+                ),
+                (
+                    "Мессенджер привязан.\n\n"
+                    "Если в почте, тарифе или других данных выше есть ошибка, напишите мне — я всё поправлю.\n\n"
+                    "👆 Перешлите мне в личные сообщения сообщение выше с вашими данными и анкетой. Если мессенджер разделил длинную анкету на несколько сообщений, перешлите все части."
+                ),
+            }
             known_old_postpurchase = (
                 row["code"] == "postpurchase_identity" and "Проверьте ваши данные" in (item.body_source or "")
             ) or (
@@ -686,7 +693,7 @@ def seed_defaults(
             ) or (
                 row["code"] == "postpurchase_identity" and item.body_source == previous_identity
             ) or (
-                row["code"] == "postpurchase_questionnaire" and item.body_source == previous_questionnaire
+                row["code"] == "postpurchase_questionnaire" and item.body_source in previous_questionnaire_bodies
             ) or (
                 row["code"] == "postpurchase_tempo_late" and "Вы остановились в Мастер-классе" in (item.body_source or "")
             ) or (

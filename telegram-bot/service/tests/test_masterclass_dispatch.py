@@ -159,7 +159,7 @@ def add_contact_and_content(session):
         if code == "tpl_postpurchase_identity":
             body = "<b>Данные участника</b>\n\n{{questionnaire_formatted}}"
         elif code == "tpl_postpurchase_questionnaire":
-            body = "Мессенджер привязан. Перешлите сообщение выше."
+            body = "Мессенджер подключён. Перешлите сообщение выше."
         elif code == "tpl_postpurchase_day_unopened":
             body = "Откройте {{day_url}}"
         elif code == "tpl_postpurchase_closing_review_copy":
@@ -923,7 +923,7 @@ def test_questionnaire_delivery_uses_only_the_linked_max_contact(tmp_path):
             platform="max",
         )["sent"] == 1
         assert max_sender.sent == [
-            ("max-42", "tpl_postpurchase_questionnaire", "Мессенджер привязан. Перешлите сообщение выше.")
+            ("max-42", "tpl_postpurchase_questionnaire", "Мессенджер подключён. Перешлите сообщение выше.")
         ]
 
 

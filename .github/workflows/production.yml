@@ -136,6 +136,7 @@ jobs:
           npm --prefix backend/tests/browser run test:embed-loading
           npm --prefix backend/tests/browser run test:video-player
           npm --prefix backend/tests/browser run test:admin-shell
+          QA_OUT=/tmp/account-offers-layout npm --prefix backend/tests/browser run test:account-offers-layout
           BLOG_QA_BASE_URL=http://127.0.0.1:8790 npm --prefix backend/tests/browser run test:blog-draft-authoring
 
       - name: Stop browser-test backend

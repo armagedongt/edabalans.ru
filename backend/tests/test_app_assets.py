@@ -603,6 +603,12 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "edb-program-card__sections" in program_card_js.text
     assert "o.code==='single:consultation'?' is-featured':''" in offers_js.text
     assert ".mc-offer-card.is-featured" in offers_css.text
+    assert ".mc.mc-offer-page{--ink:#17191e" in offers_css.text.replace("\r\n", "\n")
+    assert "font:500 16px/1.55 Manrope,Arial,sans-serif" in offers_css.text
+    assert "font-family:Manrope,Arial,sans-serif" in program_card_css.text
+    assert "fonts.googleapis.com/css2?family=Manrope" in client.get("/apps/masterclass-offers.html").text
+    theme_css = client.get("/assets/account-theme.css").text
+    assert 'html[data-account-theme="dark"] .mc.mc-offer-page' in theme_css
     assert client.get("/assets/max-logo.png").status_code == 200
     course = client.get("/apps/masterclass-course.html")
     assert course.status_code == 200
@@ -664,11 +670,17 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "data-edabalans-account-offer" in loader
     assert "focusProductCode" in loader
     assert "source: 'native'" in loader
+    assert "не подключён к личному кабинету" in loader
+    assert "не привязан к личному кабинету" not in loader
+    crm_asset = (Path(__file__).resolve().parents[1] / "app" / "static" / "crm.js").read_text(encoding="utf-8")
+    assert "Мессенджер не подключён" in crm_asset
+    assert "Мессенджер не привязан" not in crm_asset
     account = client.get("/apps/account.html").text
-    assert (
-        '<h1>Личный кабинет</h1><p class="account-session">'
-        '<strong class="account-session-email">'
-    ) in account
+    assert '<div class="account-title-row"><h1>Личный кабинет</h1>' in account
+    assert '<p class="account-session"><strong class="account-session-email">' in account
+    assert 'class="account-messengers-summary"' in account
+    assert "Подключённые мессенджеры" in account
+    assert "Привязанные мессенджеры" not in account
     assert "Вы вошли как" not in account
     assert "host+'/api/account-auth/logout'" in account
     assert "Курсы и программы" in account
@@ -688,6 +700,9 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert ">Принимаю и продолжаю</button>" not in account
     account_css = re.sub(r"\s+", "", client.get("/assets/account-visual.css").text)
     assert ".legal-copy>strong,.legal-copy>span{display:block;}" in account_css
+    assert ".account-title-row{display:flex;align-items:baseline;flex-wrap:wrap" in account_css
+    assert ".account-messengers-summary{display:grid" in account_css
+    assert ".account-messengers-line{display:none;}" in account_css
     assert ".legal-copy>.legal-paragraph+.legal-paragraph{margin-top:12px;}" in account_css
     assert "function accountSession" not in account
     application_renderer = account[

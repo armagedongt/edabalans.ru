@@ -253,7 +253,7 @@ def test_partial_publish_writes_only_selected_day_articles(monkeypatch) -> None:
         "print": "Скачать печатный вариант",
         "open": "Открыть приложение",
     }
-    assert "Ссылка продублируется вам в привязанный мессенджер" in (
+    assert "Ссылка продублируется вам в подключённый мессенджер" in (
         dqs_step["applicationNoteHtml"]
     )
 
@@ -288,7 +288,7 @@ def test_dqs_markdown_defines_two_actions_and_messenger_note() -> None:
         "print": "Скачать печатный вариант",
         "open": "Открыть приложение",
     }
-    assert "Ссылка продублируется вам в привязанный мессенджер" in definition["noteHtml"]
+    assert "Ссылка продублируется вам в подключённый мессенджер" in definition["noteHtml"]
 
 
 def test_step_progress_follows_stable_id_when_program_reorders_steps() -> None:

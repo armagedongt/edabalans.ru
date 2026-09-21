@@ -124,3 +124,30 @@
   .mc-product-actions .mc-product-buy{padding:12px 14px}
   .mc-product-action{align-items:flex-start;flex-direction:column;gap:8px}
 }
+
+/* Витрина предложений продолжает визуальную систему ЛК, а не старую бежевую тему. */
+.mc.mc-offer-page{--ink:#17191e;--muted:#4f5965;--paper:#fff;--card:#fff;--line:rgba(17,142,216,.18);--accent:#f46a35;max-width:900px;color:var(--ink);font:500 16px/1.55 Manrope,Arial,sans-serif}
+.mc.mc-offer-page h1,.mc.mc-offer-page h2,.mc.mc-offer-page button,.mc.mc-offer-page .button{font-family:Manrope,Arial,sans-serif}
+.mc.mc-offer-page>h1{color:#17191e;letter-spacing:-.05em}
+.mc.mc-offer-page>.lead{color:#4f5965;font-size:17px;line-height:1.55}
+.mc.mc-offer-page .mc-product-back{color:#118ed8!important}
+.mc.mc-offer-page .mc-offer-card{border-color:rgba(17,142,216,.18);background:#fff;box-shadow:0 14px 34px -30px rgba(12,91,136,.62)}
+.mc.mc-offer-page .mc-offer-card.is-featured{border-color:rgba(244,106,53,.34);background:linear-gradient(135deg,#fff 62%,#fff5ef);box-shadow:0 14px 34px -30px rgba(244,106,53,.72)}
+.mc.mc-offer-page .mc-offer-card h2{color:#17191e;font-size:22px;font-weight:800;letter-spacing:-.035em}
+.mc.mc-offer-page .mc-offer-card p{color:#4f5965;font-weight:500}
+.mc.mc-offer-page .mc-offer-kind{color:#d84f22;font-size:12px;font-weight:800;letter-spacing:.065em}
+.mc.mc-offer-page .mc-offer-includes{border-color:rgba(17,142,216,.15)}
+.mc.mc-offer-page .mc-offer-includes-title,.mc.mc-offer-page .mc-offer-includes li strong{color:#25303a;font-weight:800}
+.mc.mc-offer-page .mc-product-link{color:#118ed8!important;font-weight:800!important}
+.mc.mc-offer-page .mc-offer-terms>[data-offer],.mc.mc-offer-page .mc-product-buy{background:#f46a35!important;border-color:#f46a35!important;font-weight:800}
+.mc.mc-offer-page .mc-product-sheet h1{color:#17191e;font-weight:800;letter-spacing:-.05em}
+.mc.mc-offer-page .mc-product-sheet>.lead,.mc.mc-offer-page .mc-product-intro{color:#4f5965}
+.mc.mc-offer-page .mc-product-sheet>.mc-product-back{display:flex;width:max-content;margin:0 0 14px}
+.mc.mc-offer-page .mc-product-action{border-color:rgba(17,142,216,.16)}
+.mc.mc-offer-page .mc-product-action p{color:#4f5965}
+
+@media(max-width:600px){
+  .mc.mc-offer-page{padding:20px 16px 40px}
+  .mc.mc-offer-page>h1{font-size:clamp(32px,10vw,38px)}
+  .mc.mc-offer-page .mc-offer-card h2{font-size:21px}
+}

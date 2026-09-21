@@ -99,11 +99,11 @@ def consume_masterclass_link(
     )
     now = datetime.now(UTC)
     if not token or token.platform != "telegram" or token.purpose not in {"link_account", "account_credentials", "named_delivery"}:
-        return True, "Ссылка привязки не найдена. Вернитесь в Мастер-класс и создайте новую."
+        return True, "Ссылка подключения не найдена. Вернитесь в Мастер-класс и создайте новую."
     if token.consumed_at:
-        return True, "Эта ссылка уже использована. Если Telegram не привязался, создайте новую ссылку в Мастер-классе."
+        return True, "Эта ссылка уже использована. Если Telegram не подключился, создайте новую ссылку в Мастер-классе."
     if token.expires_at.replace(tzinfo=token.expires_at.tzinfo or UTC) <= now:
-        return True, "Срок ссылки истёк. Вернитесь в Мастер-класс и нажмите привязку Telegram ещё раз."
+        return True, "Срок ссылки истёк. Вернитесь в Мастер-класс и нажмите подключение Telegram ещё раз."
     onboarding = (
         session.scalar(
             select(AccountOnboarding)
@@ -137,7 +137,7 @@ def consume_masterclass_link(
                 metadata_json={"target_user_id": token.user_id},
             )
         )
-        return True, "Этот Telegram уже связан с другим клиентом. Напишите мне, чтобы я проверил привязку."
+        return True, "Этот Telegram уже связан с другим клиентом. Напишите мне, чтобы я проверил подключение."
 
     account.user_id = token.user_id
     account.username = telegram.get("username")

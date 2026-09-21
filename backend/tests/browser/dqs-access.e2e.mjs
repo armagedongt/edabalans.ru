@@ -36,7 +36,7 @@ try {
   );
   assert.match(
     await page.locator('.dqs-material-note').textContent(),
-    /Ссылка продублируется вам в привязанный мессенджер/,
+    /Ссылка продублируется вам в подключённый мессенджер/,
   );
 
   let releaseReveal;
@@ -57,7 +57,7 @@ try {
   await page.locator('#dqs-panel').waitFor({state:'visible'});
   assert.equal(
     await page.locator('#dqs-material-status').textContent(),
-    'Постоянная ссылка отправлена в привязанный мессенджер. Закрепите сообщение, чтобы DQS всегда был под рукой.',
+    'Постоянная ссылка отправлена в подключённый мессенджер. Закрепите сообщение, чтобы DQS всегда был под рукой.',
   );
   console.log('PASS: DQS print action and guarded reveal-before-open interaction.');
 } finally {

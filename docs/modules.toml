@@ -296,6 +296,7 @@ owns_files = [
   "backend/app/static/app-shell.css",
   "backend/app/static/account-theme.css", "backend/app/static/account-theme.js",
   "backend/tests/browser/account-theme.e2e.mjs",
+  "backend/tests/browser/account-offers-layout.e2e.mjs",
   "backend/tests/browser/embed-loading.e2e.mjs",
   "work/lk-loading-polish-20260917/**",
   "backend/app/importers/google_apps.py", "backend/tests/test_google_apps_import.py",
