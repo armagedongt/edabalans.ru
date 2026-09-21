@@ -693,6 +693,7 @@ def dispatch_due_masterclass_notifications(
                 CrmMessengerAccount.platform == platform,
                 CrmMessengerAccount.platform_user_id == target_platform_user_id,
                 CrmMessengerAccount.linked_at.is_not(None),
+                CrmMessengerAccount.is_deliverable.is_(True),
             )
             if target_messenger_account_id:
                 account_query = account_query.where(

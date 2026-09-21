@@ -1688,16 +1688,7 @@ def reveal_course_application(
     )
     telegram_link_status = "not_applicable"
     if app_code == "dqs":
-        account = db.scalar(
-            select(MessengerAccount.id)
-            .where(
-                MessengerAccount.user_id == user.id,
-                MessengerAccount.linked_at.is_not(None),
-                MessengerAccount.is_deliverable.is_(True),
-                MessengerAccount.is_preferred.is_(True),
-            )
-            .order_by(MessengerAccount.linked_at.desc())
-        )
+        account = preferred_messenger_account(db, user.id)
         if account and created:
             queue_notification(
                 db,
@@ -1706,7 +1697,12 @@ def reveal_course_application(
                 "dqs_app_link",
                 datetime.now(timezone.utc),
                 content_code="tpl_postpurchase_dqs_app_link",
-                payload={"source": "day-4-reveal"},
+                payload={
+                    "source": "day-4-reveal",
+                    "target_platform": account.platform,
+                    "target_messenger_account_id": str(account.id),
+                    "target_platform_user_id": account.platform_user_id,
+                },
             )
             telegram_link_status = "queued"
         elif account:
@@ -2652,8 +2648,38 @@ def admin_reset_test_profile(
         MasterclassEvent,
     ):
         db.execute(delete(model).where(model.user_id == user.id))
+    resource = db.scalar(
+        select(Resource).where(Resource.code == "ACCESS_MASTERCLASS")
+    )
+    if resource is None:
+        raise HTTPException(500, "masterclass resource is not configured")
+    policy = db.scalar(
+        select(UserCoursePolicy).where(
+            UserCoursePolicy.user_id == user.id,
+            UserCoursePolicy.resource_id == resource.id,
+        )
+    )
+    if policy is None:
+        policy = UserCoursePolicy(
+            user_id=user.id,
+            resource_id=resource.id,
+            unlock_mode="paced",
+            source="manual_test_reset",
+            course_policy_version=2,
+        )
+        db.add(policy)
+    else:
+        policy.unlock_mode = "paced"
+        policy.source = "manual_test_reset"
+        policy.course_policy_version = 2
+        policy.updated_at = datetime.now(timezone.utc)
     db.commit()
-    return {"ok": True, "user_id": str(user.id), "reset": True}
+    return {
+        "ok": True,
+        "user_id": str(user.id),
+        "reset": True,
+        "course_policy_version": policy.course_policy_version,
+    }
 
 
 @router.get("/admin/client-progress")

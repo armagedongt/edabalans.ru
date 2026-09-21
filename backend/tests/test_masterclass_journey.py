@@ -1907,6 +1907,7 @@ def test_first_dqs_reveal_queues_one_permanent_preferred_messenger_link(platform
         dqs = Resource(code="dqs", name="DQS", status="active")
         db.add(dqs)
         db.flush()
+        other_platform = "max" if platform == "telegram" else "telegram"
         db.add_all([
             UserAccess(
                 user_id=user_id,
@@ -1923,6 +1924,16 @@ def test_first_dqs_reveal_queues_one_permanent_preferred_messenger_link(platform
                 source="test",
                 is_deliverable=True,
                 is_preferred=True,
+            ),
+            MessengerAccount(
+                user_id=user_id,
+                platform=other_platform,
+                platform_user_id="other-42",
+                username="other-member",
+                linked_at=datetime.now(timezone.utc) + timedelta(seconds=1),
+                source="test",
+                is_deliverable=True,
+                is_preferred=False,
             ),
             MasterclassDayProgress(
                 user_id=user_id,
@@ -1962,6 +1973,17 @@ def test_first_dqs_reveal_queues_one_permanent_preferred_messenger_link(platform
         assert len(rows) == 1
         assert rows[0].content_code == "tpl_postpurchase_dqs_app_link"
         assert rows[0].deduplication_key == "app:dqs:revealed:dqs_app_link"
+        assert rows[0].payload == {
+            "source": "day-4-reveal",
+            "target_platform": platform,
+            "target_messenger_account_id": str(db.scalar(
+                select(MessengerAccount.id).where(
+                    MessengerAccount.user_id == user_id,
+                    MessengerAccount.platform == platform,
+                )
+            )),
+            "target_platform_user_id": "42",
+        }
 
 
 def test_offer_excludes_owned_product_and_checkout_rechecks_server_price():
@@ -2989,6 +3011,39 @@ def test_admin_can_enable_isolated_accelerated_course_profile():
     unlock = datetime.fromisoformat(payload["days"][0]["next_day_unlock_at"])
     assert payload["accelerated_test"] is True
     assert (unlock - opened).total_seconds() == 20
+
+
+def test_admin_reset_moves_course_to_current_policy_and_restores_messenger_step():
+    client, factory = setup()
+    assert client.get(
+        "/api/masterclass/course/manifest?email=member@example.test"
+    ).json()["days"][0]["steps"][2]["hidden"] is True
+    assert client.get(
+        "/api/masterclass/course?email=member@example.test"
+    ).status_code == 200
+
+    reset = client.post(
+        "/api/masterclass/admin/test-profile/reset",
+        json={"email": "member@example.test"},
+    )
+
+    assert reset.status_code == 200
+    assert reset.json()["course_policy_version"] == 2
+    manifest = client.get(
+        "/api/masterclass/course/manifest?email=member@example.test"
+    ).json()
+    messenger = next(
+        step for step in manifest["days"][0]["steps"]
+        if step["id"] == "day-01-messenger-link"
+    )
+    assert messenger["hidden"] is False
+    with factory() as db:
+        policy = db.scalar(select(UserCoursePolicy))
+        assert policy is not None
+        assert policy.unlock_mode == "paced"
+        assert policy.course_policy_version == 2
+        assert db.scalar(select(func.count(MasterclassDayProgress.id))) == 0
+        assert db.scalar(select(func.count(MasterclassStepProgress.id))) == 0
 
 
 def test_closing_review_sends_one_copy_only_after_submit():

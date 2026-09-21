@@ -927,6 +927,134 @@ def test_questionnaire_delivery_uses_only_the_linked_max_contact(tmp_path):
         ]
 
 
+def test_dqs_delivery_uses_only_the_explicit_linked_max_contact(tmp_path):
+    with session_factory(tmp_path) as session:
+        telegram_contact = add_contact_and_content(session)
+        max_bot = BotInstance(
+            code="max",
+            username="max-test",
+            display_name="MAX test",
+            token_env_name="MAX_TOKEN",
+            is_active=True,
+        )
+        session.add(max_bot)
+        session.flush()
+        max_contact = Contact(
+            bot_instance_id=max_bot.id,
+            user_id=telegram_contact.user_id,
+            telegram_user_id="max-dqs-42",
+            chat_id="max-dqs-42",
+            status="active",
+        )
+        other_max_contact = Contact(
+            bot_instance_id=max_bot.id,
+            user_id=telegram_contact.user_id,
+            telegram_user_id="max-dqs-other",
+            chat_id="max-dqs-other",
+            status="active",
+            last_seen_at=datetime.now(UTC),
+        )
+        telegram_account = session.scalar(
+            select(CrmMessengerAccount).where(
+                CrmMessengerAccount.user_id == telegram_contact.user_id,
+                CrmMessengerAccount.platform == "telegram",
+            )
+        )
+        telegram_account.is_preferred = False
+        session.flush()
+        linked_account = CrmMessengerAccount(
+            user_id=telegram_contact.user_id,
+            platform="max",
+            platform_user_id="max-dqs-42",
+            username="member",
+            linked_at=datetime.now(UTC),
+            source="test",
+            is_deliverable=True,
+            is_preferred=True,
+        )
+        session.add_all([max_contact, other_max_contact, linked_account])
+        session.flush()
+        session.add(MasterclassNotification(
+            user_id=telegram_contact.user_id,
+            notification_kind="dqs_app_link",
+            content_code="tpl_postpurchase_dqs_app_link",
+            deduplication_key="dqs:app-link:max",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={
+                "target_platform": "max",
+                "target_platform_user_id": "max-dqs-42",
+                "target_messenger_account_id": linked_account.id,
+            },
+        ))
+        session.commit()
+
+        telegram_sender = FakeSender()
+        assert dispatch_due_masterclass_notifications(
+            session,
+            telegram_sender,
+            "",
+            lambda *_: {"dqs"},
+            platform="telegram",
+        )["sent"] == 0
+        assert telegram_sender.sent == []
+
+        max_sender = FakeSender()
+        assert dispatch_due_masterclass_notifications(
+            session,
+            max_sender,
+            "",
+            lambda *_: {"dqs"},
+            platform="max",
+        )["sent"] == 1
+        assert max_sender.sent == [(
+            "max-dqs-42",
+            "tpl_postpurchase_dqs_app_link",
+            "Ваш DQS открыт. Здесь вы будете отмечать питание каждый день.\n\n"
+            "Закрепите это сообщение, чтобы дневник всегда был под рукой.\n\n"
+            '<a href="https://edabalans.ru/dqs">Открыть DQS</a>',
+        )]
+
+
+def test_dqs_delivery_waits_when_explicit_messenger_account_is_no_longer_deliverable(tmp_path):
+    with session_factory(tmp_path) as session:
+        contact = add_contact_and_content(session)
+        linked_account = session.scalar(
+            select(CrmMessengerAccount).where(
+                CrmMessengerAccount.user_id == contact.user_id,
+                CrmMessengerAccount.platform == "telegram",
+            )
+        )
+        linked_account.is_deliverable = False
+        session.add(MasterclassNotification(
+            user_id=contact.user_id,
+            notification_kind="dqs_app_link",
+            content_code="tpl_postpurchase_dqs_app_link",
+            deduplication_key="dqs:app-link:historical",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={
+                "target_platform": "telegram",
+                "target_platform_user_id": linked_account.platform_user_id,
+                "target_messenger_account_id": linked_account.id,
+            },
+        ))
+        session.commit()
+
+        sender = FakeSender()
+        result = dispatch_due_masterclass_notifications(
+            session,
+            sender,
+            "",
+            lambda *_: {"dqs"},
+            platform="telegram",
+        )
+
+        assert result["sent"] == 0
+        assert result["waiting_contact"] == 1
+        assert sender.sent == []
+
+
 def test_dispatch_skips_legacy_review_week_notifications(tmp_path):
     with session_factory(tmp_path) as session:
         add_contact_and_content(session)
