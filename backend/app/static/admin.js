@@ -691,6 +691,76 @@
     return `<option value="${esc(value)}" ${value === selected ? "selected" : ""}>${esc(value)}</option>`;
   }
 
+  function marketingTimeline(item) {
+    const entries = [];
+    const add = (value, label) => {
+      if (!value || !value.at) return;
+      entries.push({ at: value.at, label: value.label || label, detail: value.detail || "" });
+    };
+    add(item.landing_entry, "Переход с посадки");
+    add(item.start, "Старт бота");
+    add(item.site_home, "Главная интенсива");
+    (item.check_before_day_one || []).forEach((value) => add(value, "Проверка подписки"));
+    add(item.day_one, "Открыл день 1");
+    add(item.subscription, "Подписка подтверждена");
+    (item.check_after_day_one || []).forEach((value) => add(value, "Проверка подписки"));
+    add(item.later_days, "Открыл дни 2+");
+    (item.other_actions || []).forEach((value) => add(value, value.label || "Другое действие"));
+    return entries.sort((left, right) => left.at.localeCompare(right.at)).filter((entry, index, all) =>
+      index === 0 || entry.at !== all[index - 1].at || entry.label !== all[index - 1].label
+    );
+  }
+
+  function bindMarketingScrollbars() {
+    root.querySelectorAll(".marketing-horizontal-scroll").forEach((rail) => {
+      const target = root.querySelector(`#${rail.dataset.scrollTarget}`);
+      const spacer = rail.firstElementChild;
+      if (!target || !spacer) return;
+      let syncing = false;
+      const resize = () => {
+        spacer.style.width = `${target.scrollWidth}px`;
+        rail.hidden = target.scrollWidth <= target.clientWidth + 1;
+      };
+      target.addEventListener("scroll", () => {
+        if (syncing) return;
+        syncing = true;
+        rail.scrollLeft = target.scrollLeft;
+        syncing = false;
+      }, { passive: true });
+      rail.addEventListener("scroll", () => {
+        if (syncing) return;
+        syncing = true;
+        target.scrollLeft = rail.scrollLeft;
+        syncing = false;
+      }, { passive: true });
+      new ResizeObserver(resize).observe(target);
+      resize();
+    });
+  }
+
+  function bindMarketingTimelinePopover() {
+    const popover = root.querySelector("#marketing-timeline-popover");
+    if (!popover) return;
+    const hide = () => { popover.hidden = true; };
+    root.querySelectorAll("[data-marketing-timeline]").forEach((cell) => {
+      const show = () => {
+        const timeline = JSON.parse(decodeURIComponent(cell.dataset.marketingTimeline));
+        popover.innerHTML = `<b>Путь пользователя</b><div>${timeline.map((entry) => `<span><time>${marketingDate(entry.at)}</time><strong>${esc(entry.label)}</strong>${entry.detail ? `<small>${esc(entry.detail)}</small>` : ""}</span>`).join("") || "Действий пока нет"}</div>`;
+        popover.hidden = false;
+        const box = cell.getBoundingClientRect();
+        const width = Math.min(340, window.innerWidth - 24);
+        const left = Math.max(12, Math.min(box.left, window.innerWidth - width - 12));
+        popover.style.width = `${width}px`;
+        popover.style.left = `${left}px`;
+        popover.style.top = `${Math.max(12, Math.min(box.bottom + 8, window.innerHeight - popover.offsetHeight - 12))}px`;
+      };
+      cell.addEventListener("mouseenter", show);
+      cell.addEventListener("mouseleave", hide);
+      cell.addEventListener("focusin", show);
+      cell.addEventListener("focusout", hide);
+    });
+  }
+
   async function marketingDashboard() {
     setHeading("Аналитика", "МАРКЕТИНГ И ВОРОНКА");
     loading();
@@ -714,8 +784,9 @@
         ? `<a href="/admin/users?user=${encodeURIComponent(item.user_id)}">${esc(item.display_name)}</a>`
         : `<b>${esc(item.display_name)}</b>`;
       const other = (item.other_actions || []).map((action) => `<span><b>${marketingDate(action.at)}</b>${esc(action.label)}</span>`).join("");
+      const timeline = encodeURIComponent(JSON.stringify(marketingTimeline(item)));
       return `<tr>
-        <td class="marketing-person">${userName}<small>${item.usernames.map(esc).join(" · ") || "без username"}</small></td>
+        <td class="marketing-person" data-marketing-timeline="${timeline}">${userName}<small>${item.usernames.map(esc).join(" · ") || "без username"}</small></td>
         <td><b>${esc(item.source)}</b><small>${esc(item.placement)}</small></td>
         <td><b>${esc(item.campaign)}</b><small>${esc(item.link_name)}</small></td>
         <td><b>${esc(item.creative)}</b><small>${esc(item.term)}</small></td>
@@ -746,25 +817,30 @@
       <td>${item.lost.toLocaleString("ru-RU")}</td><td>${item.conversion === null ? "—" : `${item.conversion.toLocaleString("ru-RU")}%`}</td>
     </tr>`).join("");
     root.innerHTML = `
-      <form class="marketing-filters" id="marketing-filters">
-        <label>С<input name="from" type="date" min="2025-12-01" value="${esc(data.period.from)}"></label>
-        <label>По<input name="to" type="date" min="2025-12-01" value="${esc(data.period.to)}"></label>
+      <div class="marketing-sticky-head">
+        <nav class="marketing-quick-nav" aria-label="Разделы аналитики"><a href="#marketing-journeys">Пути людей</a><a href="#marketing-conversions">Конверсии</a><a href="#marketing-entry-losses">Потери до старта</a></nav>
+        <form class="marketing-filters" id="marketing-filters">
+        <div class="marketing-date-range"><label>С<input name="from" type="date" min="2025-12-01" value="${esc(data.period.from)}"></label><label>По<input name="to" type="date" min="2025-12-01" value="${esc(data.period.to)}"></label></div>
         <label>Источник<select name="source"><option value="">Все источники</option>${data.filters.sources.map((value) => marketingOption(value, selected.source)).join("")}</select></label>
         <label>Кампания<select name="campaign"><option value="">Все кампании</option>${data.filters.campaigns.map((value) => marketingOption(value, selected.campaign)).join("")}</select></label>
         <label>Объявление<select name="creative"><option value="">Все объявления</option>${data.filters.creatives.map((value) => marketingOption(value, selected.creative)).join("")}</select></label>
         <label class="marketing-user-filter">Пользователь<input name="user" value="${esc(selected.user)}" placeholder="Имя, username или ID"></label>
-        <button class="admin-action">Показать</button><a class="admin-action alt" href="/admin/marketing">Сбросить</a>
-      </form>
+        <div class="marketing-filter-actions"><button class="admin-action">Показать</button><a class="admin-action alt" href="/admin/marketing">Сбросить</a></div>
+        </form>
+      </div>
       <div class="marketing-result-line">Найдено пользователей: <b>${data.totals.matching_rows.toLocaleString("ru-RU")}</b>${data.totals.rows < data.totals.matching_rows ? ` · в таблице первые ${data.totals.rows.toLocaleString("ru-RU")}, аналитика по всем` : ""}</div>
       ${data.totals.events_truncated ? '<div class="marketing-note">Событий больше безопасного предела отчёта. Текущая таблица и аналитика неполные — сузьте период.</div>' : ""}
-      <div class="marketing-table-wrap"><table class="marketing-table marketing-leads"><thead><tr>
+      <div class="marketing-table-wrap" id="marketing-journeys"><table class="marketing-table marketing-leads"><thead><tr>
         <th>Пользователь</th><th>Источник</th><th>Кампания</th><th>Объявление</th><th>Вход с посадки</th><th>Старт бота</th><th>Статус</th><th>Главная интенсива</th><th>Проверка до дня 1</th><th>День 1</th><th>Подписка</th><th>Проверка после дня 1</th><th>Дни 2+</th><th>Другие действия</th><th>Последнее действие</th>
       </tr></thead><tbody>${rows || '<tr><td colspan="15"><div class="admin-empty">По выбранным фильтрам пользователей нет</div></td></tr>'}</tbody></table></div>
-      <h2 class="marketing-analytics-title">Конверсии текущего среза</h2>
-      <div class="marketing-table-wrap marketing-analytics-wrap"><table class="marketing-table marketing-analytics"><thead><tr><th>Действие</th><th>Количество</th><th>От прошлого шага</th><th>Потеряно</th><th>От стартовавших</th></tr></thead><tbody>${analytics}</tbody></table></div>
-      <h2 class="marketing-analytics-title">Потери до старта по объявлениям</h2>
-      <div class="marketing-table-wrap"><table class="marketing-table"><thead><tr><th>Источник</th><th>Кампания</th><th>Объявление</th><th>Мессенджер</th><th>Способ</th><th>Переходы</th><th>Старты</th><th>Потеряно</th><th>Конверсия</th></tr></thead><tbody>${entryBreakdown || '<tr><td colspan="9"><div class="admin-empty">Новые точные данные появятся после публикации обновлённой посадки</div></td></tr>'}</tbody></table></div>
-      ${data.totals.clicks_ignore_user_filter ? '<div class="marketing-note">Переходы считаются по источнику и кампании: технический клик пока нельзя надёжно привязать к поиску конкретного пользователя.</div>' : ""}`;
+      <div class="marketing-horizontal-scroll" data-scroll-target="marketing-journeys" aria-label="Горизонтальная прокрутка таблицы путей"><div></div></div>
+      <h2 class="marketing-analytics-title" id="marketing-conversions">Конверсии текущего среза</h2>
+      <div class="marketing-table-wrap marketing-analytics-wrap" id="marketing-conversions-table"><table class="marketing-table marketing-analytics"><thead><tr><th>Действие</th><th>Количество</th><th>От прошлого шага</th><th>Потеряно</th><th>От стартовавших</th></tr></thead><tbody>${analytics}</tbody></table></div>
+      <div class="marketing-horizontal-scroll" data-scroll-target="marketing-conversions-table" aria-label="Горизонтальная прокрутка конверсий"><div></div></div>
+      <h2 class="marketing-analytics-title" id="marketing-entry-losses">Потери до старта по объявлениям</h2>
+      <div class="marketing-table-wrap" id="marketing-entry-losses-table"><table class="marketing-table"><thead><tr><th>Источник</th><th>Кампания</th><th>Объявление</th><th>Мессенджер</th><th>Способ</th><th>Переходы</th><th>Старты</th><th>Потеряно</th><th>Конверсия</th></tr></thead><tbody>${entryBreakdown || '<tr><td colspan="9"><div class="admin-empty">Новые точные данные появятся после публикации обновлённой посадки</div></td></tr>'}</tbody></table></div>
+      <div class="marketing-horizontal-scroll" data-scroll-target="marketing-entry-losses-table" aria-label="Горизонтальная прокрутка потерь до старта"><div></div></div>
+      ${data.totals.clicks_ignore_user_filter ? '<div class="marketing-note">Переходы считаются по источнику и кампании: технический клик пока нельзя надёжно привязать к поиску конкретного пользователя.</div>' : ""}<aside class="marketing-timeline-popover" id="marketing-timeline-popover" hidden></aside>`;
     document.getElementById("marketing-filters").addEventListener("submit", (event) => {
       event.preventDefault();
       const form = new FormData(event.currentTarget);
@@ -775,6 +851,8 @@
       }
       location.href = `/admin/marketing?${next}`;
     });
+    bindMarketingScrollbars();
+    bindMarketingTimelinePopover();
   }
 
   async function run() {

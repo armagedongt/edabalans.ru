@@ -69,6 +69,15 @@ const sampleUserDetail = {
   tags:[{id:"t1",name:"Мастер-класс",category:"purchase"}], notes:[{body:"Обсудить следующий этап",author:"Сергей",created_at:"2026-09-19T12:00:00Z"}],
   masterclass:{questionnaires:[],events:[],offers:[]}
 };
+const sampleMarketing = {
+  period:{from:"2026-09-01",to:"2026-09-21",timezone:"Europe/Moscow"},
+  filters:{sources:["Яндекс","Пикабу"],campaigns:["Интенсив"],creatives:["Объявление 1"],selected:{source:"",campaign:"",creative:"",user:""}},
+  collection:{day_one:true,site_home:true,later_days:true},
+  totals:{rows:1,matching_rows:1,events_truncated:false,clicks_ignore_user_filter:false},
+  rows:[{user_id:"u1",display_name:"Анна",usernames:["@anna"],source:"Яндекс",placement:"Поиск",campaign:"Интенсив",link_name:"Поиск · сентябрь",creative:"Объявление 1",term:"похудение",messenger:"telegram",status:"active",is_new_lead:true,landing_entry:{at:"2026-09-01T08:58:00Z",label:"Нажал кнопку на посадке",method:"button",messenger:"telegram"},start:{at:"2026-09-01T09:00:00Z",label:"Первый старт бота"},check_before_day_one:[{at:"2026-09-01T09:05:00Z",detail:"уже подписан"}],day_one:{at:"2026-09-01T09:10:00Z"},subscription:{at:"2026-09-01T09:05:00Z",detail:"уже подписан"},check_after_day_one:[],site_home:{at:"2026-09-01T09:08:00Z"},later_days:{at:"2026-09-03T09:00:00Z",max_day:3},other_actions:[{at:"2026-09-01T09:20:00Z",label:"Начал смотреть видео",detail:"день 1"}],last_action:{at:"2026-09-03T09:00:00Z",label:"Открыл день 3"}}],
+  analytics:[{code:"web_click",label:"Перешли с посадки в мессенджер",count:10,conversion_from_previous:null,lost_from_previous:null,conversion_from_start:null,collection:"collecting"},{code:"bot_start",label:"Запустили бота",count:8,conversion_from_previous:80,lost_from_previous:2,conversion_from_start:null,collection:"collecting"}],
+  entry_breakdown:[{source:"Яндекс",campaign:"Интенсив",creative:"Объявление 1",messenger:"telegram",entry:"button",entries:10,starts:8,lost:2,conversion:80}]
+};
 
 function json(response, payload) {
   response.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
@@ -108,6 +117,7 @@ const server = createServer((request, response) => {
     "/admin/courses/masterclass-21/structure": "course-structure-editor.html",
     "/admin/courses/masterclass-21/materials/day-01-article-02/editor": "course-material-editor.html",
     "/admin/products": "product-catalog-editor.html",
+    "/admin/marketing": "admin.html",
   };
   if (pages[url.pathname]) {
     response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
@@ -155,6 +165,7 @@ const server = createServer((request, response) => {
   }
   if (url.pathname === "/admin/api/project-map") return json(response, projectMap);
   if (url.pathname === "/admin/api/summary") return json(response, { users: 321, buyers: 87, paid_payments: 112, revenue_rub: 950000, access_reviews: 4 });
+  if (url.pathname === "/admin/api/marketing/overview") return json(response, sampleMarketing);
   if (url.pathname === "/admin/api/payment-products" || url.pathname === "/admin/api/tags") return json(response, []);
   if (url.pathname === "/admin/api/users") {
     const q = url.searchParams.get("q") || "";
@@ -323,6 +334,27 @@ for (const width of [360, 430, 768, 1440]) {
   assert.match(await page.locator(".finance-mode-note").textContent(), /Сценарная модель/);
   if (evidence) await page.screenshot({ path: path.join(evidence, `admin-finance-${width}.png`), fullPage: true });
   assert.ok(dimensions.scrollWidth <= dimensions.clientWidth, JSON.stringify({width,dimensions}));
+  await page.close();
+}
+
+for (const width of [360, 1440]) {
+  const page = await browser.newPage(pageOptions({ width, height: 900 }));
+  await page.goto(`http://127.0.0.1:${port}/admin/marketing`);
+  await page.locator(".marketing-leads tbody tr").waitFor();
+  assert.equal(await page.locator(".marketing-sticky-head").evaluate((node) => getComputedStyle(node).position), "sticky");
+  assert.equal(await page.locator('.marketing-quick-nav a[href="#marketing-conversions"]').count(), 1);
+  assert.equal(await page.locator(".marketing-horizontal-scroll").first().evaluate((node) => !node.hidden && node.scrollWidth > node.clientWidth), true);
+  if (evidence) await page.screenshot({ path: path.join(evidence, `admin-marketing-${width}.png`), fullPage: true });
+  const rail = page.locator(".marketing-horizontal-scroll").first();
+  await rail.evaluate((node) => { node.scrollLeft = 180; node.dispatchEvent(new Event("scroll")); });
+  assert.equal(await page.locator("#marketing-journeys").evaluate((node) => node.scrollLeft), 180);
+  await page.locator(".marketing-person").first().hover();
+  await page.locator(".marketing-timeline-popover").waitFor({state:"visible"});
+  assert.match(await page.locator(".marketing-timeline-popover").textContent(), /Первый старт бота.*Начал смотреть видео/s);
+  if (width >= 1000) {
+    const positions = await page.locator('.marketing-date-range input').evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().top));
+    assert.ok(positions[0] < positions[1], JSON.stringify(positions));
+  }
   await page.close();
 }
 
