@@ -8,7 +8,7 @@ from typing import Annotated
 import uuid
 from urllib.parse import parse_qs, urlencode, urlsplit
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, RedirectResponse
 from pydantic import BaseModel, Field, StringConstraints
 from sqlalchemy import select
@@ -20,6 +20,12 @@ from app.account_auth_routes import primary_email, require_native_user
 from app.intensive_web_access import offer_user_id
 from app.masterclass_routes import build_offers, create_offer_checkout_record
 from app.models import Payment, Resource, UserAccess
+from app.payment_browser_grant_service import (
+    auto_login_state,
+    claim_payment_session,
+    create_payment_browser_grant,
+    set_payment_grant_cookie,
+)
 from app.pricing_routes import enforce_preview_checkout_rate_limit
 from app.pricing_service import (
     active_pricing_version,
@@ -60,8 +66,8 @@ SUCCESS_CONTENT = {
     SUCCESS_KIND_PUBLIC_MASTERCLASS: {
         "title": "Оплата прошла успешно!",
         "html": (
-            "<p>Проверьте почту, на которую оформляли заказ.</p>"
-            "<p>Туда отправлен чек о покупке. В течение нескольких минут туда придут данные для входа в личный кабинет и ссылка на него.</p>"
+            "<p>Логин, пароль и обычная ссылка на личный кабинет отправлены на почту, которую вы указали при оплате.</p>"
+            "<p>Если вы начали оплату в этом браузере, ниже появится кнопка быстрого входа. Она действует 60 минут после подтверждения платежа.</p>"
             "<p>Если письма нет, проверьте папку «Спам».</p>"
             "<p>При любых технических проблемах напишите мне: <a href=\"https://t.me/FitnessSergey\">в Telegram</a> или <a href=\"https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw\">в MAX</a>.</p>"
         ),
@@ -413,6 +419,7 @@ def _enforce_checkout_origin(request: Request, settings: Settings) -> None:
 def robokassa_checkout(
     body: RobokassaCheckoutIn,
     request: Request,
+    response: Response,
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> dict:
@@ -427,7 +434,7 @@ def robokassa_checkout(
         if discount_user_id is None:
             raise HTTPException(403, "Персональная скидка истекла или недействительна")
     try:
-        return create_payment(
+        result = create_payment(
             db,
             settings,
             version,
@@ -437,9 +444,99 @@ def robokassa_checkout(
             source_context=body.source_context,
             acquisition_query=body.acquisition_query,
         )
+        payment = db.scalar(select(Payment).where(
+            Payment.source == "robokassa",
+            Payment.external_order_id == result["invoice_id"],
+        ))
+        raw_grant = create_payment_browser_grant(db, payment, body.email, settings) if payment else None
+        if raw_grant:
+            set_payment_grant_cookie(response, raw_grant)
+        return result
     except RobokassaError as exc:
         db.rollback()
         raise HTTPException(422, str(exc)) from exc
+
+
+def _payment_form_html(payment_form: dict) -> str:
+    fields = "".join(
+        f'<input type="hidden" name="{escape(str(name), quote=True)}" value="{escape(str(value), quote=True)}">'
+        for name, value in (payment_form.get("fields") or {}).items()
+    )
+    action = escape(str(payment_form["action"]), quote=True)
+    return (
+        '<!doctype html><html lang="ru"><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        '<meta name="robots" content="noindex,nofollow"><title>Переход к оплате</title>'
+        '<style>body{margin:0;min-height:100svh;display:grid;place-items:center;'
+        'font:16px Arial,sans-serif;background:#eef8ff;color:#173f70}'
+        'main{padding:28px;text-align:center}button{padding:14px 22px;border:0;border-radius:12px;'
+        'background:#159ee4;color:#fff;font-weight:700}</style><main>'
+        '<p>Открываю безопасную страницу оплаты…</p>'
+        f'<form id="payment" action="{action}" method="POST">{fields}'
+        '<button type="submit">Продолжить</button></form></main>'
+        '<script>document.getElementById("payment").submit()</script></html>'
+    )
+
+
+@router.post("/payments/robokassa/start", include_in_schema=False)
+@router.post("/api/payments/robokassa/start", include_in_schema=False)
+async def robokassa_first_party_start(
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> HTMLResponse:
+    """First-party checkout handoff that can safely bind the returning browser."""
+    _enforce_checkout_origin(request, settings)
+    enforce_preview_checkout_rate_limit(request)
+    content_type = request.headers.get("content-type", "").split(";", 1)[0].lower()
+    if content_type != "application/x-www-form-urlencoded":
+        raise HTTPException(415, "Ожидается форма оплаты")
+    raw_body = await request.body()
+    if len(raw_body) > 16_384:
+        raise HTTPException(413, "Форма оплаты слишком большая")
+    try:
+        form = {key: values[-1] for key, values in parse_qs(raw_body.decode(), keep_blank_values=True).items()}
+        body = RobokassaCheckoutIn(
+            price_code=form.get("price_code", ""),
+            email=form.get("email", ""),
+            intensive_offer=form.get("intensive_offer") or None,
+            source_context=form.get("source_context") or None,
+            acquisition_query={
+                key: form[key]
+                for key in ("utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "yclid")
+                if form.get(key)
+            } or None,
+        )
+    except (UnicodeDecodeError, ValueError) as exc:
+        raise HTTPException(422, "Некорректные данные оплаты") from exc
+    version = active_pricing_version(db)
+    if version is None:
+        raise HTTPException(503, "Активная версия цен не опубликована")
+    discount_user_id = offer_user_id(db, body.intensive_offer) if body.intensive_offer else None
+    if body.intensive_offer and discount_user_id is None:
+        raise HTTPException(403, "Персональная скидка истекла или недействительна")
+    try:
+        result = create_payment(
+            db, settings, version, body.price_code, body.email,
+            offer_user_id=discount_user_id,
+            source_context=body.source_context,
+            acquisition_query=body.acquisition_query,
+        )
+        payment = db.scalar(select(Payment).where(
+            Payment.source == "robokassa",
+            Payment.external_order_id == result["invoice_id"],
+        ))
+        raw_grant = create_payment_browser_grant(db, payment, body.email, settings) if payment else None
+    except RobokassaError as exc:
+        db.rollback()
+        raise HTTPException(422, str(exc)) from exc
+    response = HTMLResponse(
+        _payment_form_html(result["payment_form"]),
+        headers={"X-Robots-Tag": "noindex, nofollow", "Cache-Control": "no-store"},
+    )
+    if raw_grant:
+        set_payment_grant_cookie(response, raw_grant)
+    return response
 
 
 @router.post("/api/payments/robokassa/manual-checkout")
@@ -534,7 +631,9 @@ async def robokassa_result2(
 @router.get("/api/payments/robokassa/{invoice_id}/status")
 def robokassa_status(
     invoice_id: str,
+    request: Request,
     db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
 ) -> dict:
     payment = db.scalar(
         select(Payment).where(
@@ -549,7 +648,26 @@ def robokassa_status(
         "invoice_id": invoice_id,
         "status": payment.payment_status,
         "success_kind": _success_kind(payment),
+        "entry_mode": auto_login_state(db, request, payment, settings),
     }
+
+
+@router.post("/api/payments/robokassa/{invoice_id}/claim")
+def robokassa_claim_session(
+    invoice_id: str,
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    payment = db.scalar(select(Payment).where(
+        Payment.source == "robokassa",
+        Payment.external_order_id == invoice_id,
+    ))
+    if payment is None:
+        raise HTTPException(404, "Счёт не найден")
+    expires_at = claim_payment_session(db, request, response, payment, settings)
+    return {"ok": True, "account_url": "/lk", "expires_at": expires_at.isoformat()}
 
 
 def _return_page(
@@ -564,9 +682,11 @@ def _return_page(
     if invoice_id and invoice_id.isdigit():
         polling = f"""<script>
 const statusUrl='/api/payments/robokassa/{invoice_id}/status';
+const claimUrl='/api/payments/robokassa/{invoice_id}/claim';
 const successContent={json.dumps(SUCCESS_CONTENT, ensure_ascii=False)};
-function showPaid(kind){{const content=successContent[kind]||successContent[{json.dumps(SUCCESS_KIND_PUBLIC_MASTERCLASS)}];document.title=content.title;document.getElementById('payment-page-title').textContent=content.title;document.getElementById('state').innerHTML=content.html;}}
-async function check(){{try{{const r=await fetch(statusUrl,{{credentials:'omit'}});const d=await r.json();if(d.status==='paid'){{showPaid(d.success_kind);return;}}if(d.status==='test_paid'){{document.getElementById('state').textContent='Тестовая оплата подтверждена.';return;}}}}catch(e){{}}setTimeout(check,2000);}}check();
+function showPaid(kind,entryMode){{const content=successContent[kind]||successContent[{json.dumps(SUCCESS_KIND_PUBLIC_MASTERCLASS)}];document.title=content.title;document.getElementById('payment-page-title').textContent=content.title;document.getElementById('state').innerHTML=entryMode==='existing_account'?'<p>Покупка добавлена в ваш существующий личный кабинет.</p><p>Новый пароль и повторное письмо не создавались. Войдите обычным способом.</p>':content.html;const actions=document.getElementById('payment-actions');actions.innerHTML='';const button=document.createElement('button');if(entryMode==='auto_login'){{button.textContent='Перейти в личный кабинет';button.onclick=claim;actions.appendChild(button);}}else{{const link=document.createElement('a');link.href='/lk';link.textContent='Открыть личный кабинет';actions.appendChild(link);}}}}
+async function claim(){{const button=document.querySelector('#payment-actions button');if(button){{button.disabled=true;button.textContent='Открываю…';}}try{{const r=await fetch(claimUrl,{{method:'POST',credentials:'same-origin'}});const d=await r.json();if(!r.ok)throw new Error(d.detail||'Не удалось войти');location.assign(d.account_url||'/lk');}}catch(error){{document.getElementById('payment-error').textContent=error.message;if(button){{button.disabled=false;button.textContent='Перейти в личный кабинет';}}}}}}
+async function check(){{try{{const r=await fetch(statusUrl,{{credentials:'same-origin'}});const d=await r.json();if(d.status==='paid'){{showPaid(d.success_kind,d.entry_mode);return;}}if(d.status==='test_paid'){{document.getElementById('state').textContent='Тестовая оплата подтверждена.';return;}}}}catch(e){{}}setTimeout(check,2000);}}check();
 </script>"""
     if success_kind:
         content = SUCCESS_CONTENT[success_kind]
@@ -576,7 +696,7 @@ async function check(){{try{{const r=await fetch(statusUrl,{{credentials:'omit'}
         f'<p><a href="{escape(return_url, quote=True)}">Вернуться на сайт</a></p>'
         if return_url else ""
     )
-    return HTMLResponse(f"""<!doctype html><html lang=\"ru\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>{title}</title><style>body{{margin:0;min-height:100svh;display:grid;place-items:center;background:#eef8ff;color:#173f70;font:16px/1.5 Arial,sans-serif}}main{{max-width:560px;margin:20px;padding:32px;border-radius:24px;background:white;box-shadow:0 20px 60px #176ba326;text-align:left}}a{{color:#167bc0}}#state p{{margin:0 0 14px}}#state p:last-child{{margin-bottom:0}}</style><main><h1 id=\"payment-page-title\">{title}</h1><div id=\"state\">{message}</div>{return_link}</main>{polling}</html>""", headers={"X-Robots-Tag": "noindex, nofollow"})
+    return HTMLResponse(f"""<!doctype html><html lang=\"ru\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>{title}</title><style>body{{margin:0;min-height:100svh;display:grid;place-items:center;background:#eef8ff;color:#173f70;font:16px/1.5 Arial,sans-serif}}main{{max-width:560px;margin:20px;padding:32px;border-radius:24px;background:white;box-shadow:0 20px 60px #176ba326;text-align:left}}a{{color:#167bc0}}#state p{{margin:0 0 14px}}#state p:last-child{{margin-bottom:0}}#payment-actions{{margin-top:22px}}#payment-actions button,#payment-actions a{{display:inline-block;padding:14px 20px;border:0;border-radius:12px;background:#159ee4;color:#fff;text-decoration:none;font:700 16px Arial,sans-serif;cursor:pointer}}#payment-error{{color:#a33;margin-top:12px}}</style><main><h1 id=\"payment-page-title\">{title}</h1><div id=\"state\">{message}</div><div id=\"payment-actions\"></div><div id=\"payment-error\" aria-live=\"polite\"></div>{return_link}</main>{polling}</html>""", headers={"X-Robots-Tag": "noindex, nofollow", "Cache-Control": "no-store"})
 
 
 @router.get("/payments/robokassa/success", include_in_schema=False)

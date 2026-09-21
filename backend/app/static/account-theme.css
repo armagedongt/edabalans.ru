@@ -64,6 +64,11 @@ html[data-account-theme="dark"] #account-app .legal-action{background:#263442;co
 html[data-account-theme="dark"] #account-app .legal-action:hover:not(:disabled){background:#324b5e}
 html[data-account-theme="dark"] #account-app .legal-action:disabled{background:#252b32;color:var(--account-theme-muted)}
 html[data-account-theme="dark"] #account-app .legal-error{color:#ffb7b0!important}
+html[data-account-theme="dark"] #account-app .account-messengers{background:#222d37;border-color:var(--account-theme-border)}
+html[data-account-theme="dark"] #account-app .account-messengers :is(span,p){color:var(--account-theme-muted)}
+html[data-account-theme="dark"] #account-app .account-messengers :is(button,a){background:#263442;color:var(--account-theme-blue);border-color:var(--account-theme-border)}
+html[data-account-theme="dark"] #account-app .account-messengers :is(button,a):hover:not(:disabled){background:#324859}
+html[data-account-theme="dark"] #account-app .account-messengers .messenger-state{background:#214d38;color:#9ce8b4}
 
 /* Outline: identical row behavior, only the surface changes. */
 html[data-account-theme="dark"] #masterclass-course-app .sidebar{background:linear-gradient(160deg,#282c33,#202329 55%,#1b1e24)!important;box-shadow:8px 0 30px -20px #000}

@@ -176,7 +176,7 @@ def test_paid_order_is_written_to_client_payment_and_access() -> None:
         assert db.scalar(select(UserEmail.email_normalized)) == "client@example.test"
         assert db.scalar(select(UserPhone.phone_normalized)) == "+79991234567"
         assert db.scalar(select(func.count(UserAccess.id))) == 1
-        assert db.scalar(select(func.count(AccountOnboarding.id))) == 1
+        assert db.scalar(select(func.count(AccountOnboarding.id))) == 0
         event = db.scalar(select(MasterclassEvent))
         assert event is not None
         assert event.event_type == "masterclass_purchase_confirmed"
@@ -199,7 +199,7 @@ def test_paid_order_is_written_to_client_payment_and_access() -> None:
     with session_factory() as db:
         assert db.scalar(select(func.count(Payment.id))) == 1
         assert db.scalar(select(func.count(UserAccess.id))) == 1
-        assert db.scalar(select(func.count(AccountOnboarding.id))) == 1
+        assert db.scalar(select(func.count(AccountOnboarding.id))) == 0
     app.dependency_overrides.clear()
 
 

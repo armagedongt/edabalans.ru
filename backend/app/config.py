@@ -29,7 +29,8 @@ class Settings(BaseSettings):
     account_max_bot_username: str = "id230409966750_bot"
     account_public_url: str = "https://похудение-это-есть.рф/lk"
     account_onboarding_enabled: bool = False
-    account_session_days: int = 30
+    account_session_days: int = 45
+    payment_browser_grant_minutes: int = 60
     account_email_worker_enabled: bool = True
     account_email_poll_seconds: float = 15.0
     masterclass_course_url: str = "https://похудение-это-есть.рф/lk"

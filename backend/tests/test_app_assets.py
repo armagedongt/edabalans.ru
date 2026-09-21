@@ -573,7 +573,7 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "data-offer-product" in account.text
     assert "/api/masterclass/account-offers" in account.text
     assert "/api/masterclass/dqs/link-to-telegram" in account.text
-    assert "Не нашли ссылку? Отправить ещё раз" in account.text
+    assert "Отправить ссылку:" in account.text
     account_css = client.get("/assets/account-visual.css").text
     assert ".account-card.available-card" in account_css
     assert ".account-card.featured" in account_css
@@ -697,7 +697,7 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "canContinue=item.state==='entitled_locked'" in application_renderer
     assert "item.action_label||'Открыть'" in application_renderer
     assert "item.action_label||'Продолжить Мастер-класс'" in application_renderer
-    assert "data-dqs-resend" in application_renderer
+    assert "data-dqs-send" in application_renderer
     assert "applicationIcon(item.code)" in application_renderer
     assert "application-icon-" in account
     icons = dict(re.findall(r"(dqs|strength|recipes|metabolism):'([^']+)'", account))
@@ -799,26 +799,31 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
         "Как вести дневник питания",
         "Как надо взвешиваться",
     ]
-    assert next(
+    messenger_index = next(
         index for index, step in enumerate(first_steps)
         if step["id"] == "day-01-messenger-link"
-    ) > next(
+    )
+    assert messenger_index > next(
+        index for index, step in enumerate(first_steps)
+        if step["id"] == "day-01-article-02"
+    )
+    assert messenger_index < next(
         index for index, step in enumerate(first_steps)
         if step["id"] == "day-01-questionnaire"
     )
     messenger_step = next(
         step for step in first_steps if step["id"] == "day-01-messenger-link"
     )
-    assert "уведомления о новых материалах" in messenger_step["summary"]
+    assert "материалов и уведомлений" in messenger_step["summary"]
 
     course_html = (
         root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
     ).read_text(encoding="utf-8")
     course_css = (root / "backend" / "app" / "static" / "course-visual.css").read_text(encoding="utf-8")
     assert ".articlep:not(.eyebrow):not(.hero-lead):not(.eyebrow-time){margin:0px0px18px;}" in re.sub(r"\s+", "", course_css)
-    assert "обязательный технический шаг" in course_html
-    assert "После успешной привязки появится кнопка «Продолжить»" in course_html
-    assert "messenger-links/status" in course_html
+    assert "Подключить нужно хотя бы один мессенджер" in course_html
+    assert "Кабинет сам проверит привязку" in course_html
+    assert "/api/masterclass/messengers?" in course_html
     assert "if(messengerConfirmed)advanceCourseStep" in course_html
     assert "Персональная ссылка для подключения действует 15 минут" not in course_html
     assert "pendingQuestionnaireSaves[key]=request.then" in course_html

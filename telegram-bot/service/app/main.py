@@ -27,11 +27,13 @@ from app.customer_lifecycle import reconcile_masterclass_presale_runs, stop_pres
 from app.database import Base, SessionLocal, engine, get_db
 from app.app_menu import REFRESH_CALLBACK, app_request, refresh_menu, send_menu
 from app.engine import advance_run, due_runs, personalized_delivery, resume_callback, resume_wait_timeout, start_run
+from app.delivery_registry import validate_body
 from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_CODE, allowed_telegram_ids, maintenance_allows, record_maintenance_contact
 from app.metrika import MetrikaOfflineClient, sync_offline_conversions
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, MessengerLinkToken, OwnerPaymentAlertDelivery, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
+from app.messenger_resolver import preferred_destination
 from app.masterclass_link import consume_masterclass_link
 from app.intensive_access import get_or_create_intensive_access_link
 from app.web_login import consume_web_login
@@ -310,10 +312,8 @@ def _validate_media_reference(media_path: str | None) -> None:
 
 def _broadcast_contacts(session: Session, row: Broadcast) -> list[Contact]:
     segment = row.segment or {}
-    telegram_bot_ids = select(BotInstance.id).where(BotInstance.code != "max")
     query = select(Contact).where(
         Contact.status == segment.get("status", "active"),
-        Contact.bot_instance_id.in_(telegram_bot_ids),
     )
     telegram_ids = [str(value) for value in segment.get("telegram_user_ids", []) if str(value).strip()]
     if telegram_ids:
@@ -344,7 +344,26 @@ def _broadcast_contacts(session: Session, row: Broadcast) -> list[Contact]:
                   AND r.code = ANY(:broadcast_access_codes)
             )
         """)).params(broadcast_access_codes=access_codes)
-    return [contact for contact in session.scalars(query.order_by(Contact.created_at)) if _maintenance_allows_contact(contact)]
+    selected: list[Contact] = []
+    seen_users: set[str] = set()
+    for contact in session.scalars(query.order_by(Contact.created_at)):
+        if not contact.user_id:
+            if _maintenance_allows_contact(contact):
+                selected.append(contact)
+            continue
+        if contact.user_id in seen_users:
+            continue
+        destination = preferred_destination(session, contact.user_id)
+        if destination is None:
+            continue
+        target = session.get(Contact, destination.contact_id)
+        if target is None:
+            continue
+        if not _is_max_contact(session, target) and not _maintenance_allows_contact(target):
+            continue
+        selected.append(target)
+        seen_users.add(contact.user_id)
+    return selected
 
 
 def _snapshot_broadcast_recipients(session: Session, row: Broadcast) -> list[Contact]:
@@ -357,17 +376,25 @@ def _snapshot_broadcast_recipients(session: Session, row: Broadcast) -> list[Con
     return contacts
 
 
-def _send_broadcast_content(session: Session, contact: Contact, content: ContentItem, configuration: dict, sender: TelegramClient) -> str:
+def _send_broadcast_content(session: Session, contact: Contact, content: ContentItem, configuration: dict, sender) -> str:
     rendered, rendered_configuration = personalized_delivery(session, contact, content, configuration)
     if "{{" in (rendered.body_source or "") or "{{" in str(rendered_configuration):
         raise RuntimeError(f"Unresolved delivery template: {rendered.code}")
+    validate_body("scheduled_broadcast", rendered.body_source)
     message_id = sender.send_content(contact.chat_id, rendered, rendered_configuration)
     if rendered is not content and rendered.telegram_file_id:
         content.telegram_file_id = rendered.telegram_file_id
     return message_id
 
 
-def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient, *, snapshot: bool = False) -> tuple[int, int]:
+def _deliver_broadcast(
+    session: Session,
+    row: Broadcast,
+    tg: TelegramClient | None,
+    max_sender: MaxClient | None = None,
+    *,
+    snapshot: bool = False,
+) -> tuple[int, int]:
     if snapshot:
         _snapshot_broadcast_recipients(session, row)
     row.status = "sending"; row.started_at = row.started_at or datetime.now(UTC)
@@ -377,11 +404,30 @@ def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient, *, 
     for recipient in session.scalars(select(BroadcastRecipient).where(BroadcastRecipient.broadcast_id == row.id, BroadcastRecipient.status == "pending")):
         _record_scheduler_activity()
         contact = session.get(Contact, recipient.contact_id)
-        if not contact or not _maintenance_allows_contact(contact):
+        contact_user_id = getattr(contact, "user_id", None) if contact else None
+        if contact_user_id:
+            destination = preferred_destination(session, contact_user_id)
+            contact = session.get(Contact, destination.contact_id) if destination else None
+        if not contact:
+            recipient.status = "failed"
+            recipient.error_message = "preferred messenger is unavailable or ambiguous"
+            failed += 1
+            continue
+        sender = (
+            _sequence_sender(session, contact, tg, max_sender)
+            if contact_user_id
+            else tg
+        )
+        if sender is None:
+            recipient.status = "failed"
+            recipient.error_message = "preferred messenger sender is unavailable"
+            failed += 1
+            continue
+        if sender is tg and not _maintenance_allows_contact(contact):
             recipient.status = "skipped_maintenance"
             continue
         try:
-            recipient.platform_message_id = _send_broadcast_content(session, contact, content, configuration, tg)
+            recipient.platform_message_id = _send_broadcast_content(session, contact, content, configuration, sender)
             recipient.status = "sent"; recipient.sent_at = datetime.now(UTC); sent += 1
         except Exception as exc:
             message = str(exc)
@@ -411,11 +457,25 @@ def dispatch_masterclass_notifications(
         "progress_callback": _record_scheduler_activity,
     }
     if platform == "max":
+        if settings.postpurchase_dispatch_enabled:
+            return dispatch_due_masterclass_notifications(
+                session,
+                sender,
+                settings.masterclass_offers_url,
+                test_only=settings.postpurchase_test_only,
+                **common,
+            )
         return dispatch_due_masterclass_notifications(
             session,
             sender,
             settings.masterclass_offers_url,
-            notification_kinds={"messenger_identity", "messenger_questionnaire"},
+            notification_kinds={
+                "dqs_app_link",
+                "closing_review_copy",
+                "current_diet_questionnaire",
+                "messenger_identity",
+                "messenger_questionnaire",
+            },
             **common,
         )
     if settings.postpurchase_dispatch_enabled:
@@ -481,19 +541,30 @@ def scheduler_iteration() -> None:
                 contact = session.get(Contact, run.contact_id)
                 if not contact:
                     continue
-                sender = _sequence_sender(session, contact, tg, max_sender)
+                delivery_contact = contact
+                if contact.user_id:
+                    destination = preferred_destination(session, contact.user_id)
+                    if destination is None:
+                        run.status = "error"
+                        run.next_action_at = None
+                        run.last_error = "preferred messenger is unavailable or ambiguous"
+                        session.commit()
+                        continue
+                    delivery_contact = session.get(Contact, destination.contact_id)
+                sender = _sequence_sender(session, delivery_contact, tg, max_sender)
                 if sender is None:
                     continue
-                if sender is tg and not _maintenance_allows_contact(contact):
+                if sender is tg and not _maintenance_allows_contact(delivery_contact):
                     continue
                 if run.status == "waiting":
                     resume_wait_timeout(session, run)
-                advance_run(session, run, sender)
+                advance_run(session, run, sender, delivery_contact=delivery_contact)
                 _record_scheduler_activity()
-            if tg:
+            if tg or max_sender:
                 scheduled = session.scalars(select(Broadcast).where(Broadcast.status == "scheduled", Broadcast.scheduled_at <= datetime.now(UTC))).all()
                 for broadcast in scheduled:
-                    _deliver_broadcast(session, broadcast, tg)
+                    _deliver_broadcast(session, broadcast, tg, max_sender)
+            if tg:
                 dispatch_masterclass_notifications(session, tg)
             if max_sender:
                 dispatch_masterclass_notifications(session, max_sender, platform="max")
@@ -1153,6 +1224,12 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
                     )
                     session.commit()
                     return {"ok": True, "maintenance": True, "masterclass_link": True}
+                # Ordinary identity links are durable before the confirmation
+                # send.  The legacy free-registration credentials path is the
+                # exception: it may contain the only user-visible copy of a new
+                # password, so keep its old send-before-commit retry semantics.
+                if not account_credentials_link:
+                    session.commit()
                 client().send_content(
                     contact.chat_id,
                     SimpleNamespace(
@@ -1163,10 +1240,8 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
                     ),
                     {},
                 )
-                # Commit the one-time claim only after Telegram accepted the
-                # credentials message. A transient send failure can then be
-                # retried without losing the only copy of the generated password.
-                session.commit()
+                if account_credentials_link:
+                    session.commit()
                 return {"ok": True, "masterclass_link": True}
             route = session.scalar(
                 select(BotRoute)
@@ -2186,7 +2261,13 @@ def launch_broadcast(broadcast_id: str, body: BroadcastConfirmIn, session: Sessi
     if row.status != "draft":
         raise HTTPException(409, "Broadcast already launched")
     _confirm_broadcast_audience(session, row, body.confirmed_recipient_count)
-    sent, failed = _deliver_broadcast(session, row, client(), snapshot=True)
+    sent, failed = _deliver_broadcast(
+        session,
+        row,
+        client(),
+        max_client() if settings.max_bot_token else None,
+        snapshot=True,
+    )
     return {"id":row.id,"status":row.status,"sent":sent,"failed":failed}
 
 
@@ -2240,7 +2321,12 @@ def retry_broadcast(broadcast_id: str, session: Session = Depends(get_db)) -> di
         recipient.status = "pending"
         recipient.error_message = None
     session.flush()
-    sent, failed = _deliver_broadcast(session, row, client())
+    sent, failed = _deliver_broadcast(
+        session,
+        row,
+        client(),
+        max_client() if settings.max_bot_token else None,
+    )
     return {"id": row.id, "status": row.status, "sent": sent, "failed": failed}
 
 

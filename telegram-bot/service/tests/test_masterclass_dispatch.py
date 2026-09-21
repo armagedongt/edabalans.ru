@@ -40,6 +40,11 @@ class FakeSender:
         return str(len(self.sent))
 
 
+class TimeoutSender:
+    def send_content(self, chat_id, content, configuration):
+        raise TimeoutError("temporary messenger timeout")
+
+
 def test_questionnaire_copy_uses_published_order_and_titles_without_rebinding_answers(tmp_path):
     with session_factory(tmp_path) as session:
         session.execute(text("CREATE TABLE questionnaire_runs (id TEXT, user_id TEXT, kind TEXT)"))
@@ -81,6 +86,27 @@ def test_long_telegram_html_splits_without_breaking_tags_or_entities():
     assert visible == ("а" * 3889) + "&amp;" + ("б" * 40)
 
 
+def test_max_dispatch_uses_the_same_registered_producer_scope(monkeypatch):
+    captured = {}
+
+    def fake_dispatch(*args, **kwargs):
+        captured.update(kwargs)
+        return {"sent": 0}
+
+    monkeypatch.setattr(main_module, "dispatch_due_masterclass_notifications", fake_dispatch)
+    monkeypatch.setattr(main_module.settings, "postpurchase_dispatch_enabled", False)
+
+    main_module.dispatch_masterclass_notifications(object(), object(), platform="max")
+
+    assert {
+        "dqs_app_link",
+        "closing_review_copy",
+        "current_diet_questionnaire",
+        "messenger_identity",
+        "messenger_questionnaire",
+    } <= captured["notification_kinds"]
+
+
 def session_factory(tmp_path):
     engine = make_engine(f"sqlite:///{tmp_path / 'dispatch.sqlite'}")
     Base.metadata.create_all(engine)
@@ -109,6 +135,15 @@ def add_contact_and_content(session):
     session.add(bot); session.flush()
     contact = Contact(bot_instance_id=bot.id, user_id="11111111-1111-1111-1111-111111111111", telegram_user_id="42", chat_id="42", status="active")
     session.add(contact)
+    session.add(CrmMessengerAccount(
+        user_id=contact.user_id,
+        platform="telegram",
+        platform_user_id="42",
+        source="test",
+        linked_at=datetime.now(UTC),
+        is_deliverable=True,
+        is_preferred=True,
+    ))
     for code in (
         "tpl_postpurchase_identity",
         "tpl_postpurchase_questionnaire",
@@ -179,6 +214,20 @@ def add_contact_and_content(session):
     ))
     session.flush()
     return contact
+
+
+def explicit_telegram_payload(session, user_id):
+    account = session.scalar(
+        select(CrmMessengerAccount).where(
+            CrmMessengerAccount.user_id == user_id,
+            CrmMessengerAccount.platform == "telegram",
+        )
+    )
+    return {
+        "target_platform": "telegram",
+        "target_platform_user_id": account.platform_user_id,
+        "target_messenger_account_id": account.id,
+    }
 
 
 def test_client_summary_uses_masterclass_payment_and_human_question_titles(tmp_path):
@@ -349,6 +398,62 @@ def test_dispatch_sends_closing_review_copy_to_participant(tmp_path):
         )["sent"] == 0
 
 
+def test_transient_send_failure_retries_only_until_notification_expiry(tmp_path):
+    with session_factory(tmp_path) as session:
+        contact = add_contact_and_content(session)
+        account = session.scalar(
+            select(CrmMessengerAccount).where(
+                CrmMessengerAccount.user_id == contact.user_id
+            )
+        )
+        now = datetime.now(UTC)
+        notification = MasterclassNotification(
+            user_id=contact.user_id,
+            notification_kind="dqs_app_link",
+            content_code="tpl_postpurchase_dqs_app_link",
+            deduplication_key="dqs:retry-until-expiry",
+            due_at=now - timedelta(seconds=1),
+            expires_at=now + timedelta(minutes=10),
+            status="pending",
+            payload={
+                "target_platform": "telegram",
+                "target_platform_user_id": account.platform_user_id,
+                "target_messenger_account_id": account.id,
+            },
+        )
+        session.add(notification)
+        session.commit()
+
+        first = dispatch_due_masterclass_notifications(
+            session,
+            TimeoutSender(),
+            "",
+            lambda *_: {"dqs"},
+            notification_kinds={"dqs_app_link"},
+        )
+
+        assert first["failed"] == 1
+        assert notification.status == "retrying"
+        assert notification.attempt_count == 1
+        assert notification.due_at.replace(tzinfo=UTC) > now
+
+        notification.due_at = datetime.now(UTC) - timedelta(seconds=1)
+        notification.expires_at = datetime.now(UTC) - timedelta(seconds=1)
+        session.commit()
+        second = dispatch_due_masterclass_notifications(
+            session,
+            TimeoutSender(),
+            "",
+            lambda *_: {"dqs"},
+            notification_kinds={"dqs_app_link"},
+        )
+
+        assert second["failed"] == 1
+        assert notification.status == "failed"
+        assert notification.attempt_count == 1
+        assert "expired" in notification.error_message
+
+
 def test_multipart_retry_does_not_resend_already_delivered_parts(tmp_path):
     class FailSecondPartOnce:
         def __init__(self):
@@ -371,7 +476,7 @@ def test_multipart_retry_does_not_resend_already_delivered_parts(tmp_path):
         notification = MasterclassNotification(
             id="90909090-9090-9090-9090-909090909090",
             user_id="11111111-1111-1111-1111-111111111111",
-            notification_kind="test_copy",
+                notification_kind="messenger_identity",
             content_code="tpl_postpurchase_tempo_late",
             deduplication_key="multipart:retry",
             due_at=datetime.now(UTC) - timedelta(seconds=1),
@@ -385,6 +490,8 @@ def test_multipart_retry_does_not_resend_already_delivered_parts(tmp_path):
         first = dispatch_due_masterclass_notifications(
             session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}
         )
+        notification.due_at = datetime.now(UTC) - timedelta(seconds=1)
+        session.commit()
         item.body_source = "<b>изменившийся шаблон не должен смешаться с уже начатой доставкой</b>"
         item.status = "archived"
         session.commit()
@@ -509,7 +616,7 @@ def test_dispatch_skips_legacy_dqs_support_notification(tmp_path):
 
         assert result["skipped"] == 1
         assert row.status == "skipped"
-        assert row.error_message == "nothing relevant to send"
+        assert row.error_message == "owner_or_reactive_service"
         assert sender.sent == []
 
 
@@ -524,7 +631,9 @@ def test_dispatch_sends_only_requested_dqs_link_when_postpurchase_is_disabled(tm
             deduplication_key="dqs:app-link:1",
             due_at=datetime.now(UTC) - timedelta(seconds=1),
             status="pending",
-            payload={},
+            payload=explicit_telegram_payload(
+                session, "11111111-1111-1111-1111-111111111111"
+            ),
         ))
         session.add(MasterclassNotification(
             id="bcbcbcbc-bcbc-bcbc-bcbc-bcbcbcbcbcbc",
@@ -587,7 +696,9 @@ def test_dqs_retry_preserves_browser_link_button(tmp_path):
             deduplication_key="dqs:app-link:retry",
             due_at=datetime.now(UTC) - timedelta(seconds=1),
             status="pending",
-            payload={},
+            payload=explicit_telegram_payload(
+                session, "11111111-1111-1111-1111-111111111111"
+            ),
         ))
         session.commit()
         sender = FailOnceSender()
@@ -595,6 +706,13 @@ def test_dqs_retry_preserves_browser_link_button(tmp_path):
         first = dispatch_due_masterclass_notifications(
             session, sender, "", lambda *_: {"dqs"}
         )
+        notification = session.scalar(
+            select(MasterclassNotification).where(
+                MasterclassNotification.deduplication_key == "dqs:app-link:retry"
+            )
+        )
+        notification.due_at = datetime.now(UTC) - timedelta(seconds=1)
+        session.commit()
         second = dispatch_due_masterclass_notifications(
             session, sender, "", lambda *_: {"dqs"}
         )
@@ -637,7 +755,9 @@ def test_dqs_dispatch_fails_when_text_and_graph_destinations_differ(tmp_path):
             deduplication_key="dqs:app-link:mismatch",
             due_at=datetime.now(UTC) - timedelta(seconds=1),
             status="pending",
-            payload={},
+            payload=explicit_telegram_payload(
+                session, "11111111-1111-1111-1111-111111111111"
+            ),
         )
         session.add(notification)
         session.commit()
@@ -675,7 +795,7 @@ def test_requested_questionnaire_delivers_to_regular_user_but_mailings_stay_test
             due_at=datetime.now(UTC) - timedelta(seconds=2), status="pending", payload={},
         )
         mailing = MasterclassNotification(
-            user_id=contact.user_id, notification_kind="course_stalled",
+            user_id=contact.user_id, notification_kind="course_stalled_72h",
             content_code="tpl_postpurchase_tempo_late", deduplication_key="automatic-mailing",
             due_at=datetime.now(UTC) - timedelta(seconds=1), status="pending", payload={},
         )
@@ -749,6 +869,14 @@ def test_questionnaire_delivery_uses_only_the_linked_max_contact(tmp_path):
             last_seen_at=datetime.now(UTC),
         )
         session.add_all([max_contact, other_max_contact])
+        telegram_account = session.scalar(
+            select(CrmMessengerAccount).where(
+                CrmMessengerAccount.user_id == telegram_contact.user_id,
+                CrmMessengerAccount.platform == "telegram",
+            )
+        )
+        telegram_account.is_preferred = False
+        session.flush()
         linked_account = CrmMessengerAccount(
             user_id=telegram_contact.user_id,
             platform="max",
@@ -756,6 +884,8 @@ def test_questionnaire_delivery_uses_only_the_linked_max_contact(tmp_path):
             username="member",
             linked_at=datetime.now(UTC),
             source="test",
+            is_deliverable=True,
+            is_preferred=True,
         )
         session.add(linked_account)
         session.flush()
@@ -828,7 +958,7 @@ def test_dispatch_skips_legacy_review_week_notifications(tmp_path):
 
         assert result["skipped"] == 3
         assert all(row.status == "skipped" for row in rows)
-        assert all(row.error_message == "nothing relevant to send" for row in rows)
+        assert all(row.error_message == "owner_or_non_delivery_state" for row in rows)
         assert sender.sent == []
 
 

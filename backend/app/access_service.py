@@ -143,6 +143,7 @@ def grant_resources(
                     resource_id=resource.id,
                     unlock_mode=mode,
                     source=source,
+                    course_policy_version=(2 if code == "ACCESS_MASTERCLASS" else 1),
                 )
             )
         elif mode == "fully_unlocked":

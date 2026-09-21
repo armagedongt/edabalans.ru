@@ -49,7 +49,7 @@ id = "platform.commerce"
 admin_catalog = [{ category = "commerce", order = 20, url = "/admin/pricing", label = "Цены и тарифы", icon = "🏷️", description = "Цены продуктов, тарифы и дополнительные предложения." }, { category = "commerce", order = 40, url = "/finance", label = "Финансовая модель", icon = "📊", description = "Расчёт потока, выручки, рекламы, нагрузки и маржи." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.commerce.md"
-depends_on = ["platform.crm", "messaging.telegram"]
+depends_on = ["platform.auth", "platform.crm", "messaging.telegram"]
 events_out = ["messaging.telegram.postpurchase"]
 owns_files = [
   "backend/app/access_routes.py", "backend/app/access_service.py",
@@ -85,12 +85,15 @@ owns_files = [
   "backend/migrations/versions/20260912_0041_server_recurring_subscriptions.py",
   "backend/migrations/versions/20260917_0042_owner_payment_notifications.py",
   "backend/migrations/versions/20260919_0045_access_pause.py",
+  "backend/app/payment_browser_grant_service.py",
+  "backend/migrations/versions/20260921_0047_purchase_auto_login_messenger_policy.py",
 ]
 owns_tables = [
   "products", "product_aliases", "resources", "product_access_rules",
   "pricing_versions", "price_entries", "payments", "user_accesses",
   "personal_access_links", "user_course_policies", "user_legal_acceptances",
   "account_onboardings", "recurring_subscriptions", "owner_payment_notifications",
+  "payment_browser_grants",
 ]
 owns_routes = [
   "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/robokassa*", "*/tilda/*", "*/personal-access*", "*/pay", "*/subscription*",
@@ -542,7 +545,7 @@ sources = [
 id = "products.masterclass.runtime"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.runtime.md"
-depends_on = ["platform.auth", "platform.commerce", "products.public-site", "products.dqs"]
+depends_on = ["platform.auth", "platform.commerce", "platform.crm", "products.public-site", "products.dqs", "products.masterclass.messenger-links"]
 events_out = ["messaging.telegram.postpurchase", "messaging.telegram.apps", "messaging.max"]
 owns_files = [
   "backend/app/masterclass_routes.py", "backend/app/static/masterclass.css",
@@ -603,7 +606,7 @@ card = "docs/knowledge-base/modules/catalog/products.masterclass.messenger-links
 owns_files = ["backend/migrations/versions/20260823_0016_messenger_link_tokens.py"]
 owns_tables = ["messenger_link_tokens"]
 owns_routes = ["*/api/masterclass/*messenger*", "*/api/masterclass/*telegram*"]
-depends_on = ["messaging.telegram.engine", "platform.auth", "platform.commerce"]
+depends_on = ["messaging.telegram.engine", "platform.auth", "platform.commerce", "platform.crm"]
 
 [[modules]]
 id = "messaging"
@@ -797,6 +800,7 @@ owns_files = [
   "telegram-bot/service/app/account_credentials.py",
   "telegram-bot/service/app/customer_lifecycle.py", "telegram-bot/service/app/database.py",
   "telegram-bot/service/app/engine.py", "telegram-bot/service/app/formatting.py",
+  "telegram-bot/service/app/delivery_registry.py", "telegram-bot/service/app/messenger_resolver.py",
   "telegram-bot/service/app/graph.py", "telegram-bot/service/app/main.py",
   "telegram-bot/service/app/maintenance.py", "telegram-bot/service/app/masterclass_dispatch.py",
   "telegram-bot/service/app/metrika.py",

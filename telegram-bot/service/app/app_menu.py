@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 import json
 from types import SimpleNamespace
 
-from sqlalchemy import select, text
+from sqlalchemy import inspect, select, text
 from sqlalchemy.orm import Session
 
 from app.content_formatting import content_is_runtime_ready
@@ -89,12 +89,17 @@ def available_applications(session: Session, user_id: str | None) -> list[Applic
         FROM masterclass_events
         WHERE user_id = :user_id
     """), {"user_id": user_id}).scalars().all())
-    legacy_dqs_state = session.execute(text("""
-        SELECT start_date, days, source
-        FROM dqs_states
-        WHERE user_id = :user_id
-        LIMIT 1
-    """), {"user_id": user_id}).mappings().first()
+    if inspect(session.get_bind()).has_table("dqs_states"):
+        legacy_dqs_state = session.execute(text("""
+            SELECT start_date, days, source
+            FROM dqs_states
+            WHERE user_id = :user_id
+            LIMIT 1
+        """), {"user_id": user_id}).mappings().first()
+    else:
+        # Early legacy databases can legitimately lack this optional
+        # compatibility table. Current reveal events remain canonical.
+        legacy_dqs_state = None
     legacy_dqs_revealed = False
     if legacy_dqs_state and legacy_dqs_state["source"] != "admin_open":
         days = legacy_dqs_state["days"]

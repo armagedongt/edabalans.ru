@@ -104,6 +104,15 @@
           "contentPageTitle": "Как вести дневник питания"
         },
         {
+          "id": "day-01-messenger-link",
+          "kind": "messenger",
+          "completion": "server_linked",
+          "label": "Подключить мессенджер",
+          "summary": "Подключите Telegram или MAX для анкет, материалов и уведомлений",
+          "durationMinutes": 3,
+          "hidden": false
+        },
+        {
           "id": "day-01-article-03",
           "kind": "article",
           "title": "Как надо взвешиваться",
@@ -124,15 +133,6 @@
           "summary": "Немного познакомимся и сделаем слепок вашей начальной точки",
           "durationMinutes": 10,
           "hidden": false
-        },
-        {
-          "id": "day-01-messenger-link",
-          "kind": "messenger",
-          "completion": "link_requested",
-          "label": "Привязать мессенджер",
-          "summary": "Подключите уведомления о новых материалах в Мастер-классе",
-          "durationMinutes": 3,
-          "hidden": true
         },
         {
           "id": "day-01-offer",

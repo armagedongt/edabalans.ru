@@ -11,10 +11,11 @@ import uuid
 from urllib.parse import urlparse
 
 from fastapi import HTTPException
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.managed_documents import ensure_seed_document, publish_document
-from app.models import ManagedDocumentVersion, MasterclassDayProgress
+from app.models import ManagedDocumentVersion, MasterclassDayProgress, Resource, UserCoursePolicy
 from app.product_catalog_service import product_public
 
 
@@ -231,6 +232,51 @@ def course_context(db: Session) -> CourseContext:
             if not step.get("hidden", False) and step["kind"] == "offer"
         },
         content_files=content_files,
+    )
+
+
+def course_policy_version(db: Session, user_id: uuid.UUID) -> int:
+    value = db.scalar(
+        select(UserCoursePolicy.course_policy_version)
+        .join(Resource, Resource.id == UserCoursePolicy.resource_id)
+        .where(
+            UserCoursePolicy.user_id == user_id,
+            Resource.code == "ACCESS_MASTERCLASS",
+        )
+    )
+    return int(value or 1)
+
+
+def course_context_for_user(db: Session, user_id: uuid.UUID) -> CourseContext:
+    context = course_context(db)
+    if course_policy_version(db, user_id) >= 2:
+        return context
+    manifest = deepcopy(context.manifest)
+    for day in manifest.get("days", []):
+        for step in day.get("steps", []):
+            if step.get("id") == "day-01-messenger-link":
+                step["hidden"] = True
+    days = {int(day["number"]): day for day in manifest["days"]}
+    return CourseContext(
+        revision=context.revision,
+        manifest=manifest,
+        days=days,
+        last_day=context.last_day,
+        checks={number: list(day.get("checks", [])) for number, day in days.items()},
+        apps={
+            number: step["kind"]
+            for number, day in days.items()
+            for step in day.get("steps", [])
+            if not step.get("hidden", False)
+            and step["kind"] in {"dqs", "recipes-part-1", "recipes-part-2", "closing-review"}
+        },
+        offers={
+            number: (step["placement"], step["event"])
+            for number, day in days.items()
+            for step in day.get("steps", [])
+            if not step.get("hidden", False) and step["kind"] == "offer"
+        },
+        content_files=context.content_files,
     )
 
 

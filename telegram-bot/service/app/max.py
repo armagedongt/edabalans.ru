@@ -38,6 +38,7 @@ from app.models import (
     CrmUser,
     CrmUserTag,
     ManualMessage,
+    MasterclassNotification,
     MessengerLinkToken,
     TrackingLink,
     TrackingLinkAlias,
@@ -817,7 +818,7 @@ def _consume_account_link(
         .with_for_update()
     )
     now = datetime.now(UTC)
-    if token is None or token.platform != "max" or token.purpose != "account_credentials":
+    if token is None or token.platform != "max" or token.purpose not in {"account_credentials", "link_account", "named_delivery"}:
         return "Ссылка не найдена. Проверьте письмо или напишите мне."
     if token.consumed_at is not None:
         return "Эта ссылка уже использована. Если доступ не получен, напишите мне."
@@ -835,13 +836,35 @@ def _consume_account_link(
     )
     if onboarding is not None and onboarding.claimed_at is not None:
         return "Данные для входа уже выданы в выбранном мессенджере. Если вы их потеряли, напишите мне."
+    if session.bind is not None and session.bind.dialect.name == "postgresql":
+        session.execute(text("SELECT id FROM users WHERE id=:user_id FOR UPDATE"), {"user_id": token.user_id})
     if account.user_id != token.user_id and not _is_disposable_identity(session, account.user_id):
         return "Этот аккаунт уже связан с другим личным кабинетом. Если это ошибка, напишите мне."
 
     account.user_id = token.user_id
     account.linked_at = now
     account.last_seen_at = now
-    account.source = "account_onboarding"
+    account.source = "account_onboarding" if token.purpose == "account_credentials" else "masterclass_link"
+    account.is_deliverable = False
+    account.is_preferred = False
+    for previous in session.scalars(select(CrmMessengerAccount).where(
+        CrmMessengerAccount.user_id == token.user_id,
+        CrmMessengerAccount.platform == "max",
+        CrmMessengerAccount.id != account.id,
+    )):
+        previous.is_deliverable = False
+        previous.is_preferred = False
+    # Flush the demotions before enabling the replacement identity so the
+    # partial unique indexes cannot observe two deliverable accounts at once.
+    session.flush()
+    account.is_deliverable = True
+    preferred_exists = session.scalar(select(CrmMessengerAccount.id).where(
+        CrmMessengerAccount.user_id == token.user_id,
+        CrmMessengerAccount.is_preferred.is_(True),
+        CrmMessengerAccount.id != account.id,
+    ))
+    if preferred_exists is None:
+        account.is_preferred = True
     token.consumed_at = now
     if onboarding is not None:
         onboarding.status = "claimed"
@@ -857,6 +880,38 @@ def _consume_account_link(
         )
     )
     stop_presale_runs_for_user(session, token.user_id, reason="messenger_link_confirmed")
+    if token.purpose == "named_delivery":
+        intent = token.intent_payload or {}
+        kind = str(intent.get("notification_kind") or "")
+        content_code = str(intent.get("content_code") or "")
+        if kind and content_code:
+            key = f"messenger-link:{token.id}:named-delivery"
+            if not session.scalar(select(MasterclassNotification.id).where(
+                MasterclassNotification.deduplication_key == key
+            )):
+                session.add(MasterclassNotification(
+                    user_id=token.user_id,
+                    notification_kind=kind,
+                    content_code=content_code,
+                    deduplication_key=key,
+                    due_at=now,
+                    payload={
+                        "target_platform": "max",
+                        "target_messenger_account_id": str(account.id),
+                        "target_platform_user_id": account.platform_user_id,
+                    },
+                ))
+        return (
+            "<b>MAX подключён.</b>\n\n"
+            "Ссылка на приложение поставлена в отправку сюда и придёт отдельным сообщением."
+        )
+    if token.purpose == "link_account":
+        return (
+            "<b>MAX подключён к личному кабинету.</b>\n\n"
+            "Теперь сюда можно отправлять анкеты, материалы и уведомления Мастер-класса. "
+            "Вернитесь в кабинет — шаг обновится автоматически.\n\n"
+            f'<a href="{html.escape(account_url, quote=True)}?course_day=1&amp;course_material=day-01-messenger-link">Вернуться в Мастер-класс</a>'
+        )
     email = session.execute(
         text(
             "SELECT email_normalized FROM user_emails "
@@ -1296,6 +1351,15 @@ def process_max_update(
         }
 
     if payload.startswith("M"):
+        account_credentials_link = (
+            session.scalar(
+                select(MessengerLinkToken.purpose).where(
+                    MessengerLinkToken.token_hash
+                    == hashlib.sha256(payload.encode("ascii", errors="ignore")).hexdigest()
+                )
+            )
+            == "account_credentials"
+        )
         session.add(
             UpdateReceipt(
                 update_id=receipt_id,
@@ -1312,8 +1376,13 @@ def process_max_update(
             account_url=account_url,
         )
         _ensure_contact(session, bot, account, user)
+        # Preserve send-before-commit only for the legacy credentials path,
+        # because its confirmation can contain the sole copy of a new password.
+        if not account_credentials_link:
+            session.commit()
         sender.send_html(str(user["user_id"]), reply)
-        session.commit()
+        if account_credentials_link:
+            session.commit()
         return {"ok": True, "account_credentials": True}
 
     assignment = MAX_ASSIGNMENT_ROUTES.get(payload)

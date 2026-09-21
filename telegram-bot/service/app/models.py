@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import JSON, Boolean, DateTime, Float, ForeignKey, Index, Integer, String, Text, UniqueConstraint, Uuid, func
+from sqlalchemy import JSON, Boolean, DateTime, Float, ForeignKey, Index, Integer, String, Text, UniqueConstraint, Uuid, func, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -310,7 +310,11 @@ class CrmUser(TimestampMixin, Base):
 
 class CrmMessengerAccount(Base):
     __tablename__ = "messenger_accounts"
-    __table_args__ = (UniqueConstraint("platform", "platform_user_id", name="uq_messenger_identity"),)
+    __table_args__ = (
+        UniqueConstraint("platform", "platform_user_id", name="uq_messenger_identity"),
+        Index("uq_messenger_accounts_preferred", "user_id", unique=True, postgresql_where=text("is_preferred"), sqlite_where=text("is_preferred = 1")),
+        Index("uq_messenger_accounts_deliverable_platform", "user_id", "platform", unique=True, postgresql_where=text("is_deliverable"), sqlite_where=text("is_deliverable = 1")),
+    )
 
     id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id: Mapped[str] = mapped_column(Uuid(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), index=True)
@@ -325,6 +329,8 @@ class CrmMessengerAccount(Base):
     subscription_checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     main_scenario_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     source: Mapped[str] = mapped_column(String(64), default="telegram_bot", nullable=False)
+    is_deliverable: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    is_preferred: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
@@ -460,6 +466,12 @@ class MasterclassNotification(Base):
     content_code: Mapped[str | None] = mapped_column(String(120))
     deduplication_key: Mapped[str] = mapped_column(String(180), nullable=False, unique=True)
     due_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC) + timedelta(hours=24),
+        nullable=False,
+    )
+    attempt_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     status: Mapped[str] = mapped_column(String(32), default="pending", nullable=False)
     payload: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
     sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -477,6 +489,7 @@ class MessengerLinkToken(Base):
     )
     platform: Mapped[str] = mapped_column(String(32), nullable=False)
     purpose: Mapped[str] = mapped_column(String(64), nullable=False)
+    intent_payload: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
     token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

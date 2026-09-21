@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import hashlib
+import html
 import json
 import logging
 import secrets
@@ -15,7 +16,7 @@ from cryptography.fernet import Fernet, InvalidToken
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
-from app.account_security import token_hash
+from app.account_security import encrypt_password, generate_password, password_hash, token_hash
 from app.app_service import EMAIL_RE, normalize_email
 from app.config import Settings
 from app.database import SessionLocal
@@ -123,13 +124,36 @@ def ensure_paid_account_onboarding(
     )
     if existing is not None:
         return existing
+    # Different payments for the same email may confirm concurrently.  Lock the
+    # canonical user so only one transaction can observe a missing credential.
+    db.execute(select(User.id).where(User.id == payment.user_id).with_for_update())
+    credential = db.get(AccountCredential, payment.user_id)
+    if credential is not None:
+        return None
 
-    return _create_onboarding(
-        db,
+    raw_password = generate_password()
+    db.add(
+        AccountCredential(
+            user_id=payment.user_id,
+            password_hash=password_hash(raw_password, settings.app_auth_secret),
+            password_ciphertext=encrypt_password(raw_password, settings.app_auth_secret),
+            password_version=1,
+            issued_via="purchase_email",
+        )
+    )
+    now = datetime.now(UTC)
+    row = AccountOnboarding(
         user_id=payment.user_id,
         payment_id=payment.id,
-        settings=settings,
+        claim_bundle_encrypted=_encrypt_bundle(
+            {"mode": "direct_credential", "password": raw_password}, settings
+        ),
+        expires_at=now + CLAIM_TTL,
+        next_email_attempt_at=now,
     )
+    db.add(row)
+    db.flush()
+    return row
 
 
 def ensure_free_account_onboarding(
@@ -215,6 +239,7 @@ def account_access_email(
     expires_at: datetime,
     settings: Settings,
     payment_completed: bool,
+    password: str | None = None,
 ) -> EmailMessage:
     message = EmailMessage()
     message["Subject"] = (
@@ -226,6 +251,38 @@ def account_access_email(
     if settings.smtp_reply_to:
         message["Reply-To"] = settings.smtp_reply_to
     intro = "Оплата прошла успешно." if payment_completed else "Регистрация почти готова."
+    if password:
+        account_url = settings.account_public_url
+        safe_intro = html.escape(intro)
+        safe_email = html.escape(email)
+        safe_password = html.escape(password)
+        safe_account_url = html.escape(account_url, quote=True)
+        lines = [
+            intro,
+            "",
+            "Доступ в личный кабинет готов.",
+            f"Логин: {email}",
+            f"Пароль: {password}",
+            f"Личный кабинет: {account_url}",
+            "",
+            "Сохраните это письмо: логин и пароль понадобятся на другом устройстве.",
+            "Если что-то не получилось, напишите мне в личные сообщения:",
+            "Telegram: https://t.me/FitnessSergey",
+            "MAX: https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw",
+        ]
+        message.set_content("\n".join(lines))
+        message.add_alternative(
+            f"""<!doctype html><html><body style="font:16px/1.55 Arial,sans-serif;color:#17172b">
+            <div style="max-width:620px;margin:auto;padding:28px 20px">
+            <p>{safe_intro}</p><h2>Доступ в личный кабинет готов</h2>
+            <p>Логин: <strong>{safe_email}</strong><br>Пароль: <strong>{safe_password}</strong></p>
+            <p><a href="{safe_account_url}" style="display:inline-block;padding:12px 20px;border-radius:10px;background:#159ee4;color:#fff;text-decoration:none;font-weight:700">Открыть личный кабинет</a></p>
+            <p>Сохраните это письмо: логин и пароль понадобятся на другом устройстве.</p>
+            <p style="color:#5b6472;font-size:14px">Если что-то не получилось, напишите мне: <a href="https://t.me/FitnessSergey">Telegram</a> или <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw">MAX</a>.</p>
+            </div></body></html>""",
+            subtype="html",
+        )
+        return message
     # Stored SQLite datetimes may be naive; PostgreSQL stores this deadline in UTC.
     deadline = expires_at if expires_at.tzinfo else expires_at.replace(tzinfo=UTC)
     deadline_msk = deadline.astimezone(timezone(timedelta(hours=3)))
@@ -316,12 +373,19 @@ def process_due_account_email(settings: Settings) -> bool:
             db.commit()
             return True
         try:
+            bundle = _decrypt_bundle(row.claim_bundle_encrypted, settings)
+            direct_password = (
+                str(bundle.get("password") or "")
+                if bundle.get("mode") == "direct_credential"
+                else None
+            )
             message = account_access_email(
                 email=email,
-                links=onboarding_links(row, settings),
+                links={} if direct_password else onboarding_links(row, settings),
                 expires_at=row.expires_at,
                 settings=settings,
                 payment_completed=row.payment_id is not None,
+                password=direct_password,
             )
             _send_message(message, settings)
             row.email_status = "sent"

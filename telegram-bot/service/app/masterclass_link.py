@@ -98,7 +98,7 @@ def consume_masterclass_link(
         .with_for_update()
     )
     now = datetime.now(UTC)
-    if not token or token.platform != "telegram" or token.purpose not in {"link_account", "account_credentials"}:
+    if not token or token.platform != "telegram" or token.purpose not in {"link_account", "account_credentials", "named_delivery"}:
         return True, "Ссылка привязки не найдена. Вернитесь в Мастер-класс и создайте новую."
     if token.consumed_at:
         return True, "Эта ссылка уже использована. Если Telegram не привязался, создайте новую ссылку в Мастер-классе."
@@ -115,6 +115,8 @@ def consume_masterclass_link(
     )
     if onboarding is not None and onboarding.claimed_at is not None:
         return True, "Данные для входа уже выданы в выбранном мессенджере. Если вы их потеряли, напишите мне."
+    if session.bind is not None and session.bind.dialect.name == "postgresql":
+        session.execute(text("SELECT id FROM users WHERE id=:user_id FOR UPDATE"), {"user_id": token.user_id})
 
     account = session.scalar(
         select(CrmMessengerAccount).where(
@@ -143,6 +145,26 @@ def consume_masterclass_link(
     account.last_seen_at = now
     account.linked_at = now
     account.source = "account_onboarding" if token.purpose == "account_credentials" else "masterclass_link"
+    account.is_deliverable = False
+    account.is_preferred = False
+    for previous in session.scalars(select(CrmMessengerAccount).where(
+        CrmMessengerAccount.user_id == token.user_id,
+        CrmMessengerAccount.platform == "telegram",
+        CrmMessengerAccount.id != account.id,
+    )):
+        previous.is_deliverable = False
+        previous.is_preferred = False
+    # Flush the demotions before enabling the replacement identity so the
+    # partial unique indexes cannot observe two deliverable accounts at once.
+    session.flush()
+    account.is_deliverable = True
+    preferred_exists = session.scalar(select(CrmMessengerAccount.id).where(
+        CrmMessengerAccount.user_id == token.user_id,
+        CrmMessengerAccount.is_preferred.is_(True),
+        CrmMessengerAccount.id != account.id,
+    ))
+    if preferred_exists is None:
+        account.is_preferred = True
     contact.user_id = token.user_id
     token.consumed_at = now
     if onboarding is not None:
@@ -164,6 +186,31 @@ def consume_masterclass_link(
         token.user_id,
         reason="messenger_link_confirmed",
     )
+    if token.purpose == "named_delivery":
+        intent = token.intent_payload or {}
+        kind = str(intent.get("notification_kind") or "")
+        content_code = str(intent.get("content_code") or "")
+        if kind and content_code:
+            key = f"messenger-link:{token.id}:named-delivery"
+            if not session.scalar(select(MasterclassNotification.id).where(
+                MasterclassNotification.deduplication_key == key
+            )):
+                session.add(MasterclassNotification(
+                    user_id=token.user_id,
+                    notification_kind=kind,
+                    content_code=content_code,
+                    deduplication_key=key,
+                    due_at=now,
+                    payload={
+                        "target_platform": "telegram",
+                        "target_messenger_account_id": str(account.id),
+                        "target_platform_user_id": account.platform_user_id,
+                    },
+                ))
+        return True, (
+            "<b>Telegram подключён.</b>\n\n"
+            "Ссылка на приложение поставлена в отправку сюда и придёт отдельным сообщением."
+        )
     if token.purpose == "account_credentials":
         email = session.execute(
             text(
@@ -198,10 +245,9 @@ def consume_masterclass_link(
             f'<a href="{html.escape(account_url, quote=True)}">Открыть личный кабинет</a>\n\n'
             + _existing_password_hint(credential)
         )
-    _queue_link_messages(
-        session,
-        token.user_id,
-        token.id,
-        contact.telegram_user_id,
+    return True, (
+        "<b>Telegram подключён к личному кабинету.</b>\n\n"
+        "Теперь сюда можно отправлять анкеты, материалы и уведомления Мастер-класса. "
+        "Вернитесь в кабинет — шаг обновится автоматически.\n\n"
+        f'<a href="{html.escape(account_url, quote=True)}?course_day=1&amp;course_material=day-01-messenger-link">Вернуться в Мастер-класс</a>'
     )
-    return True, "Telegram привязан. Сейчас пришлю ваши данные и анкету, а затем коротко напишу, что сделать дальше."

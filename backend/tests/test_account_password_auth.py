@@ -286,6 +286,7 @@ def seed_telegram_strength_access(factory: sessionmaker[Session]) -> None:
                     platform="telegram",
                     platform_user_id="123456",
                     source="test",
+                    linked_at=datetime.now(UTC),
                 ),
             ]
         )
@@ -406,6 +407,7 @@ def test_max_miniapp_creates_same_native_session_only_for_linked_entitled_user()
                 platform="max",
                 platform_user_id="654321",
                 source="test",
+                linked_at=datetime.now(UTC),
             ),
         ])
         db.commit()
@@ -440,6 +442,23 @@ def test_max_miniapp_creates_same_native_session_only_for_linked_entitled_user()
     app.dependency_overrides.clear()
 
 
+def test_historical_messenger_identity_cannot_create_miniapp_session():
+    client, factory = setup()
+    seed_telegram_strength_access(factory)
+    with factory() as db:
+        account = db.scalar(select(MessengerAccount))
+        account.is_deliverable = False
+        db.commit()
+
+    rejected = client.post(
+        "/api/account-auth/telegram-miniapp",
+        json={"init_data": telegram_init_data(123456), "app_code": "strength"},
+    )
+
+    assert rejected.status_code == 403
+    app.dependency_overrides.clear()
+
+
 def test_native_user_can_accept_current_legal_documents_after_login():
     client, factory = setup()
     seed_credential(factory)
@@ -466,7 +485,7 @@ def test_native_user_can_accept_current_legal_documents_after_login():
     app.dependency_overrides.clear()
 
 
-def test_paid_payment_creates_one_idempotent_onboarding_with_two_platform_links(monkeypatch):
+def test_paid_payment_creates_one_idempotent_direct_credential_email(monkeypatch):
     fixed_now = datetime(2026, 9, 17, 12, tzinfo=UTC)
 
     class FrozenDatetime(datetime):
@@ -510,22 +529,20 @@ def test_paid_payment_creates_one_idempotent_onboarding_with_two_platform_links(
         tokens = list(db.scalars(select(MessengerLinkToken).where(
             MessengerLinkToken.account_onboarding_id == first.id
         )))
-        assert {token.platform for token in tokens} == {"telegram", "max"}
-        assert all(token.expires_at.replace(tzinfo=UTC) == expected_expiry for token in tokens)
-        # Repeated payment processing must not extend previously issued links.
+        assert tokens == []
+        credential = db.get(AccountCredential, user.id)
+        assert credential is not None
+        assert credential.issued_via == "purchase_email"
+        raw_password = decrypt_password(credential.password_ciphertext, settings().app_auth_secret)
+        assert verify_password(raw_password, credential.password_hash, settings().app_auth_secret)
+        # Repeated payment processing must not extend the durable email job.
         old_expiry = fixed_now + timedelta(hours=24)
         first.expires_at = old_expiry
-        for token in tokens:
-            token.expires_at = old_expiry
         db.commit()
         reused = ensure_paid_account_onboarding(db, payment, settings())
         assert reused.id == first.id
         assert reused.expires_at == old_expiry
-        assert all(token.expires_at == old_expiry for token in tokens)
         assert db.scalar(select(AccountOnboarding).where(AccountOnboarding.payment_id == payment.id))
-        links = onboarding_links(first, settings())
-        assert links["telegram"].startswith("https://t.me/test_tg_bot?start=M")
-        assert links["max"].startswith("https://max.ru/test_max_bot?start=M")
     app.dependency_overrides.clear()
 
 
@@ -638,6 +655,59 @@ def test_free_onboarding_worker_sends_the_generated_messenger_links(monkeypatch)
     app.dependency_overrides.clear()
 
 
+def test_paid_onboarding_worker_sends_the_generated_password(monkeypatch):
+    _, factory = setup()
+    with factory() as db:
+        user = User(display_name="Покупатель")
+        db.add(user)
+        db.flush()
+        db.add(UserEmail(
+            user_id=user.id,
+            email_original="buyer@example.test",
+            email_normalized="buyer@example.test",
+            is_primary=True,
+            source="test",
+        ))
+        payment = Payment(
+            user_id=user.id,
+            source="robokassa",
+            external_order_id="paid-email-worker",
+            product_name_raw="Мастер-класс",
+            payment_status="paid",
+            paid_at=datetime.now(UTC),
+        )
+        db.add(payment)
+        db.flush()
+        onboarding = ensure_paid_account_onboarding(db, payment, settings())
+        credential = db.get(AccountCredential, user.id)
+        expected_password = decrypt_password(
+            credential.password_ciphertext, settings().app_auth_secret
+        )
+        db.commit()
+
+    delivered = []
+    monkeypatch.setattr(onboarding_service, "SessionLocal", factory)
+    monkeypatch.setattr(
+        onboarding_service,
+        "_send_message",
+        lambda message, _settings: delivered.append(message),
+    )
+
+    assert onboarding_service.process_due_account_email(settings()) is True
+    assert len(delivered) == 1
+    plain = delivered[0].get_body(preferencelist=("plain",)).get_content()
+    assert "Логин: buyer@example.test" in plain
+    assert f"Пароль: {expected_password}" in plain
+    assert "Личный кабинет:" in plain
+    assert "Telegram:" not in plain.split("Доступ в личный кабинет готов.", 1)[-1].split(
+        "Если что-то не получилось", 1
+    )[0]
+    with factory() as db:
+        row = db.get(AccountOnboarding, onboarding.id)
+        assert row.email_status == "sent"
+    app.dependency_overrides.clear()
+
+
 def test_account_portal_exposes_the_registration_entry():
     client, _ = setup()
 
@@ -726,7 +796,7 @@ def test_account_registration_migration_makes_payment_optional():
     assert "ALTER TABLE account_onboardings ALTER COLUMN payment_id DROP NOT NULL" in migration
 
 
-def test_free_onboarding_reuses_an_unclaimed_paid_delivery_when_available():
+def test_free_onboarding_does_not_restart_after_paid_credential_was_issued():
     _, factory = setup()
     with factory() as db:
         user = User(status="active")
@@ -752,7 +822,8 @@ def test_free_onboarding_reuses_an_unclaimed_paid_delivery_when_available():
         db.add(payment)
         db.flush()
         paid = ensure_paid_account_onboarding(db, payment, settings())
-        assert ensure_free_account_onboarding(db, "member@example.test", settings()).id == paid.id
+        assert paid is not None
+        assert ensure_free_account_onboarding(db, "member@example.test", settings()) is None
     app.dependency_overrides.clear()
 
 
@@ -787,6 +858,31 @@ def test_account_access_email_contains_claim_links_but_not_a_password():
     assert "Напишите Сергею" not in plain
     assert "<h1" not in html
     assert 'role="presentation"' in html
+
+
+def test_paid_account_email_contains_direct_credentials_and_escapes_html():
+    message = account_access_email(
+        email="member+tag@example.test",
+        links={},
+        expires_at=datetime(2026, 9, 27, 12, tzinfo=UTC),
+        settings=Settings(
+            database_url="sqlite+pysqlite:///:memory:",
+            app_auth_secret="test-account-secret",
+            smtp_from_email="cabinet@example.test",
+            account_public_url="https://edabalans.ru/lk?next=<unsafe>",
+        ),
+        payment_completed=True,
+        password="direct-password",
+    )
+    plain = message.get_body(preferencelist=("plain",)).get_content()
+    html_body = message.get_body(preferencelist=("html",)).get_content()
+    assert "Логин: member+tag@example.test" in plain
+    assert "Пароль: direct-password" in plain
+    assert "https://t.me/test_tg_bot?start=" not in plain
+    assert "direct-password" in html_body
+    assert "<unsafe>" not in html_body
+    assert "%3Cunsafe%3E" not in html_body
+    assert "&lt;unsafe&gt;" in html_body
 
 
 def test_legacy_queued_email_uses_stored_deadline_not_new_ttl():

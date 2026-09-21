@@ -95,6 +95,16 @@ html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app
 #account-app { --ink: #17191e; --muted: #3f4b55; --paper: #fff; --card: #fff; --line: rgba(17,142,216,.16); --accent: #27aff5; --accent-soft: #eef9ff; --radius-large: 18px; --radius-small: 14px; --radius-control: 12px; min-height: 100vh; color: var(--ink); font: 500 16px / 1.55 Manrope, Arial, sans-serif; background: transparent !important; }
 #account-app .account-shell { width: min(1080px, 100%); padding: 34px 24px 80px; }
 #account-app .account-head { max-width: 760px; margin-bottom: 31px; padding-bottom: 25px; border-bottom: 1px solid rgba(17, 142, 216, 0.15); }
+.account-messengers { margin-top: 18px; padding: 14px 16px; border: 1px solid rgba(17,142,216,.22); border-radius: 16px; background: rgba(17,142,216,.055); display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.account-messengers[hidden] { display: none; }
+.account-messengers strong, .account-messengers span { display: block; }
+.account-messengers span { margin-top: 3px; color: #596574; font-size: 13px; }
+.account-messengers button, .account-messengers a { border: 1px solid rgba(17,142,216,.28); border-radius: 10px; padding: 8px 11px; background: #fff; color: #087dbd; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+.account-messengers button:disabled { opacity: .55; cursor: default; }
+.messenger-editor { width: 100%; }
+.messenger-actions, .messenger-preferred { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 11px; }
+.account-messengers .messenger-state { margin: 0; padding: 8px 11px; border-radius: 10px; background: rgba(45,188,108,.12); color: #18733f; font-weight: 700; }
+.account-messengers p { margin: 10px 0; color: #596574; font-size: 13px; }
 #account-app .account-kicker { display: flex; align-items: center; gap: 5px; margin: 0px 0px 12px; color: transparent; font-size: 0px; letter-spacing: 0px; text-transform: none; }
 #account-app .account-kicker::before { width: 22px; height: 22px; flex: 0 0 22px; background: url("/assets/brain-logo.png") center center / 20px 20px no-repeat transparent; content: ""; filter: none; }
 #account-app .account-kicker::after { content: "ПОХУДЕНИЕ — ЭТО ЕСТЬ.РФ"; color: rgb(17, 142, 216); font: 800 11px / 1 Unbounded, Manrope, sans-serif; letter-spacing: -0.055em; }
@@ -120,6 +130,7 @@ html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app
 #account-app .application-icon { border-radius: 12px; background: rgb(238, 249, 255); color: rgb(17, 142, 216); }
 #account-app .application-card .account-open { width: 124px; min-height: 42px; margin: 0px; background: rgb(39, 175, 245); }
 #account-app .application-actions { display: grid; justify-items: end; gap: 7px; }
+#account-app .application-send-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 8px; color: rgb(63, 75, 85); font-size: 12px; }
 #account-app .application-resend { padding: 0; border: 0; background: transparent; color: rgb(17, 142, 216); font: 700 12px / 1.35 Manrope, Arial, sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 #account-app .application-resend:disabled { color: rgb(123, 128, 148); cursor: default; }
 #account-app .application-resend-status { max-width: 190px; color: rgb(63, 75, 85); font-size: 12px; line-height: 1.35; text-align: right; }
@@ -148,5 +159,6 @@ html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app
 @media (max-width: 480px) {
 #account-app .application-actions { grid-column: 1 / -1; width: 100%; justify-items: stretch; }
 #account-app .application-actions .account-open { width: 100%; }
+#account-app .application-send-links { justify-content: center; }
 #account-app .application-resend, #account-app .application-resend-status { max-width: none; text-align: center; }
 }

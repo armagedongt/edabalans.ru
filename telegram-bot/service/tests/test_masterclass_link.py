@@ -24,7 +24,7 @@ from app.models import (
 )
 
 
-def test_one_time_link_reassigns_disposable_bot_identity_and_queues_two_messages(tmp_path):
+def test_one_time_link_reassigns_disposable_bot_identity_without_legacy_onboarding(tmp_path):
     engine = make_engine(f"sqlite:///{tmp_path / 'link.sqlite'}")
     Base.metadata.create_all(engine)
     with Session(engine) as session:
@@ -65,16 +65,14 @@ def test_one_time_link_reassigns_disposable_bot_identity_and_queues_two_messages
         session.commit()
 
         assert handled is True
-        assert "привязан" in reply
+        assert "подключён" in reply
         assert contact.user_id == target.id
         assert account.user_id == target.id
         assert token.consumed_at is not None
         assert presale_run.status == "completed"
         assert presale_run.context["stopped_reason"] == "messenger_link_confirmed"
         queued = list(session.scalars(select(MasterclassNotification).where(MasterclassNotification.user_id == target.id)))
-        assert [row.notification_kind for row in queued] == ["messenger_identity", "messenger_questionnaire"]
-        assert all(row.payload["target_platform"] == "telegram" for row in queued)
-        assert all(row.payload["target_platform_user_id"] == "42" for row in queued)
+        assert queued == []
 
 
 def test_used_link_is_not_consumed_twice(tmp_path):
@@ -102,6 +100,73 @@ def test_used_link_is_not_consumed_twice(tmp_path):
         assert handled is True
         assert "уже использована" in reply
         assert session.scalar(select(MasterclassNotification.id)) is None
+
+
+def test_named_delivery_links_channel_and_queues_exactly_one_targeted_message(tmp_path):
+    engine = make_engine(f"sqlite:///{tmp_path / 'named-delivery.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        for ddl in (
+            "CREATE TABLE user_emails (id TEXT, user_id TEXT, email_original TEXT, is_primary BOOLEAN, created_at DATETIME)",
+            "CREATE TABLE user_accesses (id TEXT, user_id TEXT)",
+            "CREATE TABLE payments (id TEXT, user_id TEXT)",
+        ):
+            session.execute(text(ddl))
+        target = CrmUser(display_name="Покупатель", status="active", data_origin="native")
+        placeholder = CrmUser(display_name="Telegram", status="active", data_origin="native")
+        bot = BotInstance(code="test", username="test", display_name="test", token_env_name="TOKEN", is_active=True)
+        session.add_all([target, placeholder, bot])
+        session.flush()
+        contact = Contact(
+            bot_instance_id=bot.id,
+            user_id=placeholder.id,
+            telegram_user_id="42",
+            chat_id="42",
+            status="active",
+        )
+        account = CrmMessengerAccount(
+            user_id=placeholder.id,
+            platform="telegram",
+            platform_user_id="42",
+            source="telegram_bot",
+        )
+        payload = "Mnamed-delivery"
+        token = MessengerLinkToken(
+            user_id=target.id,
+            platform="telegram",
+            purpose="named_delivery",
+            intent_payload={
+                "notification_kind": "dqs_app_link",
+                "content_code": "tpl_postpurchase_dqs_app_link",
+            },
+            token_hash=hashlib.sha256(payload.encode("ascii")).hexdigest(),
+            expires_at=datetime.now(UTC) + timedelta(minutes=5),
+        )
+        session.add_all([contact, account, token])
+        session.commit()
+
+        first = consume_masterclass_link(
+            session,
+            contact,
+            {"id": 42, "username": "owner", "first_name": "Сергей"},
+            payload,
+        )
+        session.commit()
+        second = consume_masterclass_link(
+            session,
+            contact,
+            {"id": 42, "username": "owner", "first_name": "Сергей"},
+            payload,
+        )
+
+        assert first[0] is True and "поставлена в отправку" in first[1]
+        assert second[0] is True and "уже использована" in second[1]
+        rows = list(session.scalars(select(MasterclassNotification)))
+        assert len(rows) == 1
+        assert rows[0].notification_kind == "dqs_app_link"
+        assert rows[0].payload["target_platform"] == "telegram"
+        assert rows[0].payload["target_messenger_account_id"] == account.id
+        assert rows[0].payload["target_platform_user_id"] == "42"
 
 
 def test_account_claim_creates_password_once_without_premature_questionnaire(tmp_path):

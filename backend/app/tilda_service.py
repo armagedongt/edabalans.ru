@@ -25,6 +25,7 @@ from app.models import (
     Resource,
     User,
     UserAccess,
+    UserCoursePolicy,
     UserEmail,
     UserOffer,
     UserPhone,
@@ -32,7 +33,6 @@ from app.models import (
     TelegramTrackingEvent,
 )
 from app.access_service import complete_review, grant_resources
-from app.account_onboarding_service import ensure_paid_account_onboarding
 from app.owner_payment_notification_service import (
     enqueue_failed_payment_notification,
     enqueue_paid_payment_notification,
@@ -611,6 +611,27 @@ def grant_payment_access(
 
     access_granted = False
     for resource_id, source in resource_sources:
+        policy = db.scalar(
+            select(UserCoursePolicy).where(
+                UserCoursePolicy.user_id == payment.user_id,
+                UserCoursePolicy.resource_id == resource_id,
+            )
+        )
+        if policy is None:
+            resource_code = db.scalar(
+                select(Resource.code).where(Resource.id == resource_id)
+            )
+            db.add(UserCoursePolicy(
+                user_id=payment.user_id,
+                resource_id=resource_id,
+                unlock_mode="paced",
+                source=source,
+                course_policy_version=(
+                    2
+                    if payment.source == "robokassa" and resource_code == "ACCESS_MASTERCLASS"
+                    else 1
+                ),
+            ))
         already_granted = db.scalar(
             select(UserAccess.id).where(
                 UserAccess.user_id == payment.user_id,
@@ -698,11 +719,7 @@ def process_tilda_payment(
     existing = find_existing_payment(db, external_order_id, external_payment_id)
     if existing is not None:
         if payment_status != "paid" or existing.payment_status == "paid":
-            if existing.payment_status == "paid" and settings.account_onboarding_enabled:
-                ensure_paid_account_onboarding(db, existing, settings)
-                db.commit()
-            else:
-                db.rollback()
+            db.rollback()
             return {"status": "duplicate", "payment_id": str(existing.id)}
         if (
             existing.external_order_id
@@ -762,8 +779,6 @@ def process_tilda_payment(
         if checkout is not None:
             checkout.status = "paid"
         access_granted = grant_payment_access(db, existing, checkout, event_at)
-        if settings.account_onboarding_enabled:
-            ensure_paid_account_onboarding(db, existing, settings)
         if existing.user_id is not None and referer:
             db.add(
                 AttributionEvent(
@@ -837,8 +852,6 @@ def process_tilda_payment(
         )
 
     access_granted = grant_payment_access(db, payment, checkout, event_at)
-    if settings.account_onboarding_enabled:
-        ensure_paid_account_onboarding(db, payment, settings)
     record_paid_tracking_event(db, payment, referer, event_at)
     if payment.payment_status == "paid":
         enqueue_paid_payment_notification(db, payment)

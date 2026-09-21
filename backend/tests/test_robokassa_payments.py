@@ -37,12 +37,14 @@ from app.models import (  # noqa: E402
     OfferCheckout,
     OwnerPaymentNotification,
     Payment,
+    PaymentBrowserGrant,
     PriceEntry,
     PricingVersion,
     Product,
     Resource,
     User,
     UserAccess,
+    UserCoursePolicy,
     UserEmail,
     UserOffer,
     RecurringSubscription,
@@ -458,8 +460,8 @@ def test_public_payment_success_waits_for_callback_then_renders_canonical_copy()
     response = client.get("/payments/robokassa/success?InvId=123")
 
     assert response.status_code == 200
-    assert "Проверьте почту, на которую оформляли заказ" in response.text
-    assert "Туда отправлен чек о покупке" in response.text
+    assert "Логин, пароль и обычная ссылка на личный кабинет" in response.text
+    assert "60 минут" in response.text
     assert "const successContent=" in response.text
     assert 'href="/preview/homepage-release-candidate#pricing"' not in response.text
     app.dependency_overrides.clear()
@@ -472,7 +474,7 @@ def test_public_payment_success_copy_does_not_depend_on_onboarding_feature_flag(
     response = client.get("/payments/robokassa/success?InvId=123")
 
     assert response.status_code == 200
-    assert "данные для входа в личный кабинет и ссылка на него" in response.text
+    assert "Логин, пароль и обычная ссылка на личный кабинет" in response.text
     app.dependency_overrides.clear()
 
 
@@ -483,8 +485,8 @@ def test_public_payment_success_preview_shows_final_paid_state() -> None:
 
     assert response.status_code == 200
     assert "Оплата прошла успешно" in response.text
-    assert "данные для входа в личный кабинет и ссылка на него" in response.text
-    assert "Туда отправлен чек о покупке" in response.text
+    assert "Логин, пароль и обычная ссылка на личный кабинет" in response.text
+    assert "60 минут" in response.text
     assert "text-align:left" in response.text
     assert 'href="/preview/homepage-release-candidate#pricing"' not in response.text
 
@@ -887,6 +889,8 @@ def test_signed_production_result_grants_access() -> None:
         assert payment.raw_payload["success_kind"] == "public_masterclass"
         assert db.scalar(select(func.count(User.id))) == 1
         assert db.scalar(select(func.count(UserAccess.id))) == 1
+        policy = db.scalar(select(UserCoursePolicy))
+        assert policy is not None and policy.course_policy_version == 2
         paid_event = db.scalar(
             select(TelegramTrackingEvent).where(
                 TelegramTrackingEvent.event_type == "purchase_paid"
@@ -894,6 +898,172 @@ def test_signed_production_result_grants_access() -> None:
         )
         assert paid_event is not None
         assert paid_event.metadata_json["attribution_source"] == "unattributed"
+    app.dependency_overrides.clear()
+
+
+def test_first_purchase_browser_grant_claims_one_45_day_session() -> None:
+    client, factory, key = make_client(
+        test_mode=False, account_onboarding_enabled=True
+    )
+    seed_catalog(factory)
+    checkout = create_checkout(client, email="first@example.test")
+    assert client.cookies.get("edabalans_payment_grant")
+
+    assert client.post(
+        "/integrations/robokassa/result2",
+        content=signed_result(key, checkout["invoice_id"], "5900.00"),
+    ).status_code == 200
+    state = client.get(
+        f"/api/payments/robokassa/{checkout['invoice_id']}/status"
+    ).json()
+    assert state["entry_mode"] == "auto_login"
+
+    first = client.post(
+        f"/api/payments/robokassa/{checkout['invoice_id']}/claim"
+    )
+    assert first.status_code == 200
+    assert COOKIE_NAME in first.cookies
+    assert "edabalans_payment_grant=\"\"" in first.headers["set-cookie"]
+    second = client.post(
+        f"/api/payments/robokassa/{checkout['invoice_id']}/claim"
+    )
+    assert second.status_code == 200
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        credential = db.get(AccountCredential, payment.user_id)
+        onboarding = db.scalar(select(AccountOnboarding))
+        grant = db.scalar(select(PaymentBrowserGrant))
+        sessions = list(db.scalars(select(AccountSession)))
+        assert credential is not None and credential.issued_via == "purchase_email"
+        assert onboarding is not None and onboarding.email_status == "pending"
+        assert grant is not None and grant.consumed_at is not None
+        assert len(sessions) == 1
+        expiry = sessions[0].expires_at.replace(tzinfo=timezone.utc)
+        assert timedelta(days=44, hours=23) < expiry - datetime.now(timezone.utc) <= timedelta(days=45)
+    app.dependency_overrides.clear()
+
+
+def test_browser_grant_requires_paid_callback_original_browser_and_unexpired_paid_at() -> None:
+    client, factory, key = make_client(
+        test_mode=False, account_onboarding_enabled=True
+    )
+    seed_catalog(factory)
+    checkout = create_checkout(client, email="grant-bound@example.test")
+    invoice_id = checkout["invoice_id"]
+    grant = client.cookies.get("edabalans_payment_grant")
+    assert grant
+
+    before_callback = client.post(f"/api/payments/robokassa/{invoice_id}/claim")
+    assert before_callback.status_code == 409
+
+    assert client.post(
+        "/integrations/robokassa/result2",
+        content=signed_result(key, invoice_id, "5900.00"),
+    ).status_code == 200
+
+    other_browser = TestClient(app, base_url="https://edabalans.ru")
+    assert other_browser.get(
+        f"/api/payments/robokassa/{invoice_id}/status"
+    ).json()["entry_mode"] == "email_login"
+    assert other_browser.post(
+        f"/api/payments/robokassa/{invoice_id}/claim"
+    ).status_code == 403
+
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        payment.paid_at = datetime.now(timezone.utc) - timedelta(minutes=61)
+        db.commit()
+    client.cookies.set("edabalans_payment_grant", grant)
+    assert client.get(
+        f"/api/payments/robokassa/{invoice_id}/status"
+    ).json()["entry_mode"] == "expired"
+    assert client.post(
+        f"/api/payments/robokassa/{invoice_id}/claim"
+    ).status_code == 410
+    app.dependency_overrides.clear()
+
+
+def test_first_party_checkout_start_sets_secure_grant_cookie_and_posts_to_robokassa() -> None:
+    client, factory, _ = make_client(test_mode=False, account_onboarding_enabled=True)
+    seed_catalog(factory)
+
+    response = client.post(
+        "/api/payments/robokassa/start",
+        data={
+            "price_code": "site.masterclass.basic",
+            "email": "form-buyer@example.test",
+            "utm_source": "site",
+        },
+        headers={"Origin": "https://app.edabalans.ru"},
+    )
+
+    assert response.status_code == 200
+    assert response.headers["cache-control"] == "no-store"
+    assert '<form id="payment" action="https://auth.robokassa.ru/Merchant/Index.aspx" method="POST">' in response.text
+    assert 'name="Email" value="form-buyer@example.test"' in response.text
+    cookie = response.headers["set-cookie"]
+    assert "edabalans_payment_grant=" in cookie
+    assert "HttpOnly" in cookie and "Secure" in cookie and "SameSite=lax" in cookie
+    with factory() as db:
+        assert db.scalar(select(func.count(PaymentBrowserGrant.id))) == 1
+    app.dependency_overrides.clear()
+
+
+def test_repeat_purchase_existing_credential_skips_grant_password_and_email() -> None:
+    client, factory, key = make_client(
+        test_mode=False, account_onboarding_enabled=True
+    )
+    seed_catalog(factory)
+    with factory() as db:
+        user = User(data_origin="native", first_seen_at=datetime.now(timezone.utc))
+        db.add(user)
+        db.flush()
+        db.add(UserEmail(
+            user_id=user.id,
+            email_original="repeat@example.test",
+            email_normalized="repeat@example.test",
+            source="test",
+            verification_status="verified",
+        ))
+        db.add(AccountCredential(
+            user_id=user.id,
+            password_hash="existing-password-hash",
+            password_version=3,
+            issued_via="existing",
+        ))
+        masterclass = db.scalar(
+            select(Resource).where(Resource.code == "ACCESS_MASTERCLASS")
+        )
+        db.add(UserAccess(
+            user_id=user.id,
+            resource_id=masterclass.id,
+            source="legacy-purchase",
+            granted_at=datetime.now(timezone.utc),
+        ))
+        db.add(UserCoursePolicy(
+            user_id=user.id,
+            resource_id=masterclass.id,
+            unlock_mode="paced",
+            source="legacy-policy",
+            course_policy_version=1,
+        ))
+        db.commit()
+    checkout = create_checkout(client, email="repeat@example.test")
+    assert client.cookies.get("edabalans_payment_grant") is None
+    assert client.post(
+        "/integrations/robokassa/result2",
+        content=signed_result(key, checkout["invoice_id"], "5900.00"),
+    ).status_code == 200
+    assert client.get(
+        f"/api/payments/robokassa/{checkout['invoice_id']}/status"
+    ).json()["entry_mode"] == "existing_account"
+    with factory() as db:
+        assert db.scalar(select(PaymentBrowserGrant.id)) is None
+        assert db.scalar(select(AccountOnboarding.id)) is None
+        credential = db.scalar(select(AccountCredential))
+        assert credential.password_hash == "existing-password-hash"
+        assert credential.password_version == 3
+        assert db.scalar(select(UserCoursePolicy.course_policy_version)) == 1
     app.dependency_overrides.clear()
 
 

@@ -1620,7 +1620,7 @@
         <p>В конце большинства материалов внутри Мастер-класса есть список использованных источников, с которым вы можете ознакомиться.</p>
       </section>
     </div>
-    <section class="chain-block chain-block--pricing" id="pricing" aria-label="Тарифы"><div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="/api/pricing/site/preview" data-checkout-endpoint="/api/payments/robokassa/checkout" data-checkout-mode="robokassa">
+    <section class="chain-block chain-block--pricing" id="pricing" aria-label="Тарифы"><div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="/api/pricing/site/preview" data-checkout-endpoint="/api/payments/robokassa/start" data-checkout-mode="robokassa">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Noto+Color+Emoji&family=Unbounded:wght@700;800&display=swap');
 
@@ -3705,33 +3705,27 @@
         }
         checkoutSubmit.disabled = true;
         checkoutSubmit.textContent = 'Создаю счёт…';
-        try {
-          const response = await fetch(root.dataset.checkoutEndpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'omit',
-            body: JSON.stringify({
-              price_code: selectedPlan.dataset.priceCode,
-              email: checkoutEmail.value,
-              intensive_offer: activeOfferToken || null,
-              source_context: activeSourceContext || null,
-              acquisition_query: Object.fromEntries(
-                ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid', 'alias']
-                  .map(key => [key, new URLSearchParams(window.location.search).get(key) || ''])
-                  .filter(([, value]) => value.trim())
-              )
-            })
-          });
-          const result = await response.json().catch(() => ({}));
-          if (!response.ok) throw new Error(result.detail || `checkout ${response.status}`);
-          checkoutSubmit.textContent = 'Открываю Robokassa…';
-          submitPaymentForm(result.payment_form);
-        } catch (error) {
-          checkoutError.textContent = error.message || 'Не удалось создать счёт. Попробуйте ещё раз.';
-          checkoutError.hidden = false;
-          checkoutSubmit.disabled = false;
-          checkoutSubmit.textContent = 'Перейти к оплате';
-        }
+        const paymentStart = document.createElement('form');
+        paymentStart.method = 'POST';
+        paymentStart.action = root.dataset.checkoutEndpoint;
+        const values = {
+          price_code: selectedPlan.dataset.priceCode,
+          email: checkoutEmail.value,
+          intensive_offer: activeOfferToken || '',
+          source_context: activeSourceContext || ''
+        };
+        const query = new URLSearchParams(window.location.search);
+        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid'].forEach(key => {
+          if (query.get(key)) values[key] = query.get(key);
+        });
+        Object.entries(values).forEach(([name, value]) => {
+          const input = document.createElement('input');
+          input.type = 'hidden'; input.name = name; input.value = String(value);
+          paymentStart.appendChild(input);
+        });
+        document.body.appendChild(paymentStart);
+        checkoutSubmit.textContent = 'Открываю Robokassa…';
+        paymentStart.submit();
       });
 
       plans.forEach((plan) => {

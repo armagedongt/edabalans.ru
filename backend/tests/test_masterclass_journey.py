@@ -38,7 +38,7 @@ from app.models import (  # noqa: E402
     MasterclassStepProgress,
     MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage, Payment, Product,
     QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail,
-    UserLegalAcceptance, UserOffer, AccountCredential,
+    UserLegalAcceptance, UserOffer, AccountCredential, UserCoursePolicy,
 )
 from app.account_security import password_hash  # noqa: E402
 from scripts.generate_masterclass_offer_simulator import (  # noqa: E402
@@ -52,6 +52,8 @@ TEST_SETTINGS = Settings(
     admin_password="test-app-secret",
     app_auth_secret="test-client-session-secret",
     telegram_test_bot_username="EdabalansTestBot",
+    account_telegram_bot_username="EdabalansTestBot",
+    account_max_bot_username="EdabalansMaxTestBot",
 )
 
 
@@ -136,8 +138,13 @@ def test_locked_course_step_is_not_delivered_or_completable_and_rejoins_after_un
     client, _ = setup()
     editor = client.get("/admin/api/courses/masterclass-21/structure").json()
     manifest = editor["active"]["manifest"]
-    step = manifest["days"][0]["steps"][2]
+    step = next(item for item in manifest["days"][0]["steps"] if item["id"] == "day-01-article-03")
     step_id = step["id"]
+    step_index = next(
+        index
+        for index, item in enumerate(manifest["days"][0]["steps"])
+        if item["id"] == step_id
+    )
 
     published = client.put(
         f"/admin/api/courses/masterclass-21/materials/{step_id}",
@@ -152,7 +159,12 @@ def test_locked_course_step_is_not_delivered_or_completable_and_rejoins_after_un
         json={"expected_version": editor["active"]["version"], "manifest": manifest},
     )
     assert locked.status_code == 200
-    assert locked.json()["active"]["manifest"]["days"][0]["steps"][2]["locked"] is True
+    locked_step = next(
+        item
+        for item in locked.json()["active"]["manifest"]["days"][0]["steps"]
+        if item["id"] == step_id
+    )
+    assert locked_step["locked"] is True
 
     materials = client.get(
         "/api/masterclass/course/materials?email=member@example.test"
@@ -171,7 +183,7 @@ def test_locked_course_step_is_not_delivered_or_completable_and_rejoins_after_un
     )
     assert first.status_code == 200
     rejected = client.post(
-        "/api/masterclass/course/days/1/steps/2/complete",
+        f"/api/masterclass/course/days/1/steps/{step_index}/complete",
         json={"email": "member@example.test"},
     )
     assert rejected.status_code == 409
@@ -179,7 +191,9 @@ def test_locked_course_step_is_not_delivered_or_completable_and_rejoins_after_un
 
     current = locked.json()
     unlocked_manifest = current["active"]["manifest"]
-    unlocked_step = unlocked_manifest["days"][0]["steps"][2]
+    unlocked_step = next(
+        item for item in unlocked_manifest["days"][0]["steps"] if item["id"] == step_id
+    )
     unlocked_step["locked"] = False
     unlocked = client.put(
         "/admin/api/courses/masterclass-21/structure",
@@ -190,7 +204,11 @@ def test_locked_course_step_is_not_delivered_or_completable_and_rejoins_after_un
     )
     assert unlocked.status_code == 200
     active = unlocked.json()["active"]
-    reopened_step = active["manifest"]["days"][0]["steps"][2]
+    reopened_step = next(
+        item
+        for item in active["manifest"]["days"][0]["steps"]
+        if item["id"] == step_id
+    )
     assert reopened_step["requiredForAllAfterRevision"] == active["version"]
     after_unlock = client.get(
         "/api/masterclass/course?email=member@example.test"
@@ -922,6 +940,135 @@ def test_masterclass_personal_data_uses_tilda_email_and_server_access():
     assert denied.status_code == 403
 
 
+def test_new_course_policy_requires_authoritative_messenger_link() -> None:
+    client, factory = setup()
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        resource_id = db.scalar(select(Resource.id).where(Resource.code == "ACCESS_MASTERCLASS"))
+        db.add(UserCoursePolicy(
+            user_id=user_id,
+            resource_id=resource_id,
+            unlock_mode="paced",
+            source="test-new-policy",
+            course_policy_version=2,
+        ))
+        db.commit()
+    manifest = client.get(
+        "/api/masterclass/course/manifest?email=member@example.test"
+    ).json()
+    day = manifest["days"][0]
+    messenger_index = next(
+        index for index, step in enumerate(day["steps"])
+        if step["id"] == "day-01-messenger-link"
+    )
+    assert day["steps"][messenger_index]["hidden"] is False
+    assert client.post(
+        "/api/masterclass/course/days/1/open",
+        json={"email": "member@example.test"},
+    ).status_code == 200
+    for index, step in enumerate(day["steps"][:messenger_index]):
+        if step.get("hidden") or step.get("locked") or step.get("required") is False:
+            continue
+        completed = client.post(
+            f"/api/masterclass/course/days/1/steps/{index}/complete",
+            json={"email": "member@example.test"},
+        )
+        assert completed.status_code == 200, completed.text
+    blocked = client.post(
+        f"/api/masterclass/course/days/1/steps/{messenger_index}/complete",
+        json={"email": "member@example.test"},
+    )
+    assert blocked.status_code == 409
+    assert blocked.json()["detail"]["reason"] == "messenger_not_linked"
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        db.add(MessengerAccount(
+            user_id=user_id,
+            platform="telegram",
+            platform_user_id="new-policy-42",
+            linked_at=datetime.now(timezone.utc),
+            source="test",
+            is_deliverable=True,
+            is_preferred=True,
+        ))
+        db.commit()
+    completed = client.post(
+        f"/api/masterclass/course/days/1/steps/{messenger_index}/complete",
+        json={"email": "member@example.test"},
+    )
+    assert completed.status_code == 200
+
+
+def test_legacy_course_policy_keeps_messenger_material_hidden() -> None:
+    client, _ = setup()
+    manifest = client.get(
+        "/api/masterclass/course/manifest?email=member@example.test"
+    ).json()
+    messenger = next(
+        step for step in manifest["days"][0]["steps"]
+        if step["id"] == "day-01-messenger-link"
+    )
+    assert messenger["hidden"] is True
+
+
+def test_messenger_state_and_preferred_channel_use_only_linked_deliverable_accounts() -> None:
+    client, factory = setup()
+    empty = client.get("/api/masterclass/messengers?email=member@example.test")
+    assert empty.status_code == 200
+    assert empty.json()["require_link"] is True
+    assert empty.json()["preferred_platform"] is None
+
+    missing = client.post(
+        "/api/masterclass/messengers/preferred",
+        json={"email": "member@example.test", "platform": "max"},
+    )
+    assert missing.status_code == 409
+
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        db.add_all([
+            MessengerAccount(
+                user_id=user_id,
+                platform="telegram",
+                platform_user_id="tg-state-1",
+                linked_at=datetime.now(timezone.utc),
+                source="test",
+                is_deliverable=True,
+                is_preferred=True,
+            ),
+            MessengerAccount(
+                user_id=user_id,
+                platform="max",
+                platform_user_id="max-state-1",
+                linked_at=datetime.now(timezone.utc),
+                source="test",
+                is_deliverable=True,
+                is_preferred=False,
+            ),
+        ])
+        db.commit()
+
+    both = client.get("/api/masterclass/messengers?email=member@example.test").json()
+    assert both["linked"]["telegram"] == {
+        "linked": True,
+        "preferred": True,
+        "username": None,
+    }
+    assert both["linked"]["max"]["linked"] is True
+    assert both["preferred_platform"] == "telegram"
+    assert both["require_link"] is False
+    assert both["require_preferred"] is False
+
+    changed = client.post(
+        "/api/masterclass/messengers/preferred",
+        json={"email": "member@example.test", "platform": "max"},
+    )
+    assert changed.status_code == 200
+    assert changed.json()["preferred_platform"] == "max"
+    assert changed.json()["linked"]["telegram"]["preferred"] is False
+    assert changed.json()["linked"]["max"]["preferred"] is True
+
+
 def test_questionnaire_autosaves_each_answer_and_submit_is_idempotent():
     client, factory = setup()
     opened = client.get("/api/masterclass/questionnaires/onboarding?email=member@example.test")
@@ -961,10 +1108,9 @@ def test_questionnaire_autosaves_each_answer_and_submit_is_idempotent():
             "tpl_postpurchase_identity",
             "tpl_postpurchase_questionnaire",
         ]
-        assert all(row.payload["target_platform"] == "max" for row in notifications)
+        assert all("target_platform" not in row.payload for row in notifications)
         assert all(
-            row.payload["target_platform_user_id"] == "max-member-42"
-            for row in notifications
+            "target_platform_user_id" not in row.payload for row in notifications
         )
 
 
@@ -1480,8 +1626,9 @@ def test_dqs_material_queues_a_link_only_for_linked_telegram():
         "/api/masterclass/dqs/link-to-telegram",
         json={"email": "member@example.test"},
     )
-    assert missing.status_code == 409
-    assert missing.json()["detail"]["reason"] == "telegram_not_linked"
+    assert missing.status_code == 200
+    assert missing.json()["status"] == "link_required"
+    assert "?start=M" in missing.json()["deep_link"]
 
     with factory() as db:
         user_id = db.scalar(select(User.id))
@@ -1492,6 +1639,8 @@ def test_dqs_material_queues_a_link_only_for_linked_telegram():
             username="member",
             linked_at=datetime.now(timezone.utc),
             source="test",
+            is_deliverable=True,
+            is_preferred=True,
         ))
         db.execute(text(
             "INSERT INTO tg_contacts (user_id, status) VALUES (:user_id, 'active')"
@@ -1686,6 +1835,8 @@ def test_course_app_trigger_reveals_only_an_owned_application_once():
             username="member",
             linked_at=datetime.now(timezone.utc),
             source="test",
+            is_deliverable=True,
+            is_preferred=True,
         ))
         db.execute(
             text("INSERT INTO tg_contacts (user_id, status) VALUES (:user_id, 'active')"),
@@ -1769,6 +1920,8 @@ def test_first_dqs_reveal_queues_one_permanent_telegram_link():
                 username="member",
                 linked_at=datetime.now(timezone.utc),
                 source="test",
+                is_deliverable=True,
+                is_preferred=True,
             ),
             MasterclassDayProgress(
                 user_id=user_id,

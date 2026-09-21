@@ -60,17 +60,13 @@ try {
       })
       return
     }
-    if (url.pathname === '/api/payments/robokassa/checkout' && request.method() === 'POST') {
-      checkoutBody = request.postDataJSON()
+    if (url.pathname === '/api/payments/robokassa/start' && request.method() === 'POST') {
+      checkoutBody = Object.fromEntries(new URLSearchParams(request.postData() || ''))
       await route.fulfill({
-        contentType: 'application/json',
-        headers: { 'access-control-allow-origin': '*' },
-        body: JSON.stringify({
-          payment_form: {
-            action: 'https://auth.robokassa.ru/Merchant/Index.aspx',
-            fields: { MerchantLogin: 'test-shop', OutSum: '2900', InvId: '123' },
-          },
-        }),
+        contentType: 'text/html',
+        body: `<!doctype html><form id="payment" action="https://auth.robokassa.ru/Merchant/Index.aspx" method="POST">
+          <input name="MerchantLogin" value="test-shop"><input name="OutSum" value="2900"><input name="InvId" value="123">
+        </form><script>document.getElementById('payment').submit()</script>`,
       })
       return
     }
@@ -96,7 +92,7 @@ try {
   const tildaButton = page.locator('[data-price-code="site.masterclass.basic"] .edb-pricing-button')
   await tildaButton.waitFor({ state: 'visible' })
   const checkoutEndpoint = await page.locator('#edb-pricing-neurozeh-v1').getAttribute('data-checkout-endpoint')
-  if (checkoutEndpoint !== `${appUrl}/api/payments/robokassa/checkout`) {
+  if (checkoutEndpoint !== `${appUrl}/api/payments/robokassa/start`) {
     throw new Error(`Loader did not rewrite cross-origin checkout endpoint: ${checkoutEndpoint}`)
   }
   await tildaButton.click()
@@ -112,9 +108,9 @@ try {
   if (checkoutBody?.price_code !== 'site.masterclass.basic' || checkoutBody?.intensive_offer !== 'offer-test') {
     throw new Error(`Stored intensive offer was not restored in Tilda checkout: ${JSON.stringify(checkoutBody)}`)
   }
-  if (JSON.stringify(checkoutBody?.acquisition_query) !== JSON.stringify({
-    utm_source: 'telegram_channel', utm_content: 'post_42', yclid: 'channel-click',
-  })) {
+  if (checkoutBody?.utm_source !== 'telegram_channel'
+      || checkoutBody?.utm_content !== 'post_42'
+      || checkoutBody?.yclid !== 'channel-click') {
     throw new Error(`Channel attribution was lost by the Tilda loader: ${JSON.stringify(checkoutBody)}`)
   }
 

@@ -826,7 +826,7 @@ def test_release_candidate_keeps_source_context_separate_from_intensive_offer() 
 
     assert "const sourceContextStorageKey = 'edabalans_checkout_source_v1'" in response.text
     assert "function readSourceContext()" in response.text
-    assert "source_context: activeSourceContext || null" in response.text
+    assert "source_context: activeSourceContext || ''" in response.text
 
 
 def test_release_candidate_mounts_the_existing_account_offers_module_for_buyers() -> None:

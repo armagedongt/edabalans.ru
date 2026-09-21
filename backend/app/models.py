@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 from sqlalchemy import (
@@ -110,6 +110,21 @@ class MessengerAccount(Base):
     __tablename__ = "messenger_accounts"
     __table_args__ = (
         UniqueConstraint("platform", "platform_user_id", name="uq_messenger_identity"),
+        Index(
+            "uq_messenger_accounts_preferred",
+            "user_id",
+            unique=True,
+            postgresql_where=text("is_preferred"),
+            sqlite_where=text("is_preferred = 1"),
+        ),
+        Index(
+            "uq_messenger_accounts_deliverable_platform",
+            "user_id",
+            "platform",
+            unique=True,
+            postgresql_where=text("is_deliverable"),
+            sqlite_where=text("is_deliverable = 1"),
+        ),
     )
 
     id: Mapped[uuid.UUID] = uuid_pk()
@@ -129,6 +144,12 @@ class MessengerAccount(Base):
     subscription_checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     main_scenario_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     source: Mapped[str] = mapped_column(String(64), nullable=False)
+    is_deliverable: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default=text("true"), nullable=False
+    )
+    is_preferred: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -149,6 +170,7 @@ class MessengerLinkToken(Base):
     )
     platform: Mapped[str] = mapped_column(String(32), nullable=False)
     purpose: Mapped[str] = mapped_column(String(64), nullable=False)
+    intent_payload: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
     token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -207,10 +229,31 @@ class AccountSession(Base):
         ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False
     )
     token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    browser_grant_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("payment_browser_grants.id", ondelete="SET NULL"), unique=True
+    )
     password_version: Mapped[int] = mapped_column(Integer, nullable=False)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class PaymentBrowserGrant(Base):
+    __tablename__ = "payment_browser_grants"
+    __table_args__ = (
+        Index("ix_payment_browser_grants_expires", "expires_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    payment_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("payments.id", ondelete="CASCADE"), unique=True, nullable=False
+    )
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -766,7 +809,7 @@ class MasterclassStepProgress(Base):
     __tablename__ = "masterclass_step_progress"
     __table_args__ = (
         UniqueConstraint(
-            "user_id", "day_number", "step_index", name="uq_masterclass_step_progress"
+            "user_id", "step_id", name="uq_masterclass_step_progress_step"
         ),
         Index("ix_masterclass_step_user_day", "user_id", "day_number"),
     )
@@ -777,6 +820,9 @@ class MasterclassStepProgress(Base):
     )
     day_number: Mapped[int] = mapped_column(Integer, nullable=False)
     step_index: Mapped[int] = mapped_column(Integer, nullable=False)
+    # Nullable in metadata for isolated legacy fixtures; production migration
+    # backfills every row and enforces NOT NULL before the new code is released.
+    step_id: Mapped[str | None] = mapped_column(String(160))
     step_kind: Mapped[str] = mapped_column(String(32), nullable=False)
     completed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -979,6 +1025,9 @@ class UserCoursePolicy(Base):
         String(32), default="paced", server_default=text("'paced'"), nullable=False
     )
     source: Mapped[str] = mapped_column(String(64), nullable=False)
+    course_policy_version: Mapped[int] = mapped_column(
+        Integer, default=1, server_default=text("1"), nullable=False
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
     )
@@ -1022,6 +1071,12 @@ class MasterclassNotification(Base):
     content_code: Mapped[str | None] = mapped_column(String(120))
     deduplication_key: Mapped[str] = mapped_column(String(180), nullable=False)
     due_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC) + timedelta(hours=24),
+        nullable=False,
+    )
+    attempt_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     status: Mapped[str] = mapped_column(String(32), default="pending", nullable=False)
     payload: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
     sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

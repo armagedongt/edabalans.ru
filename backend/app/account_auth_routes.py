@@ -338,6 +338,8 @@ def telegram_miniapp_login(
         select(MessengerAccount).where(
             MessengerAccount.platform == "telegram",
             MessengerAccount.platform_user_id == telegram_user_id,
+            MessengerAccount.is_deliverable.is_(True),
+            MessengerAccount.linked_at.is_not(None),
         )
     )
     user = db.get(User, messenger.user_id) if messenger else None
@@ -376,6 +378,8 @@ def max_miniapp_login(
         select(MessengerAccount).where(
             MessengerAccount.platform == "max",
             MessengerAccount.platform_user_id == max_user_id,
+            MessengerAccount.is_deliverable.is_(True),
+            MessengerAccount.linked_at.is_not(None),
         )
     )
     user = db.get(User, messenger.user_id) if messenger else None

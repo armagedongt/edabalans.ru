@@ -24,6 +24,8 @@ from app.models import (
     SequenceVersion,
 )
 from app.maintenance import allowed_telegram_ids as parse_allowed_telegram_ids
+from app.messenger_resolver import preferred_destination
+from app.delivery_registry import EXCLUDED_PRODUCERS, contract_for, validate_body
 from app.content_formatting import (
     is_placeholder_text,
     replace_template_values,
@@ -57,6 +59,48 @@ ONBOARDING_QUESTION_TITLES = {
     "attribution": "Как вы узнали о Сергее",
 }
 ONBOARDING_QUESTION_ORDER = {code: index for index, code in enumerate(ONBOARDING_QUESTION_TITLES)}
+NOTIFICATION_RETRY_DELAYS = (60, 300, 1800)
+
+
+def _notification_retryable(exc: Exception) -> bool:
+    status = getattr(exc, "status_code", None)
+    if status is None:
+        response = getattr(exc, "response", None)
+        status = getattr(response, "status_code", None)
+    if isinstance(status, int):
+        return status == 429 or status >= 500
+    name = type(exc).__name__.lower()
+    message = str(exc).lower()
+    return any(marker in name or marker in message for marker in (
+        "timeout", "connection", "temporar", "network", "rate limit",
+    ))
+
+
+def _notification_expired(notification: MasterclassNotification, now: datetime) -> bool:
+    expires_at = notification.expires_at
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=UTC)
+    return now >= expires_at
+
+
+def _record_notification_send_failure(
+    notification: MasterclassNotification, exc: Exception, now: datetime
+) -> None:
+    notification.attempt_count += 1
+    notification.error_message = str(exc)[:2000]
+    if (
+        _notification_retryable(exc)
+        and notification.attempt_count <= len(NOTIFICATION_RETRY_DELAYS)
+        and not _notification_expired(notification, now)
+    ):
+        delay = NOTIFICATION_RETRY_DELAYS[notification.attempt_count - 1]
+        expires_at = notification.expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=UTC)
+        notification.status = "retrying"
+        notification.due_at = min(now + timedelta(seconds=delay), expires_at)
+    else:
+        notification.status = "failed"
 CURRENT_DIET_QUESTION_TITLES = {
     "whole_grains": "Цельнозерновые крупы и хлеб",
     "vegetables": "Овощи",
@@ -563,7 +607,10 @@ def dispatch_due_masterclass_notifications(
     allowed_ids = parse_allowed_telegram_ids(allowed_telegram_ids) if allowed_telegram_ids is not None else None
     due_query = (
         select(MasterclassNotification)
-        .where(MasterclassNotification.status == "pending", MasterclassNotification.due_at <= datetime.now(UTC))
+        .where(
+            MasterclassNotification.status.in_(("pending", "retrying")),
+            MasterclassNotification.due_at <= datetime.now(UTC),
+        )
         .order_by(MasterclassNotification.due_at, MasterclassNotification.created_at)
     )
     if notification_kinds is not None:
@@ -572,7 +619,44 @@ def dispatch_due_masterclass_notifications(
     progress = progress_callback or (lambda: None)
     for notification in due:
         progress()
+        if _notification_expired(notification, datetime.now(UTC)):
+            notification.status = "failed"
+            notification.error_message = "delivery expired before a confirmed send"
+            counters["failed"] += 1
+            continue
+        contract = contract_for(notification.notification_kind)
+        if contract is None:
+            if notification.notification_kind in EXCLUDED_PRODUCERS:
+                notification.status = "skipped"
+                notification.error_message = EXCLUDED_PRODUCERS[notification.notification_kind]
+                counters["skipped"] += 1
+            else:
+                notification.status = "failed"
+                notification.error_message = "proactive producer is not registered"
+                counters["failed"] += 1
+            continue
         target_platform = str((notification.payload or {}).get("target_platform") or "")
+        target_platform_user_id = str(
+            (notification.payload or {}).get("target_platform_user_id") or ""
+        )
+        target_messenger_account_id = str(
+            (notification.payload or {}).get("target_messenger_account_id") or ""
+        )
+        if contract.routing == "preferred":
+            destination = preferred_destination(session, notification.user_id)
+            if destination is None:
+                notification.status = "suppressed"
+                notification.error_message = "preferred messenger is unavailable or ambiguous"
+                counters["skipped"] += 1
+                continue
+            target_platform = destination.platform
+            target_platform_user_id = destination.platform_user_id
+            target_messenger_account_id = destination.account_id
+        elif not target_platform or not target_platform_user_id or not target_messenger_account_id:
+            notification.status = "failed"
+            notification.error_message = "explicit delivery target is incomplete"
+            counters["failed"] += 1
+            continue
         if target_platform and target_platform != platform:
             continue
         if platform == "max" and notification.notification_kind in {
@@ -602,12 +686,6 @@ def dispatch_due_masterclass_notifications(
             Contact.user_id == notification.user_id,
             Contact.status == "active",
             Contact.bot_instance_id.in_(bot_ids),
-        )
-        target_platform_user_id = str(
-            (notification.payload or {}).get("target_platform_user_id") or ""
-        )
-        target_messenger_account_id = str(
-            (notification.payload or {}).get("target_messenger_account_id") or ""
         )
         if target_platform_user_id:
             account_query = select(CrmMessengerAccount.id).where(
@@ -710,7 +788,7 @@ def dispatch_due_masterclass_notifications(
                 notification.error_message = None
                 counters["sent"] += 1
             except Exception as exc:
-                notification.error_message = str(exc)[:2000]
+                _record_notification_send_failure(notification, exc, datetime.now(UTC))
                 counters["failed"] += 1
             continue
         code = content_code_for(notification, access)
@@ -755,6 +833,14 @@ def dispatch_due_masterclass_notifications(
             notification.error_message = reason
             counters["failed"] += 1
             continue
+        log = None
+        try:
+            validate_body(notification.notification_kind, content.body_source)
+        except RuntimeError as exc:
+            notification.status = "failed"
+            notification.error_message = str(exc)
+            counters["failed"] += 1
+            continue
         try:
             configuration = notification_configuration(
                 session,
@@ -778,7 +864,11 @@ def dispatch_due_masterclass_notifications(
                 log.status = "sent"
                 progress()
             else:
-                rendered_parts = telegram_text_parts(content.body_source)
+                rendered_parts = (
+                    [content.body_source]
+                    if contract.content_kind == "authored_post"
+                    else telegram_text_parts(content.body_source)
+                )
                 part_logs = []
                 for part_index, part in enumerate(rendered_parts):
                     log_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"masterclass-notification:{notification.id}:part:{part_index}"))
@@ -814,9 +904,9 @@ def dispatch_due_masterclass_notifications(
             notification.error_message = None
             counters["sent"] += 1
         except Exception as exc:
-            if "log" in locals():
+            if log is not None:
                 log.status = "failed"
-            notification.error_message = str(exc)[:2000]
+            _record_notification_send_failure(notification, exc, datetime.now(UTC))
             counters["failed"] += 1
     session.commit()
     return counters

@@ -37,6 +37,7 @@ from app.models import (
     Contact,
     MessengerLinkToken,
     ManualMessage,
+    MasterclassNotification,
     TrackingEvent,
     UpdateReceipt,
     SequenceRun,
@@ -891,6 +892,68 @@ def test_max_account_link_rejects_second_messenger_after_telegram_claim(tmp_path
     assert "уже выданы" in fake.sent[0][1]
     with Session(engine) as session:
         assert session.get(AccountCredential, target_user_id) is None
+    app.dependency_overrides.clear()
+
+
+def test_max_named_delivery_links_channel_and_queues_exact_target_once(tmp_path, monkeypatch):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+    raw_token = "Mmax-named-delivery"
+    target_user_id = str(uuid.uuid4())
+    with Session(engine) as session:
+        session.execute(text("CREATE TABLE user_emails (user_id TEXT, email_normalized TEXT, is_primary BOOLEAN, created_at DATETIME)"))
+        session.execute(text("CREATE TABLE user_accesses (user_id TEXT)"))
+        session.execute(text("CREATE TABLE payments (user_id TEXT)"))
+        session.add(CrmUser(id=target_user_id, status="active", data_origin="native"))
+        session.add(
+            MessengerLinkToken(
+                user_id=target_user_id,
+                platform="max",
+                purpose="named_delivery",
+                token_hash=hashlib.sha256(raw_token.encode()).hexdigest(),
+                expires_at=datetime.now(UTC) + timedelta(minutes=15),
+                intent_payload={"notification_kind": "dqs_app_link", "content_code": "PP_DQS_LINK"},
+            )
+        )
+        session.commit()
+
+    response = client.post(
+        "/bot/max/webhook",
+        json=max_start(payload=raw_token),
+        headers={"X-Max-Bot-Api-Secret": "test-secret"},
+    )
+
+    assert response.json() == {"ok": True, "account_credentials": True}
+    assert "MAX подключён" in fake.sent[-1][1]
+    with Session(engine) as session:
+        account = session.scalar(select(CrmMessengerAccount).where(
+            CrmMessengerAccount.user_id == target_user_id,
+            CrmMessengerAccount.platform == "max",
+            CrmMessengerAccount.platform_user_id == "901",
+        ))
+        assert account is not None
+        assert account.is_deliverable is True
+        assert account.is_preferred is True
+        notification = session.scalar(select(MasterclassNotification).where(
+            MasterclassNotification.user_id == target_user_id,
+        ))
+        assert notification.notification_kind == "dqs_app_link"
+        assert notification.content_code == "PP_DQS_LINK"
+        assert notification.payload == {
+            "target_platform": "max",
+            "target_messenger_account_id": str(account.id),
+            "target_platform_user_id": "901",
+        }
+
+    sent_count = len(fake.sent)
+    duplicate = client.post(
+        "/bot/max/webhook",
+        json=max_start(payload=raw_token),
+        headers={"X-Max-Bot-Api-Secret": "test-secret"},
+    )
+    assert duplicate.json() == {"ok": True, "duplicate": True}
+    assert len(fake.sent) == sent_count
+    with Session(engine) as session:
+        assert session.scalar(select(func.count(MasterclassNotification.id))) == 1
     app.dependency_overrides.clear()
 
 

@@ -11,6 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.models import BotInstance, ContentItem, Contact, CrmMessengerAccount, CrmTag, CrmUserTag, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
+from app.delivery_registry import validate_body
 from app.config import get_settings
 from app.content_formatting import TEMPLATE_VARIABLE, content_is_runtime_ready, replace_template_values
 from app.customer_lifecycle import stop_runs_for_contact
@@ -73,6 +74,19 @@ def _delivery_is_retryable(exc: Exception) -> bool:
     ))
 
 
+def _delivery_not_expired(delivery: StepDelivery) -> bool:
+    value = (delivery.payload_snapshot or {}).get("expires_at")
+    if not value:
+        return True
+    try:
+        expires_at = datetime.fromisoformat(str(value))
+    except ValueError:
+        return False
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=UTC)
+    return expires_at > utcnow()
+
+
 def _record_delivery_event(
     session: Session,
     contact: Contact,
@@ -105,7 +119,17 @@ def published_version(session: Session, sequence_code: str) -> SequenceVersion |
 
 
 def start_run(session: Session, contact_id: str, sequence_code: str, time_scale: float = 1.0) -> SequenceRun:
-    existing = session.scalar(select(SequenceRun).where(SequenceRun.contact_id == contact_id, SequenceRun.status.in_(["active", "waiting"])))
+    contact = session.get(Contact, contact_id)
+    existing_query = select(SequenceRun).where(
+        SequenceRun.status.in_(["active", "waiting"])
+    )
+    if contact is not None and contact.user_id:
+        existing_query = existing_query.join(
+            Contact, Contact.id == SequenceRun.contact_id
+        ).where(Contact.user_id == contact.user_id)
+    else:
+        existing_query = existing_query.where(SequenceRun.contact_id == contact_id)
+    existing = session.scalar(existing_query.order_by(SequenceRun.started_at.desc()))
     if existing:
         return existing
     version = published_version(session, sequence_code)
@@ -450,8 +474,15 @@ def personalized_delivery(
     return rendered, _replace_configuration_values(configuration, values)
 
 
-def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: int = 100) -> SequenceRun:
-    contact = session.get(Contact, run.contact_id)
+def advance_run(
+    session: Session,
+    run: SequenceRun,
+    sender: Sender,
+    max_steps: int = 100,
+    *,
+    delivery_contact: Contact | None = None,
+) -> SequenceRun:
+    contact = delivery_contact or session.get(Contact, run.contact_id)
     for _ in range(max_steps):
         if run.status != "active":
             break
@@ -472,7 +503,10 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
                 _set_next(session, run, step); continue
             content = session.get(ContentItem, step.content_item_id)
             if not delivery:
-                delivery = StepDelivery(run_id=run.id, step_key=step.step_key, idempotency_key=key, status="pending", scheduled_at=utcnow(), payload_snapshot={"content_code": content.code if content else None})
+                expires_at = utcnow() + timedelta(
+                    seconds=max(60, int(config.get("delivery_ttl_seconds") or 86400))
+                )
+                delivery = StepDelivery(run_id=run.id, step_key=step.step_key, idempotency_key=key, status="pending", scheduled_at=utcnow(), payload_snapshot={"content_code": content.code if content else None, "expires_at": expires_at.isoformat()})
                 session.add(delivery); session.flush()
             if not content or not content_is_runtime_ready(content):
                 message = f"Content is not owner-approved: {content.code if content else step.step_key}"
@@ -483,6 +517,12 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
                 break
             try:
                 delivery.attempt_count += 1
+                delivery.payload_snapshot = {
+                    **(delivery.payload_snapshot or {}),
+                    "target_contact_id": contact.id,
+                    "target_platform": _contact_platform(session, contact),
+                    "target_platform_user_id": contact.telegram_user_id,
+                }
                 template_values = _runtime_template_values(run, config)
                 if template_values:
                     content = SimpleNamespace(
@@ -499,6 +539,7 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
                 )
                 if "{{" in (rendered_content.body_source or "") or "{{" in str(rendered_config):
                     raise RuntimeError(f"Unresolved delivery template: {rendered_content.code}")
+                validate_body("sequence_message", rendered_content.body_source)
                 delivery.platform_message_id = sender.send_content(
                     contact.chat_id, rendered_content, rendered_config
                 )
@@ -530,7 +571,11 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
                         contact.id,
                         reason="recipient_unreachable",
                     )
-                elif _delivery_is_retryable(exc) and delivery.attempt_count <= len(DELIVERY_RETRY_DELAYS):
+                elif (
+                    _delivery_is_retryable(exc)
+                    and delivery.attempt_count <= len(DELIVERY_RETRY_DELAYS)
+                    and _delivery_not_expired(delivery)
+                ):
                     delay = DELIVERY_RETRY_DELAYS[delivery.attempt_count - 1]
                     delivery.status = "retrying"
                     run.status = "active"
@@ -543,7 +588,7 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
                         {"retry_in_seconds": delay, "reason": delivery.error_code},
                     )
                 else:
-                    delivery.status = "dead_letter"
+                    delivery.status = "failed"
                     run.status = "error"
                     _record_delivery_event(
                         session,
@@ -659,6 +704,18 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
 
 def resume_callback(session: Session, contact_id: str, callback_data: str) -> SequenceRun | None:
     run = session.scalar(select(SequenceRun).where(SequenceRun.contact_id == contact_id, SequenceRun.status == "waiting").order_by(SequenceRun.started_at.desc()))
+    if run is None:
+        callback_contact = session.get(Contact, contact_id)
+        if callback_contact is not None and callback_contact.user_id:
+            run = session.scalar(
+                select(SequenceRun)
+                .join(Contact, Contact.id == SequenceRun.contact_id)
+                .where(
+                    Contact.user_id == callback_contact.user_id,
+                    SequenceRun.status == "waiting",
+                )
+                .order_by(SequenceRun.started_at.desc())
+            )
     if not run or run.context.get("waiting_callback") != callback_data:
         return None
     step = _step(session, run)

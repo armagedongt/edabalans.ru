@@ -60,6 +60,7 @@ from app.public_site_content_service import (
 from app.course_structure_service import (
     CourseContext,
     course_context,
+    course_context_for_user,
     effective_required_step_ids,
     active_course_version,
 )
@@ -174,7 +175,17 @@ class EventIn(BaseModel):
 
 class MessengerLinkIn(BaseModel):
     email: str
-    platform: str = Field(default="telegram", pattern="^telegram$")
+    platform: str = Field(pattern="^(telegram|max)$")
+
+
+class MessengerPreferenceIn(BaseModel):
+    email: str
+    platform: str = Field(pattern="^(telegram|max)$")
+
+
+class MessengerDeliveryIn(BaseModel):
+    email: str
+    platform: str = Field(pattern="^(telegram|max)$")
 
 
 class CheckoutIn(BaseModel):
@@ -471,15 +482,25 @@ def open_course_day(
     return progress
 
 
-def completed_step_indexes(db: Session, user_id: uuid.UUID, day: int) -> set[int]:
-    return set(
-        db.scalars(
-            select(MasterclassStepProgress.step_index).where(
-                MasterclassStepProgress.user_id == user_id,
-                MasterclassStepProgress.day_number == day,
-            )
+def completed_step_indexes(
+    db: Session, user_id: uuid.UUID, day: int, context: CourseContext
+) -> set[int]:
+    index_by_id = {
+        str(step["id"]): index
+        for index, step in enumerate(context.days.get(day, {}).get("steps", []))
+    }
+    completed: set[int] = set()
+    for row in db.scalars(
+        select(MasterclassStepProgress).where(
+            MasterclassStepProgress.user_id == user_id,
+            MasterclassStepProgress.day_number == day,
         )
-    )
+    ):
+        if row.step_id in index_by_id:
+            completed.add(index_by_id[row.step_id])
+        elif row.step_id is None:
+            completed.add(row.step_index)
+    return completed
 
 
 def required_step_indexes(
@@ -554,7 +575,7 @@ def reconcile_course_progress(
         )
     ):
         day = progress.day_number
-        completed = completed_step_indexes(db, user.id, day)
+        completed = completed_step_indexes(db, user.id, day, context)
         if any(
             step_index not in completed
             for step_index in required_step_indexes(context, progress, day)
@@ -572,7 +593,7 @@ def reconcile_course_progress(
 def course_payload(
     db: Session, user: User, settings: Settings, now: datetime, context: CourseContext | None = None
 ) -> dict:
-    context = context or course_context(db)
+    context = context or course_context_for_user(db, user.id)
     progress_rows = {
         row.day_number: row
         for row in db.scalars(
@@ -584,13 +605,21 @@ def course_payload(
     step_rows: dict[int, set[int]] = {
         day: set() for day in range(1, context.last_day + 1)
     }
+    indexes_by_day = {
+        day: {str(step["id"]): index for index, step in enumerate(context.days[day].get("steps", []))}
+        for day in range(1, context.last_day + 1)
+    }
     for row in db.scalars(
         select(MasterclassStepProgress).where(
             MasterclassStepProgress.user_id == user.id
         )
     ):
         if row.day_number in step_rows:
-            step_rows[row.day_number].add(row.step_index)
+            current_index = indexes_by_day[row.day_number].get(str(row.step_id or ""))
+            if current_index is not None:
+                step_rows[row.day_number].add(current_index)
+            elif row.step_id is None:
+                step_rows[row.day_number].add(row.step_index)
 
     days = []
     for day in range(1, context.last_day + 1):
@@ -713,8 +742,8 @@ def course_manifest(
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> dict:
-    resolve_masterclass_user(request, db, email, settings)
-    return course_context(db).manifest
+    user = resolve_masterclass_user(request, db, email, settings)
+    return course_context_for_user(db, user.id).manifest
 
 
 @router.get("/course/materials")
@@ -793,7 +822,7 @@ def complete_questionnaire_course_step(
     progress = day_progress(db, user.id, day)
     if progress is None:
         return False
-    completed = completed_step_indexes(db, user.id, day)
+    completed = completed_step_indexes(db, user.id, day, context)
     if index in completed:
         return True
     required_ids = set(effective_required_step_ids(context, progress, day))
@@ -811,6 +840,7 @@ def complete_questionnaire_course_step(
             user_id=user.id,
             day_number=day,
             step_index=index,
+            step_id=step["id"],
             step_kind=step["kind"],
             completed_at=now,
         )
@@ -819,7 +849,7 @@ def complete_questionnaire_course_step(
     course_event(
         db,
         user.id,
-        f"course:day:{day}:step:{index}:completed",
+        f"course:step:{step['id']}:completed",
         event_type,
         placement=placement,
         details={
@@ -843,7 +873,7 @@ def course_state(
     user = resolve_masterclass_user(request, db, email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
-    context = course_context(db)
+    context = course_context_for_user(db, user.id)
     open_course_day(db, user, context, 1, now, timezone_name)
     course_event(
         db,
@@ -886,7 +916,7 @@ def course_open_day(
     user = resolve_masterclass_user(request, db, body.email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
-    context = course_context(db)
+    context = course_context_for_user(db, user.id)
     open_course_day(db, user, context, day, now, body.timezone_name)
     db.commit()
     return course_payload(db, user, settings, now, context)
@@ -904,7 +934,7 @@ def course_complete_step(
     user = resolve_masterclass_user(request, db, body.email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
-    context = course_context(db)
+    context = course_context_for_user(db, user.id)
     progress = day_progress(db, user.id, day)
     if not progress:
         raise HTTPException(409, detail={"reason": "day_not_opened"})
@@ -917,7 +947,7 @@ def course_complete_step(
     if step.get("locked", False):
         raise HTTPException(409, detail={"reason": "step_locked"})
     kind = step["kind"]
-    completed = completed_step_indexes(db, user.id, day)
+    completed = completed_step_indexes(db, user.id, day, context)
     if index in completed:
         return course_payload(db, user, settings, now, context)
     required_ids = set(effective_required_step_ids(context, progress, day))
@@ -937,11 +967,18 @@ def course_complete_step(
         )
         if not tutorial_completed:
             return course_payload(db, user, settings, now)
+    if kind == "messenger":
+        messenger_state = _messenger_state(db, user.id)
+        if messenger_state["require_link"]:
+            raise HTTPException(409, detail={"reason": "messenger_not_linked"})
+        if messenger_state["require_preferred"]:
+            raise HTTPException(409, detail={"reason": "messenger_preferred_required"})
     db.add(
         MasterclassStepProgress(
             user_id=user.id,
             day_number=day,
             step_index=index,
+            step_id=step["id"],
             step_kind=kind,
             completed_at=now,
         )
@@ -950,7 +987,7 @@ def course_complete_step(
     course_event(
         db,
         user.id,
-        f"course:day:{day}:step:{index}:completed",
+        f"course:step:{step['id']}:completed",
         event_type,
         placement=placement,
         details={
@@ -972,11 +1009,11 @@ def course_open_task(
     user = resolve_masterclass_user(request, db, body.email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
-    context = course_context(db)
+    context = course_context_for_user(db, user.id)
     progress = day_progress(db, user.id, day)
     if not progress:
         raise HTTPException(409, detail={"reason": "day_not_opened"})
-    completed = completed_step_indexes(db, user.id, day)
+    completed = completed_step_indexes(db, user.id, day, context)
     if any(
         step_index not in completed
         for step_index in required_step_indexes(context, progress, day)
@@ -1007,7 +1044,7 @@ def course_update_check(
     user = resolve_masterclass_user(request, db, body.email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
-    context = course_context(db)
+    context = course_context_for_user(db, user.id)
     progress = day_progress(db, user.id, day)
     if not progress or not progress.task_opened_at:
         raise HTTPException(409, detail={"reason": "task_not_opened"})
@@ -1070,7 +1107,7 @@ def get_run(db: Session, user_id: uuid.UUID, kind: str) -> QuestionnaireRun:
 def queue_notification(db: Session, user_id: uuid.UUID, event: MasterclassEvent, kind: str, due_at: datetime, content_code: str | None = None, payload: dict | None = None) -> None:
     key = f"{event.event_key}:{kind}"
     if not db.scalar(select(MasterclassNotification.id).where(MasterclassNotification.user_id == user_id, MasterclassNotification.deduplication_key == key)):
-        db.add(MasterclassNotification(user_id=user_id, event_id=event.id, notification_kind=kind, content_code=content_code, deduplication_key=key, due_at=due_at, payload=payload or {}))
+        db.add(MasterclassNotification(user_id=user_id, event_id=event.id, notification_kind=kind, content_code=content_code, deduplication_key=key, due_at=due_at, expires_at=due_at + timedelta(hours=24), payload=payload or {}))
 
 
 def queue_offer_last_chance(
@@ -1194,26 +1231,13 @@ def finish_questionnaire(
         user,
         kind,
         now,
-        course_context(db),
+        course_context_for_user(db, user.id),
     )
-    messenger_account = db.scalar(
-        select(MessengerAccount)
-        .where(
-            MessengerAccount.user_id == user.id,
-            MessengerAccount.platform.in_(("telegram", "max")),
-            MessengerAccount.platform_user_id.is_not(None),
-            MessengerAccount.platform_user_id != "",
-            MessengerAccount.linked_at.is_not(None),
-        )
-        .order_by(MessengerAccount.linked_at.desc(), MessengerAccount.id.desc())
-    )
+    messenger_account = preferred_messenger_account(db, user.id)
     if kind == "onboarding" and action == "submit" and messenger_account:
         notification_payload = {
             "questionnaire_kind": kind,
             "run_id": str(run.id),
-            "target_platform": messenger_account.platform,
-            "target_messenger_account_id": str(messenger_account.id),
-            "target_platform_user_id": messenger_account.platform_user_id,
         }
         queue_notification(
             db,
@@ -1299,9 +1323,13 @@ def create_messenger_link(
     settings: Settings = Depends(get_settings),
 ) -> dict:
     user = resolve_masterclass_user(request, db, body.email, settings)
-    username = settings.telegram_test_bot_username.strip().lstrip("@")
-    if not re.fullmatch(r"[A-Za-z0-9_]{5,32}", username):
-        raise HTTPException(503, "Telegram bot is not configured")
+    username = (
+        settings.account_telegram_bot_username
+        if body.platform == "telegram"
+        else settings.account_max_bot_username
+    ).strip().lstrip("@")
+    if not username or (body.platform == "telegram" and not re.fullmatch(r"[A-Za-z0-9_]{5,32}", username)):
+        raise HTTPException(503, f"{body.platform.upper()} bot is not configured")
 
     now = datetime.now(timezone.utc)
     purpose = "link_account"
@@ -1330,7 +1358,11 @@ def create_messenger_link(
     return {
         "ok": True,
         "platform": body.platform,
-        "deep_link": f"https://t.me/{username}?start={payload}",
+        "deep_link": (
+            f"https://t.me/{username}?start={payload}"
+            if body.platform == "telegram"
+            else f"https://max.ru/{username}?start={payload}"
+        ),
         "expires_at": expires_at.isoformat(),
         "status": "generated",
         "consumption": "pending",
@@ -1354,6 +1386,7 @@ def messenger_link_status(
             MessengerAccount.user_id == user.id,
             MessengerAccount.platform == platform,
             MessengerAccount.linked_at.is_not(None),
+            MessengerAccount.is_deliverable.is_(True),
         )
         .order_by(MessengerAccount.linked_at.desc())
     )
@@ -1361,14 +1394,113 @@ def messenger_link_status(
         "ok": True,
         "platform": platform,
         "linked": account is not None,
+        "preferred": bool(account and account.is_preferred),
     }
 
 
-@router.post("/dqs/link-to-telegram")
-def send_dqs_link_to_telegram(
-    body: RunActionIn,
+def _messenger_state(db: Session, user_id: uuid.UUID) -> dict:
+    accounts = list(db.scalars(
+        select(MessengerAccount)
+        .where(
+            MessengerAccount.user_id == user_id,
+            MessengerAccount.platform.in_(("telegram", "max")),
+            MessengerAccount.linked_at.is_not(None),
+            MessengerAccount.is_deliverable.is_(True),
+        )
+        .order_by(MessengerAccount.platform, MessengerAccount.linked_at.desc())
+    ))
+    by_platform = {account.platform: account for account in accounts}
+    preferred = next((account for account in accounts if account.is_preferred), None)
+    return {
+        "ok": True,
+        "linked": {
+            platform: {
+                "linked": platform in by_platform,
+                "preferred": bool(by_platform.get(platform) and by_platform[platform].is_preferred),
+                "username": by_platform[platform].username if platform in by_platform else None,
+            }
+            for platform in ("telegram", "max")
+        },
+        "preferred_platform": preferred.platform if preferred else None,
+        "require_preferred": len(accounts) > 1 and preferred is None,
+        "require_link": not accounts,
+    }
+
+
+def preferred_messenger_account(
+    db: Session, user_id: uuid.UUID
+) -> MessengerAccount | None:
+    accounts = list(
+        db.scalars(
+            select(MessengerAccount)
+            .where(
+                MessengerAccount.user_id == user_id,
+                MessengerAccount.platform.in_(("telegram", "max")),
+                MessengerAccount.linked_at.is_not(None),
+                MessengerAccount.is_deliverable.is_(True),
+            )
+            .order_by(
+                MessengerAccount.is_preferred.desc(),
+                MessengerAccount.linked_at.desc(),
+                MessengerAccount.id.desc(),
+            )
+        )
+    )
+    preferred = [account for account in accounts if account.is_preferred]
+    if len(preferred) == 1:
+        return preferred[0]
+    if not preferred and len(accounts) == 1:
+        return accounts[0]
+    return None
+
+
+@router.get("/messengers")
+def messenger_state(
+    email: str,
     request: Request,
     db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, email, settings)
+    return _messenger_state(db, user.id)
+
+
+@router.post("/messengers/preferred")
+def set_preferred_messenger(
+    body: MessengerPreferenceIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, body.email, settings)
+    db.execute(select(User.id).where(User.id == user.id).with_for_update())
+    target = db.scalar(
+        select(MessengerAccount)
+        .where(
+            MessengerAccount.user_id == user.id,
+            MessengerAccount.platform == body.platform,
+            MessengerAccount.linked_at.is_not(None),
+            MessengerAccount.is_deliverable.is_(True),
+        )
+        .order_by(MessengerAccount.linked_at.desc(), MessengerAccount.id.desc())
+    )
+    if target is None:
+        raise HTTPException(409, f"{body.platform.upper()} ещё не подключён")
+    db.execute(
+        update(MessengerAccount)
+        .where(MessengerAccount.user_id == user.id)
+        .values(is_preferred=False)
+    )
+    target.is_preferred = True
+    db.commit()
+    return _messenger_state(db, user.id)
+
+
+def _dqs_delivery(
+    body: MessengerDeliveryIn,
+    request: Request,
+    db: Session,
+    settings: Settings,
 ) -> dict:
     user = require_native_user(request, db)
     try:
@@ -1377,23 +1509,15 @@ def send_dqs_link_to_telegram(
     except AppAccessError as exc:
         raise HTTPException(403, str(exc)) from exc
     account = db.scalar(
-        select(MessengerAccount.id)
+        select(MessengerAccount)
         .where(
             MessengerAccount.user_id == user.id,
-            MessengerAccount.platform == "telegram",
+            MessengerAccount.platform == body.platform,
             MessengerAccount.linked_at.is_not(None),
+            MessengerAccount.is_deliverable.is_(True),
         )
-        .order_by(MessengerAccount.linked_at.desc())
+        .order_by(MessengerAccount.linked_at.desc(), MessengerAccount.id.desc())
     )
-    contact = db.execute(
-        text(
-            "SELECT 1 FROM tg_contacts "
-            "WHERE user_id = :user_id AND status = 'active' LIMIT 1"
-        ),
-        {"user_id": str(user.id)},
-    ).first()
-    if not account or not contact:
-        raise HTTPException(409, detail={"reason": "telegram_not_linked"})
     now = datetime.now(timezone.utc)
     # Serialize resend checks per user so concurrent requests cannot both pass
     # the cooldown before either event becomes visible.
@@ -1412,25 +1536,74 @@ def send_dqs_link_to_telegram(
             429,
             detail={"reason": "retry_later", "retry_after_seconds": 60},
         )
-    event = course_event(
-        db,
-        user.id,
-        f"dqs:app-link:{uuid.uuid4().hex}",
-        "dqs_app_link_requested",
-        placement="account-applications",
-        details={},
-    )
-    queue_notification(
-        db,
-        user.id,
-        event,
-        "dqs_app_link",
-        now,
-        content_code="tpl_postpurchase_dqs_app_link",
-        payload={},
-    )
+    if account is None:
+        username = (
+            settings.account_telegram_bot_username
+            if body.platform == "telegram"
+            else settings.account_max_bot_username
+        ).strip().lstrip("@")
+        if not username:
+            raise HTTPException(503, f"{body.platform.upper()} bot is not configured")
+        db.execute(select(User.id).where(User.id == user.id).with_for_update())
+        for previous in db.scalars(select(MessengerLinkToken).where(
+            MessengerLinkToken.user_id == user.id,
+            MessengerLinkToken.platform == body.platform,
+            MessengerLinkToken.purpose == "named_delivery",
+            MessengerLinkToken.consumed_at.is_(None),
+            MessengerLinkToken.expires_at > now,
+        )):
+            previous.expires_at = now
+        payload = "M" + secrets.token_urlsafe(18)
+        db.add(MessengerLinkToken(
+            user_id=user.id,
+            platform=body.platform,
+            purpose="named_delivery",
+            intent_payload={
+                "notification_kind": "dqs_app_link",
+                "content_code": "tpl_postpurchase_dqs_app_link",
+            },
+            token_hash=hashlib.sha256(payload.encode("ascii")).hexdigest(),
+            expires_at=now + timedelta(minutes=15),
+        ))
+        db.commit()
+        return {
+            "ok": True,
+            "status": "link_required",
+            "deep_link": (
+                f"https://t.me/{username}?start={payload}"
+                if body.platform == "telegram"
+                else f"https://max.ru/{username}?start={payload}"
+            ),
+        }
+    event = course_event(db, user.id, f"dqs:app-link:{uuid.uuid4().hex}", "dqs_app_link_requested", placement="account-applications", details={"platform": body.platform})
+    queue_notification(db, user.id, event, "dqs_app_link", now, content_code="tpl_postpurchase_dqs_app_link", payload={"target_platform": body.platform, "target_messenger_account_id": str(account.id), "target_platform_user_id": account.platform_user_id})
     db.commit()
     return {"ok": True, "status": "queued"}
+
+
+@router.post("/dqs/send-link")
+def send_dqs_link(
+    body: MessengerDeliveryIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    return _dqs_delivery(body, request, db, settings)
+
+
+@router.post("/dqs/link-to-telegram")
+def send_dqs_link_to_telegram(
+    body: RunActionIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    return _dqs_delivery(
+        MessengerDeliveryIn(email=body.email, platform="telegram"),
+        request,
+        db,
+        settings,
+    )
 
 
 APP_REVEAL_RESOURCES: dict[str, str | tuple[str, ...]] = {
@@ -1460,7 +1633,7 @@ def reveal_course_application(
         raise HTTPException(404, "application not found")
     user = resolve_masterclass_user(request, db, body.email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
-    context = course_context(db)
+    context = course_context_for_user(db, user.id)
     progress = day_progress(db, user.id, body.day)
     steps = context.days.get(body.day, {}).get("steps", [])
     if progress is None:
@@ -1480,7 +1653,7 @@ def reveal_course_application(
     }.get(step_code)
     if step_app != app_code:
         raise HTTPException(409, detail={"reason": "application_not_in_course_step"})
-    completed = completed_step_indexes(db, user.id, body.day)
+    completed = completed_step_indexes(db, user.id, body.day, context)
     required_ids = set(effective_required_step_ids(context, progress, body.day))
     required_before = [
         index
@@ -1519,21 +1692,13 @@ def reveal_course_application(
             select(MessengerAccount.id)
             .where(
                 MessengerAccount.user_id == user.id,
-                MessengerAccount.platform == "telegram",
                 MessengerAccount.linked_at.is_not(None),
+                MessengerAccount.is_deliverable.is_(True),
+                MessengerAccount.is_preferred.is_(True),
             )
             .order_by(MessengerAccount.linked_at.desc())
         )
-        contact = None
-        if account:
-            contact = db.execute(
-                text(
-                    "SELECT 1 FROM tg_contacts "
-                    "WHERE user_id = :user_id AND status = 'active' LIMIT 1"
-                ),
-                {"user_id": str(user.id)},
-            ).first()
-        if account and contact and created:
+        if account and created:
             queue_notification(
                 db,
                 user.id,
@@ -1544,7 +1709,7 @@ def reveal_course_application(
                 payload={"source": "day-4-reveal"},
             )
             telegram_link_status = "queued"
-        elif account and contact:
+        elif account:
             already_queued = db.scalar(
                 select(MasterclassNotification.id).where(
                     MasterclassNotification.user_id == user.id,

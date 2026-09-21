@@ -436,7 +436,7 @@ def test_app_deep_link_and_refresh_work_during_maintenance(tmp_path, monkeypatch
     assert client.post("/telegram/webhook", json=opened).json() == {"ok": True, "apps_menu": True}
     assert {
         "text": "Оценка качества питания",
-        "web_app": {"url": "https://edabalans.ru/dqs"},
+        "url": "https://edabalans.ru/dqs",
         "max_app_payload": "dqs",
     } in fake.configurations[-1]["buttons"]
 
@@ -527,6 +527,16 @@ def test_broadcast_personal_links_are_per_recipient_and_survive_retry(tmp_path, 
             contact = Contact(bot_instance_id=bot.id, user_id=user_id, telegram_user_id=str(number), chat_id=str(number))
             session.add(contact)
             session.flush()
+            if user_id:
+                session.add(CrmMessengerAccount(
+                    user_id=user_id,
+                    platform="telegram",
+                    platform_user_id=str(number),
+                    linked_at=main_module.datetime.now(main_module.UTC),
+                    source="test",
+                    is_deliverable=True,
+                    is_preferred=True,
+                ))
             contact_ids[number] = contact.id
         session.commit()
 
