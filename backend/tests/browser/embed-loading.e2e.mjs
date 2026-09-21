@@ -360,7 +360,7 @@ try {
   await navigation.native.close()
 
   // Selection and completion are independent: revisiting a completed day keeps
-  // the active orange treatment and the completion checkmark at the same time.
+  // the active card, gold number and completion checkmark at the same time.
   const completedSelectedProgress=structuredClone(progress)
   completedSelectedProgress.current_day=2
   completedSelectedProgress.days[0].completed=true
@@ -372,6 +372,9 @@ try {
   assert.equal(await completedSelectedDay.evaluate(element=>element.classList.contains('done')),true,'The earlier day is already completed before revisiting it')
   assert.equal(await completedSelectedDay.evaluate(element=>element.classList.contains('active')),false,'A completed day is not active before the user selects it')
   assert.equal(await completedSelected.native.locator('#days .day-button.active').count(),1,'Only the currently selected day is active before revisiting')
+  const activeUnfinishedDay=completedSelected.native.locator('#days .day-button[data-day="2"]')
+  assert.equal(await activeUnfinishedDay.evaluate(element=>element.classList.contains('done')),false,'The current ordinary day starts unfinished')
+  assert.doesNotMatch(await activeUnfinishedDay.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'An active unfinished ordinary day does not acquire the recipe marker')
   await completedSelectedDay.click()
   await completedSelected.native.mouse.move(1200,500)
   for(const width of [360,430,768,1440]){
@@ -385,17 +388,70 @@ try {
     assert.match(selectedNumberBackground,/linear-gradient\(/,'The selected completed day keeps a gradient number at '+width+'px')
     assert.match(selectedNumberBackground,/rgb\(255, 194, 90\)/,'The selected completed day keeps the agreed gold start color at '+width+'px')
     assert.match(selectedNumberBackground,/rgb\(243, 154, 47\)/,'The selected completed day keeps the agreed gold end color at '+width+'px')
-    assert.match(await completedSelectedDay.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'Only the selected day keeps the gold sidebar marker at '+width+'px')
-    const nonSelectedRecipe=completedSelected.native.locator('#days .day-button.recipe:not(.active)').first()
-    if(await nonSelectedRecipe.count())assert.doesNotMatch(await nonSelectedRecipe.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'A recipe day does not keep a separate gold marker at '+width+'px')
+    assert.doesNotMatch(await completedSelectedDay.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'A selected ordinary day does not acquire the recipe marker at '+width+'px')
+    const recipeDay=completedSelected.native.locator('#days .day-button.recipe').first()
+    assert.equal(await recipeDay.count()>0,true,'The course exposes a recipe day at '+width+'px')
+    assert.equal(await recipeDay.evaluate(element=>element.classList.contains('active')),false,'The recipe day starts non-selected at '+width+'px')
+    await completedSelected.native.waitForFunction(()=>{
+      const recipe=document.querySelector('#days .day-button.recipe:not(.active)')
+      return recipe?.isConnected&&getComputedStyle(recipe).boxShadow.includes('rgb(255, 194, 90)')
+    })
+    assert.match(await recipeDay.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'A recipe day keeps its permanent gold marker at '+width+'px')
     assert.equal(await completedSelectedDay.locator('.day-state').evaluate(element=>getComputedStyle(element,'::after').content),'"✓"','The selected completed day keeps its checkmark at '+width+'px')
     if(process.env.QA_OUT){
       await mkdir(process.env.QA_OUT,{recursive:true})
       await completedSelected.native.screenshot({path:process.env.QA_OUT+'/course-completed-selected-day-'+width+'.png'})
     }
   }
+  await completedSelected.native.setViewportSize({width:1440,height:1000})
+  await completedSelected.native.locator('#days .day-button[data-day="1"]').hover()
+  assert.doesNotMatch(await completedSelected.native.locator('#days .day-button[data-day="1"]').evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'Hover does not add the recipe marker to an ordinary selected day')
+  await completedSelected.native.locator('#days .day-button.recipe').first().hover()
+  await completedSelected.native.waitForFunction(()=>{
+    const recipe=document.querySelector('#days .day-button.recipe:hover')
+    return recipe?.isConnected&&getComputedStyle(recipe).boxShadow.includes('rgb(255, 194, 90)')
+  })
   assert.deepEqual(completedSelected.faults,[])
   await completedSelected.native.close()
+
+  const ordinaryMaterial=await nativePage('?course_day=1&course_material=day-01-article-02&theme=light',{progress})
+  await ordinaryMaterial.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('#days .day-button[data-day="1"]')?.classList.contains('current-material'))
+  const ordinaryMaterialDay=ordinaryMaterial.native.locator('#days .day-button[data-day="1"]')
+  assert.equal(await ordinaryMaterialDay.evaluate(element=>element.classList.contains('recipe')),false,'The open ordinary material remains non-recipe')
+  assert.doesNotMatch(await ordinaryMaterialDay.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'An open material does not add the recipe marker to an ordinary day')
+  assert.deepEqual(ordinaryMaterial.faults,[])
+  await ordinaryMaterial.native.close()
+
+  const recipeIncompleteProgress=structuredClone(progress)
+  Object.assign(recipeIncompleteProgress.days[5],{opened:true,can_open:true,completed:false,completed_at:null})
+  const recipeIncomplete=await nativePage('?course_day=6&theme=light',{progress:recipeIncompleteProgress})
+  await recipeIncomplete.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('#days .day-button[data-day="6"]')?.classList.contains('active'))
+  await waitForReveal(recipeIncomplete.native)
+  const activeRecipeDay=recipeIncomplete.native.locator('#days .day-button[data-day="6"]')
+  assert.equal(await activeRecipeDay.evaluate(element=>element.classList.contains('recipe')),true,'The selected recipe day retains its type')
+  assert.equal(await activeRecipeDay.evaluate(element=>element.classList.contains('done')),false,'The selected recipe day can be unfinished')
+  assert.equal(await activeRecipeDay.evaluate(element=>element.classList.contains('locked')),false,'The selected recipe day is genuinely available')
+  assert.match(await activeRecipeDay.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'An active unfinished recipe day keeps its marker')
+  await recipeIncomplete.native.locator('#day .topic-list [data-step="0"]').click()
+  await recipeIncomplete.native.waitForFunction(()=>document.querySelector('#days .day-button[data-day="6"]')?.classList.contains('current-material'))
+  assert.match(await activeRecipeDay.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'A recipe day keeps its marker while a material is open')
+  assert.deepEqual(recipeIncomplete.faults,[])
+  await recipeIncomplete.native.close()
+
+  const recipeCompletedProgress=structuredClone(recipeIncompleteProgress)
+  Object.assign(recipeCompletedProgress.days[5],{completed:true,completed_at:new Date().toISOString()})
+  const recipeCompleted=await nativePage('?course_day=6&theme=light',{progress:recipeCompletedProgress})
+  await recipeCompleted.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('#days .day-button[data-day="6"]')?.classList.contains('active'))
+  await waitForReveal(recipeCompleted.native)
+  const completedRecipeDay=recipeCompleted.native.locator('#days .day-button[data-day="6"]')
+  assert.equal(await completedRecipeDay.evaluate(element=>element.classList.contains('done')),true,'The selected recipe day is genuinely completed')
+  assert.match(await completedRecipeDay.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'A selected completed recipe day keeps its marker')
+  await recipeCompleted.native.locator('#days .day-button[data-day="5"]').click()
+  await recipeCompleted.native.waitForFunction(()=>document.querySelector('#days .day-button[data-day="5"]')?.classList.contains('active'))
+  assert.equal(await completedRecipeDay.evaluate(element=>element.classList.contains('active')),false,'The completed recipe day becomes non-selected after navigation')
+  assert.match(await completedRecipeDay.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'A non-selected completed recipe day keeps its marker')
+  assert.deepEqual(recipeCompleted.faults,[])
+  await recipeCompleted.native.close()
 
   // Day totals count article reading time and a real displayed video only.
   // Intro copy and zero-minute service steps stay outside the estimate.
