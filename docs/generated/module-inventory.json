@@ -12598,6 +12598,14 @@
           "qualname": "assertDesktopGeometry"
         },
         {
+          "file": "backend/tests/browser/admin-shell.e2e.mjs",
+          "kind": "function",
+          "line": 227,
+          "module_id": "admin.control",
+          "name": "pageOptions",
+          "qualname": "pageOptions"
+        },
+        {
           "file": "backend/tests/test_game_page.py",
           "kind": "function",
           "line": 18,
@@ -85072,6 +85080,14 @@
       "module_id": "admin.control",
       "name": "assertDesktopGeometry",
       "qualname": "assertDesktopGeometry"
+    },
+    {
+      "file": "backend/tests/browser/admin-shell.e2e.mjs",
+      "kind": "function",
+      "line": 227,
+      "module_id": "admin.control",
+      "name": "pageOptions",
+      "qualname": "pageOptions"
     },
     {
       "file": "backend/tests/browser/direct-intensive.e2e.mjs",
