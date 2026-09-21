@@ -8,21 +8,34 @@
   <link rel="icon" type="image/png" href="/favicon.png?v=20260910a">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260910a">
   <link rel="canonical" href="https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/">
-  <link rel="stylesheet" href="/blog/assets/blog.css?v=20260917b">
+  <link rel="stylesheet" href="/blog/assets/blog.css?v=20260921a">
   <title>Похудение — это есть · Авторский блог Сергея Воронцова</title>
 </head>
 <body data-page="home">
-  <header class="site-header">
+  <header class="site-header site-header--public">
     <div class="shell header-inner">
       <a class="brand" href="https://похудение-это-есть.рф/blog">
         <strong>Похудение — это есть.рф</strong>
         <span>Блог Сергея Воронцова</span>
       </a>
-      <nav class="nav" aria-label="Основная навигация">
+      <button class="mobile-nav-toggle" type="button" aria-expanded="false" aria-controls="public-blog-nav" aria-label="Открыть меню">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav" id="public-blog-nav" aria-label="Основная навигация">
         <a href="https://похудение-это-есть.рф/">Главная</a>
-        <a href="https://похудение-это-есть.рф/">Мастер-класс</a>
+        <a class="nav-intensive" href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>
         <a href="#articles" aria-current="page">Блог</a>
-        <a href="#contacts">Контакты</a>
+        <div class="nav-contact">
+          <button class="nav-contact-trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="blog-contact-panel">
+            Контакты<span class="nav-contact-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="nav-contact-panel" id="blog-contact-panel" hidden>
+            <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">Написать в ЛС в Telegram</a>
+            <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener">Написать в ЛС в MAX</a>
+            <a href="https://t.me/Fitness_Talks" target="_blank" rel="noopener">Telegram-канал</a>
+            <a href="https://max.ru/id230409966750_biz" target="_blank" rel="noopener">Канал в MAX</a>
+          </div>
+        </div>
       </nav>
       <button class="theme-toggle" type="button" aria-label="Включить тёмную тему" title="Включить тёмную тему">
         <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
@@ -58,6 +71,6 @@
   <div id="contacts" data-edabalans-site-footer></div>
   <script src="https://edabalans.ru/site-footer.js" defer></script>
   <script src="https://edabalans.ru/cookie-notice.js" defer></script>
-  <script src="/blog/assets/blog.js?v=20260917c" defer></script>
+  <script src="/blog/assets/blog.js?v=20260921a" defer></script>
 </body>
 </html>

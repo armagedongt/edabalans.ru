@@ -96,6 +96,12 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert "site-footer.js" in response.text
     assert "https://edabalans.ru/cookie-notice.js" in response.text
     assert "/blog/assets/blog.css" in response.text
+    assert 'href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>' in response.text
+    assert '>Мастер-класс</a>' not in response.text
+    assert 'class="nav-contact-trigger"' in response.text
+    assert 'href="#contacts">Контакты</a>' not in response.text
+    assert 'href="https://t.me/FitnessSergey"' in response.text
+    assert 'href="https://max.ru/id230409966750_biz"' in response.text
 
 
 def test_blog_home_trailing_slash_is_supported() -> None:
@@ -150,6 +156,9 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
     assert '<meta property="og:type" content="article">' in response.text
     assert 'loading="eager" decoding="async" fetchpriority="high"' in article_hero
     assert 'loading="lazy" decoding="async"' in response.text
+    assert 'href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>' in response.text
+    assert '>Мастер-класс</a>' not in response.text
+    assert 'class="nav-contact-trigger"' in response.text
 
 
 def test_unknown_blog_article_returns_404() -> None:
@@ -196,6 +205,8 @@ def test_blog_assets_and_fonts_are_whitelisted() -> None:
     assert "window.addEventListener('scroll', updateTocCurrent" in script.text
     assert "setAttribute('aria-current', 'location')" in script.text
     assert "removeAttribute('aria-current')" in script.text
+    assert "setMobileNavOpen" in script.text
+    assert "setContactOpen" in script.text
     assert photo.status_code == 200
     assert photo.headers["content-type"] == "image/png"
     assert black_favicon.status_code == 200

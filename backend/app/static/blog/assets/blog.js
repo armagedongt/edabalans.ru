@@ -25,6 +25,54 @@
     });
   }
 
+  var mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+  var publicNav = document.getElementById('public-blog-nav');
+  function setMobileNavOpen(open) {
+    if (!mobileNavToggle || !publicNav) return;
+    mobileNavToggle.setAttribute('aria-expanded', String(open));
+    mobileNavToggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+    publicNav.classList.toggle('is-open', open);
+  }
+  if (mobileNavToggle && publicNav) {
+    mobileNavToggle.addEventListener('click', function () {
+      setMobileNavOpen(mobileNavToggle.getAttribute('aria-expanded') !== 'true');
+    });
+    publicNav.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMobileNavOpen(false);
+    });
+    document.addEventListener('click', function (event) {
+      if (!event.target.closest('.site-header--public')) setMobileNavOpen(false);
+    });
+  }
+
+  var contact = document.querySelector('.nav-contact');
+  var contactTrigger = contact && contact.querySelector('.nav-contact-trigger');
+  var contactPanel = contact && contact.querySelector('.nav-contact-panel');
+  function setContactOpen(open) {
+    if (!contactTrigger || !contactPanel) return;
+    contactTrigger.setAttribute('aria-expanded', String(open));
+    contactPanel.hidden = !open;
+  }
+  if (contact && contactTrigger && contactPanel) {
+    contactTrigger.addEventListener('click', function () {
+      setContactOpen(contactTrigger.getAttribute('aria-expanded') !== 'true');
+    });
+    if (window.matchMedia && window.matchMedia('(hover: hover) and (min-width: 641px)').matches) {
+      contact.addEventListener('mouseenter', function () { setContactOpen(true); });
+      contact.addEventListener('mouseleave', function () {
+        if (!contact.contains(document.activeElement)) setContactOpen(false);
+      });
+    }
+    document.addEventListener('click', function (event) {
+      if (!contact.contains(event.target)) setContactOpen(false);
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape') return;
+      if (!contactPanel.hidden) { setContactOpen(false); contactTrigger.focus(); }
+      setMobileNavOpen(false);
+    });
+  }
+
   var cards = Array.prototype.slice.call(document.querySelectorAll('.articles-section > .article-grid .article-card'));
   var categoryButtons = Array.prototype.slice.call(document.querySelectorAll('[data-category-filter]'));
   var pagination = document.querySelector('.pagination');
