@@ -124,6 +124,14 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         else render_article_body(catalog, article)
     )
     canonical = f"{BLOG_PUBLIC_ORIGIN}/articles/{article.slug}"
+    social_image = article.card.file
+    hero_html = (
+        f'<figure><img src="/blog/media/{escape(article.hero.file, quote=True)}" '
+        f'alt="{escape(article.hero.alt, quote=True)}" loading="eager" '
+        'decoding="async" fetchpriority="high"></figure>'
+        if article.hero.show
+        else ""
+    )
     structured_data = json.dumps(
         {
             "@context": "https://schema.org",
@@ -132,7 +140,7 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
             "description": article.excerpt,
             "author": {"@type": "Person", "name": "Сергей Воронцов"},
             "mainEntityOfPage": canonical,
-            "image": f"{BLOG_PUBLIC_ORIGIN}/blog/media/{article.hero.file}",
+            "image": f"{BLOG_PUBLIC_ORIGIN}/blog/media/{social_image}",
         },
         ensure_ascii=False,
     ).replace("</", r"<\/")
@@ -141,11 +149,10 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         "{{DESCRIPTION}}": escape(article.excerpt, quote=True),
         "{{CATEGORY}}": escape(article.category),
         "{{CANONICAL}}": escape(canonical, quote=True),
-        "{{HERO_SRC}}": f"/blog/media/{escape(article.hero.file, quote=True)}",
         "{{HERO_ABSOLUTE}}": escape(
-            f"{BLOG_PUBLIC_ORIGIN}/blog/media/{article.hero.file}", quote=True
+            f"{BLOG_PUBLIC_ORIGIN}/blog/media/{social_image}", quote=True
         ),
-        "{{HERO_ALT}}": escape(article.hero.alt, quote=True),
+        "{{HERO}}": hero_html,
         "{{ARTICLE_BODY}}": body,
         "{{TOC_DESKTOP}}": toc_html(toc, mobile=False),
         "{{TOC_MOBILE}}": toc_html(toc, mobile=True),

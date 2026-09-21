@@ -275,7 +275,9 @@ def test_every_published_article_and_declared_image_is_served() -> None:
         assert page.text.count('data-component="blog-cta"') == 1
         assert page.text.count('class="article-card"') == 3
         assert '<img src="http' not in page.text
-        assert page.text.count(f'<figure><img src="/blog/media/{article.hero.file}"') == 1
+        expected_hero_count = 1 if article.hero.show else 0
+        header = page.text.split('<header class="article-hero">', 1)[1].split("</header>", 1)[0]
+        assert header.count(f'<figure><img src="/blog/media/{article.hero.file}"') == expected_hero_count
         for media_name in (article.hero.file, article.card.file, *article.media):
             media = client.get(f"/blog/media/{media_name}")
             assert media.status_code == 200
@@ -407,6 +409,22 @@ def test_semaglutide_article_is_published_unchanged() -> None:
     assert article in catalog.published
     assert article.source_id == "13327360"
     assert article.category == "Похудение"
+    assert article.hero.file == "13327360/01.webp"
+    assert article.hero.show is False
+    assert article.card.file == "13327360/01.webp"
+    assert article.card.fit == "contain"
+
+    page = client.get(f"/blog/articles/{slug}")
+    header = page.text.split('<header class="article-hero">', 1)[1].split("</header>", 1)[0]
+    assert "13327360/01.webp" not in header
+    assert '<img src="/blog/media/13327360/01.webp"' in page.text
+    assert 'property="og:image" content="https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blog/media/13327360/01.webp"' in page.text
+
+    catalog_page = client.get("/blog")
+    assert (
+        'class="card-image card-image--contain" src="/blog/media/13327360/01.webp"'
+        in catalog_page.text
+    )
 
     manifest_path = Path(__file__).resolve().parents[2] / "content" / "blog" / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))

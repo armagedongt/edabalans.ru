@@ -9,14 +9,16 @@
       "category": "Похудение",
       "body_file": "13327360.md",
       "hero": {
-        "file": "13327360/cover.webp",
-        "alt": "Обложка материала «Уколол и похудел: Оземпик, Семавик и нюансы»",
-        "provenance": "Редакционная обложка из утверждённого заголовка; в exact source нет подходящей обложки."
+        "file": "13327360/01.webp",
+        "alt": "Скриншот с фразой «Семавик колоть и голову не забивать»",
+        "provenance": "https://cs19.pikabu.ru/s/2025/10/24/17/2kcexyk7.webp",
+        "show": false
       },
       "card": {
-        "file": "13327360/card.webp",
-        "alt": "Обложка карточки «Уколол и похудел: Оземпик, Семавик и нюансы»",
-        "provenance": "https://cs19.pikabu.ru/s/2025/10/24/17/2kcexyk7.webp"
+        "file": "13327360/01.webp",
+        "alt": "Скриншот с фразой «Семавик колоть и голову не забивать»",
+        "provenance": "https://cs19.pikabu.ru/s/2025/10/24/17/2kcexyk7.webp",
+        "fit": "contain"
       },
       "related_source_ids": [
         "11401696",
@@ -27,9 +29,7 @@
       "status": "published",
       "media": [
         "13327360/01.webp",
-        "13327360/02.webp",
-        "13327360/card.webp",
-        "13327360/cover.webp"
+        "13327360/02.webp"
       ],
       "source_provenance": {
         "urls": [

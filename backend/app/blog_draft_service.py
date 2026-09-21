@@ -316,7 +316,7 @@ def _git_seed_payload(slug: str) -> dict:
         "cta": article.cta,
         "sources": [f"content://blog/{article.source_id}"],
         "source_id": article.source_id,
-        "hero": article.hero.file,
+        "hero": article.hero.file if article.hero.show else None,
         "card": article.card.file,
         "card_fit": article.card.fit,
         "media": media,
@@ -377,8 +377,11 @@ def effective_article_payload(version: ManagedDocumentVersion) -> dict:
     seed["markdown"] = version.payload["markdown"]
     seed["markdown_sha256"] = version.payload["markdown_sha256"]
     seed["visibility"] = version.payload.get("visibility", "public")
+    allowed_cards = {item["name"] for item in seed["media"]}
     selected_card = version.payload.get("card", seed["card"])
     selected_fit = version.payload.get("card_fit", seed["card_fit"])
+    if selected_card not in allowed_cards:
+        selected_card, selected_fit = seed["card"], seed["card_fit"]
     seed["card"], seed["card_fit"] = _validate_card(
         selected_card, selected_fit, seed["media"]
     )
@@ -390,15 +393,18 @@ def publication_status(db: Session, version: ManagedDocumentVersion) -> tuple[st
     if published is not None:
         payload = effective_article_payload(version)
         defaults = _git_seed_payload(version.document_key)
+        allowed_cards = {item["name"] for item in defaults["media"]}
+        published_card = published.payload.get("card", defaults["card"])
+        published_fit = published.payload.get("card_fit", defaults["card_fit"])
+        if published_card not in allowed_cards:
+            published_card, published_fit = defaults["card"], defaults["card_fit"]
         return (
             "published"
             if (
                 published.payload.get("markdown_sha256")
                 == payload.get("markdown_sha256")
-                and published.payload.get("card", defaults.get("card"))
-                == payload.get("card")
-                and published.payload.get("card_fit", defaults.get("card_fit"))
-                == payload.get("card_fit")
+                and published_card == payload.get("card")
+                and published_fit == payload.get("card_fit")
             )
             else "moderation",
             published.version_no,
@@ -658,9 +664,14 @@ def public_payload(db: Session, slug: str) -> dict | None:
     payload = _git_seed_payload(slug)
     payload["markdown"] = published.payload["markdown"]
     payload["markdown_sha256"] = published.payload["markdown_sha256"]
+    allowed_cards = {item["name"] for item in payload["media"]}
+    selected_card = published.payload.get("card", payload["card"])
+    selected_fit = published.payload.get("card_fit", payload["card_fit"])
+    if selected_card not in allowed_cards:
+        selected_card, selected_fit = payload["card"], payload["card_fit"]
     payload["card"], payload["card_fit"] = _validate_card(
-        published.payload.get("card", payload["card"]),
-        published.payload.get("card_fit", payload["card_fit"]),
+        selected_card,
+        selected_fit,
         payload["media"],
     )
     return payload

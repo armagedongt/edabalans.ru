@@ -29,7 +29,7 @@ origin: owner-explicit
 
 ## Необходимая архитектурная граница
 
-Сейчас девять публичных идентичностей, SEO-поля, порядок, CTA, related и media
+Сейчас публичные идентичности, SEO-поля, порядок, CTA, related и media
 принадлежат Git-manifest. API не может добавлять туда запись без deploy. До
 реализации создания новых статей нужен один серверный registry публикаций, а не
 второй список рядом с manifest.
@@ -37,7 +37,7 @@ origin: owner-explicit
 Будущий этап должен:
 
 - завести серверную запись статьи с неизменяемым ID и уникальным slug;
-- один раз перенести в registry девять существующих manifest-записей;
+- один раз перенести в registry все существующие manifest-записи;
 - сохранить Git fallback до проверки эквивалентности рендера;
 - после приёмки переключить catalog, article, sitemap и related на registry;
 - оставить экспорт полного Markdown-пакета, чтобы сервер не стал единственным
@@ -167,13 +167,13 @@ hero/card, Article structured data, related и sitemap `lastmod`. Дата ис�
 - unknown/internal материалы не раскрываются через ошибки, media, поиск,
   sitemap, related, JSON-LD и cache.
 
-## Миграция девяти статей
+## Миграция существующих статей
 
 1. Сделать backup БД и media storage, проверить restore.
 2. Импортировать manifest identity/SEO/CTA/related/media и exact Markdown.
 3. Сравнить по каждой статье rendered body, число media, canonical, CTA и related.
 4. Запустить dual-read в тестовом контуре: DB registry с Git fallback.
-5. Проверить все девять URL, sitemap и отсутствие дублей/404.
+5. Проверить все существующие URL, sitemap и отсутствие дублей/404.
 6. Отдельно подтвердить production source switch.
 7. Сохранить rollback на Git snapshot до окончания наблюдения.
 8. Только после приёмки архивировать старый write path; экспорт Markdown оставить.
@@ -204,7 +204,7 @@ version ID, чтобы сравнение периодов не приписыв
 - internal/moderation не индексируются;
 - restore создаёт draft, не меняет live;
 - archive/redirect contract;
-- migration и rollback девяти статей.
+- migration и rollback всех существующих статей.
 
 ### Browser
 

@@ -37,6 +37,7 @@ class BlogHero:
     alt: str
     provenance: str
     fit: str = "cover"
+    show: bool = True
 
 
 @dataclass(frozen=True)
@@ -112,10 +113,14 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
         hero_raw = raw.get("hero")
         if not isinstance(hero_raw, dict):
             raise ValueError(f"blog article {source_id} must have hero metadata")
+        hero_show = hero_raw.get("show", True)
+        if not isinstance(hero_show, bool):
+            raise ValueError(f"blog article {source_id} hero.show must be a boolean")
         hero = BlogHero(
             file=_required_text(hero_raw, "file"),
             alt=_required_text(hero_raw, "alt"),
             provenance=_required_text(hero_raw, "provenance"),
+            show=hero_show,
         )
         card_raw = raw.get("card")
         if not isinstance(card_raw, dict):

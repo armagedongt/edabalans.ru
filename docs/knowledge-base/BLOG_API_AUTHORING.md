@@ -8,7 +8,7 @@ module_id: platform.blog
 
 Контур позволяет править и выпускать без deploy все статьи, зарегистрированные
 в `content/blog/manifest.json`. Manifest остаётся владельцем slug, SEO, рубрики,
-hero, CTA, related, набора разрешённых media и обложки по умолчанию. PostgreSQL
+hero и его видимость, CTA, related, набора разрешённых media и обложки по умолчанию. PostgreSQL
 хранит отдельно черновую и опубликованную версии Markdown, выбранной обложки и
 режима её кадрирования.
 
@@ -34,7 +34,7 @@ hero, CTA, related, набора разрешённых media и обложки 
 5. «Опубликовать» после отдельного подтверждения копирует именно сохранённую
    expected version в `blog-article-published`.
 6. Публичный URL читает Markdown и выбранную обложку из published snapshot;
-   SEO, разрешённые media, CTA и related каждый раз берутся из актуального
+   SEO, разрешённые media, видимость hero, CTA и related каждый раз берутся из актуального
    manifest. До первого выпуска сохраняется Git fallback и обложка по умолчанию.
    Следующая черновая правка снова не видна до нового выпуска.
 
@@ -109,7 +109,7 @@ python backend/scripts/publish_blog_draft.py `
 
 ## Текущие ограничения
 
-- редактор правит Markdown и выбирает обложку из разрешённых media; hero, сам
+- редактор правит Markdown и выбирает карточную обложку из разрешённых media; hero, сам
   набор media, SEO, CTA и related остаются manifest-backed;
 - нет WYSIWYG, автоматического related, popup и blog-аналитики;
 - закрытые материалы не попадают в sitemap, публичный каталог или поиск;

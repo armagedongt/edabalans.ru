@@ -325,7 +325,7 @@ def test_cover_selection_is_versioned_and_published_to_catalog(authoring) -> Non
     assert f'class="card-image card-image--contain" src="/blog/media/{selected}"' in home.text
 
 
-def test_legacy_published_snapshot_inherits_manifest_contain_fit(authoring) -> None:
+def test_legacy_published_snapshot_inherits_manifest_card_when_old_media_was_removed(authoring) -> None:
     client, factory = authoring
     catalog = load_blog_catalog()
     manifest_article = catalog.by_slug("temperatura-vody-dlya-priema-vnutr")
@@ -351,8 +351,8 @@ def test_legacy_published_snapshot_inherits_manifest_contain_fit(authoring) -> N
             )
         )
         legacy_payload = deepcopy(stored.payload)
-        legacy_payload.pop("card", None)
-        legacy_payload.pop("card_fit", None)
+        legacy_payload["card"] = "removed-generated-cover.webp"
+        legacy_payload["card_fit"] = "cover"
         stored.payload = legacy_payload
         db.commit()
     legacy_editor = client.get(f"/admin/api/blog/articles/{slug}").json()["article"]
