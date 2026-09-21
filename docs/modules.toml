@@ -191,6 +191,8 @@ owns_files = [
   "content/author-voice/source-review-registry-v1.json",
   "content/author-voice/material-status-v1.md",
   "content/author-voice/correction-source-selection-v1.json",
+  "content/author-voice/source-selection/blog-source-families.json",
+  "content/author-voice/source-selection/blog-source-family-decisions.md",
   "tools/compare_author_texts.py",
   "tools/tests/test_catalog_saved_notes_editorially.py",
   "tools/tests/test_prepare_post_planning_handoff.py",
