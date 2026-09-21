@@ -343,14 +343,22 @@ for (const width of [360, 1440]) {
   await page.locator(".marketing-leads tbody tr").waitFor();
   assert.equal(await page.locator(".marketing-sticky-head").evaluate((node) => getComputedStyle(node).position), "sticky");
   assert.equal(await page.locator('.marketing-quick-nav a[href="#marketing-conversions"]').count(), 1);
-  assert.equal(await page.locator(".marketing-horizontal-scroll").first().evaluate((node) => !node.hidden && node.scrollWidth > node.clientWidth), true);
-  if (evidence) await page.screenshot({ path: path.join(evidence, `admin-marketing-${width}.png`), fullPage: true });
+  assert.deepEqual(await page.locator(".marketing-leads th").allTextContents(), ["Пользователь", "Источник", "Вход", "Старт", "Статус", "Интенсив", "Последнее"]);
+  assert.ok(await page.locator(".marketing-leads tbody tr").first().evaluate((node) => node.getBoundingClientRect().height < 64));
   const rail = page.locator(".marketing-horizontal-scroll").first();
-  await rail.evaluate((node) => { node.scrollLeft = 180; node.dispatchEvent(new Event("scroll")); });
-  assert.equal(await page.locator("#marketing-journeys").evaluate((node) => node.scrollLeft), 180);
+  const hasJourneyOverflow = await page.locator("#marketing-journeys").evaluate((node) => node.scrollWidth > node.clientWidth);
+  assert.equal(await rail.evaluate((node) => !node.hidden), hasJourneyOverflow);
+  if (hasJourneyOverflow) assert.equal(await rail.evaluate((node) => getComputedStyle(node).position), "fixed");
+  if (evidence) await page.screenshot({ path: path.join(evidence, `admin-marketing-${width}.png`), fullPage: true });
+  if (hasJourneyOverflow) {
+    await rail.evaluate((node) => { node.scrollLeft = 180; node.dispatchEvent(new Event("scroll")); });
+    assert.equal(await page.locator("#marketing-journeys").evaluate((node) => node.scrollLeft), 180);
+  }
   await page.locator(".marketing-person").first().hover();
   await page.locator(".marketing-timeline-popover").waitFor({state:"visible"});
   assert.match(await page.locator(".marketing-timeline-popover").textContent(), /Первый старт бота.*Начал смотреть видео/s);
+  await page.locator(".marketing-leads .marketing-popover-trigger").first().hover();
+  assert.match(await page.locator(".marketing-timeline-popover").textContent(), /Кампания: Интенсив/);
   if (width >= 1000) {
     const positions = await page.locator('.marketing-date-range input').evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().top));
     assert.ok(positions[0] < positions[1], JSON.stringify(positions));

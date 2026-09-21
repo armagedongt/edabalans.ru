@@ -677,6 +677,13 @@
     }).format(new Date(value));
   }
 
+  function marketingShortDate(value) {
+    if (!value) return "—";
+    return new Intl.DateTimeFormat("ru-RU", {
+      timeZone: "Europe/Moscow", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
+    }).format(new Date(value)).replace(", ", " · ");
+  }
+
   function marketingEvent(value, fallback = "—") {
     if (!value) return `<span class="marketing-empty">${esc(fallback)}</span>`;
     return `<b>${marketingDate(value.at)}</b>${value.detail ? `<small>${esc(value.detail)}</small>` : ""}${value.label ? `<small>${esc(value.label)}</small>` : ""}`;
@@ -717,9 +724,11 @@
       const spacer = rail.firstElementChild;
       if (!target || !spacer) return;
       let syncing = false;
+      let hasOverflow = false;
       const resize = () => {
         spacer.style.width = `${target.scrollWidth}px`;
-        rail.hidden = target.scrollWidth <= target.clientWidth + 1;
+        hasOverflow = target.scrollWidth > target.clientWidth + 1;
+        rail.hidden = !hasOverflow;
       };
       target.addEventListener("scroll", () => {
         if (syncing) return;
@@ -735,17 +744,43 @@
       }, { passive: true });
       new ResizeObserver(resize).observe(target);
       resize();
+
+      // The journeys table can be much taller than one screen. Its scrollbar
+      // must remain reachable while reading it, not only after the last row.
+      if (rail.dataset.scrollTarget === "marketing-journeys") {
+        rail.classList.add("marketing-horizontal-scroll--fixed");
+        const placeRail = () => {
+          const box = target.getBoundingClientRect();
+          const visible = hasOverflow && box.bottom > 76 && box.top < window.innerHeight;
+          rail.toggleAttribute("hidden", !visible);
+          if (!visible) return;
+          const left = Math.max(8, box.left);
+          rail.style.left = `${left}px`;
+          rail.style.width = `${Math.max(0, Math.min(box.width, window.innerWidth - left - 8))}px`;
+        };
+        window.addEventListener("scroll", placeRail, { passive: true });
+        window.addEventListener("resize", placeRail, { passive: true });
+        placeRail();
+      }
     });
+  }
+
+  function marketingPopoverData(title, entries) {
+    return encodeURIComponent(JSON.stringify({ title, entries }));
+  }
+
+  function marketingPopoverButton(summary, title, entries) {
+    return `<button type="button" class="marketing-popover-trigger" data-marketing-popover="${marketingPopoverData(title, entries)}">${esc(summary)}</button>`;
   }
 
   function bindMarketingTimelinePopover() {
     const popover = root.querySelector("#marketing-timeline-popover");
     if (!popover) return;
     const hide = () => { popover.hidden = true; };
-    root.querySelectorAll("[data-marketing-timeline]").forEach((cell) => {
+    root.querySelectorAll("[data-marketing-popover]").forEach((cell) => {
       const show = () => {
-        const timeline = JSON.parse(decodeURIComponent(cell.dataset.marketingTimeline));
-        popover.innerHTML = `<b>Путь пользователя</b><div>${timeline.map((entry) => `<span><time>${marketingDate(entry.at)}</time><strong>${esc(entry.label)}</strong>${entry.detail ? `<small>${esc(entry.detail)}</small>` : ""}</span>`).join("") || "Действий пока нет"}</div>`;
+        const data = JSON.parse(decodeURIComponent(cell.dataset.marketingPopover));
+        popover.innerHTML = `<b>${esc(data.title)}</b><div>${data.entries.map((entry) => `<span>${entry.at ? `<time>${marketingDate(entry.at)}</time>` : ""}<strong>${esc(entry.label)}</strong>${entry.detail ? `<small>${esc(entry.detail)}</small>` : ""}</span>`).join("") || "Данных пока нет"}</div>`;
         popover.hidden = false;
         const box = cell.getBoundingClientRect();
         const width = Math.min(340, window.innerWidth - 24);
@@ -783,24 +818,35 @@
       const userName = item.user_id
         ? `<a href="/admin/users?user=${encodeURIComponent(item.user_id)}">${esc(item.display_name)}</a>`
         : `<b>${esc(item.display_name)}</b>`;
-      const other = (item.other_actions || []).map((action) => `<span><b>${marketingDate(action.at)}</b>${esc(action.label)}</span>`).join("");
-      const timeline = encodeURIComponent(JSON.stringify(marketingTimeline(item)));
+      const allActions = marketingTimeline(item);
+      const courseActions = allActions.filter((action) => /день|подписк|главная интенсива|видео/i.test(action.label));
+      const maxDay = item.later_days?.max_day;
+      const courseSummary = maxDay ? `день ${maxDay}` : item.day_one ? "день 1" : item.subscription ? "подписан" : "—";
+      const status = item.status === "blocked" ? "Заблокировал" : item.status === "lost_before_start" ? "Не стартовал" : item.is_new_lead ? "Новый" : "Повторный";
+      const sourceDetails = [
+        { label: `Источник: ${item.source}` },
+        { label: `Размещение: ${item.placement}` },
+        { label: `Кампания: ${item.campaign}` },
+        { label: `Объявление: ${item.creative}` },
+        { label: `Ссылка: ${item.link_name}` },
+      ];
+      const entryDetails = item.landing_entry ? [{ at: item.landing_entry.at, label: item.landing_entry.label, detail: `${item.landing_entry.messenger || item.messenger} · ${item.landing_entry.method === "qr" ? "QR" : "кнопка"}` }] : [];
+      const startDetails = item.start ? [{ at: item.start.at, label: item.start.label || "Старт бота" }] : [];
+      const statusDetails = [{ label: status }, { label: `Мессенджер: ${item.messenger}` }];
+      const lastAction = item.last_action || allActions.at(-1);
+      const profileDetails = [
+        { label: item.display_name },
+        ...item.usernames.map((username) => ({ label: username })),
+        ...allActions,
+      ];
       return `<tr>
-        <td class="marketing-person" data-marketing-timeline="${timeline}">${userName}<small>${item.usernames.map(esc).join(" · ") || "без username"}</small></td>
-        <td><b>${esc(item.source)}</b><small>${esc(item.placement)}</small></td>
-        <td><b>${esc(item.campaign)}</b><small>${esc(item.link_name)}</small></td>
-        <td><b>${esc(item.creative)}</b><small>${esc(item.term)}</small></td>
-        <td>${item.landing_entry ? `${marketingEvent(item.landing_entry)}<small>${esc(item.landing_entry.messenger || item.messenger)} · ${item.landing_entry.method === "qr" ? "QR" : "кнопка"}</small>` : '<span class="marketing-empty">не зафиксирован</span>'}</td>
-        <td>${marketingEvent(item.start)}</td>
-        <td><b>${item.status === "blocked" ? "Заблокировал бота" : item.status === "lost_before_start" ? "Потерян до старта" : item.is_new_lead ? "Новый" : "Повторный"}</b></td>
-        <td>${marketingEvent(item.site_home, missingStage("site_home"))}</td>
-        <td>${marketingEvents(item.check_before_day_one)}</td>
-        <td>${marketingEvent(item.day_one, missingStage("day_one"))}</td>
-        <td>${marketingEvent(item.subscription)}</td>
-        <td>${marketingEvents(item.check_after_day_one)}</td>
-        <td>${item.later_days ? `<b>${marketingDate(item.later_days.at)}</b><small>${item.later_days.max_day ? `дошёл до дня ${item.later_days.max_day}` : "открыл следующий день"}</small>` : `<span class="marketing-empty">${missingStage("later_days")}</span>`}</td>
-        <td class="marketing-other">${other || '<span class="marketing-empty">—</span>'}</td>
-        <td>${marketingEvent(item.last_action)}</td>
+        <td class="marketing-person" data-marketing-popover="${marketingPopoverData("Путь пользователя", profileDetails)}">${userName}</td>
+        <td>${marketingPopoverButton(item.source, "Источник и кампания", sourceDetails)}</td>
+        <td>${marketingPopoverButton(item.landing_entry ? (item.landing_entry.method === "qr" ? "QR" : "Кнопка") : "—", "Вход с посадки", entryDetails)}</td>
+        <td>${marketingPopoverButton(item.start ? marketingShortDate(item.start.at) : "—", "Старт бота", startDetails)}</td>
+        <td>${marketingPopoverButton(status, "Статус", statusDetails)}</td>
+        <td>${marketingPopoverButton(courseSummary, "Путь в интенсиве", courseActions)}</td>
+        <td>${marketingPopoverButton(lastAction ? marketingShortDate(lastAction.at) : "—", "Все действия", allActions)}</td>
       </tr>`;
     }).join("");
     const analytics = (data.analytics || []).map((item) => `<tr>
@@ -831,8 +877,8 @@
       <div class="marketing-result-line">Найдено пользователей: <b>${data.totals.matching_rows.toLocaleString("ru-RU")}</b>${data.totals.rows < data.totals.matching_rows ? ` · в таблице первые ${data.totals.rows.toLocaleString("ru-RU")}, аналитика по всем` : ""}</div>
       ${data.totals.events_truncated ? '<div class="marketing-note">Событий больше безопасного предела отчёта. Текущая таблица и аналитика неполные — сузьте период.</div>' : ""}
       <div class="marketing-table-wrap" id="marketing-journeys"><table class="marketing-table marketing-leads"><thead><tr>
-        <th>Пользователь</th><th>Источник</th><th>Кампания</th><th>Объявление</th><th>Вход с посадки</th><th>Старт бота</th><th>Статус</th><th>Главная интенсива</th><th>Проверка до дня 1</th><th>День 1</th><th>Подписка</th><th>Проверка после дня 1</th><th>Дни 2+</th><th>Другие действия</th><th>Последнее действие</th>
-      </tr></thead><tbody>${rows || '<tr><td colspan="15"><div class="admin-empty">По выбранным фильтрам пользователей нет</div></td></tr>'}</tbody></table></div>
+        <th>Пользователь</th><th>Источник</th><th>Вход</th><th>Старт</th><th>Статус</th><th>Интенсив</th><th>Последнее</th>
+      </tr></thead><tbody>${rows || '<tr><td colspan="7"><div class="admin-empty">По выбранным фильтрам пользователей нет</div></td></tr>'}</tbody></table></div>
       <div class="marketing-horizontal-scroll" data-scroll-target="marketing-journeys" aria-label="Горизонтальная прокрутка таблицы путей"><div></div></div>
       <h2 class="marketing-analytics-title" id="marketing-conversions">Конверсии текущего среза</h2>
       <div class="marketing-table-wrap marketing-analytics-wrap" id="marketing-conversions-table"><table class="marketing-table marketing-analytics"><thead><tr><th>Действие</th><th>Количество</th><th>От прошлого шага</th><th>Потеряно</th><th>От стартовавших</th></tr></thead><tbody>${analytics}</tbody></table></div>
