@@ -819,10 +819,18 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     course_html = (
         root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
     ).read_text(encoding="utf-8")
+    messenger_panel = re.search(
+        r'<section class="messenger-popup" id="messenger-popup".*?</section>',
+        course_html,
+        flags=re.S,
+    )
+    assert messenger_panel is not None
+    messenger_html = messenger_panel.group(0)
     course_css = (root / "backend" / "app" / "static" / "course-visual.css").read_text(encoding="utf-8")
     assert ".articlep:not(.eyebrow):not(.hero-lead):not(.eyebrow-time){margin:0px0px18px;}" in re.sub(r"\s+", "", course_css)
-    assert "Подключить нужно хотя бы один мессенджер" in course_html
-    assert "Кабинет сам проверит привязку" in course_html
+    assert "Давайте убьём двух зайцев сразу" in messenger_html
+    assert "Реклама Мастер-класса больше приходить не будет" in messenger_html
+    assert "Если двумя — подключите оба и выберите основной" in messenger_html
     assert "/api/masterclass/messengers?" in course_html
     assert "if(messengerConfirmed)advanceCourseStep" in course_html
     assert "Персональная ссылка для подключения действует 15 минут" not in course_html
