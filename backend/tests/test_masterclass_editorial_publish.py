@@ -17,6 +17,7 @@ from scripts.bootstrap_masterclass_editorial import parse_program
 from scripts.publish_masterclass_editorial import (
     apply_day_copy,
     compile_manifest,
+    dqs_application_definition,
     editorial_body,
     migrate_step_progress,
     special_prelude,
@@ -148,6 +149,29 @@ def test_first_five_release_preserves_later_days_without_removed_practice() -> N
         step["id"] != "day-03-practice"
         for step in compiled["days"][2]["steps"]
     )
+
+
+def test_single_day_release_preserves_every_other_day() -> None:
+    manifest = json.loads(
+        (ROOT / "content" / "masterclass" / "course" / "course.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    original = json.loads(json.dumps(manifest))
+    compiled, _ = compile_manifest(
+        manifest,
+        next_version=12,
+        from_day=4,
+        through_day=4,
+    )
+    days, _ = parse_program()
+    apply_day_copy(compiled, days, from_day=4, through_day=4)
+
+    assert compiled["days"][:3] == original["days"][:3]
+    assert compiled["days"][4:] == original["days"][4:]
+    assert compiled["days"][3] != original["days"][3]
+
+
 def test_partial_publish_writes_only_selected_day_articles(monkeypatch) -> None:
     from scripts import publish_masterclass_editorial as publisher
     manifest = json.loads(
@@ -156,6 +180,7 @@ def test_partial_publish_writes_only_selected_day_articles(monkeypatch) -> None:
         )
     )
     writes = []
+    published_payloads = []
     class Database:
         def __enter__(self):
             return self
@@ -166,19 +191,36 @@ def test_partial_publish_writes_only_selected_day_articles(monkeypatch) -> None:
     monkeypatch.setattr(publisher, "SessionLocal", Database)
     monkeypatch.setattr(publisher, "active_course_version", lambda db:
                         SimpleNamespace(payload=manifest, version_no=11))
-    monkeypatch.setattr(publisher, "publish_document", lambda *a, **kw:
-                        SimpleNamespace(version_no=12))
+    monkeypatch.setattr(
+        publisher,
+        "publish_document",
+        lambda *a, **kw: (
+            published_payloads.append(kw["payload"])
+            or SimpleNamespace(version_no=12)
+        ),
+    )
     monkeypatch.setattr(publisher, "migrate_step_progress", lambda *a: 0)
     monkeypatch.setattr(publisher, "get_material", lambda *a: {"version": 0})
     monkeypatch.setattr(publisher, "publish_material", lambda *a, **kw:
                         writes.append(kw["step_id"]))
-    monkeypatch.setattr("sys.argv", ["publisher", "--through-day", "5", "--publish"])
+    monkeypatch.setattr(
+        "sys.argv",
+        ["publisher", "--from-day", "4", "--through-day", "4", "--publish"],
+    )
     publisher.main()
     _, materials = parse_program()
     expected = {item["step_id"] for item in materials.values()
-                if item["day"] <= 5 and item["type"] == "article"}
+                if item["day"] == 4 and item["type"] == "article"}
     assert set(writes) == expected
     assert len(writes) == len(expected)
+    dqs_step = published_payloads[0]["days"][3]["steps"][1]
+    assert dqs_step["applicationButtons"] == {
+        "print": "Скачать печатный вариант",
+        "open": "Открыть приложение",
+    }
+    assert "Ссылка продублируется вам в привязанный мессенджер" in (
+        dqs_step["applicationNoteHtml"]
+    )
 
 
 def test_special_material_prelude_uses_markdown_before_embed_only() -> None:
@@ -197,6 +239,21 @@ def test_special_material_prelude_uses_markdown_before_embed_only() -> None:
         / "01-05-что-еще-вам-может-понадобиться.md"
     )
     assert "мини-курсы и дополнительные программы" in special_prelude(empty, "offer")
+
+
+def test_dqs_markdown_defines_two_actions_and_messenger_note() -> None:
+    path = (
+        ROOT
+        / "content/masterclass/editorial/materials/04-02-приложение-dqs.md"
+    )
+
+    definition = dqs_application_definition(path)
+
+    assert definition["buttons"] == {
+        "print": "Скачать печатный вариант",
+        "open": "Открыть приложение",
+    }
+    assert "Ссылка продублируется вам в привязанный мессенджер" in definition["noteHtml"]
 
 
 def test_step_progress_follows_stable_id_when_program_reorders_steps() -> None:

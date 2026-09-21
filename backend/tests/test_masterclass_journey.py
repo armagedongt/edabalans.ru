@@ -1896,7 +1896,8 @@ def test_course_app_trigger_reveals_only_an_owned_application_once():
         )) == 1
 
 
-def test_first_dqs_reveal_queues_one_permanent_telegram_link():
+@pytest.mark.parametrize("platform", ["telegram", "max"])
+def test_first_dqs_reveal_queues_one_permanent_preferred_messenger_link(platform):
     client, factory = setup()
     with factory() as db:
         db.execute(text(
@@ -1915,7 +1916,7 @@ def test_first_dqs_reveal_queues_one_permanent_telegram_link():
             ),
             MessengerAccount(
                 user_id=user_id,
-                platform="telegram",
+                platform=platform,
                 platform_user_id="42",
                 username="member",
                 linked_at=datetime.now(timezone.utc),

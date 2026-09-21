@@ -860,8 +860,10 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     assert "pending=openDqsMaterial(d,stepIndex)" in course_html
     assert "dqsTutorialRequested=true;openDqsApplication(d,stepIndex);return" in course_html
     assert "dqs/link-to-telegram" not in course_html
-    assert "Открыть мой DQS" in course_html
-    assert "function dqsDirectUrl(){return'https://edabalans.ru/dqs'}" in course_html
+    assert "Скачать печатный вариант" in course_html
+    assert "Открыть приложение" in course_html
+    assert "dqs-copy-link" not in course_html
+    assert "function dqsDirectUrl()" not in course_html
     assert "https://похудение-это-есть.рф/dqs" not in course_html
     assert "/api/masterclass/apps/" in course_html
     assert "revealCourseApplication('dqs',d,stepIndex,'dqs-material',true)" in course_html

@@ -61,7 +61,7 @@ def new_placeholder_step(item: dict, *, next_version: int) -> dict:
 
 
 def compile_manifest(
-    current: dict, *, next_version: int, through_day: int = 20
+    current: dict, *, next_version: int, from_day: int = 1, through_day: int = 20
 ) -> tuple[dict, list[str]]:
     days, materials = parse_program()
     result = deepcopy(current)
@@ -76,7 +76,7 @@ def compile_manifest(
     }
     changes: list[str] = []
     for editorial_day, day in zip(days, result["days"], strict=True):
-        if editorial_day["number"] > through_day:
+        if not from_day <= editorial_day["number"] <= through_day:
             continue
         day["title"] = editorial_day["title"]
         day["tocSummary"] = ""
@@ -187,6 +187,30 @@ def questionnaire_definition(path) -> dict:
     }
 
 
+def dqs_application_definition(path) -> dict:
+    body = editorial_body(path)
+    if "## Кнопки" not in body:
+        raise ValueError(f"Нет раздела кнопок DQS: {path.name}")
+    section = body.split("## Кнопки", 1)[1]
+    actions_match = re.search(r"<!-- button_actions: (.+?) -->", section)
+    if not actions_match:
+        raise ValueError(f"Нет привязки кнопок DQS: {path.name}")
+    actions = [action.strip() for action in actions_match.group(1).split(",")]
+    expected_actions = ["print", "open"]
+    label_matches = list(re.finditer(r"^[0-9]+\. (.+)$", section, flags=re.MULTILINE))
+    if actions != expected_actions or len(label_matches) != len(expected_actions):
+        raise ValueError(
+            "У DQS должны быть две подписанные кнопки в порядке: распечатать, открыть"
+        )
+    labels = [match.group(1).strip() for match in label_matches]
+    note_markdown = section[label_matches[-1].end():].strip()
+    note_markdown = re.sub(r"<!--.*?-->", "", note_markdown, flags=re.DOTALL).strip()
+    return {
+        "buttons": dict(zip(actions, labels, strict=True)),
+        "noteHtml": render_material(note_markdown, "markdown") if note_markdown else "",
+    }
+
+
 def day_sections(path) -> dict[str, str]:
     text = path.read_text(encoding="utf-8").replace("\r", "")
     parts = re.split(r"^## (.+)$", text, flags=re.MULTILINE)
@@ -203,9 +227,11 @@ def render_day_section(value: str) -> str:
     return render_material(markdown, "markdown")
 
 
-def apply_day_copy(manifest: dict, days: list[dict], *, through_day: int = 20) -> None:
+def apply_day_copy(
+    manifest: dict, days: list[dict], *, from_day: int = 1, through_day: int = 20
+) -> None:
     for editorial_day, day in zip(days, manifest["days"], strict=True):
-        if editorial_day["number"] > through_day:
+        if not from_day <= editorial_day["number"] <= through_day:
             continue
         day["lead"] = ""
         intro = editorial_day["intro_text"]
@@ -289,21 +315,35 @@ def migrate_step_progress(db, before: dict, after: dict) -> int:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--publish", action="store_true")
+    parser.add_argument("--from-day", type=int, choices=range(1, 21), default=1)
     parser.add_argument("--through-day", type=int, choices=range(1, 21), default=20)
     args = parser.parse_args()
+    if args.from_day > args.through_day:
+        parser.error("--from-day не может быть больше --through-day")
     days, materials = parse_program()
     materials = {
         key: item for key, item in materials.items()
-        if item["day"] <= args.through_day
+        if args.from_day <= item["day"] <= args.through_day
     }
     with SessionLocal() as db:
         current = active_course_version(db)
         manifest, changes = compile_manifest(
             current.payload, next_version=current.version_no + 1,
+            from_day=args.from_day,
             through_day=args.through_day,
         )
-        apply_day_copy(manifest, days, through_day=args.through_day)
-        if manifest["days"][args.through_day:] != current.payload["days"][args.through_day:]:
+        apply_day_copy(
+            manifest,
+            days,
+            from_day=args.from_day,
+            through_day=args.through_day,
+        )
+        if (
+            manifest["days"][:args.from_day - 1]
+            != current.payload["days"][:args.from_day - 1]
+            or manifest["days"][args.through_day:]
+            != current.payload["days"][args.through_day:]
+        ):
             raise ValueError("Изменены дни за пределами выбранного выпуска")
         rendered_articles = {
             item["step_id"]: editorial_body(item["path"])
@@ -325,14 +365,14 @@ def main() -> None:
             if item["type"] == "questionnaire":
                 step["questionnaireDefinition"] = questionnaire_definition(item["path"])
             if item["step_id"] == "day-04-dqs":
-                button_text = editorial_body(item["path"]).split("## Кнопки", 1)[1]
-                labels = re.findall(r"^[0-9]+\. (.+)$", button_text, flags=re.MULTILINE)
-                actions = ["open", "copy-link", "print"]
-                if len(labels) != len(actions):
-                    raise ValueError("У DQS должны быть три подписанные кнопки: открыть, скопировать ссылку и распечатать")
-                step["applicationButtons"] = dict(zip(actions, labels, strict=True))
+                definition = dqs_application_definition(item["path"])
+                step["applicationButtons"] = definition["buttons"]
+                step["applicationNoteHtml"] = definition["noteHtml"]
         for editorial_day, day in zip(days, manifest["days"], strict=True):
-            if day["number"] in {7, 15} and day["number"] <= args.through_day:
+            if (
+                day["number"] in {7, 15}
+                and args.from_day <= day["number"] <= args.through_day
+            ):
                 gate = editorial_day["access_gate"]
                 day["accessGateHtml"] = special_prelude(gate["path"], "offer")
                 day["accessGateTitle"] = gate["title"]

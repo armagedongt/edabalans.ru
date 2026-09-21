@@ -110,7 +110,7 @@ try {
   const dqs = await context.newPage();
   await dqs.goto(origin+'/lk?theme=dark&course_day=4&course_material=day-04-dqs');
   await dqs.locator('#dqs-open-app').waitFor();
-  for (const id of ['dqs-open-app','dqs-copy-link']) {
+  for (const id of ['dqs-open-app','dqs-print']) {
     const colors = await dqs.locator('#'+id).evaluate(el => {
       const style=getComputedStyle(el);
       return {background:style.backgroundColor,color:style.color};

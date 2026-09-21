@@ -25,10 +25,19 @@ const page = await context.newPage();
 try {
   await page.goto(origin+'/lk?course_day=4&course_material=day-04-dqs');
   await page.locator('#dqs-open-app').waitFor();
-
-  await page.locator('#dqs-copy-link').click();
-  await page.waitForFunction(() => document.querySelector('#dqs-material-status')?.textContent === 'Ссылка скопирована.');
-  assert.equal(await page.evaluate(() => navigator.clipboard.readText()), 'https://edabalans.ru/dqs');
+  assert.deepEqual(
+    await page.locator('.dqs-material-buttons > *').allTextContents(),
+    ['Скачать печатный вариант', 'Открыть приложение'],
+  );
+  assert.equal(await page.locator('#dqs-copy-link').count(), 0);
+  assert.equal(
+    await page.locator('#dqs-print').getAttribute('href'),
+    'https://storage.yandexcloud.net/workcloud1/table_images/DQS_for_print.png',
+  );
+  assert.match(
+    await page.locator('.dqs-material-note').textContent(),
+    /Ссылка продублируется вам в привязанный мессенджер/,
+  );
 
   let releaseReveal;
   let revealRequested = false;
@@ -36,7 +45,7 @@ try {
   await page.route(origin+'/api/masterclass/apps/dqs/reveal', async route => {
     revealRequested = true;
     await revealGate;
-    await route.fulfill({json:{ok:true,app_url:'https://edabalans.ru/dqs',telegram_link_status:'not_linked'}});
+    await route.fulfill({json:{ok:true,app_url:'https://edabalans.ru/dqs',telegram_link_status:'queued'}});
   });
   await page.route(origin+'/api/masterclass/events', route => route.fulfill({json:{ok:true,created:true}}));
 
@@ -48,9 +57,9 @@ try {
   await page.locator('#dqs-panel').waitFor({state:'visible'});
   assert.equal(
     await page.locator('#dqs-material-status').textContent(),
-    'DQS открыт. Telegram пока не привязан — приложение всегда доступно из личного кабинета.',
+    'Постоянная ссылка отправлена в привязанный мессенджер. Закрепите сообщение, чтобы DQS всегда был под рукой.',
   );
-  console.log('PASS: DQS copy action and guarded reveal-before-open interaction.');
+  console.log('PASS: DQS print action and guarded reveal-before-open interaction.');
 } finally {
   await browser.close();
 }
