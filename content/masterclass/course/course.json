@@ -86,7 +86,7 @@
           "kind": "article",
           "title": "Как пользоваться Мастер-классом",
           "summary": "Личный кабинет, программа, открытие дней, консультации и связь.",
-          "durationMinutes": 8,
+          "durationMinutes": 9,
           "status": "ready",
           "contentKind": "text",
           "hidden": false
@@ -96,7 +96,7 @@
           "kind": "article",
           "title": "Как вести дневник питания",
           "summary": "Зачем это на самом деле нужно и почему это не учет калорий",
-          "durationMinutes": 7,
+          "durationMinutes": 12,
           "status": "ready",
           "contentKind": "imported",
           "contentAsset": "extracted-2026-08-23.json",
@@ -109,7 +109,7 @@
           "completion": "server_linked",
           "label": "Подключить мессенджер",
           "summary": "Подключите Telegram или MAX для анкет, материалов и уведомлений",
-          "durationMinutes": 3,
+          "durationMinutes": 0,
           "hidden": false
         },
         {
@@ -117,7 +117,7 @@
           "kind": "article",
           "title": "Как надо взвешиваться",
           "summary": "Убираем тревогу от колебаний цифр на весах",
-          "durationMinutes": 5,
+          "durationMinutes": 7,
           "status": "ready",
           "contentKind": "imported",
           "contentAsset": "extracted-2026-08-23.json",
@@ -131,7 +131,7 @@
           "completion": "submitted",
           "label": "Заполните анкету",
           "summary": "Немного познакомимся и сделаем слепок вашей начальной точки",
-          "durationMinutes": 10,
+          "durationMinutes": 0,
           "hidden": false
         },
         {
@@ -141,7 +141,7 @@
           "event": "day_1_offer_opened",
           "label": "Что еще вам может понадобиться",
           "summary": "Краткий список того, чем я еще могу быть вам полезен",
-          "durationMinutes": 2,
+          "durationMinutes": 0,
           "completion": "opened",
           "required": true,
           "hidden": false
@@ -197,6 +197,7 @@
           "status": "ready",
           "contentKind": "imported",
           "contentAsset": "extracted-2026-08-23.json",
+          "durationMinutes": 13,
           "hidden": false,
           "contentPageTitle": "Четыре категории \"диет\" и чем они принципиально отличаются"
         },
@@ -208,6 +209,7 @@
           "status": "ready",
           "contentKind": "imported",
           "contentAsset": "extracted-2026-08-23.json",
+          "durationMinutes": 10,
           "hidden": false,
           "contentPageTitle": "Как на самом деле выглядит средиземноморская диета и почему она нам тоже не подходит"
         },
@@ -218,7 +220,7 @@
           "completion": "submitted",
           "label": "А какая у вас сейчас «диета»?",
           "summary": "Заполните небольшой опросник о ваших отношениях с разными продуктовыми категориями.",
-          "durationMinutes": 12,
+          "durationMinutes": 0,
           "required": true,
           "hidden": false,
           "requiredForAllAfterRevision": 17
@@ -240,7 +242,7 @@
       "tocSummary": "Какие есть реальные ограничения в здоровом питании, а на что можно не обращать внимание",
       "lead": "Сегодня и завтра, пока у вас достаточно мотивации в первые дни, я решил использовать это на полную катушку и выкатить самые объемные материалы, дальше будет посвободнее.  \n\nВ видео — общие принципы того, как стоит смотреть на вопросы \"вредности еды\", если мы хотим эффективно управлять своим питанием, а не просто шарахаться от этикеток.",
       "media": "video",
-      "video": 0,
+      "video": 29,
       "videoId": "https://cdn-g.boomstream.com/balancer/hyvhZs6y-9WmCBBoU.mp4",
       "image": null,
       "intro": "Это выжимка из прямого эфира, который когда-то давно был в открытом канале. Если вы его уже смотрели, то переходите сразу к статьям. Но советую хотя бы немного освежить его в памяти — дальше я опираюсь на выводы из этого видео.",
@@ -271,6 +273,7 @@
           "status": "ready",
           "contentKind": "text",
           "videoId": null,
+          "durationMinutes": 12,
           "hidden": false,
           "contentAsset": "06-necessary-restrictions.md"
         },
@@ -282,6 +285,7 @@
           "status": "ready",
           "contentKind": "text",
           "contentAsset": "08-whole-processed-ultraprocessed-food.md",
+          "durationMinutes": 11,
           "hidden": false,
           "videoId": null
         },
@@ -293,6 +297,7 @@
           "status": "ready",
           "contentKind": "text",
           "contentAsset": "07-reading-labels.md",
+          "durationMinutes": 12,
           "hidden": false,
           "videoId": null
         }
@@ -366,6 +371,7 @@
           "status": "ready",
           "contentKind": "text",
           "contentAsset": "13-dqs-system.md",
+          "durationMinutes": 45,
           "imagePresentation": "gallery",
           "hidden": false
         },
@@ -378,6 +384,7 @@
           "summary": "Откройте приложение, сохраните ссылку и начните туториал.",
           "contentKind": "text",
           "contentAsset": "19-dqs-access-and-print-options.md",
+          "durationMinutes": 0,
           "completion": "tutorial_completed",
           "hidden": false
         }

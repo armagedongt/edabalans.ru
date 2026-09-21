@@ -394,6 +394,50 @@ try {
   assert.deepEqual(completedSelected.faults,[])
   await completedSelected.native.close()
 
+  // Day totals count article reading time and a real displayed video only.
+  // Intro copy and zero-minute service steps stay outside the estimate.
+  for(const [dayNumber,expectedMinutes] of [[1,28],[2,23],[3,64],[4,64]]){
+    const durationPage=await nativePage('?course_day='+dayNumber,{progress:{...progress,current_day:dayNumber}})
+    await durationPage.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('#day .hero h1'))
+    await waitForReveal(durationPage.native)
+    assert.match(
+      await durationPage.native.locator('#day .eyebrow-time').textContent(),
+      new RegExp('≈ '+expectedMinutes+' минут'),
+      'Day '+dayNumber+' must show its article and displayed-video total',
+    )
+    const sourceDay=manifest.days[dayNumber-1]
+    for(const step of sourceDay.steps.filter(item=>!item.hidden&&item.durationMinutes===0)){
+      const index=sourceDay.steps.findIndex(item=>item.id===step.id)
+      assert.equal(
+        await durationPage.native.locator('#day [data-step="'+index+'"] .topic-meta').count(),
+        0,
+        step.id+' must not show a zero-minute label',
+      )
+    }
+    assert.deepEqual(durationPage.faults,[])
+    await durationPage.native.close()
+  }
+
+  const oneMinuteManifest=structuredClone(manifest)
+  oneMinuteManifest.days[1].steps[0].durationMinutes=1
+  const oneMinutePage=await nativePage('?course_day=2',{manifest:oneMinuteManifest,progress:{...progress,current_day:2}})
+  await oneMinutePage.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('#day .hero h1'))
+  await waitForReveal(oneMinutePage.native)
+  assert.equal(await oneMinutePage.native.locator('#day [data-step="0"] .topic-meta').textContent(),'≈ 1 минута')
+  assert.deepEqual(oneMinutePage.faults,[])
+  await oneMinutePage.native.close()
+
+  const displayedVideoManifest=structuredClone(manifest)
+  displayedVideoManifest.days[0].media='none'
+  displayedVideoManifest.days[0].videoId='https://cdn.example.test/day-one.mp4'
+  displayedVideoManifest.days[0].video=7
+  const displayedVideoPage=await nativePage('?course_day=1',{manifest:displayedVideoManifest,progress:{...progress,current_day:1}})
+  await displayedVideoPage.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('#day .media.video'))
+  await waitForReveal(displayedVideoPage.native)
+  assert.match(await displayedVideoPage.native.locator('#day .eyebrow-time').textContent(),/≈ 35 минут/)
+  assert.deepEqual(displayedVideoPage.faults,[])
+  await displayedVideoPage.native.close()
+
   // A deep link prefetches the course before mounting it; dashboard entry mounts it
   // before the first course fetch. Both must expose exactly the same visual system.
   const courseSkin = native => native.evaluate(() => {
@@ -621,6 +665,7 @@ try {
   asset.release()
   await waitForReveal(dqs.native)
   assert.match(await dqs.native.locator('#article').textContent(),/Готовое описание приложения/)
+  assert.equal(await dqs.native.locator('#count .material-meta-time').count(),0,'A zero-minute application must not show time in the open material header')
   assert.deepEqual(dqs.faults,[])
   await dqs.native.close()
 

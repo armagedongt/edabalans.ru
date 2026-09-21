@@ -1147,7 +1147,7 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
         root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
     ).read_text(encoding="utf-8")
     assert "d.steps[i].required!==false" in course_html
-    assert "var video=String(d.videoId||'').trim()" in course_html
+    assert "var video=String(d.videoId||'').trim()?" in course_html
 
 
 def test_masterclass_media_uses_present_links_and_player_route() -> None:

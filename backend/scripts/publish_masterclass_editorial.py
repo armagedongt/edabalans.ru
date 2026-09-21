@@ -80,6 +80,8 @@ def compile_manifest(
             continue
         day["title"] = editorial_day["title"]
         day["tocSummary"] = ""
+        if "video_minutes" in editorial_day:
+            day["video"] = editorial_day["video_minutes"]
         wanted = [item["step_id"] for item in editorial_day["materials"]]
         old_day_ids = {step["id"] for step in day.get("steps", [])}
         if any(step_id in current_steps and step_id not in old_day_ids for step_id in wanted):
@@ -354,6 +356,8 @@ def main() -> None:
             render_material(content, "markdown")
         for item in materials.values():
             if item["type"] == "article":
+                continue
+            if item["path"] is None:
                 continue
             step = next(
                 step

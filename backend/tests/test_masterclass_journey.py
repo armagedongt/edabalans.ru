@@ -1,6 +1,7 @@
 import os
 import hashlib
 import json
+import math
 import re
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -2808,11 +2809,22 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
         "Мастер-класс по изменению питания и пищевых привычек"
     )
     assert manifest_data["days"][0]["title"] == "Добро пожаловать!"
-    durations = [
-        step.get("durationMinutes") for step in manifest_data["days"][0]["steps"]
-    ]
-    assert all(isinstance(minutes, int) and minutes > 0 for minutes in durations)
     day_steps = manifest_data["days"][0]["steps"]
+    assert all(
+        isinstance(step.get("durationMinutes"), int)
+        and step["durationMinutes"] >= 0
+        for step in day_steps
+    )
+    assert all(
+        step["durationMinutes"] > 0
+        for step in day_steps
+        if step["kind"] == "article"
+    )
+    assert all(
+        step["durationMinutes"] == 0
+        for step in day_steps
+        if step["kind"] in {"messenger", "questionnaire", "offer"}
+    )
     offer_index = next(
         index for index, step in enumerate(day_steps) if step["id"] == "day-01-offer"
     )
@@ -3476,3 +3488,55 @@ def test_masterclass_outline_and_material_cards_do_not_render_summaries() -> Non
     assert "summary?" not in topic
     assert "step.editorialHtml" in course_html
     assert "special-material-prelude" in course_html
+
+
+def test_masterclass_duration_counts_present_video_and_hides_zero_time_steps() -> None:
+    root = Path(__file__).resolve().parents[2]
+    manifest = json.loads(
+        (root / "content" / "masterclass" / "course" / "course.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    course_html = (
+        root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
+    ).read_text(encoding="utf-8")
+
+    first_day, _, third_day, fourth_day = manifest["days"][:4]
+    assert first_day["media"] == "none"
+    assert first_day["video"] == 18
+    assert third_day["media"] == "video"
+    assert third_day["video"] == 29
+    assert fourth_day["media"] == "video"
+    assert fourth_day["video"] == 18.3
+
+    zero_time_steps = {
+        "day-01-messenger-link",
+        "day-01-questionnaire",
+        "day-01-offer",
+        "day-02-current-diet",
+        "day-04-dqs",
+    }
+    durations = {
+        step["id"]: step.get("durationMinutes")
+        for day in manifest["days"][:4]
+        for step in day["steps"]
+    }
+    assert {step_id for step_id in zero_time_steps if durations[step_id] == 0} == zero_time_steps
+
+    def expected_day_minutes(day: dict) -> int:
+        video = (
+            math.ceil(day.get("video") or 0)
+            if str(day.get("videoId") or "").strip()
+            else 0
+        )
+        return video + sum(
+            int(step.get("durationMinutes") or 0)
+            for step in day["steps"]
+            if not step.get("hidden", False)
+        )
+
+    assert [expected_day_minutes(day) for day in manifest["days"][:4]] == [28, 23, 64, 64]
+
+    assert "step.durationMinutes!==undefined&&step.durationMinutes!==null" in course_html
+    assert "var video=String(d.videoId||'').trim()?" in course_html
+    assert course_html.count("minutes>0?") >= 3

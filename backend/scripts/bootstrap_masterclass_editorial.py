@@ -97,6 +97,18 @@ def parse_program() -> tuple[list[dict], dict[str, dict]]:
             days.append(current_day)
             continue
         if current_day is not None:
+            day_meta = re.match(
+                r"<!-- day_id: ([^; ]+)(?:; video_minutes: ([0-9]+(?:\.[0-9]+)?))? -->",
+                line,
+            )
+            if day_meta:
+                current_day["day_id"] = day_meta.group(1)
+                if day_meta.group(2) is not None:
+                    video_minutes = float(day_meta.group(2))
+                    current_day["video_minutes"] = (
+                        int(video_minutes) if video_minutes.is_integer() else video_minutes
+                    )
+                continue
             gate_match = re.match(r"Экран без доступа: \[([^]]+)]\((materials/[^)]+)\)$", line)
             if gate_match:
                 current_day["access_gate"] = {"title": gate_match.group(1), "path": EDITORIAL / gate_match.group(2)}
@@ -114,10 +126,15 @@ def parse_program() -> tuple[list[dict], dict[str, dict]]:
                 current_day["intro_lines"].append(line)
             elif current_day["section"] == "task":
                 current_day["task_lines"].append(line)
-        material_match = re.match(
+        linked_material = re.match(
             r"\d+\. \[([^]]+)]\((materials/[^)]+)\) · ≈ (\d+) мин$", line
         )
-        if not material_match or current_day is None:
+        plain_material = re.match(r"\d+\. (.+?) · ≈ (\d+) мин$", line)
+        if (
+            current_day is None
+            or current_day["section"] != "materials"
+            or (not linked_material and not plain_material)
+        ):
             continue
         if index + 1 >= len(lines):
             raise ValueError(f"Нет технической привязки после: {line}")
@@ -128,9 +145,9 @@ def parse_program() -> tuple[list[dict], dict[str, dict]]:
             raise ValueError(f"Нет step_id/type после: {line}")
         item = {
             "day": current_day["number"],
-            "title": material_match.group(1).strip(),
-            "path": EDITORIAL / material_match.group(2),
-            "duration": int(material_match.group(3)),
+            "title": (linked_material or plain_material).group(1).strip(),
+            "path": EDITORIAL / linked_material.group(2) if linked_material else None,
+            "duration": int((linked_material or plain_material).group(3 if linked_material else 2)),
             "step_id": meta.group(1),
             "type": meta.group(2),
             "new_step": "new_step: true" in lines[index + 1],
@@ -218,7 +235,9 @@ def without_duplicate_leading_title(text: str) -> str:
 
 
 def write_material(item: dict, *, force: bool) -> None:
-    path: Path = item["path"]
+    path: Path | None = item["path"]
+    if path is None:
+        return
     if path.exists() and not force:
         return
     source_name = SOURCE_BY_STEP.get(item["step_id"])
@@ -244,7 +263,12 @@ def write_day(day: dict, manifest_day: dict, *, force: bool) -> None:
     if path.exists() and not force:
         return
     materials = "\n".join(
-        f"{index}. [{item['title']}](../materials/{item['path'].name}) · ≈ {item['duration']} мин"
+        (
+            f"{index}. [{item['title']}](../materials/{item['path'].name})"
+            if item["path"] is not None
+            else f"{index}. {item['title']}"
+        )
+        + f" · ≈ {item['duration']} мин"
         for index, item in enumerate(day["materials"], 1)
     )
     checks = "\n".join(

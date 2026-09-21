@@ -62,6 +62,41 @@ def test_editorial_program_compiles_to_runtime_titles_and_visible_steps() -> Non
     assert cycles["hidden"] is False
     assert cycles["locked"] is True
     assert cycles["badge"] == "Скоро"
+    assert compiled["days"][2]["video"] == 29
+    assert compiled["days"][3]["video"] == 18.3
+    zero_time_steps = {
+        "day-01-messenger-link",
+        "day-01-questionnaire",
+        "day-01-offer",
+        "day-02-current-diet",
+        "day-04-dqs",
+    }
+    assert {
+        step["id"]
+        for day in compiled["days"][:4]
+        for step in day["steps"]
+        if step["id"] in zero_time_steps and step["durationMinutes"] == 0
+    } == zero_time_steps
+
+
+def test_plain_messenger_step_is_safe_for_editorial_bootstrap(tmp_path, monkeypatch) -> None:
+    from scripts import bootstrap_masterclass_editorial as bootstrap
+
+    days, materials = bootstrap.parse_program()
+    messenger = materials["day-01-messenger-link"]
+    assert messenger["path"] is None
+    assert messenger["duration"] == 0
+
+    bootstrap.write_material(messenger, force=True)
+    monkeypatch.setattr(bootstrap, "EDITORIAL", tmp_path)
+    manifest = json.loads(
+        (ROOT / "content" / "masterclass" / "course" / "course.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    bootstrap.write_day(days[0], manifest["days"][0], force=True)
+    rendered = next((tmp_path / "days").glob("01-*.md")).read_text(encoding="utf-8")
+    assert "3. Подключить мессенджер · ≈ 0 мин" in rendered
 
 
 def test_editorial_program_restores_placeholder_missing_from_older_runtime() -> None:
