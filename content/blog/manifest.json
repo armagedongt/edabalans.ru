@@ -2,6 +2,834 @@
   "version": 1,
   "articles": [
     {
+        "source_id": "habits-formation-and-one-percent",
+        "slug": "chto-vy-ne-ponimaete-o-formirovanii-privychek",
+        "title": "Что вы не понимаете о формировании привычек?",
+        "excerpt": "Почему правило «21 дня» мало помогает со сложными изменениями — и как заменить героическое терпение привычкой улучшать питание хотя бы на 1%.",
+        "category": "Похудение",
+        "body_file": "habits-formation-and-one-percent.md",
+        "hero": {
+          "file": "habits-formation-and-one-percent/01.webp",
+          "alt": "Иллюстрация к статье «Что вы не понимаете о формировании привычек?»",
+          "provenance": "https://static.tildacdn.com/tild3639-3638-4139-a531-383964313937/image.png",
+          "show": true
+        },
+        "card": {
+          "file": "habits-formation-and-one-percent/01.webp",
+          "alt": "Иллюстрация к статье «Что вы не понимаете о формировании привычек?»",
+          "provenance": "https://static.tildacdn.com/tild3639-3638-4139-a531-383964313937/image.png",
+          "fit": "cover"
+        },
+        "related_source_ids": [
+          "11401696",
+          "13785403",
+          "training-combined-2023"
+        ],
+        "cta": "masterclass",
+        "status": "published",
+        "media": [
+          "habits-formation-and-one-percent/01.webp",
+          "habits-formation-and-one-percent/02.webp",
+          "habits-formation-and-one-percent/03.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://похудение-это-есть.рф/intensiv/tpost/fpvaefo9e1-kak-formiruyutsya-privichki-i-pravilo-1"
+          ],
+          "external_ids": [
+            "habits-formation-and-one-percent"
+          ],
+          "sha256": [
+            "c49868a9c9ac9c0231aef1b4066e17e5f45db3d815f270f0aadceac016ce7b0f"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "11339712",
+        "slug": "kakaya-samaya-vrednaya-dieta",
+        "title": "Какая самая вредная диета?",
+        "excerpt": "Самая вредная диета не обязательно выглядит опасной. Иногда она просто отнимает силы, ничего не даёт и убеждает человека, что нормальное питание вообще не работает.",
+        "category": "Качество питания",
+        "body_file": "11339712.md",
+        "hero": {
+          "file": "11339712/01.webp",
+          "alt": "Иллюстрация к статье «Какая самая вредная диета?»",
+          "provenance": "https://cs14.pikabu.ru/post_img/big/2024/03/28/6/1711617357162397936.jpg",
+          "show": true
+        },
+        "card": {
+          "file": "11339712/01.webp",
+          "alt": "Иллюстрация к статье «Какая самая вредная диета?»",
+          "provenance": "https://cs14.pikabu.ru/post_img/big/2024/03/28/6/1711617357162397936.jpg",
+          "fit": "cover"
+        },
+        "related_source_ids": [
+          "10999474",
+          "11207593",
+          "11875492"
+        ],
+        "cta": "masterclass",
+        "status": "published",
+        "media": [
+          "11339712/01.webp",
+          "11339712/02.webp",
+          "11339712/03.webp",
+          "11339712/04.webp",
+          "11339712/05.webp",
+          "11339712/06.webp",
+          "11339712/07.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://pikabu.ru/story/kakaya_samaya_vrednaya_dieta_11339712"
+          ],
+          "external_ids": [
+            "11339712"
+          ],
+          "sha256": [
+            "02cb62b5f74f8dbb0ddffca766a5dc046c493c17a723c551f39493bc6f98655c"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "intuitivnoe-pitanie-04-27-2",
+        "slug": "intuitivnoe-pitanie-vy-vse-nepravilno-ponyali",
+        "title": "Интуитивное питание — вы всё неправильно поняли",
+        "excerpt": "Интуитивное питание не обязано само по себе снижать вес. Его задача — вернуть нормальные отношения с едой, чтобы дальше можно было выбирать подходящий способ похудения.",
+        "category": "Похудение",
+        "body_file": "intuitivnoe-pitanie-04-27-2.md",
+        "hero": {
+          "file": "intuitivnoe-pitanie-04-27-2/01.webp",
+          "alt": "Иллюстрация к статье «Интуитивное питание — вы всё неправильно поняли»",
+          "provenance": "https://cs14.pikabu.ru/post_img/2024/04/27/10/171423750412834217.jpg",
+          "show": true
+        },
+        "card": {
+          "file": "intuitivnoe-pitanie-04-27-2/01.webp",
+          "alt": "Иллюстрация к статье «Интуитивное питание — вы всё неправильно поняли»",
+          "provenance": "https://cs14.pikabu.ru/post_img/2024/04/27/10/171423750412834217.jpg",
+          "fit": "contain"
+        },
+        "related_source_ids": [
+          "11401696",
+          "11339712",
+          "13785403"
+        ],
+        "cta": "masterclass",
+        "status": "published",
+        "media": [
+          "intuitivnoe-pitanie-04-27-2/01.webp",
+          "intuitivnoe-pitanie-04-27-2/02.webp",
+          "intuitivnoe-pitanie-04-27-2/03.webp",
+          "intuitivnoe-pitanie-04-27-2/04.webp",
+          "intuitivnoe-pitanie-04-27-2/05.webp",
+          "intuitivnoe-pitanie-04-27-2/06.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://telegra.ph/intuitivnoe-pitanie-04-27-2"
+          ],
+          "external_ids": [
+            "intuitivnoe-pitanie-04-27-2"
+          ],
+          "sha256": [
+            "adc03f62d89394f7960acdaa8c31262abde184624ab0d238748ec5e5883f01a5"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "11665295",
+        "slug": "musornaya-ryba-ili-musornye-nutriciologi",
+        "title": "Мусорная рыба или мусорные нутрициологи?",
+        "excerpt": "Тилапию и пангасиуса регулярно называют «грязной рыбой». Разбираю три популярных претензии: условия выращивания, загрязнения и пищевую ценность.",
+        "category": "Качество питания",
+        "body_file": "11665295.md",
+        "hero": {
+          "file": "11665295/01.webp",
+          "alt": "Иллюстрация к статье «Мусорная рыба или мусорные нутрициологи?»",
+          "provenance": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/17223368731707616.png",
+          "show": true
+        },
+        "card": {
+          "file": "11665295/01.webp",
+          "alt": "Иллюстрация к статье «Мусорная рыба или мусорные нутрициологи?»",
+          "provenance": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/17223368731707616.png",
+          "fit": "cover"
+        },
+        "related_source_ids": [
+          "11875492",
+          "11339712",
+          "11207593"
+        ],
+        "cta": "masterclass",
+        "status": "published",
+        "media": [
+          "11665295/01.webp",
+          "11665295/02.webp",
+          "11665295/03.webp",
+          "11665295/04.webp",
+          "11665295/05.webp",
+          "11665295/06.webp",
+          "11665295/07.webp",
+          "11665295/08.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://pikabu.ru/story/musornaya_ryiba_ili_musornyie_nutritsiologi_11665295"
+          ],
+          "external_ids": [
+            "11665295"
+          ],
+          "sha256": [
+            "c8d6760f9e99df97bda064fbd8e95cee935778dc7aa72ac43a186d8e7c272430"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "12109482",
+        "slug": "zadacha-pohudet-uroven-slozhnosti-zima",
+        "title": "Задача — похудеть. Уровень сложности — ЗИМА",
+        "excerpt": "Зимой мы меньше двигаемся, реже едим овощи и фрукты и легче проваливаемся в праздничное «дожиралово». Вот что можно сделать без героизма.",
+        "category": "Похудение",
+        "body_file": "12109482.md",
+        "hero": {
+          "file": "12109482/01.webp",
+          "alt": "Иллюстрация к статье «Задача — похудеть. Уровень сложности — ЗИМА»",
+          "provenance": "https://cs15.pikabu.ru/post_img/big/2024/12/07/9/1733583500193130408.jpg",
+          "show": true
+        },
+        "card": {
+          "file": "12109482/01.webp",
+          "alt": "Иллюстрация к статье «Задача — похудеть. Уровень сложности — ЗИМА»",
+          "provenance": "https://cs15.pikabu.ru/post_img/big/2024/12/07/9/1733583500193130408.jpg",
+          "fit": "cover"
+        },
+        "related_source_ids": [
+          "13277231",
+          "13785403",
+          "693339"
+        ],
+        "cta": "intensive",
+        "status": "published",
+        "media": [
+          "12109482/01.webp",
+          "12109482/02.webp",
+          "12109482/03.webp",
+          "12109482/04.webp",
+          "12109482/05.webp",
+          "12109482/06.webp",
+          "12109482/07.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://pikabu.ru/story/zadacha__pokhudet_uroven_slozhnosti__zima_12109482"
+          ],
+          "external_ids": [
+            "12109482"
+          ],
+          "sha256": [
+            "ec3243c52f3e7d569774f39dbb12b3c82f4e0e5218d408768a4ce71d2826cce8"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "13178972",
+        "slug": "izmeryaem-vashu-zhirnost",
+        "title": "Измеряем вашу жирность",
+        "excerpt": "Как примерно оценить процент жира дома, зачем знать диапазон нормы и почему одна цифра не должна превращаться в приговор или стандарт красоты.",
+        "category": "Ну, типа... ЗОЖ",
+        "body_file": "13178972.md",
+        "hero": {
+          "file": "13178972/01.webp",
+          "alt": "Иллюстрация к статье «Измеряем вашу жирность»",
+          "provenance": "https://cs18.pikabu.ru/s/2025/09/13/12/an6rdg3z_lg.jpg",
+          "show": true
+        },
+        "card": {
+          "file": "13178972/01.webp",
+          "alt": "Иллюстрация к статье «Измеряем вашу жирность»",
+          "provenance": "https://cs18.pikabu.ru/s/2025/09/13/12/an6rdg3z_lg.jpg",
+          "fit": "contain"
+        },
+        "related_source_ids": [
+          "13277231",
+          "13436070",
+          "11401696"
+        ],
+        "cta": "masterclass",
+        "status": "published",
+        "media": [
+          "13178972/01.webp",
+          "13178972/02.webp",
+          "13178972/03.webp",
+          "13178972/04.webp",
+          "13178972/05.webp",
+          "13178972/06.webp",
+          "13178972/07.webp",
+          "13178972/08.webp",
+          "13178972/09.webp",
+          "13178972/10.webp",
+          "13178972/11.webp",
+          "13178972/12.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://pikabu.ru/story/izmeryaem_vashu_zhirnost_13178972"
+          ],
+          "external_ids": [
+            "13178972"
+          ],
+          "sha256": [
+            "e5fe37842151ef30605281efb2469a0d7502644ef414659eb88a0331ce351a53"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "13762311",
+        "slug": "velikiy-post-pohudenie-i-zdorove",
+        "title": "Великий пост, похудение и здоровье",
+        "excerpt": "Пост может быть духовной практикой, но для питания это серьёзное ограничение. Разбираю белок, дефициты, похудение и разумные послабления.",
+        "category": "Качество питания",
+        "body_file": "13762311.md",
+        "hero": {
+          "file": "13762311/01.webp",
+          "alt": "Иллюстрация к статье «Великий пост, похудение и здоровье»",
+          "provenance": "https://cs20.pikabu.ru/s/2026/03/07/19/cgskx3tn_lg.png",
+          "show": true
+        },
+        "card": {
+          "file": "13762311/01.webp",
+          "alt": "Иллюстрация к статье «Великий пост, похудение и здоровье»",
+          "provenance": "https://cs20.pikabu.ru/s/2026/03/07/19/cgskx3tn_lg.png",
+          "fit": "cover"
+        },
+        "related_source_ids": [
+          "11665295",
+          "10999474",
+          "11401696"
+        ],
+        "cta": "masterclass",
+        "status": "published",
+        "media": [
+          "13762311/01.webp",
+          "13762311/02.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://pikabu.ru/story/velikiy_post_pokhudenie_i_zdorove_13762311"
+          ],
+          "external_ids": [
+            "13762311"
+          ],
+          "sha256": [
+            "03f915f794b9c4887960c81450a31b69f58d4e90b009b6f5b772748592e065c4"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
+        "slug": "minus-12-kilogrammov-za-2-mesyaca",
+        "title": "Минус 12 килограммов за 2 месяца",
+        "excerpt": "Что на практике потребуется от обычного человека, чтобы сбросить 12 килограммов за два месяца, и почему сначала полезнее проверить реалистичность цели.",
+        "category": "Похудение",
+        "body_file": "Minus-12-kilogramm-za-2-mesyaca-07-13.md",
+        "hero": {
+          "file": "Minus-12-kilogramm-za-2-mesyaca-07-13/card.webp",
+          "alt": "Иллюстрация к статье «Минус 12 килограммов за 2 месяца»",
+          "provenance": "OpenAI ImageGen, редакционная обложка без текста, 2026-09-21",
+          "show": false
+        },
+        "card": {
+          "file": "Minus-12-kilogramm-za-2-mesyaca-07-13/card.webp",
+          "alt": "Иллюстрация к статье «Минус 12 килограммов за 2 месяца»",
+          "provenance": "OpenAI ImageGen, редакционная обложка без текста, 2026-09-21",
+          "fit": "cover"
+        },
+        "related_source_ids": [
+          "13277231",
+          "11401696",
+          "13785403"
+        ],
+        "cta": "intensive",
+        "status": "published",
+        "media": [
+          "Minus-12-kilogramm-za-2-mesyaca-07-13/card.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://telegra.ph/Minus-12-kilogramm-za-2-mesyaca-07-13"
+          ],
+          "external_ids": [
+            "Minus-12-kilogramm-za-2-mesyaca-07-13"
+          ],
+          "sha256": [
+            "0bdec25cf130d46f1d20e1d40b212eb59ce2fba01392aa4c2510b88e6b86a0fd"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "11210930",
+        "slug": "nutriciolog-ili-dietolog-komu-verit",
+        "title": "Нутрициолог или диетолог — кому верить?",
+        "excerpt": "Диплом сам по себе не защищает от глупостей. Разбираю, чем отличаются врач-диетолог и нутрициолог — и как выбирать специалиста по содержанию его работы.",
+        "category": "Качество питания",
+        "body_file": "11210930.md",
+        "hero": {
+          "file": "11210930/card.webp",
+          "alt": "Иллюстрация к статье «Нутрициолог или диетолог — кому верить?»",
+          "provenance": "OpenAI ImageGen, редакционная обложка без текста, 2026-09-21",
+          "show": false
+        },
+        "card": {
+          "file": "11210930/card.webp",
+          "alt": "Иллюстрация к статье «Нутрициолог или диетолог — кому верить?»",
+          "provenance": "OpenAI ImageGen, редакционная обложка без текста, 2026-09-21",
+          "fit": "cover"
+        },
+        "related_source_ids": [
+          "11927800",
+          "11207593",
+          "11665295"
+        ],
+        "cta": "masterclass",
+        "status": "published",
+        "media": [
+          "11210930/card.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://pikabu.ru/story/otvet_na_post_nutritsiolog_vs_dietolog_11210930"
+          ],
+          "external_ids": [
+            "11210930"
+          ],
+          "sha256": [
+            "49681d0e636e8bc776a2a2c5b0e8cac930dde20f9d2e02938eb60960de031a8f"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "11534645",
+        "slug": "sladkoezhka-uvelichte-dozu-vitaminov",
+        "title": "«Сладкоежка — увеличьте дозу витаминов!»",
+        "excerpt": "Почему избыток сахара нельзя исправить коробкой БАДов и что на самом деле стоит менять в рационе.",
+        "category": "Качество питания",
+        "body_file": "11534645.md",
+        "hero": {
+          "file": "11534645/01.webp",
+          "alt": "Иллюстрация к статье ««Сладкоежка — увеличьте дозу витаминов!»»",
+          "provenance": "https://cs15.pikabu.ru/post_img/2024/06/22/7/1719054877165775730.webp",
+          "show": true
+        },
+        "card": {
+          "file": "11534645/01.webp",
+          "alt": "Иллюстрация к статье ««Сладкоежка — увеличьте дозу витаминов!»»",
+          "provenance": "https://cs15.pikabu.ru/post_img/2024/06/22/7/1719054877165775730.webp",
+          "fit": "contain"
+        },
+        "related_source_ids": [
+          "11833079",
+          "11875492",
+          "10999474"
+        ],
+        "cta": "masterclass",
+        "status": "published",
+        "media": [
+          "11534645/01.webp",
+          "11534645/02.webp",
+          "11534645/03.webp",
+          "11534645/04.webp",
+          "11534645/05.webp",
+          "11534645/06.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://pikabu.ru/story/sladkoezhka__uvelichte_dozu_vitaminov_11534645"
+          ],
+          "external_ids": [
+            "11534645"
+          ],
+          "sha256": [
+            "b8597db0b3a2943ad4bf0025f788b1493989060e8517fd9ef0c37771e121169f"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "11833079",
+        "slug": "10-debilnyh-faktov-o-vrednyh-produktah",
+        "title": "10 дебильных фактов о вредных продуктах для похудения",
+        "excerpt": "Картофель, чипсы, майонез, колбаса и другие продукты, которым приписывают не тот вред — и не по тем причинам.",
+        "category": "Качество питания",
+        "body_file": "11833079.md",
+        "hero": {
+          "file": "11833079/01.webp",
+          "alt": "Иллюстрация к статье «10 дебильных фактов о вредных продуктах для похудения»",
+          "provenance": "https://cs15.pikabu.ru/post_img/2024/09/21/10/172693476913174839.webp",
+          "show": true
+        },
+        "card": {
+          "file": "11833079/01.webp",
+          "alt": "Иллюстрация к статье «10 дебильных фактов о вредных продуктах для похудения»",
+          "provenance": "https://cs15.pikabu.ru/post_img/2024/09/21/10/172693476913174839.webp",
+          "fit": "cover"
+        },
+        "related_source_ids": [
+          "11339712",
+          "11207593",
+          "14183275"
+        ],
+        "cta": "masterclass",
+        "status": "published",
+        "media": [
+          "11833079/01.webp",
+          "11833079/02.webp",
+          "11833079/03.webp",
+          "11833079/04.webp",
+          "11833079/05.webp",
+          "11833079/06.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://pikabu.ru/story/10_debilnyikh_faktov_o_vrednyikh_produktakh_dlya_pokhudeniya_11833079"
+          ],
+          "external_ids": [
+            "11833079"
+          ],
+          "sha256": [
+            "ac0915ee5b787d0d6bb8c184aa800bc970e8d7941f579779d14ef27a6115e9e6"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "11857250",
+        "slug": "borba-s-lishnim-vesom-pochemu-shagov-nedostatochno",
+        "title": "Борьба с лишним весом: почему одних шагов недостаточно",
+        "excerpt": "Шаги полезны, но сами по себе не учат удерживать вес. Разбираю, где заканчивается польза активности и начинается попытка убежать от питания.",
+        "category": "Похудение",
+        "body_file": "11857250.md",
+        "hero": {
+          "file": "11857250/01.webp",
+          "alt": "Иллюстрация к статье «Борьба с лишним весом: почему одних шагов недостаточно»",
+          "provenance": "https://cs15.pikabu.ru/post_img/2024/09/22/7/1727001641131663781.webp",
+          "show": true
+        },
+        "card": {
+          "file": "11857250/01.webp",
+          "alt": "Иллюстрация к статье «Борьба с лишним весом: почему одних шагов недостаточно»",
+          "provenance": "https://cs15.pikabu.ru/post_img/2024/09/22/7/1727001641131663781.webp",
+          "fit": "contain"
+        },
+        "related_source_ids": [
+          "14102926",
+          "11522121",
+          "13436070"
+        ],
+        "cta": "intensive",
+        "status": "published",
+        "media": [
+          "11857250/01.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://pikabu.ru/story/otvet_na_post_borba_s_lishnim_vesom_11857250"
+          ],
+          "external_ids": [
+            "11857250"
+          ],
+          "sha256": [
+            "cb0fd6d6b604b71c7e82454c15ea8735c597484232855717bf8997e3fe5ba825"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "13355824",
+        "slug": "o-yarlykah",
+        "title": "О ярлыках",
+        "excerpt": "Как ярлык «я худею» делает еду чёрно-белой и почему добавление нормальной еды часто полезнее очередного запрета.",
+        "category": "Похудение",
+        "body_file": "13355824.md",
+        "hero": {
+          "file": "13355824/01.webp",
+          "alt": "Иллюстрация к статье «О ярлыках»",
+          "provenance": "https://cs19.pikabu.ru/s/2025/11/02/14/mrwuw7mu.webp",
+          "show": true
+        },
+        "card": {
+          "file": "13355824/01.webp",
+          "alt": "Иллюстрация к статье «О ярлыках»",
+          "provenance": "https://cs19.pikabu.ru/s/2025/11/02/14/mrwuw7mu.webp",
+          "fit": "cover"
+        },
+        "related_source_ids": [
+          "14021584",
+          "10999474",
+          "habits-formation-and-one-percent"
+        ],
+        "cta": "intensive",
+        "status": "published",
+        "media": [
+          "13355824/01.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://pikabu.ru/story/o_yarlyikakh_13355824"
+          ],
+          "external_ids": [
+            "13355824"
+          ],
+          "sha256": [
+            "0898d005cfebf9827f6a1a1168723054f56c377fef26d4ca71ec7a7c0cd7e2f5"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "d1baceb9e2b6b72013b6",
+        "slug": "glavnye-oshibki-v-pohudenii-do-goloda",
+        "title": "Главные ошибки в похудении: что нужно знать до того, как испытывать голод",
+        "excerpt": "Восемь ошибок, которые превращают похудение в короткий приступ силы воли: от неправильного ПП до попытки решить всё тренировками.",
+        "category": "Похудение",
+        "body_file": "d1baceb9e2b6b72013b6.md",
+        "hero": {
+          "file": "d1baceb9e2b6b72013b6/01.webp",
+          "alt": "Иллюстрация к статье «Главные ошибки в похудении: что нужно знать до того, как испытывать голод»",
+          "provenance": "https://optim.tildacdn.com/tild3536-3763-4064-b739-333335313931/-/format/webp/image.png.webp",
+          "show": true
+        },
+        "card": {
+          "file": "d1baceb9e2b6b72013b6/01.webp",
+          "alt": "Иллюстрация к статье «Главные ошибки в похудении: что нужно знать до того, как испытывать голод»",
+          "provenance": "https://optim.tildacdn.com/tild3536-3763-4064-b739-333335313931/-/format/webp/image.png.webp",
+          "fit": "cover"
+        },
+        "related_source_ids": [
+          "13785403",
+          "11401696",
+          "14021584"
+        ],
+        "cta": "masterclass",
+        "status": "published",
+        "media": [
+          "d1baceb9e2b6b72013b6/01.webp",
+          "d1baceb9e2b6b72013b6/02.webp",
+          "d1baceb9e2b6b72013b6/03.webp",
+          "d1baceb9e2b6b72013b6/04.webp",
+          "d1baceb9e2b6b72013b6/05.webp",
+          "d1baceb9e2b6b72013b6/06.webp",
+          "d1baceb9e2b6b72013b6/07.webp",
+          "d1baceb9e2b6b72013b6/08.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://telegra.ph/Plan-06-26-5"
+          ],
+          "external_ids": [
+            "d1baceb9e2b6b72013b6"
+          ],
+          "sha256": [
+            "9d609f77af5d81b27abb5467f3aae64d507f3e8c808c2801d8b1fd70e3d4c6d2"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "30e4d208f2cbd8e57201",
+        "slug": "pochemu-lyudi-hudeyut-i-snova-nabirayut-ves",
+        "title": "Почему люди худеют и снова набирают вес",
+        "excerpt": "Большинство людей умеют терпеть диету, но не умеют жить в новом весе. Разница — в навыках, которые остаются после похудения.",
+        "category": "Похудение",
+        "body_file": "30e4d208f2cbd8e57201.md",
+        "hero": {
+          "file": "30e4d208f2cbd8e57201/card.webp",
+          "alt": "Иллюстрация к статье «Почему люди худеют и снова набирают вес»",
+          "provenance": "OpenAI ImageGen, редакционная обложка без текста, 2026-09-21",
+          "show": false
+        },
+        "card": {
+          "file": "30e4d208f2cbd8e57201/card.webp",
+          "alt": "Иллюстрация к статье «Почему люди худеют и снова набирают вес»",
+          "provenance": "OpenAI ImageGen, редакционная обложка без текста, 2026-09-21",
+          "fit": "cover"
+        },
+        "related_source_ids": [
+          "13277231",
+          "11401696",
+          "habits-formation-and-one-percent"
+        ],
+        "cta": "masterclass",
+        "status": "published",
+        "media": [
+          "30e4d208f2cbd8e57201/card.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://telegra.ph/Prezentaciya-02-02-3"
+          ],
+          "external_ids": [
+            "30e4d208f2cbd8e57201"
+          ],
+          "sha256": [
+            "fff5ad400bfce85ae81af09995e076179378abd6d7095864f2a2529eab018333"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "2e269fdc52d600a64753",
+        "slug": "kak-ya-reshil-proyti-100000-shagov",
+        "title": "Как я решил пройти 100 000 шагов за один день",
+        "excerpt": "Семьдесят пять километров, ночь в лесу, отсутствие воды и очень наглядная цена идеи пройти сто тысяч шагов за сутки.",
+        "category": "Личное",
+        "body_file": "2e269fdc52d600a64753.md",
+        "hero": {
+          "file": "2e269fdc52d600a64753/01.webp",
+          "alt": "Иллюстрация к статье «Как я решил пройти 100 000 шагов за один день»",
+          "provenance": "https://telegra.ph/file/d2e03401d96ba2f577e1c.jpg",
+          "show": true
+        },
+        "card": {
+          "file": "2e269fdc52d600a64753/01.webp",
+          "alt": "Иллюстрация к статье «Как я решил пройти 100 000 шагов за один день»",
+          "provenance": "https://telegra.ph/file/d2e03401d96ba2f577e1c.jpg",
+          "fit": "contain"
+        },
+        "related_source_ids": [
+          "11522121",
+          "0d583f6ad1cea0eef750",
+          "14102926"
+        ],
+        "cta": "intensive",
+        "status": "published",
+        "media": [
+          "2e269fdc52d600a64753/01.webp",
+          "2e269fdc52d600a64753/02.webp",
+          "2e269fdc52d600a64753/03.webp",
+          "2e269fdc52d600a64753/04.webp",
+          "2e269fdc52d600a64753/05.webp",
+          "2e269fdc52d600a64753/06.webp",
+          "2e269fdc52d600a64753/09.webp",
+          "2e269fdc52d600a64753/10.webp",
+          "2e269fdc52d600a64753/11.webp",
+          "2e269fdc52d600a64753/12.webp",
+          "2e269fdc52d600a64753/13.webp",
+          "2e269fdc52d600a64753/14.webp",
+          "2e269fdc52d600a64753/15.webp",
+          "2e269fdc52d600a64753/16.webp",
+          "2e269fdc52d600a64753/17.webp",
+          "2e269fdc52d600a64753/18.webp",
+          "2e269fdc52d600a64753/19.webp",
+          "2e269fdc52d600a64753/20.webp",
+          "2e269fdc52d600a64753/21.webp",
+          "2e269fdc52d600a64753/22.webp",
+          "2e269fdc52d600a64753/24.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://telegra.ph/100-000-06-28"
+          ],
+          "external_ids": [
+            "2e269fdc52d600a64753"
+          ],
+          "sha256": [
+            "0df360f45e4a42bcff438dc8126193dfe23bb7cacb977a87b97af1bf63c44106"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+      {
+        "source_id": "0d583f6ad1cea0eef750",
+        "slug": "odin-nebolshoy-pryzhok-bolshie-peremeny",
+        "title": "Один небольшой прыжок — большие перемены в жизни",
+        "excerpt": "Один неудачный прыжок на велосипеде, травма колена и жизнь, которая после этого пошла совсем по другой дороге.",
+        "category": "Личное",
+        "body_file": "0d583f6ad1cea0eef750.md",
+        "hero": {
+          "file": "0d583f6ad1cea0eef750/01.webp",
+          "alt": "Иллюстрация к статье «Один небольшой прыжок — большие перемены в жизни»",
+          "provenance": "https://cs14.pikabu.ru/post_img/2023/05/01/10/1682963002189961844.jpg",
+          "show": true
+        },
+        "card": {
+          "file": "0d583f6ad1cea0eef750/01.webp",
+          "alt": "Иллюстрация к статье «Один небольшой прыжок — большие перемены в жизни»",
+          "provenance": "https://cs14.pikabu.ru/post_img/2023/05/01/10/1682963002189961844.jpg",
+          "fit": "cover"
+        },
+        "related_source_ids": [
+          "2e269fdc52d600a64753",
+          "training-combined-2023",
+          "12922345"
+        ],
+        "cta": "intensive",
+        "status": "published",
+        "media": [
+          "0d583f6ad1cea0eef750/01.webp",
+          "0d583f6ad1cea0eef750/02.webp",
+          "0d583f6ad1cea0eef750/03.webp",
+          "0d583f6ad1cea0eef750/04.webp",
+          "0d583f6ad1cea0eef750/05.webp"
+        ],
+        "source_provenance": {
+          "urls": [
+            "https://telegra.ph/story-09-01-3"
+          ],
+          "external_ids": [
+            "0d583f6ad1cea0eef750"
+          ],
+          "sha256": [
+            "57a351d30b5c450745530870b9d0833708b9ff8342bc0a65580bde49d9790cc4"
+          ],
+          "source_basis": "full_source",
+          "validation_status": "pass",
+          "review_status": "pass"
+        }
+      },
+
+    {
       "source_id": "13327360",
       "slug": "ukolol-i-pohudel-ozempik-semavik-nyuansy",
       "title": "Уколол и похудел: Оземпик, Семавик и нюансы",
