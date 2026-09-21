@@ -912,6 +912,11 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     ) in course_html
     assert '.article-toc-popover a::before' in course_css
     assert '.mobile-article-toc-popover a::before' in course_css
+    compact_css = re.sub(r"\s+", "", course_css)
+    assert '#days.day-button.active{box-shadow:inset3px0var(--accent-gold-start)!important;}' in compact_css
+    assert '#days.day-button.current-material{position:relative;margin:0px!important;outline:0px!important;}' in compact_css
+    assert '.day-button.recipe,#days.day-button.recipe{position:relative;}' in compact_css
+    assert '.day-button.recipe,#days.day-button.recipe{position:relative;box-shadow:' not in compact_css
 
     static_dir = root / "backend" / "app" / "static"
     editor_html = (static_dir / "course-structure-editor.html").read_text(encoding="utf-8")

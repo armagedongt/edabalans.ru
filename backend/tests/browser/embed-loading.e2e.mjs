@@ -385,6 +385,9 @@ try {
     assert.match(selectedNumberBackground,/linear-gradient\(/,'The selected completed day keeps a gradient number at '+width+'px')
     assert.match(selectedNumberBackground,/rgb\(255, 194, 90\)/,'The selected completed day keeps the agreed gold start color at '+width+'px')
     assert.match(selectedNumberBackground,/rgb\(243, 154, 47\)/,'The selected completed day keeps the agreed gold end color at '+width+'px')
+    assert.match(await completedSelectedDay.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'Only the selected day keeps the gold sidebar marker at '+width+'px')
+    const nonSelectedRecipe=completedSelected.native.locator('#days .day-button.recipe:not(.active)').first()
+    if(await nonSelectedRecipe.count())assert.doesNotMatch(await nonSelectedRecipe.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'A recipe day does not keep a separate gold marker at '+width+'px')
     assert.equal(await completedSelectedDay.locator('.day-state').evaluate(element=>getComputedStyle(element,'::after').content),'"✓"','The selected completed day keeps its checkmark at '+width+'px')
     if(process.env.QA_OUT){
       await mkdir(process.env.QA_OUT,{recursive:true})
