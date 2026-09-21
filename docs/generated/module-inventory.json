@@ -1438,6 +1438,10 @@
     },
     {
       "module_id": "products",
+      "path": "backend/tests/browser/account-offers-layout.e2e.mjs"
+    },
+    {
+      "module_id": "products",
       "path": "backend/tests/browser/account-theme.e2e.mjs"
     },
     {
@@ -1926,6 +1930,10 @@
     },
     {
       "module_id": "platform.blog",
+      "path": "content/blog/articles/0d583f6ad1cea0eef750.md"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "content/blog/articles/10999474.md"
     },
     {
@@ -1934,11 +1942,19 @@
     },
     {
       "module_id": "platform.blog",
+      "path": "content/blog/articles/11210930.md"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "content/blog/articles/11269472.md"
     },
     {
       "module_id": "platform.blog",
       "path": "content/blog/articles/11277666.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/11339712.md"
     },
     {
       "module_id": "platform.blog",
@@ -1954,7 +1970,23 @@
     },
     {
       "module_id": "platform.blog",
+      "path": "content/blog/articles/11534645.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/11665295.md"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "content/blog/articles/11762932.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/11833079.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/11857250.md"
     },
     {
       "module_id": "platform.blog",
@@ -1963,6 +1995,10 @@
     {
       "module_id": "platform.blog",
       "path": "content/blog/articles/11927800.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/12109482.md"
     },
     {
       "module_id": "platform.blog",
@@ -1982,6 +2018,10 @@
     },
     {
       "module_id": "platform.blog",
+      "path": "content/blog/articles/13178972.md"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "content/blog/articles/13277231.md"
     },
     {
@@ -1990,7 +2030,15 @@
     },
     {
       "module_id": "platform.blog",
+      "path": "content/blog/articles/13355824.md"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "content/blog/articles/13436070.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/13762311.md"
     },
     {
       "module_id": "platform.blog",
@@ -2010,11 +2058,35 @@
     },
     {
       "module_id": "platform.blog",
+      "path": "content/blog/articles/2e269fdc52d600a64753.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/30e4d208f2cbd8e57201.md"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "content/blog/articles/693339.md"
     },
     {
       "module_id": "platform.blog",
+      "path": "content/blog/articles/Minus-12-kilogramm-za-2-mesyaca-07-13.md"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "content/blog/articles/Sahar-09-18.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/d1baceb9e2b6b72013b6.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/habits-formation-and-one-percent.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/intuitivnoe-pitanie-04-27-2.md"
     },
     {
       "module_id": "platform.blog",
@@ -2035,6 +2107,26 @@
     {
       "module_id": "platform.blog",
       "path": "content/blog/manifest.json"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/0d583f6ad1cea0eef750/01.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/0d583f6ad1cea0eef750/02.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/0d583f6ad1cea0eef750/03.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/0d583f6ad1cea0eef750/04.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/0d583f6ad1cea0eef750/05.webp"
     },
     {
       "module_id": "platform.blog",
@@ -2102,6 +2194,10 @@
     },
     {
       "module_id": "platform.blog",
+      "path": "content/blog/media/11210930/card.webp"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "content/blog/media/11269472/01-v3-photo.webp"
     },
     {
@@ -2131,6 +2227,34 @@
     {
       "module_id": "platform.blog",
       "path": "content/blog/media/11277666/card.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11339712/01.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11339712/02.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11339712/03.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11339712/04.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11339712/05.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11339712/06.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11339712/07.webp"
     },
     {
       "module_id": "platform.blog",
@@ -2294,6 +2418,62 @@
     },
     {
       "module_id": "platform.blog",
+      "path": "content/blog/media/11534645/01.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11534645/02.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11534645/03.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11534645/04.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11534645/05.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11534645/06.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11665295/01.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11665295/02.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11665295/03.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11665295/04.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11665295/05.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11665295/06.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11665295/07.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11665295/08.webp"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "content/blog/media/11762932/01.webp"
     },
     {
@@ -2311,6 +2491,34 @@
     {
       "module_id": "platform.blog",
       "path": "content/blog/media/11762932/card.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11833079/01.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11833079/02.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11833079/03.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11833079/04.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11833079/05.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11833079/06.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11857250/01.webp"
     },
     {
       "module_id": "platform.blog",
@@ -2507,6 +2715,34 @@
     {
       "module_id": "platform.blog",
       "path": "content/blog/media/11927800/tilda-15.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12109482/01.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12109482/02.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12109482/03.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12109482/04.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12109482/05.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12109482/06.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12109482/07.webp"
     },
     {
       "module_id": "platform.blog",
@@ -2774,6 +3010,54 @@
     },
     {
       "module_id": "platform.blog",
+      "path": "content/blog/media/13178972/01.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13178972/02.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13178972/03.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13178972/04.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13178972/05.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13178972/06.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13178972/07.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13178972/08.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13178972/09.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13178972/10.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13178972/11.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13178972/12.webp"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "content/blog/media/13277231/01-v2-body.webp"
     },
     {
@@ -2802,6 +3086,10 @@
     },
     {
       "module_id": "platform.blog",
+      "path": "content/blog/media/13355824/01.webp"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "content/blog/media/13436070/01.webp"
     },
     {
@@ -2827,6 +3115,14 @@
     {
       "module_id": "platform.blog",
       "path": "content/blog/media/13436070/card.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13762311/01.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13762311/02.webp"
     },
     {
       "module_id": "platform.blog",
@@ -2918,11 +3214,103 @@
     },
     {
       "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/01.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/02.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/03.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/04.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/05.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/06.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/09.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/10.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/11.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/12.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/13.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/14.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/15.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/16.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/17.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/18.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/19.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/20.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/21.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/22.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/2e269fdc52d600a64753/24.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/30e4d208f2cbd8e57201/card.webp"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "content/blog/media/693339/01.webp"
     },
     {
       "module_id": "platform.blog",
       "path": "content/blog/media/693339/card.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/Minus-12-kilogramm-za-2-mesyaca-07-13/card.webp"
     },
     {
       "module_id": "platform.blog",
@@ -2935,6 +3323,74 @@
     {
       "module_id": "platform.blog",
       "path": "content/blog/media/Sahar-09-18/card.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/d1baceb9e2b6b72013b6/01.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/d1baceb9e2b6b72013b6/02.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/d1baceb9e2b6b72013b6/03.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/d1baceb9e2b6b72013b6/04.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/d1baceb9e2b6b72013b6/05.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/d1baceb9e2b6b72013b6/06.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/d1baceb9e2b6b72013b6/07.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/d1baceb9e2b6b72013b6/08.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/habits-formation-and-one-percent/01.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/habits-formation-and-one-percent/02.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/habits-formation-and-one-percent/03.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/intuitivnoe-pitanie-04-27-2/01.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/intuitivnoe-pitanie-04-27-2/02.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/intuitivnoe-pitanie-04-27-2/03.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/intuitivnoe-pitanie-04-27-2/04.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/intuitivnoe-pitanie-04-27-2/05.webp"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/intuitivnoe-pitanie-04-27-2/06.webp"
     },
     {
       "module_id": "platform.blog",
@@ -23832,7 +24288,7 @@
         {
           "file": "telegram-bot/service/tests/test_engine.py",
           "kind": "function",
-          "line": 386,
+          "line": 397,
           "module_id": "messaging.telegram.engine",
           "name": "test_start_is_idempotent_and_schedules_day1_reminder_from_run_start",
           "qualname": "test_start_is_idempotent_and_schedules_day1_reminder_from_run_start"
@@ -23840,7 +24296,7 @@
         {
           "file": "telegram-bot/service/tests/test_engine.py",
           "kind": "function",
-          "line": 404,
+          "line": 415,
           "module_id": "messaging.telegram.engine",
           "name": "test_message_and_anchored_delay_can_run_in_one_advance_call",
           "qualname": "test_message_and_anchored_delay_can_run_in_one_advance_call"
@@ -23848,7 +24304,7 @@
         {
           "file": "telegram-bot/service/tests/test_engine.py",
           "kind": "function",
-          "line": 434,
+          "line": 445,
           "module_id": "messaging.telegram.engine",
           "name": "test_final_pin_error_does_not_stop_welcome",
           "qualname": "test_final_pin_error_does_not_stop_welcome"
@@ -23856,7 +24312,7 @@
         {
           "file": "telegram-bot/service/tests/test_engine.py",
           "kind": "function",
-          "line": 450,
+          "line": 461,
           "module_id": "messaging.telegram.engine",
           "name": "test_unopened_day_reminder_is_sent_only_once_and_sets_canonical_tag",
           "qualname": "test_unopened_day_reminder_is_sent_only_once_and_sets_canonical_tag"
@@ -23864,7 +24320,7 @@
         {
           "file": "telegram-bot/service/tests/test_engine.py",
           "kind": "function",
-          "line": 483,
+          "line": 494,
           "module_id": "messaging.telegram.engine",
           "name": "test_opened_day_suppresses_reminder",
           "qualname": "test_opened_day_suppresses_reminder"
@@ -23872,7 +24328,7 @@
         {
           "file": "telegram-bot/service/tests/test_engine.py",
           "kind": "function",
-          "line": 520,
+          "line": 531,
           "module_id": "messaging.telegram.engine",
           "name": "test_real_subscription_check_updates_account_and_canonical_tag",
           "qualname": "test_real_subscription_check_updates_account_and_canonical_tag"
@@ -23880,7 +24336,7 @@
         {
           "file": "telegram-bot/service/tests/test_engine.py",
           "kind": "function",
-          "line": 565,
+          "line": 576,
           "module_id": "messaging.telegram.engine",
           "name": "test_welcome_does_not_check_purchase",
           "qualname": "test_welcome_does_not_check_purchase"
@@ -23888,7 +24344,7 @@
         {
           "file": "telegram-bot/service/tests/test_engine.py",
           "kind": "function",
-          "line": 574,
+          "line": 585,
           "module_id": "messaging.telegram.engine",
           "name": "test_sequence_stops_before_unapproved_message",
           "qualname": "test_sequence_stops_before_unapproved_message"
@@ -23896,7 +24352,7 @@
         {
           "file": "telegram-bot/service/tests/test_engine.py",
           "kind": "function",
-          "line": 594,
+          "line": 605,
           "module_id": "messaging.telegram.engine",
           "name": "test_transient_delivery_error_is_retried_without_stopping_sequence",
           "qualname": "test_transient_delivery_error_is_retried_without_stopping_sequence"
@@ -23904,7 +24360,7 @@
         {
           "file": "telegram-bot/service/tests/test_engine.py",
           "kind": "function",
-          "line": 619,
+          "line": 630,
           "module_id": "messaging.telegram.engine",
           "name": "test_recipient_403_stops_only_that_contacts_runs",
           "qualname": "test_recipient_403_stops_only_that_contacts_runs"
@@ -23912,7 +24368,7 @@
         {
           "file": "telegram-bot/service/tests/test_engine.py",
           "kind": "function",
-          "line": 654,
+          "line": 665,
           "module_id": "messaging.telegram.engine",
           "name": "test_welcome_timing_and_subscription_observation_steps",
           "qualname": "test_welcome_timing_and_subscription_observation_steps"
@@ -23920,7 +24376,7 @@
         {
           "file": "telegram-bot/service/tests/test_engine.py",
           "kind": "function",
-          "line": 673,
+          "line": 684,
           "module_id": "messaging.telegram.engine",
           "name": "test_complete_welcome_flow_resolves_all_personal_links_for_both_subscription_branches",
           "qualname": "test_complete_welcome_flow_resolves_all_personal_links_for_both_subscription_branches"
@@ -25629,7 +26085,7 @@
         "принимать готовые события курса и ставить сообщения;",
         "повторно проверять доступ и test-only ограничения перед доставкой;",
         "доставлять явно запрошенные копии анкет обычным участникам, не включая для них",
-        "при первом reveal DQS отправлять в привязанный Telegram постоянную браузерную",
+        "при первом reveal DQS отправлять в подключённый Telegram постоянную браузерную",
         "после отправки итогового саморевью возвращать участнику его полную копию без"
       ],
       "card": "docs/knowledge-base/modules/catalog/messaging.telegram.postpurchase.md",
@@ -36345,7 +36801,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 388,
+          "line": 389,
           "module_id": "platform.auth",
           "name": "test_max_miniapp_creates_same_native_session_only_for_linked_entitled_user",
           "qualname": "test_max_miniapp_creates_same_native_session_only_for_linked_entitled_user"
@@ -36353,7 +36809,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 445,
+          "line": 447,
           "module_id": "platform.auth",
           "name": "test_historical_messenger_identity_cannot_create_miniapp_session",
           "qualname": "test_historical_messenger_identity_cannot_create_miniapp_session"
@@ -36361,7 +36817,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 462,
+          "line": 464,
           "module_id": "platform.auth",
           "name": "test_native_user_can_accept_current_legal_documents_after_login",
           "qualname": "test_native_user_can_accept_current_legal_documents_after_login"
@@ -36369,7 +36825,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 488,
+          "line": 490,
           "module_id": "platform.auth",
           "name": "test_paid_payment_creates_one_idempotent_direct_credential_email",
           "qualname": "test_paid_payment_creates_one_idempotent_direct_credential_email"
@@ -36377,7 +36833,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "class",
-          "line": 491,
+          "line": 493,
           "module_id": "platform.auth",
           "name": "FrozenDatetime",
           "qualname": "test_paid_payment_creates_one_idempotent_direct_credential_email.FrozenDatetime"
@@ -36385,7 +36841,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "method",
-          "line": 493,
+          "line": 495,
           "module_id": "platform.auth",
           "name": "now",
           "qualname": "test_paid_payment_creates_one_idempotent_direct_credential_email.FrozenDatetime.now"
@@ -36393,7 +36849,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 549,
+          "line": 551,
           "module_id": "platform.auth",
           "name": "test_email_registration_creates_no_access_user_and_one_reusable_onboarding",
           "qualname": "test_email_registration_creates_no_access_user_and_one_reusable_onboarding"
@@ -36401,7 +36857,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "class",
-          "line": 552,
+          "line": 554,
           "module_id": "platform.auth",
           "name": "FrozenDatetime",
           "qualname": "test_email_registration_creates_no_access_user_and_one_reusable_onboarding.FrozenDatetime"
@@ -36409,7 +36865,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "method",
-          "line": 554,
+          "line": 556,
           "module_id": "platform.auth",
           "name": "now",
           "qualname": "test_email_registration_creates_no_access_user_and_one_reusable_onboarding.FrozenDatetime.now"
@@ -36417,7 +36873,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 611,
+          "line": 613,
           "module_id": "platform.auth",
           "name": "test_registration_limits_valid_requests_per_ip",
           "qualname": "test_registration_limits_valid_requests_per_ip"
@@ -36425,7 +36881,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 627,
+          "line": 629,
           "module_id": "platform.auth",
           "name": "test_free_onboarding_worker_sends_the_generated_messenger_links",
           "qualname": "test_free_onboarding_worker_sends_the_generated_messenger_links"
@@ -36433,7 +36889,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 658,
+          "line": 660,
           "module_id": "platform.auth",
           "name": "test_paid_onboarding_worker_sends_the_generated_password",
           "qualname": "test_paid_onboarding_worker_sends_the_generated_password"
@@ -36441,7 +36897,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 711,
+          "line": 713,
           "module_id": "platform.auth",
           "name": "test_account_portal_exposes_the_registration_entry",
           "qualname": "test_account_portal_exposes_the_registration_entry"
@@ -36449,7 +36905,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 724,
+          "line": 726,
           "module_id": "platform.auth",
           "name": "test_empty_account_routes_masterclass_to_the_common_purchase_view",
           "qualname": "test_empty_account_routes_masterclass_to_the_common_purchase_view"
@@ -36457,7 +36913,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 748,
+          "line": 750,
           "module_id": "platform.auth",
           "name": "test_empty_account_any_closed_product_opens_public_masterclass_tariffs",
           "qualname": "test_empty_account_any_closed_product_opens_public_masterclass_tariffs"
@@ -36465,7 +36921,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 786,
+          "line": 788,
           "module_id": "platform.auth",
           "name": "test_account_registration_migration_makes_payment_optional",
           "qualname": "test_account_registration_migration_makes_payment_optional"
@@ -36473,7 +36929,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 799,
+          "line": 801,
           "module_id": "platform.auth",
           "name": "test_free_onboarding_does_not_restart_after_paid_credential_was_issued",
           "qualname": "test_free_onboarding_does_not_restart_after_paid_credential_was_issued"
@@ -36481,7 +36937,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 830,
+          "line": 832,
           "module_id": "platform.auth",
           "name": "test_account_access_email_contains_claim_links_but_not_a_password",
           "qualname": "test_account_access_email_contains_claim_links_but_not_a_password"
@@ -36489,7 +36945,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 863,
+          "line": 865,
           "module_id": "platform.auth",
           "name": "test_paid_account_email_contains_direct_credentials_and_escapes_html",
           "qualname": "test_paid_account_email_contains_direct_credentials_and_escapes_html"
@@ -36497,7 +36953,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 888,
+          "line": 890,
           "module_id": "platform.auth",
           "name": "test_legacy_queued_email_uses_stored_deadline_not_new_ttl",
           "qualname": "test_legacy_queued_email_uses_stored_deadline_not_new_ttl"
@@ -36505,7 +36961,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 906,
+          "line": 908,
           "module_id": "platform.auth",
           "name": "test_registration_email_does_not_claim_a_payment_or_product_access",
           "qualname": "test_registration_email_does_not_claim_a_payment_or_product_access"
@@ -36513,7 +36969,7 @@
         {
           "file": "backend/tests/test_account_password_auth.py",
           "kind": "function",
-          "line": 923,
+          "line": 925,
           "module_id": "platform.auth",
           "name": "test_enabled_onboarding_requires_complete_delivery_configuration",
           "qualname": "test_enabled_onboarding_requires_complete_delivery_configuration"
@@ -37071,6 +37527,10 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "content/blog/articles/0d583f6ad1cea0eef750.md"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "content/blog/articles/10999474.md"
         },
         {
@@ -37079,11 +37539,19 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "content/blog/articles/11210930.md"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "content/blog/articles/11269472.md"
         },
         {
           "module_id": "platform.blog",
           "path": "content/blog/articles/11277666.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/11339712.md"
         },
         {
           "module_id": "platform.blog",
@@ -37099,7 +37567,23 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "content/blog/articles/11534645.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/11665295.md"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "content/blog/articles/11762932.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/11833079.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/11857250.md"
         },
         {
           "module_id": "platform.blog",
@@ -37108,6 +37592,10 @@
         {
           "module_id": "platform.blog",
           "path": "content/blog/articles/11927800.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/12109482.md"
         },
         {
           "module_id": "platform.blog",
@@ -37127,6 +37615,10 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "content/blog/articles/13178972.md"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "content/blog/articles/13277231.md"
         },
         {
@@ -37135,7 +37627,15 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "content/blog/articles/13355824.md"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "content/blog/articles/13436070.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/13762311.md"
         },
         {
           "module_id": "platform.blog",
@@ -37155,11 +37655,35 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "content/blog/articles/2e269fdc52d600a64753.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/30e4d208f2cbd8e57201.md"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "content/blog/articles/693339.md"
         },
         {
           "module_id": "platform.blog",
+          "path": "content/blog/articles/Minus-12-kilogramm-za-2-mesyaca-07-13.md"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "content/blog/articles/Sahar-09-18.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/d1baceb9e2b6b72013b6.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/habits-formation-and-one-percent.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/intuitivnoe-pitanie-04-27-2.md"
         },
         {
           "module_id": "platform.blog",
@@ -37180,6 +37704,26 @@
         {
           "module_id": "platform.blog",
           "path": "content/blog/manifest.json"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/0d583f6ad1cea0eef750/01.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/0d583f6ad1cea0eef750/02.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/0d583f6ad1cea0eef750/03.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/0d583f6ad1cea0eef750/04.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/0d583f6ad1cea0eef750/05.webp"
         },
         {
           "module_id": "platform.blog",
@@ -37247,6 +37791,10 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "content/blog/media/11210930/card.webp"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "content/blog/media/11269472/01-v3-photo.webp"
         },
         {
@@ -37276,6 +37824,34 @@
         {
           "module_id": "platform.blog",
           "path": "content/blog/media/11277666/card.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11339712/01.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11339712/02.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11339712/03.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11339712/04.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11339712/05.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11339712/06.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11339712/07.webp"
         },
         {
           "module_id": "platform.blog",
@@ -37439,6 +38015,62 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "content/blog/media/11534645/01.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11534645/02.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11534645/03.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11534645/04.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11534645/05.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11534645/06.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11665295/01.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11665295/02.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11665295/03.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11665295/04.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11665295/05.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11665295/06.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11665295/07.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11665295/08.webp"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "content/blog/media/11762932/01.webp"
         },
         {
@@ -37456,6 +38088,34 @@
         {
           "module_id": "platform.blog",
           "path": "content/blog/media/11762932/card.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11833079/01.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11833079/02.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11833079/03.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11833079/04.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11833079/05.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11833079/06.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11857250/01.webp"
         },
         {
           "module_id": "platform.blog",
@@ -37652,6 +38312,34 @@
         {
           "module_id": "platform.blog",
           "path": "content/blog/media/11927800/tilda-15.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12109482/01.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12109482/02.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12109482/03.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12109482/04.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12109482/05.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12109482/06.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12109482/07.webp"
         },
         {
           "module_id": "platform.blog",
@@ -37919,6 +38607,54 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "content/blog/media/13178972/01.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13178972/02.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13178972/03.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13178972/04.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13178972/05.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13178972/06.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13178972/07.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13178972/08.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13178972/09.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13178972/10.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13178972/11.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13178972/12.webp"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "content/blog/media/13277231/01-v2-body.webp"
         },
         {
@@ -37947,6 +38683,10 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "content/blog/media/13355824/01.webp"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "content/blog/media/13436070/01.webp"
         },
         {
@@ -37972,6 +38712,14 @@
         {
           "module_id": "platform.blog",
           "path": "content/blog/media/13436070/card.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13762311/01.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13762311/02.webp"
         },
         {
           "module_id": "platform.blog",
@@ -38063,11 +38811,103 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/01.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/02.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/03.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/04.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/05.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/06.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/09.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/10.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/11.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/12.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/13.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/14.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/15.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/16.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/17.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/18.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/19.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/20.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/21.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/22.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/2e269fdc52d600a64753/24.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/30e4d208f2cbd8e57201/card.webp"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "content/blog/media/693339/01.webp"
         },
         {
           "module_id": "platform.blog",
           "path": "content/blog/media/693339/card.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/Minus-12-kilogramm-za-2-mesyaca-07-13/card.webp"
         },
         {
           "module_id": "platform.blog",
@@ -38080,6 +38920,74 @@
         {
           "module_id": "platform.blog",
           "path": "content/blog/media/Sahar-09-18/card.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/d1baceb9e2b6b72013b6/01.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/d1baceb9e2b6b72013b6/02.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/d1baceb9e2b6b72013b6/03.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/d1baceb9e2b6b72013b6/04.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/d1baceb9e2b6b72013b6/05.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/d1baceb9e2b6b72013b6/06.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/d1baceb9e2b6b72013b6/07.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/d1baceb9e2b6b72013b6/08.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/habits-formation-and-one-percent/01.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/habits-formation-and-one-percent/02.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/habits-formation-and-one-percent/03.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/intuitivnoe-pitanie-04-27-2/01.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/intuitivnoe-pitanie-04-27-2/02.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/intuitivnoe-pitanie-04-27-2/03.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/intuitivnoe-pitanie-04-27-2/04.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/intuitivnoe-pitanie-04-27-2/05.webp"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/intuitivnoe-pitanie-04-27-2/06.webp"
         },
         {
           "module_id": "platform.blog",
@@ -51529,6 +52437,10 @@
         },
         {
           "module_id": "products",
+          "path": "backend/tests/browser/account-offers-layout.e2e.mjs"
+        },
+        {
+          "module_id": "products",
           "path": "backend/tests/browser/account-theme.e2e.mjs"
         },
         {
@@ -52454,6 +53366,22 @@
           "qualname": "observe"
         },
         {
+          "file": "backend/tests/browser/account-offers-layout.e2e.mjs",
+          "kind": "function",
+          "line": 58,
+          "module_id": "products",
+          "name": "captureAccount",
+          "qualname": "captureAccount"
+        },
+        {
+          "file": "backend/tests/browser/account-offers-layout.e2e.mjs",
+          "kind": "function",
+          "line": 111,
+          "module_id": "products",
+          "name": "captureOffers",
+          "qualname": "captureOffers"
+        },
+        {
           "file": "backend/tests/browser/account-theme.e2e.mjs",
           "kind": "function",
           "line": 20,
@@ -52864,7 +53792,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 779,
+          "line": 794,
           "module_id": "products",
           "name": "test_masterclass_first_day_article_and_image_layout_contract",
           "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -52872,7 +53800,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1002,
+          "line": 1017,
           "module_id": "products",
           "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
           "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -52880,7 +53808,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1020,
+          "line": 1035,
           "module_id": "products",
           "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
           "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -52888,7 +53816,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1047,
+          "line": 1062,
           "module_id": "products",
           "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
           "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -52896,7 +53824,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1072,
+          "line": 1087,
           "module_id": "products",
           "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
           "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -52904,7 +53832,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1086,
+          "line": 1101,
           "module_id": "products",
           "name": "test_masterclass_manifest_is_the_complete_canonical_program",
           "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -52912,7 +53840,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1153,
+          "line": 1168,
           "module_id": "products",
           "name": "test_masterclass_media_uses_present_links_and_player_route",
           "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -52920,7 +53848,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1169,
+          "line": 1184,
           "module_id": "products",
           "name": "test_legal_friendly_routes_are_public",
           "qualname": "test_legal_friendly_routes_are_public"
@@ -52928,7 +53856,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1188,
+          "line": 1203,
           "module_id": "products",
           "name": "test_legal_navigation_uses_permanent_public_domain",
           "qualname": "test_legal_navigation_uses_permanent_public_domain"
@@ -52936,7 +53864,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1200,
+          "line": 1215,
           "module_id": "products",
           "name": "test_checkout_and_cookie_legal_links_use_permanent_public_domain",
           "qualname": "test_checkout_and_cookie_legal_links_use_permanent_public_domain"
@@ -52944,7 +53872,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1223,
+          "line": 1238,
           "module_id": "products",
           "name": "test_intensive_concept_pages_are_public",
           "qualname": "test_intensive_concept_pages_are_public"
@@ -52952,7 +53880,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1313,
+          "line": 1328,
           "module_id": "products",
           "name": "test_removed_video_player_preview_routes_are_unavailable",
           "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -52960,7 +53888,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1319,
+          "line": 1334,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -52968,7 +53896,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1332,
+          "line": 1347,
           "module_id": "products",
           "name": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page",
           "qualname": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page"
@@ -52976,7 +53904,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1368,
+          "line": 1383,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -52984,7 +53912,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1379,
+          "line": 1394,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -52992,7 +53920,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1393,
+          "line": 1408,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -60562,7 +61490,7 @@
         {
           "file": "backend/app/masterclass_offer_catalog.py",
           "kind": "function",
-          "line": 173,
+          "line": 174,
           "module_id": "products.masterclass.offers",
           "name": "offer_products",
           "qualname": "offer_products"
@@ -60570,7 +61498,7 @@
         {
           "file": "backend/app/masterclass_offer_catalog.py",
           "kind": "function",
-          "line": 198,
+          "line": 199,
           "module_id": "products.masterclass.offers",
           "name": "bundle_detail",
           "qualname": "bundle_detail"
@@ -60578,7 +61506,7 @@
         {
           "file": "backend/app/masterclass_offer_catalog.py",
           "kind": "function",
-          "line": 203,
+          "line": 204,
           "module_id": "products.masterclass.offers",
           "name": "partial_bundle_copy",
           "qualname": "partial_bundle_copy"
@@ -60758,7 +61686,7 @@
         "сохранять каждый ответ и завершение попытки;",
         "при выборе способа ответа одной серверной транзакцией сохранять статус анкеты и",
         "отдельно сохранять пол, возраст, рост и вес входной анкеты как проверенные",
-        "давать выбор: отправить заполненную анкету в привязанный мессенджер или",
+        "давать выбор: отправить заполненную анкету в подключённый мессенджер или",
         "после успешного выбора активировать отдельную кнопку «Продолжить», не",
         "не открывать чек-лист дня до завершения сохранения; при рассинхронизации",
         "по кнопке начальной анкеты ставить в очередь существующую пару сообщений с",
@@ -62589,7 +63517,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2335,
+          "line": 2339,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog",
           "qualname": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog"
@@ -62597,7 +63525,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2363,
+          "line": 2367,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_simulator_lists_every_current_course_checkpoint_in_order",
           "qualname": "test_offer_simulator_lists_every_current_course_checkpoint_in_order"
@@ -62605,7 +63533,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2411,
+          "line": 2415,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_offer_preview_uses_production_offer_builder",
           "qualname": "test_admin_offer_preview_uses_production_offer_builder"
@@ -62613,7 +63541,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2433,
+          "line": 2437,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_offer_presentation_has_the_approved_six_stage_grid",
           "qualname": "test_site_short_offer_presentation_has_the_approved_six_stage_grid"
@@ -62621,7 +63549,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2487,
+          "line": 2491,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner",
           "qualname": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner"
@@ -62629,7 +63557,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2507,
+          "line": 2511,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid",
           "qualname": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid"
@@ -62637,7 +63565,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2532,
+          "line": 2536,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout",
           "qualname": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout"
@@ -62645,7 +63573,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2555,
+          "line": 2559,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_placement_cannot_be_forged_by_tilda_client",
           "qualname": "test_offer_placement_cannot_be_forged_by_tilda_client"
@@ -62653,7 +63581,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2572,
+          "line": 2576,
           "module_id": "products.masterclass.runtime",
           "name": "test_checkout_rejects_token_from_another_offer_stage",
           "qualname": "test_checkout_rejects_token_from_another_offer_stage"
@@ -62661,7 +63589,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2585,
+          "line": 2589,
           "module_id": "products.masterclass.runtime",
           "name": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage",
           "qualname": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage"
@@ -62669,7 +63597,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2619,
+          "line": 2623,
           "module_id": "products.masterclass.runtime",
           "name": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint",
           "qualname": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint"
@@ -62677,7 +63605,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2654,
+          "line": 2658,
           "module_id": "products.masterclass.runtime",
           "name": "test_recipe_windows_start_once_and_repeat_without_moving_due_time",
           "qualname": "test_recipe_windows_start_once_and_repeat_without_moving_due_time"
@@ -62685,7 +63613,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2704,
+          "line": 2708,
           "module_id": "products.masterclass.runtime",
           "name": "test_late_repeat_uses_the_original_course_checkpoint_time",
           "qualname": "test_late_repeat_uses_the_original_course_checkpoint_time"
@@ -62693,7 +63621,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2730,
+          "line": 2734,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_can_generate_signed_tokens_for_tilda_placements",
           "qualname": "test_admin_can_generate_signed_tokens_for_tilda_placements"
@@ -62701,7 +63629,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2750,
+          "line": 2754,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_offer_stages_explain_the_runtime_window_rules",
           "qualname": "test_admin_offer_stages_explain_the_runtime_window_rules"
@@ -62709,7 +63637,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2782,
+          "line": 2786,
           "module_id": "products.masterclass.runtime",
           "name": "test_current_21_day_offer_placements_select_expected_stages",
           "qualname": "test_current_21_day_offer_placements_select_expected_stages"
@@ -62717,7 +63645,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2800,
+          "line": 2804,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_progress_is_server_side_and_steps_are_strictly_sequential",
           "qualname": "test_course_progress_is_server_side_and_steps_are_strictly_sequential"
@@ -62725,7 +63653,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2973,
+          "line": 2977,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_api_uses_tilda_email_but_still_requires_server_access",
           "qualname": "test_course_api_uses_tilda_email_but_still_requires_server_access"
@@ -62733,7 +63661,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3007,
+          "line": 3011,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_can_enable_isolated_accelerated_course_profile",
           "qualname": "test_admin_can_enable_isolated_accelerated_course_profile"
@@ -62741,7 +63669,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3028,
+          "line": 3032,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_reset_moves_course_to_current_policy_and_restores_messenger_step",
           "qualname": "test_admin_reset_moves_course_to_current_policy_and_restores_messenger_step"
@@ -62749,7 +63677,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3061,
+          "line": 3065,
           "module_id": "products.masterclass.runtime",
           "name": "test_closing_review_sends_one_copy_only_after_submit",
           "qualname": "test_closing_review_sends_one_copy_only_after_submit"
@@ -62757,7 +63685,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3107,
+          "line": 3111,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_content_uses_the_same_member_session",
           "qualname": "test_course_content_uses_the_same_member_session"
@@ -62765,7 +63693,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3127,
+          "line": 3131,
           "module_id": "products.masterclass.runtime",
           "name": "test_recipe_gate_uses_access_and_records_open_once",
           "qualname": "test_recipe_gate_uses_access_and_records_open_once"
@@ -62773,7 +63701,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3189,
+          "line": 3193,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_preview_lists_only_masterclass_users_with_primary_email",
           "qualname": "test_admin_preview_lists_only_masterclass_users_with_primary_email"
@@ -62781,7 +63709,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3200,
+          "line": 3204,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices",
           "qualname": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices"
@@ -62789,7 +63717,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3225,
+          "line": 3229,
           "module_id": "products.masterclass.runtime",
           "name": "test_review_expiry_automatically_starts_final_week_before_day_21",
           "qualname": "test_review_expiry_automatically_starts_final_week_before_day_21"
@@ -62797,7 +63725,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3277,
+          "line": 3281,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_day_21_shows_standard_consultation_after_final_week",
           "qualname": "test_site_short_day_21_shows_standard_consultation_after_final_week"
@@ -62805,7 +63733,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3307,
+          "line": 3311,
           "module_id": "products.masterclass.runtime",
           "name": "test_day_19_fixes_review_and_last_week_timeline_once",
           "qualname": "test_day_19_fixes_review_and_last_week_timeline_once"
@@ -62813,7 +63741,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3332,
+          "line": 3336,
           "module_id": "products.masterclass.runtime",
           "name": "test_day_21_during_review_only_shows_its_existing_remainder",
           "qualname": "test_day_21_during_review_only_shows_its_existing_remainder"
@@ -62821,7 +63749,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3358,
+          "line": 3362,
           "module_id": "products.masterclass.runtime",
           "name": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed",
           "qualname": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed"
@@ -62829,7 +63757,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3395,
+          "line": 3399,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_lists_personal_offer_window_with_effective_expired_status",
           "qualname": "test_admin_lists_personal_offer_window_with_effective_expired_status"
@@ -62837,7 +63765,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3417,
+          "line": 3421,
           "module_id": "products.masterclass.runtime",
           "name": "test_crm_card_contains_masterclass_answers_events_and_offer_windows",
           "qualname": "test_crm_card_contains_masterclass_answers_events_and_offer_windows"
@@ -62845,7 +63773,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3441,
+          "line": 3445,
           "module_id": "products.masterclass.runtime",
           "name": "test_masterclass_article_media_route_serves_only_registered_image_tree",
           "qualname": "test_masterclass_article_media_route_serves_only_registered_image_tree"
@@ -62853,7 +63781,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3472,
+          "line": 3476,
           "module_id": "products.masterclass.runtime",
           "name": "test_masterclass_outline_and_material_cards_do_not_render_summaries",
           "qualname": "test_masterclass_outline_and_material_cards_do_not_render_summaries"
@@ -62861,7 +63789,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3493,
+          "line": 3497,
           "module_id": "products.masterclass.runtime",
           "name": "test_masterclass_duration_counts_present_video_and_hides_zero_time_steps",
           "qualname": "test_masterclass_duration_counts_present_video_and_hides_zero_time_steps"
@@ -62869,7 +63797,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 3526,
+          "line": 3530,
           "module_id": "products.masterclass.runtime",
           "name": "expected_day_minutes",
           "qualname": "test_masterclass_duration_counts_present_video_and_hides_zero_time_steps.expected_day_minutes"
@@ -78607,7 +79535,7 @@
     {
       "file": "backend/app/masterclass_offer_catalog.py",
       "kind": "function",
-      "line": 173,
+      "line": 174,
       "module_id": "products.masterclass.offers",
       "name": "offer_products",
       "qualname": "offer_products"
@@ -78615,7 +79543,7 @@
     {
       "file": "backend/app/masterclass_offer_catalog.py",
       "kind": "function",
-      "line": 198,
+      "line": 199,
       "module_id": "products.masterclass.offers",
       "name": "bundle_detail",
       "qualname": "bundle_detail"
@@ -78623,7 +79551,7 @@
     {
       "file": "backend/app/masterclass_offer_catalog.py",
       "kind": "function",
-      "line": 203,
+      "line": 204,
       "module_id": "products.masterclass.offers",
       "name": "partial_bundle_copy",
       "qualname": "partial_bundle_copy"
@@ -86621,6 +87549,22 @@
       "qualname": "main"
     },
     {
+      "file": "backend/tests/browser/account-offers-layout.e2e.mjs",
+      "kind": "function",
+      "line": 58,
+      "module_id": "products",
+      "name": "captureAccount",
+      "qualname": "captureAccount"
+    },
+    {
+      "file": "backend/tests/browser/account-offers-layout.e2e.mjs",
+      "kind": "function",
+      "line": 111,
+      "module_id": "products",
+      "name": "captureOffers",
+      "qualname": "captureOffers"
+    },
+    {
       "file": "backend/tests/browser/account-theme.e2e.mjs",
       "kind": "function",
       "line": 20,
@@ -86999,7 +87943,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 388,
+      "line": 389,
       "module_id": "platform.auth",
       "name": "test_max_miniapp_creates_same_native_session_only_for_linked_entitled_user",
       "qualname": "test_max_miniapp_creates_same_native_session_only_for_linked_entitled_user"
@@ -87007,7 +87951,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 445,
+      "line": 447,
       "module_id": "platform.auth",
       "name": "test_historical_messenger_identity_cannot_create_miniapp_session",
       "qualname": "test_historical_messenger_identity_cannot_create_miniapp_session"
@@ -87015,7 +87959,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 462,
+      "line": 464,
       "module_id": "platform.auth",
       "name": "test_native_user_can_accept_current_legal_documents_after_login",
       "qualname": "test_native_user_can_accept_current_legal_documents_after_login"
@@ -87023,7 +87967,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 488,
+      "line": 490,
       "module_id": "platform.auth",
       "name": "test_paid_payment_creates_one_idempotent_direct_credential_email",
       "qualname": "test_paid_payment_creates_one_idempotent_direct_credential_email"
@@ -87031,7 +87975,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "class",
-      "line": 491,
+      "line": 493,
       "module_id": "platform.auth",
       "name": "FrozenDatetime",
       "qualname": "test_paid_payment_creates_one_idempotent_direct_credential_email.FrozenDatetime"
@@ -87039,7 +87983,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "method",
-      "line": 493,
+      "line": 495,
       "module_id": "platform.auth",
       "name": "now",
       "qualname": "test_paid_payment_creates_one_idempotent_direct_credential_email.FrozenDatetime.now"
@@ -87047,7 +87991,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 549,
+      "line": 551,
       "module_id": "platform.auth",
       "name": "test_email_registration_creates_no_access_user_and_one_reusable_onboarding",
       "qualname": "test_email_registration_creates_no_access_user_and_one_reusable_onboarding"
@@ -87055,7 +87999,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "class",
-      "line": 552,
+      "line": 554,
       "module_id": "platform.auth",
       "name": "FrozenDatetime",
       "qualname": "test_email_registration_creates_no_access_user_and_one_reusable_onboarding.FrozenDatetime"
@@ -87063,7 +88007,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "method",
-      "line": 554,
+      "line": 556,
       "module_id": "platform.auth",
       "name": "now",
       "qualname": "test_email_registration_creates_no_access_user_and_one_reusable_onboarding.FrozenDatetime.now"
@@ -87071,7 +88015,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 611,
+      "line": 613,
       "module_id": "platform.auth",
       "name": "test_registration_limits_valid_requests_per_ip",
       "qualname": "test_registration_limits_valid_requests_per_ip"
@@ -87079,7 +88023,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 627,
+      "line": 629,
       "module_id": "platform.auth",
       "name": "test_free_onboarding_worker_sends_the_generated_messenger_links",
       "qualname": "test_free_onboarding_worker_sends_the_generated_messenger_links"
@@ -87087,7 +88031,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 658,
+      "line": 660,
       "module_id": "platform.auth",
       "name": "test_paid_onboarding_worker_sends_the_generated_password",
       "qualname": "test_paid_onboarding_worker_sends_the_generated_password"
@@ -87095,7 +88039,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 711,
+      "line": 713,
       "module_id": "platform.auth",
       "name": "test_account_portal_exposes_the_registration_entry",
       "qualname": "test_account_portal_exposes_the_registration_entry"
@@ -87103,7 +88047,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 724,
+      "line": 726,
       "module_id": "platform.auth",
       "name": "test_empty_account_routes_masterclass_to_the_common_purchase_view",
       "qualname": "test_empty_account_routes_masterclass_to_the_common_purchase_view"
@@ -87111,7 +88055,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 748,
+      "line": 750,
       "module_id": "platform.auth",
       "name": "test_empty_account_any_closed_product_opens_public_masterclass_tariffs",
       "qualname": "test_empty_account_any_closed_product_opens_public_masterclass_tariffs"
@@ -87119,7 +88063,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 786,
+      "line": 788,
       "module_id": "platform.auth",
       "name": "test_account_registration_migration_makes_payment_optional",
       "qualname": "test_account_registration_migration_makes_payment_optional"
@@ -87127,7 +88071,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 799,
+      "line": 801,
       "module_id": "platform.auth",
       "name": "test_free_onboarding_does_not_restart_after_paid_credential_was_issued",
       "qualname": "test_free_onboarding_does_not_restart_after_paid_credential_was_issued"
@@ -87135,7 +88079,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 830,
+      "line": 832,
       "module_id": "platform.auth",
       "name": "test_account_access_email_contains_claim_links_but_not_a_password",
       "qualname": "test_account_access_email_contains_claim_links_but_not_a_password"
@@ -87143,7 +88087,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 863,
+      "line": 865,
       "module_id": "platform.auth",
       "name": "test_paid_account_email_contains_direct_credentials_and_escapes_html",
       "qualname": "test_paid_account_email_contains_direct_credentials_and_escapes_html"
@@ -87151,7 +88095,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 888,
+      "line": 890,
       "module_id": "platform.auth",
       "name": "test_legacy_queued_email_uses_stored_deadline_not_new_ttl",
       "qualname": "test_legacy_queued_email_uses_stored_deadline_not_new_ttl"
@@ -87159,7 +88103,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 906,
+      "line": 908,
       "module_id": "platform.auth",
       "name": "test_registration_email_does_not_claim_a_payment_or_product_access",
       "qualname": "test_registration_email_does_not_claim_a_payment_or_product_access"
@@ -87167,7 +88111,7 @@
     {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
-      "line": 923,
+      "line": 925,
       "module_id": "platform.auth",
       "name": "test_enabled_onboarding_requires_complete_delivery_configuration",
       "qualname": "test_enabled_onboarding_requires_complete_delivery_configuration"
@@ -87503,7 +88447,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 779,
+      "line": 794,
       "module_id": "products",
       "name": "test_masterclass_first_day_article_and_image_layout_contract",
       "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -87511,7 +88455,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1002,
+      "line": 1017,
       "module_id": "products",
       "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
       "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -87519,7 +88463,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1020,
+      "line": 1035,
       "module_id": "products",
       "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
       "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -87527,7 +88471,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1047,
+      "line": 1062,
       "module_id": "products",
       "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
       "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -87535,7 +88479,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1072,
+      "line": 1087,
       "module_id": "products",
       "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
       "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -87543,7 +88487,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1086,
+      "line": 1101,
       "module_id": "products",
       "name": "test_masterclass_manifest_is_the_complete_canonical_program",
       "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -87551,7 +88495,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1153,
+      "line": 1168,
       "module_id": "products",
       "name": "test_masterclass_media_uses_present_links_and_player_route",
       "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -87559,7 +88503,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1169,
+      "line": 1184,
       "module_id": "products",
       "name": "test_legal_friendly_routes_are_public",
       "qualname": "test_legal_friendly_routes_are_public"
@@ -87567,7 +88511,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1188,
+      "line": 1203,
       "module_id": "products",
       "name": "test_legal_navigation_uses_permanent_public_domain",
       "qualname": "test_legal_navigation_uses_permanent_public_domain"
@@ -87575,7 +88519,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1200,
+      "line": 1215,
       "module_id": "products",
       "name": "test_checkout_and_cookie_legal_links_use_permanent_public_domain",
       "qualname": "test_checkout_and_cookie_legal_links_use_permanent_public_domain"
@@ -87583,7 +88527,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1223,
+      "line": 1238,
       "module_id": "products",
       "name": "test_intensive_concept_pages_are_public",
       "qualname": "test_intensive_concept_pages_are_public"
@@ -87591,7 +88535,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1313,
+      "line": 1328,
       "module_id": "products",
       "name": "test_removed_video_player_preview_routes_are_unavailable",
       "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -87599,7 +88543,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1319,
+      "line": 1334,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -87607,7 +88551,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1332,
+      "line": 1347,
       "module_id": "products",
       "name": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page",
       "qualname": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page"
@@ -87615,7 +88559,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1368,
+      "line": 1383,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -87623,7 +88567,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1379,
+      "line": 1394,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -87631,7 +88575,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1393,
+      "line": 1408,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -91239,7 +92183,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2335,
+      "line": 2339,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog",
       "qualname": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog"
@@ -91247,7 +92191,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2363,
+      "line": 2367,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_simulator_lists_every_current_course_checkpoint_in_order",
       "qualname": "test_offer_simulator_lists_every_current_course_checkpoint_in_order"
@@ -91255,7 +92199,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2411,
+      "line": 2415,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_offer_preview_uses_production_offer_builder",
       "qualname": "test_admin_offer_preview_uses_production_offer_builder"
@@ -91263,7 +92207,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2433,
+      "line": 2437,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_offer_presentation_has_the_approved_six_stage_grid",
       "qualname": "test_site_short_offer_presentation_has_the_approved_six_stage_grid"
@@ -91271,7 +92215,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2487,
+      "line": 2491,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner",
       "qualname": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner"
@@ -91279,7 +92223,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2507,
+      "line": 2511,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid",
       "qualname": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid"
@@ -91287,7 +92231,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2532,
+      "line": 2536,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout",
       "qualname": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout"
@@ -91295,7 +92239,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2555,
+      "line": 2559,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_placement_cannot_be_forged_by_tilda_client",
       "qualname": "test_offer_placement_cannot_be_forged_by_tilda_client"
@@ -91303,7 +92247,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2572,
+      "line": 2576,
       "module_id": "products.masterclass.runtime",
       "name": "test_checkout_rejects_token_from_another_offer_stage",
       "qualname": "test_checkout_rejects_token_from_another_offer_stage"
@@ -91311,7 +92255,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2585,
+      "line": 2589,
       "module_id": "products.masterclass.runtime",
       "name": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage",
       "qualname": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage"
@@ -91319,7 +92263,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2619,
+      "line": 2623,
       "module_id": "products.masterclass.runtime",
       "name": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint",
       "qualname": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint"
@@ -91327,7 +92271,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2654,
+      "line": 2658,
       "module_id": "products.masterclass.runtime",
       "name": "test_recipe_windows_start_once_and_repeat_without_moving_due_time",
       "qualname": "test_recipe_windows_start_once_and_repeat_without_moving_due_time"
@@ -91335,7 +92279,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2704,
+      "line": 2708,
       "module_id": "products.masterclass.runtime",
       "name": "test_late_repeat_uses_the_original_course_checkpoint_time",
       "qualname": "test_late_repeat_uses_the_original_course_checkpoint_time"
@@ -91343,7 +92287,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2730,
+      "line": 2734,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_can_generate_signed_tokens_for_tilda_placements",
       "qualname": "test_admin_can_generate_signed_tokens_for_tilda_placements"
@@ -91351,7 +92295,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2750,
+      "line": 2754,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_offer_stages_explain_the_runtime_window_rules",
       "qualname": "test_admin_offer_stages_explain_the_runtime_window_rules"
@@ -91359,7 +92303,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2782,
+      "line": 2786,
       "module_id": "products.masterclass.runtime",
       "name": "test_current_21_day_offer_placements_select_expected_stages",
       "qualname": "test_current_21_day_offer_placements_select_expected_stages"
@@ -91367,7 +92311,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2800,
+      "line": 2804,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_progress_is_server_side_and_steps_are_strictly_sequential",
       "qualname": "test_course_progress_is_server_side_and_steps_are_strictly_sequential"
@@ -91375,7 +92319,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2973,
+      "line": 2977,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_api_uses_tilda_email_but_still_requires_server_access",
       "qualname": "test_course_api_uses_tilda_email_but_still_requires_server_access"
@@ -91383,7 +92327,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3007,
+      "line": 3011,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_can_enable_isolated_accelerated_course_profile",
       "qualname": "test_admin_can_enable_isolated_accelerated_course_profile"
@@ -91391,7 +92335,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3028,
+      "line": 3032,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_reset_moves_course_to_current_policy_and_restores_messenger_step",
       "qualname": "test_admin_reset_moves_course_to_current_policy_and_restores_messenger_step"
@@ -91399,7 +92343,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3061,
+      "line": 3065,
       "module_id": "products.masterclass.runtime",
       "name": "test_closing_review_sends_one_copy_only_after_submit",
       "qualname": "test_closing_review_sends_one_copy_only_after_submit"
@@ -91407,7 +92351,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3107,
+      "line": 3111,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_content_uses_the_same_member_session",
       "qualname": "test_course_content_uses_the_same_member_session"
@@ -91415,7 +92359,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3127,
+      "line": 3131,
       "module_id": "products.masterclass.runtime",
       "name": "test_recipe_gate_uses_access_and_records_open_once",
       "qualname": "test_recipe_gate_uses_access_and_records_open_once"
@@ -91423,7 +92367,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3189,
+      "line": 3193,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_preview_lists_only_masterclass_users_with_primary_email",
       "qualname": "test_admin_preview_lists_only_masterclass_users_with_primary_email"
@@ -91431,7 +92375,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3200,
+      "line": 3204,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices",
       "qualname": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices"
@@ -91439,7 +92383,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3225,
+      "line": 3229,
       "module_id": "products.masterclass.runtime",
       "name": "test_review_expiry_automatically_starts_final_week_before_day_21",
       "qualname": "test_review_expiry_automatically_starts_final_week_before_day_21"
@@ -91447,7 +92391,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3277,
+      "line": 3281,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_day_21_shows_standard_consultation_after_final_week",
       "qualname": "test_site_short_day_21_shows_standard_consultation_after_final_week"
@@ -91455,7 +92399,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3307,
+      "line": 3311,
       "module_id": "products.masterclass.runtime",
       "name": "test_day_19_fixes_review_and_last_week_timeline_once",
       "qualname": "test_day_19_fixes_review_and_last_week_timeline_once"
@@ -91463,7 +92407,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3332,
+      "line": 3336,
       "module_id": "products.masterclass.runtime",
       "name": "test_day_21_during_review_only_shows_its_existing_remainder",
       "qualname": "test_day_21_during_review_only_shows_its_existing_remainder"
@@ -91471,7 +92415,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3358,
+      "line": 3362,
       "module_id": "products.masterclass.runtime",
       "name": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed",
       "qualname": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed"
@@ -91479,7 +92423,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3395,
+      "line": 3399,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_lists_personal_offer_window_with_effective_expired_status",
       "qualname": "test_admin_lists_personal_offer_window_with_effective_expired_status"
@@ -91487,7 +92431,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3417,
+      "line": 3421,
       "module_id": "products.masterclass.runtime",
       "name": "test_crm_card_contains_masterclass_answers_events_and_offer_windows",
       "qualname": "test_crm_card_contains_masterclass_answers_events_and_offer_windows"
@@ -91495,7 +92439,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3441,
+      "line": 3445,
       "module_id": "products.masterclass.runtime",
       "name": "test_masterclass_article_media_route_serves_only_registered_image_tree",
       "qualname": "test_masterclass_article_media_route_serves_only_registered_image_tree"
@@ -91503,7 +92447,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3472,
+      "line": 3476,
       "module_id": "products.masterclass.runtime",
       "name": "test_masterclass_outline_and_material_cards_do_not_render_summaries",
       "qualname": "test_masterclass_outline_and_material_cards_do_not_render_summaries"
@@ -91511,7 +92455,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3493,
+      "line": 3497,
       "module_id": "products.masterclass.runtime",
       "name": "test_masterclass_duration_counts_present_video_and_hides_zero_time_steps",
       "qualname": "test_masterclass_duration_counts_present_video_and_hides_zero_time_steps"
@@ -91519,7 +92463,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 3526,
+      "line": 3530,
       "module_id": "products.masterclass.runtime",
       "name": "expected_day_minutes",
       "qualname": "test_masterclass_duration_counts_present_video_and_hides_zero_time_steps.expected_day_minutes"
@@ -100431,7 +101375,7 @@
     {
       "file": "telegram-bot/service/tests/test_engine.py",
       "kind": "function",
-      "line": 386,
+      "line": 397,
       "module_id": "messaging.telegram.engine",
       "name": "test_start_is_idempotent_and_schedules_day1_reminder_from_run_start",
       "qualname": "test_start_is_idempotent_and_schedules_day1_reminder_from_run_start"
@@ -100439,7 +101383,7 @@
     {
       "file": "telegram-bot/service/tests/test_engine.py",
       "kind": "function",
-      "line": 404,
+      "line": 415,
       "module_id": "messaging.telegram.engine",
       "name": "test_message_and_anchored_delay_can_run_in_one_advance_call",
       "qualname": "test_message_and_anchored_delay_can_run_in_one_advance_call"
@@ -100447,7 +101391,7 @@
     {
       "file": "telegram-bot/service/tests/test_engine.py",
       "kind": "function",
-      "line": 434,
+      "line": 445,
       "module_id": "messaging.telegram.engine",
       "name": "test_final_pin_error_does_not_stop_welcome",
       "qualname": "test_final_pin_error_does_not_stop_welcome"
@@ -100455,7 +101399,7 @@
     {
       "file": "telegram-bot/service/tests/test_engine.py",
       "kind": "function",
-      "line": 450,
+      "line": 461,
       "module_id": "messaging.telegram.engine",
       "name": "test_unopened_day_reminder_is_sent_only_once_and_sets_canonical_tag",
       "qualname": "test_unopened_day_reminder_is_sent_only_once_and_sets_canonical_tag"
@@ -100463,7 +101407,7 @@
     {
       "file": "telegram-bot/service/tests/test_engine.py",
       "kind": "function",
-      "line": 483,
+      "line": 494,
       "module_id": "messaging.telegram.engine",
       "name": "test_opened_day_suppresses_reminder",
       "qualname": "test_opened_day_suppresses_reminder"
@@ -100471,7 +101415,7 @@
     {
       "file": "telegram-bot/service/tests/test_engine.py",
       "kind": "function",
-      "line": 520,
+      "line": 531,
       "module_id": "messaging.telegram.engine",
       "name": "test_real_subscription_check_updates_account_and_canonical_tag",
       "qualname": "test_real_subscription_check_updates_account_and_canonical_tag"
@@ -100479,7 +101423,7 @@
     {
       "file": "telegram-bot/service/tests/test_engine.py",
       "kind": "function",
-      "line": 565,
+      "line": 576,
       "module_id": "messaging.telegram.engine",
       "name": "test_welcome_does_not_check_purchase",
       "qualname": "test_welcome_does_not_check_purchase"
@@ -100487,7 +101431,7 @@
     {
       "file": "telegram-bot/service/tests/test_engine.py",
       "kind": "function",
-      "line": 574,
+      "line": 585,
       "module_id": "messaging.telegram.engine",
       "name": "test_sequence_stops_before_unapproved_message",
       "qualname": "test_sequence_stops_before_unapproved_message"
@@ -100495,7 +101439,7 @@
     {
       "file": "telegram-bot/service/tests/test_engine.py",
       "kind": "function",
-      "line": 594,
+      "line": 605,
       "module_id": "messaging.telegram.engine",
       "name": "test_transient_delivery_error_is_retried_without_stopping_sequence",
       "qualname": "test_transient_delivery_error_is_retried_without_stopping_sequence"
@@ -100503,7 +101447,7 @@
     {
       "file": "telegram-bot/service/tests/test_engine.py",
       "kind": "function",
-      "line": 619,
+      "line": 630,
       "module_id": "messaging.telegram.engine",
       "name": "test_recipient_403_stops_only_that_contacts_runs",
       "qualname": "test_recipient_403_stops_only_that_contacts_runs"
@@ -100511,7 +101455,7 @@
     {
       "file": "telegram-bot/service/tests/test_engine.py",
       "kind": "function",
-      "line": 654,
+      "line": 665,
       "module_id": "messaging.telegram.engine",
       "name": "test_welcome_timing_and_subscription_observation_steps",
       "qualname": "test_welcome_timing_and_subscription_observation_steps"
@@ -100519,7 +101463,7 @@
     {
       "file": "telegram-bot/service/tests/test_engine.py",
       "kind": "function",
-      "line": 673,
+      "line": 684,
       "module_id": "messaging.telegram.engine",
       "name": "test_complete_welcome_flow_resolves_all_personal_links_for_both_subscription_branches",
       "qualname": "test_complete_welcome_flow_resolves_all_personal_links_for_both_subscription_branches"
