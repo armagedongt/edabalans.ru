@@ -78,6 +78,9 @@ from app.models import (
 router = APIRouter()
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 PUBLIC_SITE_ASSETS_DIR = STATIC_DIR / "public-site-assets"
+HOMEPAGE_VERSIONS_DIR = STATIC_DIR / "homepage-preview" / "versions"
+HOMEPAGE_VERSIONS_MANIFEST = HOMEPAGE_VERSIONS_DIR / "manifest.json"
+HOMEPAGE_VERSION_ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
 PUBLIC_SITE_ASSETS = {
     "education-documents.webp",
     "education-documents-original.png",
@@ -212,6 +215,46 @@ def homepage_library_fragment(source: str, name: str) -> str:
     start = source.index(start_marker) + len(start_marker)
     end = source.index(end_marker, start)
     return source[start:end].strip()
+
+
+def homepage_preview_response(template_path: Path, embed: str | None) -> HTMLResponse:
+    template = template_path.read_text(encoding="utf-8")
+    if embed == "tilda":
+        template = template.replace(
+            '<body data-page-theme="blue-mist">',
+            '<body data-page-theme="blue-mist" data-tilda-homepage-embed="true">',
+            1,
+        ).replace(
+            'data-pricing-endpoint="/api/pricing/site/preview"',
+            'data-pricing-endpoint="/api/pricing/site"',
+            1,
+        )
+    response = HTMLResponse(template, headers={"Cache-Control": "no-cache"})
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
+def homepage_version_path(version_id: str) -> Path:
+    if not HOMEPAGE_VERSION_ID.fullmatch(version_id):
+        raise HTTPException(status_code=404, detail="homepage version not found")
+    manifest = json.loads(HOMEPAGE_VERSIONS_MANIFEST.read_text(encoding="utf-8"))
+    entry = next(
+        (
+            item
+            for item in manifest.get("versions", [])
+            if item.get("id") == version_id
+        ),
+        None,
+    )
+    if entry is None:
+        raise HTTPException(status_code=404, detail="homepage version not found")
+    file_name = entry.get("file")
+    if not isinstance(file_name, str) or Path(file_name).name != file_name:
+        raise HTTPException(status_code=500, detail="homepage version registry is invalid")
+    version_path = HOMEPAGE_VERSIONS_DIR / file_name
+    if not version_path.is_file():
+        raise HTTPException(status_code=500, detail="homepage version file is missing")
+    return version_path
 
 
 @router.get("/embed.js", include_in_schema=False)
@@ -361,22 +404,20 @@ def direct_intensive_preview() -> HTMLResponse:
 @router.get("/preview/homepage-release-candidate/", include_in_schema=False)
 def homepage_release_candidate_preview(embed: str | None = Query(default=None)) -> HTMLResponse:
     """Accepted public homepage source, with an optional T123-safe embedded form."""
-    template = (STATIC_DIR / "homepage-preview" / "release-candidate.html").read_text(
-        encoding="utf-8"
+    return homepage_preview_response(
+        STATIC_DIR / "homepage-preview" / "release-candidate.html",
+        embed,
     )
-    if embed == "tilda":
-        template = template.replace(
-            '<body data-page-theme="blue-mist">',
-            '<body data-page-theme="blue-mist" data-tilda-homepage-embed="true">',
-            1,
-        ).replace(
-            'data-pricing-endpoint="/api/pricing/site/preview"',
-            'data-pricing-endpoint="/api/pricing/site"',
-            1,
-        )
-    response = HTMLResponse(template, headers={"Cache-Control": "no-cache"})
-    response.headers["X-Robots-Tag"] = "noindex, nofollow"
-    return response
+
+
+@router.get("/preview/homepage-version/{version_id}", include_in_schema=False)
+@router.get("/preview/homepage-version/{version_id}/", include_in_schema=False)
+def homepage_version_preview(
+    version_id: str,
+    embed: str | None = Query(default=None),
+) -> HTMLResponse:
+    """Named immutable snapshots and the explicitly mutable next-homepage draft."""
+    return homepage_preview_response(homepage_version_path(version_id), embed)
 
 
 @router.get("/preview/direct-intensive/loader.js", include_in_schema=False)

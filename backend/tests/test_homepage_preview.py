@@ -793,6 +793,51 @@ def test_release_candidate_gives_a_hero_route_to_pricing_and_opens_mobile_outlin
     assert "if (open) {\n          setTocOpen(true);" in response.text
 
 
+def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft() -> None:
+    expected_baseline_sha256 = "5c53b02ae2e7d5dbacbbd6a6da4fbbfdbe6116de8745cda75964d2cb30950169"
+    root = Path(__file__).resolve().parents[2]
+    preview_dir = root / "backend" / "app" / "static" / "homepage-preview"
+    versions_dir = preview_dir / "versions"
+    manifest = json.loads((versions_dir / "manifest.json").read_text(encoding="utf-8"))
+    baseline = next(item for item in manifest["versions"] if item["id"] == "v2026-09-22")
+    draft = next(item for item in manifest["versions"] if item["id"] == "next")
+    baseline_path = versions_dir / baseline["file"]
+    baseline_source = baseline_path.read_text(encoding="utf-8")
+    normalized_baseline = baseline_path.read_bytes().replace(b"\r\n", b"\n")
+
+    assert manifest["active_runtime"] == "release-candidate"
+    assert manifest["baseline"] == baseline["id"]
+    assert manifest["working_draft"] == draft["id"]
+    assert manifest["snapshot_scope"] == "homepage_html_source"
+    assert manifest["checksum_normalization"] == "utf8_lf"
+    assert baseline["status"] == "baseline"
+    assert draft["status"] == "local_draft"
+    assert baseline["sha256"] == expected_baseline_sha256
+    assert hashlib.sha256(normalized_baseline).hexdigest() == expected_baseline_sha256
+
+    baseline_response = client.get(baseline["route"])
+    assert baseline_response.status_code == 200
+    assert baseline_response.text == baseline_source
+    assert baseline_response.headers["x-robots-tag"] == "noindex, nofollow"
+    assert baseline_response.headers["cache-control"] == "no-cache"
+
+    draft_response = client.get(draft["route"])
+    assert draft_response.status_code == 200
+    assert "Следующая главная — локальный черновик" in draft_response.text
+    for required_fragment in (
+        '<main class="homepage-chain">',
+        'data-homepage-block="hero-video"',
+        'data-homepage-block="recognition-explanation"',
+        'data-homepage-block="inside"',
+        'id="pricing"',
+        'id="faq"',
+        'id="contacts"',
+        'data-pricing-endpoint="/api/pricing/site/preview"',
+    ):
+        assert required_fragment in draft_response.text
+    assert client.get("/preview/homepage-version/not-registered").status_code == 404
+
+
 def test_tilda_embed_mode_uses_production_pricing_and_checkout() -> None:
     response = client.get("/preview/homepage-mobile?embed=tilda")
 

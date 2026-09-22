@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "active_runtime": "release-candidate",
+  "baseline": "v2026-09-22",
+  "working_draft": "next",
+  "snapshot_scope": "homepage_html_source",
+  "checksum_normalization": "utf8_lf",
+  "versions": [
+    {
+      "id": "v2026-09-22",
+      "file": "v2026-09-22.html",
+      "status": "baseline",
+      "created_at": "2026-09-22",
+      "source_commit": "676304df2f89e281ebbdd9da912a413ba0ba4a96",
+      "sha256": "5c53b02ae2e7d5dbacbbd6a6da4fbbfdbe6116de8745cda75964d2cb30950169",
+      "route": "/preview/homepage-version/v2026-09-22",
+      "note": "Полная копия HTML-источника действующей главной до начала следующего редизайна; общие API, медиа и внешние зависимости остаются актуальными."
+    },
+    {
+      "id": "next",
+      "file": "next.html",
+      "status": "local_draft",
+      "created_at": "2026-09-22",
+      "based_on": "v2026-09-22",
+      "route": "/preview/homepage-version/next",
+      "mutable": true,
+      "note": "Локальное рабочее полотно следующей главной; production его не использует."
+    }
+  ]
+}

@@ -339,6 +339,7 @@ owns_routes = [
   "*/homepage.js", "*/preview/homepage-recognition*", "*/preview/homepage-mobile*",
   "*/public-site-errors/*",
   "*/preview/homepage-release-candidate*",
+  "*/preview/homepage-version/*",
   "*/preview/homepage-tilda-shell*",
   "*/preview/homepage-reviews-wall*",
   "*/preview/direct-intensive*",
