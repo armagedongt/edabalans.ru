@@ -860,6 +860,11 @@ def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft
     assert "В первый же день я расскажу, как вести дневник питания" in embedded_draft_response.text
     assert "О новых материалах будут приходить уведомления в Telegram или MAX." in embedded_draft_response.text
     assert "Познакомьтесь с моим подходом к похудению поближе" in embedded_draft_response.text
+    author_lifetime_position = embedded_draft_response.text.index("Разберитесь один раз — наслаждайтесь всю жизнь!")
+    author_prompt_position = embedded_draft_response.text.index("Вам разве не надоело такое похудение? 👇")
+    author_meme_position = embedded_draft_response.text.index("reviews-promo-before-after-transparent.png")
+    author_closing_position = embedded_draft_response.text.index("Один раз научитесь, как быстро настроить похудение лично под вас")
+    assert author_lifetime_position < author_prompt_position < author_meme_position < author_closing_position
     pricing_position = embedded_draft_response.text.index('id="pricing"')
     approach_note_position = embedded_draft_response.text.index('class="approach-article-note"')
     anya_position = embedded_draft_response.text.index('id="anya-story"')
