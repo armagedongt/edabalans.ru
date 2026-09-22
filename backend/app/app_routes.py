@@ -107,6 +107,7 @@ HOMEPAGE_MOBILE_PREVIEW_ASSETS = {
     "direct-intensive-telegram-qr.svg",
     "final-cta-cat-clock.webp",
     "favicon-no-outline.png",
+    "familiar-advice-less-eat-more-move.png",
     "max-full-colored-dark-official.png",
     "max-full-colored-official.png",
     "money-bag-ruble-v1.webp",
