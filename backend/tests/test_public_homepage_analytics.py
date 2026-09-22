@@ -64,6 +64,7 @@ def test_collects_anonymous_open_and_section_once_per_session() -> None:
 def test_rejects_wrong_event_section_pair_and_unknown_section() -> None:
     client, _ = make_client()
     assert client.post("/api/public/homepage-analytics", json=body(event="section_seen", section_id="result_21_days")).status_code == 200
+    assert client.post("/api/public/homepage-analytics", json=body(event="cta_click", section_id="pricing_nav_mobile")).status_code == 200
     assert client.post("/api/public/homepage-analytics", json={**body(), "section_id": "pricing"}).status_code == 422
     assert client.post("/api/public/homepage-analytics", json={**body(event="section_seen", section_id="page_open")}).status_code == 422
     assert client.post("/api/public/homepage-analytics", json={**body(event="section_seen", section_id="pricing_hero")}).status_code == 422

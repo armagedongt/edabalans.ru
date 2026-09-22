@@ -872,6 +872,10 @@ def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft
     assert '<article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-1">' in embedded_draft_response.text
     assert ".homepage-program__copy{color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}" in embedded_draft_response.text
     assert ".contact-copy{max-width:640px;margin:0 0 22px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}" in embedded_draft_response.text
+    assert ".chain-block--final h1{display:grid;width:100%;max-width:var(--content-frame)" in embedded_draft_response.text
+    assert ".meme-card{position:relative;align-self:center;width:100%" in embedded_draft_response.text
+    assert ".action-group{width:min(100%,680px);margin:26px auto 0}" in embedded_draft_response.text
+    assert ".reviews-wall-cta__button--pricing{width:100%" in embedded_draft_response.text
     assert "И не только знает, но и сам похудел за пару лет на 30 кг." in embedded_draft_response.text
     assert "На время Мастер-класса я советую вообще не считать калории" in embedded_draft_response.text
     assert "В первый же день я расскажу, как вести дневник питания" in embedded_draft_response.text

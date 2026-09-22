@@ -40,8 +40,7 @@ SECTION_IDS = (
     "free_intensive",
 )
 CTA_IDS = (
-    "pricing_nav_desktop",
-    "pricing_nav_mobile",
+    "pricing_nav_menu",
     "pricing_hero",
     "pricing_anya_story",
     "pricing_final_choice",
@@ -52,8 +51,10 @@ CTA_IDS = (
     "pricing_program_overlay",
 )
 LEGACY_SECTION_IDS = {"result_21_days"}
+LEGACY_CTA_IDS = {"pricing_nav_desktop", "pricing_nav_mobile"}
 ALLOWED_SECTION_IDS = {*SECTION_IDS, *LEGACY_SECTION_IDS}
-ALLOWED_TARGET_IDS = {"page_open", *ALLOWED_SECTION_IDS, *CTA_IDS}
+ALLOWED_CTA_IDS = {*CTA_IDS, *LEGACY_CTA_IDS}
+ALLOWED_TARGET_IDS = {"page_open", *ALLOWED_SECTION_IDS, *ALLOWED_CTA_IDS}
 RATE_WINDOW_SECONDS = 60
 MAX_EVENTS_PER_WINDOW = 80
 _rate_lock = Lock()
@@ -117,7 +118,7 @@ def collect_public_homepage_event(
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "page_open requires page_open section")
     if body.event == "section_seen" and body.section_id not in ALLOWED_SECTION_IDS:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "section_seen requires a section")
-    if body.event == "cta_click" and body.section_id not in CTA_IDS:
+    if body.event == "cta_click" and body.section_id not in ALLOWED_CTA_IDS:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "cta_click requires a CTA")
     row = PublicHomepageEvent(
         session_id=str(body.session_id),
@@ -178,6 +179,6 @@ def public_homepage_analytics_summary(
         ],
         "ctas": [
             {"id": cta_id, "sessions": int(counts.get(("cta_click", cta_id), 0))}
-            for cta_id in CTA_IDS
+            for cta_id in (*CTA_IDS, *sorted(LEGACY_CTA_IDS))
         ],
     }
