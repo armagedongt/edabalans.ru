@@ -850,6 +850,16 @@ def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft
     assert "В учебных материалах есть ссылки на современные" not in embedded_draft_response.text
     assert "background:#fff6c9" in embedded_draft_response.text
     assert "approach-link-shimmer" not in embedded_draft_response.text
+    assert '<blockquote class="hero-guarantee"><p>Гарантирую 100% возврат в первые 3 дня' in embedded_draft_response.text
+    assert '<p>Старт — сразу после оплаты, доступ к материалам и всем обновлениям — навсегда!</p></blockquote>' in embedded_draft_response.text
+    assert ".hero-guarantee::before{position:absolute;top:0;bottom:0" in embedded_draft_response.text
+    assert "background:linear-gradient(100deg,#2f78ef 0%,#635cf7 55%,#b35fab 100%)" in embedded_draft_response.text
+    assert "background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%)" in embedded_draft_response.text
+    assert "И не только знает, но и сам похудел за пару лет на 30 кг." in embedded_draft_response.text
+    assert "На время Мастер-класса я советую вообще не считать калории" in embedded_draft_response.text
+    assert "В первый же день я расскажу, как вести дневник питания" in embedded_draft_response.text
+    assert "О новых материалах будут приходить уведомления в Telegram или MAX." in embedded_draft_response.text
+    assert "Познакомьтесь с моим подходом к похудению поближе" in embedded_draft_response.text
     pricing_position = embedded_draft_response.text.index('id="pricing"')
     approach_note_position = embedded_draft_response.text.index('class="approach-article-note"')
     anya_position = embedded_draft_response.text.index('id="anya-story"')
