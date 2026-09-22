@@ -856,7 +856,7 @@ def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft
     assert "background:linear-gradient(100deg,#2f78ef 0%,#635cf7 55%,#b35fab 100%)" in embedded_draft_response.text
     assert "background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%)" in embedded_draft_response.text
     assert "Выбрать тариф — начать прямо сейчас!</a>" in embedded_draft_response.text
-    assert embedded_draft_response.text.count("02. Как всё будет устроено") == 2
+    assert embedded_draft_response.text.count("04. Как всё будет устроено") == 2
     assert "02. Почему теперь получится" not in embedded_draft_response.text
     assert '<article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-1">' in embedded_draft_response.text
     assert ".homepage-program__copy{color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}" in embedded_draft_response.text
