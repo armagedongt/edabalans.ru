@@ -846,6 +846,15 @@ def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft
     assert '<p class="hero-pricing-note">Больше отзывов — в конце страницы.</p>' in embedded_draft_response.text
     assert "requestAnimationFrame(alignOpenedItem);" in embedded_draft_response.text
     assert "window.setTimeout(alignOpenedItem, 240);" in embedded_draft_response.text
+    assert "Везде в Мастер-классе ссылки на современные" in embedded_draft_response.text
+    assert "В учебных материалах есть ссылки на современные" not in embedded_draft_response.text
+    assert "background:#fff6c9" in embedded_draft_response.text
+    assert "approach-link-shimmer" not in embedded_draft_response.text
+    pricing_position = embedded_draft_response.text.index('id="pricing"')
+    approach_note_position = embedded_draft_response.text.index('class="approach-article-note"')
+    anya_position = embedded_draft_response.text.index('id="anya-story"')
+    assert pricing_position < approach_note_position < anya_position
+    assert '<a href="https://похудение-это-есть.рф/intensive">«Как должно выглядеть адекватное похудение от А до Я!»</a>' in embedded_draft_response.text
     assert client.get("/preview/homepage-version/not-registered").status_code == 404
 
 
