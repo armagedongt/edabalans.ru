@@ -835,6 +835,11 @@ def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft
         'data-pricing-endpoint="/api/pricing/site/preview"',
     ):
         assert required_fragment in draft_response.text
+    embedded_draft_response = client.get(f'{draft["route"]}?embed=tilda&hero_label=pill')
+    assert embedded_draft_response.status_code == 200
+    assert 'data-tilda-homepage-embed="true"' in embedded_draft_response.text
+    assert "get('hero_label') === 'pill'" in embedded_draft_response.text
+    assert "document.body.dataset.heroLabelVariant = 'pill';" in embedded_draft_response.text
     assert client.get("/preview/homepage-version/not-registered").status_code == 404
 
 

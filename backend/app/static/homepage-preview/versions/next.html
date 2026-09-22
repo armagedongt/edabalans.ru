@@ -526,7 +526,10 @@
     .site-title { margin: 0; font-family: Unbounded, Manrope, sans-serif; font-style: italic; font-weight: 800; line-height: .98; letter-spacing: -.068em; text-align: center; text-transform: uppercase; word-spacing: .08em; }
     .site-title span { display: block; width: max-content; max-width: 100%; margin-inline: auto; white-space: nowrap; }
     .site-title__plain { font-size: clamp(25px,7.6vw,58px); }
-    .site-title__plain:first-child { margin-bottom: 4px; font-size: clamp(21px,6.4vw,48px); }
+    .site-title__label--text { margin-bottom: 6px; color: #168fe3; font-size: clamp(16px,4.8vw,34px); letter-spacing: -.035em; }
+    .site-title__label--pill { display: none !important; min-height: 44px; align-items: center; justify-content: center; margin-bottom: 15px; padding: 10px 18px 11px; border: 1px solid rgba(255,255,255,.42); border-radius: 15px; background: linear-gradient(135deg,#168fe3 0%,#6855f7 58%,#ff6738 128%); box-shadow: 0 12px 26px -14px rgba(36,91,184,.72); color: #fff; font-family: Manrope,sans-serif; font-size: clamp(15px,4.1vw,23px); font-style: normal; line-height: 1; letter-spacing: .025em; text-transform: uppercase; }
+    body[data-hero-label-variant="pill"] .site-title__label--text { display: none; }
+    body[data-hero-label-variant="pill"] .site-title__label--pill { display: flex !important; }
     .site-title__plain + .site-title__plain { margin-top: 3px; }
     .site-title__plain small { display: inline; width: auto; margin: 0; font-size: .82em; font-weight: 800; line-height: 1; text-transform: lowercase; vertical-align: baseline; }
     .site-title__accent { margin-top: 8px; padding: 5px 10px 7px; border-radius: 10px; background: var(--site-orange); color: #fff; font-size: clamp(17px,5.45vw,58px); line-height: 1.02; letter-spacing: -.015em; transform: rotate(-.8deg); }
@@ -1277,6 +1280,11 @@
 </head>
 <body data-page-theme="blue-mist">
   <script>
+    if (new URLSearchParams(window.location.search).get('hero_label') === 'pill') {
+      document.body.dataset.heroLabelVariant = 'pill';
+    }
+  </script>
+  <script>
     (() => {
       const params = new URLSearchParams(location.search);
       document.body.dataset.supportTone = params.get('support') === 'green' ? 'green' : 'warm';
@@ -1375,7 +1383,7 @@
   <main class="homepage-chain">
     <div class="chain-block chain-block--hero"><section class="site-hero" id="top">
       <div class="site-hero__inner">
-        <h1 class="site-title" data-homepage-block="hero-title" data-block-width="hero"><span class="site-title__plain" data-homepage-field="line-0">Мастер-класс</span><span class="site-title__plain" data-homepage-field="line-1">По изменению</span><span class="site-title__plain" data-homepage-field="line-2">Питания <small>и</small></span><span class="site-title__accent" data-homepage-field="accent">Пищевых привычек</span></h1>
+        <h1 class="site-title" data-homepage-block="hero-title" data-block-width="hero"><span class="site-title__plain site-title__label--text" data-homepage-field="line-0">Мастер-класс</span><span class="site-title__plain site-title__label--pill">Мастер-класс · 21 день</span><span class="site-title__plain" data-homepage-field="line-1">По изменению</span><span class="site-title__plain" data-homepage-field="line-2">Питания <small>и</small></span><span class="site-title__accent" data-homepage-field="accent">Пищевых привычек</span></h1>
         <p class="site-lead" data-homepage-block="hero-intro" data-homepage-field="text" data-block-width="content">Предлагаю вместо очередной голодовки через силу воли изменить питание и пищевые привычки так, чтобы похудение стало проще, силы воли нужно было меньше, а вес больше никогда не возвращался назад!</p>
       <div class="floating-vsl-slot"><aside class="floating-vsl" data-floating-vsl aria-label="Видео о Мастер-классе"><button class="floating-vsl__close" type="button" data-floating-vsl-close aria-label="Скрыть видео">×</button><div class="site-player" id="hero-video" data-homepage-block="hero-video" data-block-width="video-main"><div class="site-player__mask"><iframe src="/preview/homepage-mobile/vsl-player.html?v=8" loading="eager" data-media-player data-media-context="homepage-vsl" title="Видео о Мастер-классе" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div></div></aside></div>
         <div class="site-outro" data-homepage-block="hero-outro" data-block-width="content"><p data-homepage-field="paragraph-1">За 21 день вы отключите автопилот, на котором набрали вес, научитесь лучше насыщаться за привычные калории и освоите такие пищевые привычки, которые долгие годы будут защищать от лишнего веса!</p><p data-homepage-field="paragraph-2">Я расскажу, как всё это освоить, покажу, как применять, и создам вокруг вас обстановку, чтобы эти навыки закрепились!</p><a class="hero-pricing-cta" href="#pricing">Выбрать тариф — начать прямо сейчас</a><a class="hero-pricing-note" href="#method-proof-title">или читайте подробнее о моём подходе 👇</a></div>
@@ -1469,7 +1477,7 @@
         <ul class="experience-proof__credentials" aria-label="Опыт Сергея Воронцова">
           <li class="experience-proof__credential">Разобрал 600+ дневников питания</li>
           <li class="experience-proof__credential">Написал 118 статей в топе сообщества «Мы худеем» на Пикабу</li>
-          <li class="experience-proof__credential">Похудел сам на 25 кг и уже 10 лет живу в своём весе</li>
+          <li class="experience-proof__credential">Похудел сам на 25 кг и уже 10 лет живу в своём весе. Рассказываю и показываю, как вы тоже так можете!</li>
         </ul>
         <div class="experience-proof__copy">
           <p>Я видел все проблемы, через которые вы уже проходили, проходите сейчас или ещё только пройдёте, но пока даже о них не догадываетесь. А главное, я уже подбирал для них десятки разных решений под совершенно разных людей.</p>
