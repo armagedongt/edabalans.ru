@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow">
-  <title>Новая главная — мобильная цепочка принятых блоков</title>
+  <title>Мастер-класс по изменению питания и пищевых привычек</title>
   <script>
     document.documentElement.dataset.cloudShadow =
       new URLSearchParams(location.search).get('cloud-shadow') === 'hard'
@@ -521,15 +521,16 @@
 
     .site-hero { padding: 28px var(--page-gutter) 0; background: radial-gradient(circle at 48% 11%, rgba(39,175,245,.14), transparent 34%), #fff; }
     .site-hero__inner { width: min(100%, var(--content-copy)); margin: 0 auto; }
-    .site-eyebrow { display: flex; width: max-content; max-width: 100%; min-height: 31px; align-items: center; margin: 0 auto; padding: 6px 9px; border: 1px solid rgba(33,85,121,.14); border-radius: 11px; background: rgba(255,255,255,.92); box-shadow: 0 7px 18px -13px rgba(28,67,94,.48); color: #168fe3; font-family: Manrope, sans-serif; font-size: clamp(9px,2.8vw,13px); font-weight: 800; line-height: 1.2; letter-spacing: .02em; text-transform: uppercase; backdrop-filter: blur(10px); }
-    .site-eyebrow::before { width: 7px; height: 7px; flex: 0 0 7px; margin-right: 7px; border-radius: 50%; background: #ff6738; content: ""; }
-    .site-title { margin: 28px 0 0; font-family: Unbounded, Manrope, sans-serif; font-style: italic; font-weight: 800; line-height: .98; letter-spacing: -.068em; text-align: center; text-transform: uppercase; word-spacing: .08em; }
+    .site-eyebrow { display: flex; width: max-content; max-width: 100%; min-height: 38px; align-items: center; margin: 0 auto; padding: 8px 12px; border: 1px solid rgba(33,85,121,.14); border-radius: 12px; background: rgba(255,255,255,.92); box-shadow: 0 7px 18px -13px rgba(28,67,94,.48); color: #168fe3; font-family: Manrope, sans-serif; font-size: clamp(12px,3.3vw,16px); font-weight: 800; line-height: 1.2; letter-spacing: .02em; text-transform: uppercase; backdrop-filter: blur(10px); }
+    .site-eyebrow::before { width: 8px; height: 8px; flex: 0 0 8px; margin-right: 8px; border-radius: 50%; background: #ff6738; content: ""; }
+    .site-title { margin: clamp(28px,7vw,42px) 0 0; font-family: Unbounded, Manrope, sans-serif; font-style: italic; font-weight: 800; line-height: .98; letter-spacing: -.068em; text-align: center; text-transform: uppercase; word-spacing: .08em; }
     .site-title span { display: block; width: max-content; max-width: 100%; margin-inline: auto; white-space: nowrap; }
     .site-title__plain { font-size: clamp(25px,7.6vw,58px); }
     .site-title__plain + .site-title__plain { margin-top: 3px; }
     .site-title__plain small { display: inline; width: auto; margin: 0; font-size: .82em; font-weight: 800; line-height: 1; text-transform: lowercase; vertical-align: baseline; }
     .site-title__accent { margin-top: 8px; padding: 5px 10px 7px; border-radius: 10px; background: var(--site-orange); color: #fff; font-size: clamp(17px,5.45vw,58px); line-height: 1.02; letter-spacing: -.015em; transform: rotate(-.8deg); }
     .site-lead { width: var(--content-frame); max-width: 100%; margin: 31px auto 0; color: var(--site-text); font-size: var(--type-body); font-weight: 500; line-height: 1.6; }
+    .site-lead mark{padding:0 .12em;border-radius:3px;background:#fff1a8;color:inherit;-webkit-box-decoration-break:clone;box-decoration-break:clone}
     .site-player {
       --site-player-radius: 16px;
       position: relative;
@@ -582,16 +583,19 @@
     .site-outro { width:var(--content-frame);max-width:100%;margin:22px auto 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.6;text-align:left }
     .site-outro p{margin:0}
     .site-outro p+p{margin-top:14px}
-    .hero-pricing-cta{display:flex;width:max-content;max-width:100%;min-height:52px;align-items:center;justify-content:center;margin:28px auto 0;padding:12px 20px;border-radius:14px;background:linear-gradient(135deg,#f09a31,#e66b2f);box-shadow:0 12px 23px -13px rgba(173,77,19,.62);color:#fff;font:800 15px/1.2 Manrope,sans-serif;text-align:center;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}
-    .hero-pricing-cta:hover,.hero-pricing-cta:focus-visible{box-shadow:0 16px 28px -13px rgba(173,77,19,.72);transform:translateY(-2px)}
-    .hero-pricing-note{margin:10px 0 0;color:#63717a;font-size:13px;font-weight:650;line-height:1.4;text-align:center}
-    .hero-pricing-note span{display:block;margin-top:1px;color:var(--site-orange);font-size:18px;line-height:1}
+    .hero-guarantee{position:relative;overflow:hidden;margin:22px 0 0;padding:17px 19px 17px 22px;border:1px solid rgba(243,154,47,.24);border-radius:clamp(12px,2vw,16px);background:rgba(255,255,255,.82);box-shadow:0 9px 17px -11px rgba(166,99,20,.5);color:var(--site-text);font-size:clamp(14px,1.65vw,16px);font-style:italic;font-weight:400;line-height:1.55}
+    .hero-guarantee p+p{margin-top:10px}
+    .hero-guarantee::before{position:absolute;top:0;bottom:0;left:0;width:5px;background:#f39a2f;content:""}
+    .hero-pricing-cta{display:flex;width:max-content;max-width:100%;min-height:54px;align-items:center;justify-content:center;margin:28px auto 0;padding:0 22px;border-radius:16px;background:linear-gradient(100deg,#2f78ef 0%,#635cf7 55%,#b35fab 100%);box-shadow:0 10px 18px -9px rgba(79,78,213,.82);color:#fff;font:800 16px/1.2 Manrope,sans-serif;text-align:center;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;animation:none}
+    .hero-pricing-cta:hover,.hero-pricing-cta:focus-visible{background:linear-gradient(100deg,#2f78ef 0%,#635cf7 55%,#b35fab 100%);box-shadow:0 12px 20px -9px rgba(79,78,213,.88);filter:saturate(1.05) brightness(1.03);transform:translateY(-2px)}
+    .site-outro .hero-pricing-note{display:block;width:max-content;max-width:100%;margin:18px auto 0;color:#63717a;font-size:13px;font-style:italic;font-weight:500;line-height:1.4;text-align:center;text-decoration:none;white-space:nowrap}
+    a.hero-pricing-note:hover,a.hero-pricing-note:focus-visible{color:var(--site-blue);text-decoration:underline;text-underline-offset:3px}
 
     .argument-intro { padding: 42px var(--page-gutter) 46px; background: #fff; }
     .argument-intro__inner, .method-transition__inner { width: min(100%,var(--content-frame)); margin: 0 auto; }
     .argument-intro h2 { max-width: 890px; margin: 0; font-size: var(--type-display); font-weight: 800; line-height: 1.06; letter-spacing: -.052em; text-wrap: balance; }
     .argument-copy { max-width: var(--content-frame); margin-top: 24px; }
-    .argument-intro p { margin: 0; color: #3f444c; font-size: var(--type-body); font-weight: 500; line-height: 1.62; }
+    .argument-intro p { margin: 0; color: var(--site-text); font-size: var(--type-body); font-weight: 500; line-height: 1.62; }
     .argument-intro p + p { margin-top: 10px; }
     .crossed-rule { padding-inline: .03em; color: rgba(24,26,31,.56); background: linear-gradient(-1.2deg, transparent 43%, var(--site-red) 44% 54%, transparent 55%); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 
@@ -609,7 +613,7 @@
     .method-checks { display: flex; }
     .method-check { display: grid; width: 27px; height: 27px; flex: none; place-items: center; font-size: 15px; font-style: normal; font-weight: 900; }
     .method-check--selected { border-radius: 8px; }
-    .method-check--soft { background: #d7f2e0; color: #299b57; }
+    .method-check--soft { background: #c6f1d5; color: #138e47; }
     html[data-variant="green"] .method-list li::before { background: #e8f8ef; color: #24a765; }
     .method-list p { margin: 0; }
     .method-list p > span { color: var(--site-text); font-weight: 500; }
@@ -627,7 +631,7 @@
       .desktop-nav > a, .desktop-contact__trigger, .desktop-toc__trigger { display: inline-flex; height: 40px; align-items: center; justify-content: center; padding: 0 12px; border: 0; border-radius: 14px; appearance: none; color: #fff; font: 800 14px/1 Manrope,sans-serif; text-decoration: none; white-space: nowrap; background: transparent; transition: background .16s ease; }
       .desktop-nav > a:hover, .desktop-nav > a:focus-visible, .desktop-contact__trigger:hover, .desktop-contact__trigger:focus-visible, .desktop-contact__trigger[aria-expanded="true"], .desktop-toc__trigger:hover, .desktop-toc__trigger:focus-visible, .desktop-toc__trigger[aria-expanded="true"] { background: rgba(255,255,255,.16); }
       .desktop-nav__divider{width:1px;height:24px;margin:0 4px;background:rgba(255,255,255,.32)}
-      .desktop-toc{position:relative;display:flex;align-items:center}.desktop-toc__trigger{gap:7px;cursor:pointer}.desktop-toc__panel{position:absolute;z-index:70;top:calc(100% + 11px);left:50%;display:grid;width:300px;padding:7px;border:1px solid rgba(21,105,159,.13);border-radius:17px;background:rgba(255,255,255,.98);box-shadow:0 16px 32px -22px rgba(15,70,106,.55),0 5px 12px -8px rgba(15,70,106,.24);transform:translateX(-50%);backdrop-filter:blur(12px)}.desktop-toc__panel[hidden]{display:none}.desktop-toc__panel a{display:flex;min-height:37px;align-items:center;padding:8px 12px;border-radius:11px;color:#202a32;font:700 13px/1.25 Manrope,sans-serif;text-decoration:none}.desktop-toc__panel a:hover,.desktop-toc__panel a:focus-visible{color:#118ed8;background:#edf8ff}
+      .desktop-toc{position:relative;display:flex;align-items:center}.desktop-toc__trigger{gap:7px;cursor:pointer}.desktop-toc__panel{position:absolute;z-index:70;top:calc(100% + 11px);left:50%;display:grid;width:320px;max-height:min(70vh,620px);overflow-y:auto;padding:7px;border:1px solid rgba(21,105,159,.13);border-radius:17px;background:rgba(255,255,255,.98);box-shadow:0 16px 32px -22px rgba(15,70,106,.55),0 5px 12px -8px rgba(15,70,106,.24);transform:translateX(-50%);backdrop-filter:blur(12px)}.desktop-toc__panel[hidden]{display:none}.desktop-toc__panel a{display:flex;min-height:37px;align-items:center;padding:8px 12px;border-radius:11px;color:#202a32;font:700 13px/1.25 Manrope,sans-serif;text-decoration:none}.desktop-toc__panel a:hover,.desktop-toc__panel a:focus-visible{color:#118ed8;background:#edf8ff}
       .desktop-contact { position: relative; display: flex; align-items: center; }
       .desktop-contact__trigger { gap: 7px; cursor: pointer; }
       .desktop-contact__chevron { width: 7px; height: 7px; border-right: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform .16s ease; }
@@ -639,8 +643,8 @@
       .desktop-contact__panel span[aria-disabled="true"] { color: #7e8991; cursor: not-allowed; }
       .desktop-account{position:relative;justify-self:end}.desktop-account__trigger{display:inline-flex;align-items:center;gap:7px;padding:12px 18px;border:1px solid rgba(255,255,255,.55);border-radius:23px;background:rgba(255,255,255,.16);color:#fff;font:800 13px/1 Manrope,sans-serif;white-space:nowrap;cursor:pointer}.desktop-account__trigger .desktop-contact__chevron{transition:transform .16s ease}.desktop-account__trigger[aria-expanded="true"] .desktop-contact__chevron{transform:translateY(2px) rotate(225deg)}.desktop-account__panel{position:absolute;z-index:70;top:calc(100% + 11px);right:0;display:grid;width:220px;padding:7px;border:1px solid rgba(21,105,159,.13);border-radius:17px;background:rgba(255,255,255,.97);box-shadow:0 16px 32px -22px rgba(15,70,106,.55),0 5px 12px -8px rgba(15,70,106,.24);backdrop-filter:blur(12px)}.desktop-account__panel[hidden]{display:none}.desktop-account__panel a{display:flex;min-height:41px;align-items:center;padding:9px 12px;border-radius:11px;color:#202a32;font-size:13px;font-weight:700;line-height:1.25;text-decoration:none}.desktop-account__panel a:hover,.desktop-account__panel a:focus-visible{color:#118ed8;background:#edf8ff}
       .site-hero { padding-top: 42px; padding-bottom: 0; }
-      .site-eyebrow { min-height: 36px; padding: 8px 12px; font-size: 13px; }
-      .site-eyebrow::before { width: 8px; height: 8px; flex-basis: 8px; margin-right: 8px; }
+      .site-eyebrow { min-height: 42px; padding: 10px 15px; font-size: 15px; }
+      .site-eyebrow::before { width: 9px; height: 9px; flex-basis: 9px; margin-right: 9px; }
       .site-title { margin-top: 42px; }
       .site-lead { font-size: var(--type-body); }
       .site-player { margin-top: 31px; }
@@ -665,7 +669,7 @@
 
     :root{
       --ink:#17191e;
-      --text:#343940;
+      --text:var(--site-text);
       --red:#ff665b;
       --paper:#fff;
       --blue-soft:#a9d2ff;
@@ -711,7 +715,7 @@
     .method-checks{display:flex}
     .method-check{display:grid;width:27px;height:27px;flex:none;place-items:center;font-size:15px;font-style:normal;font-weight:900}
     .method-check--selected{border-radius:8px}
-    .method-check--soft{background:#d7f2e0;color:#299b57}
+    .method-check--soft{background:#c6f1d5;color:#138e47}
     .method-list p{margin:0}
     .method-list p > span{color:var(--text);font-weight:500}
     .method-list strong{color:var(--ink);font-weight:850}
@@ -839,7 +843,8 @@
     .faq-shell{width:min(100%,var(--content-frame));margin:0 auto}
     .chain-block--faq h1{max-width:none;margin:0 auto;font-size:var(--type-section);font-weight:800;line-height:1.1;letter-spacing:-1px;text-align:left;text-wrap:balance}
     .faq-list{display:flex;width:100%;flex-direction:column;gap:12px;margin:36px auto 0}
-    .faq-item{overflow:clip;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px -22px rgba(20,30,60,.5);transition:border-color .18s ease,box-shadow .18s ease}
+    .faq-list{overflow-anchor:none}
+    .faq-item{overflow:clip;scroll-margin-top:12px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px -22px rgba(20,30,60,.5);transition:border-color .18s ease,box-shadow .18s ease}
     .faq-item:hover,.faq-item:focus-within{border-color:rgba(38,175,255,.42);box-shadow:0 14px 34px -28px rgba(18,115,180,.55)}
     .faq-item[data-open="true"]{background:linear-gradient(145deg,rgba(255,250,248,.96) 0%,var(--support-surface) 100%);border-color:var(--support-border);box-shadow:0 16px 34px -27px rgba(143,54,39,.38)}
     body[data-support-tone="green"] .faq-item[data-open="true"]{background:linear-gradient(145deg,rgba(249,255,250,.96) 0%,var(--support-surface) 100%);box-shadow:0 16px 34px -27px rgba(52,152,90,.36)}
@@ -850,11 +855,14 @@
     .faq-answer{animation:faq-open .2s ease both}
     .faq-answer[hidden]{display:none}
     .faq-answer-inner{overflow:hidden}
-    .faq-answer-copy{display:flex;flex-direction:column;gap:12px;padding:0 60px 24px 24px;color:var(--muted);font-size:15.5px;font-weight:400;line-height:1.62}
+    .faq-answer-copy{display:flex;flex-direction:column;gap:10px;padding:0 60px 24px 24px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
     .faq-answer-copy p,.faq-answer-copy ul{margin:0}
+    .faq-answer-copy ul{padding-left:1.15em}
+    .faq-answer-copy li{padding-left:.15em}
     .faq-answer-copy a{color:#168fd3;text-decoration-thickness:1px;text-underline-offset:3px}
-    .method-transition__inner figure,.faq-answer-copy figure,#edb-pricing-neurozeh-v1 .edb-product-overlay-points figure{max-width:100%;margin:18px 0}
-    .method-transition__inner img,.faq-answer-copy img,#edb-pricing-neurozeh-v1 .edb-product-overlay-points img{display:block;max-width:100%;height:auto;border-radius:14px}
+    .method-transition__inner figure,#edb-pricing-neurozeh-v1 .edb-product-overlay-points figure{max-width:100%;margin:18px 0}
+    .faq-answer-copy figure{max-width:100%;margin:4px 0}
+    .method-transition__inner img,.faq-answer-copy img,#edb-pricing-neurozeh-v1 .edb-product-overlay-points img{display:block;max-width:100%;height:auto;border-radius:clamp(12px,2vw,16px)}
     .method-transition__inner table,.faq-answer-copy table,#edb-pricing-neurozeh-v1 .edb-product-overlay-points table{display:block;width:100%;max-width:100%;overflow-x:auto;border-collapse:collapse;-webkit-overflow-scrolling:touch}
     .method-transition__inner th,.method-transition__inner td,.faq-answer-copy th,.faq-answer-copy td,#edb-pricing-neurozeh-v1 .edb-product-overlay-points th,#edb-pricing-neurozeh-v1 .edb-product-overlay-points td{min-width:120px;padding:8px 10px;border:1px solid rgba(22,143,211,.18);text-align:left;vertical-align:top}
     .faq-media{display:block;width:100%;max-height:430px;object-fit:contain;background:#f6f8fb;border:1px solid rgba(38,175,255,.12);border-radius:13px}
@@ -866,38 +874,36 @@
     .chain-block--final{--blue:#26afff;--blue-deep:#118ed8;--orange:#ff684b;--telegram:#229ed9;--max-blue:#471aff;--max-violet:#9500ff}
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    .chain-block--final{margin:0;background:#f6f8fb;color:#fff;font-family:Manrope,Arial,sans-serif;-webkit-font-smoothing:antialiased}
-    .chain-block--final a:focus-visible{outline:3px solid #fff;outline-offset:4px}
+    .chain-block--final{margin:0;background:#fff;color:var(--site-ink);font-family:Manrope,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    .chain-block--final a:focus-visible{outline:3px solid #6ec8ff;outline-offset:4px}
     .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-    .final-section{padding:var(--space-section) var(--page-gutter) 0}
-    .final-card{position:relative;isolation:isolate;overflow:hidden;width:min(100%,var(--content-panel));margin:0 auto;background:linear-gradient(145deg,var(--blue) 0%,var(--blue-deep) 100%);border-radius:24px;box-shadow:0 28px 54px -27px rgba(3,94,151,.68),0 10px 24px -18px rgba(3,70,114,.62)}
-    .final-card::before,.final-card::after{position:absolute;z-index:-1;border-radius:50%;content:"";pointer-events:none}
-    .final-card::before{top:-150px;right:-130px;width:380px;height:380px;background:radial-gradient(circle,rgba(255,255,255,.28),rgba(255,255,255,0) 68%)}
-    .final-card::after{bottom:-180px;left:-120px;width:430px;height:430px;background:radial-gradient(circle,rgba(255,255,255,.15),rgba(255,255,255,0) 68%)}
-    .final-main{--final-inline:18px;display:flex;max-width:860px;flex-direction:column;align-items:flex-start;padding:46px var(--final-inline) 64px;text-align:left}
+    .final-section{padding:calc(var(--space-section) - 14px) var(--page-gutter) 0}
+    .final-card{width:var(--content-frame);max-width:100%;margin:0 auto}
+    .final-main{display:flex;flex-direction:column;align-items:flex-start;padding:0;text-align:left}
     .sign-sticker{display:inline-block;margin:0 0 24px;padding:9px 16px;color:#fff;background:var(--orange);border:2px solid rgba(255,255,255,.82);border-radius:999px;box-shadow:0 9px 20px -13px rgba(70,20,10,.7);font-family:Unbounded,Manrope,sans-serif;font-size:11px;font-weight:800;letter-spacing:.04em;transform:rotate(-3deg)}
-    .chain-block--final h1{display:grid;max-width:var(--content-reading);margin:0;font-family:Unbounded,Manrope,sans-serif;font-size:var(--type-display);font-weight:700;line-height:1.14;letter-spacing:-1.35px;text-wrap:balance}
+    .chain-block--final h1{display:grid;max-width:var(--content-reading);margin:0;color:var(--site-ink);font-family:Manrope,Arial,sans-serif;font-size:var(--type-section);font-weight:800;line-height:1.08;letter-spacing:-.045em;text-wrap:balance}
     .chain-block--final h1 span+span{margin-top:24px}
     .chain-block--final h1 .final-sign{text-shadow:0 4px 0 rgba(5,104,164,.16)}
     .chain-block--final h1 .question-line{font-family:Manrope,Arial,sans-serif;font-size:.62em;font-weight:600;line-height:1.25;letter-spacing:0}
-    .meme-card{position:relative;align-self:center;width:min(100%,680px);margin:38px auto 0;padding:0;border:5px solid #fff;border-radius:22px;overflow:hidden;background:transparent;box-shadow:0 24px 48px -28px rgba(0,53,90,.72);transform:rotate(-1.25deg)}
+    .meme-card{position:relative;align-self:center;width:min(100%,680px);margin:24px auto 0;padding:0;overflow:hidden;border-radius:clamp(12px,2vw,16px);background:transparent}
     .meme-card img{display:block;width:100%;height:auto;margin:0 auto}
-    .action-group{width:min(100%,680px);margin-top:42px}
-    .contact-copy{max-width:640px;margin:0 0 22px;color:rgba(255,255,255,.9);font-size:17px;font-weight:400;line-height:1.55}
+    .action-group{width:min(100%,680px);margin-top:26px}
+    .contact-copy{max-width:640px;margin:0 0 22px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
+    .final-main>.contact-copy{margin-top:22px;margin-bottom:0}
     .social-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    .social-button,.primary-cta{min-height:66px;border:0;border-radius:16px;font:800 17px/1 Manrope,sans-serif;text-decoration:none;transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease,filter .18s ease}
+    .social-button,.primary-cta{min-height:56px;border:0;border-radius:16px;font:800 16px/1 Manrope,sans-serif;text-decoration:none;transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease,filter .18s ease}
     .social-button{display:flex;align-items:center;justify-content:center;gap:12px;color:#fff;box-shadow:0 16px 28px -22px rgba(0,48,80,.75)}
     .social-button:hover,.social-button:focus-visible{filter:none;box-shadow:0 19px 30px -20px rgba(0,48,80,.9);transform:rotate(-1deg) translateY(-2px)}
-    .social-button--telegram{color:var(--telegram);background:#fff}
-    .social-button--telegram:hover,.social-button--telegram:focus-visible{color:var(--telegram);background:#fff}
-    .social-button--max{color:#0d001a;background:#fff;border:1px solid rgba(71,26,255,.14)}
-    .social-icon{display:grid;width:39px;height:39px;flex:none;place-items:center}
-    .social-icon svg{display:block;width:37px;height:37px}
-    .max-logo{display:block;width:102px;height:38px;object-fit:contain}
-    .primary-cta{display:flex;align-items:center;justify-content:center;width:100%;margin-top:24px;padding:0 22px;color:#fff;background:#ff684b;box-shadow:0 16px 30px -17px rgba(255,104,75,.72);transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease}
-    .primary-cta:hover,.primary-ct.chain-block--final a:focus-visible{color:#fff;background:linear-gradient(135deg,#ffd47d,#e8ae45);box-shadow:0 20px 32px -15px rgba(232,174,69,.82);transform:rotate(-1deg) translateY(-2px)}
-    @media(min-width:760px){.final-section{padding-top:var(--space-section);padding-bottom:0}.final-main{--final-inline:72px;padding:58px var(--final-inline) 78px}.sign-sticker{margin-bottom:28px;font-size:12px}.action-group{margin-top:52px}}
-    @media(max-width:430px){.final-main{--final-inline:14px;padding-inline:var(--final-inline)}.social-row{gap:8px}.social-button,.primary-cta{min-height:62px;font-size:15px}.social-button{gap:7px}.social-icon{width:34px;height:34px}.social-icon svg{width:32px;height:32px}.max-logo{width:78px}.meme-card{border-radius:18px}.contact-copy{font-size:15px}}
+    .social-button--telegram{color:#fff;background:linear-gradient(180deg,#2aabee,#229ed9)}
+    .social-button--telegram:hover,.social-button--telegram:focus-visible{color:#fff;background:linear-gradient(180deg,#39b8f5,#1d96d2)}
+    .social-button--max{color:#fff;background:#0b0b0d}
+    .social-icon{display:grid;width:34px;height:34px;flex:none;place-items:center}
+    .social-icon svg{display:block;width:30px;height:30px}
+    .max-logo{display:block;width:88px;height:32px;object-fit:contain}
+    .primary-cta{display:flex;align-items:center;justify-content:center;width:100%;margin-top:24px;padding:0 22px;color:#fff;background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%);box-shadow:0 16px 30px -17px rgba(221,82,45,.68)}
+    .primary-cta:hover,.primary-cta:focus-visible{color:#fff;background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%);box-shadow:0 20px 32px -15px rgba(221,82,45,.78);filter:saturate(1.08) brightness(1.03);transform:translateY(-2px)}
+    @media(min-width:760px){.final-section{padding-top:calc(var(--space-section) - 14px);padding-bottom:0}.action-group{margin-top:46px}}
+    @media(max-width:430px){.social-row{gap:8px}.social-button,.primary-cta{min-height:52px;font-size:15px}.social-button{gap:7px}.social-icon{width:30px;height:30px}.social-icon svg{width:28px;height:28px}.max-logo{width:72px;height:29px}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.social-button,.primary-cta{transition:none}}
 
     .copy-section{padding:clamp(54px,8vw,88px) var(--page-gutter);color:var(--site-ink);background:transparent}
@@ -905,9 +911,21 @@
     .copy-section h2{max-width:var(--content-frame);margin:0;font-size:var(--type-section);font-weight:800;line-height:1.08;letter-spacing:-.045em;text-wrap:balance}
     .copy-section p{max-width:var(--content-reading);margin:24px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
     .copy-section p+p{margin-top:14px}
+    .faq-shell>.hero-pricing-note{margin:28px auto 0;color:var(--site-text);font-size:15px;font-style:italic;font-weight:500;line-height:1.45;text-align:center}
     .recognition-explanation{width:100vw;margin-left:calc(50% - 50vw);padding:clamp(28px,4.5vw,42px) 0 clamp(12px,2vw,22px)}
     .recognition-explanation .copy-section__inner{width:var(--content-frame);max-width:calc(100% - var(--page-gutter) - var(--page-gutter));margin:0 auto}
     .recognition-explanation p{max-width:none;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
+    .recognition--static .recognition__scene{position:relative;top:auto}
+    .recognition--static .recognition__spacer{display:none}
+    .familiar-advice{padding:clamp(28px,5vw,52px) 0 0}
+    .familiar-advice__title{margin:0;color:var(--site-ink);font-size:var(--type-section);font-weight:850;line-height:1.08;letter-spacing:-.045em;text-wrap:balance}
+    .familiar-advice__figure{width:min(100%,760px);margin:0 auto}
+    .familiar-advice__figure img{display:block;width:100%;height:auto;filter:drop-shadow(0 18px 28px rgba(33,85,121,.12))}
+    .familiar-advice__figure + .familiar-advice__title{margin-top:clamp(20px,4vw,32px)}
+    .familiar-advice__copy{max-width:var(--content-frame);margin:clamp(22px,4vw,34px) 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
+    .familiar-advice__copy p{margin:0}.familiar-advice__copy p+p{margin-top:16px}
+    .familiar-advice__bridge{color:var(--site-text);font-weight:500}
+    .recognition--static .method-transition{padding-top:clamp(18px,3vw,30px)}
     .copy-section--inside{padding-top:36px;padding-bottom:clamp(34px,5vw,50px)}
     .inside-steps{display:grid;gap:11px;max-width:var(--content-reading);margin:28px 0 0;padding:0;counter-reset:inside-step;list-style:none}
     .inside-steps li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:13px;align-items:start;padding:16px 0;border-bottom:1px solid rgba(22,143,211,.15);color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.5;counter-increment:inside-step}
@@ -922,7 +940,7 @@
     .inside-gallery__item{display:block;min-width:0;overflow:hidden;border-radius:clamp(12px,2vw,18px);background:#fff;box-shadow:0 15px 30px -24px rgba(20,92,138,.5);transition:transform .18s ease,box-shadow .18s ease}
     .inside-gallery__item:hover,.inside-gallery__item:focus-visible{box-shadow:0 20px 34px -22px rgba(20,92,138,.62);transform:translateY(-2px);outline:3px solid rgba(38,175,255,.42);outline-offset:3px}
     .inside-gallery__item img{display:block;width:100%;height:auto;background:#fff}
-    .method-proof{padding-top:var(--space-section);padding-bottom:0}
+    .method-proof{padding-top:clamp(26px,4vw,42px);padding-bottom:0}
     .method-proof__link{display:inline-flex;align-items:center;gap:5px;padding:0;border:0;background:transparent;color:var(--site-blue);font:inherit;font-weight:800;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;cursor:pointer}
     .method-proof__link-icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:2}
     html.method-overlay--locked,html.method-overlay--locked body{overflow:hidden}
@@ -950,57 +968,65 @@
     @media(max-width:640px){.method-gallery__controls{padding-right:34px}.method-gallery__button{min-width:38px;min-height:38px}.method-gallery__viewport{max-height:calc(100dvh - 150px)}}
     .proof-list{display:grid;gap:18px;max-width:var(--content-reading);margin:30px 0 0;padding:0;list-style:none}
     .proof-list li{display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:13px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.58}
-    .proof-list li::before{display:grid;width:32px;height:32px;place-items:center;border-radius:9px;background:#d7f2e0;color:#299b57;font-size:19px;font-weight:900;line-height:1;content:"✓"}
-    .proof-list li.proof-list__item--warning::before{background:#ffe4df;color:#d34f42;font-size:25px;content:"×"}
-    .experience-proof{padding-top:var(--space-section);padding-bottom:0}
+    .proof-list li::before{display:grid;width:32px;height:32px;place-items:center;border-radius:9px;background:#c6f1d5;color:#138e47;font-size:19px;font-weight:900;line-height:1;content:"✓"}
+    .proof-list li.proof-list__item--warning::before{background:#ffd2cb;color:#ee3d2f;font-size:25px;content:"×"}
+    .proof-list li.proof-list__item--notice::before{background:#ffe58a;color:#e07800;font-size:20px;content:"!"}
+    .method-proof__listen{max-width:var(--content-reading);margin:24px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
+    .approach-article-note{display:block;width:var(--content-frame);max-width:100%;margin:24px auto 0;padding:19px 22px;border:0;border-radius:16px;background:#fff6c9;color:inherit;font:inherit;font-size:var(--type-body);font-weight:400;line-height:1.65}
+    .approach-article-note a{color:#118ed8;font-weight:600;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+    .approach-article-note a:hover,.approach-article-note a:focus-visible{color:#0b72b1}
+    .experience-proof{padding-top:var(--space-related);padding-bottom:0}
     .experience-proof__inner{width:var(--content-frame);max-width:100%;margin:0 auto}
-    .experience-proof h2{max-width:var(--content-frame);margin:0;font-size:clamp(29px,3.45vw,44px);font-weight:800;line-height:1.1;letter-spacing:-.045em;text-wrap:balance}
-    .experience-proof__panel{position:relative;overflow:hidden;width:var(--content-frame);max-width:100%;margin:var(--space-related) 0 0;padding:clamp(25px,5vw,44px) clamp(18px,5vw,42px);border-radius:18px;background:radial-gradient(circle at 84% 10%,rgba(219,248,255,.34),transparent 32%),radial-gradient(circle at 4% 110%,rgba(18,126,193,.22),transparent 42%),linear-gradient(132deg,#168dcb 0%,#27aff5 48%,#86d3ef 100%);box-shadow:0 16px 28px -21px rgba(13,64,98,.68);color:#fff}
-    .experience-proof__panel::before,.experience-proof__panel::after{position:absolute;pointer-events:none;content:""}
-    .experience-proof__panel::before{inset:-40% -16% auto auto;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(226,250,255,.42),transparent 67%);filter:blur(8px)}
-    .experience-proof__panel::after{inset:auto -16% -44% -20%;height:230px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,83,158,.2),transparent 68%);filter:blur(13px)}
-    .experience-proof__stats{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 18px;margin:0}
-    .experience-proof__stat{display:grid;min-width:0;grid-template-rows:25px 82px minmax(76px,auto);justify-items:center}
-    .experience-proof__stat dt{grid-row:1;width:min(100%,190px);margin:0;color:rgba(255,255,255,.78);font-size:11px;font-weight:850;letter-spacing:.06em;line-height:1;text-align:center;text-transform:uppercase}
-    .experience-proof__stat dd{display:contents;margin:0}
-    .experience-proof__number{display:flex;width:min(100%,190px);min-width:0;align-items:flex-end;justify-content:center;color:#fff;font-size:clamp(42px,12vw,68px);font-weight:900;line-height:.96;letter-spacing:-.025em;font-variant-numeric:tabular-nums;text-align:center;text-shadow:0 2px 16px rgba(0,45,83,.2);white-space:nowrap}
-    .experience-proof__unit{align-self:flex-end;margin:0 0 .02em .1em;font-size:.5em;font-weight:850;letter-spacing:-.01em;line-height:1}
-    .experience-proof__description{display:block;width:min(100%,190px);min-width:0;margin:0;color:rgba(255,255,255,.9);font-size:12px;font-weight:750;line-height:1.38;text-align:left}
-    .experience-proof__copy{max-width:var(--content-frame);margin:var(--space-related) 0 0}
-    .experience-proof__copy p{max-width:none;margin:0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
-    .experience-proof__copy p+p{margin-top:14px}
-    @media(min-width:900px){.experience-proof__stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}.experience-proof__stat{grid-template-rows:25px 96px minmax(84px,auto)}.experience-proof__stat dt,.experience-proof__number,.experience-proof__description{width:min(100%,185px)}.experience-proof__number{font-size:clamp(48px,5.25vw,68px)}.experience-proof__description{font-size:13px}}
+    .experience-proof__title{max-width:var(--content-reading);margin:0;color:var(--site-text);font-size:var(--type-body);font-weight:800;line-height:1.62}
+    .experience-proof__credentials{display:grid;gap:14px;max-width:var(--content-reading);margin:22px 0 0;padding:0;list-style:none}
+    .experience-proof__credential{display:grid;grid-template-columns:32px minmax(0,1fr);align-items:center;gap:13px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.5}
+    .experience-proof__credential::before{display:grid;width:32px;height:32px;place-items:center;border-radius:9px;background:#ffe58a;color:#e07800;content:"★";font-size:17px;font-weight:900;line-height:1}
+    .experience-proof__copy{margin:22px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
+    .experience-proof__copy p{margin:0}.experience-proof__copy p+p{margin-top:14px}
     .result-section{padding-top:var(--space-section);padding-bottom:0}
     .result-section__title{width:var(--content-frame);max-width:calc(100vw - (var(--page-gutter) * 2));margin:0 auto;font-size:var(--type-section);font-weight:800;line-height:1.08;letter-spacing:-.045em;text-wrap:nowrap}
     .result-section__inner{width:var(--content-frame);max-width:100%;margin:0 auto}
     .result-section__list{display:grid;gap:13px;margin:28px 0 0;padding:0;list-style:none}
     .result-section__list li{display:grid;grid-template-columns:27px minmax(0,1fr);gap:11px;align-items:start;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.45}
-    .result-section__list li::before{display:grid;width:27px;height:27px;place-items:center;border-radius:8px;background:#d7f2e0;color:#299b57;content:"✓";font-size:15px;font-weight:900;line-height:1}
+    .result-section__list li::before{display:grid;width:27px;height:27px;place-items:center;border-radius:8px;background:#c6f1d5;color:#138e47;content:"✓";font-size:15px;font-weight:900;line-height:1}
     .result-section__closing{margin:var(--space-related) 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
     .result-section__closing+.result-section__closing{margin-top:16px}
     .author-section{padding-top:var(--space-section);padding-bottom:0}
     .author-section__layout{display:block}
-    .author-section__image{display:block;width:100%;margin:clamp(24px,4vw,34px) 0 0;overflow:hidden;border-radius:clamp(18px,3vw,28px);background:#fff;box-shadow:0 24px 44px -34px rgba(17,112,173,.52)}
+    .author-section__image{display:block;width:100%;margin:clamp(24px,4vw,34px) 0 0;overflow:hidden;border-radius:clamp(12px,2vw,16px);background:#fff;box-shadow:0 24px 44px -34px rgba(17,112,173,.52)}
     .author-section__image img{display:block;width:100%;height:auto}
-    .free-intensive{padding-top:var(--space-section);padding-bottom:0}
+    .author-section__subheading{margin:clamp(30px,5vw,48px) 0 0;color:var(--site-ink);font-size:var(--type-section);font-weight:800;line-height:1.08;letter-spacing:-.045em;text-wrap:balance}
+    .author-section__subheading--challenge{margin-top:clamp(32px,5vw,50px)}
+    .copy-section p.author-section__challenge-copy{margin-top:18px}
+    .author-section__meme{display:block;width:min(100%,760px);margin:clamp(12px,2vw,18px) auto 0}
+    .author-section__meme img{display:block;width:100%;height:auto}
+    .copy-section p.author-section__after-meme{margin-top:0}
+    .free-intensive{padding-top:18px;padding-bottom:var(--space-section)}
+    .free-intensive h2{text-align:center}
+    .free-intensive .approach-article-note{width:100%;margin-top:24px;text-align:left}
     .free-intensive__inline-link{display:inline-flex;align-items:baseline;gap:.28em;color:var(--site-blue);font-weight:800;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:.15em}
     .free-intensive__inline-link:focus-visible,.free-intensive__inline-link:hover{color:#087bb8}
     .free-intensive__link-icon{display:inline-grid;width:1em;height:1em;place-items:center;font-size:.92em;font-weight:900;line-height:1;text-decoration:none}
-    .free-intensive__cta{display:flex;width:fit-content;min-height:58px;align-items:center;justify-content:center;margin:28px auto 0;padding:0 26px;border-radius:15px;background:var(--site-blue);box-shadow:0 16px 28px -18px rgba(17,142,216,.58);color:#fff;font-size:17px;font-weight:800;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}
+    .free-intensive__cta{display:flex;width:fit-content;min-height:54px;align-items:center;justify-content:center;margin:28px auto 0;padding:0 22px;border-radius:16px;background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%);box-shadow:0 16px 30px -17px rgba(221,82,45,.68);color:#fff;font-size:16px;font-weight:800;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
     .free-intensive__cta:hover,.free-intensive__cta:focus-visible{box-shadow:0 20px 32px -17px rgba(17,142,216,.72);transform:translateY(-2px)}
     .reviews-featured-heading{padding-top:var(--space-section);padding-bottom:0}
+    .reviews-featured__more-note{width:var(--content-frame);max-width:100%;margin:30px auto 0;color:#657785;font-size:15px;font-style:italic;font-weight:500;line-height:1.45;text-align:center}
     .reviews-voice .voice-widget + .voice-widget{margin-top:var(--space-element)}
     .anya-story__cta{display:flex;width:var(--content-frame);max-width:calc(100% - var(--page-gutter) - var(--page-gutter));margin:var(--space-related) auto 0}
     @media(min-width:760px){.anya-story__cta{width:fit-content;max-width:none;margin-left:auto;margin-right:auto}}
     .reviews-after-cat{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin:0 auto;padding:var(--space-block) 0 0;color:#16181d}
     .reviews-after-cat h2{margin:0;font-size:var(--type-section);font-weight:800;line-height:1.14;letter-spacing:-.045em;text-wrap:balance}
     .reviews-after-cat p{max-width:var(--content-reading);margin:22px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
-    .reviews-wall-cta{width:var(--content-frame);max-width:100%;margin:0 auto;padding:var(--space-block) 0 var(--space-section)}
+    .reviews-wall-cta{width:var(--content-frame);max-width:100%;margin:0 auto;padding:var(--space-block) 0 18px}
     .reviews-wall-cta__actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
-    .reviews-wall-cta__button{display:inline-flex;min-height:54px;align-items:center;justify-content:center;padding:0 22px;border-radius:15px;color:#fff;font-size:16px;font-weight:800;text-decoration:none;box-shadow:0 15px 28px -20px rgba(19,91,137,.6);transition:transform .18s ease,box-shadow .18s ease}
+    .reviews-wall-cta__button{display:inline-flex;min-height:54px;align-items:center;justify-content:center;padding:0 22px;border-radius:16px;color:#fff;font-size:16px;font-weight:800;text-decoration:none;box-shadow:0 15px 28px -20px rgba(19,91,137,.6);transition:transform .18s ease,box-shadow .18s ease}
     .reviews-wall-cta__button:hover,.reviews-wall-cta__button:focus-visible{transform:translateY(-2px);box-shadow:0 20px 32px -20px rgba(19,91,137,.7)}
-    .reviews-wall-cta__button--pricing{background:var(--site-orange)}
+    .reviews-wall-cta__button--pricing{background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%);box-shadow:0 16px 30px -17px rgba(221,82,45,.68)}
     .reviews-wall-cta__button--intensive{background:var(--site-blue)}
+    .reviews-wall-cta+.free-intensive{padding-top:18px}
+    .primary-cta,.reviews-wall-cta__button--pricing,.anya-story__cta{min-height:54px;padding:0 22px;border-radius:16px;background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%);box-shadow:0 16px 30px -17px rgba(221,82,45,.68);color:#fff;font:800 16px/1.2 Manrope,sans-serif;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
+    .primary-cta:hover,.primary-cta:focus-visible,.reviews-wall-cta__button--pricing:hover,.reviews-wall-cta__button--pricing:focus-visible,.anya-story__cta:hover,.anya-story__cta:focus-visible{background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%);box-shadow:0 20px 32px -15px rgba(221,82,45,.78);color:#fff;filter:saturate(1.08) brightness(1.03);transform:translateY(-2px)}
+    .approach-article-note+.chain-block--anya{padding-top:clamp(34px,5vw,56px)}
     @media(max-width:560px){.reviews-wall-cta__actions{display:grid;grid-template-columns:1fr}.reviews-wall-cta__button{width:100%}}
 
     html{scroll-behavior:smooth;background:#e7f7ff}
@@ -1072,7 +1098,7 @@
     .anya-story__header{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin-right:auto;margin-left:auto}
     .anya-story__kicker{display:inline-flex;padding:8px 12px;border-radius:999px;background:#ff684b;color:#fff;font-size:12px;font-weight:900;letter-spacing:.05em;transform:rotate(-2deg)}
     .anya-story__header h2{margin:18px 0 0;font-size:var(--type-section);font-weight:800;line-height:1.08;letter-spacing:-.045em}
-    .anya-story__header p{max-width:580px;margin:18px 0 0;color:#55616d;font-size:var(--type-body);font-weight:600;line-height:1.55}
+    .anya-story__header p{max-width:580px;margin:18px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
     .anya-story__gesture{display:inline-grid;width:64px;height:36px;margin-left:15px;vertical-align:-.3em;color:#168fd3;place-items:center}
     .anya-story__gesture[hidden]{display:none}
     .anya-swipe-option{display:none;align-items:center;justify-content:center;color:#168fd3;font-size:12px;font-weight:800}
@@ -1103,7 +1129,7 @@
     .anya-slide--video{width:min(80vw,var(--anya-video-width,275px));aspect-ratio:1080/1914;background:#121018}
     .anya-slide--video iframe{width:100%;height:100%;border:0}
     .anya-slide--placeholder{background:linear-gradient(150deg,#31b6ff,#168fd3)}
-    .anya-story__after{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin:22px auto 0;color:#55616d;font-size:var(--type-body);line-height:1.6}
+    .anya-story__after{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin:22px auto 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
     .anya-story__after p{margin:0}
     .anya-story__after p+p{margin-top:14px}
     .anya-story__controls{display:none}
@@ -1159,8 +1185,9 @@
     .voice-widget__speed:hover,.voice-widget__speed:focus-visible{background:#d8eefb}
     .voice-widget__quote{margin:10px 0 0;padding-top:9px;border-top:1px solid rgba(73,134,171,.18);color:#647785;font-size:12px;font-style:italic;font-weight:400;line-height:1.45}
     .voice-widget__audio{display:none}
-    .homepage-program{width:var(--content-frame);max-width:100%;margin:0 auto;padding:clamp(34px,5vw,50px) 0 0;counter-reset:homepage-program}
-    .homepage-program__title{max-width:var(--content-reading);margin:0 auto 26px;color:var(--site-ink);font-size:var(--type-section);font-weight:800;line-height:1.08;letter-spacing:-.045em;text-align:center;text-wrap:balance}
+    .homepage-program{width:var(--content-frame);max-width:100%;margin:0 auto;padding:clamp(16px,2.4vw,26px) 0 0;counter-reset:homepage-program}
+    .homepage-program__title{max-width:var(--content-reading);margin:0 0 26px;color:var(--site-ink);font-size:var(--type-section);font-weight:800;line-height:1.08;letter-spacing:-.045em;text-align:left;text-wrap:balance}
+    .homepage-program__intro{max-width:var(--content-reading);margin:-8px 0 28px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
     .homepage-program__list{display:grid;gap:18px;margin:0;padding:0;list-style:none}
     .homepage-program__card{--program-accent:#27aff5;--program-accent-deep:#118ed8;--program-wash:rgba(39,175,245,.12);--program-wash-strong:rgba(39,175,245,.21);position:relative;overflow:hidden;padding:15px;border:1px solid rgba(20,141,206,.15);border-radius:18px;background:radial-gradient(circle at 91% -8%,var(--program-wash-strong),transparent 36%),linear-gradient(145deg,var(--program-wash) 0%,rgba(255,255,255,.98) 45%,#fff 100%);box-shadow:0 28px 62px -30px rgba(10,90,137,.42),0 11px 25px -18px rgba(10,90,137,.3);counter-increment:homepage-program}
     .homepage-program__card::before{position:absolute;z-index:2;inset:0 0 auto;height:4px;background:linear-gradient(90deg,var(--program-accent),var(--program-accent-deep));content:""}
@@ -1172,11 +1199,13 @@
     .homepage-program__heading::before{display:grid;width:72px;min-height:48px;place-items:center start;color:var(--program-accent);font-size:44px;font-weight:900;line-height:1;letter-spacing:.015em;content:counter(homepage-program,decimal-leading-zero)}
     .homepage-program__heading h3{margin:0;color:#142130;font-size:clamp(21px,5.5vw,28px);font-weight:800;line-height:1.12;letter-spacing:-.035em;text-wrap:balance}
     .homepage-program__body{display:grid;gap:18px}
-    .homepage-program__media{display:block;overflow:hidden;width:100%;border:1px solid rgba(20,90,130,.08);border-radius:11px;background:#eaf0f3;box-shadow:0 13px 26px -19px rgba(10,72,110,.55),0 5px 12px -9px rgba(10,72,110,.3)}
+    .homepage-program__media{display:block;overflow:hidden;width:100%;border:1px solid rgba(20,90,130,.08);border-radius:clamp(12px,2vw,16px);background:#eaf0f3;box-shadow:0 13px 26px -19px rgba(10,72,110,.55),0 5px 12px -9px rgba(10,72,110,.3)}
     .homepage-program__media img{display:block;width:100%;height:auto}
-    .homepage-program__copy{color:#344a5d;font-size:16px;font-weight:500;line-height:1.58}
+    .homepage-program__copy{color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
     .homepage-program__copy p{margin:0}.homepage-program__copy p+p{margin-top:11px}
-    @media(min-width:760px){.homepage-program{padding-top:clamp(34px,5vw,50px)}.homepage-program__title{margin-bottom:34px}.homepage-program__list{gap:24px}.homepage-program__card{padding:22px}.homepage-program__heading{grid-template-columns:90px minmax(0,1fr);gap:16px;margin:3px 0 22px}.homepage-program__heading::before{width:90px;min-height:60px;font-size:56px}.homepage-program__body{grid-template-columns:minmax(0,1fr) minmax(264px,.656fr);align-items:center;gap:32px}.homepage-program__media{grid-column:2;grid-row:1}.homepage-program__copy{grid-column:1;grid-row:1;font-size:17px;line-height:1.62}}
+    .homepage-program__details-note{max-width:var(--content-reading);margin:34px auto 0;color:#657785;font-size:15px;font-style:italic;font-weight:500;line-height:1.45;text-align:center}
+    @media(min-width:760px){.homepage-program{padding-top:clamp(18px,2.8vw,30px)}.homepage-program__title{margin-bottom:34px}.homepage-program__list{gap:24px}.homepage-program__card{padding:22px}.homepage-program__heading{grid-template-columns:90px minmax(0,1fr);gap:16px;margin:3px 0 22px}.homepage-program__heading::before{width:90px;min-height:60px;font-size:56px}.homepage-program__body{grid-template-columns:minmax(0,1fr) minmax(264px,.656fr);align-items:center;gap:32px}.homepage-program__media{grid-column:2;grid-row:1}.homepage-program__copy{grid-column:1;grid-row:1}}
+    .homepage-program + .chain-block--before-after{margin-top:clamp(44px,7vw,76px)}
     .reviews-featured{width:min(calc(100% + 5px),805px);margin:0 auto;padding:var(--space-related) 20px 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:calc(clamp(10px,3vw,18px) + 5px)}
     .reviews-featured__column{display:flex;min-width:0;flex-direction:column;gap:calc(clamp(10px,3vw,18px) + 5px)}
     .reviews-wall{--reviews-wall-gap:calc(clamp(10px,3vw,18px) + 5px);position:relative;width:min(calc(100% + 5px),805px);margin:0 auto;padding:var(--space-related) 20px var(--space-related);column-gap:var(--reviews-wall-gap)}
@@ -1251,9 +1280,11 @@
       .review-lightbox__promo .reviews-wall__promo-media{grid-row:1 / 3}
       .review-lightbox__promo .reviews-wall__promo-media img{max-height:calc(100dvh - 82px)}
     }
-    @media (prefers-reduced-motion:reduce){.reviews-wall__promo-button{transition:none}}
+    @media (prefers-reduced-motion:reduce){.reviews-wall__promo-button{transition:none}.hero-pricing-cta{animation:none}}
     @media(max-width:719px){
       .desktop-header{display:none!important}
+      .hero-pricing-cta{width:100%}
+      .hero-pricing-note{font-size:clamp(10px,3.35vw,13px)}
       .chain-block--before-after{padding:0}
       .chain-block--before-after .wl-masterclass-story{padding-bottom:18px}
       .chain-block--anya{padding-top:var(--space-section);padding-bottom:0}
@@ -1292,20 +1323,24 @@
         <div class="desktop-toc">
           <button class="desktop-toc__trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="desktop-toc-panel">Оглавление<span class="desktop-contact__chevron" aria-hidden="true"></span></button>
           <div class="desktop-toc__panel" id="desktop-toc-panel" hidden>
-            <a href="#hero-video">01. Видео. О чём Мастер-класс</a>
-            <a href="#homepage-program-title">02. Что вас ждёт внутри</a>
-            <a href="#reviews-featured-title">03. Те, кто прошёл Мастер-класс</a>
-            <a href="#method-proof-title">04. О моём подходе</a>
-            <a href="#pricing">05. Тарифы и цены</a>
-            <a href="#pricing-program-title">06. Подробная программа по дням</a>
-            <a href="#anya-story-title">07. Что случилось с Аней</a>
-            <a href="#author-title">08. Обо мне</a>
-            <a href="#faq">09. Важные вопросы</a>
-            <a href="#reviews-more-title">10. Больше отзывов</a>
+            <a href="#masterclass-title">01. О Мастер-классе</a>
+            <a href="#familiar-advice-title">02. Знакомый совет?</a>
+            <a href="#approach-title">03. Пора менять подход</a>
+            <a href="#homepage-program-title">04. Как всё будет устроено</a>
+            <a href="#reviews-featured-title">05. Результаты участников</a>
+            <a href="#method-proof-title">06. О моём подходе</a>
+            <a href="#pricing">07. Тарифы и цены</a>
+            <a href="#pricing-program-title">08. Программа по дням</a>
+            <a href="#anya-story-title">09. Что случилось с Аней</a>
+            <a href="#author-title">10. Обо мне</a>
+            <a href="#faq-title">11. Важные вопросы</a>
+            <a href="#final-title">12. Финальный выбор</a>
+            <a href="#reviews-more-title">13. Больше отзывов</a>
+            <a href="#free-intensive-title">14. Есть сомнения?</a>
           </div>
         </div>
         <span class="desktop-nav__divider" aria-hidden="true"></span>
-        <a href="#pricing">Выбрать тариф</a><a href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>
+        <a href="#pricing" data-analytics-cta="pricing_nav_desktop">Выбрать тариф</a><a href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>
         <span class="desktop-nav__divider" aria-hidden="true"></span>
         <div class="desktop-contact">
           <button class="desktop-contact__trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="desktop-contact-panel">
@@ -1335,20 +1370,24 @@
       <div class="mobile-toc">
         <button class="mobile-toc__trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="mobile-toc-panel">Оглавление</button>
         <div class="mobile-toc__panel" id="mobile-toc-panel" hidden>
-          <a href="#hero-video">01. Видео. О чём Мастер-класс</a>
-          <a href="#homepage-program-title">02. Что вас ждёт внутри</a>
-          <a href="#reviews-featured-title">03. Те, кто прошёл Мастер-класс</a>
-          <a href="#method-proof-title">04. О моём подходе</a>
-          <a href="#pricing">05. Тарифы и цены</a>
-          <a href="#pricing-program-title">06. Подробная программа по дням</a>
-          <a href="#anya-story-title">07. Что случилось с Аней</a>
-          <a href="#author-title">08. Обо мне</a>
-          <a href="#faq">09. Важные вопросы</a>
-          <a href="#reviews-more-title">10. Больше отзывов</a>
+          <a href="#masterclass-title">01. О Мастер-классе</a>
+          <a href="#familiar-advice-title">02. Знакомый совет?</a>
+          <a href="#approach-title">03. Пора менять подход</a>
+          <a href="#homepage-program-title">04. Как всё будет устроено</a>
+          <a href="#reviews-featured-title">05. Результаты участников</a>
+          <a href="#method-proof-title">06. О моём подходе</a>
+          <a href="#pricing">07. Тарифы и цены</a>
+          <a href="#pricing-program-title">08. Программа по дням</a>
+          <a href="#anya-story-title">09. Что случилось с Аней</a>
+          <a href="#author-title">10. Обо мне</a>
+          <a href="#faq-title">11. Важные вопросы</a>
+          <a href="#final-title">12. Финальный выбор</a>
+          <a href="#reviews-more-title">13. Больше отзывов</a>
+          <a href="#free-intensive-title">14. Есть сомнения?</a>
         </div>
       </div>
       <div class="mobile-nav-divider" aria-hidden="true"></div>
-      <a href="#pricing">Выбрать тариф</a><a href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>
+      <a href="#pricing" data-analytics-cta="pricing_nav_mobile">Выбрать тариф</a><a href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>
       <div class="mobile-nav-divider" aria-hidden="true"></div>
       <div class="mobile-contact">
         <button class="mobile-contact__trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="mobile-contact-panel">Контакты</button>
@@ -1368,50 +1407,34 @@
     <div class="chain-block chain-block--hero"><section class="site-hero" id="top">
       <div class="site-hero__inner">
         <p class="site-eyebrow" data-homepage-block="hero-label" data-homepage-field="text" data-block-width="intrinsic">Мастер-класс · 21 день</p>
-        <h1 class="site-title" data-homepage-block="hero-title" data-block-width="hero"><span class="site-title__plain" data-homepage-field="line-1">По изменению</span><span class="site-title__plain" data-homepage-field="line-2">Питания <small>и</small></span><span class="site-title__accent" data-homepage-field="accent">Пищевых привычек</span></h1>
-        <p class="site-lead" data-homepage-block="hero-intro" data-homepage-field="text" data-block-width="content">За три недели вы научитесь делать похудение проще, а пользоваться этим потом будете — всю жизнь!</p>
-      <div class="floating-vsl-slot"><aside class="floating-vsl" data-floating-vsl aria-label="Видео о Мастер-классе"><button class="floating-vsl__close" type="button" data-floating-vsl-close aria-label="Скрыть видео">×</button><div class="site-player" id="hero-video" data-homepage-block="hero-video" data-block-width="video-main"><div class="site-player__mask"><iframe src="/preview/homepage-mobile/vsl-player.html?v=8" loading="eager" data-media-player data-media-context="homepage-vsl" title="Видео о Мастер-классе" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div></div></aside></div>
-        <div class="site-outro" data-homepage-block="hero-outro" data-block-width="content"><p data-homepage-field="paragraph-1">Вместо очередной голодовки — я покажу вам со стороны ваше привычное питание и пищевые привычки.</p><p data-homepage-field="paragraph-2">Вы научитесь лучше насыщаться за те же калории и соберёте свою систему питания, в которой не нужно будет так много силы воли ради простого похудения.</p><p data-homepage-field="paragraph-3">Я расскажу, что это за навыки, научу, как их освоить, покажу, как применять, и создам вокруг вас обстановку, чтобы эти навыки закрепились!</p><a class="hero-pricing-cta" href="#pricing">Выбрать тариф — начать прямо сейчас</a><p class="hero-pricing-note">Или читайте подробнее о моём подходе ниже<span aria-hidden="true">👇</span></p></div>
+        <h1 class="site-title" id="masterclass-title" data-homepage-block="hero-title" data-block-width="hero" data-analytics-section="hero_intro"><span class="site-title__plain" data-homepage-field="line-1">По изменению</span><span class="site-title__plain" data-homepage-field="line-2">Питания <small>и</small></span><span class="site-title__accent" data-homepage-field="accent">Пищевых привычек</span></h1>
+        <p class="site-lead" data-homepage-block="hero-intro" data-homepage-field="text" data-block-width="content">Предлагаю вместо очередной голодовки через силу воли изменить питание и пищевые привычки так, <mark>чтобы похудение стало проще</mark>, силы воли нужно было меньше, а вес больше никогда не возвращался назад!</p>
+      <div class="floating-vsl-slot"><aside class="floating-vsl" data-floating-vsl aria-label="Видео о Мастер-классе"><button class="floating-vsl__close" type="button" data-floating-vsl-close aria-label="Скрыть видео">×</button><div class="site-player" id="hero-video" data-homepage-block="hero-video" data-block-width="video-main" data-analytics-section="hero_video"><div class="site-player__mask"><iframe src="/preview/homepage-mobile/vsl-player.html?v=8" loading="eager" data-media-player data-media-context="homepage-vsl" title="Видео о Мастер-классе" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div></div></aside></div>
+        <div class="site-outro" data-homepage-block="hero-outro" data-block-width="content"><p data-homepage-field="paragraph-1">За 21 день вы отключите автопилот, на котором набрали вес, научитесь лучше насыщаться за привычные калории и освоите такие пищевые привычки, которые долгие годы будут защищать от лишнего веса!</p><p data-homepage-field="paragraph-2">Я расскажу, как всё это освоить, покажу, как применять, и создам вокруг вас обстановку, чтобы эти навыки закрепились!</p><blockquote class="hero-guarantee"><p>Гарантирую 100% возврат в первые 3 дня, если вам не подойдёт мой подход.</p><p>Старт — сразу после оплаты, доступ к материалам и всем обновлениям — навсегда!</p></blockquote><a class="hero-pricing-cta" href="#pricing" data-analytics-cta="pricing_hero">Выбрать тариф — начать прямо сейчас!</a><p class="hero-pricing-note">или читайте подробнее о моём подходе 👇</p></div>
       </div>
     </section>
 
     </div>
     <!-- library:recognition:start -->
-    <div class="chain-block chain-block--recognition"><section class="recognition" data-recognition>
+    <div class="chain-block chain-block--recognition"><section class="recognition recognition--static" data-recognition>
       <div class="recognition__scene">
-        <section class="argument">
-          <div class="argument__inner">
-            <h1 data-homepage-block="recognition-title" data-homepage-field="html" data-block-width="content">Чтобы похудеть, нужно <span class="old-formula"><span class="old-formula__line">«меньше есть<svg class="strike-svg" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 11 C24 8, 46 13, 68 10 S88 9, 98 11"/></svg></span> <span class="old-formula__line">и больше двигаться»<svg class="strike-svg" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 10 C18 13, 39 8, 58 11 S83 14, 98 10"/></svg></span></span></h1>
-            <div class="argument__copy" data-homepage-block="recognition-intro" data-homepage-field="html" data-block-width="content">
-              <p>Казалось бы, слова вроде правильные... Но что если вы уже не можете есть ещё меньше, а двигаться больше — ну никак не получается? А худеть как-то надо...</p>
-            </div>
-          </div>
-        </section>
-        <div class="recognition__person-wrap" data-person data-homepage-block="recognition-scene" data-block-width="content">
-          <img class="recognition__person" src="/preview/homepage-mobile/crying-character.png" width="1280" height="639" alt="Плачущий человечек лежит в луже слёз">
-          <div class="recognition__pains" aria-label="Трудности с похудением">
-            <p class="pain" data-homepage-field="pain-1">Весь день держалась — вечером сорвалась</p>
-            <p class="pain" data-homepage-field="pain-2">Ем и так мало — вес стоит</p>
-            <p class="pain" data-homepage-field="pain-3">Вроде похудела — вес опять вернулся</p>
-            <p class="pain" data-homepage-field="pain-4">Еда — единственное удовольствие</p>
-            <p class="pain" data-homepage-field="pain-5">Всё знаю — ничего не делаю...</p>
-            <p class="pain pain--final" data-homepage-field="pain-6" aria-label="Я так больше не хочу.">Я так больше <span class="final-old">не могу</span>. <span class="final-new">не хочу</span></p>
-          </div>
-        </div>
-        <section class="copy-section recognition-explanation" data-homepage-block="recognition-explanation" data-block-width="content">
-          <div class="copy-section__inner">
-            <p data-homepage-field="paragraph-1">Да, для похудения — нужен дефицит калорий. <strong>Но здоровое питание и пищевые привычки именно для того</strong> и нужны, чтобы у вас глаза на лоб не полезли от этого дефицита.</p>
-            <p data-homepage-field="paragraph-2">Тяга к сладкому, частым перекусам, постоянный голод, невозможность вовремя остановиться, срывы и прочие оказии — <strong>это не ваши характеристики как личности, а просто недостаток навыков,</strong> как жить в дефиците калорий.</p>
+        <section class="familiar-advice" data-homepage-block="recognition-intro" data-block-width="content">
+          <figure class="familiar-advice__figure" data-homepage-field="media"><img src="/preview/homepage-mobile/familiar-advice-less-eat-more-move.png" width="1280" height="639" alt="Меньше ешь и больше двигайся"></figure>
+          <h2 class="familiar-advice__title" id="familiar-advice-title" data-homepage-field="title" data-analytics-section="recognition">Знакомый совет?</h2>
+          <div class="familiar-advice__copy" data-homepage-block="recognition-explanation" data-homepage-field="text">
+            <p>Слова как бы правильные... Но что, если вы уже не можете есть ещё меньше, а двигаться больше — ну вообще никак не получается?</p>
+            <p>Да, для похудения нужен только дефицит калорий. Но здоровое питание и пищевые привычки нужны как раз для того, чтобы у вас глаза на лоб не полезли от этого дефицита.</p>
+            <p class="familiar-advice__bridge">И вы могли спокойно быть в дефиците достаточно долго, чтобы увидеть изменения в зеркале. А значит...</p>
           </div>
         </section>
         <section class="method-transition" aria-label="Следующий блок страницы" data-homepage-block="approach" data-homepage-field="html" data-block-width="content" data-recognition-followup>
           <div class="method-transition__inner">
-            <p class="method-kicker">Значит, пора менять подход!</p>
+            <h2 class="method-kicker" id="approach-title" data-analytics-section="approach">Пора менять подход!</h2>
             <ul class="method-list">
               <li><span class="method-checks" aria-hidden="true"><i class="method-check method-check--selected method-check--soft">✓</i></span><p><span>Вместо ограничений — </span><strong>баланс</strong></p></li>
               <li><span class="method-checks" aria-hidden="true"><i class="method-check method-check--selected method-check--soft">✓</i></span><p><span>Вместо ПП еды — </span><strong><span class="method-list__no-break">пищевые привычки</span></strong></p></li>
               <li><span class="method-checks" aria-hidden="true"><i class="method-check method-check--selected method-check--soft">✓</i></span><p><span>Вместо уменьшения калорий — </span><strong><span class="method-list__no-break">увеличение насыщения</span></strong></p></li>
-              <li><span class="method-checks" aria-hidden="true"><i class="method-check method-check--selected method-check--soft">✓</i></span><p><span>Вместо подсчета граммов — </span><strong><span class="method-list__no-break">дневник по фото</span></strong></p></li>
+              <li><span class="method-checks" aria-hidden="true"><i class="method-check method-check--selected method-check--soft">✓</i></span><p><span>Вместо подсчёта граммов — </span><strong><span class="method-list__no-break">дневник по фото</span></strong></p></li>
               <li><span class="method-checks" aria-hidden="true"><i class="method-check method-check--selected method-check--soft">✓</i></span><p><span>Вместо погони за цифрами на весах — </span><strong>изменение образа жизни</strong></p></li>
               <li><span class="method-checks" aria-hidden="true"><i class="method-check method-check--selected method-check--soft">✓</i></span><p><span>Вместо случайных попыток — </span><strong><span class="method-list__no-break">понятный порядок действий</span></strong></p></li>
             </ul>
@@ -1422,7 +1445,20 @@
     </section>
   </div>
     <!-- library:recognition:end -->
-    <section class="chain-block chain-block--before-after" aria-label="Похудение до и после Мастер-класса" data-homepage-block="before-after" data-homepage-field="visual" data-block-width="visual"><section class="wl-masterclass-story" aria-label="Похудение до и после мастер-класса">
+    <section class="chain-block homepage-program" data-homepage-block="inside" data-homepage-field="steps" data-block-width="content" aria-labelledby="homepage-program-title">
+      <h2 class="homepage-program__title" id="homepage-program-title" data-analytics-section="program_inside">Как всё будет устроено:</h2>
+      <p class="homepage-program__intro">Мастер-класс длится 21 день. Вы ведёте дневник питания (не учёт калорий), читаете ежедневные материалы, выполняете домашние задания и в конце приходите на консультацию с разбором дневника!</p>
+      <ol class="homepage-program__list">
+        <li class="homepage-program__card"><div class="homepage-program__heading"><h3 id="program-first-result-title">Первый результат — уже через неделю</h3></div><div class="homepage-program__body"><div class="homepage-program__media"><img src="/preview/homepage-mobile/masterclass-inside-04.webp" alt="Примеры дневника питания и домашних заданий" loading="lazy"></div><div class="homepage-program__copy"><p>Благодаря дневнику питания по моей системе вы увидите все мелкие косяки в пищевом поведении, которые раньше отравляли вам жизнь, но вы о них даже не задумывались.</p><p>Мы отключим вам автопилот в отношениях с едой, и вы посмотрите на своё питание совершенно другими глазами — развидеть это потом будет невозможно.</p></div></div></li>
+        <li class="homepage-program__card"><div class="homepage-program__heading"><h3 id="program-dqs-title">Система оценки качества питания</h3></div><div class="homepage-program__body"><div class="homepage-program__media"><img src="https://app.edabalans.ru/media/reviews/v1/masterclass-balanced-nutrition-score-table.webp" alt="Таблица оценки сбалансированности питания" loading="lazy"></div><div class="homepage-program__copy"><p>Всю еду на свете можно разделить на 17 продуктовых категорий. И даже у самых вредных есть своя задача и смысл в питании. Но только когда всё на своих местах!</p><p>Вы научитесь понимать задачи всех категорий и находить им подходящее место в вашем питании, чтобы перестать вешать ярлыки вредного или ПП-шного и начать искать в тарелках реальный баланс и насыщение.</p></div></div></li>
+        <li class="homepage-program__card"><div class="homepage-program__heading"><h3 id="program-recipes-title">Система рецептов</h3></div><div class="homepage-program__body"><div class="homepage-program__media"><img src="/preview/homepage-mobile/masterclass-inside-01.webp" alt="Объяснение системы оценки состава питания" loading="lazy"></div><div class="homepage-program__copy"><p>Моя авторская система рецептов и конструктор питания помогут нормально собирать приёмы пищи в любой непонятной ситуации и из любой еды — хоть дома, хоть в гостях, из доставок или в ресторане!</p><p>Я дам не просто рецепты, а покажу на конкретных примерах, как применять все принципы здорового питания, о которых рассказываю в Мастер-классе.</p></div></div></li>
+        <li class="homepage-program__card"><div class="homepage-program__heading"><h3 id="program-extra-title">План на все случаи жизни</h3></div><div class="homepage-program__body"><div class="homepage-program__media"><img src="/preview/homepage-mobile/masterclass-inside-02.webp" alt="Примеры дополнительных материалов Мастер-класса" loading="lazy"></div><div class="homepage-program__copy"><p>Как побороть тягу к сладкому; как справляться с эмоциональным голодом; как организовывать питание в гостях, поездках и на отдыхе; правила срывов и чит-милов — и много других статей на все случаи жизни (раздел регулярно обновляется).</p><p>Чтобы в каждой повторяющейся ситуации у вас был понятный порядок действий, а не очередная каша в голове.</p></div></div></li>
+        <li class="homepage-program__card"><div class="homepage-program__heading"><h3 id="program-consultation-title">Индивидуальная консультация</h3></div><div class="homepage-program__body"><div class="homepage-program__media"><img src="https://app.edabalans.ru/media/reviews/v1/masterclass-consultation-review-card.png" alt="Фрагмент разбора дневника питания на консультации" loading="lazy"></div><div class="homepage-program__copy"><p>Разберу ваш дневник питания в мельчайших подробностях, подсвечу слабые и сильные стороны, отвечу на любые вопросы, подскажу, за что хвататься в первую очередь, а на что лично вам можно и подзабить.</p><p>Учитываю не только свои сферические хотелки в вакууме, но и ваши возможности и ограничения.</p><p>Я не стремлюсь слепить из вас идеал за три недели, но помогу вам стать завтра чуточку лучше, чем вчера!</p></div></div></li>
+      </ol>
+      <p class="homepage-program__details-note"><em>* Полную программу по дням читайте после описания тарифов.</em></p>
+    </section>
+
+    <section class="chain-block chain-block--before-after" id="before-after" aria-label="Похудение до и после Мастер-класса" data-homepage-block="before-after" data-homepage-field="visual" data-block-width="visual" data-analytics-section="before_after"><section class="wl-masterclass-story" aria-label="Похудение до и после мастер-класса">
   <div
     class="wl-masterclass-story__visual wl-masterclass-story__visual--before"
     data-wl-reveal="from-right"
@@ -1460,44 +1496,23 @@
 
 </section>
 
-    <section class="chain-block homepage-program" data-homepage-block="inside" data-homepage-field="steps" data-block-width="content" aria-labelledby="homepage-program-title">
-      <h2 class="homepage-program__title" id="homepage-program-title">Что вас ждёт внутри:</h2>
-      <ol class="homepage-program__list">
-        <li class="homepage-program__card"><div class="homepage-program__heading"><h3>Первый результат — уже через неделю</h3></div><div class="homepage-program__body"><div class="homepage-program__media"><img src="/preview/homepage-mobile/masterclass-inside-04.webp" alt="Примеры дневника питания и домашних заданий" loading="lazy"></div><div class="homepage-program__copy"><p>Благодаря дневнику питания по моей системе вы увидите все мелкие косяки в пищевом поведении, которые раньше отравляли вам жизнь, но вы о них даже не задумывались.</p><p>Мы отключим вам автопилот в отношениях с едой, и вы посмотрите на своё питание совершенно другими глазами — развидеть это потом будет невозможно.</p></div></div></li>
-        <li class="homepage-program__card"><div class="homepage-program__heading"><h3>Система оценки качества питания</h3></div><div class="homepage-program__body"><div class="homepage-program__media"><img src="https://app.edabalans.ru/media/reviews/v1/masterclass-balanced-nutrition-score-table.webp" alt="Таблица оценки сбалансированности питания" loading="lazy"></div><div class="homepage-program__copy"><p>Всю еду на свете можно разделить на 17 продуктовых категорий. И даже у самых вредных есть своя задача и смысл в питании. Но только когда все на своих местах!</p><p>Вы научитесь понимать задачи всех категорий и находить им подходящее место в вашем питании, чтобы перестать вешать ярлыки вредного или ПП-шного и начать искать в тарелках реальный баланс и насыщение.</p></div></div></li>
-        <li class="homepage-program__card"><div class="homepage-program__heading"><h3>Система рецептов</h3></div><div class="homepage-program__body"><div class="homepage-program__media"><img src="/preview/homepage-mobile/masterclass-inside-01.webp" alt="Объяснение системы оценки состава питания" loading="lazy"></div><div class="homepage-program__copy"><p>Моя авторская система рецептов и конструктор питания помогут нормально собирать приёмы пищи в любой непонятной ситуации и из любой еды — хоть дома, хоть в гостях, из доставок или в ресторане!</p><p>Я дам не просто рецепты, а покажу на конкретных примерах, как применять все принципы здорового питания, о которых рассказываю в Мастер-классе.</p></div></div></li>
-        <li class="homepage-program__card"><div class="homepage-program__heading"><h3>Дополнительные материалы</h3></div><div class="homepage-program__body"><div class="homepage-program__media"><img src="/preview/homepage-mobile/masterclass-inside-02.webp" alt="Примеры дополнительных материалов Мастер-класса" loading="lazy"></div><div class="homepage-program__copy"><p>Как побороть тягу к сладкому; как справляться с эмоциональным голодом, как организовывать питание в гостях, поездках и на отдыхе; правила срывов и чит-милов, и много других статей на все случаи жизни (регулярно обновляется).</p><p>Чтобы в каждой повторяющейся ситуации у вас был понятный порядок действий, а не очередная каша в голове.</p></div></div></li>
-        <li class="homepage-program__card"><div class="homepage-program__heading"><h3>Индивидуальная консультация</h3></div><div class="homepage-program__body"><div class="homepage-program__media"><img src="https://app.edabalans.ru/media/reviews/v1/masterclass-consultation-review-card.png" alt="Фрагмент разбора дневника питания на консультации" loading="lazy"></div><div class="homepage-program__copy"><p>Разберу ваш дневник питания в мельчайших подробностях, подсвечу слабые и сильные стороны, отвечу на любые вопросы, подскажу, за что хвататься в первую очередь, а на что лично вам можно и подзабить.</p><p>Учитываю не только свои сферические хотелки в вакууме, но и ваши возможности и ограничения.</p><p>Я не стремлюсь слепить из вас идеал за три недели, но помогу вам стать завтра чуточку лучше, чем вчера!</p></div></div></li>
-      </ol>
-    </section>
-
     <section class="chain-block experience-proof" data-homepage-block="experience-proof" data-block-width="content" aria-labelledby="experience-proof-title">
       <div class="experience-proof__inner" data-homepage-field="text">
-        <h1 id="experience-proof-title">Лично с вами я ещё не знаком, а вот с вашими проблемами — знаком уже давно!</h1>
-        <div class="experience-proof__panel">
-          <dl class="experience-proof__stats">
-            <div class="experience-proof__stat"><dt>Разобрал</dt><dd><strong class="experience-proof__number">600+</strong><span class="experience-proof__description">дневников питания участников Мастер-класса</span></dd></div>
-            <div class="experience-proof__stat"><dt>Похудел</dt><dd><strong class="experience-proof__number">−25<small class="experience-proof__unit">кг</small></strong><span class="experience-proof__description">И уже 10 лет спокойно живу в новом весе</span></dd></div>
-            <div class="experience-proof__stat"><dt>Написал</dt><dd><strong class="experience-proof__number">118</strong><span class="experience-proof__description">статей в топе сообщества «Мы худеем» на Пикабу</span></dd></div>
-            <div class="experience-proof__stat"><dt>Сделал</dt><dd><strong class="experience-proof__number">4</strong><span class="experience-proof__description">мини-приложения, которые упрощают ваше похудение</span></dd></div>
-          </dl>
-        </div>
+        <p class="experience-proof__title" id="experience-proof-title" data-analytics-section="experience">Лично с вами я ещё не знаком, а вот с вашими проблемами — знаком уже давно!</p>
+        <ul class="experience-proof__credentials" aria-label="Опыт Сергея Воронцова">
+          <li class="experience-proof__credential">Разобрал 600+ дневников питания!</li>
+          <li class="experience-proof__credential">Написал 118 статей в сообществе «Мы худеем» на Пикабу, которые вышли в Горячее!</li>
+          <li class="experience-proof__credential">Похудел сам на 25 кг и уже 10 лет живу в своём весе. Рассказываю и показываю, как вы тоже так можете!</li>
+        </ul>
         <div class="experience-proof__copy">
-          <p>Я уже видел проблемы, через которые вы проходили, проходите сейчас или ещё только пройдёте, но пока даже о них не догадываетесь. А главное, я уже подбирал для них десятки разных решений под совершенно разных людей.</p>
-          <p>Выбирая даже самостоятельный тариф, вы получаете весь этот опыт в удобной упаковке — буквально на блюдечке.</p>
+          <p>Я видел все проблемы, через которые вы уже проходили, проходите прямо сейчас и с которыми ещё столкнётесь в будущем, но даже о них пока не подозреваете.</p>
+          <p>В Мастер-классе весь этот опыт — в удобной упаковке, на блюдечке с голубой каёмочкой.</p>
         </div>
       </div>
     </section>
 
-    <section class="chain-block copy-section free-intensive" id="intensive" data-homepage-block="free-intensive" data-block-width="content" aria-labelledby="free-intensive-title">
-      <div class="copy-section__inner">
-        <h2 id="free-intensive-title" data-homepage-field="title">Есть сомнения?</h2>
-        <p data-homepage-field="paragraph-1">Если вы ещё не понимаете, почему это именно то, что нужно вам для успешного похудения, и хотите познакомиться с моим подходом поближе — я записал бесплатный интенсив в четырёх частях <a class="free-intensive__inline-link" href="https://похудение-это-есть.рф/intensive">«Последнее похудение»<span class="free-intensive__link-icon" aria-hidden="true">↗</span></a>.</p>
-        <p data-homepage-field="paragraph-2"><strong>Там я рассказываю, как должна выглядеть история адекватного похудения от А до Я!</strong></p>
-      </div>
-    </section>
     <section class="chain-block copy-section reviews-featured-heading" data-homepage-block="reviews-featured-heading" data-block-width="content">
-      <div class="copy-section__inner"><h2 id="reviews-featured-title" data-homepage-field="title">Вот что говорят те, кто уже прошёл Мастер-класс</h2></div>
+      <div class="copy-section__inner"><h2 id="reviews-featured-title" data-homepage-field="title" data-analytics-section="reviews_featured">А вот и результаты:</h2></div>
     </section>
     <!-- library:reviews-voice:start -->
     <section class="reviews-voice" aria-label="Голосовые отзывы" data-block-width="content">
@@ -1546,17 +1561,20 @@
       <div class="reviews-featured__column"><button class="reviews-featured__item" type="button" style="--tilt:-1.2deg" data-review-index="1" aria-label="Открыть отзыв Анны"><img src="https://optim.tildacdn.com/tild3462-3461-4633-b639-613964313736/-/format/webp/Frame_492445363_1.jpg.webp" alt="Анна — отзыв о результате Мастер-класса" loading="lazy" decoding="async"></button><button class="reviews-featured__item" type="button" style="--tilt:.7deg" data-review-index="3" aria-label="Открыть отзыв Ани"><img src="/preview/homepage-mobile/anya-before-after.webp?v=1" alt="Аня до и после похудения" loading="lazy" decoding="async"></button><button class="reviews-featured__item" type="button" style="--tilt:.6deg" data-review-index="5" aria-label="Открыть отзыв Анны Вальковской"><img src="https://optim.tildacdn.com/tild6238-3062-4138-b234-336662303539/-/contain/758x1058/center/center/-/format/webp/Frame_492445364_2.jpg.webp" alt="Анна Вальковская — отзыв 64,1 кг" loading="lazy" decoding="async"></button></div>
       <div class="reviews-featured__column"><button class="reviews-featured__item" type="button" style="--tilt:.9deg" data-review-index="2" aria-label="Открыть отзыв Натальи"><img src="https://optim.tildacdn.com/tild6336-3032-4033-b434-613563326139/-/format/webp/Frame_492445372_1.jpg.webp" alt="Наталья — фото до и после" loading="lazy" decoding="async"></button><button class="reviews-featured__item" type="button" style="--tilt:-.5deg" data-review-index="4" aria-label="Открыть отзыв Виктора"><img src="https://static.tildacdn.com/tild3835-3864-4366-b261-386161373536/Frame_492445360_1.jpg" alt="Виктор — результат через семь месяцев после Мастер-класса" loading="lazy" decoding="async"></button><button class="reviews-featured__item" type="button" style="--tilt:-1deg" data-review-index="6" aria-label="Открыть отзыв Григория"><img src="https://optim.tildacdn.com/tild6634-6636-4463-b361-663039303138/-/format/webp/__29_1.jpg.webp" alt="Григорий Малышкин — отзыв" loading="lazy" decoding="async"></button></div>
     </section>
+    <p class="reviews-featured__more-note" data-block-width="content"><em>* Больше отзывов — в конце страницы.</em></p>
     <!-- library:reviews-featured:end -->
 
     <section class="chain-block copy-section method-proof" data-homepage-block="method-proof" data-block-width="content" aria-labelledby="method-proof-title">
       <div class="copy-section__inner">
-        <h2 id="method-proof-title" data-homepage-field="title">О моём подходе</h2>
+        <h2 id="method-proof-title" data-homepage-field="title" data-analytics-section="method">О моём подходе</h2>
         <ul class="proof-list" data-homepage-field="points">
-          <li class="proof-list__item--warning"><span><strong>Я не являюсь медицинским специалистом и не прикидываюсь им!</strong> Не ставлю диагнозы, не лечу заболевания, не продаю БАДы, не гадаю по анализам и не навязываю промокоды на всякую ерунду.</span></li>
-          <li><span>Я — тренер по питанию. Моя задача — помочь вам сделать питание сбалансированным в условиях вашей повседневности и навести порядок в пищевых привычках, а также в поведении вокруг еды. Соответствующее образование — имеется. <button class="method-proof__link" type="button" data-method-overlay-open="education">Подробнее <svg class="method-proof__link-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg></button></span></li>
-          <li><span>В материалах Мастер-класса я не несу отсебятину. В них есть ссылки на научные исследования и современные рекомендации профильных организаций в сфере питания. <button class="method-proof__link" type="button" data-method-overlay-open="sources">Каких <svg class="method-proof__link-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg></button></span></li>
-          <li><span>Моя основная задача во время Мастер-класса — сделать так, чтобы вы перешли от чтения полезных материалов к их применению. <span aria-hidden="true">👇</span></span></li>
+          <li class="proof-list__item--notice"><span>Я не являюсь медицинским специалистом и не прикидываюсь им!</span></li>
+          <li class="proof-list__item--warning"><span>Не гадаю по анализам, не ставлю диагнозы, не лечу заболевания и не продаю БАДы.</span></li>
+          <li><span>Я — тренер по питанию. Помогаю сделать повседневное питание лучше, чем вчера, и навести порядок в пищевых привычках.</span></li>
+          <li><span>Соответствующее образование — имеется. <button class="method-proof__link" type="button" data-method-overlay-open="education">Подробнее <svg class="method-proof__link-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg></button></span></li>
+          <li><span>Везде в Мастер-классе ссылки на современные рекомендации профильных организаций в сфере питания и научные исследования. <button class="method-proof__link" type="button" data-method-overlay-open="sources">Каких <svg class="method-proof__link-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg></button></span></li>
         </ul>
+        <p class="method-proof__listen">Делаю так, чтобы вы перешли от чтения полезных советов к их применению и изменению своей жизни! Вот послушайте <span aria-hidden="true">👇</span></p>
       </div>
     </section>
     <section class="reviews-voice" aria-label="Голосовой отзыв Татьяны" data-homepage-block="reviews-voice-3" data-block-width="content">
@@ -1587,7 +1605,7 @@
         <p>Диплом № 342419695163, регистрационный номер 1092, предоставляет право на профессиональную деятельность в сфере консультирования по вопросам здорового образа жизни, рационального и сбалансированного питания людей разных возрастных групп.</p>
         <p>Сертификат № 10900 подтверждает компетенции профессионального стандарта «Специалист по инструкторской и методической работе в области физической культуры и спорта» в части трудовой функции «Планирование и реализация мероприятий по физическому воспитанию населения».</p>
         <p><button class="method-proof__link" type="button" data-method-overlay-open="education-originals">Открыть оригиналы документов <svg class="method-proof__link-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg></button></p>
-        <h3>Чем медицинский специалист в сфере питания отличается от немедицинского?</h3>
+        <h3 id="medical-specialist-difference-title">Чем медицинский специалист в сфере питания отличается от немедицинского?</h3>
         <p>Медицинский специалист работает с людьми с заболеваниями: диагностирует и лечит заболевания, назначает лечение и даёт медицинские рекомендации.</p>
         <p>Немедицинский специалист помогает с поведенческими аспектами реализации уже имеющихся рекомендаций врача и консультирует относительно здоровых людей по вопросам питания и здорового образа жизни — так, чтобы им потом не пришлось обращаться уже к медицинским специалистам.</p>
         <p>Если какой-то ваш вопрос требует врача или другого специалиста — я так прямо об этом и говорю.</p>
@@ -3099,7 +3117,7 @@
 
   <section class="edb-pricing-phone" aria-labelledby="edb-pricing-title">
     <header class="edb-pricing-intro" data-homepage-block="pricing-heading" data-block-width="wide">
-      <div class="edb-pricing-kicker" id="edb-pricing-title" data-homepage-field="text">Выберите тариф</div>
+      <div class="edb-pricing-kicker" id="edb-pricing-title" data-homepage-field="text" data-analytics-section="pricing">Выберите тариф</div>
     </header>
     <aside class="edb-pricing-intensive-offer" hidden aria-live="polite">
       <strong>Ваша персональная скидка за прохождение бесплатного интенсива — 1 000 ₽</strong>
@@ -3110,7 +3128,7 @@
 
     <section class="edb-pricing-owned-offers" hidden aria-live="polite">
       <header class="edb-pricing-owned-intro">
-        <h3>У вас уже есть доступ к мастер-классу</h3>
+        <h3 id="pricing-owned-title">У вас уже есть доступ к мастер-классу</h3>
         <p>Дополнительные курсы или услуги можно приобрести ниже или в <a href="https://похудение-это-есть.рф/lk" data-production-href="https://похудение-это-есть.рф/lk">личном кабинете</a>.</p>
         <p>Если вам нужно что-то обсудить индивидуально, напишите мне: <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">в Telegram</a> или <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener">в MAX</a>.</p>
       </header>
@@ -3119,20 +3137,20 @@
 
     <div class="edb-pricing-list" data-homepage-block="pricing-cards" data-homepage-field="catalog" data-block-width="wide" hidden>
       <article class="edb-pricing-plan" data-price-code="site.masterclass.basic">
-        <h3 class="edb-pricing-plan-name" data-price-field="name"></h3>
+        <h3 class="edb-pricing-plan-name" id="pricing-basic-title" data-price-field="name"></h3>
         <ul>
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-book"></use></svg></span><span>Основная программа Мастер-класса</span></li>
         </ul>
         <div class="edb-pricing-bottom">
           <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span class="edb-pricing-discount-label">Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
           <div class="edb-pricing-sale-line"><div class="edb-pricing-price" data-price-field="sale"></div><div class="edb-pricing-personal-price" data-price-field="personal-sale"></div></div>
-          <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
+          <button class="edb-pricing-button" type="button" data-analytics-cta="pricing_plan_basic">Начать прямо сейчас</button>
         </div>
       </article>
 
       <article class="edb-pricing-plan edb-pricing-plan-featured" data-price-code="site.masterclass.recipes">
         <div class="edb-pricing-ribbon">Выбирают чаще</div>
-        <h3 class="edb-pricing-plan-name" data-price-field="name"></h3>
+        <h3 class="edb-pricing-plan-name" id="pricing-recipes-title" data-price-field="name"></h3>
         <ul>
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-book"></use></svg></span><span>Основная программа Мастер-класса</span></li>
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-pot"></use></svg></span><span>Система рецептов</span></li>
@@ -3141,13 +3159,13 @@
         <div class="edb-pricing-bottom">
           <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span class="edb-pricing-discount-label">Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
           <div class="edb-pricing-sale-line"><div class="edb-pricing-price" data-price-field="sale"></div><div class="edb-pricing-personal-price" data-price-field="personal-sale"></div></div>
-          <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
+          <button class="edb-pricing-button" type="button" data-analytics-cta="pricing_plan_recipes">Начать прямо сейчас</button>
         </div>
       </article>
 
       <article class="edb-pricing-plan edb-pricing-plan-consult" data-price-code="site.masterclass.consult">
         <div class="edb-pricing-photo-sticker"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAYEBQUFBAYFBQUHBgYHCQ8KCQgICRMNDgsPFhMXFxYTFRUYGyMeGBohGhUVHikfISQlJygnGB0rLismLiMmJyb/2wBDAQYHBwkICRIKChImGRUZJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJib/wAARCACgAKADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDa1rTr3+xxr99eKxnsxvRZArMuAsTf7XOAQOm3muF1DVnupl82KBQAE/cxhRx3x3PqaNe1nUdaumubyfez4yqDagwAMADgfSsuOJpJlTHJNKFJRfNL5HP5GzZNBu+0MAqxHCDb9454rrvB/iGOyeWGS3S5sn5ni2hWHbKnv+Pqa5m/tWtntEtZFcKqsCpDY/8Ar12HhnRtJtLi7t9SQySLEJYbuJmMfTJBA+uM9iK5a84uN9xt/ZR1Wh+JE0Gc2qW8kljJPvhcoMuvQge5BHHtXXTXWm+KLKa2S3SOWzbdBE/UkD0x09q8/ngub4mWOzVUtNtvZiN/9buyNzH+99fpUd7dSeGbFb94rmFnJiWJztHm4wVPoMnI6gjI4IpU5TikpAuxo31xpF/NFeQQeQ7KPtEYUMNyg5Jz3yMEe9MsbqzaFXtLclkmXe0wU5bGOmM8ZFcXcX9vaabeW0peS7mMVzFIFxhwcOn0xtb86s+GtWt5r9wSTJI+dw4wCwyMf1rWpFyvcuMV0O7l8T30cENh5iR5JaVtq5bn6cYIq6tzHbpY6nMiXVzK25Xlk6DHBwB1+tcRrE0dzrUMFsNzhPmx37gfUk1s2OjXKXMV4MzwNtSSFvlPm55Vf8fSsZNUob2FKNz0rw4VgMllHeRXQUGQlF+6SemelatywWIk846AKD+lY2l6dNZzia2dYbU5MkTdcdh/9fNarXUBBAYF1XdtPXFbQqe772haTtYSSESwt55BIX74AGTjrWDqd1NbQTWU6hvNxIs21drAAcAdeo/WptSuxK6BVbG7CNjv34qpMpdlllYOQx8olc7B2HTjJ6ivPrZhGLagtTRU29TXiuWigiVwhIRdh2DjisDW1kkljmjCSI8g85CmUJz1I9SSBmr6zO1ssW1t4HTvu9aoTXM0bpG8T4dWfn72QOc49/SvOq4yc5b3RpKKsSiW7urFkvAFuNxY7UUKADjA74+tNbVXtpksbkALGgGdgAIx1/8ArVVvLzyxtEYVigA6n8PrmqLrLfSRefc7rcDccDJU/wB3PvW1JylF8791mMpWfu7nSQTW5P7sxlkH90HGe3SrEDbnHCZZhk7RxzVJLG3UWxSIxoo4UNz68nqat2wQzBl4DEduPrXlVtHodMb9T5Rs7a61C6W2s7Z7iZkLbIxkkAZJx7CrENtJHZRXsaM7hyHIYHaBjqvUdep4NVdOV1uoGDHMg4CtgkkdM10qXDrejVlKZY+XNHHCPL46ADoRgdT+NfY1akk7LY85vsaXhy+trLTfsuqWVvd2yyNLJ8+DJuUBQhx8pB649PatvQHawge7QyNbMrLcW6ncRGw+8v0rnpv+QwbiytUgHyzxQMQ6biMjHYj/AGfbFdB4ele1R2doxNIDtZ5NinPrnpz2Neck0+dISV9Ds5WnsdGt4JdPju4D5b+dGRGXAwVYknkcjg1xPj7X7bU4TZCEgQyHes5zJA+eRx0GRnnNZ2veLNbh863ju3eB12y7QHVjjBwccCvPWvYYrgyxvKkmckhsnPuCBXqU6bvzNmmxs31401tFCVXfEf8AWK3LjpVPT9Rl0+ZmWISH+BuhU5B/pUJvbS5X5CkEx6tg+Wx+n8JPrVdRbysY5FKTD+FmyG+hrpSWw35HYeG9VEEq6i+G1JW8zkjZKAcg+xHORXeaJ4nt7lUbUbnz7uQFksbZcBFPZeQOeOue9eK2sjWUjBQWRuxOCtbnhFpIdQFzbIrT7sBj95V7lfQjI/CsqtJTi7CTadz6F0vVr+7SPzdPmFvNGVP75Nq+vINLdM0YZ0cKwb5RuPyp2/HFZmk67ZTzx2zPItwUGd3AfPXAHGcjmprsgyMLfaCnykY6DFfOVvaTqcs1Y6LpRuixc6hCtukQLO2M79p+b1x9KsJIt3aM7SOI1ZQAq4x9SfasTeSjqhXgbfm/h98+lOtmnRX8xm8suqr2BPTpWsMPG9k7MlVHc6Cd0C71zuRPlGc7jjjI/pWS82xoyHjkcjaGPZf7v1q1JPbw2bAxsPNUtwdxYdz61nNDDNCx3BUxvPHT2J7fjXmuPvvn2uaTZX1CZ5M7yu5B8uW4OenvUOnXbSXSxSA/KTyfu/T9apXj26BYUXz5CuMrztHqPb3qlcNMke8lbiKNtqq0gUZ/CvVVNOnynJd3udv5qr97CnBY4fOfcDtV7TLrcQkshaTduG5cbRXmT62sd5b/AL1UGCJhg4B7D+ma6yx1CG4nhS2uU/duMLu55/z6mvNrYSdOCsdEK12eBX1kLS+e02mPAVGWdSHhOBncMf5GKvac0pWSC2dGLnA5Pz4PUccfWst4Lkq19dtPKoZUlk6sWIOBk/7tdP4SuNLtpmupLZm8pf3e6QHLH+E8YA9/0r35N8ujuzlSH6ej3VkEzJLtwGWTa568cf196k1lfLt/OuokQBWABcsx7da3FERhE2pWMGn28uTFBbgp5gHJc98fWvP/ABFqD6jduxVo4VG2KFcgBa1p3e5vGNlczZ7pZJD9huZIm6lG6GqjXksn7u4t43J43EYB/wDr/SpIrEYMvlBdvIznrVv7DOkRaO3ZpHHMsgyf/rV1KcUNwkzJmgj3ZXCf7IYmpbW2nnYRr82Dx6itSx0C7uHClTk+nSu/8OeDZAEkuVGR196ftOiBUn1OR0/RL24wHjbPuK1LKyutJlWVYSZIJNwGOowQR/KvWorG3hhVBGMqMZrNu7SJ5GOwenSs3UsaKnc860q8kHiCZYLqVS5M8SMfbJXnoR2I9O9eh6Jqx1Gxje4lWJhnzQMZcZ4b247exrldf0QR3S3NuvlyfeRl7MKb4Yv3N48TP5XmjGMA4Pp+pH5VFWMasdd0ZODid3bq9w2Ipc5UY+UnOavQ7WcQAb2jkUM3T6VmT3VxBLG8qp+8G5cNyOAoJ7YOM1d0ZleddqyZ8xd24d8ZP+H4V5dK7q67Ep9EU73UGbU9oJMBkwRIPlyv0/kKfeNEkk4VHWZIzhVGN57DHQis+ymtDI0F2yANKXZsYZFGSeD36VYup4LqdIIYw7uMxt5mDjnBIH8RPapklz8qRKbeqMG7uI4ZBJgx7gA45YMPpVd7x0haNyY7Uf8ALNzx64A7npTmNw6s6Mflba4b58cZx+daEVnaygfbEjyG8zzJDzn0x6Z7V0uUVuTqcZdSfbbqOO0trh5cZZcZyPaup8NadeJqCQyH5JWG0hsc54wDzVlr7TNGtQtu0aDzCufMBAB7Z6ke3NRtrMkyedb74trKm5PlbGewNXKcqkeWKsifhd2eNPMbhkKAswPI3cdBj8etdpo+o2ltFYac1tBJIr7jNypO7ko/GRt5BHfA9K4SaWOObam0hgASBmrdvqRa4Z8GRnUJlvT2q6lPmt5FRdnc9H1O8+2QyTztv82QjeBldqnAX6cjgVyWtQxy6rb2kLmSR32yHtx941b0qSd2kVgVTOYo2PBAGcUeGYje648jpzECeRzg4qoe6rnRFubNKz0yOTUXYp+6tDsQEcM+OW/DpXRWunxyMNyA0sNsYlYdWZyx/E5rZ06H5QSOajdnfFWRLaWFtHg+SvHoK1o9oXapwPSokAC8ClDkNitloS4kkmQOpqgwbcdxBq4zqw5quyr1VfypSKS0M/UYtyBsZ2nNcNq0S2mqTXYysLsp4OMFuhH5V3lznaecZrm9fW2ksZYblfkkTaWH8PofwNJS1sZVIaGj4TuG1eL7PNqSxtbDysbc7kH3WGfY4x9K7Gxjgtb3ybc7yCGkkznc2OSfQ14t4alltNctoZWIAwrsD95ScH9OfwFet+HkYwz/ALzcFkcBumfl6kdq5ZUmq/OnpbY4mrM4K5uVlvTvUm4Dn5R8xJJ6D3q/Zve6LcJdahaFhMpWLzVw4PtzkdcVWs4Layu5JFlM2Fx5ynHPcipry9mvpGQmQMnO/HP1zRJtvlS0ME+XVbi3esNNIwkCRzD5Rg4ODyQf/r1XF9FfR+UV+YHBXOMgDkVbGk+bZyTOUdkO5UXhwAf5Y9Kz4RBFe/NGAWIBPcU48u8ehLbvdksGkaWEFzeOySRnKqn3Rz8oHp70tuZFv0k85pJVYIApOSMjg+w9fasfVop7q5WSLesEWPkL8A9f1p9m7xyFXadQ7DYVbuO4PpXSXc7NKL7jh8SuevtKWuZ2xyTu/wAaigiDM5UY5pqnbMpIJD8GpYS8c25UbB4JxxXmpa6nsxkrl2OEKy5TnHNX7aMbulMhjkcAlSc+1XYY3DYCnPTpWlim10LsCA4GMAVcEeVHrUdskigAofyrUtoSwBKH8qaRjKVissJWA8c15J8aL6SPTrbTy3E0+8j2Uf4kV7fJC5jwEbp6V86fHC58zxalkg4tbdQR/tOc/wAsV0Uoe9c5atT3WjiYeIl+maS4l8uM4PzNwP8AGkyFHIrsfhN4aj8SeJGuL2IyWGnAMyY4kkPRT7dz9K6pPlRxRi5Ox6R8FPCg0vShrV3D/p92v7sMOYYu34nqfbFep7S8bRzKskTDDI6hlI9waZCCiAJGQBxgDpU8bsTtZG/Kue19zsSSVjjtb+H+g37NNYRf2bcNjd5Q+Rh6be34V57rvgHxTYyM1lYC7hLEh4HLMcnvjB/pXvDQsRkK35U+0SRZFyrZ3DsaylRUnczlTi9T/9k=" alt="Сергей Воронцов"></div>
-        <h3 class="edb-pricing-plan-name" data-price-field="name"></h3>
+        <h3 class="edb-pricing-plan-name" id="pricing-consult-title" data-price-field="name"></h3>
         <ul>
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-book"></use></svg></span><span>Основная программа Мастер-класса</span></li>
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-pot"></use></svg></span><span>Система рецептов</span></li>
@@ -3159,7 +3177,7 @@
         <div class="edb-pricing-bottom">
           <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span class="edb-pricing-discount-label">Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
           <div class="edb-pricing-sale-line"><div class="edb-pricing-price" data-price-field="sale"></div><div class="edb-pricing-personal-price" data-price-field="personal-sale"></div></div>
-          <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
+          <button class="edb-pricing-button" type="button" data-analytics-cta="pricing_plan_consult">Начать прямо сейчас</button>
         </div>
       </article>
     </div>
@@ -3186,7 +3204,7 @@
     </ul>
 
     <div class="edb-pricing-details" data-homepage-block="pricing-program" data-homepage-field="links" data-block-width="content" hidden>
-      <h3 class="edb-pricing-details-title" id="pricing-program-title">Программа по дням</h3>
+      <h3 class="edb-pricing-details-title" id="pricing-program-title" data-analytics-section="program_days">Программа по дням</h3>
       <div class="edb-pricing-program" aria-label="Основная программа">
         <p class="edb-pricing-program-label">Основная программа</p>
         <div class="edb-pricing-details-links">
@@ -3208,10 +3226,10 @@
   <section class="edb-product-overlay" aria-hidden="true" aria-live="polite">
     <div class="edb-product-overlay-bar">
       <button class="edb-product-overlay-back" type="button">← Назад</button>
-      <button class="edb-product-overlay-cta" type="button">Выбрать тариф</button>
+      <button class="edb-product-overlay-cta" type="button" data-analytics-cta="pricing_program_overlay">Выбрать тариф</button>
     </div>
     <div class="edb-product-overlay-content">
-      <h2 class="edb-product-overlay-title"></h2>
+      <h2 class="edb-product-overlay-title" id="pricing-product-overlay-title"></h2>
       <p class="edb-product-overlay-copy"></p>
       <div class="edb-product-overlay-points"></div>
     </div>
@@ -3774,11 +3792,12 @@
   </script>
 </div>
 </section>
+    <aside class="approach-article-note" data-homepage-block="approach-article-link" data-block-width="content">Если вы хотите познакомиться с моим подходом поближе и узнать, как именно работает то, что я даю в Мастер-классе, — читайте статью в моём канале <a href="https://похудение-это-есть.рф/intensive">«Как должно выглядеть адекватное похудение от А до Я!»</a></aside>
     <section class="chain-block chain-block--anya" id="anya-story" aria-labelledby="anya-story-title">
       <div class="anya-story">
         <header class="anya-story__header" data-homepage-block="anya-heading" data-block-width="story">
           <span class="anya-story__kicker" data-homepage-field="kicker">ИСТОРИЯ</span>
-          <h2 id="anya-story-title"><span data-homepage-field="title">Что случилось с Аней?</span><span class="anya-story__gesture" aria-label="Листайте историю вбок" hidden>
+          <h2 id="anya-story-title" data-analytics-section="anya_story"><span data-homepage-field="title">Что случилось с Аней?</span><span class="anya-story__gesture" aria-label="Листайте историю вбок" hidden>
             <span class="anya-swipe-option anya-swipe-option--tilda" aria-hidden="true"><span class="anya-swipe-tilda"><span class="anya-swipe-tilda__cards"><i></i><i></i></span><svg class="anya-swipe-tilda__hand" viewBox="0 0 28 34"><path d="M8 29c-2-4-4-7-3-9 1-2 3-1 5 1V8c0-2 1-3 3-3s3 1 3 3v7-3c0-2 1-3 3-3s3 1 3 3v4-2c0-2 1-3 3-3s3 1 3 3v8c0 7-4 10-10 10h-2c-4 0-6-1-8-3Z"/></svg></span></span>
             <span class="anya-swipe-option anya-swipe-option--finger" aria-hidden="true"><span class="anya-swipe-finger"><svg viewBox="0 0 28 34"><path d="M8 29c-2-4-4-7-3-9 1-2 3-1 5 1V8c0-2 1-3 3-3s3 1 3 3v7-3c0-2 1-3 3-3s3 1 3 3v4-2c0-2 1-3 3-3s3 1 3 3v8c0 7-4 10-10 10h-2c-4 0-6-1-8-3Z"/></svg><i class="anya-swipe-track"></i></span></span>
             <span class="anya-swipe-option anya-swipe-option--nudge" aria-hidden="true"><span class="anya-swipe-nudge"><i></i></span></span>
@@ -3816,11 +3835,11 @@
         </div>
         </template>
         <div class="anya-story__after" data-homepage-block="anya-outro" data-block-width="story"><p data-homepage-field="paragraph-1">Не ждите идеального момента или идеальных условий, когда и на работе вдруг не будет стресса, и дома куда-то пропадут все домашние дела.</p><p data-homepage-field="paragraph-2">Мы оба знаем, что этого не произойдёт в обозримом будущем. И мы оба знаем, что с каждым годом худеть будет только тяжелее.</p></div>
-        <a class="free-intensive__cta anya-story__cta" data-homepage-block="anya-cta" data-homepage-field="cta" data-block-width="story" href="#pricing">Начать прямо сейчас</a>
+        <a class="free-intensive__cta anya-story__cta" data-homepage-block="anya-cta" data-homepage-field="cta" data-block-width="story" href="#pricing" data-analytics-cta="pricing_anya_story">Начать прямо сейчас</a>
       </div>
     </section>
 
-    <section class="chain-block result-section" data-homepage-block="result" data-block-width="content" aria-labelledby="result-title">
+    <section class="chain-block result-section" data-homepage-block="result" data-block-width="content" aria-labelledby="result-title" hidden aria-hidden="true">
       <h2 class="result-section__title" id="result-title">Что останется у вас через 21 день</h2>
       <div class="result-section__inner">
         <ul class="result-section__list">
@@ -3837,50 +3856,53 @@
 
     <section class="chain-block copy-section author-section" data-homepage-block="author" data-block-width="content" aria-labelledby="author-title">
       <div class="copy-section__inner author-section__layout">
-        <h2 id="author-title" data-homepage-field="title">Обо мне</h2>
-        <p data-homepage-field="paragraph-1">Топовый автор сообщества "Мы Худеем" на Pikabu.ru, велосипедист, триатлет (железный человек), путешественник, любитель тефтелей с чесноком и пюрешкой.</p>
+        <h2 id="author-title" data-homepage-field="title" data-analytics-section="about">Обо мне</h2>
+        <p data-homepage-field="paragraph-1">Топовый автор сообщества «Мы худеем» на Пикабу, велосипедист, триатлет (железный человек), путешественник, любитель тефтелей с чесноком и пюрешкой.</p>
         <figure class="author-section__image" data-homepage-field="media"><img src="/blog/assets/sergey-author.png" alt="Сергей Воронцов: изменение веса и занятия спортом" loading="lazy"></figure>
         <p data-homepage-field="paragraph-2">Разок меня тоже бес попутал — набрал до 95 кг. Потом одумался, поменял образ жизни и похудел до 70 кг, ни дня не сидя на диете и даже не зная, что существует приложение по учёту калорий.</p>
-        <p data-homepage-field="paragraph-3">С того времени уже почти 10 лет живу в новом весе и радуюсь жизни. Тому же и учу своих клиентов.</p>
+        <p data-homepage-field="paragraph-3">С того времени уже почти 10 лет живу в новом весе и радуюсь жизни. Рассказываю и показываю, как вы тоже так можете!</p>
+        <div class="author-section__lifetime">
+          <h3 class="author-section__subheading author-section__subheading--challenge" id="lifetime-title">Разберитесь один раз — наслаждайтесь всю жизнь!</h3>
+          <p class="author-section__challenge-copy">Вам разве не надоело такое похудение? 👇</p>
+          <figure class="author-section__meme"><img src="/preview/homepage-mobile/reviews-promo-before-after-transparent.png?v=1" alt="Схема: до, после и после после" loading="lazy" decoding="async"></figure>
+          <p class="author-section__after-meme" data-homepage-field="paragraph-4">Один раз научитесь, как быстро настроить похудение лично под вас, и будете пожинать плоды этого всю оставшуюся жизнь, не забивая себе голову тряской над каждым килограммом и не начиная очередное экстренное похудение к лету.</p>
+          <p data-homepage-field="paragraph-5">Когда вы на своей шкуре почувствуете, что похудение может быть простым и лёгким, вы перестанете его бояться, откладывать или пытаться похудеть как-то супербыстро к какому-то событию. Похудение станет просто неизбежным следствием вашего нового образа жизни!</p>
+        </div>
       </div>
     </section>
     <section class="chain-block chain-block--faq" id="faq" aria-label="Важные вопросы" data-homepage-block="faq" data-homepage-field="items" data-block-width="content"><div class="faq-section">
     <section class="faq-shell" aria-labelledby="faq-title">
-      <h1 id="faq-title">Важные вопросы</h1>
+      <h1 id="faq-title" data-analytics-section="faq">Важные вопросы</h1>
       <div class="faq-list" data-public-faq aria-live="polite">Загружаю вопросы…</div>
       <!-- local FAQ snapshot: source = faq-owner-edit.md; production keeps the content API -->
       <template data-local-faq-template>
-        <article class="faq-item" data-open="true"><button class="faq-question" type="button" aria-expanded="true" aria-controls="faq-answer-1"><span class="faq-question-text">Какое у меня образование?</span><span class="faq-sign" aria-hidden="true">−</span></button><div class="faq-answer" id="faq-answer-1"><div class="faq-answer-inner"><div class="faq-answer-copy"><p><strong>Я не медицинский специалист по питанию.</strong> У меня дополнительное профессиональное образование по программе «Фитнес-нутрициолог» и «Специалист по инструкторской и методической работе в области физической культуры и спорта».</p><p>Оригиналы документов и пояснение, чем медицинский специалист отличается от немедицинского, читайте <button class="method-proof__link" type="button" data-method-overlay-open="education">по ссылке <svg class="method-proof__link-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg></button>.</p><p>Я не ставлю диагнозы, не лечу заболевания. При медицинских ограничениях опираюсь на заключение врача и работаю только в границах своих компетенций.</p></div></div></div></article>
-        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2"><span class="faq-question-text">Чем Мастер-класс отличается от очередного марафона похудения?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-2" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><figure class="faq-answer-media"><img src="https://app.edabalans.ru/media/reviews/v1/promo-01-before-after.webp" alt="Схема: до, после и после после" loading="lazy" decoding="async"></figure><p>Подходом и целями! Я не ставлю целью согнать у вас вес любой ценой. Я пытаюсь показать вам новый подход к питанию и к похудению!</p><p>Моя задача — чтобы вы встали на лыжи более здорового образа жизни и он вам понравился! Понравился так, чтобы назад вам самим не хотелось, а не только из-за страха лишнего веса.</p></div></div></div></article>
-        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3"><span class="faq-question-text">Если я и так много знаю о правильном питании?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-3" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><figure class="faq-answer-media"><img src="https://optim.tildacdn.com/tild3435-6538-4130-b061-326131626261/-/format/webp/noroot.png.webp" alt="Отзыв Виктора" loading="lazy"></figure><p>Знать и применять — это разные вещи. Выше — отзыв Виктора, который пришёл ко мне вот точно с такими же словами, что он многое знает о похудении. Он сначала сам похудел за несколько лет на 30 кг, потом набрал добрую половину обратно и только потом пришёл на Мастер-класс.</p></div></div></div></article>
-        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4"><span class="faq-question-text">Что конкретно мне придётся делать?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-4" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><ul><li>Фотографировать еду и вести дневник питания.</li><li>Оценивать баланс продуктовых категорий в моём приложении.</li><li>Регулярно взвешиваться и вести учёт шагов.</li><li>Отвечать на вопросы и задания из материалов Мастер-класса у себя в дневнике</li><li>Пробовать изменения в питании и пищевых привычках</li></ul><p>Ключевое слово — <strong>пробовать</strong>. Я не жду, что вы идеально выполните все задания и примените всё сразу. Постарайтесь выполнить хотя бы половину, и оставить только то, с чем сможете идти дальше по жизни!</p></div></div></div></article>
+        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-1"><span class="faq-question-text">Какое у меня образование?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-1" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>У меня дополнительное профессиональное образование по программам «Фитнес-нутрициолог» и «Специалист по инструкторской и методической работе в области физической культуры и спорта».</p><p>Оригиналы документов и пояснение, чем медицинский специалист отличается от немедицинского, читайте <button class="method-proof__link" type="button" data-method-overlay-open="education">по ссылке <svg class="method-proof__link-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg></button>.</p><p>При медицинских ограничениях опираюсь на заключение врача и работаю только в границах своих компетенций.</p></div></div></div></article>
+        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2"><span class="faq-question-text">Чем Мастер-класс отличается от очередного марафона похудения?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-2" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Подходом и целями! Я не ставлю целью согнать у вас вес любой ценой. Я пытаюсь показать вам новый подход к питанию и к похудению!</p><p>Моя задача — чтобы вы встали на лыжи более здорового образа жизни и он вам понравился! Понравился так, чтобы назад вам самим не хотелось, а не только из-за страха лишнего веса.</p></div></div></div></article>
+        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3"><span class="faq-question-text">Если я и так много знаю о правильном питании?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-3" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><figure class="faq-answer-media"><img src="https://optim.tildacdn.com/tild3435-6538-4130-b061-326131626261/-/format/webp/noroot.png.webp" alt="Отзыв Виктора" loading="lazy"></figure><p>Знать и применять — это разные вещи. Выше — отзыв Виктора, который пришёл ко мне вот точно с такими же словами, что он многое знает о похудении.</p><p>И не только знает, но и сам похудел за пару лет на 30 кг. Но затем большую часть набрал обратно и только потом пришёл на Мастер-класс.</p></div></div></div></article>
+        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4"><span class="faq-question-text">Что конкретно мне придётся делать?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-4" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><ul><li>Фотографировать еду и вести дневник питания.</li><li>Оценивать баланс продуктовых категорий в моём приложении.</li><li>Регулярно взвешиваться и вести учёт шагов.</li><li>Отвечать на вопросы и задания из материалов Мастер-класса у себя в дневнике.</li><li>Пробовать изменения в питании и пищевых привычках.</li></ul><p>Ключевое слово — <strong>пробовать</strong>. Я не жду, что вы идеально выполните все задания и примените всё сразу.</p><p>Постарайтесь выполнить хотя бы половину и оставить только то, с чем сможете идти дальше по жизни!</p></div></div></div></article>
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-5"><span class="faq-question-text">Сколько времени потребуется?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-5" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>В среднем рассчитывайте на 20–30 минут в день на материалы и ещё примерно столько же на практику и задания.</p><p>Вся программа рассчитана на 21 день. Из них 18 — полноценные учебные дни, остальные полегче: там будет пауза и дополнительные материалы.</p><p>Если у вас тариф с консультацией, я обычно прошу успеть закончить основную программу и подготовить дневник в течение 30 дней. Времени будет с запасом.</p></div></div></div></article>
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-6"><span class="faq-question-text">Что будет, если я отстану от программы?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-6" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Ничего страшного. На самостоятельном тарифе можете проходить Мастер-класс в своём темпе. Доступ к материалам останется у вас навсегда, поэтому можно вернуться к нужному дню позднее или перечитать всю программу ещё раз.</p><p>Кстати, многие так и делают раз в полгода и находят там много нового, что упустили в первый раз! Очень рекомендую!</p><p>Если у вас тариф с консультацией, я обычно прошу уложиться в 30 дней. Но если что-то случится — просто напишите мне.</p></div></div></div></article>
-        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-7"><span class="faq-question-text">Нужно ли считать калории?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-7" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Нет. Во время Мастер-класса вы будете вести дневник питания по моей системе (фотографии + учёт продуктовых категорий), и на это время я даже настаиваю, чтобы вы не считали калории, потому что это будет отвлекать.</p><p>Для того чтобы научиться считать калории так, чтобы перестать считать калории, у меня есть отдельный мини-курс, который доступен только после Мастер-класса. Потому что сначала база из адекватного питания и здоровых пищевых привычек, а потом всё остальное, включая калории и тренировки.</p></div></div></div></article>
-        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-8"><span class="faq-question-text">Что будет после оплаты? Как всё устроено?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-8" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Сразу после оплаты вам на почту придёт доступ в личный кабинет на моём сайте. В кабинете вас уже будут ждать приветственное видео и пара статей. Там я расскажу, как вести дневник, как устроена программа и другие технические мелочи.</p><p>Раз в 24 часа вам будет приходить уведомление об открытии материалов нового дня. Чтобы открыть следующий день, нужно будет сначала прочитать предыдущий.</p><p>Программа Мастер-класса создавалась вместе с методологом. В статьях есть оглавление и навигация, у видео — тайм-коды, чтобы можно было быстро вернуться к нужному месту.</p><p>Внутри есть тексты, видео, задания и специальные приложения для практической работы. Текстов немного больше, чем видео: их удобно перечитывать и возвращаться к нужным местам. Главные концептуальные вещи я объясняю в видео. О выходе новых материалов будут напоминать Telegram- или MAX-боты.</p></div></div></div></article>
-        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-9"><span class="faq-question-text">Я смогу пройти всё самостоятельно?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-9" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Да. Программа изначально была рассчитана на самостоятельное прохождение: посмотрели материал, выполнили задание, применили к своему рациону, посмотрели что вышло и получится ли так жить дальше.</p><p>Если вам нужны ответы по ходу программы и индивидуальный разбор дневника, для этого есть тариф с консультацией.</p></div></div></div></article>
+        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-7"><span class="faq-question-text">Нужно ли считать калории?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-7" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Нет. На время Мастер-класса я советую вообще не считать калории, даже если вы к этому привыкли.</p><p>Так у вас будет больше времени, сил и внимания на ведение дневника питания по моей системе (фотографии + учёт продуктовых категорий) — и вы не перегорите от кучи всего сразу.</p><p>После Мастер-класса можно будет вернуться к учёту калорий, но уже с совершенно другими пищевыми привычками.</p><p>Для того чтобы научиться считать калории так, чтобы перестать считать калории, у меня есть отдельный мини-курс, который доступен только после Мастер-класса.</p><p>Потому что сначала база из адекватного питания и здоровых пищевых привычек, а потом всё остальное, включая калории и тренировки.</p></div></div></div></article>
+        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-8"><span class="faq-question-text">Что будет после оплаты? Как всё устроено?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-8" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Сразу после оплаты вам на почту придёт доступ в личный кабинет на моём сайте.</p><p>В первый же день я расскажу, как вести дневник питания, как устроена программа, что вас ждёт и другие технические детали.</p><p>А затем раз в 24 часа будут приходить уведомления об открытии новых материалов следующего дня. Чтобы открыть их, нужно сначала полностью прочитать предыдущие материалы.</p><p>Программа Мастер-класса создавалась вместе с методологом. В статьях есть оглавление и навигация, у видео — тайм-коды, чтобы можно было быстро вернуться к нужному месту.</p><p>Материалы состоят из видео, которых будет немного меньше, и текстовых статей, которых будет немного больше. Потому что их удобно перечитывать и возвращаться к нужным местам.</p><p>Также вас ждут практические задания и специальное приложение для геймификации похудения.</p><p>О новых материалах будут приходить уведомления в Telegram или MAX.</p></div></div></div></article>
+        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-9"><span class="faq-question-text">Я смогу пройти всё самостоятельно?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-9" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Да. Программа изначально была рассчитана на самостоятельное прохождение: посмотрели материал, выполнили задание, применили к своему рациону, посмотрели, что вышло и получится ли так жить дальше.</p><p>Если вам нужны ответы по ходу программы и индивидуальный разбор дневника, для этого есть тариф с консультацией.</p></div></div></div></article>
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-10"><span class="faq-question-text">Насколько я похудею?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-10" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Честный ответ — я не знаю. И не буду обещать вам конкретное количество килограммов за три недели.</p><p>Во время Мастер-класса главная цель — не выжать из весов цифру поменьше, а собрать фундамент для дальнейшего похудения: улучшить питание, разобраться с пищевыми привычками и понять, что на самом деле раньше мешало худеть. Убрать эти проблемы и уже потом смотреть за движением цифр на весах.</p></div></div></div></article>
-        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-11"><span class="faq-question-text">А если мне не нужно худеть?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-11" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Тоже подойдёт. Мастер-класс помогает оценить качество рациона, разобраться с насыщением и пищевыми привычками и понять, что стоит изменить именно вам для ваших целей в жизни. Это пригодится и для поддержания веса и для обеспечения тренировочной активности и просто чтобы сохранить здоровье.</p></div></div></div></article>
+        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-11"><span class="faq-question-text">А если мне не нужно худеть?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-11" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Тоже подойдёт. Мастер-класс помогает оценить качество рациона, разобраться с насыщением и пищевыми привычками и понять, что стоит изменить именно вам для ваших целей в жизни.</p><p>Это пригодится и для поддержания веса, и для обеспечения тренировочной активности, и просто чтобы сохранить здоровье.</p></div></div></div></article>
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-12"><span class="faq-question-text">Какой тариф выбрать?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-12" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Минимальный тариф — это основная программа Мастер-класса. Базовый минимум, без которого я вообще не понимаю, какой смысл бросаться в калории, тренировки, голодовки и ограничения. Максимально рекомендую всем и каждому!</p><p>Стандартный тариф дополнительно включает систему рецептов и каталог приёмов пищи. Вы сможете не только понять принципы, но и увидеть, как применять их к обычной домашней и покупной еде в разных сценариях.</p><p>Тариф с консультацией подойдёт, если вам нужна вторая голова: возможность задать вопросы, получить поддержку, подробный разбор дневника и персональный план дальнейших действий.</p></div></div></div></article>
-        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-13"><span class="faq-question-text">А если я не ем определённые продукты?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-13" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Если по какой-то причине от личной непереносимости до рекомендации врача, вы не можете есть тот или иной продукт, то ничего страшного. Просто тогда важность соблюдения сбалансированного питания по всем другим продуктовым категориям резко возрастает. А это именно то, на чём и основана добрая часть Мастер-класса.</p></div></div></div></article>
+        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-13"><span class="faq-question-text">А если я не ем определённые продукты?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-13" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Если по какой-то причине — от личной непереносимости до рекомендации врача — вы не можете есть тот или иной продукт, то ничего страшного.</p><p>Просто тогда важность соблюдения сбалансированного питания по всем другим продуктовым категориям резко возрастает. А это именно то, на чём и основана добрая часть Мастер-класса.</p></div></div></div></article>
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-14"><span class="faq-question-text">У меня есть заболевание или я принимаю лекарства. Мне подойдёт программа?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-14" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Если заболевание влияет на питание, вес или допустимые ограничения, назначения вашего врача всегда стоят на первом месте.</p><p>Но я могу помочь вам организовать максимально доступное для вас сбалансированное питание с учётом ограничений от вашего врача.</p><p>А уж пищевые привычки привести в порядок не помешает при любых заболеваниях...</p></div></div></div></article>
-        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-15"><span class="faq-question-text">У меня РПП. Мне подойдёт программа?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-15" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Я не занимаюсь лечением диагностированных расстройств пищевого поведения. Но в Мастер-классе я рассказываю об адекватных отношениях с едой и сбалансированном подходе к похудению, что будет полезно, если РПП ещё нет, но уже есть звоночки.</p></div></div></div></article>
+        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-15"><span class="faq-question-text">У меня РПП. Мне подойдёт программа?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-15" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Я не занимаюсь лечением диагностированных расстройств пищевого поведения.</p><p>Но в Мастер-классе я рассказываю об адекватных отношениях с едой и сбалансированном подходе к похудению, что будет полезно, если РПП ещё нет, но уже есть звоночки.</p></div></div></div></article>
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-16"><span class="faq-question-text">А что, если мне не понравится?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-16" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Если до начала четвёртого дня вы поймёте, что мой подход к похудению вам не близок, просто не открывайте четвёртый день и напишите мне в личные сообщения запрос на возврат. Я сделаю полный возврат без лишних вопросов.</p></div></div></div></article>
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-17"><span class="faq-question-text">Сколько действует доступ к материалам?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-17" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Доступ к приобретённым материалам остаётся у вас навсегда. Если я добавлю новые материалы, перепишу старые или обновлю рецепты, эти обновления тоже появятся у вас без дополнительной оплаты.</p></div></div></div></article>
       </template>
-      <p class="hero-pricing-note">А ниже — ещё больше отзывов.</p>
+      <p class="hero-pricing-note"><em>* Больше отзывов — в конце страницы.</em></p>
     </section>
   </div>
   </section>
     <section class="chain-block chain-block--final" id="contacts" aria-label="Финальный выбор" data-homepage-block="final-cta" data-block-width="content"><div class="final-section">
     <section class="final-card" aria-labelledby="final-title">
       <div class="final-main">
-        <div class="sign-sticker" data-homepage-field="sticker">ПУ-ПУ-ПУ…</div>
-        <h1 id="final-title">
-          <span data-homepage-field="line-1">Вы долистали сайт до конца…</span>
-          <span class="question-line" data-homepage-field="line-2">Ждёте какой-то особый знак?</span>
-          <span class="final-sign" data-homepage-field="line-3">Вот вам знак!</span>
-        </h1>
+        <h1 id="final-title" data-homepage-field="title" data-analytics-section="final_choice">Не откладывайте на завтра то, что можно похудеть сегодня</h1>
+        <p class="contact-copy" data-homepage-field="lead">Каждый день, пока вы не тренируете новые пищевые привычки, вы закрепляете старые пищевые привычки, которые потом будет всё тяжелее менять.</p>
         <figure class="meme-card">
           <img src="/preview/homepage-mobile/final-cta-cat-clock.webp?v=2" alt="Кот смотрит на часы: не до этого, не сейчас, ой — прошло 10 лет" loading="lazy" decoding="async">
         </figure>
@@ -3888,21 +3910,21 @@
           <p class="contact-copy" data-homepage-field="contact-copy">Сомневаетесь → напишите мне в личные сообщения, расскажите о ваших трудностях и задайте любой вопрос. <strong>Всем отвечаю лично.</strong></p>
           <div class="social-row">
             <a class="social-button social-button--telegram" href="https://t.me/FitnessSergey" target="_blank" rel="noreferrer">
-              <span class="social-icon" aria-hidden="true"><svg viewBox="0 0 1000 1000"><defs><linearGradient id="tg-gradient" x1="50%" y1="0%" x2="50%" y2="99.258%"><stop stop-color="#2aabee"/><stop offset="1" stop-color="#229ed9"/></linearGradient></defs><circle cx="500" cy="500" r="500" fill="url(#tg-gradient)"/><path d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z" fill="#fff"/></svg></span>
+              <span class="social-icon" aria-hidden="true"><svg viewBox="190 270 580 510"><path fill="#fff" d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z"/></svg></span>
               <span>Telegram</span>
             </a>
             <a class="social-button social-button--max" href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noreferrer">
-              <img class="max-logo" src="/preview/homepage-mobile/max-full-colored-dark-official.png" alt="MAX" loading="lazy" decoding="async">
+              <img class="max-logo" src="/preview/homepage-mobile/max-full-colored-official.png" alt="MAX" loading="lazy" decoding="async">
             </a>
           </div>
-          <a class="primary-cta" href="#pricing">Выбрать тариф</a>
+          <a class="primary-cta" href="#pricing" data-analytics-cta="pricing_final_choice">Выбрать тариф</a>
         </div>
       </div>
     </section>
   </div>
 </section>
   <section class="chain-block reviews-after-cat" aria-label="Больше отзывов" data-homepage-block="reviews-after-cat" data-block-width="content">
-    <h2 id="reviews-more-title" data-homepage-field="title">Больше отзывов</h2>
+    <h2 id="reviews-more-title" data-homepage-field="title" data-analytics-section="reviews_more">Больше отзывов</h2>
     <p data-homepage-field="text">Всего через три недели у вас может быть повод написать что-то подобное 👇</p>
   </section>
   <section class="reviews-voice" aria-label="Голосовые отзывы Ирины и Анны" data-homepage-block="reviews-voice-more" data-block-width="content">
@@ -3938,7 +3960,7 @@
     </article>
   </section>
   <!-- library:reviews-wall:start -->
-  <section class="reviews-wall" id="reviews-wall" aria-label="Отзывы участников" data-homepage-block="reviews-wall" data-homepage-field="media" data-block-width="visual">
+  <section class="reviews-wall" id="reviews-wall" aria-label="Отзывы участников" data-homepage-block="reviews-wall" data-homepage-field="media" data-block-width="visual" data-analytics-section="reviews_wall">
     <button class="reviews-wall__item" type="button" style="--tilt:-1.2deg" data-review-index="1" aria-label="Открыть отзыв Светланы Подоговой"><img src="https://app.edabalans.ru/media/reviews/v1/r020-svetlana-podogova.webp" alt="Светлана Подогова — отзыв участницы" loading="lazy" decoding="async"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:.8deg" data-review-index="2" aria-label="Открыть отзыв Михаила Мандрика"><img src="https://app.edabalans.ru/media/reviews/v1/r021-mikhail-mandrik.webp" alt="Михаил Мандрик — отзыв участника" loading="lazy" decoding="async"></button>
     <article class="reviews-wall__feature-video" id="review-circle-video" aria-label="Видеоотзыв участницы">
@@ -3989,8 +4011,13 @@
   <!-- library:reviews-wall:end -->
   <section class="reviews-wall-cta" aria-label="Продолжить знакомство с программой" data-homepage-block="reviews-wall-cta" data-block-width="content">
     <div class="reviews-wall-cta__actions">
-      <a class="reviews-wall-cta__button reviews-wall-cta__button--pricing" href="#pricing">Выбрать тариф</a>
-      <a class="reviews-wall-cta__button reviews-wall-cta__button--intensive" href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>
+      <a class="reviews-wall-cta__button reviews-wall-cta__button--pricing" href="#pricing" data-analytics-cta="pricing_after_reviews">Выбрать тариф</a>
+    </div>
+  </section>
+  <section class="chain-block copy-section free-intensive" id="intensive" data-homepage-block="free-intensive" data-block-width="content" aria-labelledby="free-intensive-title">
+    <div class="copy-section__inner">
+      <h2 id="free-intensive-title" data-homepage-field="title" data-analytics-section="free_intensive">Есть сомнения?</h2>
+      <aside class="approach-article-note" data-homepage-field="paragraph-1">Познакомьтесь с моим подходом к похудению поближе и узнайте, как именно работает то, что я даю в Мастер-классе, — читайте статью в моём канале <a href="https://похудение-это-есть.рф/intensive">«Как должно выглядеть адекватное похудение от А до Я!»</a></aside>
     </div>
   </section>
   </main>
@@ -4073,12 +4100,6 @@
     })();
 
     (() => {
-      const reviewsEnd = document.querySelector('.reviews-wall-cta');
-      const finalChoice = document.querySelector('.chain-block--final');
-      if (reviewsEnd && finalChoice) reviewsEnd.after(finalChoice);
-    })();
-
-    (() => {
       const toggle = document.querySelector('.mobile-toggle');
       const sheet = document.querySelector('.mobile-sheet');
       if (!toggle || !sheet) return;
@@ -4137,6 +4158,7 @@
       const lane=root.querySelector('.recognition__pains');
       const person=root.querySelector('.recognition__person');
       const pains=[...root.querySelectorAll('.pain')];
+      if(!scene||!field||!lane||!person||!pains.length)return;
       const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
       const clamp=(v,min=0,max=1)=>Math.min(max,Math.max(min,v));
       let geometry={spacing:0,animationDistance:0};
@@ -4274,16 +4296,6 @@
       const endpoint = '/api/public/homepage-analytics';
       const pageId = 'masterclass-homepage-2026';
       const storagePrefix = 'edb_homepage_analytics_v1';
-      const sectionTargets = [
-        ['hero_video', '#hero-video'], ['recognition', '[data-homepage-block="recognition"]'],
-        ['approach', '[data-homepage-block="approach"]'], ['before_after', '[data-homepage-block="before-after"]'],
-        ['program_inside', '#homepage-program-title'], ['experience', '#experience-proof-title'],
-        ['free_intensive', '#free-intensive-title'], ['reviews_featured', '#reviews-featured-title'],
-        ['method', '#method-proof-title'], ['pricing', '#pricing'], ['program_days', '#pricing-program-title'],
-        ['anya_story', '#anya-story-title'], ['result_21_days', '#result-title'], ['about', '#author-title'],
-        ['faq', '#faq-title'], ['final_choice', '#final-title'], ['reviews_more', '#reviews-more-title'],
-        ['reviews_wall', '#reviews-wall']
-      ];
       const makeId = () => crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
       const readId = (key, scope) => {
         try { const value = scope.getItem(key); if (value) return value; const next = makeId(); scope.setItem(key, next); return next; }
@@ -4298,19 +4310,39 @@
         sent.add(key);
         const body = JSON.stringify({ event, section_id: sectionId, viewer_id: viewerId, session_id: sessionId, page_id: pageId, page_path: location.pathname });
         fetch(endpoint, { method: 'POST', headers: {'Content-Type': 'application/json'}, body, keepalive: true }).catch(() => {});
+        const metrikaGoal = event === 'section_seen' ? 'homepage_section_seen' : event === 'cta_click' ? 'homepage_cta_click' : '';
+        if (metrikaGoal && typeof window.ym === 'function') {
+          window.ym(97331502, 'reachGoal', metrikaGoal, { homepage: { target: sectionId, page_path: location.pathname } });
+        }
       };
       send('page_open', 'page_open');
-      const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        send('section_seen', entry.target.dataset.analyticsSection);
-        observer.unobserve(entry.target);
-      }), { threshold: .3 });
-      sectionTargets.forEach(([id, selector]) => {
-        const target = document.querySelector(selector);
-        if (!target) return;
-        target.dataset.analyticsSection = id;
-        observer.observe(target);
-      });
+      const sectionTargets = [...document.querySelectorAll('[data-analytics-section]')];
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          send('section_seen', entry.target.dataset.analyticsSection);
+          observer.unobserve(entry.target);
+        }), { threshold: 0, rootMargin: '0px 0px -35% 0px' });
+        sectionTargets.forEach((target) => observer.observe(target));
+      } else {
+        const unseen = new Set(sectionTargets);
+        const scanSections = () => {
+          unseen.forEach((target) => {
+            const rect = target.getBoundingClientRect();
+            if (rect.top > innerHeight * .65 || rect.bottom < 0) return;
+            send('section_seen', target.dataset.analyticsSection);
+            unseen.delete(target);
+          });
+          if (!unseen.size) removeEventListener('scroll', scanSections);
+        };
+        addEventListener('scroll', scanSections, { passive: true });
+        scanSections();
+      }
+      document.addEventListener('click', (event) => {
+        const cta = event.target.closest?.('[data-analytics-cta]');
+        if (!cta) return;
+        send('cta_click', cta.dataset.analyticsCta);
+      }, true);
     })();
   </script>
   <script>
@@ -4427,6 +4459,16 @@
             button.setAttribute('aria-expanded', 'true');
             item.querySelector('.faq-sign').textContent = '−';
             item.querySelector('.faq-answer').hidden = false;
+            const alignOpenedItem = () => {
+              const scrollMargin = Number.parseFloat(getComputedStyle(item).scrollMarginTop) || 0;
+              const targetTop = window.scrollY + item.getBoundingClientRect().top - scrollMargin;
+              window.scrollTo({ top: targetTop, behavior: 'instant' });
+            };
+            requestAnimationFrame(() => {
+              alignOpenedItem();
+              requestAnimationFrame(alignOpenedItem);
+            });
+            window.setTimeout(alignOpenedItem, 240);
           }
         }));
       }
@@ -4436,7 +4478,14 @@
         if (!list) return;
         const localTemplate = document.querySelector('[data-local-faq-template]');
         if (localTemplate) {
-          list.replaceChildren(localTemplate.content.cloneNode(true));
+          const faqSnapshot = localTemplate.content.cloneNode(true);
+          faqSnapshot.querySelectorAll('.faq-item').forEach((item) => {
+            item.dataset.open = 'false';
+            item.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+            item.querySelector('.faq-sign').textContent = '+';
+            item.querySelector('.faq-answer').hidden = true;
+          });
+          list.replaceChildren(faqSnapshot);
           bindFaq(list);
           return;
         }
@@ -4445,7 +4494,7 @@
           if (!response.ok) throw new Error(`faq ${response.status}`);
           const documentData = await response.json();
           list.innerHTML = documentData.items.map((item, index) => {
-            const open = index === 0;
+            const open = false;
             const answerId = `faq-answer-${index + 1}`;
             return `<article class="faq-item" data-open="${open}"><button class="faq-question" type="button" aria-expanded="${open}" aria-controls="${answerId}"><span class="faq-question-text">${escapeHtml(item.question)}</span><span class="faq-sign" aria-hidden="true">${open ? '−' : '+'}</span></button><div class="faq-answer" id="${answerId}"${open ? '' : ' hidden'}><div class="faq-answer-inner"><div class="faq-answer-copy">${item.html}</div></div></div></article>`;
           }).join('');

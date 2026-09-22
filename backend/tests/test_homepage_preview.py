@@ -785,51 +785,52 @@ def test_release_candidate_gives_a_hero_route_to_pricing_and_opens_mobile_outlin
     response = client.get("/preview/homepage-release-candidate")
 
     assert response.status_code == 200
-    assert 'class="hero-pricing-cta" href="#pricing">Выбрать тариф — начать прямо сейчас</a>' in response.text
-    assert "Или читайте подробнее о моём подходе ниже" in response.text
-    assert "<h1 id=\"faq-title\">Важные вопросы</h1>" in response.text
-    assert "А ниже — ещё больше отзывов." in response.text
-    assert "if (reviewsEnd && finalChoice) reviewsEnd.after(finalChoice);" in response.text
+    assert 'class="hero-pricing-cta" href="#pricing" data-analytics-cta="pricing_hero">Выбрать тариф — начать прямо сейчас!</a>' in response.text
+    assert "или читайте подробнее о моём подходе 👇" in response.text
+    assert '<h1 id="faq-title" data-analytics-section="faq">Важные вопросы</h1>' in response.text
+    assert "Полную программу по дням читайте после описания тарифов" in response.text
     assert "if (open) {\n          setTocOpen(true);" in response.text
 
 
 def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft() -> None:
-    expected_baseline_sha256 = "5c53b02ae2e7d5dbacbbd6a6da4fbbfdbe6116de8745cda75964d2cb30950169"
+    expected_previous_sha256 = "5c53b02ae2e7d5dbacbbd6a6da4fbbfdbe6116de8745cda75964d2cb30950169"
+    expected_baseline_sha256 = "135162a19ba1ae1d19fa39f11dbc8304fe8c25e5ea2968856142d8843db01c76"
     root = Path(__file__).resolve().parents[2]
     preview_dir = root / "backend" / "app" / "static" / "homepage-preview"
     versions_dir = preview_dir / "versions"
     manifest = json.loads((versions_dir / "manifest.json").read_text(encoding="utf-8"))
-    baseline = next(item for item in manifest["versions"] if item["id"] == "v2026-09-22")
-    accepted = next(item for item in manifest["versions"] if item["id"] == "v2026-09-22-2")
+    previous = next(item for item in manifest["versions"] if item["id"] == "v2026-09-22")
+    baseline = next(item for item in manifest["versions"] if item["id"] == "v2026-09-22-2")
     draft = next(item for item in manifest["versions"] if item["id"] == "next")
     baseline_path = versions_dir / baseline["file"]
     baseline_source = baseline_path.read_text(encoding="utf-8")
     normalized_baseline = baseline_path.read_bytes().replace(b"\r\n", b"\n")
+    previous_path = versions_dir / previous["file"]
 
     assert manifest["active_runtime"] == "release-candidate"
     assert manifest["baseline"] == baseline["id"]
     assert manifest["working_draft"] == draft["id"]
     assert manifest["snapshot_scope"] == "homepage_html_source"
     assert manifest["checksum_normalization"] == "utf8_lf"
-    assert baseline["status"] == "baseline"
+    assert previous["status"] == "previous"
+    assert baseline["status"] == "active"
     assert draft["status"] == "local_draft"
+    assert previous["sha256"] == expected_previous_sha256
+    assert hashlib.sha256(previous_path.read_bytes().replace(b"\r\n", b"\n")).hexdigest() == expected_previous_sha256
+    assert client.get(previous["route"]).status_code == 200
     assert baseline["sha256"] == expected_baseline_sha256
     assert hashlib.sha256(normalized_baseline).hexdigest() == expected_baseline_sha256
-
-    accepted_path = versions_dir / accepted["file"]
-    normalized_accepted = accepted_path.read_bytes().replace(b"\r\n", b"\n")
-    assert accepted["status"] == "accepted"
-    assert hashlib.sha256(normalized_accepted).hexdigest() == accepted["sha256"]
-    accepted_response = client.get(accepted["route"])
-    assert accepted_response.status_code == 200
-    assert accepted_response.text == accepted_path.read_text(encoding="utf-8")
-    assert "Полную программу по дням читайте после описания тарифов" in accepted_response.text
 
     baseline_response = client.get(baseline["route"])
     assert baseline_response.status_code == 200
     assert baseline_response.text == baseline_source
     assert baseline_response.headers["x-robots-tag"] == "noindex, nofollow"
     assert baseline_response.headers["cache-control"] == "no-cache"
+    assert "Полную программу по дням читайте после описания тарифов" in baseline_response.text
+
+    runtime_response = client.get("/preview/homepage-release-candidate")
+    assert runtime_response.status_code == 200
+    assert runtime_response.text == baseline_source
 
     draft_response = client.get(draft["route"])
     assert draft_response.status_code == 200
