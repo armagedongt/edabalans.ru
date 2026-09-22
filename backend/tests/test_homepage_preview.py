@@ -843,7 +843,7 @@ def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft
     assert "get('hero_label')" not in embedded_draft_response.text
     assert 'dataset.heroLabelVariant' not in embedded_draft_response.text
     assert '<p class="hero-pricing-note">или читайте подробнее о моём подходе 👇</p>' in embedded_draft_response.text
-    assert '<p class="hero-pricing-note">Больше отзывов — в конце страницы.</p>' in embedded_draft_response.text
+    assert '<p class="hero-pricing-note"><em>* Больше отзывов — в конце страницы.</em></p>' in embedded_draft_response.text
     assert "requestAnimationFrame(alignOpenedItem);" in embedded_draft_response.text
     assert "window.setTimeout(alignOpenedItem, 240);" in embedded_draft_response.text
     assert "Везде в Мастер-классе ссылки на современные" in embedded_draft_response.text
@@ -855,6 +855,12 @@ def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft
     assert ".hero-guarantee::before{position:absolute;top:0;bottom:0" in embedded_draft_response.text
     assert "background:linear-gradient(100deg,#2f78ef 0%,#635cf7 55%,#b35fab 100%)" in embedded_draft_response.text
     assert "background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%)" in embedded_draft_response.text
+    assert "Выбрать тариф — начать прямо сейчас!</a>" in embedded_draft_response.text
+    assert embedded_draft_response.text.count("02. Как всё будет устроено") == 2
+    assert "02. Почему теперь получится" not in embedded_draft_response.text
+    assert '<article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-1">' in embedded_draft_response.text
+    assert ".homepage-program__copy{color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}" in embedded_draft_response.text
+    assert ".contact-copy{max-width:640px;margin:0 0 22px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}" in embedded_draft_response.text
     assert "И не только знает, но и сам похудел за пару лет на 30 кг." in embedded_draft_response.text
     assert "На время Мастер-класса я советую вообще не считать калории" in embedded_draft_response.text
     assert "В первый же день я расскажу, как вести дневник питания" in embedded_draft_response.text
