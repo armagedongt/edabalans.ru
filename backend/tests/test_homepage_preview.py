@@ -676,8 +676,33 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "review-lightbox__cta" not in response.text
     assert "data-review-cta" not in response.text
     assert "const showCta" not in response.text
+    assert "document.body.dataset.pricingTimer" not in response.text
+    assert "document.body.dataset.pricingFill" not in response.text
+    assert "document.body.dataset.supportTone" in response.text
+    assert 'class="edb-pricing-timer"' not in response.text
+    overlay_bar_rule = response.text.split(
+        "#edb-pricing-neurozeh-v1 .edb-product-overlay-bar {", 1
+    )[1].split("}", 1)[0]
+    assert "position: fixed;" in overlay_bar_rule
+    assert "bottom: 0;" in overlay_bar_rule
+    assert "env(safe-area-inset-bottom)" in overlay_bar_rule
+
+
+def test_homepage_release_candidate_matches_canonical_block_map() -> None:
+    response = client.get("/preview/homepage-release-candidate")
+
+    assert response.status_code == 200
+    parser = RobotsMetaParser()
+    parser.feed(response.text)
     block_map_path = Path(__file__).parents[2] / "content/public-site/homepage/block-map.json"
     block_map = json.loads(block_map_path.read_text(encoding="utf-8"))
+    project_root = Path(__file__).parents[2]
+    runtime_source = "backend/app/static/homepage-preview/release-candidate.html"
+
+    assert block_map["runtimeSource"] == runtime_source
+    assert block_map["acceptedSnapshot"] == (
+        "backend/app/static/homepage-preview/versions/v2026-09-22-3.html"
+    )
     assert parser.block_order == [block["id"] for block in block_map["blocks"]]
     for block in block_map["blocks"]:
         assert parser.block_fields[block["id"]] == set(block["fields"])
@@ -689,16 +714,30 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert [block["order"] for block in block_map["blocks"]] == list(
         range(10, 10 * (len(block_map["blocks"]) + 1), 10)
     )
-    assert "document.body.dataset.pricingTimer" not in response.text
-    assert "document.body.dataset.pricingFill" not in response.text
-    assert "document.body.dataset.supportTone" in response.text
-    assert 'class="edb-pricing-timer"' not in response.text
-    overlay_bar_rule = response.text.split(
-        "#edb-pricing-neurozeh-v1 .edb-product-overlay-bar {", 1
-    )[1].split("}", 1)[0]
-    assert "position: fixed;" in overlay_bar_rule
-    assert "bottom: 0;" in overlay_bar_rule
-    assert "env(safe-area-inset-bottom)" in overlay_bar_rule
+    runtime_owned_blocks = {
+        "hero-label", "hero-title", "hero-intro", "hero-outro",
+        "recognition-intro", "recognition-explanation", "approach", "inside",
+        "experience-proof", "reviews-featured-heading", "reviews-voice-1",
+        "reviews-voice-2", "reviews-featured", "method-proof", "reviews-voice-3",
+        "pricing-heading", "pricing-trust", "approach-article-link", "anya-heading",
+        "anya-intro", "anya-slider", "anya-outro", "anya-cta", "result", "faq",
+        "final-cta", "reviews-after-cat", "reviews-voice-more", "reviews-wall",
+        "reviews-wall-cta", "free-intensive", "cookie-notice",
+    }
+    for block in block_map["blocks"]:
+        sources = block["source"] if isinstance(block["source"], list) else [block["source"]]
+        if block["id"] in runtime_owned_blocks:
+            assert runtime_source in sources
+        for source in sources:
+            if source.startswith(("backend/", "content/")) and "*" not in source:
+                assert (project_root / source).exists(), source
+    assert "backend/app/static/homepage-preview/mobile.html" not in {
+        source
+        for block in block_map["blocks"]
+        for source in (
+            block["source"] if isinstance(block["source"], list) else [block["source"]]
+        )
+    }
 
 
 def test_homepage_uses_one_shared_vertical_rhythm_without_stacked_section_gaps() -> None:

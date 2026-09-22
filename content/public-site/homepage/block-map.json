@@ -1,7 +1,10 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "page": "homepage",
-  "description": "Каноническая карта блоков главной для точной передачи текстов и медиа между дизайн-потоком, писательским потоком и runtime.",
+  "acceptedVersion": "v2026-09-22-3",
+  "runtimeSource": "backend/app/static/homepage-preview/release-candidate.html",
+  "acceptedSnapshot": "backend/app/static/homepage-preview/versions/v2026-09-22-3.html",
+  "description": "Каноническая карта фактических блоков главной версии 3. Порядок совпадает с DOM runtime; тексты и медиа меняются только в указанном источнике-владельце.",
   "boundaryMeasurement": {
     "selector": "[data-homepage-block=\"{id}\"]",
     "top": "element.getBoundingClientRect().top",
@@ -11,463 +14,53 @@
   "widthModes": {
     "intrinsic": "Ширина определяется содержимым плашки.",
     "hero": "Отдельная композиция первого экрана.",
-    "video-main": "Главное видео: рабочая область занимает 90% высоты окна; ширина выводится из формата 3:4 и дополнительно ограничивается контейнером и 760 px.",
-    "video-portrait": "Портретное видео Ани: высота совпадает с главным видео, а ширина следует исходному формату 1080:1914.",
-    "content": "Основной стандарт: окно минус 40 px; затем 600/620/760 px, максимум 760 px.",
-    "visual": "Визуальный блок до/после: не шире основного стандарта и 760 px.",
-    "story": "История Ани: заголовок и текст идут по общей колонке; слайдер начинается на той же левой линии, тянется вправо максимум до 760 px, карточка занимает 80% окна, но не больше 608 px.",
-    "wide": "Единственное широкое исключение: сетка тарифов до 1180 px.",
-    "shared": "Общий компонент проекта, не локальная копия главной.",
-    "overlay": "Компактный плавающий слой поверх страницы; на всех экранах центрируется снизу и сохраняет ограниченную ширину."
+    "video-main": "Главное видео ограничивается своей маской, основной колонкой и высотой окна.",
+    "video-portrait": "Портретное видео Ани следует исходному формату 1080:1914 внутри общей колонки.",
+    "content": "Основная текстовая колонка, максимум 760 px.",
+    "visual": "Медиа в ширине основной колонки, максимум 760 px.",
+    "story": "История Ани: общая текстовая колонка и портретный слайдер.",
+    "wide": "Широкое исключение тарифов, максимум 1180 px.",
+    "shared": "Общий компонент проекта, а не локальная копия главной.",
+    "overlay": "Компактный слой поверх страницы."
   },
   "blocks": [
-    {
-      "order": 10,
-      "id": "hero-label",
-      "label": "Плашка «Мастер-класс · 21 день»",
-      "selector": "[data-homepage-block=\"hero-label\"]",
-      "width": "intrinsic",
-      "fields": [
-        "text"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 20,
-      "id": "hero-title",
-      "label": "Хиро-заголовок",
-      "selector": "[data-homepage-block=\"hero-title\"]",
-      "width": "hero",
-      "fields": [
-        "line-1",
-        "line-2",
-        "accent"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 30,
-      "id": "hero-intro",
-      "label": "Текст над видео",
-      "selector": "[data-homepage-block=\"hero-intro\"]",
-      "width": "content",
-      "fields": [
-        "text"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 40,
-      "id": "hero-video",
-      "label": "Продажное видео",
-      "selector": "[data-homepage-block=\"hero-video\"]",
-      "width": "video-main",
-      "fields": [],
-      "source": "backend/app/static/homepage-preview/vsl-player.html"
-    },
-    {
-      "order": 50,
-      "id": "hero-outro",
-      "label": "Текст под видео",
-      "selector": "[data-homepage-block=\"hero-outro\"]",
-      "width": "content",
-      "fields": [
-        "paragraph-1",
-        "paragraph-2",
-        "paragraph-3"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html",
-      "status": "accepted"
-    },
-    {
-      "order": 60,
-      "id": "recognition-title",
-      "label": "Заголовок «Чтобы похудеть…»",
-      "selector": "[data-homepage-block=\"recognition-title\"]",
-      "width": "content",
-      "fields": [
-        "html"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 70,
-      "id": "recognition-intro",
-      "label": "Текст над человечком",
-      "selector": "[data-homepage-block=\"recognition-intro\"]",
-      "width": "content",
-      "fields": [
-        "html"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 80,
-      "id": "recognition-scene",
-      "label": "Человечек и облачка",
-      "selector": "[data-homepage-block=\"recognition-scene\"]",
-      "width": "content",
-      "fields": [
-        "pain-1",
-        "pain-2",
-        "pain-3",
-        "pain-4",
-        "pain-5",
-        "pain-6"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 90,
-      "id": "recognition-explanation",
-      "label": "Почему дефицит требует навыков",
-      "selector": "[data-homepage-block=\"recognition-explanation\"]",
-      "width": "content",
-      "fields": [
-        "paragraph-1",
-        "paragraph-2"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 100,
-      "id": "approach",
-      "label": "«Значит, пора менять подход»",
-      "selector": "[data-homepage-block=\"approach\"]",
-      "width": "content",
-      "fields": [
-        "html"
-      ],
-      "source": "content/public-site/homepage/approach.md",
-      "api": "/api/public-site/content/approach"
-    },
-    {
-      "order": 110,
-      "id": "before-after",
-      "label": "До и после Мастер-класса",
-      "selector": "[data-homepage-block=\"before-after\"]",
-      "width": "visual",
-      "fields": [
-        "visual"
-      ],
-      "source": [
-        "backend/app/static/homepage-preview/weight-loss-before-masterclass.svg",
-        "backend/app/static/homepage-preview/weight-loss-after-masterclass.svg"
-      ]
-    },
-    {
-      "order": 120,
-      "id": "inside",
-      "label": "Как проходит Мастер-класс",
-      "selector": "[data-homepage-block=\"inside\"]",
-      "width": "content",
-      "fields": [
-        "steps"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 130,
-      "id": "inside-gallery",
-      "label": "Интерфейс и материалы Мастер-класса",
-      "selector": "[data-homepage-block=\"inside-gallery\"]",
-      "width": "visual",
-      "fields": [
-        "media"
-      ],
-      "source": [
-        "backend/app/static/homepage-preview/mobile.html",
-        "backend/app/static/homepage-preview/masterclass-inside-01.webp",
-        "backend/app/static/homepage-preview/masterclass-inside-02.webp",
-        "backend/app/static/homepage-preview/masterclass-inside-03.webp",
-        "backend/app/static/homepage-preview/masterclass-inside-04.webp"
-      ]
-    },
-    {
-      "order": 140,
-      "id": "experience-proof",
-      "label": "Опыт перед бесплатным интенсивом",
-      "selector": "[data-homepage-block=\"experience-proof\"]",
-      "width": "content",
-      "fields": [
-        "text"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 150,
-      "id": "free-intensive",
-      "label": "Переход к бесплатному интенсиву",
-      "selector": "[data-homepage-block=\"free-intensive\"]",
-      "width": "content",
-      "fields": [
-        "title",
-        "paragraph-1",
-        "paragraph-2",
-        "cta"
-      ],
-      "source": [
-        "backend/app/static/homepage-preview/mobile.html",
-        "backend/app/intensive_public_cta.py"
-      ]
-    },
-    {
-      "order": 160,
-      "id": "reviews-featured-heading",
-      "label": "Заголовок избранных отзывов",
-      "selector": "[data-homepage-block=\"reviews-featured-heading\"]",
-      "width": "content",
-      "fields": [
-        "title"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 170,
-      "id": "reviews-voice-1",
-      "label": "Первый голосовой отзыв",
-      "selector": "[data-homepage-block=\"reviews-voice-1\"]",
-      "width": "content",
-      "fields": [
-        "avatar",
-        "author",
-        "description"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 180,
-      "id": "reviews-voice-2",
-      "label": "Второй голосовой отзыв",
-      "selector": "[data-homepage-block=\"reviews-voice-2\"]",
-      "width": "content",
-      "fields": [
-        "avatar",
-        "author",
-        "description"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 190,
-      "id": "reviews-featured",
-      "label": "Пять избранных фотоотзывов",
-      "selector": "[data-homepage-block=\"reviews-featured\"]",
-      "width": "visual",
-      "fields": [
-        "media"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 200,
-      "id": "method-proof",
-      "label": "О моём подходе",
-      "selector": "[data-homepage-block=\"method-proof\"]",
-      "width": "content",
-      "fields": [
-        "title",
-        "points"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html",
-      "overlays": [
-        "education",
-        "sources"
-      ]
-    },
-    {
-      "order": 210,
-      "id": "pricing-heading",
-      "label": "Плашка «Выберите тариф»",
-      "selector": "[data-homepage-block=\"pricing-heading\"]",
-      "width": "wide",
-      "fields": [
-        "text"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 220,
-      "id": "pricing-cards",
-      "label": "Тарифы",
-      "selector": "[data-homepage-block=\"pricing-cards\"]",
-      "width": "wide",
-      "fields": [
-        "catalog"
-      ],
-      "source": "platform.commerce",
-      "api": "/api/pricing/site/preview"
-    },
-    {
-      "order": 230,
-      "id": "pricing-trust",
-      "label": "Доступ и гарантия",
-      "selector": "[data-homepage-block=\"pricing-trust\"]",
-      "width": "content",
-      "fields": [
-        "text"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 240,
-      "id": "pricing-program",
-      "label": "Программа по дням",
-      "selector": "[data-homepage-block=\"pricing-program\"]",
-      "width": "content",
-      "fields": [
-        "links"
-      ],
-      "source": "content/public-site/homepage/*.md"
-    },
-    {
-      "order": 250,
-      "id": "anya-heading",
-      "label": "История: что случилось с Аней",
-      "selector": "[data-homepage-block=\"anya-heading\"]",
-      "width": "story",
-      "fields": [
-        "kicker",
-        "title"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 260,
-      "id": "anya-intro",
-      "label": "Текст перед историей Ани",
-      "selector": "[data-homepage-block=\"anya-intro\"]",
-      "width": "story",
-      "fields": [
-        "text"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 270,
-      "id": "anya-slider",
-      "label": "Видео истории Ани",
-      "selector": "[data-homepage-block=\"anya-slider\"]",
-      "width": "video-portrait",
-      "fields": [
-        "media"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 280,
-      "id": "anya-outro",
-      "label": "Текст после истории Ани",
-      "selector": "[data-homepage-block=\"anya-outro\"]",
-      "width": "story",
-      "fields": [
-        "paragraph-1",
-        "paragraph-2"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html",
-      "status": "accepted"
-    },
-    {
-      "order": 290,
-      "id": "anya-cta",
-      "label": "Кнопка после истории Ани",
-      "selector": "[data-homepage-block=\"anya-cta\"]",
-      "width": "story",
-      "fields": [
-        "cta"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 300,
-      "id": "author",
-      "label": "Об авторе",
-      "selector": "[data-homepage-block=\"author\"]",
-      "width": "content",
-      "fields": [
-        "title",
-        "paragraph-1",
-        "media",
-        "paragraph-2",
-        "paragraph-3"
-      ],
-      "source": [
-        "backend/app/static/homepage-preview/mobile.html",
-        "backend/app/static/blog/assets/sergey-author.png"
-      ]
-    },
-    {
-      "order": 310,
-      "id": "faq",
-      "label": "Частые вопросы",
-      "selector": "[data-homepage-block=\"faq\"]",
-      "width": "content",
-      "fields": [
-        "items"
-      ],
-      "source": "content/public-site/homepage/faq.md",
-      "api": "/api/public-site/content/faq"
-    },
-    {
-      "order": 320,
-      "id": "final-cta",
-      "label": "Финальный призыв",
-      "selector": "[data-homepage-block=\"final-cta\"]",
-      "width": "content",
-      "fields": [
-        "sticker",
-        "line-1",
-        "line-2",
-        "line-3",
-        "contact-copy"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 330,
-      "id": "reviews-after-cat",
-      "label": "Переход к дополнительным отзывам после кота",
-      "selector": "[data-homepage-block=\"reviews-after-cat\"]",
-      "width": "content",
-      "fields": [
-        "title",
-        "text"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 340,
-      "id": "reviews-wall",
-      "label": "Длинное полотно дополнительных отзывов",
-      "selector": "[data-homepage-block=\"reviews-wall\"]",
-      "width": "visual",
-      "fields": [
-        "media"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 350,
-      "id": "footer",
-      "label": "Общий публичный подвал",
-      "selector": "[data-homepage-block=\"footer\"]",
-      "width": "shared",
-      "fields": [],
-      "source": "backend/app/static/site-footer.js"
-    },
-    {
-      "order": 360,
-      "id": "cookie-notice",
-      "label": "Уведомление об использовании cookie",
-      "selector": "[data-homepage-block=\"cookie-notice\"]",
-      "width": "overlay",
-      "fields": [
-        "copy",
-        "policy",
-        "action"
-      ],
-      "source": "backend/app/static/homepage-preview/mobile.html",
-      "status": "revision"
-    }
+    { "order": 10, "id": "hero-label", "label": "Плашка «Мастер-класс · 21 день»", "selector": "[data-homepage-block=\"hero-label\"]", "fields": ["text"], "width": "intrinsic", "source": "backend/app/static/homepage-preview/release-candidate.html" },
+    { "order": 20, "id": "hero-title", "label": "Хиро-заголовок", "selector": "[data-homepage-block=\"hero-title\"]", "fields": ["accent", "line-1", "line-2"], "width": "hero", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "hero_intro" },
+    { "order": 30, "id": "hero-intro", "label": "Вводный текст", "selector": "[data-homepage-block=\"hero-intro\"]", "fields": ["text"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
+    { "order": 40, "id": "hero-video", "label": "Главное видео", "selector": "[data-homepage-block=\"hero-video\"]", "fields": [], "width": "video-main", "source": "backend/app/static/homepage-preview/vsl-player.html", "analyticsSection": "hero_video" },
+    { "order": 50, "id": "hero-outro", "label": "Обещание, гарантия и первый CTA", "selector": "[data-homepage-block=\"hero-outro\"]", "fields": ["paragraph-1", "paragraph-2"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsCta": "pricing_hero" },
+    { "order": 60, "id": "recognition-intro", "label": "Знакомый совет", "selector": "[data-homepage-block=\"recognition-intro\"]", "fields": ["media", "title"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "recognition" },
+    { "order": 70, "id": "recognition-explanation", "label": "Почему одного дефицита недостаточно", "selector": "[data-homepage-block=\"recognition-explanation\"]", "fields": ["text"], "width": null, "source": "backend/app/static/homepage-preview/release-candidate.html" },
+    { "order": 80, "id": "approach", "label": "Пора менять подход", "selector": "[data-homepage-block=\"approach\"]", "fields": ["html"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "approach" },
+    { "order": 90, "id": "inside", "label": "Как всё будет устроено", "selector": "[data-homepage-block=\"inside\"]", "fields": ["steps"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "program_inside" },
+    { "order": 100, "id": "before-after", "label": "До и после Мастер-класса", "selector": "[data-homepage-block=\"before-after\"]", "fields": ["visual"], "width": "visual", "source": ["backend/app/static/homepage-preview/weight-loss-before-masterclass.svg", "backend/app/static/homepage-preview/weight-loss-after-masterclass.svg"], "analyticsSection": "before_after" },
+    { "order": 110, "id": "experience-proof", "label": "Опыт автора", "selector": "[data-homepage-block=\"experience-proof\"]", "fields": ["text"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "experience" },
+    { "order": 120, "id": "reviews-featured-heading", "label": "Заголовок избранных отзывов", "selector": "[data-homepage-block=\"reviews-featured-heading\"]", "fields": ["title"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "reviews_featured" },
+    { "order": 130, "id": "reviews-voice-1", "label": "Голосовой отзыв 1", "selector": "[data-homepage-block=\"reviews-voice-1\"]", "fields": ["author"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
+    { "order": 140, "id": "reviews-voice-2", "label": "Голосовой отзыв 2", "selector": "[data-homepage-block=\"reviews-voice-2\"]", "fields": ["author"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
+    { "order": 150, "id": "reviews-featured", "label": "Избранные фотоотзывы", "selector": "[data-homepage-block=\"reviews-featured\"]", "fields": ["media"], "width": "visual", "source": "backend/app/static/homepage-preview/release-candidate.html" },
+    { "order": 160, "id": "method-proof", "label": "О подходе автора", "selector": "[data-homepage-block=\"method-proof\"]", "fields": ["points", "title"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "method" },
+    { "order": 170, "id": "reviews-voice-3", "label": "Голосовой отзыв Татьяны", "selector": "[data-homepage-block=\"reviews-voice-3\"]", "fields": [], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
+    { "order": 180, "id": "pricing-heading", "label": "Заголовок тарифов", "selector": "[data-homepage-block=\"pricing-heading\"]", "fields": ["text"], "width": "wide", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "pricing" },
+    { "order": 190, "id": "pricing-cards", "label": "Тарифные карточки", "selector": "[data-homepage-block=\"pricing-cards\"]", "fields": ["catalog"], "width": "wide", "source": "platform.commerce", "api": "/api/pricing/site/preview", "analyticsCtas": ["pricing_plan_basic", "pricing_plan_recipes", "pricing_plan_consult"] },
+    { "order": 200, "id": "pricing-trust", "label": "Гарантии и условия доступа", "selector": "[data-homepage-block=\"pricing-trust\"]", "fields": ["text"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
+    { "order": 210, "id": "pricing-program", "label": "Программа по дням", "selector": "[data-homepage-block=\"pricing-program\"]", "fields": ["links"], "width": "content", "source": "content/public-site/homepage/*.md", "analyticsSection": "program_days", "analyticsCta": "pricing_program_overlay" },
+    { "order": 220, "id": "approach-article-link", "label": "Ссылка на подробный материал о подходе", "selector": "[data-homepage-block=\"approach-article-link\"]", "fields": [], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
+    { "order": 230, "id": "anya-heading", "label": "Заголовок истории Ани", "selector": "[data-homepage-block=\"anya-heading\"]", "fields": ["kicker", "title"], "width": "story", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "anya_story" },
+    { "order": 240, "id": "anya-intro", "label": "Вводный текст истории Ани", "selector": "[data-homepage-block=\"anya-intro\"]", "fields": ["text"], "width": "story", "source": "backend/app/static/homepage-preview/release-candidate.html" },
+    { "order": 250, "id": "anya-slider", "label": "Видеоистория Ани", "selector": "[data-homepage-block=\"anya-slider\"]", "fields": ["media"], "width": "video-portrait", "source": "backend/app/static/homepage-preview/release-candidate.html" },
+    { "order": 260, "id": "anya-outro", "label": "Текст после истории Ани", "selector": "[data-homepage-block=\"anya-outro\"]", "fields": ["paragraph-1", "paragraph-2"], "width": "story", "source": "backend/app/static/homepage-preview/release-candidate.html" },
+    { "order": 270, "id": "anya-cta", "label": "CTA после истории Ани", "selector": "[data-homepage-block=\"anya-cta\"]", "fields": ["cta"], "width": "story", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsCta": "pricing_anya_story" },
+    { "order": 280, "id": "result", "label": "Исторический блок результата", "selector": "[data-homepage-block=\"result\"]", "fields": [], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "status": "hidden" },
+    { "order": 290, "id": "author", "label": "Об авторе", "selector": "[data-homepage-block=\"author\"]", "fields": ["media", "paragraph-1", "paragraph-2", "paragraph-3", "paragraph-4", "paragraph-5", "title"], "width": "content", "source": ["backend/app/static/homepage-preview/release-candidate.html", "backend/app/static/blog/assets/sergey-author.png"], "analyticsSection": "about" },
+    { "order": 300, "id": "faq", "label": "Важные вопросы", "selector": "[data-homepage-block=\"faq\"]", "fields": ["items"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "faq" },
+    { "order": 310, "id": "final-cta", "label": "Финальный выбор", "selector": "[data-homepage-block=\"final-cta\"]", "fields": ["contact-copy", "lead", "title"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "final_choice", "analyticsCta": "pricing_final_choice" },
+    { "order": 320, "id": "reviews-after-cat", "label": "Заголовок дополнительных отзывов", "selector": "[data-homepage-block=\"reviews-after-cat\"]", "fields": ["text", "title"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "reviews_more" },
+    { "order": 330, "id": "reviews-voice-more", "label": "Дополнительные голосовые отзывы", "selector": "[data-homepage-block=\"reviews-voice-more\"]", "fields": [], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
+    { "order": 340, "id": "reviews-wall", "label": "Полотно дополнительных отзывов", "selector": "[data-homepage-block=\"reviews-wall\"]", "fields": ["media"], "width": "visual", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "reviews_wall" },
+    { "order": 350, "id": "reviews-wall-cta", "label": "CTA после отзывов", "selector": "[data-homepage-block=\"reviews-wall-cta\"]", "fields": [], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsCta": "pricing_after_reviews" },
+    { "order": 360, "id": "free-intensive", "label": "Сомнения и бесплатный интенсив", "selector": "[data-homepage-block=\"free-intensive\"]", "fields": ["paragraph-1", "title"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "free_intensive" },
+    { "order": 370, "id": "footer", "label": "Общий публичный подвал", "selector": "[data-homepage-block=\"footer\"]", "fields": [], "width": "shared", "source": "backend/app/static/site-footer.js" },
+    { "order": 380, "id": "cookie-notice", "label": "Уведомление cookie", "selector": "[data-homepage-block=\"cookie-notice\"]", "fields": ["action", "copy", "policy"], "width": "overlay", "source": ["backend/app/static/homepage-preview/release-candidate.html", "backend/app/static/site-cookie-notice.js"] }
   ]
 }
