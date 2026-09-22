@@ -521,15 +521,11 @@
 
     .site-hero { padding: 28px var(--page-gutter) 0; background: radial-gradient(circle at 48% 11%, rgba(39,175,245,.14), transparent 34%), #fff; }
     .site-hero__inner { width: min(100%, var(--content-copy)); margin: 0 auto; }
-    .site-eyebrow { display: flex; width: max-content; max-width: 100%; min-height: 31px; align-items: center; margin: 0 auto; padding: 6px 9px; border: 1px solid rgba(33,85,121,.14); border-radius: 11px; background: rgba(255,255,255,.92); box-shadow: 0 7px 18px -13px rgba(28,67,94,.48); color: #168fe3; font-family: Manrope, sans-serif; font-size: clamp(9px,2.8vw,13px); font-weight: 800; line-height: 1.2; letter-spacing: .02em; text-transform: uppercase; backdrop-filter: blur(10px); }
-    .site-eyebrow::before { width: 7px; height: 7px; flex: 0 0 7px; margin-right: 7px; border-radius: 50%; background: #ff6738; content: ""; }
+    .site-eyebrow { display: flex; width: max-content; max-width: 100%; min-height: 38px; align-items: center; margin: 0 auto; padding: 8px 12px; border: 1px solid rgba(33,85,121,.14); border-radius: 12px; background: rgba(255,255,255,.92); box-shadow: 0 7px 18px -13px rgba(28,67,94,.48); color: #168fe3; font-family: Manrope, sans-serif; font-size: clamp(12px,3.3vw,16px); font-weight: 800; line-height: 1.2; letter-spacing: .02em; text-transform: uppercase; backdrop-filter: blur(10px); }
+    .site-eyebrow::before { width: 8px; height: 8px; flex: 0 0 8px; margin-right: 8px; border-radius: 50%; background: #ff6738; content: ""; }
     .site-title { margin: 0; font-family: Unbounded, Manrope, sans-serif; font-style: italic; font-weight: 800; line-height: .98; letter-spacing: -.068em; text-align: center; text-transform: uppercase; word-spacing: .08em; }
     .site-title span { display: block; width: max-content; max-width: 100%; margin-inline: auto; white-space: nowrap; }
     .site-title__plain { font-size: clamp(25px,7.6vw,58px); }
-    .site-title__label--text { margin-bottom: 6px; color: #168fe3; font-size: clamp(16px,4.8vw,34px); letter-spacing: -.035em; }
-    .site-title__label--pill { display: none !important; min-height: 44px; align-items: center; justify-content: center; margin-bottom: 15px; padding: 10px 18px 11px; border: 1px solid rgba(255,255,255,.42); border-radius: 15px; background: linear-gradient(135deg,#168fe3 0%,#6855f7 58%,#ff6738 128%); box-shadow: 0 12px 26px -14px rgba(36,91,184,.72); color: #fff; font-family: Manrope,sans-serif; font-size: clamp(15px,4.1vw,23px); font-style: normal; line-height: 1; letter-spacing: .025em; text-transform: uppercase; }
-    body[data-hero-label-variant="pill"] .site-title__label--text { display: none; }
-    body[data-hero-label-variant="pill"] .site-title__label--pill { display: flex !important; }
     .site-title__plain + .site-title__plain { margin-top: 3px; }
     .site-title__plain small { display: inline; width: auto; margin: 0; font-size: .82em; font-weight: 800; line-height: 1; text-transform: lowercase; vertical-align: baseline; }
     .site-title__accent { margin-top: 8px; padding: 5px 10px 7px; border-radius: 10px; background: var(--site-orange); color: #fff; font-size: clamp(17px,5.45vw,58px); line-height: 1.02; letter-spacing: -.015em; transform: rotate(-.8deg); }
@@ -586,11 +582,13 @@
     .site-outro { width:var(--content-frame);max-width:100%;margin:22px auto 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.6;text-align:left }
     .site-outro p{margin:0}
     .site-outro p+p{margin-top:14px}
-    .hero-pricing-cta{display:flex;width:max-content;max-width:100%;min-height:52px;align-items:center;justify-content:center;margin:28px auto 0;padding:12px 20px;border-radius:14px;background:linear-gradient(115deg,#087fca 0%,#26afff 42%,#087fca 76%,#55c7ff 100%);background-size:220% 100%;box-shadow:0 16px 30px -14px rgba(0,132,214,.72);color:#fff;font:800 15px/1.2 Manrope,sans-serif;text-align:center;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease;animation:hero-cta-shimmer 5.5s ease-in-out infinite}
+    .hero-guarantee{position:relative;margin:22px 0 0;padding:18px 19px 18px 22px;border:1px solid rgba(22,143,227,.2);border-radius:clamp(12px,2vw,16px);background:rgba(255,255,255,.82);box-shadow:0 16px 30px -26px rgba(20,97,145,.62);color:var(--site-text);font:inherit}
+    .hero-guarantee::before{position:absolute;top:17px;bottom:17px;left:0;width:4px;border-radius:0 4px 4px 0;background:linear-gradient(180deg,#168fe3,#6855f7,#ff6738);content:""}
+    .hero-pricing-cta{display:flex;width:max-content;max-width:100%;min-height:52px;align-items:center;justify-content:center;margin:28px auto 0;padding:12px 20px;border-radius:10px;background:linear-gradient(135deg,#168fe3 0%,#6855f7 58%,#ff6738 128%);background-size:220% 100%;box-shadow:0 16px 30px -14px rgba(58,79,197,.78);color:#fff;font:800 15px/1.2 Manrope,sans-serif;text-align:center;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease;animation:hero-cta-shimmer 5.5s ease-in-out infinite}
     .hero-pricing-cta:hover,.hero-pricing-cta:focus-visible{box-shadow:0 18px 30px -14px rgba(8,107,171,.72);transform:translateY(-2px)}
     @keyframes hero-cta-shimmer{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
     .hero-pricing-note{display:block;width:max-content;max-width:100%;margin:11px auto 0;color:#63717a;font-size:13px;font-style:italic;font-weight:500;line-height:1.4;text-align:center;text-decoration:none;white-space:nowrap}
-    .hero-pricing-note:hover,.hero-pricing-note:focus-visible{color:var(--site-blue);text-decoration:underline;text-underline-offset:3px}
+    a.hero-pricing-note:hover,a.hero-pricing-note:focus-visible{color:var(--site-blue);text-decoration:underline;text-underline-offset:3px}
 
     .argument-intro { padding: 42px var(--page-gutter) 46px; background: #fff; }
     .argument-intro__inner, .method-transition__inner { width: min(100%,var(--content-frame)); margin: 0 auto; }
@@ -644,8 +642,8 @@
       .desktop-contact__panel span[aria-disabled="true"] { color: #7e8991; cursor: not-allowed; }
       .desktop-account{position:relative;justify-self:end}.desktop-account__trigger{display:inline-flex;align-items:center;gap:7px;padding:12px 18px;border:1px solid rgba(255,255,255,.55);border-radius:23px;background:rgba(255,255,255,.16);color:#fff;font:800 13px/1 Manrope,sans-serif;white-space:nowrap;cursor:pointer}.desktop-account__trigger .desktop-contact__chevron{transition:transform .16s ease}.desktop-account__trigger[aria-expanded="true"] .desktop-contact__chevron{transform:translateY(2px) rotate(225deg)}.desktop-account__panel{position:absolute;z-index:70;top:calc(100% + 11px);right:0;display:grid;width:220px;padding:7px;border:1px solid rgba(21,105,159,.13);border-radius:17px;background:rgba(255,255,255,.97);box-shadow:0 16px 32px -22px rgba(15,70,106,.55),0 5px 12px -8px rgba(15,70,106,.24);backdrop-filter:blur(12px)}.desktop-account__panel[hidden]{display:none}.desktop-account__panel a{display:flex;min-height:41px;align-items:center;padding:9px 12px;border-radius:11px;color:#202a32;font-size:13px;font-weight:700;line-height:1.25;text-decoration:none}.desktop-account__panel a:hover,.desktop-account__panel a:focus-visible{color:#118ed8;background:#edf8ff}
       .site-hero { padding-top: 42px; padding-bottom: 0; }
-      .site-eyebrow { min-height: 36px; padding: 8px 12px; font-size: 13px; }
-      .site-eyebrow::before { width: 8px; height: 8px; flex-basis: 8px; margin-right: 8px; }
+      .site-eyebrow { min-height: 42px; padding: 10px 15px; font-size: 15px; }
+      .site-eyebrow::before { width: 9px; height: 9px; flex-basis: 9px; margin-right: 9px; }
       .site-title { margin-top: 42px; }
       .site-lead { font-size: var(--type-body); }
       .site-player { margin-top: 31px; }
@@ -844,7 +842,8 @@
     .faq-shell{width:min(100%,var(--content-frame));margin:0 auto}
     .chain-block--faq h1{max-width:none;margin:0 auto;font-size:var(--type-section);font-weight:800;line-height:1.1;letter-spacing:-1px;text-align:left;text-wrap:balance}
     .faq-list{display:flex;width:100%;flex-direction:column;gap:12px;margin:36px auto 0}
-    .faq-item{overflow:clip;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px -22px rgba(20,30,60,.5);transition:border-color .18s ease,box-shadow .18s ease}
+    .faq-list{overflow-anchor:none}
+    .faq-item{overflow:clip;scroll-margin-top:12px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px -22px rgba(20,30,60,.5);transition:border-color .18s ease,box-shadow .18s ease}
     .faq-item:hover,.faq-item:focus-within{border-color:rgba(38,175,255,.42);box-shadow:0 14px 34px -28px rgba(18,115,180,.55)}
     .faq-item[data-open="true"]{background:linear-gradient(145deg,rgba(255,250,248,.96) 0%,var(--support-surface) 100%);border-color:var(--support-border);box-shadow:0 16px 34px -27px rgba(143,54,39,.38)}
     body[data-support-tone="green"] .faq-item[data-open="true"]{background:linear-gradient(145deg,rgba(249,255,250,.96) 0%,var(--support-surface) 100%);box-shadow:0 16px 34px -27px rgba(52,152,90,.36)}
@@ -855,11 +854,14 @@
     .faq-answer{animation:faq-open .2s ease both}
     .faq-answer[hidden]{display:none}
     .faq-answer-inner{overflow:hidden}
-    .faq-answer-copy{display:flex;flex-direction:column;gap:12px;padding:0 60px 24px 24px;color:var(--muted);font-size:15.5px;font-weight:400;line-height:1.62}
+    .faq-answer-copy{display:flex;flex-direction:column;gap:10px;padding:0 60px 24px 24px;color:var(--muted);font-size:15.5px;font-weight:400;line-height:1.62}
     .faq-answer-copy p,.faq-answer-copy ul{margin:0}
+    .faq-answer-copy ul{padding-left:1.15em}
+    .faq-answer-copy li{padding-left:.15em}
     .faq-answer-copy a{color:#168fd3;text-decoration-thickness:1px;text-underline-offset:3px}
-    .method-transition__inner figure,.faq-answer-copy figure,#edb-pricing-neurozeh-v1 .edb-product-overlay-points figure{max-width:100%;margin:18px 0}
-    .method-transition__inner img,.faq-answer-copy img,#edb-pricing-neurozeh-v1 .edb-product-overlay-points img{display:block;max-width:100%;height:auto;border-radius:14px}
+    .method-transition__inner figure,#edb-pricing-neurozeh-v1 .edb-product-overlay-points figure{max-width:100%;margin:18px 0}
+    .faq-answer-copy figure{max-width:100%;margin:4px 0}
+    .method-transition__inner img,.faq-answer-copy img,#edb-pricing-neurozeh-v1 .edb-product-overlay-points img{display:block;max-width:100%;height:auto;border-radius:clamp(12px,2vw,16px)}
     .method-transition__inner table,.faq-answer-copy table,#edb-pricing-neurozeh-v1 .edb-product-overlay-points table{display:block;width:100%;max-width:100%;overflow-x:auto;border-collapse:collapse;-webkit-overflow-scrolling:touch}
     .method-transition__inner th,.method-transition__inner td,.faq-answer-copy th,.faq-answer-copy td,#edb-pricing-neurozeh-v1 .edb-product-overlay-points th,#edb-pricing-neurozeh-v1 .edb-product-overlay-points td{min-width:120px;padding:8px 10px;border:1px solid rgba(22,143,211,.18);text-align:left;vertical-align:top}
     .faq-media{display:block;width:100%;max-height:430px;object-fit:contain;background:#f6f8fb;border:1px solid rgba(38,175,255,.12);border-radius:13px}
@@ -874,7 +876,7 @@
     .chain-block--final{margin:0;background:#fff;color:var(--site-ink);font-family:Manrope,Arial,sans-serif;-webkit-font-smoothing:antialiased}
     .chain-block--final a:focus-visible{outline:3px solid #6ec8ff;outline-offset:4px}
     .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-    .final-section{padding:var(--space-section) var(--page-gutter) 0}
+    .final-section{padding:calc(var(--space-section) - 8px) var(--page-gutter) 0}
     .final-card{width:var(--content-frame);max-width:100%;margin:0 auto}
     .final-main{display:flex;flex-direction:column;align-items:flex-start;padding:0;text-align:left}
     .sign-sticker{display:inline-block;margin:0 0 24px;padding:9px 16px;color:#fff;background:var(--orange);border:2px solid rgba(255,255,255,.82);border-radius:999px;box-shadow:0 9px 20px -13px rgba(70,20,10,.7);font-family:Unbounded,Manrope,sans-serif;font-size:11px;font-weight:800;letter-spacing:.04em;transform:rotate(-3deg)}
@@ -882,7 +884,7 @@
     .chain-block--final h1 span+span{margin-top:24px}
     .chain-block--final h1 .final-sign{text-shadow:0 4px 0 rgba(5,104,164,.16)}
     .chain-block--final h1 .question-line{font-family:Manrope,Arial,sans-serif;font-size:.62em;font-weight:600;line-height:1.25;letter-spacing:0}
-    .meme-card{position:relative;align-self:center;width:min(100%,680px);margin:32px auto 0;padding:0;overflow:hidden;background:transparent}
+    .meme-card{position:relative;align-self:center;width:min(100%,680px);margin:32px auto 0;padding:0;overflow:hidden;border-radius:clamp(12px,2vw,16px);background:transparent}
     .meme-card img{display:block;width:100%;height:auto;margin:0 auto}
     .action-group{width:min(100%,680px);margin-top:42px}
     .contact-copy{max-width:640px;margin:0 0 22px;color:var(--site-text);font-size:17px;font-weight:400;line-height:1.55}
@@ -891,15 +893,15 @@
     .social-button,.primary-cta{min-height:66px;border:0;border-radius:16px;font:800 17px/1 Manrope,sans-serif;text-decoration:none;transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease,filter .18s ease}
     .social-button{display:flex;align-items:center;justify-content:center;gap:12px;color:#fff;box-shadow:0 16px 28px -22px rgba(0,48,80,.75)}
     .social-button:hover,.social-button:focus-visible{filter:none;box-shadow:0 19px 30px -20px rgba(0,48,80,.9);transform:rotate(-1deg) translateY(-2px)}
-    .social-button--telegram{color:#fff;background:#2aabee}
-    .social-button--telegram:hover,.social-button--telegram:focus-visible{color:#fff;background:#229ed9}
+    .social-button--telegram{color:#fff;background:linear-gradient(180deg,#2aabee,#229ed9)}
+    .social-button--telegram:hover,.social-button--telegram:focus-visible{color:#fff;background:linear-gradient(180deg,#39b8f5,#1d96d2)}
     .social-button--max{color:#fff;background:#0b0b0d}
     .social-icon{display:grid;width:39px;height:39px;flex:none;place-items:center}
-    .social-icon svg{display:block;width:37px;height:37px}
+    .social-icon svg{display:block;width:34px;height:34px}
     .max-logo{display:block;width:102px;height:38px;object-fit:contain}
     .primary-cta{display:flex;align-items:center;justify-content:center;width:100%;margin-top:24px;padding:0 22px;color:#fff;background:#ff684b;box-shadow:0 16px 30px -17px rgba(255,104,75,.72);transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease}
     .primary-cta:hover,.primary-ct.chain-block--final a:focus-visible{color:#fff;background:linear-gradient(135deg,#ffd47d,#e8ae45);box-shadow:0 20px 32px -15px rgba(232,174,69,.82);transform:rotate(-1deg) translateY(-2px)}
-    @media(min-width:760px){.final-section{padding-top:var(--space-section);padding-bottom:0}.action-group{margin-top:46px}}
+    @media(min-width:760px){.final-section{padding-top:calc(var(--space-section) - 8px);padding-bottom:0}.action-group{margin-top:46px}}
     @media(max-width:430px){.social-row{gap:8px}.social-button,.primary-cta{min-height:62px;font-size:15px}.social-button{gap:7px}.social-icon{width:34px;height:34px}.social-icon svg{width:32px;height:32px}.max-logo{width:78px}.contact-copy{font-size:15px}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.social-button,.primary-cta{transition:none}}
 
@@ -966,9 +968,14 @@
     .proof-list li{display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:13px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.58}
     .proof-list li::before{display:grid;width:32px;height:32px;place-items:center;border-radius:9px;background:#d7f2e0;color:#299b57;font-size:19px;font-weight:900;line-height:1;content:"✓"}
     .proof-list li.proof-list__item--warning::before{background:#ffe4df;color:#d34f42;font-size:25px;content:"×"}
+    .proof-list li.proof-list__item--notice::before{background:#fff0b7;color:#c57b00;font-size:20px;content:"!"}
+    .method-proof__listen{max-width:var(--content-reading);margin:24px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
+    .approach-article-link{display:block;width:var(--content-frame);max-width:100%;margin:clamp(26px,4vw,40px) auto 0;padding:19px 22px;overflow:hidden;border-radius:16px;background:linear-gradient(110deg,#fff0a9 0%,#fff8d5 38%,#ffd966 66%,#fff0a9 100%);background-size:220% 100%;box-shadow:0 18px 34px -26px rgba(167,113,0,.72);color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.58;text-decoration:none;animation:approach-link-shimmer 6s ease-in-out infinite}
+    .approach-article-link:hover,.approach-article-link:focus-visible{color:var(--site-ink);box-shadow:0 20px 38px -24px rgba(167,113,0,.82);transform:translateY(-1px)}
+    @keyframes approach-link-shimmer{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
     .experience-proof{padding-top:var(--space-related);padding-bottom:0}
     .experience-proof__inner{width:var(--content-frame);max-width:100%;margin:0 auto}
-    .experience-proof__title{max-width:var(--content-reading);margin:0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
+    .experience-proof__title{max-width:var(--content-reading);margin:0;color:var(--site-text);font-size:var(--type-body);font-weight:800;line-height:1.62}
     .experience-proof__credentials{display:grid;gap:14px;max-width:var(--content-reading);margin:22px 0 0;padding:0;list-style:none}
     .experience-proof__credential{display:grid;grid-template-columns:32px minmax(0,1fr);align-items:center;gap:13px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.5}
     .experience-proof__credential::before{display:grid;width:32px;height:32px;place-items:center;border-radius:9px;background:#fff0b7;color:#d78900;content:"★";font-size:17px;font-weight:900;line-height:1}
@@ -984,14 +991,17 @@
     .result-section__closing+.result-section__closing{margin-top:16px}
     .author-section{padding-top:var(--space-section);padding-bottom:0}
     .author-section__layout{display:block}
-    .author-section__image{display:block;width:100%;margin:clamp(24px,4vw,34px) 0 0;overflow:hidden;border-radius:clamp(18px,3vw,28px);background:#fff;box-shadow:0 24px 44px -34px rgba(17,112,173,.52)}
+    .author-section__image{display:block;width:100%;margin:clamp(24px,4vw,34px) 0 0;overflow:hidden;border-radius:clamp(12px,2vw,16px);background:#fff;box-shadow:0 24px 44px -34px rgba(17,112,173,.52)}
     .author-section__image img{display:block;width:100%;height:auto}
     .author-section__subheading{margin:clamp(30px,5vw,48px) 0 0;color:var(--site-ink);font-size:var(--type-section);font-weight:800;line-height:1.08;letter-spacing:-.045em;text-wrap:balance}
+    .author-section__subheading--challenge{margin-top:clamp(32px,5vw,50px)}
+    .author-section__meme{display:block;width:min(100%,760px);margin:clamp(12px,2vw,18px) auto 0}
+    .author-section__meme img{display:block;width:100%;height:auto}
     .free-intensive{padding-top:var(--space-section);padding-bottom:var(--space-section)}
     .free-intensive__inline-link{display:inline-flex;align-items:baseline;gap:.28em;color:var(--site-blue);font-weight:800;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:.15em}
     .free-intensive__inline-link:focus-visible,.free-intensive__inline-link:hover{color:#087bb8}
     .free-intensive__link-icon{display:inline-grid;width:1em;height:1em;place-items:center;font-size:.92em;font-weight:900;line-height:1;text-decoration:none}
-    .free-intensive__cta{display:flex;width:fit-content;min-height:58px;align-items:center;justify-content:center;margin:28px auto 0;padding:0 26px;border-radius:15px;background:var(--site-blue);box-shadow:0 16px 28px -18px rgba(17,142,216,.58);color:#fff;font-size:17px;font-weight:800;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}
+    .free-intensive__cta{display:flex;width:fit-content;min-height:58px;align-items:center;justify-content:center;margin:28px auto 0;padding:0 26px;border-radius:16px;background:var(--site-blue);box-shadow:0 16px 28px -18px rgba(17,142,216,.58);color:#fff;font-size:17px;font-weight:800;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}
     .free-intensive__cta:hover,.free-intensive__cta:focus-visible{box-shadow:0 20px 32px -17px rgba(17,142,216,.72);transform:translateY(-2px)}
     .reviews-featured-heading{padding-top:var(--space-section);padding-bottom:0}
     .reviews-featured__more-note{width:var(--content-frame);max-width:100%;margin:30px auto 0;color:#657785;font-size:13px;font-weight:550;line-height:1.45;text-align:center}
@@ -1003,7 +1013,7 @@
     .reviews-after-cat p{max-width:var(--content-reading);margin:22px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
     .reviews-wall-cta{width:var(--content-frame);max-width:100%;margin:0 auto;padding:var(--space-block) 0 var(--space-section)}
     .reviews-wall-cta__actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
-    .reviews-wall-cta__button{display:inline-flex;min-height:54px;align-items:center;justify-content:center;padding:0 22px;border-radius:15px;color:#fff;font-size:16px;font-weight:800;text-decoration:none;box-shadow:0 15px 28px -20px rgba(19,91,137,.6);transition:transform .18s ease,box-shadow .18s ease}
+    .reviews-wall-cta__button{display:inline-flex;min-height:54px;align-items:center;justify-content:center;padding:0 22px;border-radius:16px;color:#fff;font-size:16px;font-weight:800;text-decoration:none;box-shadow:0 15px 28px -20px rgba(19,91,137,.6);transition:transform .18s ease,box-shadow .18s ease}
     .reviews-wall-cta__button:hover,.reviews-wall-cta__button:focus-visible{transform:translateY(-2px);box-shadow:0 20px 32px -20px rgba(19,91,137,.7)}
     .reviews-wall-cta__button--pricing{background:var(--site-orange)}
     .reviews-wall-cta__button--intensive{background:var(--site-blue)}
@@ -1180,12 +1190,12 @@
     .homepage-program__heading::before{display:grid;width:72px;min-height:48px;place-items:center start;color:var(--program-accent);font-size:44px;font-weight:900;line-height:1;letter-spacing:.015em;content:counter(homepage-program,decimal-leading-zero)}
     .homepage-program__heading h3{margin:0;color:#142130;font-size:clamp(21px,5.5vw,28px);font-weight:800;line-height:1.12;letter-spacing:-.035em;text-wrap:balance}
     .homepage-program__body{display:grid;gap:18px}
-    .homepage-program__media{display:block;overflow:hidden;width:100%;border:1px solid rgba(20,90,130,.08);border-radius:11px;background:#eaf0f3;box-shadow:0 13px 26px -19px rgba(10,72,110,.55),0 5px 12px -9px rgba(10,72,110,.3)}
+    .homepage-program__media{display:block;overflow:hidden;width:100%;border:1px solid rgba(20,90,130,.08);border-radius:clamp(12px,2vw,16px);background:#eaf0f3;box-shadow:0 13px 26px -19px rgba(10,72,110,.55),0 5px 12px -9px rgba(10,72,110,.3)}
     .homepage-program__media img{display:block;width:100%;height:auto}
     .homepage-program__copy{color:#344a5d;font-size:16px;font-weight:500;line-height:1.58}
     .homepage-program__copy p{margin:0}.homepage-program__copy p+p{margin-top:11px}
     @media(min-width:760px){.homepage-program{padding-top:clamp(18px,2.8vw,30px)}.homepage-program__title{margin-bottom:34px}.homepage-program__list{gap:24px}.homepage-program__card{padding:22px}.homepage-program__heading{grid-template-columns:90px minmax(0,1fr);gap:16px;margin:3px 0 22px}.homepage-program__heading::before{width:90px;min-height:60px;font-size:56px}.homepage-program__body{grid-template-columns:minmax(0,1fr) minmax(264px,.656fr);align-items:center;gap:32px}.homepage-program__media{grid-column:2;grid-row:1}.homepage-program__copy{grid-column:1;grid-row:1;font-size:17px;line-height:1.62}}
-    .homepage-program + .chain-block--before-after{margin-top:clamp(30px,5vw,58px)}
+    .homepage-program + .chain-block--before-after{margin-top:clamp(44px,7vw,76px)}
     .reviews-featured{width:min(calc(100% + 5px),805px);margin:0 auto;padding:var(--space-related) 20px 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:calc(clamp(10px,3vw,18px) + 5px)}
     .reviews-featured__column{display:flex;min-width:0;flex-direction:column;gap:calc(clamp(10px,3vw,18px) + 5px)}
     .reviews-wall{--reviews-wall-gap:calc(clamp(10px,3vw,18px) + 5px);position:relative;width:min(calc(100% + 5px),805px);margin:0 auto;padding:var(--space-related) 20px var(--space-related);column-gap:var(--reviews-wall-gap)}
@@ -1260,7 +1270,7 @@
       .review-lightbox__promo .reviews-wall__promo-media{grid-row:1 / 3}
       .review-lightbox__promo .reviews-wall__promo-media img{max-height:calc(100dvh - 82px)}
     }
-    @media (prefers-reduced-motion:reduce){.reviews-wall__promo-button{transition:none}.hero-pricing-cta{animation:none}}
+    @media (prefers-reduced-motion:reduce){.reviews-wall__promo-button{transition:none}.hero-pricing-cta,.approach-article-link{animation:none}}
     @media(max-width:719px){
       .desktop-header{display:none!important}
       .hero-pricing-cta{width:100%}
@@ -1279,11 +1289,6 @@
   <script src="/assets/public-program-card.js?v=20260917-3"></script>
 </head>
 <body data-page-theme="blue-mist">
-  <script>
-    if (new URLSearchParams(window.location.search).get('hero_label') === 'pill') {
-      document.body.dataset.heroLabelVariant = 'pill';
-    }
-  </script>
   <script>
     (() => {
       const params = new URLSearchParams(location.search);
@@ -1383,10 +1388,11 @@
   <main class="homepage-chain">
     <div class="chain-block chain-block--hero"><section class="site-hero" id="top">
       <div class="site-hero__inner">
-        <h1 class="site-title" data-homepage-block="hero-title" data-block-width="hero"><span class="site-title__plain site-title__label--text" data-homepage-field="line-0">Мастер-класс</span><span class="site-title__plain site-title__label--pill">Мастер-класс · 21 день</span><span class="site-title__plain" data-homepage-field="line-1">По изменению</span><span class="site-title__plain" data-homepage-field="line-2">Питания <small>и</small></span><span class="site-title__accent" data-homepage-field="accent">Пищевых привычек</span></h1>
+        <p class="site-eyebrow" data-homepage-block="hero-label" data-homepage-field="text" data-block-width="intrinsic">Мастер-класс · 21 день</p>
+        <h1 class="site-title" data-homepage-block="hero-title" data-block-width="hero"><span class="site-title__plain" data-homepage-field="line-1">По изменению</span><span class="site-title__plain" data-homepage-field="line-2">Питания <small>и</small></span><span class="site-title__accent" data-homepage-field="accent">Пищевых привычек</span></h1>
         <p class="site-lead" data-homepage-block="hero-intro" data-homepage-field="text" data-block-width="content">Предлагаю вместо очередной голодовки через силу воли изменить питание и пищевые привычки так, чтобы похудение стало проще, силы воли нужно было меньше, а вес больше никогда не возвращался назад!</p>
       <div class="floating-vsl-slot"><aside class="floating-vsl" data-floating-vsl aria-label="Видео о Мастер-классе"><button class="floating-vsl__close" type="button" data-floating-vsl-close aria-label="Скрыть видео">×</button><div class="site-player" id="hero-video" data-homepage-block="hero-video" data-block-width="video-main"><div class="site-player__mask"><iframe src="/preview/homepage-mobile/vsl-player.html?v=8" loading="eager" data-media-player data-media-context="homepage-vsl" title="Видео о Мастер-классе" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div></div></aside></div>
-        <div class="site-outro" data-homepage-block="hero-outro" data-block-width="content"><p data-homepage-field="paragraph-1">За 21 день вы отключите автопилот, на котором набрали вес, научитесь лучше насыщаться за привычные калории и освоите такие пищевые привычки, которые долгие годы будут защищать от лишнего веса!</p><p data-homepage-field="paragraph-2">Я расскажу, как всё это освоить, покажу, как применять, и создам вокруг вас обстановку, чтобы эти навыки закрепились!</p><a class="hero-pricing-cta" href="#pricing">Выбрать тариф — начать прямо сейчас</a><a class="hero-pricing-note" href="#method-proof-title">или читайте подробнее о моём подходе 👇</a></div>
+        <div class="site-outro" data-homepage-block="hero-outro" data-block-width="content"><p data-homepage-field="paragraph-1">За 21 день вы отключите автопилот, на котором набрали вес, научитесь лучше насыщаться за привычные калории и освоите такие пищевые привычки, которые долгие годы будут защищать от лишнего веса!</p><p data-homepage-field="paragraph-2">Я расскажу, как всё это освоить, покажу, как применять, и создам вокруг вас обстановку, чтобы эти навыки закрепились!</p><blockquote class="hero-guarantee"><p>Гарантирую 100% возврат в первые 3 дня, если вам не подойдёт мой подход. Старт — сразу после оплаты, доступ к материалам и всем обновлениям — навсегда!</p></blockquote><a class="hero-pricing-cta" href="#pricing">Выбрать тариф — начать прямо сейчас</a><p class="hero-pricing-note">или читайте подробнее о моём подходе 👇</p></div>
       </div>
     </section>
 
@@ -1422,8 +1428,8 @@
   </div>
     <!-- library:recognition:end -->
     <section class="chain-block homepage-program" data-homepage-block="inside" data-homepage-field="steps" data-block-width="content" aria-labelledby="homepage-program-title">
-      <h2 class="homepage-program__title" id="homepage-program-title">Как всё будет устроено</h2>
-      <p class="homepage-program__intro">Мастер-класс длится 21 день. Вы ведёте дневник питания (не учёт калорий), читаете ежедневные материалы и выполняете домашние задания.</p>
+      <h2 class="homepage-program__title" id="homepage-program-title">Как всё будет устроено:</h2>
+      <p class="homepage-program__intro">Мастер-класс длится 21 день. Вы ведёте дневник питания (не учёт калорий), читаете ежедневные материалы, выполняете домашние задания и в конце приходите на консультацию с разбором дневника!</p>
       <ol class="homepage-program__list">
         <li class="homepage-program__card"><div class="homepage-program__heading"><h3>Первый результат — уже через неделю</h3></div><div class="homepage-program__body"><div class="homepage-program__media"><img src="/preview/homepage-mobile/masterclass-inside-04.webp" alt="Примеры дневника питания и домашних заданий" loading="lazy"></div><div class="homepage-program__copy"><p>Благодаря дневнику питания по моей системе вы увидите все мелкие косяки в пищевом поведении, которые раньше отравляли вам жизнь, но вы о них даже не задумывались.</p><p>Мы отключим вам автопилот в отношениях с едой, и вы посмотрите на своё питание совершенно другими глазами — развидеть это потом будет невозможно.</p></div></div></li>
         <li class="homepage-program__card"><div class="homepage-program__heading"><h3>Система оценки качества питания</h3></div><div class="homepage-program__body"><div class="homepage-program__media"><img src="https://app.edabalans.ru/media/reviews/v1/masterclass-balanced-nutrition-score-table.webp" alt="Таблица оценки сбалансированности питания" loading="lazy"></div><div class="homepage-program__copy"><p>Всю еду на свете можно разделить на 17 продуктовых категорий. И даже у самых вредных есть своя задача и смысл в питании. Но только когда все на своих местах!</p><p>Вы научитесь понимать задачи всех категорий и находить им подходящее место в вашем питании, чтобы перестать вешать ярлыки вредного или ПП-шного и начать искать в тарелках реальный баланс и насыщение.</p></div></div></li>
@@ -1475,12 +1481,12 @@
       <div class="experience-proof__inner" data-homepage-field="text">
         <p class="experience-proof__title" id="experience-proof-title">Лично с вами я ещё не знаком, а вот с вашими проблемами — знаком уже давно!</p>
         <ul class="experience-proof__credentials" aria-label="Опыт Сергея Воронцова">
-          <li class="experience-proof__credential">Разобрал 600+ дневников питания</li>
-          <li class="experience-proof__credential">Написал 118 статей в топе сообщества «Мы худеем» на Пикабу</li>
+          <li class="experience-proof__credential">Разобрал 600+ дневников питания!</li>
+          <li class="experience-proof__credential">Написал 118 статей в сообществе «Мы худеем» на Пикабу, которые вышли в Горячее!</li>
           <li class="experience-proof__credential">Похудел сам на 25 кг и уже 10 лет живу в своём весе. Рассказываю и показываю, как вы тоже так можете!</li>
         </ul>
         <div class="experience-proof__copy">
-          <p>Я видел все проблемы, через которые вы уже проходили, проходите сейчас или ещё только пройдёте, но пока даже о них не догадываетесь. А главное, я уже подбирал для них десятки разных решений под совершенно разных людей.</p>
+          <p>Я видел все проблемы, через которые вы уже проходили, проходите прямо сейчас и с которыми ещё столкнётесь в будущем, но даже о них пока не подозреваете.</p>
           <p>В Мастер-классе весь этот опыт — в удобной упаковке, на блюдечке с голубой каёмочкой.</p>
         </div>
       </div>
@@ -1543,11 +1549,13 @@
       <div class="copy-section__inner">
         <h2 id="method-proof-title" data-homepage-field="title">О моём подходе</h2>
         <ul class="proof-list" data-homepage-field="points">
-          <li class="proof-list__item--warning"><span>Я не являюсь медицинским специалистом и не прикидываюсь им! Не гадаю по анализам, не ставлю диагнозы, не лечу заболевания и не продаю БАДы.</span></li>
-          <li><span>Я — тренер по питанию. Помогаю сделать повседневное питание лучше, чем вчера, и навести порядок в пищевых привычках. Соответствующее образование — имеется. <button class="method-proof__link" type="button" data-method-overlay-open="education">Подробнее <svg class="method-proof__link-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg></button></span></li>
-          <li><span>Во всех статьях Мастер-класса есть ссылки на современные рекомендации профильных организаций в сфере питания и научные исследования. <button class="method-proof__link" type="button" data-method-overlay-open="sources">Каких <svg class="method-proof__link-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg></button></span></li>
-          <li><span>Делаю так, чтобы вы перешли от чтения полезных советов к их применению и изменению своей жизни! Вот послушайте <span aria-hidden="true">👇</span></span></li>
+          <li class="proof-list__item--notice"><span>Я не являюсь медицинским специалистом и не прикидываюсь им!</span></li>
+          <li class="proof-list__item--warning"><span>Не гадаю по анализам, не ставлю диагнозы, не лечу заболевания и не продаю БАДы.</span></li>
+          <li><span>Я — тренер по питанию. Помогаю сделать повседневное питание лучше, чем вчера, и навести порядок в пищевых привычках.</span></li>
+          <li><span>Соответствующее образование — имеется. <button class="method-proof__link" type="button" data-method-overlay-open="education">Подробнее <svg class="method-proof__link-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg></button></span></li>
+          <li><span>В учебных материалах есть ссылки на современные рекомендации профильных организаций в сфере питания и научные исследования. <button class="method-proof__link" type="button" data-method-overlay-open="sources">Каких <svg class="method-proof__link-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg></button></span></li>
         </ul>
+        <p class="method-proof__listen">Делаю так, чтобы вы перешли от чтения полезных советов к их применению и изменению своей жизни! Вот послушайте <span aria-hidden="true">👇</span></p>
       </div>
     </section>
     <section class="reviews-voice" aria-label="Голосовой отзыв Татьяны" data-homepage-block="reviews-voice-3" data-block-width="content">
@@ -1567,6 +1575,7 @@
         <audio class="voice-widget__audio" preload="none" data-voice-audio data-voice-src="/public-site-assets/reviews/tatiana-sysueva-review.mp3" data-production-src="/public-site-assets/reviews/tatiana-sysueva-review.mp3"></audio>
       </article>
     </section>
+    <a class="approach-article-link" href="https://t.me/Fitness_Talks_bot?start=BMB6Y" target="_blank" rel="noreferrer" data-homepage-block="approach-article-link" data-block-width="content">Если вы хотите познакомиться с моим подходом поближе и узнать, как именно работает то, что я даю в Мастер-классе, — читайте статью в моём канале «Как должно выглядеть адекватное похудение от А до Я!»</a>
     <div class="method-overlay" data-method-overlay="education" hidden>
       <div class="method-overlay__backdrop" data-method-overlay-close></div>
       <section class="method-overlay__panel" role="dialog" aria-modal="true" aria-labelledby="education-overlay-title" tabindex="-1">
@@ -3833,8 +3842,10 @@
         <figure class="author-section__image" data-homepage-field="media"><img src="/blog/assets/sergey-author.png" alt="Сергей Воронцов: изменение веса и занятия спортом" loading="lazy"></figure>
         <p data-homepage-field="paragraph-2">Разок меня тоже бес попутал — набрал до 95 кг. Потом одумался, поменял образ жизни и похудел до 70 кг, ни дня не сидя на диете и даже не зная, что существует приложение по учёту калорий.</p>
         <p data-homepage-field="paragraph-3">С того времени уже почти 10 лет живу в новом весе и радуюсь жизни. Рассказываю и показываю, как вы тоже так можете!</p>
-        <h3 class="author-section__subheading">Сделать один раз — наслаждаться всю жизнь!</h3>
-        <p data-homepage-field="paragraph-4">Один раз вы разберётесь, как устроено похудение, и будете пожинать плоды этого всю оставшуюся жизнь, не забивая себе голову тряской над каждым килограммом и не начиная очередное похудение к лету.</p>
+        <h3 class="author-section__subheading author-section__subheading--challenge">Не надоело такое похудение?</h3>
+        <figure class="author-section__meme"><img src="/preview/homepage-mobile/reviews-promo-before-after-transparent.png?v=1" alt="Схема: до, после и после после" loading="lazy" decoding="async"></figure>
+        <h3 class="author-section__subheading">Разберитесь один раз — наслаждаться всю жизнь!</h3>
+        <p data-homepage-field="paragraph-4">Один раз научитесь, как настроить похудение лично под вас, и будете пожинать плоды этого всю оставшуюся жизнь, не забивая себе голову тряской над каждым килограммом и не начиная очередное экстренное похудение к лету.</p>
         <p data-homepage-field="paragraph-5">Когда вы на своей шкуре почувствуете, что похудение может быть простым и лёгким, вы перестанете его бояться, откладывать или пытаться похудеть как-то супербыстро к какому-то событию. Похудение станет просто неизбежным следствием вашего нового образа жизни!</p>
       </div>
     </section>
@@ -3845,7 +3856,7 @@
       <!-- local FAQ snapshot: source = faq-owner-edit.md; production keeps the content API -->
       <template data-local-faq-template>
         <article class="faq-item" data-open="true"><button class="faq-question" type="button" aria-expanded="true" aria-controls="faq-answer-1"><span class="faq-question-text">Какое у меня образование?</span><span class="faq-sign" aria-hidden="true">−</span></button><div class="faq-answer" id="faq-answer-1"><div class="faq-answer-inner"><div class="faq-answer-copy"><p><strong>Я не медицинский специалист по питанию.</strong> У меня дополнительное профессиональное образование по программе «Фитнес-нутрициолог» и «Специалист по инструкторской и методической работе в области физической культуры и спорта».</p><p>Оригиналы документов и пояснение, чем медицинский специалист отличается от немедицинского, читайте <button class="method-proof__link" type="button" data-method-overlay-open="education">по ссылке <svg class="method-proof__link-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg></button>.</p><p>Я не ставлю диагнозы, не лечу заболевания. При медицинских ограничениях опираюсь на заключение врача и работаю только в границах своих компетенций.</p></div></div></div></article>
-        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2"><span class="faq-question-text">Чем Мастер-класс отличается от очередного марафона похудения?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-2" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><figure class="faq-answer-media"><img src="https://app.edabalans.ru/media/reviews/v1/promo-01-before-after.webp" alt="Схема: до, после и после после" loading="lazy" decoding="async"></figure><p>Подходом и целями! Я не ставлю целью согнать у вас вес любой ценой. Я пытаюсь показать вам новый подход к питанию и к похудению!</p><p>Моя задача — чтобы вы встали на лыжи более здорового образа жизни и он вам понравился! Понравился так, чтобы назад вам самим не хотелось, а не только из-за страха лишнего веса.</p></div></div></div></article>
+        <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2"><span class="faq-question-text">Чем Мастер-класс отличается от очередного марафона похудения?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-2" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Подходом и целями! Я не ставлю целью согнать у вас вес любой ценой. Я пытаюсь показать вам новый подход к питанию и к похудению!</p><p>Моя задача — чтобы вы встали на лыжи более здорового образа жизни и он вам понравился! Понравился так, чтобы назад вам самим не хотелось, а не только из-за страха лишнего веса.</p></div></div></div></article>
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3"><span class="faq-question-text">Если я и так много знаю о правильном питании?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-3" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><figure class="faq-answer-media"><img src="https://optim.tildacdn.com/tild3435-6538-4130-b061-326131626261/-/format/webp/noroot.png.webp" alt="Отзыв Виктора" loading="lazy"></figure><p>Знать и применять — это разные вещи. Выше — отзыв Виктора, который пришёл ко мне вот точно с такими же словами, что он многое знает о похудении. Он сначала сам похудел за несколько лет на 30 кг, потом набрал добрую половину обратно и только потом пришёл на Мастер-класс.</p></div></div></div></article>
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4"><span class="faq-question-text">Что конкретно мне придётся делать?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-4" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><ul><li>Фотографировать еду и вести дневник питания.</li><li>Оценивать баланс продуктовых категорий в моём приложении.</li><li>Регулярно взвешиваться и вести учёт шагов.</li><li>Отвечать на вопросы и задания из материалов Мастер-класса у себя в дневнике</li><li>Пробовать изменения в питании и пищевых привычках</li></ul><p>Ключевое слово — <strong>пробовать</strong>. Я не жду, что вы идеально выполните все задания и примените всё сразу. Постарайтесь выполнить хотя бы половину, и оставить только то, с чем сможете идти дальше по жизни!</p></div></div></div></article>
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-5"><span class="faq-question-text">Сколько времени потребуется?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-5" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>В среднем рассчитывайте на 20–30 минут в день на материалы и ещё примерно столько же на практику и задания.</p><p>Вся программа рассчитана на 21 день. Из них 18 — полноценные учебные дни, остальные полегче: там будет пауза и дополнительные материалы.</p><p>Если у вас тариф с консультацией, я обычно прошу успеть закончить основную программу и подготовить дневник в течение 30 дней. Времени будет с запасом.</p></div></div></div></article>
@@ -3862,7 +3873,7 @@
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-16"><span class="faq-question-text">А что, если мне не понравится?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-16" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Если до начала четвёртого дня вы поймёте, что мой подход к похудению вам не близок, просто не открывайте четвёртый день и напишите мне в личные сообщения запрос на возврат. Я сделаю полный возврат без лишних вопросов.</p></div></div></div></article>
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-17"><span class="faq-question-text">Сколько действует доступ к материалам?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-17" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Доступ к приобретённым материалам остаётся у вас навсегда. Если я добавлю новые материалы, перепишу старые или обновлю рецепты, эти обновления тоже появятся у вас без дополнительной оплаты.</p></div></div></div></article>
       </template>
-      <p class="hero-pricing-note">А ниже — ещё больше отзывов.</p>
+      <p class="hero-pricing-note">Больше отзывов — в конце страницы.</p>
     </section>
   </div>
   </section>
@@ -3878,7 +3889,7 @@
           <p class="contact-copy" data-homepage-field="contact-copy">Сомневаетесь → напишите мне в личные сообщения, расскажите о ваших трудностях и задайте любой вопрос. <strong>Всем отвечаю лично.</strong></p>
           <div class="social-row">
             <a class="social-button social-button--telegram" href="https://t.me/FitnessSergey" target="_blank" rel="noreferrer">
-              <span class="social-icon" aria-hidden="true"><svg viewBox="0 0 1000 1000"><defs><linearGradient id="tg-gradient" x1="50%" y1="0%" x2="50%" y2="99.258%"><stop stop-color="#2aabee"/><stop offset="1" stop-color="#229ed9"/></linearGradient></defs><circle cx="500" cy="500" r="500" fill="url(#tg-gradient)"/><path d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z" fill="#fff"/></svg></span>
+              <span class="social-icon" aria-hidden="true"><svg viewBox="190 270 580 510"><path fill="#fff" d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z"/></svg></span>
               <span>Telegram</span>
             </a>
             <a class="social-button social-button--max" href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noreferrer">
@@ -3985,8 +3996,7 @@
   <section class="chain-block copy-section free-intensive" id="intensive" data-homepage-block="free-intensive" data-block-width="content" aria-labelledby="free-intensive-title">
     <div class="copy-section__inner">
       <h2 id="free-intensive-title" data-homepage-field="title">Есть сомнения?</h2>
-      <p data-homepage-field="paragraph-1">Если вы ещё не понимаете, почему это именно то, что нужно вам для успешного похудения, и хотите познакомиться с моим подходом поближе — я записал бесплатный интенсив в четырёх частях <a class="free-intensive__inline-link" href="https://похудение-это-есть.рф/intensive">«Последнее похудение»<span class="free-intensive__link-icon" aria-hidden="true">↗</span></a>.</p>
-      <p data-homepage-field="paragraph-2"><strong>Там я рассказываю, как должна выглядеть история адекватного похудения от А до Я!</strong></p>
+      <p data-homepage-field="paragraph-1">Если вы хотите познакомиться с моим подходом поближе и узнать, как именно работает то, что я даю в Мастер-классе, — читайте статью в моём канале <a class="free-intensive__inline-link" href="https://t.me/Fitness_Talks_bot?start=BMB6Y" target="_blank" rel="noreferrer">«Как должно выглядеть адекватное похудение от А до Я!»<span class="free-intensive__link-icon" aria-hidden="true">↗</span></a></p>
     </div>
   </section>
   </main>
@@ -4418,6 +4428,16 @@
             button.setAttribute('aria-expanded', 'true');
             item.querySelector('.faq-sign').textContent = '−';
             item.querySelector('.faq-answer').hidden = false;
+            const alignOpenedItem = () => {
+              const scrollMargin = Number.parseFloat(getComputedStyle(item).scrollMarginTop) || 0;
+              const targetTop = window.scrollY + item.getBoundingClientRect().top - scrollMargin;
+              window.scrollTo({ top: targetTop, behavior: 'instant' });
+            };
+            requestAnimationFrame(() => {
+              alignOpenedItem();
+              requestAnimationFrame(alignOpenedItem);
+            });
+            window.setTimeout(alignOpenedItem, 240);
           }
         }));
       }

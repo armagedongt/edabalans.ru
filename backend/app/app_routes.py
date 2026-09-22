@@ -119,6 +119,7 @@ HOMEPAGE_MOBILE_PREVIEW_ASSETS = {
     "masterclass-inside-03.webp",
     "masterclass-inside-04.webp",
     "reviews-promo-before-after.jpg",
+    "reviews-promo-before-after-transparent.png",
     "reviews-promo-can-dont-want.jpg",
     "reviews-promo-cant-do.jpg",
     "reviews-promo-hudet-budem.jpg",

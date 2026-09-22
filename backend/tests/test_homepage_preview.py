@@ -838,8 +838,14 @@ def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft
     embedded_draft_response = client.get(f'{draft["route"]}?embed=tilda&hero_label=pill')
     assert embedded_draft_response.status_code == 200
     assert 'data-tilda-homepage-embed="true"' in embedded_draft_response.text
-    assert "get('hero_label') === 'pill'" in embedded_draft_response.text
-    assert "document.body.dataset.heroLabelVariant = 'pill';" in embedded_draft_response.text
+    assert '<p class="site-eyebrow"' in embedded_draft_response.text
+    assert 'Мастер-класс · 21 день' in embedded_draft_response.text
+    assert "get('hero_label')" not in embedded_draft_response.text
+    assert 'dataset.heroLabelVariant' not in embedded_draft_response.text
+    assert '<p class="hero-pricing-note">или читайте подробнее о моём подходе 👇</p>' in embedded_draft_response.text
+    assert '<p class="hero-pricing-note">Больше отзывов — в конце страницы.</p>' in embedded_draft_response.text
+    assert "requestAnimationFrame(alignOpenedItem);" in embedded_draft_response.text
+    assert "window.setTimeout(alignOpenedItem, 240);" in embedded_draft_response.text
     assert client.get("/preview/homepage-version/not-registered").status_code == 404
 
 
@@ -1449,6 +1455,7 @@ def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> 
         "masterclass-inside-03.webp",
         "masterclass-inside-04.webp",
         "reviews-promo-before-after.jpg",
+        "reviews-promo-before-after-transparent.png",
         "reviews-promo-can-dont-want.jpg",
         "reviews-promo-cant-do.jpg",
         "reviews-promo-hudet-budem.jpg",
