@@ -800,6 +800,7 @@ def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft
     versions_dir = preview_dir / "versions"
     manifest = json.loads((versions_dir / "manifest.json").read_text(encoding="utf-8"))
     baseline = next(item for item in manifest["versions"] if item["id"] == "v2026-09-22")
+    accepted = next(item for item in manifest["versions"] if item["id"] == "v2026-09-22-2")
     draft = next(item for item in manifest["versions"] if item["id"] == "next")
     baseline_path = versions_dir / baseline["file"]
     baseline_source = baseline_path.read_text(encoding="utf-8")
@@ -814,6 +815,15 @@ def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft
     assert draft["status"] == "local_draft"
     assert baseline["sha256"] == expected_baseline_sha256
     assert hashlib.sha256(normalized_baseline).hexdigest() == expected_baseline_sha256
+
+    accepted_path = versions_dir / accepted["file"]
+    normalized_accepted = accepted_path.read_bytes().replace(b"\r\n", b"\n")
+    assert accepted["status"] == "accepted"
+    assert hashlib.sha256(normalized_accepted).hexdigest() == accepted["sha256"]
+    accepted_response = client.get(accepted["route"])
+    assert accepted_response.status_code == 200
+    assert accepted_response.text == accepted_path.read_text(encoding="utf-8")
+    assert "Полную программу по дням читайте после описания тарифов" in accepted_response.text
 
     baseline_response = client.get(baseline["route"])
     assert baseline_response.status_code == 200
