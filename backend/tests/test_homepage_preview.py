@@ -794,21 +794,21 @@ def test_release_candidate_gives_a_hero_route_to_pricing_and_opens_mobile_outlin
 
 def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft() -> None:
     expected_previous_sha256 = "5c53b02ae2e7d5dbacbbd6a6da4fbbfdbe6116de8745cda75964d2cb30950169"
-    expected_baseline_sha256 = "135162a19ba1ae1d19fa39f11dbc8304fe8c25e5ea2968856142d8843db01c76"
-    expected_accepted_sha256 = "71932b268a233dd1a65d7eb6bb5a2f90e79336de386434aee459abaf6e1b91f7"
+    expected_version_2_sha256 = "135162a19ba1ae1d19fa39f11dbc8304fe8c25e5ea2968856142d8843db01c76"
+    expected_baseline_sha256 = "71932b268a233dd1a65d7eb6bb5a2f90e79336de386434aee459abaf6e1b91f7"
     root = Path(__file__).resolve().parents[2]
     preview_dir = root / "backend" / "app" / "static" / "homepage-preview"
     versions_dir = preview_dir / "versions"
     manifest = json.loads((versions_dir / "manifest.json").read_text(encoding="utf-8"))
     previous = next(item for item in manifest["versions"] if item["id"] == "v2026-09-22")
-    baseline = next(item for item in manifest["versions"] if item["id"] == "v2026-09-22-2")
-    accepted = next(item for item in manifest["versions"] if item["id"] == "v2026-09-22-3")
+    version_2 = next(item for item in manifest["versions"] if item["id"] == "v2026-09-22-2")
+    baseline = next(item for item in manifest["versions"] if item["id"] == "v2026-09-22-3")
     draft = next(item for item in manifest["versions"] if item["id"] == "next")
     baseline_path = versions_dir / baseline["file"]
     baseline_source = baseline_path.read_text(encoding="utf-8")
     normalized_baseline = baseline_path.read_bytes().replace(b"\r\n", b"\n")
     previous_path = versions_dir / previous["file"]
-    accepted_path = versions_dir / accepted["file"]
+    version_2_path = versions_dir / version_2["file"]
 
     assert manifest["active_runtime"] == "release-candidate"
     assert manifest["baseline"] == baseline["id"]
@@ -816,20 +816,20 @@ def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft
     assert manifest["snapshot_scope"] == "homepage_html_source"
     assert manifest["checksum_normalization"] == "utf8_lf"
     assert previous["status"] == "previous"
+    assert version_2["status"] == "previous"
     assert baseline["status"] == "active"
-    assert accepted["status"] == "accepted"
     assert draft["status"] == "local_draft"
     assert previous["sha256"] == expected_previous_sha256
     assert hashlib.sha256(previous_path.read_bytes().replace(b"\r\n", b"\n")).hexdigest() == expected_previous_sha256
     assert client.get(previous["route"]).status_code == 200
     assert baseline["sha256"] == expected_baseline_sha256
     assert hashlib.sha256(normalized_baseline).hexdigest() == expected_baseline_sha256
-    assert accepted["sha256"] == expected_accepted_sha256
-    assert hashlib.sha256(accepted_path.read_bytes().replace(b"\r\n", b"\n")).hexdigest() == expected_accepted_sha256
-    accepted_response = client.get(accepted["route"])
-    assert accepted_response.status_code == 200
-    assert accepted_response.text == accepted_path.read_text(encoding="utf-8")
-    assert accepted_response.headers["x-robots-tag"] == "noindex, nofollow"
+    assert version_2["sha256"] == expected_version_2_sha256
+    assert hashlib.sha256(version_2_path.read_bytes().replace(b"\r\n", b"\n")).hexdigest() == expected_version_2_sha256
+    version_2_response = client.get(version_2["route"])
+    assert version_2_response.status_code == 200
+    assert version_2_response.text == version_2_path.read_text(encoding="utf-8")
+    assert version_2_response.headers["x-robots-tag"] == "noindex, nofollow"
 
     baseline_response = client.get(baseline["route"])
     assert baseline_response.status_code == 200
