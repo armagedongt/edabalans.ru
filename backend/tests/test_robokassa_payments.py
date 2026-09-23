@@ -27,6 +27,8 @@ from app.intensive_web_access import (  # noqa: E402
 )
 from app.account_security import token_hash  # noqa: E402
 from app.account_auth_routes import COOKIE_NAME  # noqa: E402
+from app.app_auth import create_placement_token  # noqa: E402
+from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.main import app  # noqa: E402
 from app.pricing_routes import _preview_checkout_rate_lock, _preview_checkout_rate_state  # noqa: E402
 from app.models import (  # noqa: E402
@@ -44,6 +46,7 @@ from app.models import (  # noqa: E402
     Resource,
     User,
     UserAccess,
+    UserLegalAcceptance,
     UserCoursePolicy,
     UserEmail,
     UserOffer,
@@ -1147,6 +1150,50 @@ def test_account_purchase_is_not_exported_as_initial_public_purchase() -> None:
                 TelegramTrackingEvent.event_type == "purchase_paid"
             )
         ) == 0
+    app.dependency_overrides.clear()
+
+
+def test_course_offer_opens_native_payment_and_rechecks_placement(monkeypatch) -> None:
+    client, factory, _ = make_client()
+    seed_catalog(factory)
+    with factory() as db:
+        user = User(data_origin="native", first_seen_at=datetime.now(timezone.utc))
+        db.add(user)
+        db.flush()
+        resource = db.scalar(select(Resource).where(Resource.code == "ACCESS_MASTERCLASS"))
+        db.add_all([
+            UserEmail(user_id=user.id, email_original="member@example.test", email_normalized="member@example.test", source="test", verification_status="verified"),
+            UserAccess(user_id=user.id, resource_id=resource.id, source="test", granted_at=datetime.now(timezone.utc)),
+            AccountCredential(user_id=user.id, password_hash="unused", password_version=1, issued_via="test"),
+            AccountSession(user_id=user.id, token_hash=token_hash("course-offer-session"), password_version=1, expires_at=datetime.now(timezone.utc) + timedelta(days=1)),
+            *[UserLegalAcceptance(user_id=user.id, document_code=item["code"], document_version=item["version"], source="test") for item in LEGAL_DOCUMENTS],
+        ])
+        db.commit()
+    client.cookies.set(COOKIE_NAME, "course-offer-session")
+    settings = app.dependency_overrides[get_settings]()
+    token = create_placement_token("day-1-offer", settings)
+    calls = []
+
+    def current_offer(db, user, placement, **kwargs):
+        calls.append((user.id, placement))
+        return {"expires_at": None, "pricing_version_id": None, "offers": [{
+            "code": "single:recipes", "title": "Система рецептов", "items": ["recipes"], "price": 1900,
+        }]}
+
+    monkeypatch.setattr("app.robokassa_routes.build_offers", current_offer)
+    url = "/api/payments/robokassa/course-offers/checkout"
+    headers = {"Origin": "https://app.edabalans.ru"}
+    rejected = client.post(url, json={"offer_code": "single:recipes", "placement": "day-19-offer", "placement_token": token}, headers=headers)
+    assert rejected.status_code == 403
+    unavailable = client.post(url, json={"offer_code": "single:calories", "placement": "day-1-offer", "placement_token": token}, headers=headers)
+    assert unavailable.status_code == 409, unavailable.text
+    checkout = client.post(url, json={"offer_code": "single:recipes", "placement": "day-1-offer", "placement_token": token}, headers=headers)
+    assert checkout.status_code == 200, checkout.text
+    assert checkout.json()["payment_form"]["method"] == "POST"
+    assert calls[-1][1] == "day-1-offer"
+    with factory() as db:
+        assert db.scalar(select(func.count(OfferCheckout.id))) == 1
+        assert db.scalar(select(func.count(Payment.id))) == 1
     app.dependency_overrides.clear()
 
 

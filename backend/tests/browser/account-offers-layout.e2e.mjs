@@ -146,6 +146,38 @@ async function captureOffers() {
   await page.close();
 }
 
+async function checkCourseOfferCheckout() {
+  const page = await context.newPage();
+  const setup = `<script>
+    window.EdabalansAppContext={app:'masterclass-offers',accountOffer:false,placement:'day-1-offer',placementToken:'signed-course-placement-token'};
+    window.EdabalansIdentity={email:'sergey@example.test',source:'native'};
+    window.__checkoutRequests=[];
+    HTMLFormElement.prototype.submit=function(){window.__submittedPayment={action:this.action,fields:Object.fromEntries(new FormData(this))};};
+    window.fetch=function(url,options){
+      if(options&&options.method==='POST'){
+        window.__checkoutRequests.push({url:String(url),body:JSON.parse(options.body)});
+        return Promise.resolve(new Response(JSON.stringify({payment_form:{action:'https://auth.robokassa.ru/Merchant/Index.aspx',method:'POST',fields:{MerchantLogin:'test',InvId:'123'}}}),{status:200,headers:{'Content-Type':'application/json'}}));
+      }
+      return Promise.resolve(new Response(${JSON.stringify(JSON.stringify(offerData))},{status:200,headers:{'Content-Type':'application/json'}}));
+    };
+  </script>`;
+  await page.setContent(`<!doctype html><meta charset="utf-8"><style id="edabalans-masterclass-css">${masterclassCss}</style><div id="masterclass-offers-app"></div>${setup}<script>${masterclassJs}</script>`, {waitUntil: 'domcontentloaded'});
+  await page.locator('[data-offer="single:recipes"]').click();
+  await page.locator('.mc-native-checkout__dialog').waitFor();
+  await page.locator('.mc-native-checkout__dialog input[type="checkbox"]').check();
+  await page.locator('.mc-native-checkout__submit').click();
+  await page.waitForFunction(() => Boolean(window.__submittedPayment));
+  const result = await page.evaluate(() => ({requests:window.__checkoutRequests,payment:window.__submittedPayment}));
+  assert.equal(result.requests.length, 1);
+  assert(result.requests[0].url.endsWith('/api/payments/robokassa/course-offers/checkout'));
+  assert.deepEqual(result.requests[0].body, {
+    offer_code:'single:recipes',placement:'day-1-offer',placement_token:'signed-course-placement-token'
+  });
+  assert.equal(result.payment.fields.InvId, '123');
+  await page.close();
+}
+
 await captureAccount();
 await captureOffers();
+await checkCourseOfferCheckout();
 await browser.close();

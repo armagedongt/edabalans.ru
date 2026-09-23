@@ -18,7 +18,9 @@ from app.config import Settings, get_settings
 from app.database import get_db
 from app.account_auth_routes import primary_email, require_native_user
 from app.intensive_web_access import offer_user_id
-from app.masterclass_routes import build_offers, create_offer_checkout_record
+from app.app_auth import require_placement
+from app.masterclass_offer_rules import EMBED_PLACEMENTS
+from app.masterclass_routes import build_offers, create_offer_checkout_record, resolve_masterclass_user
 from app.models import Payment, Resource, UserAccess
 from app.payment_browser_grant_service import (
     auto_login_state,
@@ -125,6 +127,12 @@ class RobokassaCheckoutIn(BaseModel):
 class NativeOfferCheckoutIn(BaseModel):
     offer_code: str = Field(min_length=3, max_length=120)
     focus_product_code: str | None = Field(default=None, max_length=40)
+
+
+class NativeCourseOfferCheckoutIn(BaseModel):
+    offer_code: str = Field(min_length=3, max_length=120)
+    placement: str = Field(min_length=1, max_length=80)
+    placement_token: str = Field(min_length=20, max_length=4096)
 
 
 class NativeTariffCheckoutIn(BaseModel):
@@ -599,6 +607,33 @@ def robokassa_account_offer_checkout(
     payload = build_offers(
         db, user, "offers-hub", use_pricing_catalog=settings.pricing_catalog_enabled,
         focus_product_code=body.focus_product_code, readonly=True,
+    )
+    card = next((item for item in payload["offers"] if item["code"] == body.offer_code), None)
+    if card is None:
+        raise HTTPException(409, "Предложение больше не доступно")
+    try:
+        checkout = create_offer_checkout_record(db, user, payload, card)
+        return create_member_offer_payment(db, settings, checkout, user, primary_email(db, user.id))
+    except RobokassaError as exc:
+        db.rollback()
+        raise HTTPException(422, str(exc)) from exc
+
+
+@router.post("/api/payments/robokassa/course-offers/checkout")
+def robokassa_course_offer_checkout(
+    body: NativeCourseOfferCheckoutIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    _enforce_checkout_origin(request, settings)
+    enforce_preview_checkout_rate_limit(request)
+    if body.placement not in EMBED_PLACEMENTS:
+        raise HTTPException(422, "unknown masterclass placement")
+    require_placement(request, body.placement, body.placement_token, settings)
+    user = resolve_masterclass_user(request, db, "", settings)
+    payload = build_offers(
+        db, user, body.placement, use_pricing_catalog=settings.pricing_catalog_enabled,
     )
     card = next((item for item in payload["offers"] if item["code"] == body.offer_code), None)
     if card is None:
