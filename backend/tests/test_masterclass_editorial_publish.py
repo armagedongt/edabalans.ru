@@ -45,10 +45,15 @@ def test_editorial_program_compiles_to_runtime_titles_and_visible_steps() -> Non
         for step in compiled["days"][6]["steps"]
         if not step.get("hidden", False)
     ] == [
+        "day-06-article-03",
         "day-07-video-01",
-        "day-07-store-food",
         "day-07-recipes-part-1",
     ]
+    assert [
+        step["id"]
+        for step in compiled["days"][7]["steps"]
+        if not step.get("hidden", False)
+    ] == ["day-07-store-food"]
     assert next(
         step
         for step in compiled["days"][5]["steps"]
@@ -97,6 +102,14 @@ def test_plain_messenger_step_is_safe_for_editorial_bootstrap(tmp_path, monkeypa
     bootstrap.write_day(days[0], manifest["days"][0], force=True)
     rendered = next((tmp_path / "days").glob("01-*.md")).read_text(encoding="utf-8")
     assert "3. Подключить мессенджер · ≈ 0 мин" in rendered
+
+
+def test_editorial_validator_accepts_plain_messenger_step(capsys) -> None:
+    from scripts import validate_masterclass_editorial as validator
+
+    validator.main()
+
+    assert "OK: 20 дней" in capsys.readouterr().out
 
 
 def test_editorial_program_restores_placeholder_missing_from_older_runtime() -> None:
@@ -157,11 +170,10 @@ def test_day_markdown_supplies_runtime_day_copy_and_checks() -> None:
 
     day = compiled["days"][5]
     assert day["lead"] == ""
-    assert day["intro"].startswith("<p>Когда у вас четыре приёма пищи в день")
-    assert "Опорная точка — это не просто блюдо" in day["intro"]
-    assert "Выберите один повторяющийся приём пищи" in day["intro"]
+    assert day["intro"].startswith("<p>Когда у вас по три-четыре приёма пищи в день")
+    assert "лишить себя этого геморроя" in day["intro"]
     assert day["afterText"] == ""
-    assert day["checks"][0]["text"].startswith("Выбрать одну опорную точку")
+    assert day["checks"][0]["text"].startswith("Напишите, какие в вашем расписании дня")
     assert "<p>" in day["intro"]
 
     first = compiled["days"][0]
@@ -253,7 +265,7 @@ def test_partial_publish_writes_only_selected_day_articles(monkeypatch) -> None:
         "print": "Скачать печатный вариант",
         "open": "Открыть приложение",
     }
-    assert "Ссылка продублируется вам в подключённый мессенджер" in (
+    assert "Ссылка продублируется вам в привязанный мессенджер" in (
         dqs_step["applicationNoteHtml"]
     )
 
@@ -288,7 +300,7 @@ def test_dqs_markdown_defines_two_actions_and_messenger_note() -> None:
         "print": "Скачать печатный вариант",
         "open": "Открыть приложение",
     }
-    assert "Ссылка продублируется вам в подключённый мессенджер" in definition["noteHtml"]
+    assert "Ссылка продублируется вам в привязанный мессенджер" in definition["noteHtml"]
 
 
 def test_step_progress_follows_stable_id_when_program_reorders_steps() -> None:
@@ -404,10 +416,14 @@ def test_questionnaire_markdown_preserves_help_format_and_rejects_ambiguous_code
         questionnaire_definition(path)
 
 
-def test_rest_day_has_no_materials_and_recipe_selection_is_article() -> None:
+def test_practice_day_has_guide_and_recipe_selection_is_article() -> None:
     current = json.loads((ROOT / "content/masterclass/course/course.json").read_text(encoding="utf-8"))
     compiled, _ = compile_manifest(current, next_version=12)
-    assert not [step for step in compiled["days"][7]["steps"] if not step.get("hidden")]
+    assert [
+        step["id"]
+        for step in compiled["days"][7]["steps"]
+        if not step.get("hidden")
+    ] == ["day-07-store-food"]
     selection = next(step for step in compiled["days"][6]["steps"] if step["id"] == "day-07-recipes-part-1")
     assert selection["kind"] == "article"
     assert selection["contentKind"] == "text"
@@ -422,9 +438,12 @@ def test_cross_day_move_stops_instead_of_corrupting_positional_progress() -> Non
         compile_manifest(current, next_version=12)
 
 
-def test_recipe_access_gate_reuses_same_prelude_instead_of_copying_text() -> None:
+def test_recipe_access_gate_opens_offer_without_repeating_day_six_copy() -> None:
     folder = ROOT / "content/masterclass/editorial/materials"
-    assert special_prelude(folder / "07-00-приобрести-систему-рецептов.md", "offer") == special_prelude(folder / "06-04-что-такое-система-рецептов.md", "offer")
+    assert special_prelude(
+        folder / "07-00-приобрести-систему-рецептов.md",
+        "offer",
+    ) == ""
 
 
 def test_title_changes_only_in_program_reach_runtime_without_editing_body_h1(monkeypatch) -> None:

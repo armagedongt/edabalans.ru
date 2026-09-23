@@ -451,9 +451,6 @@ html { scroll-behavior: auto; }
 .dqs-material-buttons a { border: 0px; border-radius: 12px; padding: 11px 14px; background: var(--ink); color: rgb(255, 255, 255); font-style: inherit; font-variant: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; font-language-override: inherit; font-weight: var(--weight-bold); cursor: pointer; text-decoration: none; }
 .dqs-material-buttons .secondary { background: rgb(238, 231, 221); color: var(--ink); }
 .dqs-material-buttons button:disabled { opacity: 0.5; cursor: not-allowed; }
-.dqs-material-note { margin: 12px 0px 0px; color: var(--muted); font-size: var(--text-sm); }
-.dqs-material-note > :first-child { margin-top: 0px; }
-.dqs-material-note > :last-child { margin-bottom: 0px; }
 .dqs-material-status { min-height: 1.4em; margin: 12px 0px 0px; color: var(--muted); font-size: var(--text-sm); }
 :root, #masterclass-course-app { --ink: #17191e; --muted: #46515b; --paper: #f8fcfe; --card: #fff; --line: rgba(17,142,216,.28); --accent: #f46a35; --soft: #fff4ef; --green: #118ed8; --side: #259bd3; --side2: #1689c2; --violet: #118ed8; --shadow: 0 17px 34px -27px rgba(12,91,136,.5); --font: Manrope,Arial,sans-serif; }
 body { background: linear-gradient(135deg, rgb(247, 252, 255) 0px, rgb(255, 255, 255) 46%, rgb(248, 252, 254) 100%); color: var(--ink); }
@@ -584,11 +581,11 @@ body { background: linear-gradient(135deg, rgb(247, 252, 255) 0px, rgb(255, 255,
 .day-button.active { background: rgba(17, 142, 216, 0.27); border-color: rgba(255, 255, 255, 0.28); }
 .day-button.done:hover, .day-button.unfinished:hover, .day-button.locked:hover, .day-button.current-material:hover { border-color: rgba(255, 255, 255, 0.38); background: rgba(17, 142, 216, 0.32) !important; }
 .day-button.recipe, #days .day-button.recipe { position: relative; box-shadow: inset 3px 0 var(--accent-gold-start) !important; }
-#days .day-button.current-material { position: relative; margin: 0px !important; outline: 0px !important; }
+#days .day-button.current-material { position: relative; margin: 0px !important; box-shadow: inset 3px 0 var(--accent-gold-start) !important; outline: 0px !important; }
 .day-button.recipe::before, .day-kind, .day-progress { display: none !important; }
 .day-number { width: 42px; height: 42px; background: rgba(255, 255, 255, 0.18); border-radius: 12px; }
 .active .day-number { background: linear-gradient(145deg,var(--accent-gold-start),var(--accent-gold-end)); box-shadow: rgba(87, 48, 4, 0.9) 0px 7px 14px -9px; }
-.done:not(.active) .day-number { background: rgba(255, 255, 255, 0.18); }
+.done .day-number { background: rgba(255, 255, 255, 0.18); }
 .day-state { width: 24px; min-height: 42px; }
 .day-state::before, .day-state::after { display: none !important; }
 .done .day-state::after { width: 22px; height: 22px; border-radius: 7px; background: rgb(101, 217, 125); color: rgb(255, 255, 255); content: "✓"; font: 800 14px / 22px Manrope, Arial, sans-serif; text-align: center; box-shadow: rgba(5, 89, 74, 0.9) 0px 5px 13px -6px; display: grid !important; }

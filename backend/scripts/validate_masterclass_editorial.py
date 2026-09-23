@@ -4,20 +4,29 @@ from __future__ import annotations
 from pathlib import Path
 import re
 
-from bootstrap_masterclass_editorial import EDITORIAL, parse_program
+try:
+    from bootstrap_masterclass_editorial import EDITORIAL, parse_program
+except ModuleNotFoundError:  # Imported as backend.scripts.* in tests and tooling.
+    from scripts.bootstrap_masterclass_editorial import EDITORIAL, parse_program
 
 
 def main() -> None:
     days, materials = parse_program()
     errors: list[str] = []
-    linked = {item["path"].resolve() for item in materials.values()}
+    linked = {
+        item["path"].resolve()
+        for item in materials.values()
+        if item["path"] is not None
+    }
     linked.update({
         (EDITORIAL / "materials" / "07-00-приобрести-систему-рецептов.md").resolve(),
         (EDITORIAL / "materials" / "15-00-приобрести-каталог-рецептов.md").resolve(),
         (EDITORIAL / "materials" / "08-01-система-рецептов-последний-день.md").resolve(),
     })
     for item in materials.values():
-        path: Path = item["path"]
+        path: Path | None = item["path"]
+        if path is None:
+            continue
         if not path.is_file():
             errors.append(f"Нет файла: {path.relative_to(EDITORIAL)}")
             continue

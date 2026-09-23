@@ -538,16 +538,6 @@
           "hidden": false
         },
         {
-          "id": "day-06-article-03",
-          "kind": "article",
-          "title": "Как получать от еды то, что вы хотите",
-          "summary": "Материал перенесён внутрь закрытого рецептурного блока дня 7; шаг сохранён ради истории прогресса.",
-          "status": "ready",
-          "contentKind": "text",
-          "contentAsset": "34-five-tastes.md",
-          "hidden": true
-        },
-        {
           "id": "day-06-article-04",
           "kind": "article",
           "title": "Почему рецепт с первого раза может быть не вашим",
@@ -608,6 +598,16 @@
       "recipeDay": true,
       "publicationStatus": "ready",
       "steps": [
+        {
+          "id": "day-06-article-03",
+          "kind": "article",
+          "title": "Как получать от еды то, что вы хотите",
+          "summary": "Материал внутри закрытого рецептурного блока.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "34-five-tastes.md",
+          "hidden": false
+        },
         {
           "id": "day-07-video-01",
           "kind": "article",
