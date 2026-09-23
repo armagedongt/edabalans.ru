@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from datetime import datetime, time, timedelta, timezone
 from decimal import Decimal
 import hashlib
@@ -329,9 +330,85 @@ def course_step_kinds(context: CourseContext, day: int) -> list[str]:
     ]
 
 
-def current_required_step_ids(context: CourseContext, day: int) -> list[str]:
+def day_access_allowed(day_payload: dict, owned_resources: set[str]) -> bool:
+    resource = day_payload.get("accessResource")
+    return not resource or resource in owned_resources
+
+
+def manifest_for_resources(manifest: dict, owned_resources: set[str]) -> dict:
+    result = deepcopy(manifest)
+    for day in result.get("days", []):
+        if day_access_allowed(day, owned_resources):
+            day["accessDenied"] = False
+            continue
+        visible = [
+            step for step in day.get("steps", []) if not step.get("hidden", False)
+        ]
+        for step in visible:
+            step["hidden"] = True
+        if visible:
+            gate = next(
+                (
+                    step
+                    for step in visible
+                    if "recipes-part" in str(step.get("id", ""))
+                ),
+                visible[0],
+            )
+            gate.update(
+                hidden=False,
+                locked=False,
+                required=False,
+                accessGate=True,
+                kind=day["accessCode"],
+                code=day["accessCode"],
+                title=day.get("accessGateTitle") or "Приобрести доступ",
+                label=day.get("accessGateTitle") or "Приобрести доступ",
+                summary="",
+            )
+            gate.pop("contentAsset", None)
+            gate.pop("contentKind", None)
+        day["accessDenied"] = True
+    return result
+
+
+def course_context_for_member(db: Session, user_id: uuid.UUID) -> CourseContext:
+    base = course_context_for_user(db, user_id)
+    manifest = manifest_for_resources(base.manifest, access_codes(db, user_id))
+    days = {int(day["number"]): day for day in manifest["days"]}
+    return CourseContext(
+        revision=base.revision,
+        manifest=manifest,
+        days=days,
+        last_day=base.last_day,
+        checks={number: list(day.get("checks", [])) for number, day in days.items()},
+        apps={
+            number: step["kind"]
+            for number, day in days.items()
+            for step in day.get("steps", [])
+            if not step.get("hidden", False)
+            and step["kind"]
+            in {"dqs", "recipes-part-1", "recipes-part-2", "closing-review"}
+        },
+        offers={
+            number: (step["placement"], step["event"])
+            for number, day in days.items()
+            for step in day.get("steps", [])
+            if not step.get("hidden", False) and step["kind"] == "offer"
+        },
+        content_files=base.content_files,
+    )
+
+
+def current_required_step_ids(
+    context: CourseContext, day: int, owned_resources: set[str] | None = None
+) -> list[str]:
     if day not in context.days:
         raise HTTPException(404, "masterclass day not found")
+    if owned_resources is not None and not day_access_allowed(
+        context.days[day], owned_resources
+    ):
+        return []
     return [
         step["id"]
         for step in context.days[day].get("steps", [])
@@ -593,7 +670,7 @@ def reconcile_course_progress(
 def course_payload(
     db: Session, user: User, settings: Settings, now: datetime, context: CourseContext | None = None
 ) -> dict:
-    context = context or course_context_for_user(db, user.id)
+    context = context or course_context_for_member(db, user.id)
     progress_rows = {
         row.day_number: row
         for row in db.scalars(
@@ -743,7 +820,7 @@ def course_manifest(
     settings: Settings = Depends(get_settings),
 ) -> dict:
     user = resolve_masterclass_user(request, db, email, settings)
-    return course_context_for_user(db, user.id).manifest
+    return course_context_for_member(db, user.id).manifest
 
 
 @router.get("/course/materials")
@@ -761,7 +838,22 @@ def course_materials(
         for day in state["days"]
         if day["opened"] or day["can_open"]
     }
-    return published_materials(db, allowed_days=allowed_days, step_id=step_id)
+    context = course_context_for_member(db, user.id)
+    allowed_step_ids = {
+        step["id"]
+        for day_number, day in context.days.items()
+        if day_number in allowed_days
+        for step in day.get("steps", [])
+        if not step.get("hidden", False)
+        and not step.get("locked", False)
+        and step.get("kind") == "article"
+    }
+    return published_materials(
+        db,
+        allowed_days=allowed_days,
+        step_id=step_id,
+        allowed_step_ids=allowed_step_ids,
+    )
 
 
 def course_step_event(
@@ -873,7 +965,7 @@ def course_state(
     user = resolve_masterclass_user(request, db, email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
-    context = course_context_for_user(db, user.id)
+    context = course_context_for_member(db, user.id)
     open_course_day(db, user, context, 1, now, timezone_name)
     course_event(
         db,
@@ -895,8 +987,19 @@ def course_content(
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> FileResponse:
-    resolve_masterclass_user(request, db, email, settings)
-    path = course_context(db).content_files.get(asset_name)
+    user = resolve_masterclass_user(request, db, email, settings)
+    context = course_context_for_member(db, user.id)
+    allowed_assets = {
+        step["contentAsset"]
+        for day in context.days.values()
+        for step in day.get("steps", [])
+        if not step.get("hidden", False)
+        and not step.get("locked", False)
+        and step.get("contentAsset")
+    }
+    if asset_name not in allowed_assets:
+        raise HTTPException(404, "masterclass content not found")
+    path = context.content_files.get(asset_name)
     if not path or not path.is_file():
         raise HTTPException(404, "masterclass content not found")
     media_type = "application/json" if path.suffix == ".json" else "text/plain"
@@ -916,7 +1019,7 @@ def course_open_day(
     user = resolve_masterclass_user(request, db, body.email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
-    context = course_context_for_user(db, user.id)
+    context = course_context_for_member(db, user.id)
     open_course_day(db, user, context, day, now, body.timezone_name)
     db.commit()
     return course_payload(db, user, settings, now, context)
@@ -934,7 +1037,7 @@ def course_complete_step(
     user = resolve_masterclass_user(request, db, body.email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
-    context = course_context_for_user(db, user.id)
+    context = course_context_for_member(db, user.id)
     progress = day_progress(db, user.id, day)
     if not progress:
         raise HTTPException(409, detail={"reason": "day_not_opened"})
@@ -1009,7 +1112,7 @@ def course_open_task(
     user = resolve_masterclass_user(request, db, body.email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
-    context = course_context_for_user(db, user.id)
+    context = course_context_for_member(db, user.id)
     progress = day_progress(db, user.id, day)
     if not progress:
         raise HTTPException(409, detail={"reason": "day_not_opened"})
@@ -1044,7 +1147,7 @@ def course_update_check(
     user = resolve_masterclass_user(request, db, body.email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
-    context = course_context_for_user(db, user.id)
+    context = course_context_for_member(db, user.id)
     progress = day_progress(db, user.id, day)
     if not progress or not progress.task_opened_at:
         raise HTTPException(409, detail={"reason": "task_not_opened"})
@@ -1231,7 +1334,7 @@ def finish_questionnaire(
         user,
         kind,
         now,
-        course_context_for_user(db, user.id),
+        course_context_for_member(db, user.id),
     )
     messenger_account = preferred_messenger_account(db, user.id)
     if kind == "onboarding" and action == "submit" and messenger_account:
@@ -1633,7 +1736,7 @@ def reveal_course_application(
         raise HTTPException(404, "application not found")
     user = resolve_masterclass_user(request, db, body.email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
-    context = course_context_for_user(db, user.id)
+    context = course_context_for_member(db, user.id)
     progress = day_progress(db, user.id, body.day)
     steps = context.days.get(body.day, {}).get("steps", [])
     if progress is None:

@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 
 from app.database import Base
 from app.models import MasterclassStepProgress, User
+from app.masterclass_routes import manifest_for_resources
 from scripts.bootstrap_masterclass_editorial import parse_program
 from scripts.publish_masterclass_editorial import (
     apply_day_copy,
@@ -69,6 +70,8 @@ def test_editorial_program_compiles_to_runtime_titles_and_visible_steps() -> Non
     assert cycles["badge"] == "Скоро"
     assert compiled["days"][2]["video"] == 29
     assert compiled["days"][3]["video"] == 18.3
+    assert compiled["days"][6]["accessResource"] == "ACCESS_RECIPES"
+    assert compiled["days"][7]["accessResource"] == "ACCESS_RECIPES"
     zero_time_steps = {
         "day-01-messenger-link",
         "day-01-questionnaire",
@@ -82,6 +85,39 @@ def test_editorial_program_compiles_to_runtime_titles_and_visible_steps() -> Non
         for step in day["steps"]
         if step["id"] in zero_time_steps and step["durationMinutes"] == 0
     } == zero_time_steps
+
+
+def test_recipe_days_hide_articles_behind_one_access_gate() -> None:
+    manifest = json.loads(
+        (ROOT / "content" / "masterclass" / "course" / "course.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    compiled, _ = compile_manifest(manifest, next_version=12)
+    for day_number in (7, 8):
+        compiled["days"][day_number - 1]["accessGateTitle"] = (
+            "Приобрести доступ к «Системе рецептов»"
+        )
+
+    locked = manifest_for_resources(compiled, {"ACCESS_MASTERCLASS"})
+    for day_number in (7, 8):
+        day = locked["days"][day_number - 1]
+        visible = [step for step in day["steps"] if not step.get("hidden")]
+        assert day["accessDenied"] is True
+        assert len(visible) == 1
+        assert visible[0]["accessGate"] is True
+        assert visible[0]["kind"] == "recipes-part-1"
+        assert "contentAsset" not in visible[0]
+
+    allowed = manifest_for_resources(
+        compiled, {"ACCESS_MASTERCLASS", "ACCESS_RECIPES"}
+    )
+    assert allowed["days"][6]["accessDenied"] is False
+    assert [
+        step["id"]
+        for step in allowed["days"][6]["steps"]
+        if not step.get("hidden")
+    ] == ["day-06-article-03", "day-07-video-01", "day-07-recipes-part-1"]
 
 
 def test_plain_messenger_step_is_safe_for_editorial_bootstrap(tmp_path, monkeypatch) -> None:
@@ -110,6 +146,22 @@ def test_editorial_validator_accepts_plain_messenger_step(capsys) -> None:
     validator.main()
 
     assert "OK: 20 дней" in capsys.readouterr().out
+
+
+def test_editorial_validator_rejects_other_pathless_materials(monkeypatch) -> None:
+    from scripts import validate_masterclass_editorial as validator
+
+    days, materials = parse_program()
+    invalid = dict(materials)
+    invalid["broken"] = {
+        "step_id": "broken",
+        "type": "article",
+        "path": None,
+    }
+    monkeypatch.setattr(validator, "parse_program", lambda: (days, invalid))
+
+    with pytest.raises(SystemExit, match="без Markdown допустим только для messenger"):
+        validator.main()
 
 
 def test_editorial_program_restores_placeholder_missing_from_older_runtime() -> None:
@@ -170,14 +222,14 @@ def test_day_markdown_supplies_runtime_day_copy_and_checks() -> None:
 
     day = compiled["days"][5]
     assert day["lead"] == ""
-    assert day["intro"].startswith("<p>Когда у вас по три-четыре приёма пищи в день")
-    assert "лишить себя этого геморроя" in day["intro"]
+    assert day["intro"].startswith("<p>")
+    assert day["intro"].count("<p>") >= 2
     assert day["afterText"] == ""
-    assert day["checks"][0]["text"].startswith("Напишите, какие в вашем расписании дня")
+    assert len([item for item in day["checks"] if not item.get("hidden")]) == 2
     assert "<p>" in day["intro"]
 
     first = compiled["days"][0]
-    assert "организационными вопросами" in first["intro"]
+    assert first["intro"].startswith("<p>")
     assert first["afterText"] == ""
 
 

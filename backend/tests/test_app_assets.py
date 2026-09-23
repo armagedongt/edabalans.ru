@@ -914,7 +914,7 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     assert '.mobile-article-toc-popover a::before' in course_css
     compact_css = re.sub(r"\s+", "", course_css)
     assert '#days.day-button.active{box-shadow:' not in compact_css
-    assert '#days.day-button.current-material{position:relative;margin:0px!important;outline:0px!important;}' in compact_css
+    assert '#days.day-button.current-material{position:relative;margin:0px!important;box-shadow:inset3px0var(--accent-gold-start)!important;outline:0px!important;}' in compact_css
     assert '.day-button.recipe,#days.day-button.recipe{position:relative;box-shadow:inset3px0var(--accent-gold-start)!important;}' in compact_css
 
     static_dir = root / "backend" / "app" / "static"
@@ -1138,7 +1138,12 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
         "Опорные точки в питании", "Эволюция рецепта на примере овсянки",
         "Почему рецепт с первого раза может быть не вашим",
     ]
-    assert manifest["days"][6]["steps"][1]["items"] == [
+    recipe_step = next(
+        step
+        for step in manifest["days"][6]["steps"]
+        if step["id"] == "day-07-recipes-part-1"
+    )
+    assert recipe_step["items"] == [
         "Как получать от еды то, что вы хотите",
         "Конструктор полноценного приёма пищи",
         {

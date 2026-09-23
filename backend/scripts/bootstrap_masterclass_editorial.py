@@ -75,6 +75,11 @@ TYPE_LABELS = {
     "offer": "допродажа",
 }
 
+ACCESS_RESOURCE_BY_CODE = {
+    "recipes-part-1": "ACCESS_RECIPES",
+    "recipes-part-2": "ACCESS_RECIPES",
+}
+
 
 def parse_program() -> tuple[list[dict], dict[str, dict]]:
     text = (EDITORIAL / "program.md").read_text(encoding="utf-8")
@@ -97,17 +102,28 @@ def parse_program() -> tuple[list[dict], dict[str, dict]]:
             days.append(current_day)
             continue
         if current_day is not None:
-            day_meta = re.match(
-                r"<!-- day_id: ([^; ]+)(?:; video_minutes: ([0-9]+(?:\.[0-9]+)?))? -->",
-                line,
-            )
+            day_meta = re.match(r"<!-- day_id: ([^; ]+)(.*?) -->", line)
             if day_meta:
                 current_day["day_id"] = day_meta.group(1)
-                if day_meta.group(2) is not None:
-                    video_minutes = float(day_meta.group(2))
+                metadata = {
+                    key.strip(): value.strip()
+                    for key, value in re.findall(
+                        r";\s*([a-z_]+):\s*([^;]+)", day_meta.group(2)
+                    )
+                }
+                if "video_minutes" in metadata:
+                    video_minutes = float(metadata["video_minutes"])
                     current_day["video_minutes"] = (
                         int(video_minutes) if video_minutes.is_integer() else video_minutes
                     )
+                if "access" in metadata:
+                    access_code = metadata["access"]
+                    if access_code not in ACCESS_RESOURCE_BY_CODE:
+                        raise ValueError(
+                            f"Неизвестная граница доступа дня: {access_code}"
+                        )
+                    current_day["access"] = access_code
+                    current_day["access_resource"] = ACCESS_RESOURCE_BY_CODE[access_code]
                 continue
             gate_match = re.match(r"Экран без доступа: \[([^]]+)]\((materials/[^)]+)\)$", line)
             if gate_match:

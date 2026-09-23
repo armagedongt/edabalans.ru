@@ -80,6 +80,12 @@ def compile_manifest(
             continue
         day["title"] = editorial_day["title"]
         day["tocSummary"] = ""
+        if editorial_day.get("access"):
+            day["accessCode"] = editorial_day["access"]
+            day["accessResource"] = editorial_day["access_resource"]
+        else:
+            day.pop("accessCode", None)
+            day.pop("accessResource", None)
         if "video_minutes" in editorial_day:
             day["video"] = editorial_day["video_minutes"]
         wanted = [item["step_id"] for item in editorial_day["materials"]]
@@ -374,7 +380,7 @@ def main() -> None:
                 step["applicationNoteHtml"] = definition["noteHtml"]
         for editorial_day, day in zip(days, manifest["days"], strict=True):
             if (
-                day["number"] in {7, 15}
+                editorial_day.get("access_gate")
                 and args.from_day <= day["number"] <= args.through_day
             ):
                 gate = editorial_day["access_gate"]

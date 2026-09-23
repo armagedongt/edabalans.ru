@@ -80,7 +80,7 @@ def test_optional_course_steps_do_not_block_required_progression():
             ]
             for day in (7, 8, 9, 15, 16)
         }
-    assert required[7] == [2]
+    assert required[7] == [0, 3]
     assert required[8] == []
     assert required[9] == []
     assert required[15] == [1, 3]
@@ -133,6 +133,87 @@ def test_course_structure_editor_publishes_one_version_and_runtime_uses_it():
         json={"expected_version": payload["active"]["version"], "manifest": conflict_manifest},
     )
     assert conflict.status_code == 409
+
+
+def test_recipe_day_articles_are_not_delivered_without_recipe_access():
+    client, factory = setup()
+    manifest = client.get(
+        "/api/masterclass/course/manifest?email=member@example.test"
+    )
+    assert manifest.status_code == 200
+    day_seven = manifest.json()["days"][6]
+    visible = [step for step in day_seven["steps"] if not step.get("hidden")]
+    assert day_seven["accessDenied"] is True
+    assert len(visible) == 1
+    assert visible[0]["accessGate"] is True
+    assert visible[0]["kind"] == "recipes-part-1"
+
+    published = client.put(
+        "/admin/api/courses/masterclass-21/materials/day-06-article-03",
+        json={"expected_version": 0, "content": "Закрытый рецепт", "format": "markdown"},
+    )
+    assert published.status_code == 200
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        db.add(
+            MasterclassDayProgress(
+                user_id=user_id,
+                day_number=7,
+                first_opened_at=datetime.now(timezone.utc),
+                timezone_name="Europe/Moscow",
+                structure_revision_no=1,
+                required_step_ids=[],
+                required_check_ids=[],
+                checkmarks={},
+            )
+        )
+        db.commit()
+
+    materials = client.get(
+        "/api/masterclass/course/materials?email=member@example.test"
+        "&step_id=day-06-article-03"
+    )
+    assert materials.status_code == 200
+    assert materials.json()["materials"] == {}
+    assert client.get(
+        "/api/masterclass/course/content/34-five-tastes.md"
+        "?email=member@example.test"
+    ).status_code == 404
+
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        recipes = db.scalar(select(Resource).where(Resource.code == "ACCESS_RECIPES"))
+        db.add(
+            UserAccess(
+                user_id=user_id,
+                resource_id=recipes.id,
+                source="test",
+                granted_at=datetime.now(timezone.utc),
+            )
+        )
+        db.commit()
+
+    unlocked = client.get(
+        "/api/masterclass/course/manifest?email=member@example.test"
+    ).json()
+    assert unlocked["days"][6]["accessDenied"] is False
+    unlocked_ids = [
+        step["id"]
+        for step in unlocked["days"][6]["steps"]
+        if not step.get("hidden")
+    ]
+    assert "day-06-article-03" in unlocked_ids
+    assert all(not step.get("accessGate") for step in unlocked["days"][6]["steps"])
+    materials = client.get(
+        "/api/masterclass/course/materials?email=member@example.test"
+        "&step_id=day-06-article-03"
+    )
+    assert materials.status_code == 200
+    assert materials.json()["materials"]["day-06-article-03"]["html"]
+    assert client.get(
+        "/api/masterclass/course/content/34-five-tastes.md"
+        "?email=member@example.test"
+    ).status_code == 200
 
 
 def test_locked_course_step_is_not_delivered_or_completable_and_rejoins_after_unlock():

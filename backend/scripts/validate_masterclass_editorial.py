@@ -26,6 +26,10 @@ def main() -> None:
     for item in materials.values():
         path: Path | None = item["path"]
         if path is None:
+            if item["type"] != "messenger":
+                errors.append(
+                    f"Материал без Markdown допустим только для messenger: {item['step_id']}"
+                )
             continue
         if not path.is_file():
             errors.append(f"Нет файла: {path.relative_to(EDITORIAL)}")

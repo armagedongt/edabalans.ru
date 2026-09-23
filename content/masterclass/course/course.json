@@ -596,6 +596,9 @@
         }
       ],
       "recipeDay": true,
+      "accessCode": "recipes-part-1",
+      "accessResource": "ACCESS_RECIPES",
+      "accessGateTitle": "Приобрести доступ к «Системе рецептов»",
       "publicationStatus": "ready",
       "steps": [
         {
@@ -689,6 +692,9 @@
         }
       ],
       "recipeDay": true,
+      "accessCode": "recipes-part-1",
+      "accessResource": "ACCESS_RECIPES",
+      "accessGateTitle": "Приобрести доступ к «Системе рецептов»",
       "publicationStatus": "ready",
       "steps": [
         {
