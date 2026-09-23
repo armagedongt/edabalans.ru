@@ -146,7 +146,20 @@ def test_recipe_day_articles_are_not_delivered_without_recipe_access():
     assert day_seven["accessDenied"] is True
     assert len(visible) == 1
     assert visible[0]["accessGate"] is True
-    assert visible[0]["kind"] == "recipes-part-1"
+    assert visible[0]["kind"] == "offer"
+    assert visible[0]["placement"] == "recipes-part-1-gate"
+    assert visible[0]["id"] == "day-07-offer"
+    assert visible[0]["event"] == "recipes_part_1_offer_reopened"
+    day_eight = manifest.json()["days"][7]
+    day_eight_visible = [
+        step for step in day_eight["steps"] if not step.get("hidden")
+    ]
+    assert day_eight["accessDenied"] is True
+    assert len(day_eight_visible) == 1
+    assert day_eight_visible[0]["kind"] == "offer"
+    assert day_eight_visible[0]["placement"] == "recipes-part-1-gate"
+    assert day_eight_visible[0]["id"] == "day-08-offer"
+    assert day_eight_visible[0]["event"] == "recipes_part_1_last_day_opened"
 
     published = client.put(
         "/admin/api/courses/masterclass-21/materials/day-06-article-03",

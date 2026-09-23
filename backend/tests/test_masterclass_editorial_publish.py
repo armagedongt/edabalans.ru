@@ -106,7 +106,8 @@ def test_recipe_days_hide_articles_behind_one_access_gate() -> None:
         assert day["accessDenied"] is True
         assert len(visible) == 1
         assert visible[0]["accessGate"] is True
-        assert visible[0]["kind"] == "recipes-part-1"
+        assert visible[0]["kind"] == "offer"
+        assert visible[0]["placement"] == "recipes-part-1-gate"
         assert "contentAsset" not in visible[0]
 
     allowed = manifest_for_resources(

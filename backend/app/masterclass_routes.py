@@ -341,31 +341,41 @@ def manifest_for_resources(manifest: dict, owned_resources: set[str]) -> dict:
         if day_access_allowed(day, owned_resources):
             day["accessDenied"] = False
             continue
+        access_code = str(day["accessCode"])
+        gate_placement = f"{access_code}-gate"
         visible = [
             step for step in day.get("steps", []) if not step.get("hidden", False)
         ]
         for step in visible:
             step["hidden"] = True
-        if visible:
-            gate = next(
-                (
-                    step
-                    for step in visible
-                    if "recipes-part" in str(step.get("id", ""))
-                ),
-                visible[0],
+        gate = next(
+            (
+                step
+                for step in day.get("steps", [])
+                if step.get("kind") == "offer"
+                and step.get("placement") == gate_placement
+            ),
+            None,
+        )
+        if gate is None and visible:
+            gate = visible[0]
+        if gate is not None:
+            gate_event = gate.get("event") or (
+                f"{access_code.replace('-', '_')}_offer_opened"
             )
             gate.update(
                 hidden=False,
                 locked=False,
                 required=False,
                 accessGate=True,
-                kind=day["accessCode"],
-                code=day["accessCode"],
+                kind="offer",
+                placement=gate_placement,
+                event=gate_event,
                 title=day.get("accessGateTitle") or "Приобрести доступ",
                 label=day.get("accessGateTitle") or "Приобрести доступ",
                 summary="",
             )
+            gate.pop("code", None)
             gate.pop("contentAsset", None)
             gate.pop("contentKind", None)
         day["accessDenied"] = True
