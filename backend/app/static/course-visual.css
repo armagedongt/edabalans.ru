@@ -581,11 +581,11 @@ body { background: linear-gradient(135deg, rgb(247, 252, 255) 0px, rgb(255, 255,
 .day-button.active { background: rgba(17, 142, 216, 0.27); border-color: rgba(255, 255, 255, 0.28); }
 .day-button.done:hover, .day-button.unfinished:hover, .day-button.locked:hover, .day-button.current-material:hover { border-color: rgba(255, 255, 255, 0.38); background: rgba(17, 142, 216, 0.32) !important; }
 .day-button.recipe, #days .day-button.recipe { position: relative; box-shadow: inset 3px 0 var(--accent-gold-start) !important; }
-#days .day-button.current-material { position: relative; margin: 0px !important; box-shadow: inset 3px 0 var(--accent-gold-start) !important; outline: 0px !important; }
+#days .day-button.current-material { position: relative; margin: 0px !important; outline: 0px !important; }
 .day-button.recipe::before, .day-kind, .day-progress { display: none !important; }
 .day-number { width: 42px; height: 42px; background: rgba(255, 255, 255, 0.18); border-radius: 12px; }
 .active .day-number { background: linear-gradient(145deg,var(--accent-gold-start),var(--accent-gold-end)); box-shadow: rgba(87, 48, 4, 0.9) 0px 7px 14px -9px; }
-.done .day-number { background: rgba(255, 255, 255, 0.18); }
+.done:not(.active) .day-number { background: rgba(255, 255, 255, 0.18); }
 .day-state { width: 24px; min-height: 42px; }
 .day-state::before, .day-state::after { display: none !important; }
 .done .day-state::after { width: 22px; height: 22px; border-radius: 7px; background: rgb(101, 217, 125); color: rgb(255, 255, 255); content: "✓"; font: 800 14px / 22px Manrope, Arial, sans-serif; text-align: center; box-shadow: rgba(5, 89, 74, 0.9) 0px 5px 13px -6px; display: grid !important; }
