@@ -810,9 +810,9 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     assert [
         step["title"] for step in first_steps if step.get("kind") == "article"
     ] == [
-        "Как пользоваться Мастер-классом",
+        "Как устроен Мастер-класс",
         "Как вести дневник питания",
-        "Как надо взвешиваться",
+        "Всё о весах и взвешиваниях",
     ]
     messenger_index = next(
         index for index, step in enumerate(first_steps)
@@ -829,7 +829,7 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     messenger_step = next(
         step for step in first_steps if step["id"] == "day-01-messenger-link"
     )
-    assert "материалов и уведомлений" in messenger_step["summary"]
+    assert messenger_step["summary"] == ""
 
     course_html = (
         root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
@@ -860,7 +860,7 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     assert "function ensureStepContent(step)" in course_html
     assert "if(contentRequests[asset])return contentRequests[asset]" in course_html
     assert "EdabalansEmbed.loadingHtml('Загрузка материала')" in course_html
-    assert "return!step.hidden&&['messenger','offer']" in course_html
+    assert "return!step.hidden&&!step.nested&&['messenger','offer']" in course_html
     assert "day.shortTitle||day.title" not in course_html
     assert "return day.tocSummary||generated" in course_html
     assert "esc(nextDay.title)" in course_html
@@ -1029,11 +1029,8 @@ def test_masterclass_second_day_contains_current_diet_questionnaire() -> None:
     assert step["id"] == "day-02-current-diet"
     assert step["kind"] == "questionnaire"
     assert step["questionnaireKind"] == "current-diet"
-    assert step["label"] == "А какая у вас сейчас «диета»?"
-    assert step["summary"] == (
-        "Заполните небольшой опросник о ваших отношениях с разными "
-        "продуктовыми категориями."
-    )
+    assert step["label"] == "Заполните опросник: а какая у вас сейчас «диета»?"
+    assert step["summary"] == ""
 
 
 def test_masterclass_day_three_order_and_cards_have_no_editorial_markers() -> None:
@@ -1127,7 +1124,7 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
         for step in day["steps"]:
             assert step.get("id")
             assert step.get("kind")
-            assert step.get("summary")
+            assert "summary" in step
             step_ids.append(step["id"])
     assert len(step_ids) == len(set(step_ids))
 
@@ -1135,30 +1132,21 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
         step["title"] for step in manifest["days"][5]["steps"]
         if step["kind"] == "article" and not step.get("hidden", False)
     ] == [
-        "Опорные точки в питании", "Эволюция рецепта на примере овсянки",
-        "Почему рецепт с первого раза может быть не вашим",
+        "Принцип опорных точек", "Эволюция рецепта на примере овсянки",
+        "Правило 1%",
     ]
     recipe_step = next(
         step
         for step in manifest["days"][6]["steps"]
         if step["id"] == "day-07-recipes-part-1"
     )
-    assert recipe_step["items"] == [
-        "Как получать от еды то, что вы хотите",
-        "Конструктор полноценного приёма пищи",
-        {
-            "title": "Как выбирать готовую еду в магазинах и доставках",
-            "status": "soon",
-            "openable": False,
-            "required": False,
-        },
-        "Первая порция рецептов",
-    ]
+    assert recipe_step["kind"] == "article"
+    assert recipe_step["title"] == "Первая подборка рецептов"
     assert [
         step["title"] for step in manifest["days"][15]["steps"]
         if step["kind"] == "article" and not step.get("hidden", False)
     ] == [
-        "Для тех, кто любит подглядывать",
+        "Примеры дневников участников Мастер-класса с прошлых потоков",
     ]
     assert [
         step["title"] for step in manifest["days"][19]["steps"]
@@ -1172,6 +1160,19 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
     ).read_text(encoding="utf-8")
     assert "d.steps[i].required!==false" in course_html
     assert "var video=String(d.videoId||'').trim()?" in course_html
+
+
+def test_masterclass_nested_recipe_pages_stay_out_of_outline_and_return_to_parent() -> None:
+    root = Path(__file__).resolve().parents[2]
+    page = (root / "backend/app/static/masterclass-first-days-preview.html").read_text(
+        encoding="utf-8"
+    )
+
+    assert "!step.hidden&&!step.nested" in page
+    assert "step.hidden||step.nested?'':courseStepCard" in page
+    assert "if(d.steps[i].nested)return true" in page
+    assert "step.parentStepId?stepIndexById(d,step.parentStepId):-1" in page
+    assert "К подборке рецептов ←" in page
 
 
 def test_masterclass_media_uses_present_links_and_player_route() -> None:

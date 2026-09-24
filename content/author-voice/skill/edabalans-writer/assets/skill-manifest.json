@@ -1,9 +1,9 @@
 {
-  "package_version": "2.7.2-20260921",
+  "package_version": "2.7.3-20260924",
   "files": [
     {
       "path": "content/author-voice/skill/edabalans-writer/SKILL.md",
-      "sha256": "2d2aee6edeca693b8434f05b2399b535449247b1b7e1003f0f96283ed15e70ce"
+      "sha256": "cb3a5985b4b06a7adb34d2df3888ee90ea429c58934c245b8f9a028af4988e3e"
     },
     {
       "path": "content/author-voice/authoring-work-profiles-v1.md",
@@ -15,11 +15,11 @@
     },
     {
       "path": "content/author-voice/writer-contract-v1.md",
-      "sha256": "5323e38a60bc93306b9443cb3b45f9c5781d2ba426af5459ff7294fccf1ef20c"
+      "sha256": "70bb75274c66ce7f81c105797f18f3ed013d1d28ac81c2717fffde9a32f28712"
     },
     {
       "path": "docs/knowledge-base/ARTICLE_STANDARD.md",
-      "sha256": "d441dc4299af271bb9c40ec39a91246e07478b1a023dcf70953d7c929ad215bf"
+      "sha256": "95c0030058b2cd3ec870a922a922073b7a61c5e6f8a5c208264048cb5c01cf65"
     },
     {
       "path": "content/author-voice/product-fact-router.md",

@@ -67,9 +67,11 @@ def main() -> None:
         if not re.search(r"^- \[[ xX]] .+", day["task_text"], flags=re.MULTILINE):
             errors.append(f"Нет пунктов задания дня {day['number']} в program.md")
     for path in (EDITORIAL / "materials").glob("*.md"):
-        if path.resolve() not in linked:
+        text = path.read_text(encoding="utf-8")
+        is_editing_draft = "Статус: `draft_for_editing`" in text
+        if path.resolve() not in linked and not is_editing_draft:
             errors.append(f"Файл не включён в программу: {path.relative_to(EDITORIAL)}")
-        first = path.read_text(encoding="utf-8").splitlines()[0]
+        first = text.splitlines()[0]
         if re.match(r"^# .+\.$", first):
             errors.append(f"Точка в конце заголовка: {path.relative_to(EDITORIAL)}")
     access_markers = {

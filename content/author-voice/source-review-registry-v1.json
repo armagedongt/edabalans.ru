@@ -1,7 +1,7 @@
 {
   "registry_version": "source-review-registry-v1",
   "policy_version": "source-integration-v2-2026-08-28",
-  "updated_at": "2026-08-28",
+  "updated_at": "2026-09-24",
   "status_definitions": {
     "passed": "Полный проход выполнен по текущей политике для указанной версии текста.",
     "conflicts_reported": "Текущая проверка выполнена, но Сергею вынесены фактические конфликты без изменения текста.",
@@ -134,6 +134,51 @@
       "review_policy": "pre-source-integration-v2-single-final-pass",
       "review_depth": "legacy",
       "review_status": "needs_recheck"
+    },
+    {
+      "material_id": "content/masterclass/editorial/materials/11-01-уменьшить-вред-от-сладкого.md",
+      "text_version": "sha256:e6f7b493f3c8bb53",
+      "reviewed_at": "2026-09-24",
+      "review_policy": "source-integration-v2-2026-08-28",
+      "review_depth": "full",
+      "review_status": "passed",
+      "notes": "Проверены порядок еды, протеиновый рычаг, движение после еды и согласованное объяснение связи избытка энергии, жировой ткани, инсулинорезистентности и диабета; декоративные и устаревшие ссылки удалены."
+    },
+    {
+      "material_id": "content/masterclass/editorial/materials/11-02-уменьшить-тягу-к-сладкому.md",
+      "text_version": "sha256:3c0648c311192a8a",
+      "reviewed_at": "2026-09-24",
+      "review_policy": "source-integration-v2-2026-08-28",
+      "review_depth": "full",
+      "review_status": "passed",
+      "notes": "Источники привязаны к коротким проверяемым тезисам о подсластителях, цельных фруктах, упаковках, размере порции и планах «если — то»; длинное повторение из предыдущего дня удалено по согласованию."
+    },
+    {
+      "material_id": "content/masterclass/editorial/materials/13-01-привычки-для-насыщения.md",
+      "text_version": "sha256:0dd7645cd6280ab4",
+      "reviewed_at": "2026-09-24",
+      "review_policy": "source-integration-v2-2026-08-28",
+      "review_depth": "full",
+      "review_status": "passed",
+      "notes": "Проверены доказательные функции ссылок о скорости еды, отвлечении, объёме и форме блюда; повтор про паузу перед сладким сокращён до согласованного напоминания."
+    },
+    {
+      "material_id": "content/masterclass/editorial/materials/13-02-привычки-для-удовольствия.md",
+      "text_version": "sha256:59afb7a238288dea",
+      "reviewed_at": "2026-09-24",
+      "review_policy": "source-integration-v2-2026-08-28",
+      "review_depth": "full",
+      "review_status": "passed",
+      "notes": "Ссылки оставлены только у тезисов о подаче, низкокалорийных напитках и аромате; упражнение «Изюминка» вынесено без переписывания в самостоятельный материал."
+    },
+    {
+      "material_id": "content/masterclass/editorial/materials/13-03-упражнение-изюминка.md",
+      "text_version": "sha256:b7173e0fb72d525c",
+      "reviewed_at": "2026-09-24",
+      "review_policy": "source-integration-v2-2026-08-28",
+      "review_depth": "full",
+      "review_status": "passed",
+      "notes": "Авторский блок перенесён дословно и структурирован заголовками; источник встроен только в тезис об автоматическом и импульсивном пищевом поведении."
     }
   ]
 }

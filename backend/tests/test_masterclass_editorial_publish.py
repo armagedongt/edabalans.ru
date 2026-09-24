@@ -44,7 +44,7 @@ def test_editorial_program_compiles_to_runtime_titles_and_visible_steps() -> Non
     assert [
         step["id"]
         for step in compiled["days"][6]["steps"]
-        if not step.get("hidden", False)
+        if not step.get("hidden", False) and not step.get("nested", False)
     ] == [
         "day-06-article-03",
         "day-07-video-01",
@@ -65,13 +65,33 @@ def test_editorial_program_compiles_to_runtime_titles_and_visible_steps() -> Non
         for step in compiled["days"][16]["steps"]
         if step["id"] == "day-17-article-04"
     )
-    assert cycles["hidden"] is False
-    assert cycles["locked"] is True
-    assert cycles["badge"] == "Скоро"
+    assert cycles["hidden"] is True
+    guide = next(
+        step
+        for step in compiled["days"][7]["steps"]
+        if step["id"] == "day-07-store-food"
+    )
+    assert guide["locked"] is True
+    assert guide["badge"] == "Скоро"
+    assert guide["contentKind"] == "placeholder"
     assert compiled["days"][2]["video"] == 29
     assert compiled["days"][3]["video"] == 18.3
     assert compiled["days"][6]["accessResource"] == "ACCESS_RECIPES"
     assert compiled["days"][7]["accessResource"] == "ACCESS_RECIPES"
+    assert compiled["days"][14]["accessResource"] == "ACCESS_RECIPES"
+    nested = [step for step in compiled["days"][6]["steps"] if step.get("nested")]
+    assert [step["id"] for step in nested] == [
+        "day-07-recipe-author-oatmeal",
+        "day-07-recipe-red-lentils",
+        "day-07-recipe-broccoli",
+        "day-07-recipe-marinara",
+        "day-07-recipe-white-sauce",
+        "day-07-recipe-lazy-khachapuri",
+        "day-07-recipe-caesar",
+        "day-07-recipe-tuna-family",
+    ]
+    assert all(step["parentStepId"] == "day-07-recipes-part-1" for step in nested)
+    assert all(step["required"] is False and step["hidden"] is False for step in nested)
     zero_time_steps = {
         "day-01-messenger-link",
         "day-01-questionnaire",
@@ -94,20 +114,21 @@ def test_recipe_days_hide_articles_behind_one_access_gate() -> None:
         )
     )
     compiled, _ = compile_manifest(manifest, next_version=12)
-    for day_number in (7, 8):
+    for day_number in (7, 8, 15):
         compiled["days"][day_number - 1]["accessGateTitle"] = (
             "Приобрести доступ к «Системе рецептов»"
         )
 
     locked = manifest_for_resources(compiled, {"ACCESS_MASTERCLASS"})
-    for day_number in (7, 8):
+    for day_number in (7, 8, 15):
         day = locked["days"][day_number - 1]
         visible = [step for step in day["steps"] if not step.get("hidden")]
         assert day["accessDenied"] is True
         assert len(visible) == 1
         assert visible[0]["accessGate"] is True
         assert visible[0]["kind"] == "offer"
-        assert visible[0]["placement"] == "recipes-part-1-gate"
+        expected_part = 2 if day_number == 15 else 1
+        assert visible[0]["placement"] == f"recipes-part-{expected_part}-gate"
         assert "contentAsset" not in visible[0]
 
     allowed = manifest_for_resources(
@@ -117,8 +138,15 @@ def test_recipe_days_hide_articles_behind_one_access_gate() -> None:
     assert [
         step["id"]
         for step in allowed["days"][6]["steps"]
-        if not step.get("hidden")
+        if not step.get("hidden") and not step.get("nested")
     ] == ["day-06-article-03", "day-07-video-01", "day-07-recipes-part-1"]
+    assert len(
+        [
+            step
+            for step in allowed["days"][6]["steps"]
+            if step.get("nested") and not step.get("hidden")
+        ]
+    ) == 8
 
 
 def test_plain_messenger_step_is_safe_for_editorial_bootstrap(tmp_path, monkeypatch) -> None:
@@ -165,7 +193,7 @@ def test_editorial_validator_rejects_other_pathless_materials(monkeypatch) -> No
         validator.main()
 
 
-def test_editorial_program_restores_placeholder_missing_from_older_runtime() -> None:
+def test_editorial_program_does_not_restore_excluded_cycle_placeholder() -> None:
     manifest = json.loads(
         (ROOT / "content" / "masterclass" / "course" / "course.json").read_text(
             encoding="utf-8"
@@ -179,15 +207,10 @@ def test_editorial_program_restores_placeholder_missing_from_older_runtime() -> 
 
     compiled, _ = compile_manifest(manifest, next_version=12)
 
-    cycles = next(
-        step
+    assert all(
+        step["id"] != "day-17-article-04"
         for step in compiled["days"][16]["steps"]
-        if step["id"] == "day-17-article-04"
     )
-    assert cycles["contentKind"] == "placeholder"
-    assert cycles["status"] == "draft"
-    assert cycles["locked"] is True
-    assert cycles["badge"] == "Скоро"
 
 
 def test_program_order_replaces_stale_runtime_order() -> None:

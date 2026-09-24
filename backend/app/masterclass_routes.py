@@ -326,7 +326,7 @@ def course_step_kinds(context: CourseContext, day: int) -> list[str]:
     return [
         step["kind"]
         for step in context.days[day].get("steps", [])
-        if not step.get("hidden", False)
+        if not step.get("hidden", False) and not step.get("nested", False)
     ]
 
 
@@ -423,6 +423,7 @@ def current_required_step_ids(
         step["id"]
         for step in context.days[day].get("steps", [])
         if not step.get("hidden", False)
+        and not step.get("nested", False)
         and not step.get("locked", False)
         and step.get("required", True)
     ]
@@ -2559,6 +2560,20 @@ def recipe_gate(
                             "openable": bool(item.get("openable", True)),
                             "required": bool(item.get("required", False)),
                         })
+        if part == 1 and not recipe_items:
+            recipe_items = [
+                {
+                    "title": str(step.get("title", "")),
+                    "status": str(step.get("status", "ready")),
+                    "openable": not bool(step.get("locked", False)),
+                    "required": False,
+                    "stepId": str(step.get("id", "")),
+                }
+                for day in context.manifest.get("days", [])
+                for step in day.get("steps", [])
+                if step.get("nested") is True
+                and step.get("parentStepId") == "day-07-recipes-part-1"
+            ]
         payload.update({
             "state": "content",
             "title": f"Рецепты · часть {part}",

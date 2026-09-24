@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1800" viewBox="0 0 1200 1800" role="img" aria-labelledby="title desc">
+  <title id="title">Виды голода</title>
+  <desc id="desc">Голод. Физиологический: Объективный; Из-за неправильного питания или пищевого поведения. Эмоциональный: Аппетит; Попытка купировать эмоции.</desc>
+
+  <defs>
+    <linearGradient id="background" x1="80" y1="40" x2="1120" y2="1760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F9FCFF"/>
+      <stop offset="1" stop-color="#EDF7FF"/>
+    </linearGradient>
+    <linearGradient id="root" x1="300" y1="58" x2="900" y2="208" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2BB4FF"/>
+      <stop offset="1" stop-color="#1769D2"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-30%" width="140%" height="170%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#1769D2" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="1800" rx="56" fill="url(#background)"/>
+
+  <rect x="300" y="58" width="600" height="150" rx="44" fill="url(#root)" filter="url(#shadow)"/>
+  <text x="600" y="155" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="66" font-weight="800" text-anchor="middle">Голод</text>
+
+  <path d="M600 208V250H90V1145M90 370H170M90 1145H170" fill="none" stroke="#A8D2EF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="90" cy="370" r="11" fill="#2AAAEF"/>
+  <circle cx="90" cy="1145" r="11" fill="#F28B62"/>
+
+  <rect x="170" y="290" width="910" height="160" rx="38" fill="#DDF2FF" stroke="#B9E1FA" stroke-width="4"/>
+  <text x="625" y="390" fill="#173F5F" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="800" text-anchor="middle">Физиологический</text>
+
+  <path d="M245 450V505H150V885M150 610H220M150 850H220" fill="none" stroke="#74BDE9" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="150" cy="610" r="11" fill="#2AAAEF"/>
+  <circle cx="150" cy="850" r="11" fill="#2AAAEF"/>
+
+  <rect x="220" y="525" width="860" height="170" rx="34" fill="#FFFFFF" stroke="#CFEAFB" stroke-width="4" filter="url(#shadow)"/>
+  <text x="650" y="630" fill="#21384C" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle">Объективный</text>
+
+  <rect x="220" y="730" width="860" height="240" rx="34" fill="#FFFFFF" stroke="#CFEAFB" stroke-width="4" filter="url(#shadow)"/>
+  <text x="650" y="822" fill="#21384C" font-family="Inter, Arial, sans-serif" font-size="50" font-weight="700" text-anchor="middle">
+    <tspan x="650" dy="0">Из-за неправильного питания</tspan>
+    <tspan x="650" dy="66">или пищевого поведения</tspan>
+  </text>
+
+  <rect x="170" y="1065" width="910" height="160" rx="38" fill="#FFF0EA" stroke="#F9D4C5" stroke-width="4"/>
+  <text x="625" y="1165" fill="#693322" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="800" text-anchor="middle">Эмоциональный</text>
+
+  <path d="M245 1225V1280H150V1640M150 1385H220M150 1595H220" fill="none" stroke="#F0A88B" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="150" cy="1385" r="11" fill="#F28B62"/>
+  <circle cx="150" cy="1595" r="11" fill="#F28B62"/>
+
+  <rect x="220" y="1300" width="860" height="170" rx="34" fill="#FFFFFF" stroke="#F8D9CC" stroke-width="4" filter="url(#shadow)"/>
+  <text x="650" y="1405" fill="#3E332F" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle">Аппетит</text>
+
+  <rect x="220" y="1510" width="860" height="220" rx="34" fill="#FFFFFF" stroke="#F8D9CC" stroke-width="4" filter="url(#shadow)"/>
+  <text x="650" y="1608" fill="#3E332F" font-family="Inter, Arial, sans-serif" font-size="52" font-weight="700" text-anchor="middle">
+    <tspan x="650" dy="0">Попытка купировать</tspan>
+    <tspan x="650" dy="68">эмоции</tspan>
+  </text>
+</svg>

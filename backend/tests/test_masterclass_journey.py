@@ -80,11 +80,11 @@ def test_optional_course_steps_do_not_block_required_progression():
             ]
             for day in (7, 8, 9, 15, 16)
         }
-    assert required[7] == [0, 3]
+    assert required[7] == [0, 1]
     assert required[8] == []
     assert required[9] == []
-    assert required[15] == [1, 3]
-    assert required[16] == [1]
+    assert required[15] == [0]
+    assert required[16] == [0]
     assert current_required_step_ids(context, 9) == []
 
     old_progress = MasterclassDayProgress(
@@ -3242,33 +3242,22 @@ def test_recipe_gate_uses_access_and_records_open_once():
     assert allowed["allowed"] is True
     assert allowed["state"] == "content"
     assert allowed["title"] == "Рецепты · часть 1"
-    store_food = next(
-        item for item in allowed["items"]
-        if item["title"] == "Как выбирать готовую еду в магазинах и доставках"
-    )
-    assert store_food == {
-        "title": "Как выбирать готовую еду в магазинах и доставках",
-        "status": "soon",
-        "openable": False,
-        "required": False,
-    }
-    ready_items = {
-        item["title"]: item
+    assert [item["stepId"] for item in allowed["items"]] == [
+        "day-07-recipe-author-oatmeal",
+        "day-07-recipe-red-lentils",
+        "day-07-recipe-broccoli",
+        "day-07-recipe-marinara",
+        "day-07-recipe-white-sauce",
+        "day-07-recipe-lazy-khachapuri",
+        "day-07-recipe-caesar",
+        "day-07-recipe-tuna-family",
+    ]
+    assert all(
+        item["status"] == "ready"
+        and item["openable"] is True
+        and item["required"] is False
         for item in allowed["items"]
-        if item["status"] == "ready"
-    }
-    assert ready_items["Как получать от еды то, что вы хотите"] == {
-        "title": "Как получать от еды то, что вы хотите",
-        "status": "ready",
-        "openable": True,
-        "required": False,
-    }
-    assert ready_items["Конструктор полноценного приёма пищи"] == {
-        "title": "Конструктор полноценного приёма пищи",
-        "status": "ready",
-        "openable": True,
-        "required": False,
-    }
+    )
     with factory() as db:
         assert db.scalar(select(func.count(MasterclassEvent.id)).where(
             MasterclassEvent.event_type == "recipes_part_1_opened"

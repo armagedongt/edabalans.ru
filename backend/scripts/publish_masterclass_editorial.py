@@ -94,14 +94,18 @@ def compile_manifest(
             raise ValueError("Перенос материала между днями требует согласования привязки и прогресса")
         wanted_set = set(wanted)
         for step in day.get("steps", []):
-            step["hidden"] = step["id"] not in wanted_set
+            # Nested recipe pages belong to the day and remain directly routable,
+            # but they are intentionally absent from the linear program list.
+            step["hidden"] = (
+                step["id"] not in wanted_set and not step.get("nested", False)
+            )
         for item in editorial_day["materials"]:
             step = current_steps.get(item["step_id"])
             if step is None:
-                if item["type"] == "article" and item.get("new_step"):
-                    step = new_article_step(item, next_version=next_version)
-                elif item["step_id"] == "day-17-article-04":
+                if item.get("placeholder"):
                     step = new_placeholder_step(item, next_version=next_version)
+                elif item["type"] == "article" and item.get("new_step"):
+                    step = new_article_step(item, next_version=next_version)
                 else:
                     raise ValueError(f"Нет runtime-шаблона материала {item['step_id']}")
                 day["steps"].append(step)
@@ -117,13 +121,26 @@ def compile_manifest(
             if item["type"] == "article" and step.get("kind") == "recipes-part-1":
                 step["kind"] = "article"
                 step["contentKind"] = "text"
-                step.pop("code", None)
                 step["contentAsset"] = "58-first-recipes-selection.md"
+                for legacy_key in (
+                    "code", "label", "completion", "accessResource", "items"
+                ):
+                    step.pop(legacy_key, None)
             if was_hidden:
                 step["requiredForAllAfterRevision"] = next_version
-            if item["step_id"] == "day-17-article-04":
+            if item.get("placeholder"):
+                step["status"] = "draft"
+                step["contentKind"] = "placeholder"
+                step.pop("contentAsset", None)
+                step["required"] = False
                 step["locked"] = True
                 step["badge"] = "Скоро"
+            elif item["type"] == "article" and step.get("contentKind") == "placeholder":
+                step["status"] = "ready"
+                step["contentKind"] = "text"
+                step["required"] = True
+                step.pop("locked", None)
+                step.pop("badge", None)
         visible = [current_steps[step_id] for step_id in wanted]
         hidden = [
             step for step in day.get("steps", [])
