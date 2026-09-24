@@ -82,10 +82,10 @@ def test_optional_course_steps_do_not_block_required_progression():
         }
     assert required[7] == [0, 1]
     assert required[8] == []
-    assert required[9] == []
+    assert required[9] == [0]
     assert required[15] == [0]
     assert required[16] == [0]
-    assert current_required_step_ids(context, 9) == []
+    assert current_required_step_ids(context, 9) == ["day-09-article-01"]
 
     old_progress = MasterclassDayProgress(
         day_number=9,
@@ -94,7 +94,9 @@ def test_optional_course_steps_do_not_block_required_progression():
         required_check_ids=[],
         checkmarks={},
     )
-    assert effective_required_step_ids(context, old_progress, 9) == []
+    assert effective_required_step_ids(context, old_progress, 9) == [
+        "day-09-article-01"
+    ]
 
 
 def test_course_structure_editor_publishes_one_version_and_runtime_uses_it():

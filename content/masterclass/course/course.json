@@ -899,6 +899,7 @@
           "contentAsset": "67-emotional-hunger-guide.md",
           "hidden": false,
           "required": true,
+          "requiredForAllAfterRevision": 38,
           "durationMinutes": 11
         }
       ],

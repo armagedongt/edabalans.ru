@@ -1060,7 +1060,7 @@ def test_masterclass_day_three_order_and_cards_have_no_editorial_markers() -> No
     assert ".topic.draft" not in course_html
 
 
-def test_emotional_hunger_guide_is_visible_but_temporarily_locked() -> None:
+def test_emotional_hunger_guide_is_published_and_navigable() -> None:
     root = Path(__file__).resolve().parents[2]
     manifest = json.loads(
         (root / "content" / "masterclass" / "course" / "course.json").read_text(
@@ -1073,8 +1073,11 @@ def test_emotional_hunger_guide_is_visible_but_temporarily_locked() -> None:
         if step["id"] == "day-09-article-01"
     )
     assert guide["hidden"] is False
-    assert guide["locked"] is True
-    assert guide["badge"] == "Скоро"
+    assert guide["status"] == "ready"
+    assert guide["contentKind"] == "text"
+    assert guide["required"] is True
+    assert "locked" not in guide
+    assert "badge" not in guide
 
     course_html = (
         root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
