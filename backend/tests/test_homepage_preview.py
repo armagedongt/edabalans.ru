@@ -857,6 +857,14 @@ def test_release_candidate_copy_uses_the_full_content_frame() -> None:
     assert ".action-group{width:min(100%,680px);" in html
 
 
+def test_release_candidate_meme_trims_transparent_vertical_padding_without_changing_asset() -> None:
+    html = client.get("/preview/homepage-release-candidate").text
+
+    assert ".author-section__meme{display:block;overflow:hidden;width:min(100%,760px);aspect-ratio:1434/877;" in html
+    assert ".author-section__meme img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 36%}" in html
+    assert 'src="/preview/homepage-mobile/reviews-promo-before-after-transparent.png?v=1"' in html
+
+
 def test_homepage_versions_preserve_snapshots_and_separate_current_runtime_and_next_draft() -> None:
     expected_previous_sha256 = "5c53b02ae2e7d5dbacbbd6a6da4fbbfdbe6116de8745cda75964d2cb30950169"
     expected_version_2_sha256 = "135162a19ba1ae1d19fa39f11dbc8304fe8c25e5ea2968856142d8843db01c76"
