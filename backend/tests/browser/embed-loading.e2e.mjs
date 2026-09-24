@@ -448,8 +448,13 @@ try {
   assert.match(await completedRecipeDay.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'A selected completed recipe day keeps its marker')
   await recipeCompleted.native.locator('#days .day-button[data-day="5"]').click()
   await recipeCompleted.native.waitForFunction(()=>document.querySelector('#days .day-button[data-day="5"]')?.classList.contains('active'))
+  await recipeCompleted.native.waitForFunction(()=>{
+    const recipe=document.querySelector('#days .day-button[data-day="6"]')
+    return recipe?.isConnected&&recipe.classList.contains('recipe')&&getComputedStyle(recipe).boxShadow.includes('rgb(255, 194, 90)')
+  })
   assert.equal(await completedRecipeDay.evaluate(element=>element.classList.contains('active')),false,'The completed recipe day becomes non-selected after navigation')
   assert.match(await completedRecipeDay.evaluate(element=>getComputedStyle(element).boxShadow),/rgb\(255, 194, 90\)/,'A non-selected completed recipe day keeps its marker')
+  assert.deepEqual(await recipeCompleted.native.locator('#days .day-button.recipe').evaluateAll(elements=>elements.map(element=>Number(element.dataset.day))),[6,7,8,15],'Only the four canonical days retain the recipe marker')
   assert.deepEqual(recipeCompleted.faults,[])
   await recipeCompleted.native.close()
 

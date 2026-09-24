@@ -475,7 +475,7 @@ body { background: linear-gradient(135deg, rgb(247, 252, 255) 0px, rgb(255, 255,
 .done .day-progress { color: rgb(229, 248, 255) !important; }
 .locked .day-progress { color: rgba(255, 255, 255, 0.72) !important; }
 .side-note { border-color: rgba(255, 255, 255, 0.32); background: rgba(17, 142, 216, 0.18); }
-#days .day-button[data-day="6"], #days .day-button[data-day="7"], #days .day-button[data-day="8"], #days .day-button[data-day="14"], #days .day-button[data-day="15"], #days .day-button[data-day="16"] { position: relative; z-index: 1; }
+#days .day-button.recipe { position: relative; z-index: 1; }
 .content { padding: 40px 38px 100px; }
 .eyebrow { color: rgb(17, 142, 216); font-weight: 800; }
 .eyebrow-time { color: var(--muted); }
@@ -640,8 +640,8 @@ body { background: linear-gradient(135deg, rgb(247, 252, 255) 0px, rgb(255, 255,
 .preview-sidebar-header .close-menu { position: static !important; display: grid !important; place-items: center !important; flex: 0 0 34px !important; width: 34px !important; height: 34px !important; min-height: 34px !important; margin: 0px !important; padding: 0px !important; line-height: 1 !important; }
 .sidebar:not(:has(.preview-sidebar-header))::before { height: 36px; overflow: hidden; background: url("/assets/brain-logo.png") left center / 27px 27px no-repeat; color: rgb(255, 255, 255); content: "ПОХУДЕНИЕ — ЭТО ЕСТЬ.РФ"; letter-spacing: -0.055em; text-overflow: ellipsis; white-space: nowrap; display: block !important; width: calc(100% - 54px) !important; margin: 0px 0px 8px 8px !important; padding: 4px 0px 5px 35px !important; font: 800 12px / 27px Unbounded, Manrope, sans-serif !important; }
 .sidebar:not(:has(.preview-sidebar-header)) .close-menu { position: absolute !important; top: 13px !important; right: 15px !important; }
-.day-button.recipe, #days .day-button.recipe, #days .day-button[data-day="6"], #days .day-button[data-day="7"], #days .day-button[data-day="8"], #days .day-button[data-day="14"], #days .day-button[data-day="15"], #days .day-button[data-day="16"] { margin: 0px !important; border-color: rgba(255, 255, 255, 0.16) !important; border-width: 1px !important; border-radius: 14px !important; background: rgba(255, 255, 255, 0.04) !important; outline: 0px !important; }
-.day-button.recipe:hover, #days .day-button.recipe:hover, #days .day-button[data-day="6"]:hover, #days .day-button[data-day="7"]:hover, #days .day-button[data-day="8"]:hover, #days .day-button[data-day="14"]:hover, #days .day-button[data-day="15"]:hover, #days .day-button[data-day="16"]:hover { border-color: rgba(255, 255, 255, 0.38) !important; background: rgba(17, 142, 216, 0.32) !important; }
+.day-button.recipe, #days .day-button.recipe { margin: 0px !important; border-color: rgba(255, 255, 255, 0.16) !important; border-width: 1px !important; border-radius: 14px !important; background: rgba(255, 255, 255, 0.04) !important; outline: 0px !important; }
+.day-button.recipe:hover, #days .day-button.recipe:hover { border-color: rgba(255, 255, 255, 0.38) !important; background: rgba(17, 142, 216, 0.32) !important; }
 .day-button.recipe::after, .locked .day-state::before, .topic.locked .topic-state::before { display: none !important; }
 .day-button { align-items: center !important; }
 .day-button .day-state { align-self: center !important; justify-items: center !important; width: 28px !important; height: 42px !important; min-height: 42px !important; padding: 0px !important; }
