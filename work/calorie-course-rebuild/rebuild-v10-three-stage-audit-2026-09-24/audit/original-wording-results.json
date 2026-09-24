@@ -1,0 +1,1119 @@
+{
+  "metric": {
+    "primary": "Exact normalized six-token sequences found in original Tilda lessons or course transcripts",
+    "normalization": "case and е/ё normalized; Markdown punctuation and link targets ignored; no stemming or semantic matching",
+    "interpretation": "Conservative evidence of verbatim author wording. It intentionally gives no credit to semantic paraphrase."
+  },
+  "source_files": [
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/01-course-plan--7058269/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/02-bju-again--7058309/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/03-track-workouts--7058285/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/04-stage-one-tasks--7058281/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/05-menu-and-recipes--7058441/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/06-food-diary-app--7058293/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/07-record-accurately--7058617/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/08-simplify-calorie-tracking--7058621/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/09-stage-two-tasks--7058465/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/10-energy-balance--7058493/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/11-set-calorie-deficit--7058497/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/12-weight-loss-rate--7058513/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/13-workout-supplement--7058541/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/14-activity-bonus--7058553/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/15-stage-three-tasks--7058561/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/16-food-blocks-and-catalog--7058577/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/17-hunger-snacking-grazing--7058585/source.md",
+    "work/calorie-course-rebuild/source-tilda-complete/lessons/18-language-of-actions--7058589/source.md",
+    "content/calories/reference/transcripts/Калорийный курс — Расчёт активности и тренировок — транскрипт.txt",
+    "content/calories/reference/transcripts/Калорийный курс — Только калории — считаем — архивный транскрипт.txt",
+    "content/calories/reference/transcripts/Калорийный курс — Только калории, урок 1 — архивный транскрипт.txt"
+  ],
+  "course": {
+    "tokens": 30681,
+    "exact_sixgram_tokens": 14087,
+    "coverage_percent": 45.9
+  },
+  "materials": [
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-01-counting/01-app-and-why.md",
+      "tokens": 1084,
+      "coverage": {
+        "4": {
+          "matched_tokens": 51,
+          "coverage_percent": 4.7
+        },
+        "6": {
+          "matched_tokens": 14,
+          "coverage_percent": 1.3
+        },
+        "10": {
+          "matched_tokens": 0,
+          "coverage_percent": 0.0
+        }
+      },
+      "paragraphs_total": 34,
+      "paragraphs_without_exact_sixgram": 32,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 43,
+          "tokens": 62,
+          "coverage_percent": 0.0,
+          "excerpt": "- [Comparing Self-Monitoring Strategies for Weight Loss in a Smartphone App: Randomized Controlled Trial](https://pubmed.ncbi.nlm.nih.gov/30816851/) - [Use of a Smartphone App for Weight Loss Versus a Paper-Based Dietary"
+        },
+        {
+          "paragraph": 1,
+          "tokens": 49,
+          "coverage_percent": 0.0,
+          "excerpt": "Приложение для учёта калорий должно экономить вам время, а не превращать ужин в дополнительную смену на работе. Если ради тарелки еды нужно сорок минут тыкать в разные окна, высчитывать усушку в столбик, а потом ещё иска"
+        },
+        {
+          "paragraph": 14,
+          "tokens": 49,
+          "coverage_percent": 0.0,
+          "excerpt": ":::note [Важно] На первом этапе приложение нужно только для записи фактически съеденной еды и выгрузки дневника. В исследованиях мобильного самоконтроля результат был связан не с одной установкой приложения, а с тем, [на"
+        },
+        {
+          "paragraph": 29,
+          "tokens": 48,
+          "coverage_percent": 0.0,
+          "excerpt": "В этом материале вам достаточно понять, **где** создаётся и хранится рецепт. Как считать разные блюда, что делать с общей кастрюлей и зачем нужен вес после приготовления — разберём отдельным большим шагом. Там как раз на"
+        },
+        {
+          "paragraph": 23,
+          "tokens": 46,
+          "coverage_percent": 0.0,
+          "excerpt": "Записывайте еду туда, где вы потом сможете её нормально найти. Завтрак, обед и ужин — это ваши запланированные приёмы пищи, даже если один из них случился в машине или выглядел как бутерброд. Всё, что вы сознательно доба"
+        },
+        {
+          "paragraph": 40,
+          "tokens": 45,
+          "coverage_percent": 0.0,
+          "excerpt": "1. Установите «Худеем вместе». 2. Найдите один продукт в упаковке и сверьте его с этикеткой. 3. Создайте один собственный продукт. 4. Добавьте обычный приём пищи и затем исправьте в нём одну запись. 5. Создайте пробное б"
+        },
+        {
+          "paragraph": 9,
+          "tokens": 44,
+          "coverage_percent": 0.0,
+          "excerpt": "- Приложение бесплатное и без рекламы. - В нём простой интерфейс, где не нужно проходить квест ради обычной записи. - Свои продукты и рецепты хранятся отдельно, а не тонут среди сотен чужих вариантов. - Рецепт можно собр"
+        },
+        {
+          "paragraph": 10,
+          "tokens": 43,
+          "coverage_percent": 0.0,
+          "excerpt": "Последний пункт не мелочь. Вы несколько недель взвешиваете еду, разбираетесь с рецептами, собираете наблюдения — а потом меняете телефон, удаляете приложение или теряете аккаунт. И вся эта работа исчезает. Отдельный файл"
+        }
+      ],
+      "top_matching_sources": [
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/06-food-diary-app--7058293/source.md",
+          "matching_sixgrams": 4
+        },
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/07-record-accurately--7058617/source.md",
+          "matching_sixgrams": 2
+        }
+      ]
+    },
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-01-counting/02-dishes-purchased-outside.md",
+      "tokens": 2975,
+      "coverage": {
+        "4": {
+          "matched_tokens": 127,
+          "coverage_percent": 4.3
+        },
+        "6": {
+          "matched_tokens": 50,
+          "coverage_percent": 1.7
+        },
+        "10": {
+          "matched_tokens": 44,
+          "coverage_percent": 1.5
+        }
+      },
+      "paragraphs_total": 105,
+      "paragraphs_without_exact_sixgram": 101,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 7,
+          "tokens": 68,
+          "coverage_percent": 0.0,
+          "excerpt": "| Что происходит | Как считать | | --- | --- | | Состав неизвестен, еда куплена вне дома | Найти несколько похожих вариантов, выбрать разумную оценку и пометить её | | На тарелке лежат отдельные продукты | Внести каждый "
+        },
+        {
+          "paragraph": 23,
+          "tokens": 59,
+          "coverage_percent": 0.0,
+          "excerpt": "**Заказ в сетевом фастфуде.** Сначала откройте официальную карточку именно вашей позиции и размера. Бургер, большая картошка и капучино — это три отдельные записи, а не абстрактный «комбо-обед». Если напиток можно собрат"
+        },
+        {
+          "paragraph": 41,
+          "tokens": 59,
+          "coverage_percent": 0.0,
+          "excerpt": "Если половина вашего рациона состоит из новых сложных блюд, которые каждый раз приходится разбирать заново, проблема уже не в приложении. Это хороший повод постепенно найти несколько повторяемых оснований: знакомый завтр"
+        },
+        {
+          "paragraph": 128,
+          "tokens": 59,
+          "coverage_percent": 0.0,
+          "excerpt": "- [ТР ТС 022/2011 «Пищевая продукция в части её маркировки». Приложение 4. Коэффициенты пересчёта энергетической ценности](https://docs.cntd.ru/document/902320347/titles/8P20LS) - [The Energy Content of Restaurant Foods "
+        },
+        {
+          "paragraph": 13,
+          "tokens": 57,
+          "coverage_percent": 0.0,
+          "excerpt": "В ресторанах, кафе, на фудкортах и в гипермаркетах часто можно узнать вес порции, состав и калорийность. При покупке выпечки и кондитерских изделий эта информация тоже обычно где-то есть — у сотрудника, в технологической"
+        },
+        {
+          "paragraph": 26,
+          "tokens": 57,
+          "coverage_percent": 0.0,
+          "excerpt": "| Что удалось узнать | Как занести | |---|---| | Есть официальные БЖУ и масса вашей порции | Записать официальную позицию и проверить размер | | Известны объём и состав напитка | Посчитать молоко, сироп, сахар и добавки "
+        },
+        {
+          "paragraph": 24,
+          "tokens": 54,
+          "coverage_percent": 0.0,
+          "excerpt": "**Латте в кофейне.** Спросите объём, вид и количество молока, число порций сиропа и есть ли сахар. Если сотрудник не знает калорийность, соберите оценку по компонентам: эспрессо почти ничего не решает, основной вклад даю"
+        },
+        {
+          "paragraph": 17,
+          "tokens": 52,
+          "coverage_percent": 0.0,
+          "excerpt": "1. Найдите несколько значений веса обычной порции. 2. Найдите несколько вариантов калорийности на 100 г. 3. Сравните описание с тем, что лежит перед вами. 4. Если продукт явно жирный, берите значение ближе к верхней гран"
+        }
+      ],
+      "top_matching_sources": [
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/06-food-diary-app--7058293/source.md",
+          "matching_sixgrams": 30
+        }
+      ]
+    },
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-01-counting/03-accuracy.md",
+      "tokens": 1297,
+      "coverage": {
+        "4": {
+          "matched_tokens": 1297,
+          "coverage_percent": 100.0
+        },
+        "6": {
+          "matched_tokens": 1297,
+          "coverage_percent": 100.0
+        },
+        "10": {
+          "matched_tokens": 1297,
+          "coverage_percent": 100.0
+        }
+      },
+      "paragraphs_total": 13,
+      "paragraphs_without_exact_sixgram": 0,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 16,
+          "tokens": 604,
+          "coverage_percent": 100.0,
+          "excerpt": "1. Естественно, с помощью весов, это необсуждаемое снаряжение. Погрешность 1 грамм — приемлемо, но лучше до десятых грамма, так как взвешивая масло, можно наскрести существенную погрешность. На глаз мерить даже не рассчи"
+        },
+        {
+          "paragraph": 3,
+          "tokens": 197,
+          "coverage_percent": 100.0,
+          "excerpt": "1. Это повышает вовлечённость и управляемость вашим рационом. Сразу видно объём еды и есть понимание, сколько в нём калорий. Именно так мозг и тренируется для перехода на интуитивное питание. А ещё удобно на ходу подстра"
+        },
+        {
+          "paragraph": 8,
+          "tokens": 98,
+          "coverage_percent": 100.0,
+          "excerpt": "Тогда ключевая фраза — \"среднее значение\". И, вообще-то, большего нам и не надо! Почему-то многим кажется, что если неточность может достигать 30%, то все продукты в этой категории обязательно будет либо на 30% более кал"
+        },
+        {
+          "paragraph": 14,
+          "tokens": 69,
+          "coverage_percent": 100.0,
+          "excerpt": "В этом и в следующем материале (про упрощение учета) будут перечислены приемы и методики для обоих этапов, но имейте в виду, что применять их на практике стоит только по порядку. Сначала считаем точно, потом упрощаем. Не"
+        },
+        {
+          "paragraph": 9,
+          "tokens": 52,
+          "coverage_percent": 100.0,
+          "excerpt": "Конечно, если вы собрались съесть за всю жизнь всего один, например, бургер, или тортик, то тогда значение конкретно его калорийности действительно может быть далеко от среднего, но как только вы съедите второй, погрешно"
+        },
+        {
+          "paragraph": 10,
+          "tokens": 47,
+          "coverage_percent": 100.0,
+          "excerpt": "Здесь как с подкидыванием монетки, мы понятия не имеем, что выпадет в следующий раз... орёл (спелое яблоко) или решка (менее спелое), тут отклонение в целых 50%, но я готов с кем угодно поспорить, подкинув её 1000 раз, п"
+        },
+        {
+          "paragraph": 7,
+          "tokens": 45,
+          "coverage_percent": 100.0,
+          "excerpt": "А насчет точности иногда можно услышать, что: \"Мы даже не знаем точного количества калорий в еде, потому что производители всегда врут, а на упаковках указано только среднее значение!\", из этого даже можно сделать вывод,"
+        },
+        {
+          "paragraph": 12,
+          "tokens": 42,
+          "coverage_percent": 100.0,
+          "excerpt": "**Поэтому сначала** мы учимся считать правильно-правильно и точно-точно только лишь для того, чтобы лучше познакомиться с едой, с принципом учета калорий и отпечатать у себя в голове объективное восприятие продуктов. А н"
+        }
+      ],
+      "top_matching_sources": [
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/07-record-accurately--7058617/source.md",
+          "matching_sixgrams": 1292
+        },
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/06-food-diary-app--7058293/source.md",
+          "matching_sixgrams": 244
+        }
+      ]
+    },
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-01-counting/04-simplify-tracking.md",
+      "tokens": 2476,
+      "coverage": {
+        "4": {
+          "matched_tokens": 2476,
+          "coverage_percent": 100.0
+        },
+        "6": {
+          "matched_tokens": 2476,
+          "coverage_percent": 100.0
+        },
+        "10": {
+          "matched_tokens": 2476,
+          "coverage_percent": 100.0
+        }
+      },
+      "paragraphs_total": 48,
+      "paragraphs_without_exact_sixgram": 0,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 12,
+          "tokens": 325,
+          "coverage_percent": 100.0,
+          "excerpt": "1. Знать, сколько грамм каждой крупы или хлопьев в сухом виде вам нужно на одну порцию (примерно). 2. Знать вес каждой емкости или до какой отметки её нужно заполнить, чтобы в граммах все это ровнялось одной порции. 3. П"
+        },
+        {
+          "paragraph": 9,
+          "tokens": 196,
+          "coverage_percent": 100.0,
+          "excerpt": "1. Важно, что разные крупы имеют разное отношение объема к весу, а некоторые — одинаковое, потратьте время, взвесьте их все, запишите и повесьте на холодильник и учитывайте в дальнейших измерениях. 2. Растительное масло "
+        },
+        {
+          "paragraph": 3,
+          "tokens": 96,
+          "coverage_percent": 100.0,
+          "excerpt": "Вот мой вариант их использования с пресловутой овсянкой. Я подобрал стакан, который, если набрать доверху будет ровно 80г хлопьев, мешаю туда пополам рисовые и овсяные. Молоко беру 1 к 1 по объёму, то есть меряю тем же с"
+        },
+        {
+          "paragraph": 24,
+          "tokens": 87,
+          "coverage_percent": 100.0,
+          "excerpt": "Один раз составили такой рецепт, подшаманив его за пару попыток, записали все пропорции и больше НИКОГДА не считаем его калории. Я советую рассчитывать рецепты для таких блюд либо отталкиваясь от веса самого мелкого ингр"
+        },
+        {
+          "paragraph": 6,
+          "tokens": 80,
+          "coverage_percent": 100.0,
+          "excerpt": "- Покупные наборы мерных ложек, бывают пластиковые, бывают из нержавейки, размеры представлены от чайной ложки, до объема в 100мл. - Один большой мерный стакан, желательно в стекле (прозрачный) с отметками в миллилитрах."
+        },
+        {
+          "paragraph": 29,
+          "tokens": 78,
+          "coverage_percent": 100.0,
+          "excerpt": "- Супы — вообще просто созданы для этой идеи, особенно крем-супы. Подойдут совсем любые, но желательно те, в которых равномерное распределение начинки, а не одна баранья нога на ведро. Для супов можно взять целевую калор"
+        },
+        {
+          "paragraph": 21,
+          "tokens": 77,
+          "coverage_percent": 100.0,
+          "excerpt": "Вместо овсянки могут быть хлопья, мюсли, а вместо молока йогурт или кефир, общая модель от этого не меняется. Теперь это блюдо можно легко готовить хоть на всю семью и раскладывать по тарелкам без долгих подсчетов, остае"
+        },
+        {
+          "paragraph": 50,
+          "tokens": 69,
+          "coverage_percent": 100.0,
+          "excerpt": "Уменьшив или увеличив вес чего угодно в этом наборе в целых два раза (нарубили совсем на отвали), то общая калорийность на 100г будет меняться в пределах от 21.3ккал до 24.4 ккал. Если взять среднее значение, то на тарел"
+        }
+      ],
+      "top_matching_sources": [
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/08-simplify-calorie-tracking--7058621/source.md",
+          "matching_sixgrams": 2471
+        }
+      ]
+    },
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-01-counting/05-personal-recipe-catalog.md",
+      "tokens": 624,
+      "coverage": {
+        "4": {
+          "matched_tokens": 8,
+          "coverage_percent": 1.3
+        },
+        "6": {
+          "matched_tokens": 0,
+          "coverage_percent": 0.0
+        },
+        "10": {
+          "matched_tokens": 0,
+          "coverage_percent": 0.0
+        }
+      },
+      "paragraphs_total": 26,
+      "paragraphs_without_exact_sixgram": 26,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 11,
+          "tokens": 75,
+          "coverage_percent": 0.0,
+          "excerpt": "1. Нажмите «Новое блюдо» и дайте ему название, по которому сами найдёте его через месяц. 2. По очереди найдите ингредиенты и укажите вес каждого. 3. Если продукта нет, нажмите «Добавить свой продукт» и перенесите БЖУ и к"
+        },
+        {
+          "paragraph": 19,
+          "tokens": 48,
+          "coverage_percent": 0.0,
+          "excerpt": "Например, вы уже знаете, что вечером будет ваш гуляш. Поставили обычную порцию в план — и заранее видите, сколько пространства остаётся для завтрака, обеда и чего-нибудь вкусного. Это не обязательство прожить день по Exc"
+        },
+        {
+          "paragraph": 2,
+          "tokens": 45,
+          "coverage_percent": 0.0,
+          "excerpt": "Это уже не абстрактная идея. В личном кабинете есть отдельный калькулятор рецептов: он ищет продукты в общем каталоге, позволяет добавить свой продукт, считает БЖУ и калории, учитывает выход готового блюда, показывает зн"
+        },
+        {
+          "paragraph": 5,
+          "tokens": 37,
+          "coverage_percent": 0.0,
+          "excerpt": "Вы один раз рассчитываете домашний гуляш, суп, овсянку или салат, сохраняете его под понятным названием, а в следующий раз открываете готовую карточку. Если рецепт изменился — редактируете его, а не делаете вид, что нова"
+        },
+        {
+          "paragraph": 20,
+          "tokens": 37,
+          "coverage_percent": 0.0,
+          "excerpt": "Можно сравнить два варианта одного рецепта: с привычным количеством масла и с меньшим, с другим гарниром, с дополнительными овощами. Но не превращайте калькулятор в аппарат по производству самой низкокалорийной еды. Вкус"
+        },
+        {
+          "paragraph": 23,
+          "tokens": 35,
+          "coverage_percent": 0.0,
+          "excerpt": "- другой основной продукт или его жирность; - заметно другое количество масла, соуса, сахара, орехов; - другой итоговый выход; - изменилась технология так, что часть ингредиентов осталась в сковороде, маринаде или жидкос"
+        },
+        {
+          "paragraph": 15,
+          "tokens": 33,
+          "coverage_percent": 0.0,
+          "excerpt": "Сегодня вы положили себе 350 г: это 280 ккал. Завтра 500 г: это 400 ккал. Не нужно делить кастрюлю на идеальные равные контейнеры и следить, чтобы никто не украл у вас три ложки."
+        },
+        {
+          "paragraph": 29,
+          "tokens": 33,
+          "coverage_percent": 0.0,
+          "excerpt": "После этого первый этап закончен: вы умеете записывать еду точно, считать сложные и покупные блюда, пользоваться разумными упрощениями и сохранять повторяемые рецепты. Теперь можно переходить от потребления к расходу — р"
+        }
+      ],
+      "top_matching_sources": []
+    },
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-02-metabolism-and-deficit/part-a-expense/01-energy-balance-calculator.md",
+      "tokens": 2790,
+      "coverage": {
+        "4": {
+          "matched_tokens": 76,
+          "coverage_percent": 2.7
+        },
+        "6": {
+          "matched_tokens": 20,
+          "coverage_percent": 0.7
+        },
+        "10": {
+          "matched_tokens": 0,
+          "coverage_percent": 0.0
+        }
+      },
+      "paragraphs_total": 111,
+      "paragraphs_without_exact_sixgram": 109,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 118,
+          "tokens": 77,
+          "coverage_percent": 0.0,
+          "excerpt": "| Поле | Первый вариант | Второй вариант | Почему два значения | | --- | --- | --- | --- | | Вес | Среднее сопоставимых взвешиваний | То же | Данные достаточно устойчивы | | Процент жира | Нижняя разумная оценка | Соседн"
+        },
+        {
+          "paragraph": 155,
+          "tokens": 57,
+          "coverage_percent": 0.0,
+          "excerpt": "На третьем этапе мы соберём сопоставимые взвешивания, среднее питание и достаточно длинный период. Тогда калькулятор встретится с реальностью. Изменение веса в ответ на энергетический дисбаланс [происходит во времени и н"
+        },
+        {
+          "paragraph": 138,
+          "tokens": 54,
+          "coverage_percent": 0.0,
+          "excerpt": "- ваш реальный расход в конкретный день; - насколько честно и полно записана еда; - что именно часы называют «калориями тренировки»; - сколько тренировочных шагов осталось в общей сумме; - насколько типичной была выбранн"
+        },
+        {
+          "paragraph": 2,
+          "tokens": 53,
+          "coverage_percent": 0.0,
+          "excerpt": "С расходом всё веселее. Нельзя утром встать на прибор и узнать: «Сегодня вы потратите 2147 ккал, хорошего дня». Организм не выдаёт чек. Поэтому любой бытовой калькулятор расхода — это не измерительный прибор, а **модель*"
+        },
+        {
+          "paragraph": 145,
+          "tokens": 51,
+          "coverage_percent": 0.0,
+          "excerpt": "| Часть модели | Что ввёл | Насколько уверен | Что надо проверить | | --- | ---: | --- | --- | | Вес | | Высоко / средне / низко | Нужны ли ещё сопоставимые взвешивания | | Процент жира | | | Какими двумя значениями огра"
+        },
+        {
+          "paragraph": 127,
+          "tokens": 49,
+          "coverage_percent": 0.0,
+          "excerpt": "1. Период, по которому считаете средние значения. 2. Все утренние сопоставимые взвешивания этого периода. 3. Среднее потребление калорий и белка. 4. Средние шаги и пометку, входят ли туда тренировки. 5. Тип, длительность"
+        },
+        {
+          "paragraph": 40,
+          "tokens": 48,
+          "coverage_percent": 0.0,
+          "excerpt": "Если у вас есть недавнее измерение, проведённое одним и тем же методом в сопоставимых условиях, можно использовать его как ориентир. Но бытовой биоимпеданс, весы с электродами и визуальная оценка не дают лабораторной точ"
+        },
+        {
+          "paragraph": 96,
+          "tokens": 45,
+          "coverage_percent": 0.0,
+          "excerpt": "Срок нужен калькулятору для прогноза изменения веса при выбранном дефиците. При нулевом дефиците на расчёт энергобаланса он не влияет. Действующий калькулятор принимает `0` в поле дефицита и показывает энергобаланс; скор"
+        }
+      ],
+      "top_matching_sources": [
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/10-energy-balance--7058493/source.md",
+          "matching_sixgrams": 5
+        }
+      ]
+    },
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-02-metabolism-and-deficit/part-a-expense/02-training-accounting.md",
+      "tokens": 2018,
+      "coverage": {
+        "4": {
+          "matched_tokens": 2018,
+          "coverage_percent": 100.0
+        },
+        "6": {
+          "matched_tokens": 2018,
+          "coverage_percent": 100.0
+        },
+        "10": {
+          "matched_tokens": 2018,
+          "coverage_percent": 100.0
+        }
+      },
+      "paragraphs_total": 77,
+      "paragraphs_without_exact_sixgram": 0,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 7,
+          "tokens": 80,
+          "coverage_percent": 100.0,
+          "excerpt": "**Пульс на тренировке. **Сделайте общую разминку, затем запустите тренировку на часах, тренируйтесь без нажатия паузы, затем если в конце тренировки у вас какая-то растяжка или что-то слишком лёгкое, остановите тренировк"
+        },
+        {
+          "paragraph": 5,
+          "tokens": 68,
+          "coverage_percent": 100.0,
+          "excerpt": "Мерить его придется много: для тестирований, пульс в покое и пульс для расчета тренировок. Если у вас пока нету пульсометра, то для тестирования степ-тест и измерения пульса в покое, можно воспользоваться методом пальца."
+        },
+        {
+          "paragraph": 6,
+          "tokens": 67,
+          "coverage_percent": 100.0,
+          "excerpt": "**Пульс в покое. **На этот показатель влияет не только общая тренированность, но и усталость со стрессом. Поэтому мерить стоит утром, сразу после того, как проснётесь, не вставая с кровати, желательно чтобы накануне не б"
+        },
+        {
+          "paragraph": 9,
+          "tokens": 62,
+          "coverage_percent": 100.0,
+          "excerpt": "Адекватная точность расчета в моем калькуляторе достигается при среднем пульсе от 105-110 и до 170 ударов в минуту. Если ваш пульс ниже, то нужно уже смотреть внимательнее, так, без консультации я не могу подсказать точн"
+        },
+        {
+          "paragraph": 1,
+          "tokens": 61,
+          "coverage_percent": 100.0,
+          "excerpt": "Для тех, кто раньше не особо вникал в тренировки информация в этом посте может показаться излишней для простого человека, желающего скинуть вес, но в этом-то и проблема. Мы пытаемся что-то изменить, не понимая как это ра"
+        },
+        {
+          "paragraph": 36,
+          "tokens": 57,
+          "coverage_percent": 100.0,
+          "excerpt": "От себя добавлю лишь только то, что это требования грубо говоря, чтобы вы не померли раньше времени от мышечной атрофии или других сопутствующих проблем. А для похудения у нас будут свои критерии того сколько надо и скол"
+        },
+        {
+          "paragraph": 22,
+          "tokens": 56,
+          "coverage_percent": 100.0,
+          "excerpt": "Когда работаю с человеком индивидуально, я всегда беру из приложения только время тренировки и пульс. А калории считаю по своему калькулятору. Иногда значения совпадают, иногда отличаются совсем немного, а иногда цифры с"
+        },
+        {
+          "paragraph": 44,
+          "tokens": 54,
+          "coverage_percent": 100.0,
+          "excerpt": "Короче, неплохо было бы сначала узнать свой МПК, а потом начать что-то делать для его улучшения. Причем отлично подойдут как силовые тренировки, так и аэробные и даже простые домашние, главное, чтобы были тренировки. А п"
+        }
+      ],
+      "top_matching_sources": [
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/13-workout-supplement--7058541/source.md",
+          "matching_sixgrams": 2013
+        },
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/03-track-workouts--7058285/source.md",
+          "matching_sixgrams": 18
+        },
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/14-activity-bonus--7058553/source.md",
+          "matching_sixgrams": 14
+        }
+      ]
+    },
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-02-metabolism-and-deficit/part-a-expense/03-energy-turnover-exercise-snacks.md",
+      "tokens": 1636,
+      "coverage": {
+        "4": {
+          "matched_tokens": 1636,
+          "coverage_percent": 100.0
+        },
+        "6": {
+          "matched_tokens": 1636,
+          "coverage_percent": 100.0
+        },
+        "10": {
+          "matched_tokens": 1636,
+          "coverage_percent": 100.0
+        }
+      },
+      "paragraphs_total": 43,
+      "paragraphs_without_exact_sixgram": 0,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 9,
+          "tokens": 158,
+          "coverage_percent": 100.0,
+          "excerpt": "1. Уступать место в транспорте не только хороший тон, но и способ сжечь пару калорий, а если вы проводите в транспорте по несколько часов в день, то даже не парочку. 2. Если у вас машина, то вы тоже можете убить двух зай"
+        },
+        {
+          "paragraph": 23,
+          "tokens": 83,
+          "coverage_percent": 100.0,
+          "excerpt": "1. Снимается возражение, которое работает при отказе от тренажерного зала \"у меня нет времени\", оно трансформируется в \"я просто не хочу это делать\", с ним уже жить сложнее, придётся с собой договариваться. 2. Эффективно"
+        },
+        {
+          "paragraph": 46,
+          "tokens": 74,
+          "coverage_percent": 100.0,
+          "excerpt": "Сейчас очень популярны высокоинтенсивные тренировки на 10-15 минут, которые всю душу выжимают, но не дают за это время гигантского расхода калорий. Такие игрища трудно будет повторять чаще чем 3 раз в неделю, зато прогул"
+        },
+        {
+          "paragraph": 7,
+          "tokens": 63,
+          "coverage_percent": 100.0,
+          "excerpt": "Теперь, когда у вас на руках есть дневник активности *(я ****очень-очень**** на это надеюсь) *посмотрите на него внимательно и подумайте, что и куда можно добавить. Если удастся наскрести хотя бы один час на стоячую акти"
+        },
+        {
+          "paragraph": 12,
+          "tokens": 55,
+          "coverage_percent": 100.0,
+          "excerpt": "Увеличивая активность и вместе с ней потребление калорий мы ничем не ограничены, а создавая дефицит только за счёт уменьшения рациона, мы быстро упрёмся в стену, после которой организм начнёт всеми способами саботировать"
+        },
+        {
+          "paragraph": 3,
+          "tokens": 52,
+          "coverage_percent": 100.0,
+          "excerpt": "Вместо того, чтобы тратить время на раздумья, от какой бы еды отказаться, чтобы не набрать калорий, иногда выгоднее потратить это время на расход калорий и первый вопрос отпадёт сам собой. А так же увеличив оборот калори"
+        },
+        {
+          "paragraph": 11,
+          "tokens": 51,
+          "coverage_percent": 100.0,
+          "excerpt": "Благодаря системе расчетов повседневной активности в калькуляторе, вы можете заранее прикинуть, сколько калорий можно отыграть на таких мелочах, насколько это будет комфортно встроить в вашу жизнь и стоит ли игра свеч. О"
+        },
+        {
+          "paragraph": 19,
+          "tokens": 48,
+          "coverage_percent": 100.0,
+          "excerpt": "Да, при работе в офисе такое сложновато провернуть, но было бы желание. Если вы начнёте отжиматься прямо у своего рабочего места, это действительно будет странно, а вот походить по этажам 5 минут в час — вполне социально"
+        }
+      ],
+      "top_matching_sources": [
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/14-activity-bonus--7058553/source.md",
+          "matching_sixgrams": 1631
+        },
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/13-workout-supplement--7058541/source.md",
+          "matching_sixgrams": 14
+        },
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/10-energy-balance--7058493/source.md",
+          "matching_sixgrams": 2
+        }
+      ]
+    },
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-02-metabolism-and-deficit/part-b-calibration/01-report-kbju-fat.md",
+      "tokens": 2944,
+      "coverage": {
+        "4": {
+          "matched_tokens": 139,
+          "coverage_percent": 4.7
+        },
+        "6": {
+          "matched_tokens": 94,
+          "coverage_percent": 3.2
+        },
+        "10": {
+          "matched_tokens": 81,
+          "coverage_percent": 2.8
+        }
+      },
+      "paragraphs_total": 105,
+      "paragraphs_without_exact_sixgram": 101,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 129,
+          "tokens": 83,
+          "coverage_percent": 0.0,
+          "excerpt": "| Что проверяю | Где смотрю | Что заметил | Что пока не знаю | | --- | --- | --- | --- | | Почему голоден после завтрака | Калории, белок, объём | Завтрак небольшой по объёму, белок приходит в основном из сыра | Поможет "
+        },
+        {
+          "paragraph": 26,
+          "tokens": 67,
+          "coverage_percent": 0.0,
+          "excerpt": "- Хочу понять, почему два-три раза за неделю голодал уже через час после завтрака. - Хочу найти, откуда в нескольких днях взялся неожиданный перебор калорий. - Хочу проверить, есть ли у меня белок не только вечером, но и"
+        },
+        {
+          "paragraph": 41,
+          "tokens": 63,
+          "coverage_percent": 0.0,
+          "excerpt": "Продукт с высокой калорийностью на 100 граммов может спокойно помещаться в рационе небольшой порцией и давать ровно столько удовольствия, сколько вам от него нужно. А продукт с умеренной калорийностью может стать заметны"
+        },
+        {
+          "paragraph": 8,
+          "tokens": 59,
+          "coverage_percent": 0.0,
+          "excerpt": "Откройте в приложении отчёт за последнее выполненное окно учёта и выгрузите его целиком. Нужны не скриншоты двух «хороших» дней, а один и тот же период для всех показателей: калорий, БЖУ, веса, шагов и ваших пометок. Есл"
+        },
+        {
+          "paragraph": 18,
+          "tokens": 54,
+          "coverage_percent": 0.0,
+          "excerpt": "Если вы открываете диаграмму и видите «жиры выше цели», не надо сразу начинать выковыривать желток из яйца и покупать обезжиренный творог. Сначала надо понять, откуда эти жиры пришли. Возможно, большая часть набралась из"
+        },
+        {
+          "paragraph": 5,
+          "tokens": 52,
+          "coverage_percent": 0.0,
+          "excerpt": "- Почему после завтрака через час снова хочется есть? - Откуда в салате, каше или супе набралась калорийность? - Есть ли в основных приёмах пищи нормальная белковая опора? - Не получается ли так, что небольшой по объёму "
+        },
+        {
+          "paragraph": 134,
+          "tokens": 52,
+          "coverage_percent": 0.0,
+          "excerpt": "- [Reductions in portion size and energy density of foods are additive and lead to sustained decreases in energy intake](https://pubmed.ncbi.nlm.nih.gov/16400043/) - [The Effect of Energy Density and Eating Rate on Ad Li"
+        },
+        {
+          "paragraph": 50,
+          "tokens": 49,
+          "coverage_percent": 0.0,
+          "excerpt": "Например, десять граммов хорошего шоколада могут дать больше намеренного удовольствия, чем большая порция случайного печенья. А ложка масла, которую вы даже не заметили в салате, может не дать ни дополнительного насыщени"
+        }
+      ],
+      "top_matching_sources": [
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/02-bju-again--7058309/source.md",
+          "matching_sixgrams": 64
+        }
+      ]
+    },
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-02-metabolism-and-deficit/part-b-calibration/02-deficit-pace-deadlines.md",
+      "tokens": 2082,
+      "coverage": {
+        "4": {
+          "matched_tokens": 2082,
+          "coverage_percent": 100.0
+        },
+        "6": {
+          "matched_tokens": 2082,
+          "coverage_percent": 100.0
+        },
+        "10": {
+          "matched_tokens": 2082,
+          "coverage_percent": 100.0
+        }
+      },
+      "paragraphs_total": 54,
+      "paragraphs_without_exact_sixgram": 0,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 39,
+          "tokens": 301,
+          "coverage_percent": 100.0,
+          "excerpt": "- Сначала вы смотрите, сколько вы в принципе ели раньше. Если у вас уже был учёт 1–2 недели — отлично. Берёте среднее потребление за этот период и сопоставляете его с рассчитанным энергобалансом: понимаете, был ли это пр"
+        },
+        {
+          "paragraph": 33,
+          "tokens": 82,
+          "coverage_percent": 100.0,
+          "excerpt": "Есть нижние границы потребления калорий, за которые я стараюсь не заходить. Для женщин это 1200 ккал, для мужчин — 1500 ккал, и то это крайние случаи. В большинстве историй я стараюсь не опускаться ниже 1350 ккал в средн"
+        },
+        {
+          "paragraph": 35,
+          "tokens": 66,
+          "coverage_percent": 100.0,
+          "excerpt": "С учётом этих ограничений я обычно ориентируюсь на средний дефицит порядка 400–500 ккал в день. Для большинства людей до 100кг после наведения порядка в питании это комфортная величина: не валит с ног, не вызывает постоя"
+        },
+        {
+          "paragraph": 36,
+          "tokens": 64,
+          "coverage_percent": 100.0,
+          "excerpt": "Я также обязательно учитываю качество питания и субъективный комфорт с тем дефицитом, который уже был в последние недели. Иногда после всех расчётов приходится сказать честно: с текущим качеством питания человек пока не "
+        },
+        {
+          "paragraph": 28,
+          "tokens": 57,
+          "coverage_percent": 100.0,
+          "excerpt": "Пока это не будет вашим идеальным режимом похудения, а лишь хорошей отправной точкой. Нужно будет совместить ваш комфорт от такого питания, ваш вес и ваши записи по калориям. Да, звучит не сильно быстро, но только такой "
+        },
+        {
+          "paragraph": 63,
+          "tokens": 57,
+          "coverage_percent": 100.0,
+          "excerpt": "Я в этом материале описал реально всё, чем руководствуюсь на консультациях. Вы можете попробовать сделать всё это самостоятельно, а можете обратиться ко мне за разбором дневника и полноценной консультацией по всем вашим "
+        },
+        {
+          "paragraph": 13,
+          "tokens": 51,
+          "coverage_percent": 100.0,
+          "excerpt": "Примечание: к сожалению, этому правилу невозможно следовать при заниженном рационе \"с запасом\", потому что если в меню на 1200-1300 ккал позволять себе 20-40% пустых калорий, то это всё равно будет как комариный укус в п"
+        },
+        {
+          "paragraph": 11,
+          "tokens": 50,
+          "coverage_percent": 100.0,
+          "excerpt": "В итоге получается ситуация тупая до слёз. Мы мучаемся, при этом не худеем, так ещё и удовольствия от любимой пищи не получаем, поточу, что её употребление несёт за собой чувство вины. Такими условиями нужно пытать особо"
+        }
+      ],
+      "top_matching_sources": [
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/11-set-calorie-deficit--7058497/source.md",
+          "matching_sixgrams": 2077
+        }
+      ]
+    },
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-02-metabolism-and-deficit/part-b-calibration/03-phases-periodization.md",
+      "tokens": 883,
+      "coverage": {
+        "4": {
+          "matched_tokens": 8,
+          "coverage_percent": 0.9
+        },
+        "6": {
+          "matched_tokens": 0,
+          "coverage_percent": 0.0
+        },
+        "10": {
+          "matched_tokens": 0,
+          "coverage_percent": 0.0
+        }
+      },
+      "paragraphs_total": 31,
+      "paragraphs_without_exact_sixgram": 31,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 17,
+          "tokens": 47,
+          "coverage_percent": 0.0,
+          "excerpt": "Допустим, расчётный расход — около 2000 ккал, назначенное потребление — 1600, обычная база — 8000 шагов. Через четыре дня вес встал. Никакой новой фазы не произошло. Сначала заканчиваем окно наблюдения. Если же несколько"
+        },
+        {
+          "paragraph": 5,
+          "tokens": 46,
+          "coverage_percent": 0.0,
+          "excerpt": "- На подготовке вы не худеете любой ценой, а получаете надёжную исходную модель. - На снижении веса удерживаете назначенный дефицит и проверяете его по сопоставимым окнам. - На поддержании сохраняете результат и учитесь "
+        },
+        {
+          "paragraph": 1,
+          "tokens": 43,
+          "coverage_percent": 0.0,
+          "excerpt": "Вы уже назначили себе дефицит, срок и рабочий темп на третьем этапе. Здесь мы не будем считать их заново. Теперь надо встроить расчёт в жизнь: понять, в какой фазе вы находитесь, когда продолжать снижение, когда перейти "
+        },
+        {
+          "paragraph": 11,
+          "tokens": 43,
+          "coverage_percent": 0.0,
+          "excerpt": "Пример. В понедельник вы решили, что едите «примерно на 1600», но масло, кофе и еда вне дома не посчитаны, шаги гуляют от 3000 до 12 000, а вес записан два раза. Это не плохой результат. Это просто ещё не основание назна"
+        },
+        {
+          "paragraph": 36,
+          "tokens": 43,
+          "coverage_percent": 0.0,
+          "excerpt": "> Сейчас я снижаю вес. На ближайшие 14 дней сохраняю среднее 1565–1650 ккал, около 8000 шагов и прежний недельный объём тренировок. Вес сравниваю по средним значениям двух недель. Если голод становится неуправляемым или "
+        },
+        {
+          "paragraph": 26,
+          "tokens": 41,
+          "coverage_percent": 0.0,
+          "excerpt": "Пример. Женщина из нашего расчёта начинала с баланса около 2015 ккал и потребления 1565. После снижения веса нельзя автоматически объявить 2015 новой пожизненной нормой. Она вводит текущий вес, сохраняет фактические шаги"
+        },
+        {
+          "paragraph": 19,
+          "tokens": 36,
+          "coverage_percent": 0.0,
+          "excerpt": "Дефицит работает на среднем отрезке, а не обязан идеально совпадать каждый день. День на 1750 и день на 1500 могут входить в один и тот же рабочий режим, если недельное среднее, голод и активность остаются управляемыми."
+        },
+        {
+          "paragraph": 40,
+          "tokens": 35,
+          "coverage_percent": 0.0,
+          "excerpt": "И они не требуют постоянно жить по расписанию курса. Периодизация здесь нужна ровно для одного: чтобы вы понимали текущую задачу и не применяли правила дефицита там, где уже пора поддерживать, восстанавливаться или занов"
+        }
+      ],
+      "top_matching_sources": []
+    },
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-02-metabolism-and-deficit/part-b-calibration/04-corrections-steps-plateau.md",
+      "tokens": 3157,
+      "coverage": {
+        "4": {
+          "matched_tokens": 48,
+          "coverage_percent": 1.5
+        },
+        "6": {
+          "matched_tokens": 31,
+          "coverage_percent": 1.0
+        },
+        "10": {
+          "matched_tokens": 10,
+          "coverage_percent": 0.3
+        }
+      },
+      "paragraphs_total": 146,
+      "paragraphs_without_exact_sixgram": 144,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 165,
+          "tokens": 118,
+          "coverage_percent": 0.0,
+          "excerpt": "| Гипотеза | Что проверить | Какое действие не нужно делать заранее | | --- | --- | --- | | Дневник систематически занижен | 2–3 дня фото, масло, повторяющиеся плотные продукты, рестораны | Не урезать плановую калорийнос"
+        },
+        {
+          "paragraph": 48,
+          "tokens": 73,
+          "coverage_percent": 0.0,
+          "excerpt": "- около **4000 шагов в день и ниже** — очень низкая бытовая база; при такой базе уменьшать движение ещё сильнее уже почти некуда, а любое сокращение еды приходится делать на маленьком энергетическом обороте; - **7500–850"
+        },
+        {
+          "paragraph": 39,
+          "tokens": 56,
+          "coverage_percent": 0.0,
+          "excerpt": "Её величина сильно различается между людьми и зависит в том числе от того, измеряли человека [прямо во время активного снижения веса](https://pubmed.ncbi.nlm.nih.gov/29733003/) или уже после стабилизации. В длительном на"
+        },
+        {
+          "paragraph": 49,
+          "tokens": 54,
+          "coverage_percent": 0.0,
+          "excerpt": "Если вы начинали с 3500–4000 шагов, я не предлагаю завтра поставить цель 14 тысяч. Сначала добавьте повторяемый объём — например, одну прогулку или несколько коротких выходов — и проверьте, что можете поддерживать его бе"
+        },
+        {
+          "paragraph": 134,
+          "tokens": 52,
+          "coverage_percent": 0.0,
+          "excerpt": "На консультации я смотрю не только на итоговую калорийность. Я сопоставляю фотографии и дневник, график веса, шаги, тренировки, качество рациона, голод, сон и то, насколько план вообще помещается в жизнь. А потом выбираю"
+        },
+        {
+          "paragraph": 183,
+          "tokens": 51,
+          "coverage_percent": 0.0,
+          "excerpt": "Курс не пытается по списку симптомов угадать диагноз или решить, насколько срочно вам нужна помощь. Если состояние кажется острым или опасным — обращайтесь за неотложной помощью. Если проблема не выглядит экстренной, но "
+        },
+        {
+          "paragraph": 106,
+          "tokens": 50,
+          "coverage_percent": 0.0,
+          "excerpt": "- достаточно ли нормальной еды; - есть ли белковые продукты; - хватает ли овощей, фруктов, круп и других источников клетчатки; - не исчез ли объём еды; - не слишком ли большая часть калорий уходит в продукты, которые съе"
+        },
+        {
+          "paragraph": 132,
+          "tokens": 50,
+          "coverage_percent": 0.0,
+          "excerpt": "- несколько объяснений одинаково правдоподобны; - дневник, вес и активность противоречат друг другу; - самостоятельные изменения ухудшают голод, силы, сон или пищевое поведение; - есть обстоятельства здоровья, которые не"
+        }
+      ],
+      "top_matching_sources": [
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/11-set-calorie-deficit--7058497/source.md",
+          "matching_sixgrams": 11
+        }
+      ]
+    },
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-03-stop-tracking/01-hunger-windows-blocks.md",
+      "tokens": 4363,
+      "coverage": {
+        "4": {
+          "matched_tokens": 4363,
+          "coverage_percent": 100.0
+        },
+        "6": {
+          "matched_tokens": 4363,
+          "coverage_percent": 100.0
+        },
+        "10": {
+          "matched_tokens": 4363,
+          "coverage_percent": 100.0
+        }
+      },
+      "paragraphs_total": 99,
+      "paragraphs_without_exact_sixgram": 0,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 118,
+          "tokens": 265,
+          "coverage_percent": 100.0,
+          "excerpt": "1. Herman, C. P., & Polivy, J. — A Boundary Model for the Regulation of Eating (1984). Работа описывает модель «когнитивного ограничения» питания и феномен what-the-hell effect: когда человек постоянно старается есть чут"
+        },
+        {
+          "paragraph": 97,
+          "tokens": 227,
+          "coverage_percent": 100.0,
+          "excerpt": "- Пейте воду. Самое простое правило: бутылка с водой должна стоять перед глазами на расстоянии вытянутой руки. Остальное — дело техники. Иногда чувство голода усиливается просто из-за того, что вы мало пьёте. Потребление"
+        },
+        {
+          "paragraph": 101,
+          "tokens": 191,
+          "coverage_percent": 100.0,
+          "excerpt": "- Быстрый ужин. С момента, как вы зашли на кухню после окна голода, до момента, как вы сели за стол, должно пройти не больше 10–15 минут. Не стоит долго стоять на кухне голодным, готовить сложные блюда и давать себе лишн"
+        },
+        {
+          "paragraph": 93,
+          "tokens": 183,
+          "coverage_percent": 100.0,
+          "excerpt": "- Нормальная порция гарнира. Хотя бы один раз до окна голода должна быть нормальная порция здорового гарнира. Это может быть завтрак, обед или оба приёма пищи. Гарнир даёт объём и энергию, поэтому помогает дольше сохраня"
+        },
+        {
+          "paragraph": 13,
+          "tokens": 102,
+          "coverage_percent": 100.0,
+          "excerpt": "- **Ваша задача**, как человека желающего изменить свой образ жизни навсегда — это не тупо выполнять всё, что я скажу, не отсвечивая, а использовать мои советы, мысли, комментарии к вашему дневнику и контекст который я д"
+        },
+        {
+          "paragraph": 114,
+          "tokens": 68,
+          "coverage_percent": 100.0,
+          "excerpt": "3️⃣ Теперь в вашем дневнике появится ещё один элемент наблюдения. Кроме фотографий еды, даты, веса и других привычных записей, пишите ещё и о том, как у вас проходит окно голода. Какое чувство голода было к его концу? На"
+        },
+        {
+          "paragraph": 72,
+          "tokens": 67,
+          "coverage_percent": 100.0,
+          "excerpt": "- Сфокусировать и голод и свою силу воли в одной точке дня, а не размазывать \"удовольствие\" от голода ровным слоем. - Изолировать приёмы пищи, чтобы в контролируемых условиях понять, как каждый из них отдельно влияет на "
+        },
+        {
+          "paragraph": 61,
+          "tokens": 63,
+          "coverage_percent": 100.0,
+          "excerpt": "Любой, кто практикует интервальное голодание отлично знает, понимает и планирует, что и как он будет есть в свое окно размером в 8 часов, потому что думает о них все остальные 16 часов, а если мало будет думать, то за эт"
+        }
+      ],
+      "top_matching_sources": [
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/17-hunger-snacking-grazing--7058585/source.md",
+          "matching_sixgrams": 4358
+        },
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/18-language-of-actions--7058589/source.md",
+          "matching_sixgrams": 1
+        }
+      ]
+    },
+    {
+      "path": "work/calorie-course-rebuild/rebuild-v10-three-stage-audit-2026-09-24/module-03-stop-tracking/02-catalog-and-stop-tracking.md",
+      "tokens": 2352,
+      "coverage": {
+        "4": {
+          "matched_tokens": 19,
+          "coverage_percent": 0.8
+        },
+        "6": {
+          "matched_tokens": 6,
+          "coverage_percent": 0.3
+        },
+        "10": {
+          "matched_tokens": 0,
+          "coverage_percent": 0.0
+        }
+      },
+      "paragraphs_total": 116,
+      "paragraphs_without_exact_sixgram": 115,
+      "lowest_coverage_paragraphs": [
+        {
+          "paragraph": 89,
+          "tokens": 98,
+          "coverage_percent": 0.0,
+          "excerpt": "| Язык намерений | Язык действий | | --- | --- | | Есть меньше | Собирать ужин в одну тарелку и не есть из общей упаковки | | Есть больше белка | Добавлять один из трёх заранее выбранных белковых продуктов в обед | | Не "
+        },
+        {
+          "paragraph": 175,
+          "tokens": 61,
+          "coverage_percent": 0.0,
+          "excerpt": "- [Establishing Healthy Eating 'Habits': A Pilot Randomised Controlled Trial of a Habit-Based Dietary Intervention following Oral Rehabilitation for Older Adults](https://pubmed.ncbi.nlm.nih.gov/36771437/) - [Healthy hab"
+        },
+        {
+          "paragraph": 23,
+          "tokens": 46,
+          "coverage_percent": 0.0,
+          "excerpt": "- вы знаете своё фактическое среднее; - модель проверена хотя бы на нескольких сопоставимых окнах; - вес движется в ожидаемую сторону или поддерживается; - режим переносим; - есть 5–10 повторяемых рассчитанных приёмов; -"
+        },
+        {
+          "paragraph": 52,
+          "tokens": 46,
+          "coverage_percent": 0.0,
+          "excerpt": "Если вес сдвинулся, питание стало хаотичным или появилась новая цель, люди часто воспринимают возвращение приложения как поражение. Но [регулярная проверка веса может помогать удерживать результат после снижения веса](ht"
+        },
+        {
+          "paragraph": 150,
+          "tokens": 43,
+          "coverage_percent": 0.0,
+          "excerpt": "- можете ли вы поесть вне дома без паники; - не выбираете ли еду только по удобству записи; - не отказываетесь ли от нормального блюда, потому что его трудно посчитать; - не превращается ли превышение цифры в наказание; "
+        },
+        {
+          "paragraph": 12,
+          "tokens": 42,
+          "coverage_percent": 0.0,
+          "excerpt": "Из каталога соберите несколько **блоков питания**: повторяемых сочетаний, из которых удобно складывается день. Например, знакомый завтрак, два варианта обеда, быстрый ужин и пара перекусов. Блок — не жёсткое меню. Это ра"
+        },
+        {
+          "paragraph": 5,
+          "tokens": 41,
+          "coverage_percent": 0.0,
+          "excerpt": "- увидели, сколько едите на самом деле; - научились считать продукты и сложные блюда; - нашли главные источники калорий; - собрали модель расхода; - проверили её по тренду веса; - нашли переносимый режим; - перевели повт"
+        },
+        {
+          "paragraph": 108,
+          "tokens": 40,
+          "coverage_percent": 0.0,
+          "excerpt": "- использовать готовую опорную точку; - съесть фрукт; - собрать один нормальный приём вместо серии кусочков; - заказать знакомое блюдо из каталога; - не доедать автоматически за ребёнком; - сделать короткую паузу в том п"
+        }
+      ],
+      "top_matching_sources": [
+        {
+          "path": "work/calorie-course-rebuild/source-tilda-complete/lessons/18-language-of-actions--7058589/source.md",
+          "matching_sixgrams": 1
+        }
+      ]
+    }
+  ]
+}

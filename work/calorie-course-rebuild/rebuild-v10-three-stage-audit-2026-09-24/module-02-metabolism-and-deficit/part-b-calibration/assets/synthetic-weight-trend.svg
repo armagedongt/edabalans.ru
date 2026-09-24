@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="500" viewBox="0 0 1000 500" role="img" aria-labelledby="title desc">
+  <title id="title">Ежедневный вес и семидневное среднее за четырнадцать дней</title>
+  <desc id="desc">Серые точки ежедневного веса заметно колеблются, яркая линия семидневного среднего снижается с 84,03 до 83,63 килограмма.</desc>
+  <rect width="1000" height="500" rx="28" fill="#fffdf9"/>
+  <text x="70" y="48" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#24211f">Вес шумит, тренд движется</text>
+  <text x="70" y="73" font-family="Arial, sans-serif" font-size="15" fill="#706d68">Синтетический пример · данные из таблицы в статье</text>
+
+  <g stroke="#e8e1d8" stroke-width="1">
+    <line x1="80" y1="80" x2="940" y2="80"/>
+    <line x1="80" y1="173" x2="940" y2="173"/>
+    <line x1="80" y1="265" x2="940" y2="265"/>
+    <line x1="80" y1="358" x2="940" y2="358"/>
+    <line x1="80" y1="420" x2="940" y2="420"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="14" fill="#706d68" text-anchor="end">
+    <text x="66" y="85">84,4</text>
+    <text x="66" y="178">84,1</text>
+    <text x="66" y="270">83,8</text>
+    <text x="66" y="363">83,5</text>
+    <text x="66" y="425">83,3</text>
+  </g>
+
+  <polyline points="80,142 146,204 212,173 278,265 344,296 410,111 476,173 542,265 608,296 674,235 740,358 806,327 872,389 938,358" fill="none" stroke="#9e9a95" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#9e9a95">
+    <circle cx="80" cy="142" r="5"/><circle cx="146" cy="204" r="5"/><circle cx="212" cy="173" r="5"/><circle cx="278" cy="265" r="5"/><circle cx="344" cy="296" r="5"/><circle cx="410" cy="111" r="5"/><circle cx="476" cy="173" r="5"/><circle cx="542" cy="265" r="5"/><circle cx="608" cy="296" r="5"/><circle cx="674" cy="235" r="5"/><circle cx="740" cy="358" r="5"/><circle cx="806" cy="327" r="5"/><circle cx="872" cy="389" r="5"/><circle cx="938" cy="358" r="5"/>
+  </g>
+
+  <polyline points="476,194 542,213 608,225 674,235 740,247 806,253 872,293 938,318" fill="none" stroke="#d95f32" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#d95f32">
+    <circle cx="476" cy="194" r="6"/><circle cx="542" cy="213" r="6"/><circle cx="608" cy="225" r="6"/><circle cx="674" cy="235" r="6"/><circle cx="740" cy="247" r="6"/><circle cx="806" cy="253" r="6"/><circle cx="872" cy="293" r="6"/><circle cx="938" cy="318" r="6"/>
+  </g>
+
+  <g font-family="Arial, sans-serif" font-size="13" fill="#706d68" text-anchor="middle">
+    <text x="80" y="450">1</text><text x="146" y="450">2</text><text x="212" y="450">3</text><text x="278" y="450">4</text><text x="344" y="450">5</text><text x="410" y="450">6</text><text x="476" y="450">7</text><text x="542" y="450">8</text><text x="608" y="450">9</text><text x="674" y="450">10</text><text x="740" y="450">11</text><text x="806" y="450">12</text><text x="872" y="450">13</text><text x="938" y="450">14</text>
+  </g>
+  <text x="510" y="480" font-family="Arial, sans-serif" font-size="14" fill="#706d68" text-anchor="middle">День наблюдения</text>
+
+  <g font-family="Arial, sans-serif" font-size="14" fill="#3d3935">
+    <line x1="590" y1="45" x2="625" y2="45" stroke="#9e9a95" stroke-width="3"/><text x="635" y="50">ежедневный вес</text>
+    <line x1="775" y1="45" x2="810" y2="45" stroke="#d95f32" stroke-width="6"/><text x="820" y="50">7-дневное среднее</text>
+  </g>
+</svg>
