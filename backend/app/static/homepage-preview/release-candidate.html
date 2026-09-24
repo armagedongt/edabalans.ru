@@ -2644,12 +2644,11 @@
 
     #edb-pricing-neurozeh-v1 .edb-product-overlay {
       position: fixed;
-      z-index: 100;
+      z-index: 1200;
       inset: 0;
       display: none;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      background: #f5f7fa;
+      place-items: center;
+      padding: 16px;
       color: #16181d;
     }
 
@@ -2663,41 +2662,71 @@
     }
 
     #edb-pricing-neurozeh-v1 .edb-product-overlay.is-open {
-      display: block;
+      display: grid;
     }
 
-    #edb-pricing-neurozeh-v1 .edb-product-overlay-bar {
-      position: fixed;
-      z-index: 2;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      padding: 12px 18px max(12px, env(safe-area-inset-bottom));
-      border-top: 1px solid #e0e5ea;
-      background: rgba(245, 247, 250, .94);
-      box-shadow: 0 -14px 32px -28px rgba(25, 42, 58, .7);
-      backdrop-filter: blur(12px);
-    }
-
-    #edb-pricing-neurozeh-v1 .edb-product-overlay-back {
-      width: min(50%, 172px);
-      min-height: 48px;
-      border-radius: 14px;
-      border: 1px solid rgba(17, 142, 216, .18);
-      background: #26afff;
-      color: #ffffff;
-      box-shadow: 0 10px 22px -16px rgba(17, 142, 216, .78);
-      font: 800 15px 'Manrope', sans-serif;
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-shade {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      border: 0;
+      background: rgba(10,35,64,.56);
+      backdrop-filter: blur(5px);
       cursor: pointer;
     }
 
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-dialog {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: min(100%, 800px);
+      max-height: calc(100dvh - 32px);
+      overflow: hidden;
+      border: 1px solid rgba(22,143,211,.16);
+      border-radius: 22px;
+      background: #fff;
+      box-shadow: 0 28px 80px rgba(14,54,87,.28);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-close {
+      position: absolute;
+      z-index: 3;
+      top: 12px;
+      right: 12px;
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: #eef8ff;
+      color: #176ba3;
+      font: 26px/1 'Manrope', sans-serif;
+      cursor: pointer;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-bar {
+      order: 2;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-top: 1px solid #e0e5ea;
+      background: #f5f7fa;
+    }
+
     #edb-pricing-neurozeh-v1 .edb-product-overlay-content {
-      width: min(100%, 390px);
-      margin: 0 auto;
-      padding: 48px 18px 128px;
+      width: 100%;
+      min-height: 0;
+      padding: 52px 28px 28px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    @media (max-width: 600px) {
+      #edb-pricing-neurozeh-v1 .edb-product-overlay { padding: 10px; }
+      #edb-pricing-neurozeh-v1 .edb-product-overlay-dialog { max-height: calc(100dvh - 20px); border-radius: 18px; }
+      #edb-pricing-neurozeh-v1 .edb-product-overlay-content { padding: 54px 18px 20px; }
     }
 
     #edb-pricing-neurozeh-v1 .edb-product-overlay-title {
@@ -3062,8 +3091,8 @@
       }
 
       #edb-pricing-neurozeh-v1 .edb-product-overlay-content {
-        width: min(100%, 760px);
-        max-width: 760px;
+        padding-right: 36px;
+        padding-left: 36px;
       }
     }
 
@@ -3225,15 +3254,18 @@
     </div>
   </section>
 
-  <section class="edb-product-overlay" aria-hidden="true" aria-live="polite">
-    <div class="edb-product-overlay-bar">
-      <button class="edb-product-overlay-back" type="button">← Назад</button>
-      <button class="edb-product-overlay-cta" type="button" data-analytics-cta="pricing_program_overlay">Выбрать тариф</button>
-    </div>
-    <div class="edb-product-overlay-content">
-      <h2 class="edb-product-overlay-title" id="pricing-product-overlay-title"></h2>
-      <p class="edb-product-overlay-copy"></p>
-      <div class="edb-product-overlay-points"></div>
+  <section class="edb-product-overlay" aria-hidden="true">
+    <button class="edb-product-overlay-shade" type="button" tabindex="-1" aria-label="Закрыть описание"></button>
+    <div class="edb-product-overlay-dialog" role="dialog" aria-modal="true" aria-labelledby="pricing-product-overlay-title">
+      <button class="edb-product-overlay-close" type="button" aria-label="Закрыть описание">×</button>
+      <div class="edb-product-overlay-content" aria-live="polite">
+        <h2 class="edb-product-overlay-title" id="pricing-product-overlay-title"></h2>
+        <p class="edb-product-overlay-copy"></p>
+        <div class="edb-product-overlay-points"></div>
+      </div>
+      <div class="edb-product-overlay-bar">
+        <button class="edb-product-overlay-cta" type="button" data-analytics-cta="pricing_program_overlay">Выбрать тариф</button>
+      </div>
     </div>
   </section>
 
@@ -3283,6 +3315,8 @@
       const overlayCopy = root.querySelector('.edb-product-overlay-copy');
       const overlayPoints = root.querySelector('.edb-product-overlay-points');
       const overlayCta = root.querySelector('.edb-product-overlay-cta');
+      const overlayClose = root.querySelector('.edb-product-overlay-close');
+      let overlayTrigger = null;
       const pricingSection = root.closest('.chain-block--pricing');
       const plans = root.querySelectorAll('.edb-pricing-plan');
       const pricingStatus = root.querySelector('.edb-pricing-status');
@@ -3552,6 +3586,7 @@
       });
 
       async function openProduct(code) {
+        overlayTrigger = document.activeElement;
         overlayTitle.textContent = 'Загружаю…';
         overlayCopy.textContent = '';
         overlayCopy.hidden = true;
@@ -3565,7 +3600,8 @@
         overlay.setAttribute('aria-hidden', 'false');
         document.documentElement.classList.add('edb-product-overlay--locked');
         pricingSection.classList.add('has-open-overlay');
-        overlay.scrollTop = 0;
+        root.querySelector('.edb-product-overlay-content').scrollTop = 0;
+        overlayClose.focus();
         try {
           const response = await fetch(`/api/public-site/content/${encodeURIComponent(code)}`, { credentials: 'omit' });
           if (!response.ok) throw new Error(`public content ${response.status}`);
@@ -3595,12 +3631,24 @@
         overlay.setAttribute('aria-hidden', 'true');
         document.documentElement.classList.remove('edb-product-overlay--locked');
         pricingSection.classList.remove('has-open-overlay');
+        if (overlayTrigger && overlayTrigger.isConnected) overlayTrigger.focus();
       }
 
       root.querySelectorAll('[data-product]').forEach((button) => {
         button.addEventListener('click', () => openProduct(button.dataset.product));
       });
-      root.querySelector('.edb-product-overlay-back').addEventListener('click', closeOverlay);
+      overlayClose.addEventListener('click', closeOverlay);
+      root.querySelector('.edb-product-overlay-shade').addEventListener('click', closeOverlay);
+      overlay.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') { event.preventDefault(); closeOverlay(); }
+        if (event.key === 'Tab') {
+          const items = [...overlay.querySelectorAll('.edb-product-overlay-dialog button:not([hidden]), .edb-product-overlay-dialog a[href]')]
+            .filter((item) => item.getClientRects().length);
+          if (!items.length) return;
+          if (event.shiftKey && document.activeElement === items[0]) { event.preventDefault(); items[items.length - 1].focus(); }
+          else if (!event.shiftKey && document.activeElement === items[items.length - 1]) { event.preventDefault(); items[0].focus(); }
+        }
+      });
       overlayCta.addEventListener('click', () => {
         const preferredTarget = plans[Number(overlayCta.dataset.target || 0)];
         const target = preferredTarget && !preferredTarget.hidden

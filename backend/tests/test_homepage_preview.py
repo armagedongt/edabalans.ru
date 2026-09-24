@@ -740,6 +740,21 @@ def test_homepage_release_candidate_matches_canonical_block_map() -> None:
     }
 
 
+def test_current_homepage_product_details_open_in_closable_popup() -> None:
+    response = client.get("/preview/homepage-release-candidate")
+
+    assert response.status_code == 200
+    assert 'class="edb-product-overlay-dialog" role="dialog" aria-modal="true"' in response.text
+    assert 'class="edb-product-overlay-close" type="button" aria-label="Закрыть описание"' in response.text
+    assert 'class="edb-product-overlay-shade" type="button"' in response.text
+    assert "max-height: calc(100dvh - 32px);" in response.text
+    assert "overscroll-behavior: contain;" in response.text
+    assert "overlayClose.addEventListener('click', closeOverlay);" in response.text
+    assert "root.querySelector('.edb-product-overlay-shade').addEventListener('click', closeOverlay);" in response.text
+    assert "if (event.key === 'Escape') { event.preventDefault(); closeOverlay(); }" in response.text
+    assert "overlayTrigger.focus();" in response.text
+
+
 def test_homepage_uses_one_shared_vertical_rhythm_without_stacked_section_gaps() -> None:
     response = client.get("/preview/homepage-mobile")
 
@@ -831,7 +846,7 @@ def test_release_candidate_gives_a_hero_route_to_pricing_and_opens_mobile_outlin
     assert "if (open) {\n          setTocOpen(true);" in response.text
 
 
-def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft() -> None:
+def test_homepage_versions_preserve_snapshots_and_separate_current_runtime_and_next_draft() -> None:
     expected_previous_sha256 = "5c53b02ae2e7d5dbacbbd6a6da4fbbfdbe6116de8745cda75964d2cb30950169"
     expected_version_2_sha256 = "135162a19ba1ae1d19fa39f11dbc8304fe8c25e5ea2968856142d8843db01c76"
     expected_baseline_sha256 = "71932b268a233dd1a65d7eb6bb5a2f90e79336de386434aee459abaf6e1b91f7"
@@ -879,7 +894,7 @@ def test_homepage_versions_preserve_the_current_baseline_and_separate_next_draft
 
     runtime_response = client.get("/preview/homepage-release-candidate")
     assert runtime_response.status_code == 200
-    assert runtime_response.text == baseline_source
+    assert runtime_response.text == (preview_dir / "release-candidate.html").read_text(encoding="utf-8")
 
     draft_response = client.get(draft["route"])
     assert draft_response.status_code == 200
