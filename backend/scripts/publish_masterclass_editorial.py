@@ -74,6 +74,10 @@ def compile_manifest(
         step_id: bool(step.get("hidden", False))
         for step_id, step in current_steps.items()
     }
+    originally_locked = {
+        step_id: bool(step.get("locked", False))
+        for step_id, step in current_steps.items()
+    }
     changes: list[str] = []
     for editorial_day, day in zip(days, result["days"], strict=True):
         if not from_day <= editorial_day["number"] <= through_day:
@@ -112,6 +116,7 @@ def compile_manifest(
                 current_steps[step["id"]] = step
                 changes.append(f"день {editorial_day['number']}: добавлен {step['id']}")
             was_hidden = originally_hidden.get(step["id"], False)
+            was_locked = originally_locked.get(step["id"], False)
             step["hidden"] = False
             step["title"] = item["title"]
             if "label" in step or step.get("kind") != "article":
@@ -126,7 +131,7 @@ def compile_manifest(
                     "code", "label", "completion", "accessResource", "items"
                 ):
                     step.pop(legacy_key, None)
-            if was_hidden:
+            if was_hidden or was_locked:
                 step["requiredForAllAfterRevision"] = next_version
             if item.get("placeholder"):
                 step["status"] = "draft"
@@ -135,7 +140,11 @@ def compile_manifest(
                 step["required"] = False
                 step["locked"] = True
                 step["badge"] = "Скоро"
-            elif item["type"] == "article" and step.get("contentKind") == "placeholder":
+            elif item["type"] == "article" and (
+                step.get("contentKind") == "placeholder"
+                or was_locked
+                or step.get("badge") == "Скоро"
+            ):
                 step["status"] = "ready"
                 step["contentKind"] = "text"
                 step["required"] = True

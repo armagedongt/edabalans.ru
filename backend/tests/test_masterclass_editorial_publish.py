@@ -79,6 +79,12 @@ def test_editorial_program_compiles_to_runtime_titles_and_visible_steps() -> Non
     assert compiled["days"][6]["accessResource"] == "ACCESS_RECIPES"
     assert compiled["days"][7]["accessResource"] == "ACCESS_RECIPES"
     assert compiled["days"][14]["accessResource"] == "ACCESS_RECIPES"
+    recipes_selection = next(
+        step
+        for step in compiled["days"][6]["steps"]
+        if step["id"] == "day-07-recipes-part-1"
+    )
+    assert recipes_selection["required"] is False
     nested = [step for step in compiled["days"][6]["steps"] if step.get("nested")]
     assert [step["id"] for step in nested] == [
         "day-07-recipe-author-oatmeal",
@@ -105,6 +111,36 @@ def test_editorial_program_compiles_to_runtime_titles_and_visible_steps() -> Non
         for step in day["steps"]
         if step["id"] in zero_time_steps and step["durationMinutes"] == 0
     } == zero_time_steps
+
+
+def test_ready_article_clears_stale_soon_state_and_reactivates_progress() -> None:
+    manifest = json.loads(
+        (ROOT / "content" / "masterclass" / "course" / "course.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    hunger_guide = next(
+        step
+        for step in manifest["days"][8]["steps"]
+        if step["id"] == "day-09-article-01"
+    )
+    hunger_guide["locked"] = True
+    hunger_guide["badge"] = "Скоро"
+    hunger_guide["requiredForAllAfterRevision"] = 38
+
+    compiled, _ = compile_manifest(manifest, next_version=12)
+
+    hunger_guide = next(
+        step
+        for step in compiled["days"][8]["steps"]
+        if step["id"] == "day-09-article-01"
+    )
+    assert hunger_guide["status"] == "ready"
+    assert hunger_guide["contentKind"] == "text"
+    assert hunger_guide["required"] is True
+    assert hunger_guide["requiredForAllAfterRevision"] == 12
+    assert "locked" not in hunger_guide
+    assert "badge" not in hunger_guide
 
 
 def test_recipe_days_hide_articles_behind_one_access_gate() -> None:
