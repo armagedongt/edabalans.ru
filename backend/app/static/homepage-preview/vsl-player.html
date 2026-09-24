@@ -1,7 +1,6 @@
 <style>html,body{width:100%;height:100%;margin:0;overflow:hidden;background:transparent!important}body{padding:0}</style>
 <div id="modular-video-player" class="mvp" tabindex="0">
   <video class="mvp__video mvp__video--preview" playsinline autoplay muted preload="auto"></video>
-  <video class="mvp__video mvp__video--main" playsinline preload="none" aria-hidden="true"></video>
 
   <div class="mvp__shade"></div>
 
@@ -101,9 +100,6 @@
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;cursor:pointer;
 }
 #modular-video-player .mvp__video--preview{z-index:1}
-#modular-video-player .mvp__video--main{z-index:2;opacity:0;pointer-events:none;transition:opacity .12s linear}
-#modular-video-player.mvp--main-active .mvp__video--main{opacity:1;pointer-events:auto}
-#modular-video-player.mvp--main-active .mvp__video--preview{pointer-events:none}
 #modular-video-player .mvp__shade{
   position:absolute;z-index:3;inset:0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(0,0,0,.02) 45%,rgba(0,0,0,.58) 100%);
@@ -120,7 +116,6 @@
   transform:translateX(5px);
 }
 #modular-video-player.mvp--playing .mvp__big-play{opacity:0;pointer-events:none}
-#modular-video-player.mvp--handoff-pending .mvp__big-play{opacity:0;pointer-events:none}
 
 #modular-video-player .mvp__sound-card{
   position:absolute;z-index:5;left:50%;top:54%;transform:translate(-50%,-50%);
@@ -393,7 +388,6 @@
       source: 'https://cdn-g.boomstream.com/balancer/SBDlvNgl-9WmCBBoU.mp4',
       videoId: 'intensive-day-1-2026-09-03',
       volume: 0.85,
-      singleSource: true,
       allowSeek: true,
       acceleratedProgress: false
     }
@@ -411,11 +405,9 @@
   };
   root.classList.toggle('mvp--seekable', seekEnabled);
   const previewVideo = root.querySelector('.mvp__video--preview');
-  const mainVideo = root.querySelector('.mvp__video--main');
   let video = previewVideo;
   previewVideo.src = mediaPreset.previewSource;
   previewVideo.volume = mediaPreset.volume ?? 1;
-  mainVideo.volume = 0;
 
   /* Внешний плеер показывает плавный опережающий прогресс. Видео при этом
      идёт с реальной скоростью и не перематывается. */
@@ -479,16 +471,11 @@
     return h ? `${h}:${String(m).padStart(2,'0')}:${sec}` : `${m}:${sec}`;
   }
 
-  const videos = mediaPreset.singleSource ? [previewVideo] : [previewVideo, mainVideo];
+  const videos = [previewVideo];
   let soundEngaged = false;
-  let mainPrepared = false;
-  let handoffPending = false;
-  let handoffAligning = false;
 
   function logicalDuration(){
-    if (mediaPreset.singleSource && Number.isFinite(previewVideo.duration)) return previewVideo.duration;
-    if (Number.isFinite(mainVideo.duration) && mainVideo.duration > 0) return mainVideo.duration;
-    return video === mainVideo && Number.isFinite(video.duration) ? video.duration : 0;
+    return Number.isFinite(video.duration) ? video.duration : 0;
   }
 
   function applyModules(){
@@ -561,18 +548,10 @@
 
   function togglePlay(){
     if (video.paused) {
-      if (video === previewVideo && mainPrepared) {
-        if (previewVideo.ended) {
-          handoffPending = true;
-          tryMainHandoff();
-          return;
-        }
-        playAndTakeFocus(mainVideo, false);
-      }
       playAndTakeFocus();
       return;
     }
-    videos.forEach(item=>item.pause());
+    video.pause();
   }
 
   function updateProgress(){
@@ -601,70 +580,25 @@
     }
   }
 
-  function activateMainVideo(){
-    if (video === mainVideo || mainVideo.readyState < 3) return;
-    const selectedVolume = previewVideo.volume;
-    const selectedMuted = previewVideo.muted;
-    video = mainVideo;
-    mainVideo.volume = selectedVolume;
-    mainVideo.muted = selectedMuted;
-    previewVideo.muted = true;
-    previewVideo.pause();
-    root.classList.remove('mvp--handoff-pending');
-    root.classList.add('mvp--main-active');
-    volumeSlider.value = mainVideo.muted ? '0' : String(mainVideo.volume);
-    updatePlayUI();
-    updateProgress();
-    showControls(true);
-  }
-
-  function tryMainHandoff(){
-    if (!handoffPending || video === mainVideo || mainVideo.readyState < 3 || handoffAligning) return;
-    const targetTime = previewVideo.currentTime || 0;
-    if (Math.abs((mainVideo.currentTime || 0) - targetTime) > .45) {
-      handoffAligning = true;
-      mainVideo.currentTime = Math.min(targetTime, Number.isFinite(mainVideo.duration) ? mainVideo.duration : targetTime);
-      mainVideo.addEventListener('seeked', ()=>{
-        handoffAligning = false;
-        tryMainHandoff();
-      }, {once:true});
-      return;
-    }
-    if (mainVideo.paused) {
-      const attempt = mainVideo.play();
-      if (attempt && typeof attempt.then === 'function') {
-        attempt.then(activateMainVideo).catch(()=>{});
-        return;
-      }
-    }
-    activateMainVideo();
-  }
-
-  function prepareMainPlayback(){
-    if (mediaPreset.singleSource || mainPrepared) return;
-    mainPrepared = true;
-    mainVideo.src = mediaPreset.source;
-    mainVideo.loop = false;
-    mainVideo.muted = false;
-    mainVideo.volume = 0;
-    mainVideo.playbackRate = previewVideo.playbackRate;
-    mainVideo.load();
-    playAndTakeFocus(mainVideo, false);
-  }
-
   function enableSoundAndWatch(){
     if (soundEngaged) return;
     passiveAutoplayAllowed = false;
     soundEngaged = true;
+    previewVideo.pause();
+    previewVideo.autoplay = false;
     previewVideo.loop = false;
-    previewVideo.currentTime = 0;
+    if (mediaPreset.source !== mediaPreset.previewSource) {
+      previewVideo.src = mediaPreset.source;
+      previewVideo.load();
+    } else {
+      previewVideo.currentTime = 0;
+    }
     previewVideo.muted = false;
     previewVideo.volume = mediaPreset.volume ?? 1;
     soundCard.hidden = true;
     root.classList.remove('mvp--awaiting-sound');
     analyticsApi.markEngaged();
     announceActivePlayer();
-    if (!mediaPreset.singleSource) prepareMainPlayback();
     playAndTakeFocus(previewVideo, false);
     showControls(true);
   }
@@ -708,7 +642,7 @@
       }, 0);
     });
     item.addEventListener('ended', ()=>{
-      if (item !== video || item === previewVideo) return;
+      if (item !== video || !soundEngaged) return;
       updatePlayUI();
       showControls(false);
       postToParent({ type:'edabalans:player-idle' });
@@ -719,28 +653,15 @@
       analyticsApi.trackTimeUpdate(item);
     });
     item.addEventListener('loadedmetadata', ()=>{
-      if (item === video || item === mainVideo) updateProgress();
+      if (item === video) updateProgress();
     });
   });
-  if (mediaPreset.singleSource) {
-    const handleSingleSourceEnded = ()=>{
-      updatePlayUI();
-      showControls(false);
-      postToParent({ type:'edabalans:player-idle' });
-    };
-    previewVideo.addEventListener('ended', handleSingleSourceEnded);
-  }
   previewVideo.addEventListener('ended', ()=>{
     if (!soundEngaged && passiveAutoplayAllowed) {
       previewVideo.currentTime = 0;
       previewVideo.play().catch(()=>{});
     }
-    if (mediaPreset.singleSource || !soundEngaged) return;
-    handoffPending = true;
-    root.classList.add('mvp--handoff-pending');
-    tryMainHandoff();
   });
-  ['canplay','playing'].forEach(eventName=>mainVideo.addEventListener(eventName, tryMainHandoff));
 
   root.addEventListener('pointermove', ()=>{ if (soundEngaged) showControls(true); });
   root.addEventListener('focusin', ()=>{ if (soundEngaged) showControls(true); });
@@ -839,9 +760,6 @@
     }
     if (event.data?.type !== 'edabalans:pause-player') return;
     passiveAutoplayAllowed = false;
-    handoffPending = false;
-    handoffAligning = false;
-    root.classList.remove('mvp--handoff-pending');
     if (autoplayStart) previewVideo.removeEventListener('canplay', autoplayStart);
     videos.forEach(item=>item.pause());
     updatePlayUI();
@@ -895,7 +813,7 @@
 
   const speedButtons = [...root.querySelectorAll('.mvp__speed-option')];
 
-  const initialSource = video.currentSrc || video.getAttribute('src');
+  const initialSource = mediaPreset.source;
   const qualityOptions = QUALITY_OPTIONS
     .map(item=>({ ...item, url:item.url || (item.id === 'original' ? initialSource : '') }))
     .filter(item=>item.url);
@@ -1103,7 +1021,7 @@
       }
 
       const fullDuration = logicalDuration();
-      if (engaged && (mediaPreset.singleSource || source === mainVideo) && Number.isFinite(fullDuration) && fullDuration > 0) {
+      if (engaged && Number.isFinite(fullDuration) && fullDuration > 0) {
         const watchedDuration = [...watched].reduce((total, bucketStart)=>{
           return total + Math.max(0, Math.min(ANALYTICS_CONFIG.bucketSizeSec, fullDuration - bucketStart));
         }, 0);

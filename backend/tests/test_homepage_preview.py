@@ -267,11 +267,11 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert parser.main_count == 1
     assert len(parser.ids) == len(set(parser.ids))
     assert parser.iframe_sources == {
-        "/preview/homepage-mobile/vsl-player.html?v=7"
+        "/preview/homepage-mobile/vsl-player.html?v=9"
     }
     assert (
         'data-media-src="/preview/homepage-mobile/vsl-player.html?'
-        'v=7&context=anya-review"'
+        'v=9&context=anya-review"'
         in response.text
     )
     assert ".anya-slide--video{width:min(80vw,var(--anya-video-width,275px));aspect-ratio:1080/1914" in response.text
@@ -402,8 +402,8 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "transform:translate3d(-50%,0,0)!important" in response.text
     assert 'data-anya-slider' in response.text
     assert '<template data-temporarily-disabled="anya-slider">' in response.text
-    assert response.text.count('data-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review"') == 1
-    assert 'data-disabled-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review"' in response.text
+    assert response.text.count('data-media-src="/preview/homepage-mobile/vsl-player.html?v=9&context=anya-review"') == 1
+    assert 'data-disabled-media-src="/preview/homepage-mobile/vsl-player.html?v=9&context=anya-review"' in response.text
     assert '<div class="anya-story__player-shell">' in response.text
     assert ".anya-story__player-shell{padding:0 var(--page-gutter)}" in response.text
     assert '<div class="anya-story__player-frame">' in response.text
@@ -425,7 +425,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert slider_viewport_marker in anya_slider_template
     assert slider_viewport_marker not in anya_live_markup
     assert 'data-disabled-media-src=' in anya_slider_template
-    assert 'data-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review"' in anya_live_markup
+    assert 'data-media-src="/preview/homepage-mobile/vsl-player.html?v=9&context=anya-review"' in anya_live_markup
     assert 'data-anya-counter' not in response.text
     assert 'data-anya-prev' in response.text
     assert 'data-anya-next' in response.text
@@ -1303,7 +1303,9 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
     assert "previewVideo.loop = false;" in sound_engagement
     assert "soundCard.hidden = true;" in sound_engagement
     assert "announceActivePlayer();" in sound_engagement
-    assert "prepareMainPlayback();" in sound_engagement
+    assert "previewVideo.pause();" in sound_engagement
+    assert "previewVideo.src = mediaPreset.source;" in sound_engagement
+    assert "previewVideo.load();" in sound_engagement
     assert "playAndTakeFocus(previewVideo, false);" in sound_engagement
     assert "showControls(true);" in sound_engagement
     active_player = response.text.split(
@@ -1320,8 +1322,6 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
         "if (event.data?.type !== 'edabalans:pause-player') return;", 1
     )[1].split("\n  });", 1)[0]
     assert "passiveAutoplayAllowed = false;" in pause_handler
-    assert "handoffPending = false;" in pause_handler
-    assert "handoffAligning = false;" in pause_handler
     assert "previewVideo.removeEventListener('canplay', autoplayStart);" in pause_handler
     assert "videos.forEach(item=>item.pause());" in pause_handler
     first_player_click = response.text.split(
@@ -1355,7 +1355,7 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
     assert "const parentOrigin = (() => {" in response.text
     assert "postToParent({ type:'edabalans:player-active', context:PLAYER_CONTEXT });" in response.text
     assert 'class="mvp__video mvp__video--preview"' in response.text
-    assert 'class="mvp__video mvp__video--main" playsinline preload="none"' in response.text
+    assert 'class="mvp__video mvp__video--main"' not in response.text
     assert "mvp--awaiting-sound .mvp__controls" in response.text
     assert "mvp__loader" not in response.text
     media_presets = response.text.split("const MEDIA_PRESETS = {", 1)[1].split(
@@ -1376,22 +1376,8 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
     assert "volume: 0.85" in homepage_vsl_preset
     assert "previewVideo.volume = mediaPreset.volume ?? 1;" in response.text
     assert "volumeSlider.value = String(video.volume);" in response.text
-    assert "mainVideo.src = mediaPreset.source;" in response.text
     assert "previewVideo.addEventListener('ended'" in response.text
-    assert "tryMainHandoff();" in response.text
-    assert "attempt.then(activateMainVideo)" in response.text
-    assert "const selectedVolume = previewVideo.volume;" in response.text
-    assert "mainVideo.volume = selectedVolume;" in response.text
-    assert "mainVideo.muted = selectedMuted;" in response.text
-    assert "volumeSlider.value = mainVideo.muted ? '0'" in response.text
-    assert "root.classList.add('mvp--handoff-pending');" in response.text
-    assert "root.classList.remove('mvp--handoff-pending');" in response.text
-    assert "mvp--handoff-pending .mvp__big-play" in response.text
-    preview_handoff = response.text.split("previewVideo.addEventListener('ended', ()=>{", 1)[1].split(
-        "});", 1
-    )[0]
-    assert "updatePlayUI();" not in preview_handoff
-    assert "showControls(false);" not in preview_handoff
+    assert "mainVideo" not in response.text
     assert "analyticsApi.trackTimeUpdate(item);" in response.text
 
 
@@ -1424,7 +1410,7 @@ def test_public_player_supports_intensive_single_source_seekable_mode() -> None:
     assert "const PLAYER_CONTEXT = playerQuery.get('context')" in response.text
     assert "const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT];" in response.text
     assert "Object.hasOwn(MEDIA_PRESETS, PLAYER_CONTEXT)" in response.text
-    assert "singleSource: true" in response.text
+    assert "const videos = [previewVideo];" in response.text
     assert "allowSeek: true" in response.text
     assert "acceleratedProgress: false" in response.text
     autoplay_setup = response.text.split("if (MODULES.autoplay) {", 1)[1].split(
@@ -1436,8 +1422,7 @@ def test_public_player_supports_intensive_single_source_seekable_mode() -> None:
         "\n  }", 1
     )[0]
     assert "previewVideo.loop = false;" in sound_engagement
-    assert "const videos = mediaPreset.singleSource ? [previewVideo]" in response.text
-    assert "if (!mediaPreset.singleSource) prepareMainPlayback();" in response.text
+    assert "previewVideo.src = mediaPreset.source;" in response.text
     assert "const seekEnabled = mediaPreset.allowSeek ?? (PLAYER_MODE !== 'engagement');" in response.text
     assert "if (!seekEnabled) return;" in response.text
     assert ".mvp--seekable .mvp__progress{cursor:pointer;pointer-events:auto}" in response.text

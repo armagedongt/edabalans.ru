@@ -28,7 +28,7 @@ async function fixture(storage = 'normal') {
       paused: { get() { return state(this).paused } },
       ended: { get() { return state(this).ended } },
       readyState: { get() { return this.getAttribute('src') ? 4 : 0 } },
-      duration: { get() { return this.getAttribute('src') ? (this.matches('.mvp__video--preview') && !location.search.includes('intensive-day-1') ? 8 : 100) : NaN } },
+      duration: { get() { return this.getAttribute('src') ? (this.getAttribute('src').includes('3qGepzqy') || this.getAttribute('src').includes('IpVIy3yM') ? 8 : 100) : NaN } },
       currentTime: {
         get() { return state(this).time },
         set(value) { state(this).time = value; state(this).ended = false; queueMicrotask(() => this.dispatchEvent(new Event('seeked'))) }
@@ -44,7 +44,10 @@ async function fixture(storage = 'normal') {
       state(this).paused = true
       this.dispatchEvent(new Event('pause'))
     }
-    HTMLMediaElement.prototype.load = function () {}
+    HTMLMediaElement.prototype.load = function () { state(this).time = 0; state(this).paused = true }
+    if (storage === 'ios-volume') {
+      Object.defineProperty(HTMLMediaElement.prototype, 'volume', { get() { return 1 }, set() {} })
+    }
     window.finishMedia = media => {
       state(media).ended = true
       state(media).paused = true
@@ -122,7 +125,8 @@ try {
   for (const storage of ['read-blocked', 'write-blocked', 'corrupt']) {
     const playback = await fixture(storage)
     await playback.page.goto(`${origin}/public?context=homepage-vsl`)
-    assert.equal(await playback.page.locator('.mvp__video--main').getAttribute('src'), null)
+    assert.equal(await playback.page.locator('video').count(), 1)
+    assert.match(await playback.page.locator('video').getAttribute('src'), /3qGepzqy/)
     assert.deepEqual(playback.payloads, [])
     const engagedResponse = playback.page.waitForResponse(response => response.url().endsWith('/api/public/video-analytics'))
     await playback.page.getByRole('button', { name: 'Включить звук' }).click()
@@ -133,9 +137,8 @@ try {
     assert.match(playback.payloads[0].session_id, /^[0-9a-f-]{36}$/i)
     assert.equal(playback.payloads[0].page_path, '/public')
     const session = playback.payloads[0].session_id
-    await playback.page.locator('.mvp__video--preview').evaluate(video => { video.currentTime = 8; window.finishMedia(video) })
-    await playback.page.waitForFunction(() => document.querySelector('.mvp').classList.contains('mvp--main-active'))
-    assert.equal(await playback.page.locator('.mvp__video--main').evaluate(video => video.currentTime), 8)
+    assert.match(await playback.page.locator('video').getAttribute('src'), /F5zqt5iQ/)
+    assert.equal(await playback.page.locator('video').evaluate(video => video.currentTime), 0)
     const exitResponse = playback.page.waitForResponse(response => response.request().postDataJSON()?.event === 'video_exit')
     await playback.page.evaluate(() => dispatchEvent(new Event('pagehide')))
     await exitResponse
@@ -165,7 +168,8 @@ try {
     const seekable = context === 'intensive-day-1'
     assert.equal(await profile.page.locator('.mvp').evaluate(root => root.classList.contains('mvp--seekable')), seekable)
     assert.equal(await profile.page.locator('.mvp__video--preview').evaluate(video => video.loop), false)
-    assert.equal(await profile.page.locator('.mvp__video--main').getAttribute('src') === null, seekable)
+    assert.equal(await profile.page.locator('video').count(), 1)
+    assert.match(await profile.page.locator('video').getAttribute('src'), seekable ? /SBDlvNgl/ : context === 'anya-review' ? /RkqYeVnc/ : /F5zqt5iQ/)
     const result = await profile.page.locator('.mvp__progress').evaluate(progress => {
       const video = document.querySelector('.mvp__video--preview')
       video.currentTime = 50
@@ -193,6 +197,22 @@ try {
       assert.equal(profile.payloads.filter(payload => payload.event === 'video_complete').length, 1)
     }
     await profile.close()
+  }
+
+  for (const context of ['homepage-vsl', 'anya-review']) {
+    const iphone = await fixture('ios-volume')
+    await iphone.page.goto(`${origin}/public?context=${context}`)
+    assert.equal(await iphone.page.locator('video').count(), 1)
+    const previewSource = await iphone.page.locator('video').getAttribute('src')
+    assert.ok(previewSource)
+    await iphone.page.getByRole('button', { name: 'Включить звук' }).click()
+    assert.notEqual(await iphone.page.locator('video').getAttribute('src'), previewSource)
+    assert.equal(await iphone.page.locator('video').evaluate(video => video.paused), false)
+    await iphone.page.locator('.mvp__play').click()
+    assert.equal(await iphone.page.locator('video').evaluate(video => video.paused), true, 'Pause must stop the only media stream when iOS ignores volume writes')
+    await iphone.page.locator('.mvp__play').click()
+    assert.equal(await iphone.page.locator('video').evaluate(video => video.paused), false)
+    await iphone.close()
   }
 
   const sound = await fixture()

@@ -20,13 +20,18 @@ module_id: products.masterclass.runtime
 | Профиль / где применять | Старт и источник | Шкала / перемотка | Главы и обложка | Аналитика |
 |---|---|---|---|---|
 | **Учебный** `standard`: видео дня МК | Ручной старт; один HTTPS MP4 | Честная; перемотка разрешена | Обложка из данных; кликабельные главы при наличии таймкодов | Нет публичной; просмотр не завершает шаг курса |
-| **Главная — VSL** `homepage-vsl` | Короткий muted loop; клик запускает с нуля со звуком; затем полный MP4 с той же позиции | Опережающая; перемотка запрещена | Глав нет; оформление/кадр задаёт оболочка | Осознанный просмотр, одна сессия preview + full |
-| **Главная — Аня** `anya-review` | Та же логика preview + full | Опережающая; перемотка запрещена | Глав нет; портретный кадр и отложенная загрузка оболочки | Отдельный ID ролика, тот же событийный контракт |
+| **Главная — VSL** `homepage-vsl` | Короткий muted loop; по клику тот же video-элемент переключается на полный MP4 с начала и со звуком | Опережающая; перемотка запрещена | Глав нет; оформление/кадр задаёт оболочка | Осознанный просмотр, одна сессия preview + full |
+| **Главная — Аня** `anya-review` | То же одноэлементное переключение короткого MP4 на полный | Опережающая; перемотка запрещена | Глав нет; портретный кадр и отложенная загрузка оболочки | Отдельный ID ролика, тот же событийный контракт |
 | **Интенсив — день 1** `intensive-day-1` | Один полный MP4; muted loop до клика; затем с нуля со звуком без loop | Честная; перемотка разрешена | Глав нет | Завершение по просмотренным интервалам, не по перемотке к концу |
 
 Это готовые наборы функций, не четыре копии HTML. Смена ролика/таймкодов
 не создаёт новый профиль. Профиль интенсива — уже согласованное исключение;
 не переносить его автозапуск и публичную аналитику на все учебные видео.
+Во всех публичных профилях работает ровно один `<video>`. У VSL и Ани до
+осознанного клика загружен только короткий файл, после клика — полный в том же
+элементе; у интенсива один и тот же полный файл до и после клика. Не запускать
+второй скрытый поток для бесшовного перехода: на iPhone его звук может продолжиться
+после паузы видимой картинки. Замена файла может дать краткую паузу на загрузку.
 У всех четырёх доступны play/pause, звук/громкость, скорости 1/1.25/1.5/1.75/2
 и полноэкранный режим в поддерживающем браузере. Субтитры, PiP и выбор качества
 скрыты в текущем интерфейсе: наличие резервного кода не делает их активной функцией.
@@ -38,7 +43,7 @@ module_id: products.masterclass.runtime
 | Функция | Где включена | Единственный исполняемый источник / владелец |
 |---|---|---|
 | Ручное учебное воспроизведение, честная шкала, главы | `standard` | [player-standard-with-contents.html](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/video-player-development/player-standard-with-contents.html); `products.masterclass.runtime` |
-| Публичный autoplay, включение звука, preview → full | VSL и Аня; интенсив использует однофайловое исключение | [vsl-player.html](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/homepage-preview/vsl-player.html), `MEDIA_PRESETS`; `products.public-site` |
+| Публичный autoplay, включение звука, preview → full в одном video-элементе | VSL и Аня; интенсив использует один и тот же файл до и после клика | [vsl-player.html](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/homepage-preview/vsl-player.html), `MEDIA_PRESETS`; `products.public-site` |
 | Скорости, play/pause, fullscreen | Оба плеера | Соответствующий HTML из двух строк выше; не копировать controls в каждую страницу |
 | Осознанная публичная аналитика | Три публичных presets | [PUBLIC_VIDEO_ANALYTICS.md](https://github.com/armagedongt/edabalans.ru/blob/main/docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md), [API](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/public_video_analytics_routes.py); `products.public-site` |
 | Один активный источник звука на странице | Подключённые публичные iframe и локальные audio/video | [media-coordinator.js](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/homepage-preview/media-coordinator.js), [PUBLIC_SITE.md](https://github.com/armagedongt/edabalans.ru/blob/main/docs/knowledge-base/PUBLIC_SITE.md); `products.public-site` |
