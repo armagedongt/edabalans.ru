@@ -1037,6 +1037,111 @@ def test_masterclass_personal_data_uses_tilda_email_and_server_access():
     assert denied.status_code == 403
 
 
+def test_stable_resource_link_resolves_access_offer_and_full_unlock():
+    client, factory = setup()
+
+    first = client.get(
+        "/api/account/resource-link",
+        params={"target": "masterclass-21:day-01-article-tutorial"},
+    )
+    assert first.status_code == 200
+    assert first.json()["action"] == "open"
+    assert first.json()["params"] == {
+        "course_day": 1,
+        "course_material": "day-01-article-tutorial",
+    }
+
+    recipes = client.get(
+        "/api/account/resource-link",
+        params={"target": "masterclass-21:day-06-article-03"},
+    )
+    assert recipes.status_code == 200
+    assert recipes.json()["action"] == "offer"
+    assert recipes.json()["product_code"] == "recipes"
+
+    with factory() as db:
+        user_id = db.scalar(
+            select(UserEmail.user_id).where(
+                UserEmail.email_normalized == "member@example.test"
+            )
+        )
+    unlocked = client.put(
+        f"/admin/api/users/{user_id}/course-policies/ACCESS_MASTERCLASS",
+        json={"unlock_mode": "fully_unlocked"},
+    )
+    assert unlocked.status_code == 200
+    detail = client.get(f"/admin/api/users/{user_id}").json()
+    masterclass_access = next(
+        item for item in detail["accesses"] if item["code"] == "ACCESS_MASTERCLASS"
+    )
+    assert masterclass_access["course_policy_supported"] is True
+    assert masterclass_access["unlock_mode"] == "fully_unlocked"
+
+    late = client.get(
+        "/api/account/resource-link",
+        params={"target": "masterclass-21:day-20-article-01"},
+    )
+    assert late.status_code == 200
+    assert late.json()["action"] == "open"
+
+
+def test_manual_full_unlock_requires_existing_course_access():
+    client, factory = setup()
+    with factory() as db:
+        user_id = db.scalar(
+            select(UserEmail.user_id).where(
+                UserEmail.email_normalized == "member@example.test"
+            )
+        )
+        calories = Resource(
+            code="ACCESS_CALORIES", name="Калорийный курс", status="active"
+        )
+        db.add(calories)
+        db.commit()
+
+    response = client.put(
+        f"/admin/api/users/{user_id}/course-policies/ACCESS_CALORIES",
+        json={"unlock_mode": "fully_unlocked"},
+    )
+    assert response.status_code == 409
+    assert response.json()["detail"] == "active_access_required"
+
+
+def test_recipe_purchase_and_recipe_full_unlock_are_separate_states():
+    client, factory = setup()
+    with factory() as db:
+        user_id = db.scalar(
+            select(UserEmail.user_id).where(
+                UserEmail.email_normalized == "member@example.test"
+            )
+        )
+        recipes = db.scalar(
+            select(Resource).where(Resource.code == "ACCESS_RECIPES")
+        )
+        db.add(
+            UserAccess(
+                user_id=user_id,
+                resource_id=recipes.id,
+                source="test",
+                granted_at=datetime.now(timezone.utc),
+            )
+        )
+        db.commit()
+
+    paced = client.get("/api/masterclass/course?email=member@example.test").json()
+    assert paced["days"][6]["can_open"] is False
+
+    policy = client.put(
+        f"/admin/api/users/{user_id}/course-policies/ACCESS_RECIPES",
+        json={"unlock_mode": "fully_unlocked"},
+    )
+    assert policy.status_code == 200
+    unlocked = client.get("/api/masterclass/course?email=member@example.test").json()
+    assert unlocked["days"][6]["can_open"] is True
+    assert unlocked["days"][7]["can_open"] is True
+    assert unlocked["fully_unlocked"] is False
+
+
 def test_new_course_policy_requires_authoritative_messenger_link() -> None:
     client, factory = setup()
     with factory() as db:

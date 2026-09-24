@@ -19,6 +19,7 @@ from app.database import Base, get_db  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.main import app  # noqa: E402
 import app.main as main_module  # noqa: E402
+from app.managed_documents import publish_document  # noqa: E402
 from app.models import (  # noqa: E402
     ContentItem,
     ContentItemVersion,
@@ -326,6 +327,104 @@ def test_calorie_course_and_calculator_are_blocked_until_masterclass_completion(
     calories = next(item for item in account["courses"] if item["code"] == "calories")
     assert calories["state"] == "masterclass_locked"
     assert calories["app"] is None
+    linked = client.get(
+        "/api/account/resource-link",
+        params={"target": "calories:calories-stage-01-app"},
+    )
+    assert linked.status_code == 200
+    assert linked.json()["action"] == "locked"
+    assert linked.json()["reason_code"] == "masterclass_not_completed"
+
+
+def test_manual_full_unlock_bypasses_course_prerequisite_and_internal_sequence():
+    client, factory = setup(masterclass_completed=False)
+    with factory() as db:
+        user_id = db.scalar(
+            select(UserEmail.user_id).where(
+                UserEmail.email_normalized == "calories@example.test"
+            )
+        )
+
+    policy = client.put(
+        f"/admin/api/users/{user_id}/course-policies/ACCESS_CALORIES",
+        json={"unlock_mode": "fully_unlocked"},
+    )
+    assert policy.status_code == 200
+
+    course = client.get("/api/calories/course?email=calories@example.test")
+    assert course.status_code == 200
+    assert course.json()["fully_unlocked"] is True
+    assert all(stage["can_open"] for stage in course.json()["stages"])
+
+    opened = client.post(
+        "/api/calories/course/days/5/open",
+        json={"email": "calories@example.test"},
+    )
+    assert opened.status_code == 200
+    completed = client.post(
+        "/api/calories/course/days/5/steps/2/complete",
+        json={"email": "calories@example.test"},
+    )
+    assert completed.status_code == 200
+    task = client.post(
+        "/api/calories/course/days/5/task/open",
+        json={"email": "calories@example.test"},
+    )
+    assert task.status_code == 200
+
+    linked = client.get(
+        "/api/account/resource-link",
+        params={"target": "calories:calories-stage-05-exit"},
+    )
+    assert linked.status_code == 200
+    assert linked.json()["action"] == "open"
+    assert linked.json()["params"]["calories_stage"] == 5
+
+
+def test_resource_link_discovers_newly_published_material_from_active_structure():
+    client, factory = setup()
+    editor = client.get("/admin/api/courses/calories/structure").json()
+    manifest = editor["active"]["manifest"]
+    new_step = dict(manifest["stages"][0]["steps"][0])
+    new_step.update(
+        {
+            "id": "calories-stage-01-new-material",
+            "title": "Новый материал",
+            "summary": "Добавлен через редактор структуры.",
+        }
+    )
+    manifest["stages"][0]["steps"].insert(0, new_step)
+    manifest["days"] = manifest["stages"]
+    with factory() as db:
+        publish_document(
+            db,
+            document_type="course-structure",
+            document_key="calories",
+            schema_version=1,
+            payload=manifest,
+            expected_version=editor["active"]["version"],
+            admin="test-chat-release",
+        )
+    published = client.put(
+        "/admin/api/courses/calories/materials/calories-stage-01-new-material",
+        json={
+            "expected_version": 0,
+            "content": "## Новый материал\n\nТекст из редактора.",
+            "format": "markdown",
+        },
+    )
+    assert published.status_code == 200
+
+    linked = client.get(
+        "/api/account/resource-link",
+        params={"target": "calories:calories-stage-01-new-material"},
+    )
+    assert linked.status_code == 200
+    assert linked.json()["action"] == "open"
+    assert linked.json()["params"] == {
+        "calories_stage": 1,
+        "calories_material": "calories-stage-01-new-material",
+    }
 
 
 def test_calorie_material_can_be_published_without_structure_deploy():

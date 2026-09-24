@@ -215,6 +215,8 @@ button { cursor: pointer; }
 .crm-access-heading { margin:10px 0 6px; color:var(--muted); font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
 .crm-access-row { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 10px; border:1px solid var(--line); border-radius:9px; background:#fafdff; }
 .crm-access-row > div { display:flex; align-items:center; gap:7px; }
+.crm-access-row > div:first-child { flex-wrap:wrap; min-width:0; }
+.crm-access-row .crm-check { align-items:center; margin-left:2px; padding:4px 7px; }
 .crm-access-row span { color:var(--muted); font-size:12px; }
 .crm-access-row .crm-btn { min-height:29px; }
 .crm-inline-personal { margin-top:12px; padding-top:11px; border-top:1px solid var(--line); }
@@ -384,4 +386,5 @@ button { cursor: pointer; }
   .crm-purchases-card .crm-tags { justify-content:flex-start; }
   .crm-access-row { align-items:flex-start; flex-direction:column; }
   .crm-access-row > div:last-child { width:100%; }
+  .crm-access-row .crm-check { margin-left:0; }
 }

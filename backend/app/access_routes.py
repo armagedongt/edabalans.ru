@@ -40,10 +40,22 @@ from app.models import (
 from app.product_identity import purchased_products
 from app.product_catalog_service import PRODUCT_CONNECTIONS, product_public
 from app.metabolism_service import metabolism_is_unlocked
+from app.course_access_service import (
+    active_resource_codes,
+    course_entry_unlocked,
+    course_fully_unlocked,
+)
 from app.dqs_access_service import dqs_is_revealed
 
 
 router = APIRouter(tags=["access-links"])
+
+RESOURCE_PRODUCT_CODES = {
+    "ACCESS_MASTERCLASS": "masterclass",
+    "ACCESS_RECIPES": "recipes",
+    "ACCESS_CALORIES": "calories",
+    "ACCESS_STRENGTH": "training",
+}
 
 
 def native_user(request: Request, db: Session) -> User:
@@ -68,6 +80,218 @@ class PersonalLinkCreateIn(BaseModel):
     standard_amount: Decimal | None = Field(default=None, ge=0, le=10_000_000)
     expires_days: int = Field(default=14, ge=1, le=365)
     fully_unlocked: bool = False
+
+
+def resource_link_response(
+    action: str,
+    *,
+    target: str,
+    reason_code: str | None = None,
+    **values,
+) -> dict:
+    return {
+        "ok": True,
+        "target": target,
+        "action": action,
+        "reason_code": reason_code,
+        **values,
+    }
+
+
+def missing_resource_offer(target: str, resource_code: str) -> dict:
+    product_code = RESOURCE_PRODUCT_CODES.get(resource_code)
+    if product_code is None:
+        return resource_link_response(
+            "unavailable", target=target, reason_code="offer_not_configured"
+        )
+    return resource_link_response(
+        "offer",
+        target=target,
+        reason_code="not_owned",
+        product_code=product_code,
+        public_masterclass=product_code == "masterclass",
+    )
+
+
+def step_is_open(
+    steps: list[dict],
+    step_index: int,
+    completed_indexes: set[int],
+    *,
+    fully_unlocked: bool,
+) -> bool:
+    if fully_unlocked or step_index in completed_indexes:
+        return True
+    return not any(
+        index not in completed_indexes
+        for index, step in enumerate(steps[:step_index])
+        if not step.get("hidden", False)
+        and not step.get("nested", False)
+        and not step.get("locked", False)
+        and step.get("required", True)
+    )
+
+
+def resolve_masterclass_resource_link(
+    db: Session,
+    user: User,
+    target: str,
+    step_id: str,
+    settings: Settings,
+) -> dict:
+    from app.course_structure_service import course_context
+    from app.masterclass_routes import course_context_for_member, course_payload
+
+    base = course_context(db)
+    found = next(
+        (
+            (day, index, step)
+            for day, payload in base.days.items()
+            for index, step in enumerate(payload.get("steps", []))
+            if step.get("id") == step_id
+        ),
+        None,
+    )
+    if found is None:
+        return resource_link_response(
+            "unavailable", target=target, reason_code="target_not_found"
+        )
+    day, step_index, step = found
+    if step.get("hidden", False) or step.get("locked", False) or step.get("nested", False):
+        return resource_link_response(
+            "unavailable", target=target, reason_code="target_not_published"
+        )
+    owned = active_resource_codes(db, user.id)
+    if "ACCESS_MASTERCLASS" not in owned:
+        return missing_resource_offer(target, "ACCESS_MASTERCLASS")
+    day_resource = str(base.days[day].get("accessResource") or "ACCESS_MASTERCLASS")
+    if day_resource not in owned:
+        return missing_resource_offer(target, day_resource)
+
+    member = course_context_for_member(db, user.id)
+    state = course_payload(db, user, settings, datetime.now(timezone.utc), member)
+    day_state = state["days"][day - 1]
+    if not day_state["opened"] and not day_state["can_open"]:
+        return resource_link_response(
+            "locked",
+            target=target,
+            reason_code="progress_locked",
+            title="Материал пока закрыт",
+            explanation="Продолжите Мастер-класс по порядку — материал откроется на своём этапе.",
+            action_app="masterclass-course",
+            action_label="Продолжить Мастер-класс",
+        )
+    steps = member.days[day].get("steps", [])
+    completed = set(day_state.get("completed_steps") or [])
+    if not step_is_open(
+        steps,
+        step_index,
+        completed,
+        fully_unlocked=bool(state.get("fully_unlocked")),
+    ):
+        return resource_link_response(
+            "locked",
+            target=target,
+            reason_code="progress_locked",
+            title="Материал пока закрыт",
+            explanation="Сначала закончите предыдущие материалы этого дня.",
+            action_app="masterclass-course",
+            action_label="Продолжить Мастер-класс",
+        )
+    return resource_link_response(
+        "open",
+        target=target,
+        app="masterclass-course",
+        params={"course_day": day, "course_material": step_id},
+    )
+
+
+def resolve_calorie_resource_link(
+    db: Session,
+    user: User,
+    target: str,
+    step_id: str,
+) -> dict:
+    from app.calorie_course_material_service import article_step, material_item, publication_status
+    from app.calorie_course_routes import course_payload
+    from app.calorie_course_service import course_context
+
+    context = course_context(db)
+    found = next(
+        (
+            (stage, index, step)
+            for stage, payload in context.stages.items()
+            for index, step in enumerate(payload.get("steps", []))
+            if step.get("id") == step_id
+        ),
+        None,
+    )
+    if found is None:
+        return resource_link_response(
+            "unavailable", target=target, reason_code="target_not_found"
+        )
+    stage, step_index, step = found
+    if step.get("hidden", False) or step.get("locked", False):
+        return resource_link_response(
+            "unavailable", target=target, reason_code="target_not_published"
+        )
+    if not publication_status(db)["ready"]:
+        return resource_link_response(
+            "unavailable", target=target, reason_code="course_not_published"
+        )
+    if step.get("kind") == "article":
+        article_step(context, step_id)
+        if material_item(db, step_id) is None:
+            return resource_link_response(
+                "unavailable", target=target, reason_code="target_not_published"
+            )
+    owned = active_resource_codes(db, user.id)
+    if "ACCESS_CALORIES" not in owned:
+        return missing_resource_offer(target, "ACCESS_CALORIES")
+    if not course_entry_unlocked(db, user.id, "ACCESS_CALORIES"):
+        return resource_link_response(
+            "locked",
+            target=target,
+            reason_code="masterclass_not_completed",
+            title="Курс куплен, но ещё закрыт",
+            explanation="Калорийный курс откроется после завершения Мастер-класса.",
+            action_app="masterclass-course",
+            action_label="Продолжить Мастер-класс",
+        )
+    state = course_payload(db, user, datetime.now(timezone.utc), context)
+    stage_state = state["stages"][stage - 1]
+    if not stage_state["opened"] and not stage_state["can_open"]:
+        return resource_link_response(
+            "locked",
+            target=target,
+            reason_code="progress_locked",
+            title="Материал пока закрыт",
+            explanation="Продолжите курс по порядку — материал откроется на своём этапе.",
+            action_app="calories-course",
+            action_label="Продолжить курс",
+        )
+    completed = set(stage_state.get("completed_steps") or [])
+    if not step_is_open(
+        context.stages[stage].get("steps", []),
+        step_index,
+        completed,
+        fully_unlocked=course_fully_unlocked(db, user.id, "ACCESS_CALORIES"),
+    ):
+        return resource_link_response(
+            "locked",
+            target=target,
+            reason_code="progress_locked",
+            title="Материал пока закрыт",
+            explanation="Сначала закончите предыдущие материалы этого этапа.",
+            action_app="calories-course",
+            action_label="Продолжить курс",
+        )
+    return resource_link_response(
+        "open",
+        target=target,
+        app="calories-course",
+        params={"calories_stage": stage, "calories_material": step_id},
+    )
 
 
 def aware_utc(value: datetime | None) -> datetime | None:
@@ -287,12 +511,25 @@ def account_payload(email: str, db: Session, *, progress_user_id: uuid.UUID | No
         None,
     )
     calories_unlocked = progress_user_id == user.id and metabolism_is_unlocked(db, user.id)
+    training_unlocked = progress_user_id == user.id and course_entry_unlocked(
+        db, user.id, "ACCESS_STRENGTH"
+    )
     courses = account_courses(definitions, owned, legal["required"])
     for item in courses:
         code = item["code"]
         if code == "masterclass" and masterclass_purchase:
             item["tariff"] = masterclass_purchase["tariff"]
         if code == "calories" and item["owned"] and not calories_unlocked and not item["maintenance"]:
+            item["state"] = "masterclass_locked"
+            item["app"] = None
+            item["unlock_after_masterclass"] = True
+        if (
+            code == "strength"
+            and item["owned"]
+            and item["ready"]
+            and not training_unlocked
+            and not item["maintenance"]
+        ):
             item["state"] = "masterclass_locked"
             item["app"] = None
             item["unlock_after_masterclass"] = True
@@ -324,6 +561,30 @@ def account_catalog(email: str, request: Request, db: Session = Depends(get_db))
 
     session_user = native_session_user(request, db)
     return account_payload(email, db, progress_user_id=session_user.id if session_user else None)
+
+
+@router.get("/api/account/resource-link")
+def resolve_account_resource_link(
+    target: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    """Resolve a stable course material key without treating the URL as access."""
+    user = native_user(request, db)
+    normalized = target.strip()
+    if len(normalized) > 180 or ":" not in normalized:
+        raise HTTPException(422, "Некорректная ссылка на материал")
+    course_code, step_id = normalized.split(":", 1)
+    if not course_code or not step_id:
+        raise HTTPException(422, "Некорректная ссылка на материал")
+    if course_code == "masterclass-21":
+        return resolve_masterclass_resource_link(db, user, normalized, step_id, settings)
+    if course_code == "calories":
+        return resolve_calorie_resource_link(db, user, normalized, step_id)
+    return resource_link_response(
+        "unavailable", target=normalized, reason_code="course_not_registered"
+    )
 
 
 @router.post("/api/account/legal-acceptances")

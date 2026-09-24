@@ -20,6 +20,7 @@ from app.calorie_course_service import (
     effective_required_step_ids,
 )
 from app.database import get_db
+from app.course_access_service import course_fully_unlocked
 from app.metabolism_service import metabolism_is_unlocked
 from app.models import CourseEvent, CourseStageProgress, CourseStepProgress, User
 
@@ -138,6 +139,8 @@ def required_step_indexes(
 def stage_can_open(
     db: Session, user_id: uuid.UUID, stage: int, context: CalorieCourseContext
 ) -> tuple[bool, str | None]:
+    if course_fully_unlocked(db, user_id, RESOURCE_CODE):
+        return True, None
     if stage == 1:
         return True, None
     if stage not in context.stages:
@@ -240,6 +243,7 @@ def course_payload(
         if row.stage_number in step_rows:
             step_rows[row.stage_number].add(row.step_index)
 
+    fully_unlocked = course_fully_unlocked(db, user.id, RESOURCE_CODE)
     stages = []
     for stage in range(1, context.last_stage + 1):
         progress = progress_rows.get(stage)
@@ -289,7 +293,9 @@ def course_payload(
                     ),
                     None,
                 ),
-                "task_unlocked": all(index in completed_indexes for index in required_indexes),
+                "task_unlocked": fully_unlocked or all(
+                    index in completed_indexes for index in required_indexes
+                ),
                 "task_opened": bool(progress and progress.task_opened_at),
                 "checkmarks": checkmarks,
                 "check_count": len(context.checks[stage]),
@@ -310,7 +316,7 @@ def course_payload(
         "server_now": now.isoformat(),
         "unlock_schedule": "next_stage_after_completion",
         "accelerated_test": False,
-        "fully_unlocked": False,
+        "fully_unlocked": fully_unlocked,
         "current_day": max(progress_rows) if progress_rows else 1,
         "days": stages,
         "stages": stages,
@@ -407,7 +413,9 @@ def course_complete_step(
         for previous_index, previous in enumerate(steps[:index])
         if previous["id"] in required_ids
     ]
-    if any(previous not in completed for previous in required_before):
+    if not course_fully_unlocked(db, user.id, RESOURCE_CODE) and any(
+        previous not in completed for previous in required_before
+    ):
         raise HTTPException(409, detail={"reason": "previous_step_not_completed"})
     step = steps[index]
     db.add(
@@ -451,7 +459,7 @@ def course_open_task(
     if progress is None:
         raise HTTPException(409, detail={"reason": "stage_not_opened"})
     completed = completed_step_indexes(db, user.id, stage)
-    if any(
+    if not course_fully_unlocked(db, user.id, RESOURCE_CODE) and any(
         step_index not in completed
         for step_index in required_step_indexes(context, progress, stage)
     ):

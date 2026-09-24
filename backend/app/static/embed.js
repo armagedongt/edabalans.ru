@@ -476,6 +476,7 @@
       mount.getAttribute('data-edabalans-account-url') ||
       (location.hostname === 'app.edabalans.ru' ? PUBLIC_ACCOUNT_URL : '/lk')
     );
+    var purchaseReturnUrl = String(mount.getAttribute('data-edabalans-purchase-return-url') || '');
     var linkToken = String(mount.getAttribute('data-edabalans-link-token') || new URLSearchParams(location.search).get('access_token') || '');
     if (!roots[app]) {
       mount.textContent = 'Неизвестное приложение: ' + app;
@@ -493,8 +494,8 @@
       .then(function (html) {
         window.EdabalansAppHost = APP_HOST;
         window.EdabalansAppContext = adminUser
-          ? {mode: 'admin', targetUserId: adminUser, app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, linkToken: linkToken, accountOffer: accountOffer, publicMasterclass: publicMasterclass, focusProductCode: focusProductCode}
-          : {mode: 'user', app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, linkToken: linkToken, accountOffer: accountOffer, publicMasterclass: publicMasterclass, focusProductCode: focusProductCode};
+          ? {mode: 'admin', targetUserId: adminUser, app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, purchaseReturnUrl: purchaseReturnUrl, linkToken: linkToken, accountOffer: accountOffer, publicMasterclass: publicMasterclass, focusProductCode: focusProductCode}
+          : {mode: 'user', app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, purchaseReturnUrl: purchaseReturnUrl, linkToken: linkToken, accountOffer: accountOffer, publicMasterclass: publicMasterclass, focusProductCode: focusProductCode};
         var doc = new DOMParser().parseFromString(html, 'text/html');
         var sourceRoot = doc.getElementById(roots[app]);
         mount.id = roots[app];

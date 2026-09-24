@@ -24,6 +24,7 @@ from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.checkout_reference import tilda_order_command
 from app.database import get_db
+from app.course_access_service import active_resource_codes, course_fully_unlocked
 from app.questionnaire_person_service import PERSON_FIELDS, normalize_person_answer, person_parameters
 from app.course_material_service import published_materials
 from app.models import (
@@ -271,17 +272,7 @@ def scheduled_unlock_at(
 
 
 def masterclass_fully_unlocked(db: Session, user_id: uuid.UUID) -> bool:
-    return bool(
-        db.scalar(
-            select(UserCoursePolicy.id)
-            .join(Resource, Resource.id == UserCoursePolicy.resource_id)
-            .where(
-                UserCoursePolicy.user_id == user_id,
-                Resource.code == "ACCESS_MASTERCLASS",
-                UserCoursePolicy.unlock_mode == "fully_unlocked",
-            )
-        )
-    )
+    return course_fully_unlocked(db, user_id, "ACCESS_MASTERCLASS")
 
 
 def notification_due(db: Session, user_id: uuid.UUID, normal: datetime) -> datetime:
@@ -512,6 +503,14 @@ def course_day_can_open(
 ) -> tuple[bool, str | None, datetime | None]:
     if masterclass_fully_unlocked(db, user_id):
         return True, None, None
+    day_payload = course_context(db).days.get(day, {})
+    day_resource = str(day_payload.get("accessResource") or "")
+    if (
+        day_resource
+        and day_resource in active_resource_codes(db, user_id)
+        and course_fully_unlocked(db, user_id, day_resource)
+    ):
+        return True, None, None
     if day == 1:
         return True, None, None
     previous = day_progress(db, user_id, day - 1)
@@ -724,7 +723,9 @@ def course_payload(
         required_indexes = [
             index for index, step in enumerate(steps) if step["id"] in required_set
         ]
-        task_unlocked = all(index in completed_indexes for index in required_indexes)
+        task_unlocked = masterclass_fully_unlocked(db, user.id) or all(
+            index in completed_indexes for index in required_indexes
+        )
         placement = context.offers.get(day)
         placement_payload = None
         if progress and placement:
@@ -936,7 +937,9 @@ def complete_questionnaire_course_step(
         )
         if previous["id"] in required_ids
     ]
-    if any(previous not in completed for previous in required_before):
+    if not masterclass_fully_unlocked(db, user.id) and any(
+        previous not in completed for previous in required_before
+    ):
         return False
     db.add(
         MasterclassStepProgress(
@@ -1070,7 +1073,9 @@ def course_complete_step(
         for previous_index, previous in enumerate(steps[:index])
         if previous["id"] in required_ids
     ]
-    if any(previous not in completed for previous in required_before):
+    if not masterclass_fully_unlocked(db, user.id) and any(
+        previous not in completed for previous in required_before
+    ):
         raise HTTPException(409, detail={"reason": "previous_step_not_completed"})
     if kind == "dqs":
         tutorial_completed = db.scalar(
@@ -1128,7 +1133,7 @@ def course_open_task(
     if not progress:
         raise HTTPException(409, detail={"reason": "day_not_opened"})
     completed = completed_step_indexes(db, user.id, day, context)
-    if any(
+    if not masterclass_fully_unlocked(db, user.id) and any(
         step_index not in completed
         for step_index in required_step_indexes(context, progress, day)
     ):

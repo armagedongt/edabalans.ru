@@ -2,26 +2,15 @@ from __future__ import annotations
 
 import uuid
 
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.app_service import AppAccessError, require_user_resource
-from app.models import MasterclassEvent, Resource, User, UserCoursePolicy
+from app.course_access_service import course_entry_unlocked
+from app.models import User
 
 
 def metabolism_is_unlocked(db: Session, user_id: uuid.UUID) -> bool:
-    if db.scalar(select(MasterclassEvent.id).where(
-        MasterclassEvent.user_id == user_id,
-        MasterclassEvent.event_type == "masterclass_completed",
-    )) is not None:
-        return True
-    return db.scalar(select(UserCoursePolicy.id).join(
-        Resource, Resource.id == UserCoursePolicy.resource_id,
-    ).where(
-        UserCoursePolicy.user_id == user_id,
-        Resource.code == "ACCESS_CALORIES",
-        UserCoursePolicy.unlock_mode == "fully_unlocked",
-    )) is not None
+    return course_entry_unlocked(db, user_id, "ACCESS_CALORIES")
 
 
 def require_metabolism_user(db: Session, user: User) -> User:

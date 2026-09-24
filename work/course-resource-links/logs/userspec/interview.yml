@@ -1,0 +1,49 @@
+interview_metadata:
+  started: "2026-09-24"
+  last_updated: "2026-09-24"
+  status: "completed"
+  can_resume: false
+
+conversation_history:
+  - asked_at: "2026-09-24"
+    topic_keys: ["feature_description", "acceptance_criteria", "edge_cases"]
+    agent_questions: |
+      Требования сформулированы владельцем без дополнительного интервью.
+    user_answer: |
+      Нужен общий ключ ссылки на материал. Если материал открыт — открыть его; если
+      не куплен — показать единый модуль покупки. Нужно отличать купленный курс от
+      уже открытого по прохождению. Калорийный курс и курс тренировок открываются
+      после всех 20 дней Мастер-класса. В CRM нужна отдельная галочка полного
+      открытия курса для конкретного пользователя. Решение должно переноситься на
+      будущие курсы и быть задокументировано.
+
+general_understanding:
+  feature_name: {score: 3, value: "Универсальные ссылки и условия открытия курсов", gaps: [], required: true}
+  feature_description: {score: 3, value: "Общий resolver ссылки, prerequisite и ручной full unlock", gaps: [], required: true}
+  work_type: {score: 3, value: "feature", gaps: [], required: true}
+  user_problem: {score: 3, value: "Прямая ссылка не различает покупку, прогресс и закрытый prerequisite", gaps: [], required: true}
+  target_users: {score: 3, value: "Участники курсов и администратор CRM", gaps: [], required: false}
+  success_criteria: {score: 3, value: "Одна ссылка безопасно открывает материал, продажу или корректный locked-state", gaps: [], required: true}
+  constraints: {score: 3, value: "Без второго источника прав и без раскрытия черновиков", gaps: [], required: true}
+  testing_strategy: {score: 3, value: "Интеграционные тесты routes и прогресса", gaps: [], required: true}
+
+user_experience:
+  user_stories: {score: 3, value: "Переход по ссылке, покупка, продолжение курса, ручной unlock", gaps: [], required: true}
+  acceptance_criteria: {score: 3, value: "Зафиксированы в user-spec", gaps: [], required: true}
+  edge_cases: {score: 3, value: "Куплено, но prerequisite/этап закрыт; hidden/locked/unpublished", gaps: [], required: true}
+  error_scenarios: {score: 3, value: "Неизвестный ключ и неизвестный runtime безопасно закрыты", gaps: [], required: true}
+  verification_strategy: {score: 3, value: "Тесты resolver, CRM и full unlock", gaps: [], required: true}
+  ui_ux_requirements: {score: 3, value: "Один стандартный offer и один стандартный locked screen", gaps: [], required: false}
+  risks: {score: 3, value: "URL не является правом; policy требует активный access", gaps: [], required: true}
+  technical_decisions: {score: 3, value: "course_code:step_id и существующая user_course_policies", gaps: [], required: false}
+  deploy_approach: {score: 3, value: "Обычный backend deploy без migration", gaps: [], required: false}
+  manual_user_actions: {score: 3, value: "Не требуются", gaps: [], required: false}
+
+integration:
+  integration_points: {score: 3, value: "ЛК, runtime Мастер-класса/Калорийного, CRM, account offers", gaps: [], required: true}
+  dependencies: {score: 3, value: "user_accesses, user_course_policies, course manifests", gaps: [], required: false}
+  technical_constraints: {score: 3, value: "Серверный guard материалов остаётся обязательным", gaps: [], required: false}
+  data_requirements: {score: 3, value: "Только существующие таблицы", gaps: [], required: false}
+  migration_needs: {score: 3, value: "Миграция не нужна", gaps: [], required: false}
+
+notes: "Владелец прямо разрешил реализацию и попросил автономную работу."
