@@ -1233,7 +1233,7 @@
           "hidden": false
         }
       ],
-      "recipeDay": true,
+      "recipeDay": false,
       "publicationStatus": "ready",
       "steps": [
         {
@@ -1383,7 +1383,7 @@
           "hidden": false
         }
       ],
-      "recipeDay": true,
+      "recipeDay": false,
       "publicationStatus": "ready",
       "steps": [
         {

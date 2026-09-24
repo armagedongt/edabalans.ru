@@ -8,11 +8,24 @@ from pathlib import Path
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 
-from app.course_structure_service import prepare_20_day_migration
+from app.course_structure_service import normalize_seed, prepare_20_day_migration
 
 
 ROOT = Path(__file__).resolve().parents[2]
 DESIRED = ROOT / "content" / "masterclass" / "course" / "course.json"
+
+
+def test_recipe_outline_accent_has_one_canonical_day_set_even_for_old_revisions():
+    manifest = json.loads(DESIRED.read_text(encoding="utf-8"))
+    # Existing published revisions may still call the whole second recipe episode
+    # (days 14–16) a recipeDay; that must not change the outline's visual marker.
+    manifest["days"][13]["recipeDay"] = True
+    manifest["days"][15]["recipeDay"] = True
+
+    normalized = normalize_seed(manifest)
+
+    assert [day["number"] for day in normalized["days"] if day["recipeDay"]] == [6, 7, 8, 15]
+    assert [day["number"] for day in manifest["days"] if day["recipeDay"]] == [6, 7, 8, 14, 15, 16]
 
 
 def test_migration_removes_legacy_day_without_touching_first_five_days():

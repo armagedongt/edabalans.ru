@@ -23,6 +23,9 @@ DOCUMENT_TYPE = "course-structure"
 DOCUMENT_KEY = "masterclass-21"
 MANAGED_SCHEMA_VERSION = 1
 MASTERCLASS_DAY_COUNT = 20
+# Only these days keep the permanent gold stripe in the course outline.
+# Recipe offer windows and access gates are independent of this visual marker.
+RECIPE_OUTLINE_ACCENT_DAYS = frozenset({6, 7, 8, 15})
 COURSE_CONTENT_ROOT = Path(__file__).resolve().parents[2] / "content" / "masterclass"
 COURSE_MANIFEST_PATH = COURSE_CONTENT_ROOT / "course" / "course.json"
 SYSTEM_KINDS = {
@@ -110,6 +113,7 @@ def normalize_seed(manifest: dict) -> dict:
             day.pop(key, None)
         day.setdefault("afterLead", "")
         day_number = int(day["number"])
+        day["recipeDay"] = day_number in RECIPE_OUTLINE_ACCENT_DAYS
         day["checks"] = [
             item if isinstance(item, dict) else {
                 "id": check_id(day_number, index),
