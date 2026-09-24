@@ -846,6 +846,17 @@ def test_release_candidate_gives_a_hero_route_to_pricing_and_opens_mobile_outlin
     assert "if (open) {\n          setTocOpen(true);" in response.text
 
 
+def test_release_candidate_copy_uses_the_full_content_frame() -> None:
+    html = client.get("/preview/homepage-release-candidate").text
+
+    assert "--content-reading: var(--content-frame);" in html
+    assert ".contact-copy{width:100%;" in html
+    assert ".anya-story__header p{margin:" in html
+    assert ".contact-copy{max-width:640px;" not in html
+    assert ".anya-story__header p{max-width:580px;" not in html
+    assert ".action-group{width:min(100%,680px);" in html
+
+
 def test_homepage_versions_preserve_snapshots_and_separate_current_runtime_and_next_draft() -> None:
     expected_previous_sha256 = "5c53b02ae2e7d5dbacbbd6a6da4fbbfdbe6116de8745cda75964d2cb30950169"
     expected_version_2_sha256 = "135162a19ba1ae1d19fa39f11dbc8304fe8c25e5ea2968856142d8843db01c76"

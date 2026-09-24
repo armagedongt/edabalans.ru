@@ -362,7 +362,7 @@
       --content-wide: 1180px;
       --content-frame: min(calc(100vw - 40px), 600px);
       --content-copy: 940px;
-      --content-reading: 680px;
+      --content-reading: var(--content-frame);
       --content-panel: var(--content-frame);
       --content-video-frame: min(calc(90svh * 3 / 4), var(--content-standard-max));
       --content-inline-start: calc((100vw - var(--content-frame)) / 2);
@@ -890,7 +890,7 @@
     .meme-card{position:relative;align-self:center;width:100%;margin:24px auto 0;padding:0;overflow:hidden;border-radius:clamp(12px,2vw,16px);background:transparent}
     .meme-card img{display:block;width:100%;height:auto;margin:0 auto}
     .action-group{width:min(100%,680px);margin:26px auto 0}
-    .contact-copy{max-width:640px;margin:0 0 22px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
+    .contact-copy{width:100%;margin:0 0 22px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
     .final-main>.contact-copy{margin-top:22px;margin-bottom:0}
     .social-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
     .social-button,.primary-cta{min-height:56px;border:0;border-radius:16px;font:800 16px/1 Manrope,sans-serif;text-decoration:none;transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease,filter .18s ease}
@@ -1100,7 +1100,7 @@
     .anya-story__header{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin-right:auto;margin-left:auto}
     .anya-story__kicker{display:inline-flex;padding:8px 12px;border-radius:999px;background:#ff684b;color:#fff;font-size:12px;font-weight:900;letter-spacing:.05em;transform:rotate(-2deg)}
     .anya-story__header h2{margin:18px 0 0;font-size:var(--type-section);font-weight:800;line-height:1.08;letter-spacing:-.045em}
-    .anya-story__header p{max-width:580px;margin:18px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
+    .anya-story__header p{margin:18px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
     .anya-story__gesture{display:inline-grid;width:64px;height:36px;margin-left:15px;vertical-align:-.3em;color:#168fd3;place-items:center}
     .anya-story__gesture[hidden]{display:none}
     .anya-swipe-option{display:none;align-items:center;justify-content:center;color:#168fd3;font-size:12px;font-weight:800}
