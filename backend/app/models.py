@@ -988,9 +988,14 @@ class PersonalAccessLink(Base):
     __tablename__ = "personal_access_links"
 
     id: Mapped[uuid.UUID] = uuid_pk()
-    user_id: Mapped[uuid.UUID] = mapped_column(
+    # A paid offer may be prepared before its recipient has an account.  The
+    # payment confirmation later binds the offer to the existing or newly
+    # created user with this email.
+    user_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), index=True
     )
+    target_email_original: Mapped[str] = mapped_column(String(320), nullable=False)
+    target_email_normalized: Mapped[str] = mapped_column(String(320), index=True, nullable=False)
     token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     mode: Mapped[str] = mapped_column(String(16), nullable=False)
     resource_codes: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
@@ -1029,7 +1034,7 @@ class UserCoursePolicy(Base):
         String(32), default="paced", server_default=text("'paced'"), nullable=False
     )
     start_mode: Mapped[str] = mapped_column(
-        String(32), default="open", server_default=text("'open'"), nullable=False
+        String(32), default="auto", server_default=text("'auto'"), nullable=False
     )
     source: Mapped[str] = mapped_column(String(64), nullable=False)
     course_policy_version: Mapped[int] = mapped_column(

@@ -150,8 +150,12 @@ def grant_resources(
         mode = (unlock_modes or {}).get(code, "paced")
         if mode not in {"paced", "fully_unlocked"}:
             raise ValueError(f"invalid unlock mode for {code}")
-        start_mode = (start_modes or {}).get(code, "open")
-        if start_mode not in {"open", "blocked"}:
+        # ``auto`` means that the product's own ordinary progression rule is
+        # in force.  ``open`` is an explicit CRM override; ``blocked`` is a
+        # deliberate manual hold.  Older rows remain ``open`` for backwards
+        # compatibility.
+        start_mode = (start_modes or {}).get(code, "auto")
+        if start_mode not in {"auto", "open", "blocked"}:
             raise ValueError(f"invalid start mode for {code}")
         policy = db.scalar(
             select(UserCoursePolicy).where(

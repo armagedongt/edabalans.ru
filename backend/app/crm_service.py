@@ -1100,12 +1100,12 @@ def update_course_access_state(
                 user_id=user_id,
                 resource_id=resource.id,
                 unlock_mode="fully_unlocked" if all_lessons_open else "paced",
-                start_mode="open" if start_open else "blocked",
+                start_mode="open" if start_open else "auto",
                 source="manual_admin",
             ))
         else:
             policy.unlock_mode = "fully_unlocked" if all_lessons_open else "paced"
-            policy.start_mode = "open" if start_open else "blocked"
+            policy.start_mode = "open" if start_open else "auto"
             policy.source = "manual_admin"
     else:
         # Do not erase a payment record: pausing makes the right unavailable

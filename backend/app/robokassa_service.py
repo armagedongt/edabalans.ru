@@ -27,6 +27,7 @@ from app.intensive_web_access import (
 from app.models import (
     OfferCheckout,
     Payment,
+    PersonalAccessLink,
     PriceEntry,
     PricingVersion,
     Product,
@@ -43,7 +44,10 @@ from app.tilda_service import (
     record_paid_tracking_event,
     validate_user_email_binding,
 )
-from app.account_onboarding_service import ensure_paid_account_onboarding
+from app.account_onboarding_service import (
+    ensure_paid_account_onboarding,
+    issue_initial_direct_password,
+)
 from app.owner_payment_notification_service import enqueue_paid_payment_notification
 
 
@@ -58,6 +62,7 @@ LIVE_PROBE_AMOUNT = Decimal("10.00")
 MANUAL_SERVICE_CHECKOUT_KIND = "manual_service"
 MANUAL_SERVICE_OFFER_CODE = "manual.payment"
 MANUAL_SERVICE_TITLE = "Свободная оплата"
+PERSONAL_ACCESS_CHECKOUT_KIND = "personal_access"
 MOSCOW = ZoneInfo("Europe/Moscow")
 EMAIL_PATTERN = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 HASH_ALGORITHMS = {"md5", "sha1", "sha256", "sha384", "sha512"}
@@ -491,6 +496,93 @@ def create_member_offer_payment(
     }
 
 
+def create_personal_access_payment(
+    db: Session, settings: Settings, link: PersonalAccessLink
+) -> dict:
+    """Create a direct Robokassa invoice for an admin-prepared offer.
+
+    The recipient's email is fixed by the CRM record.  A new account is not
+    created until the signed payment confirmation arrives.
+    """
+    _require_checkout_settings(settings)
+    if link.mode != "paid" or link.status != "active":
+        raise RobokassaError("Персональное предложение больше не доступно")
+    email = normalize_checkout_email(link.target_email_normalized)
+    now = datetime.now(timezone.utc)
+    expires_at = link.expires_at
+    if expires_at and expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if expires_at is not None and expires_at <= now:
+        raise RobokassaError("Срок персонального предложения закончился")
+    checkout = db.get(OfferCheckout, link.checkout_id) if link.checkout_id else None
+    if checkout is not None and checkout.payment_id is not None:
+        payment = db.get(Payment, checkout.payment_id)
+        if payment is not None and payment.payment_status == "pending":
+            return {
+                "ok": True,
+                "invoice_id": payment.external_order_id,
+                "amount": amount_value(payment.amount),
+                "test_mode": settings.robokassa_test_mode,
+                "expires_at": checkout.expires_at.isoformat(),
+                "payment_form": {
+                    "action": settings.robokassa_payment_url,
+                    "method": "POST",
+                    "fields": _payment_fields(settings, payment, checkout.title, email, checkout.expires_at),
+                },
+            }
+        raise RobokassaError("Ссылка уже была использована для оплаты")
+    payment_id = uuid.uuid4()
+    invoice_id = str(_invoice_id(payment_id))
+    payment = Payment(
+        id=payment_id,
+        user_id=link.user_id,
+        source=SOURCE,
+        external_order_id=invoice_id,
+        email_at_purchase=email,
+        product_name_raw="Персональное предложение Сергея",
+        amount=link.final_amount,
+        amount_is_estimated=False,
+        currency=link.currency,
+        payment_status="pending",
+        payment_system="robokassa",
+        raw_payload={
+            "test_mode": settings.robokassa_test_mode,
+            "account_purchase": link.user_id is not None,
+            "success_kind": SUCCESS_KIND_MEMBER_OFFER,
+            "personal_access": True,
+            "personal_access_link_id": str(link.id),
+        },
+    )
+    db.add(payment)
+    db.flush()
+    checkout = OfferCheckout(
+        user_id=link.user_id,
+        checkout_kind=PERSONAL_ACCESS_CHECKOUT_KIND,
+        offer_code=f"personal:{link.id}",
+        title="Персональное предложение Сергея",
+        items=list(link.resource_codes or []),
+        amount=link.final_amount,
+        expires_at=expires_at or now + timedelta(days=14),
+        payment_id=payment.id,
+    )
+    db.add(checkout)
+    db.flush()
+    link.checkout_id = checkout.id
+    db.commit()
+    return {
+        "ok": True,
+        "invoice_id": invoice_id,
+        "amount": amount_value(payment.amount),
+        "test_mode": settings.robokassa_test_mode,
+        "expires_at": checkout.expires_at.isoformat(),
+        "payment_form": {
+            "action": settings.robokassa_payment_url,
+            "method": "POST",
+            "fields": _payment_fields(settings, payment, checkout.title, email, checkout.expires_at),
+        },
+    }
+
+
 def create_manual_service_payment(
     db: Session,
     settings: Settings,
@@ -747,6 +839,10 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
             enqueue_paid_payment_notification(db, payment)
         db.commit()
         return invoice_id
+    personal_link = db.scalar(
+        select(PersonalAccessLink).where(PersonalAccessLink.checkout_id == checkout.id)
+    )
+    creates_account = personal_link is not None and personal_link.user_id is None
     if checkout.user_id is not None:
         user = db.get(User, checkout.user_id)
         if user is None:
@@ -801,10 +897,14 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         "integration": {"test_mode": is_test_payment},
         "notification": payload,
     }
+    if personal_link is not None:
+        payment.raw_payload["personal_access_link_id"] = str(personal_link.id)
     trusted_snapshot = checkout_metadata.get("trusted_source_snapshot")
     if isinstance(trusted_snapshot, dict):
         payment.raw_payload["trusted_source_snapshot"] = trusted_snapshot
     checkout.user_id = user.id
+    if personal_link is not None:
+        personal_link.user_id = user.id
     checkout.status = payment.payment_status
     if not is_test_payment:
         if checkout.checkout_kind == "recurring_subscription":
@@ -821,7 +921,16 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         else:
             grant_payment_access(db, payment, checkout, occurred_at)
             _record_initial_direct_payment(db, payment, checkout, occurred_at)
-        if settings.account_onboarding_enabled and not account_purchase:
+            if creates_account:
+                issue_initial_direct_password(
+                    db,
+                    user=user,
+                    settings=settings,
+                    issued_via="personal_paid_link",
+                )
+        # Personal links deliver the initial password by email themselves.
+        # Do not also start the generic messenger-claim onboarding.
+        if settings.account_onboarding_enabled and not account_purchase and personal_link is None:
             ensure_paid_account_onboarding(db, payment, settings)
     elif checkout.checkout_kind == "recurring_subscription":
         from app.robokassa_subscription_service import apply_confirmed_subscription_payment

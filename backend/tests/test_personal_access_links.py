@@ -48,6 +48,9 @@ def setup():
         admin_username="admin@example.com",
         admin_password="test-admin-password",
         app_auth_secret="test-client-session-secret",
+        smtp_host="smtp.example.test",
+        smtp_from_email="noreply@example.test",
+        account_public_url="https://example.test/lk",
     )
     app.dependency_overrides[get_db] = override_db
     app.dependency_overrides[get_settings] = lambda: settings
@@ -160,6 +163,38 @@ def test_paid_personal_link_uses_shared_short_checkout_reference():
     assert "EB-" not in response.json()["cart_command"]
     with factory() as db:
         assert db.scalar(select(func.count(OfferCheckout.id))) == 1
+    app.dependency_overrides.clear()
+
+
+def test_paid_personal_offer_keeps_email_until_payment_and_uses_direct_url():
+    client, factory, _ = setup()
+
+    created = client.post(
+        "/admin/api/personal-access-links",
+        json={
+            "email": "new-client@example.test",
+            "resource_codes": ["ACCESS_MASTERCLASS", "ACCESS_CALORIES"],
+            "resource_settings": [
+                {"resource_code": "ACCESS_MASTERCLASS", "start_open": True, "all_lessons_open": False},
+                {"resource_code": "ACCESS_CALORIES", "start_open": False, "all_lessons_open": False},
+            ],
+            "standard_amount": 10800,
+            "final_amount": 6900,
+            "expires_days": 14,
+        },
+    )
+
+    assert created.status_code == 200, created.text
+    payload = created.json()
+    assert payload["url"].startswith("https://edabalans.ru/access-links/")
+    assert "new-client@example.test" not in payload["telegram_text"]
+    with factory() as db:
+        assert db.scalar(select(func.count(User.id))) == 2
+        link = db.scalar(select(PersonalAccessLink))
+        assert link is not None
+        assert link.user_id is None
+        assert link.target_email_normalized == "new-client@example.test"
+        assert link.start_modes == {"ACCESS_MASTERCLASS": "open", "ACCESS_CALORIES": "auto"}
     app.dependency_overrides.clear()
 
 

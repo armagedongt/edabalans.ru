@@ -241,6 +241,7 @@ button { cursor: pointer; }
 .crm-personal-access-matrix .crm-access-matrix-cell span { opacity:0; }
 .crm-personal-access-matrix .crm-access-matrix-cell:has(input:checked) span { opacity:1; }
 .crm-personal-access-matrix .crm-access-matrix-cell:has(input:disabled) { cursor:not-allowed; filter:saturate(.25); opacity:.52; }
+.crm-new-account .crm-access-matrix-head,.crm-new-account .crm-access-matrix-row { grid-template-columns:minmax(150px,1fr) 68px 78px 88px; }
 .crm-course-access-control { position:relative; }
 .crm-course-access-control summary { min-width:84px; padding:6px 5px; border:1px solid rgba(17,142,216,.34); border-radius:7px; color:var(--crm-blue-deep); background:#fff; cursor:pointer; font-size:11px; font-weight:700; list-style:none; text-align:center; }
 .crm-course-access-control summary::-webkit-details-marker { display:none; }
