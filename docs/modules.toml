@@ -70,6 +70,7 @@ owns_files = [
   "backend/tests/test_pricing_catalog.py", "backend/tests/test_robokassa_payments.py",
   "backend/tests/test_tilda_payments.py", "backend/tests/test_owner_payment_notifications.py",
   "backend/tests/test_purchase_auto_login_migration.py",
+  "backend/tests/test_course_access_states_migration.py",
   "docs/TILDA_PAYMENTS.md", "docs/ROBOKASSA_PAYMENTS.md", "docs/TILDA_PERSONAL_ACCESS_EMBED.md",
   "docs/knowledge-base/ACCESS_MANAGEMENT_GUIDE.md",
   "docs/knowledge-base/ACCESS_RULES.md", "docs/knowledge-base/ACCOUNT_LEGAL_GATE.md",
