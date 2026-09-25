@@ -8,8 +8,13 @@ os.environ.setdefault("ADMIN_USERNAME", "admin@example.com")
 os.environ.setdefault("ADMIN_PASSWORD", "test-admin-password")
 
 from fastapi.testclient import TestClient  # noqa: E402
+from sqlalchemy import create_engine  # noqa: E402
+from sqlalchemy.orm import Session  # noqa: E402
 
 from app.config import get_settings  # noqa: E402
+from app.database import Base  # noqa: E402
+from app.crm_service import user_detail  # noqa: E402
+from app.models import Payment, User  # noqa: E402
 
 get_settings.cache_clear()
 
@@ -24,6 +29,30 @@ def test_crm_requires_authentication() -> None:
     response = make_client().get("/crm", follow_redirects=False)
     assert response.status_code == 303
     assert response.headers["location"] == "/admin?next=/crm"
+
+
+def test_user_detail_opens_and_marks_an_unmapped_historical_tariff() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    with Session(engine) as db:
+        user = User(display_name="CRM test")
+        db.add(user)
+        db.flush()
+        db.add(
+            Payment(
+                user_id=user.id,
+                source="test",
+                external_order_id="unmapped-tariff",
+                product_name_raw="Historical import",
+                payment_status="paid",
+            )
+        )
+        db.commit()
+
+        detail = user_detail(db, user.id)
+
+    assert detail is not None
+    assert detail["payments"][0]["tariff"] == "Загружено · тариф не определён"
 
 
 def test_legacy_control_and_people_redirect_to_single_admin_surfaces() -> None:
