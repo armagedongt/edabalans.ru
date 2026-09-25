@@ -1,5 +1,10 @@
 import json
+import os
 from pathlib import Path
+
+os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
+
+from app import product_identity
 
 
 STATIC = Path(__file__).resolve().parents[1] / "app" / "static"
@@ -19,3 +24,12 @@ def test_variable_catalog_is_aggregate_only() -> None:
     variables = json.loads((STATIC / "leadteh_variables.json").read_text(encoding="utf-8"))
     assert len(variables) == 227
     assert all(set(item) <= {"index", "name", "filled", "distinct", "types", "category", "action", "reason"} for item in variables)
+
+
+def test_unmapped_legacy_tariff_is_marked_as_imported(monkeypatch) -> None:
+    monkeypatch.setattr(product_identity, "tariff_public", lambda _db, _code: None)
+
+    assert (
+        product_identity.tariff_label(None, "LEGACY_UNMAPPED")
+        == "Загружено · тариф не определён"
+    )
