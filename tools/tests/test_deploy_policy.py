@@ -229,7 +229,7 @@ class DeployPolicyTests(unittest.TestCase):
             caddy = repo / "infra" / "caddy" / "Caddyfile"
             blog_article = repo / "content" / "blog" / "articles" / "one.md"
             editorial_material = (
-                repo / "content" / "masterclass" / "editorial" / "materials" / "one.md"
+                repo / "content" / "masterclass" / "editorial" / "materials" / "русский-материал.md"
             )
             main.parent.mkdir(parents=True)
             backend.parent.mkdir(parents=True)
