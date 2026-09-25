@@ -1,6 +1,6 @@
 {
-  "schema_version": 1,
-  "updated_at": "2026-09-21",
+  "schema_version": 2,
+  "updated_at": "2026-09-25",
   "module_id": "platform.content",
   "purpose": "Канонический редакционный выбор исходной основы и правило перехода семьи под опубликованную статью собственного блога без удаления истории проявлений.",
   "rules": {
@@ -21,7 +21,8 @@
     {
       "family_id": "habits-formation-and-one-percent",
       "title": "Что вы не понимаете о формировании привычек",
-      "owner_decision": "prepare_for_blog",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {"source_id": "habits-formation-and-one-percent", "slug": "chto-vy-ne-ponimaete-o-formirovanii-privychek"},
       "preferred_basis": "tilda-intensive-fpvaefo9e1",
       "preparation_mode": "full_source_with_author_supplement",
       "rationale": "Сергей указал старый интенсив как обязательную полную основу. В нём находится самостоятельный прикладной блок «Правило 1%», которого нет в площадочных версиях. Telegraph-версия сохраняется как дополнительный авторский источник для более общего разбора сложных привычек.",
@@ -81,7 +82,8 @@
     {
       "family_id": "most-harmful-diet",
       "title": "Какая самая вредная диета?",
-      "owner_decision": "prepare_for_blog",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {"source_id": "11339712", "slug": "kakaya-samaya-vrednaya-dieta"},
       "preferred_basis": "A051",
       "preparation_mode": "full_source_light_cleanup",
       "rationale": "Pikabu-версия опубликована позже и примерно на 900 знаков полнее; в ней развёрнут вывод о вреде бесполезных диет. Удаляются только площадочные CTA и навигация.",
@@ -93,7 +95,8 @@
     {
       "family_id": "intuitive-eating",
       "title": "Интуитивное питание — вы всё неправильно поняли",
-      "owner_decision": "prepare_for_blog",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {"source_id": "intuitivnoe-pitanie-04-27-2", "slug": "intuitivnoe-pitanie-vy-vse-nepravilno-ponyali"},
       "preferred_basis": "A233",
       "preparation_mode": "full_source_light_cleanup",
       "rationale": "Telegraph-версия немного полнее и содержит цельное вступление и полный переход к исследованиям; публикация Pikabu на следующий день является почти тем же текстом с площадочным хвостом.",
@@ -105,7 +108,8 @@
     {
       "family_id": "trash-fish",
       "title": "Мусорная рыба или мусорные нутрициологи?",
-      "owner_decision": "prepare_for_blog",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {"source_id": "11665295", "slug": "musornaya-ryba-ili-musornye-nutriciologi"},
       "preferred_basis": "A066",
       "preparation_mode": "full_source_light_cleanup",
       "rationale": "Pikabu-версия вышла позже и содержит содержательные уточнения и более завершённый вывод. Telegraph остаётся предыдущей редакцией, хотя формально чуть длиннее из-за отдельных формулировок и ссылки на мем.",
@@ -117,7 +121,8 @@
     {
       "family_id": "winter-weight-loss",
       "title": "Задача — похудеть. Уровень сложности — ЗИМА",
-      "owner_decision": "prepare_for_blog",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {"source_id": "12109482", "slug": "zadacha-pohudet-uroven-slozhnosti-zima"},
       "preferred_basis": "A081",
       "preparation_mode": "full_source_light_cleanup",
       "relationship": "replacement_revision_not_sequel",
@@ -131,7 +136,8 @@
     {
       "family_id": "measuring-body-fat",
       "title": "Измеряем вашу жирность",
-      "owner_decision": "prepare_for_blog",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {"source_id": "13178972", "slug": "izmeryaem-vashu-zhirnost"},
       "preferred_basis": "A090",
       "preparation_mode": "full_source_light_cleanup",
       "rationale": "Pikabu-версия примерно на 900 знаков полнее. VC опубликован на следующий день, но является сокращённой площадочной версией.",
@@ -143,7 +149,8 @@
     {
       "family_id": "great-lent-weight-loss-health",
       "title": "Великий пост, похудение и здоровье",
-      "owner_decision": "prepare_for_blog",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {"source_id": "13762311", "slug": "velikiy-post-pohudenie-i-zdorove"},
       "preferred_basis": "A098",
       "preparation_mode": "full_source_light_cleanup",
       "rationale": "Один полноценный найденный источник; семейных дублей не обнаружено.",
@@ -154,7 +161,8 @@
     {
       "family_id": "minus-12-kg-in-two-months",
       "title": "Минус 12 килограмм за 2 месяца",
-      "owner_decision": "prepare_for_blog",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {"source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13", "slug": "minus-12-kilogrammov-za-2-mesyaca"},
       "preferred_basis": "A165",
       "preparation_mode": "full_source_light_cleanup",
       "rationale": "Один полноценный найденный источник; семейных дублей не обнаружено.",

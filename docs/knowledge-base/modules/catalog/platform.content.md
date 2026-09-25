@@ -142,11 +142,14 @@ MCP-доступ принадлежат `platform.knowledge`; этот моду�
 PostgreSQL content tables, `docs/CONTENT_CATALOG.md`,
 `docs/knowledge-base/ARTICLE_STANDARD.md`, importers и перечисленные в
 `docs/modules.toml` канонические файлы `content/author-voice/`.
-Выбор полной основы для следующей статьи блога хранится в
-`content/author-voice/source-selection/blog-source-families.json`; он фиксирует
-старшую редакционную основу, предыдущие площадочные версии и дополнительные
-авторские источники, не стирая provenance и равноправную историю проявлений в
-серверном каталоге.
+Единый редакционный статус длинных статей хранится в
+`content/author-voice/source-selection/article-source-registry.json`: каждая
+известная статья относится либо к опубликованному канону блога, либо к
+отложенному корпусу с причиной. Человекочитаемая таблица находится рядом в
+`article-source-registry.md`. Подтверждённые связи нескольких площадочных версий
+и выбор полной основы остаются в
+`content/author-voice/source-selection/blog-source-families.json`; предполагаемое
+текстовое сходство не повышается до семейной связи автоматически.
 После публичного выпуска каноном семьи автоматически считается запись
 `content/blog/manifest.json` со `status=published`; её `source_provenance` и
 подтверждённая семья остаются историей источников под этим каноном.

@@ -1711,7 +1711,21 @@
         "13277231/02-v2-body.webp",
         "13277231/02-v2-card.webp",
         "13277231/02.png"
-      ]
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/skolko_vremeni_nuzhno_na_pokhudenie_13277231"
+        ],
+        "external_ids": [
+          "13277231"
+        ],
+        "sha256": [
+          "caffa8b6a629bd75d5b38a512dd48559b3ec12c70c9d35519d67e9666d9b345b"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
     },
     {
       "source_id": "11401696",
@@ -1766,13 +1780,25 @@
         "11401696/tilda-14.jpg"
       ],
       "source_provenance": {
-        "platform": "tilda",
+        "urls": [
+          "https://похудение-это-есть.рф/starts",
+          "https://pikabu.ru/story/pokhudenie_nachinaetsya_ne_s_pokhudeniya_11401696"
+        ],
+        "external_ids": [
+          "11401696",
+          "49216621"
+        ],
+        "sha256": [
+          "1f9dee6d7651088a17a4d6004d5f7df6c1111eb02f9aa4be2da8fd5086a78bd9",
+          "90e6b203468c60c76d8f850b579505fe4a22ab50780791b7e0598ee28b818a89"
+        ],
+        "platform": "tilda+pikabu",
         "project_id": "9532923",
         "page_id": "49216621",
-        "url": "https://похудение-это-есть.рф/starts",
-        "html_sha256": "90e6b203468c60c76d8f850b579505fe4a22ab50780791b7e0598ee28b818a89",
         "retrieved_at": "2026-09-17",
-        "source_basis": "full_source"
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
       }
     },
     {
@@ -1832,13 +1858,25 @@
         "11927800/tilda-15.jpg"
       ],
       "source_provenance": {
-        "platform": "tilda",
+        "urls": [
+          "https://похудение-это-есть.рф/jpn",
+          "https://pikabu.ru/story/pochemu_yapontsyi_khudyie_a_tyi_net_11927800"
+        ],
+        "external_ids": [
+          "11927800",
+          "61175321"
+        ],
+        "sha256": [
+          "43e5b32bd74e13c043cab351dbbb8122ab06614d6d8f4f809e85e9617c18e72b",
+          "0e080acdf6dadda56f34f71e20bf2ed8a963a891fd6664f5eb98af31a9f2bccd"
+        ],
+        "platform": "tilda+pikabu",
         "project_id": "9532923",
         "page_id": "61175321",
-        "url": "https://похудение-это-есть.рф/jpn",
-        "html_sha256": "0e080acdf6dadda56f34f71e20bf2ed8a963a891fd6664f5eb98af31a9f2bccd",
         "retrieved_at": "2026-09-17",
-        "source_basis": "full_source"
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
       }
     },
     {
@@ -1872,7 +1910,21 @@
         "11269472/02-v2-body.webp",
         "11269472/02.jpg",
         "11269472/03.jpg"
-      ]
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/temperatura_vodyi_dlya_priema_vnutr_11269472"
+        ],
+        "external_ids": [
+          "11269472"
+        ],
+        "sha256": [
+          "fe2cfe27c64d9d41bb2004116a32947cdd96e628f37ebcc684655cc905c7c697"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
     },
     {
       "source_id": "12237133",
@@ -1938,7 +1990,21 @@
         "12237133/18-v2-body.webp",
         "12237133/18-v3-photo.webp",
         "12237133/18.png"
-      ]
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/samyiy_zdorovyiy_chelovek_na_planete_12237133"
+        ],
+        "external_ids": [
+          "12237133"
+        ],
+        "sha256": [
+          "0db3764b300bddf573e5a0bbf5cc7b599ebb8936cf90dc6ddb617b1a521a7104"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
     },
     {
       "source_id": "11875492",
@@ -1977,7 +2043,21 @@
         "11875492/06-v2-body.webp",
         "11875492/06.jpg",
         "11875492/07.jpg"
-      ]
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/nepriyatnaya_pravda_pro_myod_11875492"
+        ],
+        "external_ids": [
+          "11875492"
+        ],
+        "sha256": [
+          "1c19323867136dde3aa7461e31ebdf307e152cee78e2ab48533c718dacdcca35"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
     },
     {
       "source_id": "tilda-49734795",
