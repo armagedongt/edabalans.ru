@@ -10,6 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.access_service import (
+    EMAIL_RE,
     active_link,
     amount_number,
     complete_review,
@@ -20,6 +21,7 @@ from app.access_service import (
     review_blocks_access,
     user_for_email,
 )
+from app.account_onboarding_service import direct_credential_email_configuration_error
 from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.checkout_reference import tilda_order_command
@@ -89,6 +91,10 @@ class PersonalLinkCreateIn(BaseModel):
     # Legacy clients used one checkbox for every selected resource. Keep it
     # accepted until the CRM is upgraded, then prefer resource_settings.
     fully_unlocked: bool = False
+
+
+class PersonalPaidLinkCreateIn(PersonalLinkCreateIn):
+    email: str = Field(min_length=3, max_length=320)
 
 
 def resource_link_response(
@@ -706,6 +712,14 @@ def create_personal_link(
     user = db.get(User, user_id)
     if user is None or user.merged_into_user_id is not None:
         raise HTTPException(404, "Пользователь не найден")
+    email = db.scalar(
+        select(UserEmail.email_normalized)
+        .where(UserEmail.user_id == user.id)
+        .order_by(UserEmail.is_primary.desc(), UserEmail.created_at.asc())
+        .limit(1)
+    )
+    if not email:
+        raise HTTPException(422, "У этого человека нет email для персональной ссылки")
     settings_by_code = {item.resource_code: item for item in body.resource_settings}
     if len(settings_by_code) != len(body.resource_settings):
         raise HTTPException(422, "Один продукт нельзя указывать в ссылке дважды")
@@ -725,7 +739,7 @@ def create_personal_link(
         for code in resources
     }
     start_modes = {
-        code: "open" if (settings_by_code.get(code).start_open if settings_by_code else True) else "blocked"
+        code: "open" if (settings_by_code.get(code).start_open if settings_by_code else True) else "auto"
         for code in resources
     }
     url = f"{settings.personal_access_page_url}?access_token={token}"
@@ -741,6 +755,8 @@ def create_personal_link(
     telegram_text = message_template.replace("{personal_link}", url)
     link = PersonalAccessLink(
         user_id=user.id,
+        target_email_original=email,
+        target_email_normalized=email,
         token_hash=token_hash,
         mode=mode,
         resource_codes=list(resources),
@@ -770,6 +786,132 @@ def create_personal_link(
     )
     db.commit()
     return {"ok": True, "url": url, "telegram_text": telegram_text, "mode": mode}
+
+
+@router.post("/admin/api/personal-access-links")
+def create_paid_personal_link(
+    body: PersonalPaidLinkCreateIn,
+    admin: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    """Prepare a direct paid offer without creating an account before payment."""
+    email = body.email.strip().lower()
+    if not EMAIL_RE.fullmatch(email):
+        raise HTTPException(422, "Введите корректный email")
+    target_user = user_for_email(db, email)
+    if body.final_amount <= 0:
+        raise HTTPException(422, "Для оплаты укажите сумму больше нуля")
+    if target_user is None and direct_credential_email_configuration_error(settings):
+        raise HTTPException(409, "Почта для нового аккаунта пока не настроена")
+    settings_by_code = {item.resource_code: item for item in body.resource_settings}
+    if len(settings_by_code) != len(body.resource_settings):
+        raise HTTPException(422, "Один продукт нельзя указывать в ссылке дважды")
+    if any(item.all_lessons_open and not item.start_open for item in body.resource_settings):
+        raise HTTPException(422, "Нельзя открыть все уроки у закрытого для старта курса")
+    if settings_by_code and set(settings_by_code) != set(body.resource_codes):
+        raise HTTPException(422, "Настройки ссылки должны быть заданы для каждого выбранного продукта")
+    resources = resources_for_codes(db, body.resource_codes)
+    unlock_modes = {
+        code: "fully_unlocked" if settings_by_code.get(code).all_lessons_open else "paced"
+        for code in resources
+    }
+    start_modes = {
+        code: "open" if settings_by_code.get(code).start_open else "auto"
+        for code in resources
+    }
+    token, token_hash = create_link_token()
+    names = ", ".join(resources[code].name for code in body.resource_codes)
+    price = amount_number(body.final_amount)
+    discount = (
+        f" Обычная стоимость — {amount_number(body.standard_amount)} ₽."
+        if body.standard_amount is not None and body.standard_amount > body.final_amount
+        else ""
+    )
+    url = f"https://edabalans.ru/access-links/{token}"
+    message_template = (
+        f"Для вас подготовлено персональное предложение: {names}.{discount} "
+        f"Итоговая стоимость — {price} ₽. Оплатить: {{personal_link}}"
+    )
+    db.add(PersonalAccessLink(
+        user_id=target_user.id if target_user is not None else None,
+        target_email_original=body.email.strip(),
+        target_email_normalized=email,
+        token_hash=token_hash,
+        mode="paid",
+        resource_codes=list(resources),
+        unlock_modes=unlock_modes,
+        start_modes=start_modes,
+        standard_amount=body.standard_amount,
+        final_amount=body.final_amount,
+        expires_at=datetime.now(timezone.utc) + timedelta(days=body.expires_days),
+        created_by=admin,
+        telegram_text=message_template,
+    ))
+    db.commit()
+    return {
+        "ok": True,
+        "url": url,
+        "telegram_text": message_template.replace("{personal_link}", url),
+        "mode": "paid",
+        "existing_account": target_user is not None,
+    }
+
+
+@router.get("/admin/api/personal-access-links")
+def list_active_paid_personal_links(
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    rows = list(
+        db.scalars(
+            select(PersonalAccessLink)
+            .where(PersonalAccessLink.mode == "paid", PersonalAccessLink.status == "active")
+            .order_by(PersonalAccessLink.created_at.desc())
+            .limit(30)
+        )
+    )
+    return {
+        "links": [
+            {
+                "id": str(item.id),
+                "email": item.target_email_normalized,
+                "resources": item.resource_codes,
+                "final_amount": amount_number(item.final_amount),
+                "expires_at": item.expires_at.isoformat() if item.expires_at else None,
+                "created_at": item.created_at.isoformat(),
+                "checkout_started": item.checkout_id is not None,
+            }
+            for item in rows
+        ]
+    }
+
+
+@router.post("/admin/api/personal-access-links/{link_id}/cancel")
+def cancel_paid_personal_link(
+    link_id: uuid.UUID,
+    admin: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    link = db.get(PersonalAccessLink, link_id)
+    if link is None or link.mode != "paid":
+        raise HTTPException(404, "Персональное предложение не найдено")
+    if link.status != "active":
+        raise HTTPException(409, "Это предложение уже нельзя отменить")
+    link.status = "cancelled"
+    link.resolved_at = datetime.now(timezone.utc)
+    if link.user_id is not None:
+        db.add(
+            AdminAppEdit(
+                admin_username=admin,
+                target_user_id=link.user_id,
+                app_code="crm",
+                action="cancel_personal_access_link",
+                details={"personal_access_link_id": str(link.id)},
+            )
+        )
+    db.commit()
+    return {"ok": True, "status": link.status}
 
 
 @router.get("/admin/api/users/{user_id}/personal-access-links")

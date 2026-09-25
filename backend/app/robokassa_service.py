@@ -48,6 +48,7 @@ from app.account_onboarding_service import (
     ensure_paid_account_onboarding,
     issue_initial_direct_password,
 )
+from app.access_service import active_link
 from app.owner_payment_notification_service import enqueue_paid_payment_notification
 
 
@@ -530,7 +531,13 @@ def create_personal_access_payment(
                     "fields": _payment_fields(settings, payment, checkout.title, email, checkout.expires_at),
                 },
             }
-        raise RobokassaError("Ссылка уже была использована для оплаты")
+        if payment is not None and payment.payment_status == "test_paid":
+            # A test ResultUrl2 proves the integration but must not consume a
+            # real offer or create an account. Let the same CRM offer be tested
+            # again with a fresh invoice.
+            link.checkout_id = None
+        else:
+            raise RobokassaError("Ссылка уже была использована для оплаты")
     payment_id = uuid.uuid4()
     invoice_id = str(_invoice_id(payment_id))
     payment = Payment(
@@ -840,8 +847,32 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         db.commit()
         return invoice_id
     personal_link = db.scalar(
-        select(PersonalAccessLink).where(PersonalAccessLink.checkout_id == checkout.id)
+        select(PersonalAccessLink)
+        .where(PersonalAccessLink.checkout_id == checkout.id)
+        .with_for_update()
     )
+    if personal_link is not None and not active_link(personal_link, occurred_at):
+        raise RobokassaError("Персональное предложение отменено или срок его действия закончился")
+    checkout_metadata = dict(payment.raw_payload or {})
+    is_test_payment = bool(checkout_metadata.get("test_mode"))
+    if personal_link is not None and is_test_payment:
+        # Test notifications are recorded as tests only: neither account nor
+        # product right is created, and the offer remains active.
+        payment.external_payment_id = operation_id
+        payment.payment_status = "test_paid"
+        payment.payment_system = str(data.get("paymentMethod") or "robokassa")[:64]
+        payment.source_event_at = occurred_at
+        payment.paid_at = occurred_at
+        payment.raw_payload = {
+            "success_kind": SUCCESS_KIND_MEMBER_OFFER,
+            "checkout_id": str(checkout.id),
+            "personal_access_link_id": str(personal_link.id),
+            "integration": {"test_mode": True},
+            "notification": payload,
+        }
+        checkout.status = "test_paid"
+        db.commit()
+        return invoice_id
     creates_account = personal_link is not None and personal_link.user_id is None
     if checkout.user_id is not None:
         user = db.get(User, checkout.user_id)
@@ -875,8 +906,6 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
             raise RobokassaError(str(exc)) from exc
     if user is None:
         raise RobokassaError("В счёте отсутствует email")
-    checkout_metadata = dict(payment.raw_payload or {})
-    is_test_payment = bool(checkout_metadata.get("test_mode"))
     account_purchase = bool(checkout_metadata.get("account_purchase"))
     success_kind = str(
         checkout_metadata.get("success_kind")

@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from app.models import (
     PersonalAccessLink,
     Resource,
+    MasterclassEvent,
     User,
     UserAccess,
     UserCoursePolicy,
@@ -63,7 +64,34 @@ def course_start_is_open(db: Session, user_id: uuid.UUID, resource_code: str) ->
         )
         .limit(1)
     )
-    return mode != "blocked"
+    if mode is None:
+        # Rights issued before the three-state policy existed retain their
+        # historical behaviour until an administrator explicitly configures
+        # the course.
+        return True
+    if mode == "blocked":
+        return False
+    if mode == "open":
+        return True
+    # In the ordinary mode a purchase grants the right but does not bypass
+    # the product's own start condition. The event is already the canonical
+    # fact used by the relevant course runtime; CRM only adds an explicit
+    # override on top of it.
+    if resource_code in {"ACCESS_CALORIES", "ACCESS_STRENGTH"}:
+        return db.scalar(
+            select(MasterclassEvent.id).where(
+                MasterclassEvent.user_id == user_id,
+                MasterclassEvent.event_type == "masterclass_completed",
+            )
+        ) is not None
+    if resource_code == "ACCESS_RECIPES":
+        return db.scalar(
+            select(MasterclassEvent.id).where(
+                MasterclassEvent.user_id == user_id,
+                MasterclassEvent.event_key == "recipes_part_1_opened",
+            )
+        ) is not None
+    return True
 
 
 def create_link_token() -> tuple[str, str]:

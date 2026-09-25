@@ -50,6 +50,22 @@ def account_onboarding_configuration_error(settings: Settings) -> str | None:
     return None
 
 
+def direct_credential_email_configuration_error(settings: Settings) -> str | None:
+    """Check only the configuration needed to send a ready password by email."""
+    required = {
+        "APP_AUTH_SECRET": settings.app_auth_secret,
+        "SMTP_HOST": settings.smtp_host,
+        "SMTP_FROM_EMAIL": settings.smtp_from_email,
+        "ACCOUNT_PUBLIC_URL": settings.account_public_url,
+    }
+    missing = [name for name, value in required.items() if not str(value).strip()]
+    if missing:
+        return f"direct credential email is missing: {', '.join(missing)}"
+    if not settings.account_email_worker_enabled:
+        return "direct credential email worker is disabled"
+    return None
+
+
 def _fernet(settings: Settings) -> Fernet:
     if not settings.app_auth_secret:
         raise RuntimeError("APP_AUTH_SECRET is required")
@@ -222,13 +238,6 @@ def queue_direct_credential_email(
     settings: Settings,
 ) -> AccountOnboarding:
     """Queue the current direct credential in the existing durable mail worker."""
-    credential = db.get(AccountCredential, user.id)
-    if (
-        credential is None
-        or credential.password_version != password_version
-        or not credential.password_ciphertext
-    ):
-        raise ValueError("current credential is unavailable")
     now = datetime.now(UTC)
     pending = list(
         db.scalars(
@@ -241,16 +250,10 @@ def queue_direct_credential_email(
     )
     for item in pending:
         item.email_status = "superseded"
-        item.email_error = "A newer direct credential was issued"
+        item.email_error = "A newer administrator password was issued"
     row = AccountOnboarding(
         user_id=user.id,
-        claim_bundle_encrypted=_encrypt_bundle(
-            {
-                "mode": "direct_credential",
-                "password": decrypt_password(credential.password_ciphertext, settings.app_auth_secret),
-            },
-            settings,
-        ),
+        claim_bundle_encrypted=_encrypt_bundle({"password_version": password_version}, settings),
         delivery_mode="direct_password",
         expires_at=now + CLAIM_TTL,
         next_email_attempt_at=now,
@@ -258,6 +261,35 @@ def queue_direct_credential_email(
     db.add(row)
     db.flush()
     return row
+
+
+def issue_initial_direct_password(
+    db: Session,
+    *,
+    user: User,
+    settings: Settings,
+    issued_via: str,
+) -> bool:
+    """Issue a ready password only for a newly created paid account."""
+    if db.get(AccountCredential, user.id) is not None:
+        return False
+    password = generate_password()
+    credential = AccountCredential(
+        user_id=user.id,
+        password_hash=password_hash(password, settings.app_auth_secret),
+        password_ciphertext=encrypt_password(password, settings.app_auth_secret),
+        password_version=1,
+        issued_via=issued_via,
+    )
+    db.add(credential)
+    db.flush()
+    queue_direct_credential_email(
+        db,
+        user=user,
+        password_version=credential.password_version,
+        settings=settings,
+    )
+    return True
 
 
 def onboarding_links(row: AccountOnboarding, settings: Settings) -> dict[str, str]:
@@ -420,11 +452,23 @@ def process_due_account_email(settings: Settings) -> bool:
             return True
         try:
             bundle = _decrypt_bundle(row.claim_bundle_encrypted, settings)
-            direct_password = (
-                str(bundle.get("password") or "")
-                if bundle.get("mode") == "direct_credential"
-                else None
-            )
+            direct_password = None
+            if row.delivery_mode == "direct_password":
+                credential = db.get(AccountCredential, row.user_id)
+                if (
+                    credential is None
+                    or credential.password_version != bundle.get("password_version")
+                    or not credential.password_ciphertext
+                ):
+                    row.email_status = "superseded"
+                    row.email_error = "A newer credential is active"
+                    db.commit()
+                    return True
+                direct_password = decrypt_password(
+                    credential.password_ciphertext, settings.app_auth_secret
+                )
+            elif bundle.get("mode") == "direct_credential":
+                direct_password = str(bundle.get("password") or "")
             message = account_access_email(
                 email=email,
                 links={} if direct_password else onboarding_links(row, settings),

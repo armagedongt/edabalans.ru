@@ -26,6 +26,7 @@ from app.intensive_web_access import (  # noqa: E402
     issue_checkout_source_context,
 )
 from app.account_security import token_hash  # noqa: E402
+from app.auth import require_admin  # noqa: E402
 from app.account_auth_routes import COOKIE_NAME  # noqa: E402
 from app.app_auth import create_placement_token  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
@@ -37,6 +38,7 @@ from app.models import (  # noqa: E402
     AccountOnboarding,
     MessengerLinkToken,
     OfferCheckout,
+    PersonalAccessLink,
     OwnerPaymentNotification,
     Payment,
     PaymentBrowserGrant,
@@ -105,6 +107,9 @@ def make_client(
         app_auth_secret="robokassa-tests",
         allowed_origins="https://похудение-это-есть.рф",
         account_onboarding_enabled=account_onboarding_enabled,
+        smtp_host="smtp.example.test",
+        smtp_from_email="noreply@example.test",
+        account_public_url="https://edabalans.ru/lk",
         robokassa_checkout_enabled=True,
         robokassa_live_probe_enabled=live_probe_enabled,
         robokassa_test_mode=test_mode,
@@ -901,6 +906,83 @@ def test_signed_production_result_grants_access() -> None:
         )
         assert paid_event is not None
         assert paid_event.metadata_json["attribution_source"] == "unattributed"
+    app.dependency_overrides.clear()
+
+
+def test_direct_paid_personal_offer_creates_account_only_after_live_result() -> None:
+    client, factory, key = make_client(test_mode=False, account_onboarding_enabled=True)
+    seed_catalog(factory)
+    app.dependency_overrides[require_admin] = lambda: "test-admin"
+
+    created = client.post(
+        "/admin/api/personal-access-links",
+        json={
+            "email": "personal-new@example.test",
+            "resource_codes": ["ACCESS_MASTERCLASS"],
+            "resource_settings": [
+                {"resource_code": "ACCESS_MASTERCLASS", "start_open": True, "all_lessons_open": True}
+            ],
+            "final_amount": 4900,
+            "expires_days": 14,
+        },
+    )
+    assert created.status_code == 200, created.text
+    path = urlsplit(created.json()["url"]).path
+    with factory() as db:
+        assert db.scalar(select(func.count(User.id))) == 0
+        assert db.scalar(select(PersonalAccessLink.user_id)) is None
+
+    first = client.get(path, follow_redirects=False)
+    second = client.get(path, follow_redirects=False)
+    assert first.status_code == second.status_code == 303
+    invoice = parse_qs(urlsplit(first.headers["location"]).query)["InvId"][0]
+    with factory() as db:
+        assert db.scalar(select(func.count(Payment.id))) == 1
+
+    confirmed = client.post(
+        "/integrations/robokassa/result2",
+        content=signed_result(key, invoice, "4900.00", operation_id="personal-live"),
+    )
+    assert confirmed.status_code == 200
+    with factory() as db:
+        user = db.scalar(select(User).join(UserEmail).where(UserEmail.email_normalized == "personal-new@example.test"))
+        link = db.scalar(select(PersonalAccessLink))
+        assert user is not None
+        assert db.get(AccountCredential, user.id) is not None
+        assert db.scalar(select(UserAccess).where(UserAccess.user_id == user.id)) is not None
+        assert link is not None and link.user_id == user.id and link.status == "paid"
+        onboarding = db.scalar(select(AccountOnboarding).where(AccountOnboarding.user_id == user.id))
+        assert onboarding is not None and onboarding.delivery_mode == "direct_password"
+    app.dependency_overrides.clear()
+
+
+def test_personal_offer_test_result_does_not_consume_offer_or_create_account() -> None:
+    client, factory, key = make_client(test_mode=True, account_onboarding_enabled=True)
+    seed_catalog(factory)
+    app.dependency_overrides[require_admin] = lambda: "test-admin"
+    created = client.post(
+        "/admin/api/personal-access-links",
+        json={
+            "email": "personal-test@example.test",
+            "resource_codes": ["ACCESS_MASTERCLASS"],
+            "resource_settings": [
+                {"resource_code": "ACCESS_MASTERCLASS", "start_open": False, "all_lessons_open": False}
+            ],
+            "final_amount": 4900,
+        },
+    )
+    assert created.status_code == 200
+    path = urlsplit(created.json()["url"]).path
+    start = client.get(path, follow_redirects=False)
+    invoice = parse_qs(urlsplit(start.headers["location"]).query)["InvId"][0]
+    assert client.post("/integrations/robokassa/result2", content=signed_result(key, invoice, "4900.00")).status_code == 200
+    with factory() as db:
+        link = db.scalar(select(PersonalAccessLink))
+        assert link is not None and link.status == "active" and link.user_id is None
+        assert db.scalar(select(func.count(User.id))) == 0
+    retry = client.get(path, follow_redirects=False)
+    assert retry.status_code == 303
+    assert parse_qs(urlsplit(retry.headers["location"]).query)["InvId"][0] != invoice
     app.dependency_overrides.clear()
 
 

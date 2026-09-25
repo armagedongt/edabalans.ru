@@ -453,7 +453,7 @@
     root.innerHTML = top("users") + `
       ${state.addPaidOfferOpen ? `<section class="crm-card crm-new-account"><div class="crm-card-title">Персональное платное предложение</div><div class="crm-card-sub">Карточка не создаётся до оплаты. После оплаты доступы добавятся к существующему ЛК либо будет создан новый и пароль уйдёт на эту почту.</div><form class="crm-form" id="paid-offer-form"><label><div class="crm-k">EMAIL ПОЛУЧАТЕЛЯ</div><input class="crm-input" id="paid-offer-email" type="email" required placeholder="name@example.com"></label><div class="crm-access-matrix crm-personal-access-matrix" role="table" aria-label="Что откроется после оплаты"><div class="crm-access-matrix-head" role="row"><span>Продукт</span><span>Право</span><span>Старт</span><span>Все уроки</span></div>${[
         ["ACCESS_MASTERCLASS", "Мастер-класс"], ["ACCESS_RECIPES", "Система рецептов"], ["ACCESS_CALORIES", "Калорийный курс"], ["ACCESS_STRENGTH", "Курс тренировок"]
-      ].map(([code, name]) => `<div class="crm-access-matrix-row" data-paid-offer-course="${code}"><strong>${name}</strong><label class="crm-access-matrix-cell is-right"><input type="checkbox" data-paid-offer-setting="entitled"><span>✓</span></label><label class="crm-access-matrix-cell is-start"><input type="checkbox" data-paid-offer-setting="start-open" disabled><span>✓</span></label><label class="crm-access-matrix-cell is-all"><input type="checkbox" data-paid-offer-setting="all-lessons-open" disabled><span>✓</span></label></div>`).join("")}</div><div class="crm-two-fields"><label><div class="crm-k">ОБЫЧНАЯ СТОИМОСТЬ</div><input class="crm-input" id="paid-offer-standard" type="number" min="0" step="1" placeholder="например 10800"></label><label><div class="crm-k">ИТОГО К ОПЛАТЕ</div><input class="crm-input" id="paid-offer-final" type="number" min="1" step="1" required placeholder="например 6900"></label></div><label><div class="crm-k">ССЫЛКА ДЕЙСТВУЕТ, ДНЕЙ</div><input class="crm-input" id="paid-offer-days" type="number" min="1" max="365" value="14"></label><button class="crm-btn small">Сформировать ссылку и сообщение</button></form><div id="paid-offer-result"></div></section>` : ""}
+      ].map(([code, name]) => `<div class="crm-access-matrix-row" data-paid-offer-course="${code}"><strong>${name}</strong><label class="crm-access-matrix-cell is-right"><input type="checkbox" data-paid-offer-setting="entitled"><span>✓</span></label><label class="crm-access-matrix-cell is-start"><input type="checkbox" data-paid-offer-setting="start-open" disabled><span>✓</span></label><label class="crm-access-matrix-cell is-all"><input type="checkbox" data-paid-offer-setting="all-lessons-open" disabled><span>✓</span></label></div>`).join("")}</div><div class="crm-two-fields"><label><div class="crm-k">ОБЫЧНАЯ СТОИМОСТЬ</div><input class="crm-input" id="paid-offer-standard" type="number" min="0" step="1" placeholder="например 10800"></label><label><div class="crm-k">ИТОГО К ОПЛАТЕ</div><input class="crm-input" id="paid-offer-final" type="number" min="1" step="1" required placeholder="например 6900"></label></div><label><div class="crm-k">ССЫЛКА ДЕЙСТВУЕТ, ДНЕЙ</div><input class="crm-input" id="paid-offer-days" type="number" min="1" max="365" value="14"></label><button class="crm-btn small">Сформировать ссылку и сообщение</button></form><div id="paid-offer-result"></div><div class="crm-card-sub" style="margin-top:12px">Активные предложения можно отменить; саму секретную ссылку после закрытия окна безопасно не восстанавливаем — вместо этого создайте новую.</div><div id="paid-offer-active"></div></section>` : ""}
       ${state.addManualAccountOpen ? `<section class="crm-card crm-new-account"><div class="crm-card-title">Новый человек</div><div class="crm-card-sub">Создастся пустая карточка без покупок и доступов. Пароль появится здесь и будет поставлен в очередь на отправку по указанной почте.</div><form class="crm-two-fields" id="manual-account-form"><label><div class="crm-k">EMAIL</div><input class="crm-input" id="manual-account-email" type="email" required placeholder="name@example.com"></label><label><div class="crm-k">ИМЯ, ЕСЛИ ИЗВЕСТНО</div><input class="crm-input" id="manual-account-name" maxlength="255"></label><button class="crm-btn small">Создать и отправить пароль</button></form><div id="manual-account-result"></div></section>` : ""}
       <div class="crm-toolbar">
         <input class="crm-search" id="crm-search" placeholder="Поиск по имени, email или Telegram" value="${esc(state.query)}">
@@ -904,6 +904,20 @@
     bindTop();
     const paidOfferForm = document.getElementById("paid-offer-form");
     if (paidOfferForm) {
+      const activeOffers = document.getElementById("paid-offer-active");
+      const loadActiveOffers = async () => {
+        try {
+          const result = await api("/admin/api/personal-access-links");
+          const rows = result.links || [];
+          activeOffers.innerHTML = rows.length ? rows.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.email)} · ${esc((item.resources || []).join(", "))}</span><strong>${esc(String(item.final_amount))} ₽</strong></div><div class="crm-row-meta">до ${esc((item.expires_at || "").slice(0, 10))}${item.checkout_started ? " · оплата начата" : ""}</div><button class="crm-btn alt small" type="button" data-cancel-paid-offer="${esc(item.id)}">Отменить</button></div>`).join("") : "";
+          activeOffers.querySelectorAll("[data-cancel-paid-offer]").forEach((button) => button.addEventListener("click", async () => {
+            if (!window.confirm("Отменить это предложение? Уже открытая ссылка больше не оплатится.")) return;
+            await api(`/admin/api/personal-access-links/${button.dataset.cancelPaidOffer}/cancel`, {method:"POST"});
+            await loadActiveOffers();
+          }));
+        } catch (_) { activeOffers.innerHTML = ""; }
+      };
+      void loadActiveOffers();
       const synchronize = (input) => {
         const row = input.closest("[data-paid-offer-course]");
         const right = row.querySelector('[data-paid-offer-setting="entitled"]');
@@ -922,6 +936,7 @@
         const result = await api("/admin/api/personal-access-links", {method:"POST", body:JSON.stringify({email:document.getElementById("paid-offer-email").value, resource_codes:resourceSettings.map((item)=>item.resource_code), resource_settings:resourceSettings.map(({entitled,...item})=>item), standard_amount:standardValue===""?null:Number(standardValue), final_amount:Number(document.getElementById("paid-offer-final").value), expires_days:Number(document.getElementById("paid-offer-days").value||14)})});
         document.getElementById("paid-offer-result").innerHTML = `<textarea class="crm-textarea" id="paid-offer-ready-text" readonly>${esc(result.telegram_text)}</textarea><button class="crm-btn small" id="copy-paid-offer-text" type="button">Скопировать сообщение</button>`;
         document.getElementById("copy-paid-offer-text").onclick = async () => { await copyText(result.telegram_text); document.getElementById("copy-paid-offer-text").textContent = "Скопировано"; };
+        await loadActiveOffers();
       });
     }
     const manualAccountForm = document.getElementById("manual-account-form");

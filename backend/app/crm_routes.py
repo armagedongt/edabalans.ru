@@ -39,7 +39,6 @@ from app.crm_service import (
     link_user_email,
     set_access_review,
     grant_manual_access,
-    set_manual_course_policy,
     revoke_manual_access,
     pause_manual_access,
     resume_manual_access,
@@ -451,23 +450,6 @@ def admin_grant_access(user_id: uuid.UUID, payload: ResourceAction,
     if not grant_manual_access(db, user_id, payload.resource_code, admin):
         raise HTTPException(status_code=400, detail="user or resource not found")
     return {"status": "granted"}
-
-
-@router.put("/admin/api/users/{user_id}/course-policies/{resource_code}")
-def admin_set_course_policy(
-    user_id: uuid.UUID,
-    resource_code: str,
-    payload: CoursePolicyUpdate,
-    admin: str = Depends(require_admin),
-    db: Session = Depends(get_db),
-) -> dict[str, str]:
-    ok, result = set_manual_course_policy(
-        db, user_id, resource_code, payload.unlock_mode, admin
-    )
-    if not ok:
-        status = 409 if result == "active_access_required" else 400
-        raise HTTPException(status_code=status, detail=result)
-    return {"status": "saved", "unlock_mode": result}
 
 
 @router.delete("/admin/api/users/{user_id}/accesses/{resource_code}")

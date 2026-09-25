@@ -1,7 +1,7 @@
 """Add course start states and direct credential email delivery.
 
 Revision ID: 20260925_0047
-Revises: 20260920_0046
+Revises: 20260921_0047
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ from sqlalchemy.dialects import postgresql
 
 
 revision = "20260925_0047"
-down_revision = "20260920_0046"
+down_revision = "20260921_0047"
 branch_labels = None
 depends_on = None
 

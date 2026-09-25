@@ -22,6 +22,7 @@ from app.app_auth import require_placement
 from app.masterclass_offer_rules import EMBED_PLACEMENTS
 from app.masterclass_routes import build_offers, create_offer_checkout_record, resolve_masterclass_user
 from app.models import Payment, Resource, UserAccess
+from app.access_service import active_link, link_by_token
 from app.payment_browser_grant_service import (
     auto_login_state,
     claim_payment_session,
@@ -43,6 +44,7 @@ from app.robokassa_service import (
     create_live_probe_payment,
     create_manual_service_payment,
     create_member_offer_payment,
+    create_personal_access_payment,
     create_payment,
 )
 from app.robokassa_subscription_service import (
@@ -279,6 +281,24 @@ def _robokassa_redirect(payment_form: dict) -> RedirectResponse:
     separator = "&" if "?" in action else "?"
     payment_url = f'{action}{separator}{urlencode(payment_form["fields"])}'
     return RedirectResponse(payment_url, status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.get("/access-links/{token}", include_in_schema=False)
+def personal_access_payment_redirect(
+    token: str,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> RedirectResponse:
+    """A personal URL goes directly to Robokassa, without an account page."""
+    link = link_by_token(db, token, for_update=True)
+    if link is None or link.mode != "paid" or not active_link(link):
+        raise HTTPException(status.HTTP_410_GONE, "Персональное предложение больше не доступно")
+    try:
+        checkout = create_personal_access_payment(db, settings, link)
+    except RobokassaError as exc:
+        db.rollback()
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(exc)) from exc
+    return _robokassa_redirect(checkout["payment_form"])
 
 
 @router.get("/robokassa-test", include_in_schema=False)
