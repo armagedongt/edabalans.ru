@@ -45,8 +45,9 @@
       "deferred_not_now": 18,
       "editorial_review": 93,
       "incomplete_draft": 14,
+      "obsolete_product_archive": 4,
       "owner_review_later": 3,
-      "private_product_material": 47,
+      "private_product_material": 43,
       "short_reserve": 43,
       "technical_or_service": 25
     },
@@ -3680,8 +3681,8 @@
       "family_id": "deferred:A163",
       "title": "Кухонные дела",
       "disposition": "deferred",
-      "deferred_kind": "private_product_material",
-      "reason": "Учебный материал курса; не публиковать автоматически.",
+      "deferred_kind": "obsolete_product_archive",
+      "reason": "Решение Сергея 25.09.2026: «Кухонные дела» — неактуальный архив старого МК. Сохранить исходник; не предлагать для публикации и не использовать как актуальную авторскую основу.",
       "members": [
         {
           "catalog_id": "A163",
@@ -5294,8 +5295,8 @@
       "family_id": "deferred:A255",
       "title": "Правило Гарвардской \"Здоровой Тарелки\"",
       "disposition": "deferred",
-      "deferred_kind": "private_product_material",
-      "reason": "Учебный материал курса; не публиковать автоматически.",
+      "deferred_kind": "obsolete_product_archive",
+      "reason": "Решение Сергея 25.09.2026: «Правило Гарвардской Здоровой Тарелки» — неактуальный архив старого МК. Сохранить исходник; не предлагать для публикации и не использовать как актуальную авторскую основу.",
       "members": [
         {
           "catalog_id": "A255",
@@ -5501,8 +5502,8 @@
       "family_id": "deferred:A124",
       "title": "Пять вкусов еды",
       "disposition": "deferred",
-      "deferred_kind": "private_product_material",
-      "reason": "Учебный материал курса; не публиковать автоматически.",
+      "deferred_kind": "obsolete_product_archive",
+      "reason": "Решение Сергея 25.09.2026: «Пять вкусов еды» — неактуальный архив старого МК. Сохранить исходник; не предлагать для публикации и не использовать как актуальную авторскую основу.",
       "members": [
         {
           "catalog_id": "A124",
@@ -5958,8 +5959,8 @@
       "family_id": "deferred:A203",
       "title": "Средиземноморская диета",
       "disposition": "deferred",
-      "deferred_kind": "private_product_material",
-      "reason": "Учебный материал курса; не публиковать автоматически.",
+      "deferred_kind": "obsolete_product_archive",
+      "reason": "Решение Сергея 25.09.2026: «Средиземноморская диета» (Telegraph /Sredizemnomorskaya-dieta-12-07) — неактуальный архив старого МК. Сохранить исходник; не предлагать для публикации и не использовать как актуальную авторскую основу.",
       "members": [
         {
           "catalog_id": "A203",

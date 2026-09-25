@@ -72,8 +72,9 @@
 | `deferred_not_now` | 18 | Владелец прямо решил пока не брать. |
 | `editorial_review` | 93 | Полная статья-кандидат: проверить семейство, пользу, актуальность и выбрать основу. |
 | `incomplete_draft` | 14 | Черновик/заметка: не считать готовой статьёй. |
+| `obsolete_product_archive` | 4 | Неактуальный архив старого МК: сохранить для истории, не предлагать к публикации и не использовать как актуальную авторскую основу. |
 | `owner_review_later` | 3 | Нужен отдельный просмотр владельцем. |
-| `private_product_material` | 47 | Курс или Мастер-класс: не публиковать автоматически. |
+| `private_product_material` | 43 | Курс или Мастер-класс: не публиковать автоматически. |
 | `short_reserve` | 43 | Материал 3000–3999 знаков: сначала решить, является ли самостоятельной статьёй. |
 | `technical_or_service` | 25 | Техническая страница, сценарий, услуга, продажная или посторонняя сущность. |
 
@@ -174,7 +175,7 @@
 | A121 | telegraph | [Курс "Только Калории" — Бонус к активности](https://telegra.ph/222-08-29-5) | `private_product_material` | 1 |
 | A120 | telegraph | [Курс "Только Калории" — Урок #3 Часть 2.](https://telegra.ph/221-11-21-2) | `private_product_material` | 0 |
 | A122 | telegraph | [Курс "Только Калории" — Урок #3/Часть 1](https://telegra.ph/22222-07-31) | `private_product_material` | 0 |
-| A163 | telegraph | [Кухонные дела](https://telegra.ph/Kuhnya-12-26) | `private_product_material` | 0 |
+| A163 | telegraph | [Кухонные дела](https://telegra.ph/Kuhnya-12-26) | `obsolete_product_archive` | 0 |
 | A167 | telegraph | [Летом есть две проблемы!](https://telegra.ph/Nabrosok-07-18) | `incomplete_draft` | 0 |
 | A025 | pikabu | [Лимонная, блин, вода... поговорим о святом!](https://pikabu.ru/story/limonnaya_blin_voda_pogovorim_o_svyatom_10715248) | `short_reserve` | 1 |
 | A262 | telegraph | [Лимонная, блин, вода... поговорим о святом!⁠⁠](https://telegra.ph/voda-10-08-2) | `short_reserve` | 1 |
@@ -241,7 +242,7 @@
 | A174 | telegraph | [ПП рецепты — это плохо И вот почему!](https://telegra.ph/PP-recepty--hren-i-vot-pochemu-01-03) | `editorial_review` | 2 |
 | A053 | pikabu | [ПП-кулич — вам не нужен!](https://pikabu.ru/story/ppkulich__vam_ne_nuzhen_11385251) | `short_reserve` | 1 |
 | A196 | telegraph | [Правила безопасности за шведским столом](https://telegra.ph/SHS-06-18-2) | `editorial_review` | 1 |
-| A255 | telegraph | [Правило Гарвардской "Здоровой Тарелки"](https://telegra.ph/tarelka-12-17-3) | `private_product_material` | 0 |
+| A255 | telegraph | [Правило Гарвардской "Здоровой Тарелки"](https://telegra.ph/tarelka-12-17-3) | `obsolete_product_archive` | 0 |
 | A136 | telegraph | [Правильные действия](https://telegra.ph/Calories-only-09-09) | `editorial_review` | 0 |
 | A189 | telegraph | [Привычки для увеличения удовольствия](https://telegra.ph/Privychki-dlya-uvelicheniya-udovolstviya-03-02) | `private_product_material` | 0 |
 | A234 | telegraph | [Прикладные способы усилить насыщение ничего не меняя в тарелке (ну почти)](https://telegra.ph/kakakaka-08-10) | `private_product_material` | 0 |
@@ -250,7 +251,7 @@
 | A232 | telegraph | [Пришлось даже оглавление сделать](https://telegra.ph/in-far-far-galaxy-02-12) | `editorial_review` | 0 |
 | A244 | telegraph | [Программа Мастер-класса](https://telegra.ph/programma-04-04-3) | `technical_or_service` | 0 |
 | A190 | telegraph | [Промт: обработка данных из дневника питания](https://telegra.ph/Promt-obrabotka-dannyh-iz-dnevnika-pitaniya-02-03) | `technical_or_service` | 0 |
-| A124 | telegraph | [Пять вкусов еды](https://telegra.ph/5-vkusov-12-25) | `private_product_material` | 0 |
+| A124 | telegraph | [Пять вкусов еды](https://telegra.ph/5-vkusov-12-25) | `obsolete_product_archive` | 0 |
 | A065 | pikabu | [Разбор бреда: «5 вещей, которые я не буду делать как нутрициолог»](https://pikabu.ru/story/razbor_breda_5_veshchey_kotoryie_ya_ne_budu_delat_kak_nutritsiolog_11583796) | `short_reserve` | 0 |
 | A010 | pikabu | [Разбудить любого и спросить: "Можно ли кушать на ночь?"](https://pikabu.ru/story/razbudit_lyubogo_i_sprosit_mozhno_li_kushat_na_noch_10293844) | `short_reserve` | 0 |
 | A021 | pikabu | [Резинки для тренировок!](https://pikabu.ru/story/rezinki_dlya_trenirovok_10573917) | `editorial_review` | 1 |
@@ -269,7 +270,7 @@
 | A202 | telegraph | [Способы восстановление поле тренировки Часть 2.](https://telegra.ph/Sposoby-vosstanovlenie-pole-trenirovki-CHast-2-08-11) | `editorial_review` | 0 |
 | A249 | telegraph | [Способы сокращения ВРЕДА от сладкого.](https://telegra.ph/sladkoe-ne-pomeha-04-12) | `private_product_material` | 0 |
 | A231 | telegraph | [Способы сокращения КОЛИЧЕСТВА сладкого](https://telegra.ph/hvatit-sladkogo-04-11) | `editorial_review` | 1 |
-| A203 | telegraph | [Средиземноморская диета](https://telegra.ph/Sredizemnomorskaya-dieta-12-07) | `private_product_material` | 0 |
+| A203 | telegraph | [Средиземноморская диета](https://telegra.ph/Sredizemnomorskaya-dieta-12-07) | `obsolete_product_archive` | 0 |
 | A102 | pikabu | [Средиземноморская диета — это вообще что?!?!](https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380) | `short_reserve` | 0 |
 | A251 | telegraph | [Срывы и зажоры. В чем разница, что с ними делать и причем тут чит-милы.](https://telegra.ph/sriv-sriv-sriv-04-11) | `private_product_material` | 0 |
 | A112 | telegraph | [Сценарий видео калории Урок 4. Учет тренировочной активности](https://telegra.ph/111-07-27-11) | `technical_or_service` | 0 |
