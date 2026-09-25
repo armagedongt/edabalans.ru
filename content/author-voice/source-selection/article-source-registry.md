@@ -11,9 +11,10 @@
 - В блоге: **44** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
 - Уже привязано к канонам блога: **51** внешних проявлений.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **231**.
+- Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **243**.
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
-- Telegram-посты в этот реестр не входят.
+- Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
 ## Канон в блоге
 
@@ -61,7 +62,7 @@
 | Уколол и похудел: Оземпик, Семавик и нюансы | [blog:ukolol-i-pohudel-ozempik-semavik-nyuansy](https://blog.похудение-это-есть.рф/articles/ukolol-i-pohudel-ozempik-semavik-nyuansy) | 1 | 1 |
 | Ходить, чтобы худеть | [blog:hodit-chtoby-hudet](https://blog.похудение-это-есть.рф/articles/hodit-chtoby-hudet) | 1 | 0 |
 | Хочешь худеть? Заткнись и ешь картошку! | [blog:hochesh-hudet-esh-kartoshku](https://blog.похудение-это-есть.рф/articles/hochesh-hudet-esh-kartoshku) | 1 | 0 |
-| Что вы не понимаете о формировании привычек? | [blog:chto-vy-ne-ponimaete-o-formirovanii-privychek](https://blog.похудение-это-есть.рф/articles/chto-vy-ne-ponimaete-o-formirovanii-privychek) | 3 | 0 |
+| Что вы не понимаете о формировании привычек? | [blog:chto-vy-ne-ponimaete-o-formirovanii-privychek](https://blog.похудение-это-есть.рф/articles/chto-vy-ne-ponimaete-o-formirovanii-privychek) | 4 | 0 |
 | Эти долбанные 10 000 шагов | [blog:eti-dolbannye-10000-shagov](https://blog.похудение-это-есть.рф/articles/eti-dolbannye-10000-shagov) | 1 | 0 |
 
 ## Отложенный корпус по типам
@@ -69,9 +70,9 @@
 | Тип | Количество | Что означает |
 |---|---:|---|
 | `deferred_not_now` | 18 | Владелец прямо решил пока не брать. |
-| `editorial_review` | 82 | Полная статья-кандидат: проверить семейство, пользу, актуальность и выбрать основу. |
+| `editorial_review` | 93 | Полная статья-кандидат: проверить семейство, пользу, актуальность и выбрать основу. |
 | `incomplete_draft` | 14 | Черновик/заметка: не считать готовой статьёй. |
-| `owner_review_later` | 2 | Нужен отдельный просмотр владельцем. |
+| `owner_review_later` | 3 | Нужен отдельный просмотр владельцем. |
 | `private_product_material` | 47 | Курс или Мастер-класс: не публиковать автоматически. |
 | `short_reserve` | 43 | Материал 3000–3999 знаков: сначала решить, является ли самостоятельной статьёй. |
 | `technical_or_service` | 25 | Техническая страница, сценарий, услуга, продажная или посторонняя сущность. |
@@ -307,15 +308,27 @@
 | A067 | pikabu | [Чёрный пояс по прохождению верхнего Ларса2](https://pikabu.ru/story/chyornyiy_poyas_po_prokhozhdeniyu_verkhnego_larsa_11684797) | `editorial_review` | 0 |
 | A113 | telegraph | [Энергетический баланс](https://telegra.ph/111-09-28-22) | `editorial_review` | 0 |
 | A144 | telegraph | [Эфир «Вредная еда»](https://telegra.ph/EHfir-Vrednaya-eda-09-21) | `editorial_review` | 0 |
+| tilda-post:e4441ism91 | tilda | [⛔️ Почему эффекта плато не существует](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet) | `editorial_review` | 0 |
+| tilda-post:knian4e971 | tilda | [✍️ Ваш новый план похудения](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/knian4e971-vash-novii-plan-pohudeniya) | `editorial_review` | 0 |
+| tilda-post:a75rtx6go1 | tilda | [🍔 Что надо поменять в питании, чтобы лучше насыщаться?](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/a75rtx6go1-chto-nado-pomenyat-v-pitanii-chtobi-luc) | `editorial_review` | 0 |
+| tilda-post:sgpfzdvvy1 | tilda | [🍭 Вы едите 31кг сахара в год!](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/sgpfzdvvy1-vi-edite-31kg-sahara-v-god) | `editorial_review` | 0 |
 | A117 | telegraph | [💎 13 правил  для организации домашних тренировок⁠⁠](https://telegra.ph/13-pravil-09-18) | `editorial_review` | 1 |
+| tilda-post:amkbo7kgg1 | tilda | [💪 Зачем нужны тренировки (кроме похудения)](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni) | `editorial_review` | 0 |
+| tilda-post:pxukhjlca1 | tilda | [📸 Как вести дневник питания БЕЗ калорий](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/pxukhjlca1-kak-vesti-dnevnik-pitaniya-bez-kalorii) | `editorial_review` | 0 |
+| tilda-post:7siam7t8k1 | tilda | [😎 Как сократить тягу к сладкому и как есть сладкое с меньшим вредом для здоровья!](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/7siam7t8k1-kak-sokratit-tyagu-k-sladkomu-i-kak-est) | `editorial_review` | 0 |
 | A111 | telegraph | [😡 Привычка за 21 день — это ложь!](https://telegra.ph/111-07-23-19) | `incomplete_draft` | 0 |
+| tilda-post:x5ykn0tjc1 | tilda | [🤦‍♂️ Три главные ошибки в начале похудения](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/x5ykn0tjc1-tri-glavnie-oshibki-v-nachale-pohudeniy) | `editorial_review` | 0 |
+| tilda-post:jajp12c7j1 | tilda | [🥄 Просто кладите ложку на стол!](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/jajp12c7j1-prosto-kladite-lozhku-na-stol) | `editorial_review` | 0 |
+| tilda-post:5kegfp3o71 | tilda | [🥐 Примеры реальных дневников](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/5kegfp3o71-primeri-realnih-dnevnikov) | `owner_review_later` | 0 |
 | A130 | telegraph | [🥕 Правило 30-ти растений](https://telegra.ph/CHast-2-08-08) | `incomplete_draft` | 1 |
+| tilda-post:hbfozma3y1 | tilda | [🥕 Правило 30-ти растений](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/hbfozma3y1-pravilo-30-ti-rastenii) | `editorial_review` | 0 |
 | A123 | telegraph | [🥕Правило 40-ка растений](https://telegra.ph/30rastei-01-26) | `editorial_review` | 1 |
+| tilda-post:m0epglvrp1 | tilda | [🧮 Зачем на самом деле надо считать калории](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/m0epglvrp1-zachem-na-samom-dele-nado-schitat-kalor) | `editorial_review` | 0 |
 
 ## Непокрытые источники и синхронизация
 
 - В текущем локальном корпусе нет источников Дзен. Нужен отдельный discovery по аккаунту/экспорту, если такие публикации существуют.
-- Серверная синхронизация Git-слоя решений ещё не выполнена. При следующем доступном сеансе Библиотекаря нужно зарегистрировать маршруты, подтверждённые семейные связи и очередь возможных дублей без копирования полных текстов.
+- Производная карта зарегистрирована в серверном Библиотекаре: `knowledge://resource/article-family-routing`. Она хранит маршруты, ссылки и очередь сравнения; неподтверждённые пары не повышены до доказанных дублей.
 - Telegraph: известные 211 страниц были перечитаны 17.09.2026, но свежий список аккаунта без токена не подтверждён.
 - Pikabu: использованы серверная библиотека и локальные полные корпуса; публикации после даты снимка требуют следующего refresh.
 

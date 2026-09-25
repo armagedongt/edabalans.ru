@@ -175,6 +175,7 @@ owns_files = [
   "content/author-voice/skill/edabalans-writer/SKILL.md",
   "content/external-references/**",
   "tools/analyze_saved_telegram_notes.py", "tools/build_author_*.py",
+  "tools/build_article_source_registry.py", "tools/build_article_channel_links.py",
   "tools/build_rhetorical_library.py", "tools/build_voice_core.py",
   "tools/catalog_saved_notes_editorially.py", "tools/collect_public_site.py",
   "tools/collect_telegraph.py", "tools/enrich_author_catalog.py",

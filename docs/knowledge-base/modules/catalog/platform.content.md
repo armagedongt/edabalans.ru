@@ -150,6 +150,13 @@ PostgreSQL content tables, `docs/CONTENT_CATALOG.md`,
 и выбор полной основы остаются в
 `content/author-voice/source-selection/blog-source-families.json`; предполагаемое
 текстовое сходство не повышается до семейной связи автоматически.
+Два представления `long_material` / `short_post`, связи с Telegram-анонсами,
+старыми рассылками и источниками интенсива определяет
+`content/author-voice/source-selection/ARTICLE_SOURCE_LINKING.md`.
+`article-source-supplements.json` дополняет реестр подтверждёнными метаданными
+старого интенсива и альтернативными заголовками. Приватная карта сообщений и
+будущих замен строится `tools/build_article_channel_links.py`; длинный материал
+может быть опубликован сообщением канала, а его анонс не считается дублем текста.
 После публичного выпуска каноном семьи автоматически считается запись
 `content/blog/manifest.json` со `status=published`; её `source_provenance` и
 подтверждённая семья остаются историей источников под этим каноном.
