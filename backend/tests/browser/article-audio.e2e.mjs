@@ -35,6 +35,7 @@ try {
   assert.equal(await page.locator('[data-voice-speed]').textContent(), '×1.5')
   assert.equal(await page.locator('[data-voice-widget]').getAttribute('data-state'), 'playing')
   await page.locator('[data-voice-play]').click()
+  await page.waitForFunction(() => document.querySelector('[data-voice-widget]').dataset.state === 'paused')
   assert.equal(await page.locator('audio').evaluate(audio => audio.paused), true)
   assert.equal(await page.locator('[data-voice-widget]').getAttribute('data-state'), 'paused')
   await page.locator('[data-voice-seek]').fill('500')
