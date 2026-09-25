@@ -390,6 +390,8 @@ def test_calorie_course_completes_stage_in_order_and_opens_next_at_local_six(mon
         assert notification.content_code == "tpl_postpurchase_metabolism_app_link"
         assert notification.payload["target_platform"] == "telegram"
         assert notification.payload["target_platform_user_id"] == "calories-test-user"
+        account = db.scalar(select(MessengerAccount).where(MessengerAccount.platform_user_id == "calories-test-user"))
+        assert notification.payload["target_messenger_account_id"] == str(account.id)
         assert db.scalar(select(func.count(MasterclassEvent.id)).where(MasterclassEvent.event_type == "app_revealed_metabolism")) == 1
     assert client.post("/api/calories/course/days/2/task/open", json={"email": email}).status_code == 200
     for index in range(4):

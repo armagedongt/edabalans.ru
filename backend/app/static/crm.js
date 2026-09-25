@@ -249,7 +249,7 @@
     }
     if (kind === "messengers") {
       const messengers = user.messengers || [];
-      if (!messengers.length) return '<div class="crm-popover-empty">Мессенджер не привязан</div>';
+      if (!messengers.length) return '<div class="crm-popover-empty">Мессенджер не подключён</div>';
       return `<div class="crm-popover-title">Мессенджеры</div>${messengers.map((item) => `<div class="crm-popover-item"><strong>${messengerIcon(item.platform)} ${esc(item.platform === "telegram" ? "Telegram" : item.platform === "max" ? "MAX" : item.platform)}</strong><span>${item.username ? `@${esc(item.username)} · ` : ""}в боте ${botAge(item.main_scenario_seen_at || item.first_seen_at)} · ${channelState({ messengers: [item] }).label.toLowerCase()}</span></div>`).join("")}`;
     }
     if (kind === "notes") {

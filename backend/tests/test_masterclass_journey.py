@@ -1070,12 +1070,14 @@ def test_stable_resource_link_resolves_access_offer_and_full_unlock():
         json={"unlock_mode": "fully_unlocked"},
     )
     assert unlocked.status_code == 200
-    detail = client.get(f"/admin/api/users/{user_id}").json()
+    detail = client.get(f"/admin/api/users/{user_id}/course-accesses").json()
     masterclass_access = next(
-        item for item in detail["accesses"] if item["code"] == "ACCESS_MASTERCLASS"
+        item for item in detail["courses"] if item["resource_code"] == "ACCESS_MASTERCLASS"
     )
-    assert masterclass_access["course_policy_supported"] is True
-    assert masterclass_access["unlock_mode"] == "fully_unlocked"
+    assert masterclass_access["available"] is True
+    assert masterclass_access["entitled"] is True
+    assert masterclass_access["start_open"] is True
+    assert masterclass_access["all_lessons_open"] is True
 
     late = client.get(
         "/api/account/resource-link",

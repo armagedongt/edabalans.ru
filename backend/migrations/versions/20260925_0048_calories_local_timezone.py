@@ -4,7 +4,7 @@ from alembic import op
 import sqlalchemy as sa
 
 revision = "20260925_0048"
-down_revision = "20260921_0047"
+down_revision = "20260925_0047"
 branch_labels = None
 depends_on = None
 
