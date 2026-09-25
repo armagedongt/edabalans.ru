@@ -43,7 +43,28 @@ def safe_href(value: str) -> bool:
 def opens_in_new_tab(value: str) -> bool:
     """Keep same-site course navigation in place; separate external browsing."""
     parsed = urlparse(value.strip())
-    return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+    return parsed.scheme in {"http", "https"} and bool(parsed.netloc) and not course_material_href(value)
+
+
+def course_material_href(value: str) -> str | None:
+    """Keep links to our course materials on the current site's account route."""
+    parsed = urlparse(value.strip())
+    if parsed.scheme or parsed.netloc:
+        if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+            return None
+        hostname = parsed.hostname.encode("idna").decode("ascii").lower()
+        course_hosts = {
+            "edabalans.ru",
+            "похудение-это-есть.рф".encode("idna").decode("ascii"),
+        }
+        if hostname not in course_hosts:
+            return None
+    if parsed.path not in {"/lk", "/apps/masterclass-course.html"}:
+        return None
+    query = parse_qs(parsed.query)
+    if not query.get("course_day") or not query.get("course_material"):
+        return None
+    return "/lk?" + parsed.query + ("#" + parsed.fragment if parsed.fragment else "")
 
 
 def safe_video_source(value: str) -> bool:
@@ -123,7 +144,7 @@ class ArticleSanitizer(HTMLParser):
         if tag == "a":
             href = next((value for name, value in attrs if name.lower() == "href"), None)
             if href and safe_href(href):
-                rendered_attrs = f' href="{escape(href.strip(), quote=True)}"'
+                rendered_attrs = f' href="{escape(course_material_href(href) or href.strip(), quote=True)}"'
                 if self.course_semantics and opens_in_new_tab(href):
                     rendered_attrs += ' target="_blank" rel="noopener"'
                 tracking_key = next(
@@ -231,7 +252,7 @@ def inline_markdown(value: str) -> str:
         label = match.group(1).replace(r"\[", "[").replace(r"\]", "]")
         href = match.group(2)
         external = ' target="_blank" rel="noopener"' if opens_in_new_tab(href) else ""
-        return f'<a href="{href}"{external}>{label}</a>'
+        return f'<a href="{course_material_href(href) or href}"{external}>{label}</a>'
 
     rendered = re.sub(
         r"\[((?:\\[\[\]]|[^\]])+)\]\((https?://[^\s)]+|/(?!/)[^\s)]+)\)",

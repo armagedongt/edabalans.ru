@@ -91,6 +91,29 @@ class ArticleMarkupTests(unittest.TestCase):
             'Источник</a></p>',
         )
 
+    def test_course_material_links_stay_on_the_account_site_and_in_the_same_tab(self) -> None:
+        source = (
+            "[Вкусы](https://похудение-это-есть.рф/lk?course_day=7&course_material=day-06-article-03) "
+            "[Рецепт](/apps/masterclass-course.html?course_day=7&course_material=day-07-recipe-marinara)"
+        )
+        rendered = markdown_to_article_html(source)
+        self.assertIn(
+            '<a href="/lk?course_day=7&amp;course_material=day-06-article-03">Вкусы</a>',
+            rendered,
+        )
+        self.assertIn(
+            '<a href="/lk?course_day=7&amp;course_material=day-07-recipe-marinara">Рецепт</a>',
+            rendered,
+        )
+        self.assertNotIn('target="_blank"', rendered)
+        self.assertEqual(
+            sanitize_article_html(
+                '<p><a href="https://edabalans.ru/apps/masterclass-course.html?course_day=7&amp;course_material=day-06-article-03" target="_blank">Вкусы</a></p>',
+                course_semantics=True,
+            ),
+            '<p><a href="/lk?course_day=7&amp;course_material=day-06-article-03">Вкусы</a></p>',
+        )
+
     def test_markdown_images_are_lazy_and_decode_asynchronously(self) -> None:
         rendered = markdown_to_article_html("![Подпись](/media/example.webp)")
 

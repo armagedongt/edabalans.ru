@@ -188,12 +188,18 @@ frontend исключает её из оглавления, линейной н�
 - `GET /course-assets/masterclass/media/{asset_path}` — публичные изображения
   опубликованных статей из разрешённых каталогов `editorial/assets` и legacy
   `source-current/assets`;
+
 - `POST /api/masterclass/course/days/{day}/open` — первое/повторное открытие;
 - `POST /api/masterclass/course/days/{day}/steps/{index}/complete` — завершение
   следующего обязательного пункта; сервер переводит позицию активного manifest в
   стабильный `step_id`, а для messenger-шага дополнительно проверяет связь;
 - `POST /api/masterclass/course/days/{day}/task/open` — открытие задания;
 - `PUT /api/masterclass/course/days/{day}/checks/{index}` — состояние галочки.
+
+Ссылки между материалами курса открываются в текущей вкладке кабинета через
+`/lk?course_day=…&course_material=…`. При рендеринге старые абсолютные ссылки
+на собственный домен и адреса `/apps/masterclass-course.html` приводятся к этому
+маршруту; внешние ссылки сохраняют обычное поведение новой вкладки.
 
 Все клиентские методы определяют `user_id` по защищённой серверной сессии и
 повторно проверяют `ACCESS_MASTERCLASS`. Email из query, формы или localStorage не
