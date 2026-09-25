@@ -1,5 +1,5 @@
 {
-  "package_version": "2.8.1-20260925",
+  "package_version": "2.8.2-20260925",
   "files": [
     {
       "path": "content/author-voice/skill/edabalans-writer/SKILL.md",
@@ -35,7 +35,7 @@
     },
     {
       "path": "content/author-voice/article-component-router.md",
-      "sha256": "89e4a00561968283bd102d55b701b2c39bdb72e6e43092a4227edabdfb0363f1"
+      "sha256": "744ed0dd14d79a44c84c5b940753127bb23529e195a673f4f3cd2e0d688f5b2d"
     },
     {
       "path": "content/author-voice/author-task.schema.json",
