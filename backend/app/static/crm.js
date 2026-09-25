@@ -133,6 +133,18 @@
     return state.userDetails.get(id);
   }
 
+  function crmUrlForUser(userId) {
+    const url = new URL(location.href);
+    if (userId) url.searchParams.set("user", userId);
+    else url.searchParams.delete("user");
+    return `${url.pathname}${url.search}${url.hash}`;
+  }
+
+  function setCurrentUserUrl(userId, replace = false) {
+    const method = replace ? "replaceState" : "pushState";
+    history[method]({ user: userId || null }, "", crmUrlForUser(userId));
+  }
+
   function botAge(value) {
     if (!value) return "не запускал";
     const started = new Date(value);
@@ -807,7 +819,10 @@
     });
   }
 
-  async function openUser(id) {
+  async function openUser(id, updateUrl = true) {
+    if (updateUrl && new URLSearchParams(location.search).get("user") !== id) {
+      setCurrentUserUrl(id);
+    }
     root.innerHTML = top("") + '<div class="crm-loading">Открываю карточку…</div>';
     const user = await loadUserDetail(id);
     state.courseAccessPreview = null;
@@ -950,7 +965,10 @@
     });
     bindUserPreviews();
     bindCourseAccessPreview(id);
-    document.getElementById("crm-back").addEventListener("click", () => showView(state.view));
+    document.getElementById("crm-back").addEventListener("click", () => {
+      setCurrentUserUrl(null);
+      showView(state.view);
+    });
     document.getElementById("name-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       await api(`/admin/api/users/${id}`, { method: "PATCH", body: JSON.stringify({ display_name: document.getElementById("display-name").value }) });
@@ -1045,9 +1063,15 @@
     state.summary = await api("/admin/api/summary");
     const params = new URLSearchParams(location.search); state.query = params.get("q") || "";
     const initialUser = params.get("user");
-    if (initialUser) return openUser(initialUser);
+    if (initialUser) return openUser(initialUser, false);
     return showView("users");
   }
+
+  window.addEventListener("popstate", () => {
+    const userId = new URLSearchParams(location.search).get("user");
+    if (userId) openUser(userId, false).catch(showError);
+    else showView("users").catch(showError);
+  });
 
   initialise().catch(showError);
 })();

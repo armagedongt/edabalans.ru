@@ -398,6 +398,7 @@ for (const [name, route] of Object.entries(integratedPages)) {
       await page.locator(".crm-profile-head").waitFor();
       assert.match(await page.locator(".crm-profile-head").textContent(), /Анна/);
       assert.equal(await page.getByText("Курсы и доступы", { exact:true }).count(), 1);
+      assert.equal(new URL(page.url()).searchParams.get("user"), "u1");
       assert.equal(await page.getByText("Купленные продукты и тарифы", { exact:true }).count(), 0);
       assert.equal(await page.getByText("История покупок", { exact:true }).count(), 1);
       assert.equal(await page.locator(".crm-purchase-item").count(), 2);
@@ -429,6 +430,7 @@ for (const [name, route] of Object.entries(integratedPages)) {
       if (evidence) await page.screenshot({ path: path.join(evidence, "admin-crm-profile-1440.png"), fullPage:true });
       await page.getByRole("button", { name:"← Назад" }).click();
       await page.locator("#crm-user-results tbody tr[data-user-id]").first().waitFor();
+      assert.equal(new URL(page.url()).searchParams.has("user"), false);
       failNextPaymentRequest = true;
       await page.getByRole("button", { name:"Оплаты", exact:true }).click();
       await page.getByText("CRM не загрузилась", { exact:true }).waitFor();
