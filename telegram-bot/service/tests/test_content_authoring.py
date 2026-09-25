@@ -45,13 +45,15 @@ def test_seed_gives_every_working_message_a_brief_and_writer_queue(tmp_path):
         seed_defaults(session, "Fitness_Talks_bot")
         report = audit_content(session)
 
-    assert report["total"] == 52
+    assert report["total"] == 53
     assert not [item for item in report["items"] if "missing_brief" in item["issues"]]
     assert not [item for item in report["items"] if item["editorial_status"] == "missing_content"]
     assert report["counts"]["placeholder"] == 17
-    assert report["counts"]["approved"] == 35
+    assert report["counts"]["approved"] == 36
     assert len(report["writer_queue"]) == 17
-    assert report["approved_skipped"] == 35
+    assert report["approved_skipped"] == 36
+    calculator = next(item for item in report["items"] if item["code"] == "tpl_postpurchase_metabolism_app_link")
+    assert calculator["editorial_status"] == "approved"
     assert report["runtime_blocked"] == 17
     start_item = next(item for item in report["items"] if item.get("code") == "tpl_start_masterclass_owned")
     assert start_item["usages"][0]["previous"]
@@ -144,7 +146,7 @@ def test_confirmed_publish_is_versioned_and_skipped_by_writer(tmp_path, monkeypa
     assert conflict.status_code == 409
     report = client.get("/bot-api/content-audit").json()
     assert "tpl_day1" not in {item["code"] for item in report["writer_queue"]}
-    assert report["approved_skipped"] == 35
+    assert report["approved_skipped"] == 36
     app.dependency_overrides.clear()
 
 
