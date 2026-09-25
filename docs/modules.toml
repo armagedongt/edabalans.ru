@@ -529,6 +529,8 @@ owns_files = [
   "backend/tests/test_masterclass_structure_migration.py",
   "backend/tests/test_masterclass_editorial_publish.py",
   "backend/tests/test_masterclass_article_video.py",
+  "backend/tests/test_masterclass_article_audio.py",
+  "backend/tests/browser/article-audio.e2e.mjs",
   "backend/tests/test_github_content_editor.py",
   "tools/publish_course_material.py", "tools/tests/test_publish_course_material.py",
   "tools/publish_final_masterclass_structure.py",

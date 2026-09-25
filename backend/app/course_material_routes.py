@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
+from html import escape
 import difflib
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import FileResponse, Response
+from fastapi.responses import FileResponse, Response, HTMLResponse
+from app.article_markup import safe_audio_arguments
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -52,6 +54,19 @@ def component_asset(*parts: str) -> str:
     return COURSE_CONTENT_ROOT.joinpath("components", *parts).read_text(encoding="utf-8")
 
 
+@router.get("/course-assets/masterclass/audio-player", include_in_schema=False)
+def masterclass_audio_player(src: str, avatar: str, author: str, duration: str) -> HTMLResponse:
+    if not safe_audio_arguments(src, avatar, author, duration):
+        raise HTTPException(422, "Некорректные параметры аудио")
+    template = component_asset("article-audio", "player.html")
+    # One substitution pass: user text cannot introduce another template marker.
+    import re
+    values = {"src": src, "avatar": avatar, "author": author, "duration": duration}
+    page = re.sub(r"\{\{(src|avatar|author|duration)\}\}",
+                  lambda match: escape(values[match[1]], quote=True), template)
+    return HTMLResponse(page, headers={"Cache-Control": "public, max-age=300"})
+
+
 @router.get("/course-assets/masterclass/media/{asset_path:path}", include_in_schema=False)
 def masterclass_article_media(asset_path: str) -> FileResponse:
     for root in MASTERCLASS_MEDIA_ROOTS:
@@ -75,6 +90,7 @@ def masterclass_article_component_styles() -> Response:
         component_asset("dqs-image-slider", "slider.css"),
         component_asset("dqs-score-tables", "score-tables.css"),
         component_asset("article-spoiler", "spoiler.css"),
+        '.article-audio{width:100%;margin:26px 0 30px}.article-audio iframe{display:block;width:100%;height:148px;border:0;background:transparent}',
     ))
     return Response(
         css,

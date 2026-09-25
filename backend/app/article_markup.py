@@ -24,7 +24,7 @@ COURSE_CLASS_TOKENS = {
     "gallery-arrow", "gallery-prev", "gallery-next", "gallery-footer",
     "gallery-counter", "gallery-dots", "gallery-dot", "active",
     "dqs-score-table-wrap", "dqs-score-table",
-    "article-spoiler", "article-spoiler-body", "media",
+    "article-spoiler", "article-spoiler-body", "media", "article-audio",
     "blog-cta", "blog-cta-intensive", "blog-cta-masterclass", "blog-cta-telegram",
     "blog-cta-eyebrow",
     "score-2", "score-1", "score-0", "score--1", "score--2",
@@ -90,6 +90,37 @@ def safe_video_frame(value: str) -> bool:
             and len(query["src"]) == 1 and safe_video_source(query["src"][0]))
 
 
+def safe_audio_arguments(source: str, avatar: str, author: str, duration: str) -> bool:
+    """Closed audio player accepts direct HTTPS media, never arbitrary embeds."""
+    def media_url(value: str, suffixes: tuple[str, ...]) -> bool:
+        decoded = unquote(value)
+        if value != value.strip() or "\\" in decoded or any(ord(c) < 32 for c in decoded):
+            return False
+        try:
+            parsed = urlparse(value)
+            return (parsed.scheme == "https" and bool(parsed.hostname)
+                    and not parsed.username and not parsed.password
+                    and parsed.port in {None, 443} and not parsed.fragment
+                    and parsed.path.lower().endswith(suffixes))
+        except ValueError:
+            return False
+    return (media_url(source, (".mp3", ".ogg", ".m4a"))
+            and media_url(avatar, (".webp", ".jpg", ".jpeg", ".png"))
+            and 1 <= len(author.strip()) <= 100
+            and re.fullmatch(r"[0-9]{1,3}:[0-5][0-9]", duration) is not None)
+
+
+def safe_audio_frame(value: str) -> bool:
+    if not value.startswith("/course-assets/masterclass/audio-player?"):
+        return False
+    parsed = urlparse(value)
+    query = parse_qs(parsed.query, keep_blank_values=True)
+    keys = ("src", "avatar", "author", "duration")
+    return (not parsed.fragment and set(query) == set(keys)
+            and all(len(query[key]) == 1 for key in keys)
+            and safe_audio_arguments(*(query[key][0] for key in keys)))
+
+
 def safe_image_src(value: str, *, allow_relative: bool = False) -> bool:
     cleaned = value.strip()
     decoded = unquote(cleaned)
@@ -123,6 +154,12 @@ class ArticleSanitizer(HTMLParser):
                 and self.course_semantics and self.allow_product_components):
             attributes = dict(attrs)
             source = str(attributes.get("src") or "")
+            if safe_audio_frame(source):
+                self.parts.append(
+                    f'<iframe src="{escape(source, quote=True)}"'
+                    ' title="Голосовое Сергея Воронцова" loading="lazy"></iframe>'
+                )
+                return
             if safe_video_frame(source):
                 title = str(attributes.get("title") or "Видео")[:200]
                 self.parts.append(
