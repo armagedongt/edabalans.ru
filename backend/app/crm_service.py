@@ -43,7 +43,7 @@ from app.config import Settings
 from app.masterclass_routes import (
     questions,
 )
-from app.product_identity import purchased_products, tariff_name
+from app.product_identity import purchased_products, tariff_label
 from app.course_access_service import set_course_unlock_mode
 
 CONFIRMED_PAYMENT_STATUSES = ("paid", "confirmed")
@@ -282,7 +282,7 @@ def list_users(
         )
     rows = db.execute(stmt).mappings().all()
     tariff_by_product_code = {
-        code: tariff_name(db, code) or "Основной"
+        code: tariff_label(db, code)
         for code in {row["initial_product_code"] for row in rows if row["initial_product_code"]}
     }
     user_ids = [row["id"] for row in rows]

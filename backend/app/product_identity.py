@@ -12,10 +12,16 @@ from app.product_catalog_service import tariff_public
 
 
 CONFIRMED_PAYMENT_STATUSES = ("paid", "confirmed")
+UNRESOLVED_TARIFF_LABEL = "Загружено · тариф не определён"
 
 def tariff_name(db: Session, product_code: str | None) -> str | None:
     tariff = tariff_public(db, product_code or "")
     return tariff["name"] if tariff else None
+
+
+def tariff_label(db: Session, product_code: str | None) -> str:
+    """Return an explicit CRM label when a legacy purchase has no mapped tariff."""
+    return tariff_name(db, product_code) or UNRESOLVED_TARIFF_LABEL
 
 
 def purchased_products(db: Session, user_id: uuid.UUID) -> list[dict]:
@@ -47,7 +53,7 @@ def purchased_products(db: Session, user_id: uuid.UUID) -> list[dict]:
             {
                 "product_code": code,
                 "product_name": name or payment.product_name_raw,
-                "tariff": tariff_name(db, code) or "Основной",
+                "tariff": tariff_label(db, code),
                 "purchased_at": purchased_at.isoformat() if purchased_at else None,
             }
         )
