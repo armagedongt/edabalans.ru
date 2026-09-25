@@ -527,7 +527,7 @@ def test_editorial_body_rewrites_obsidian_visible_article_images_to_public_media
     assert "](../assets/" not in body
     assert (
         "](/course-assets/masterclass/media/01-food-diary/"
-        "telegram-channel-collage-2026-09-20.png)"
+        "telegram-channel-collage-2026-09-20.webp)"
     ) in body
     assert (
         "](/course-assets/masterclass/media/01-food-diary/"

@@ -3652,10 +3652,10 @@ def test_masterclass_article_media_route_serves_only_registered_image_tree() -> 
 
     second_editorial_image = client.get(
         "/course-assets/masterclass/media/01-food-diary/"
-        "telegram-channel-collage-2026-09-20.png"
+        "telegram-channel-collage-2026-09-20.webp"
     )
     assert second_editorial_image.status_code == 200
-    assert second_editorial_image.headers["content-type"] == "image/png"
+    assert second_editorial_image.headers["content-type"] == "image/webp"
 
     escaped = client.get(
         "/course-assets/masterclass/media/%2E%2E/course/course.json"

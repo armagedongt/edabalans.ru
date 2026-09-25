@@ -61,7 +61,11 @@ def masterclass_article_media(asset_path: str) -> FileResponse:
             and path.suffix.casefold() in MASTERCLASS_MEDIA_SUFFIXES
             and path.is_file()
         ):
-            return FileResponse(path, headers={"Cache-Control": "public, max-age=86400"})
+            return FileResponse(
+                path,
+                media_type="image/webp" if path.suffix.casefold() == ".webp" else None,
+                headers={"Cache-Control": "public, max-age=86400"},
+            )
     raise HTTPException(404, "Изображение материала не найдено")
 
 
