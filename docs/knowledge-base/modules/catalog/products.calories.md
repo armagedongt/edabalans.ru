@@ -2,7 +2,7 @@
 title: "Калорийный курс"
 summary: "Этапный текстовый курс об учёте, анализе, расходе, дефиците и выходе из постоянного подсчёта."
 document_status: current
-implementation_status: in_development
+implementation_status: implemented
 ---
 
 # Калорийный курс
@@ -61,7 +61,7 @@ implementation_status: in_development
 описывает эту редакцию; активный manifest и статьи публикуются отдельно от кода.
 Статус редакторского `pass` не заменяет проверку runtime, прав и доставки.
 
-До публикации согласованный корпус находится в приватной локальной папке
+Согласованный корпус сохранён в приватной локальной папке
 `D:/CodexWork/private-authoring/calorie-stage3-20260925/publication-proofread-v1`.
 Техническая копия для переноса — соседняя `publication-ready-v1`; её
 `publication-map.json` хранит SHA-256 исходников и результата, стабильные ID,

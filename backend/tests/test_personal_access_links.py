@@ -405,6 +405,8 @@ def test_product_maintenance_preserves_entitlements_and_reopens_owned_products(m
     from app.product_catalog_service import PRODUCT_CONNECTIONS
     import app.calorie_course_material_service as calorie_materials
 
+    for code in ("calories", "recipes"):
+        monkeypatch.setitem(PRODUCT_CONNECTIONS[code], "maintenance", True)
     client, factory, user_id = setup()
     with factory() as db:
         db.get(User, user_id).access_review_status = "completed"
