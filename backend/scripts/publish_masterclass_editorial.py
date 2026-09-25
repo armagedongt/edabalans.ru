@@ -346,11 +346,29 @@ def migrate_step_progress(db, before: dict, after: dict) -> int:
     return len(changed)
 
 
+def preserve_excluded(manifest: dict, current: dict, days: set[int], steps: set[str]) -> None:
+    """Keep explicitly frozen runtime data byte-for-byte, including access fields."""
+    originals = {int(day["number"]): day for day in current["days"]}
+    for index, day in enumerate(manifest["days"]):
+        original = originals[int(day["number"])]
+        if int(day["number"]) in days:
+            manifest["days"][index] = deepcopy(original)
+            continue
+        old_steps = {step["id"]: step for step in original["steps"]}
+        for position, step in enumerate(day["steps"]):
+            if step["id"] in steps:
+                if step["id"] not in old_steps:
+                    raise ValueError(f"Исключённый материал отсутствует в runtime: {step['id']}")
+                day["steps"][position] = deepcopy(old_steps[step["id"]])
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--publish", action="store_true")
     parser.add_argument("--from-day", type=int, choices=range(1, 21), default=1)
     parser.add_argument("--through-day", type=int, choices=range(1, 21), default=20)
+    parser.add_argument("--exclude-day", type=int, choices=range(1, 21), action="append", default=[])
+    parser.add_argument("--exclude-step", action="append", default=[])
     args = parser.parse_args()
     if args.from_day > args.through_day:
         parser.error("--from-day не может быть больше --through-day")
@@ -358,6 +376,9 @@ def main() -> None:
     materials = {
         key: item for key, item in materials.items()
         if args.from_day <= item["day"] <= args.through_day
+        and item["day"] not in args.exclude_day
+        and key not in args.exclude_step
+        and not item.get("placeholder")
     }
     with SessionLocal() as db:
         current = active_course_version(db)
@@ -412,7 +433,9 @@ def main() -> None:
                 gate = editorial_day["access_gate"]
                 day["accessGateHtml"] = special_prelude(gate["path"], "offer")
                 day["accessGateTitle"] = gate["title"]
+        preserve_excluded(manifest, current.payload, set(args.exclude_day), set(args.exclude_step))
         print(f"Текущая редакция структуры: {current.version_no}")
+        print(f"Статей в выпуске: {len(rendered_articles)}; исключены дни: {args.exclude_day}; материалы: {args.exclude_step}")
         print("\n".join(changes))
         if not args.publish:
             print("Проверка завершена; публикация не выполнялась")

@@ -4,7 +4,7 @@ from html import escape
 from html.parser import HTMLParser
 import re
 from typing import Callable
-from urllib.parse import unquote, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 from fastapi import HTTPException
 
@@ -24,7 +24,7 @@ COURSE_CLASS_TOKENS = {
     "gallery-arrow", "gallery-prev", "gallery-next", "gallery-footer",
     "gallery-counter", "gallery-dots", "gallery-dot", "active",
     "dqs-score-table-wrap", "dqs-score-table",
-    "article-spoiler", "article-spoiler-body",
+    "article-spoiler", "article-spoiler-body", "media",
     "blog-cta", "blog-cta-intensive", "blog-cta-masterclass", "blog-cta-telegram",
     "blog-cta-eyebrow",
     "score-2", "score-1", "score-0", "score--1", "score--2",
@@ -38,6 +38,35 @@ def safe_href(value: str) -> bool:
     if decoded.startswith("//") or "\\" in decoded or any(ord(character) < 32 for character in decoded):
         return False
     return urlparse(cleaned).scheme in {"", "http", "https", "mailto"}
+
+
+def opens_in_new_tab(value: str) -> bool:
+    """Keep same-site course navigation in place; separate external browsing."""
+    parsed = urlparse(value.strip())
+    return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+
+
+def safe_video_source(value: str) -> bool:
+    decoded = unquote(value)
+    if value != value.strip() or "\\" in decoded or any(ord(c) < 32 for c in decoded):
+        return False
+    try:
+        parsed = urlparse(value)
+        return (parsed.scheme == "https" and bool(parsed.hostname)
+                and not parsed.username and not parsed.password
+                and parsed.port in {None, 443} and not parsed.fragment
+                and parsed.path.lower().endswith(".mp4"))
+    except ValueError:
+        return False
+
+
+def safe_video_frame(value: str) -> bool:
+    if not value.startswith("/apps/video-player.html?"):
+        return False
+    parsed = urlparse(value)
+    query = parse_qs(parsed.query, keep_blank_values=True)
+    return (not parsed.fragment and set(query) == {"src"}
+            and len(query["src"]) == 1 and safe_video_source(query["src"][0]))
 
 
 def safe_image_src(value: str, *, allow_relative: bool = False) -> bool:
@@ -69,6 +98,18 @@ class ArticleSanitizer(HTMLParser):
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         tag = tag.lower()
+        if (tag == "iframe" and not self.blocked_depth
+                and self.course_semantics and self.allow_product_components):
+            attributes = dict(attrs)
+            source = str(attributes.get("src") or "")
+            if safe_video_frame(source):
+                title = str(attributes.get("title") or "Видео")[:200]
+                self.parts.append(
+                    f'<iframe src="{escape(source, quote=True)}"'
+                    f' title="{escape(title, quote=True)}" loading="lazy"'
+                    ' allow="fullscreen; picture-in-picture" allowfullscreen></iframe>'
+                )
+                return
         if tag in BLOCKED_TAGS:
             self.blocked_depth += 1
             return
@@ -83,7 +124,7 @@ class ArticleSanitizer(HTMLParser):
             href = next((value for name, value in attrs if name.lower() == "href"), None)
             if href and safe_href(href):
                 rendered_attrs = f' href="{escape(href.strip(), quote=True)}"'
-                if self.course_semantics:
+                if self.course_semantics and opens_in_new_tab(href):
                     rendered_attrs += ' target="_blank" rel="noopener"'
                 tracking_key = next(
                     (value for name, value in attrs if name.lower() == "data-tracking-key"),
@@ -177,7 +218,8 @@ def sanitize_article_html(
             detail="Главный заголовок хранится в карточке материала; удалите h1 из текста статьи",
         )
     result = "".join(parser.parts).strip()
-    if not result or (not article_plain_text(result).strip() and "<img " not in result):
+    if not result or (not article_plain_text(result).strip() and "<img " not in result
+                      and "<iframe " not in result):
         raise HTTPException(status_code=422, detail="Текст страницы не может быть пустым")
     return result
 
@@ -187,7 +229,9 @@ def inline_markdown(value: str) -> str:
 
     def render_link(match: re.Match[str]) -> str:
         label = match.group(1).replace(r"\[", "[").replace(r"\]", "]")
-        return f'<a href="{match.group(2)}" target="_blank" rel="noopener">{label}</a>'
+        href = match.group(2)
+        external = ' target="_blank" rel="noopener"' if opens_in_new_tab(href) else ""
+        return f'<a href="{href}"{external}>{label}</a>'
 
     rendered = re.sub(
         r"\[((?:\\[\[\]]|[^\]])+)\]\((https?://[^\s)]+|/(?!/)[^\s)]+)\)",

@@ -3,11 +3,28 @@ from __future__ import annotations
 
 from pathlib import Path
 import re
+import sys
 
 try:
     from bootstrap_masterclass_editorial import EDITORIAL, parse_program
 except ModuleNotFoundError:  # Imported as backend.scripts.* in tests and tooling.
     from scripts.bootstrap_masterclass_editorial import EDITORIAL, parse_program
+
+try:
+    from app.masterclass_editorial import (
+        EDITABLE_MATERIALS,
+        ROOT,
+        validate_editorial_source,
+    )
+except ModuleNotFoundError:  # Executed with the repository root on sys.path.
+    backend_root = Path(__file__).resolve().parents[1]
+    if str(backend_root) not in sys.path:
+        sys.path.insert(0, str(backend_root))
+    from app.masterclass_editorial import (
+        EDITABLE_MATERIALS,
+        ROOT,
+        validate_editorial_source,
+    )
 
 
 def main() -> None:
@@ -23,6 +40,16 @@ def main() -> None:
         (EDITORIAL / "materials" / "15-00-приобрести-каталог-рецептов.md").resolve(),
         (EDITORIAL / "materials" / "08-01-система-рецептов-последний-день.md").resolve(),
     })
+    for step_id, relative_path in EDITABLE_MATERIALS.items():
+        path = (ROOT / relative_path).resolve()
+        linked.add(path)
+        if not path.is_file():
+            errors.append(f"Нет подключённого Markdown-файла: {relative_path}")
+            continue
+        try:
+            validate_editorial_source(step_id, path.read_text(encoding="utf-8"))
+        except ValueError as exc:
+            errors.append(f"Неверный подключённый Markdown-файл {relative_path}: {exc}")
     for item in materials.values():
         path: Path | None = item["path"]
         if path is None:

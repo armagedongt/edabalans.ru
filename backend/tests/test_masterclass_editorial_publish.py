@@ -23,10 +23,38 @@ from scripts.publish_masterclass_editorial import (
     migrate_step_progress,
     special_prelude,
     questionnaire_definition,
+    preserve_excluded,
 )
 
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def test_frozen_days_and_materials_are_preserved_exactly():
+    from copy import deepcopy
+    original = {"days": [
+        {"number": 4, "title": "DQS", "checks": ["кря"], "steps": [{"id": "dqs", "locked": True}]},
+        {"number": 8, "title": "День", "steps": [{"id": "frozen", "badge": "Скоро"}, {"id": "editable", "title": "Старое"}]},
+    ]}
+    updated = deepcopy(original)
+    updated["days"][0]["title"] = "Изменение"
+    updated["days"][0]["steps"] = []
+    updated["days"][1]["steps"][0] = {"id": "frozen", "badge": "Новое"}
+    updated["days"][1]["steps"][1]["title"] = "Новое"
+    preserve_excluded(updated, original, {4}, {"frozen"})
+    assert updated["days"][0] == original["days"][0]
+    assert updated["days"][1]["steps"][0] == original["days"][1]["steps"][0]
+    assert updated["days"][1]["steps"][1]["title"] == "Новое"
+    updated["days"][0]["checks"].append("Изменение")
+    assert original["days"][0]["checks"] == ["кря"]
+
+
+def test_all_nested_recipes_are_registered_and_have_valid_markdown():
+    from app.masterclass_editorial import EDITABLE_MATERIALS, validate_editorial_source
+    recipes = {key: value for key, value in EDITABLE_MATERIALS.items() if key.startswith("day-07-recipe-")}
+    assert len(recipes) == 8
+    for step_id, path in recipes.items():
+        validate_editorial_source(step_id, (ROOT / path).read_text(encoding="utf-8"))
 
 
 def test_editorial_program_compiles_to_runtime_titles_and_visible_steps() -> None:
@@ -331,7 +359,8 @@ def test_single_day_release_preserves_every_other_day() -> None:
     assert compiled["days"][3] != original["days"][3]
 
 
-def test_partial_publish_writes_only_selected_day_articles(monkeypatch) -> None:
+@pytest.mark.parametrize("frozen", [False, True])
+def test_partial_publish_writes_only_selected_day_articles(monkeypatch, frozen) -> None:
     from scripts import publish_masterclass_editorial as publisher
     manifest = json.loads(
         (ROOT / "content" / "masterclass" / "course" / "course.json").read_text(
@@ -364,14 +393,26 @@ def test_partial_publish_writes_only_selected_day_articles(monkeypatch) -> None:
                         writes.append(kw["step_id"]))
     monkeypatch.setattr(
         "sys.argv",
-        ["publisher", "--from-day", "4", "--through-day", "4", "--publish"],
+        (["publisher", "--from-day", "1", "--through-day", "19", "--publish",
+          "--exclude-day", "4", "--exclude-day", "18", "--exclude-step", "day-02-article-02"]
+         if frozen else ["publisher", "--from-day", "4", "--through-day", "4", "--publish"]),
     )
     publisher.main()
     _, materials = parse_program()
     expected = {item["step_id"] for item in materials.values()
-                if item["day"] == 4 and item["type"] == "article"}
+                if item["type"] == "article" and (
+                    (item["day"] < 20 and item["day"] not in {4, 18}
+                     and item["step_id"] not in {"day-02-article-02", "day-17-article-04"}
+                     and not item.get("placeholder")) if frozen else item["day"] == 4)}
     assert set(writes) == expected
     assert len(writes) == len(expected)
+    if frozen:
+        assert published_payloads[0]["days"][3] == manifest["days"][3]
+        assert published_payloads[0]["days"][17:] == manifest["days"][17:18] + published_payloads[0]["days"][18:19] + manifest["days"][19:]
+        old_step = next(s for s in manifest["days"][1]["steps"] if s["id"] == "day-02-article-02")
+        new_step = next(s for s in published_payloads[0]["days"][1]["steps"] if s["id"] == "day-02-article-02")
+        assert new_step == old_step
+        return
     dqs_step = published_payloads[0]["days"][3]["steps"][1]
     assert dqs_step["applicationButtons"] == {
         "print": "Скачать печатный вариант",

@@ -6,6 +6,7 @@ import re
 
 ROOT = Path(__file__).resolve().parents[2]
 EDITORIAL_ROOT = ROOT / "content" / "masterclass" / "editorial"
+MEDIA_PREFIX = "/course-assets/masterclass/media/"
 
 # Первый безопасный вертикальный срез. Новые материалы добавляются сюда только
 # после проверки их runtime-типа и публикационного маршрута.
@@ -13,6 +14,30 @@ EDITABLE_MATERIALS = {
     "day-01-article-02": (
         "content/masterclass/editorial/materials/"
         "01-02-как-вести-дневник-питания.md"
+    ),
+    "day-07-recipe-author-oatmeal": (
+        "content/masterclass/editorial/materials/07-04-авторская-овсянка.md"
+    ),
+    "day-07-recipe-red-lentils": (
+        "content/masterclass/editorial/materials/07-05-красная-чечевица.md"
+    ),
+    "day-07-recipe-broccoli": (
+        "content/masterclass/editorial/materials/07-06-брокколи.md"
+    ),
+    "day-07-recipe-marinara": (
+        "content/masterclass/editorial/materials/07-07-соус-маринара.md"
+    ),
+    "day-07-recipe-white-sauce": (
+        "content/masterclass/editorial/materials/07-08-белый-соус.md"
+    ),
+    "day-07-recipe-lazy-khachapuri": (
+        "content/masterclass/editorial/materials/07-09-ленивый-хачапури.md"
+    ),
+    "day-07-recipe-caesar": (
+        "content/masterclass/editorial/materials/07-10-салат-а-ля-цезарь.md"
+    ),
+    "day-07-recipe-tuna-family": (
+        "content/masterclass/editorial/materials/07-11-вызывайте-тунца.md"
     ),
 }
 
@@ -42,7 +67,13 @@ def editorial_body_text(text: str) -> str:
         or re.match(r"^<!--\s*step_id:", lines[0].strip(), re.IGNORECASE)
     ):
         lines.pop(0)
-    return "\n".join(lines).strip() + "\n"
+    body = "\n".join(lines).strip()
+    body = re.sub(
+        r"(!\[[^]]*]\()(?:assets/|\.\./assets/)",
+        rf"\1{MEDIA_PREFIX}",
+        body,
+    )
+    return body + "\n"
 
 
 def editorial_body(path: Path) -> str:
