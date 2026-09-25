@@ -169,6 +169,10 @@ const server = createServer((request, response) => {
     return setTimeout(() => json(response, users), delay);
   }
   if (url.pathname === "/admin/api/users/u1") return json(response, sampleUserDetail);
+  if (url.pathname === "/admin/api/users/u1/course-accesses") return json(response, {courses: [
+    {resource_code:"ACCESS_MASTERCLASS",name:"Мастер-класс",entitled:true,start_open:true,all_lessons_open:false,available:true},
+    {resource_code:"ACCESS_CALORIES",name:"Курс о калориях",entitled:false,start_open:false,all_lessons_open:false,available:true}
+  ]});
   if (url.pathname === "/admin/api/resources") return json(response, [
     {code:"ACCESS_MASTERCLASS",name:"Мастер-класс"},
     {code:"ACCESS_DQS",name:"Diet Quality Score"},
@@ -347,6 +351,7 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.match(await page.locator(".crm-popover:visible").textContent(), /anna@example\.com/);
       assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").count(), 1);
       await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").click();
+      await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email[aria-label='Email скопирован']").waitFor();
       assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").getAttribute("aria-label"), "Email скопирован");
       assert.equal(await page.locator(".crm-table-wrap").evaluate((node) => node.scrollWidth > node.clientWidth), true);
       assert.equal(await page.locator(".crm-table-scrollbar").evaluate((node) => node.scrollWidth > node.clientWidth), true);
@@ -392,9 +397,9 @@ for (const [name, route] of Object.entries(integratedPages)) {
       await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-person-name").click();
       await page.locator(".crm-profile-head").waitFor();
       assert.match(await page.locator(".crm-profile-head").textContent(), /Анна/);
-      assert.equal(await page.getByText("Покупки и тарифы", { exact:true }).count(), 1);
+      assert.equal(await page.getByText("Курсы и доступы", { exact:true }).count(), 1);
       assert.equal(await page.getByText("Купленные продукты и тарифы", { exact:true }).count(), 0);
-      assert.equal(await page.getByText("История покупок", { exact:true }).count(), 0);
+      assert.equal(await page.getByText("История покупок", { exact:true }).count(), 1);
       assert.equal(await page.locator(".crm-purchase-item").count(), 2);
       assert.equal(await page.locator(".crm-profile-contacts").count(), 0);
       assert.equal(await page.locator(".crm-profile-messengers .crm-contact-button--telegram").count(), 1);
@@ -406,13 +411,14 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.equal(await page.locator(".crm-foot").count(), 0);
       assert.equal(await page.getByText("Tilda Members Area", { exact:true }).count(), 0);
       assert.equal(await page.locator("#review-form").count(), 0);
-      assert.equal(await page.locator("#resource-code option", { hasText:"Курс о калориях" }).count(), 1);
-      assert.equal(await page.locator("#resource-code option", { hasText:"Приложение тренировок" }).count(), 1);
+      assert.equal(await page.locator("#course-access-preview [data-course-code='ACCESS_CALORIES']").count(), 1);
+      assert.equal(await page.locator("#course-access-preview [data-course-code='ACCESS_MASTERCLASS'] .is-right").count(), 1);
+      assert.equal(await page.locator("#course-access-preview [data-course-code='ACCESS_CALORIES'] [data-course-setting='start-open']").isDisabled(), true);
+      assert.equal(await page.locator(".crm-access-applications", { hasText:"Дневник силовых тренировок" }).count(), 1);
       assert.equal(await page.locator(".crm-card-title", { hasText:"Этапы рассылки" }).count(), 1);
       assert.equal(await page.locator(".crm-avatar").count(), 0);
       assert.match(await page.locator(".crm-profile-summary").textContent(), /Первая оплата.*02\.08\.2026.*через 1 дн\. после старта бота/s);
-      assert.equal(await page.locator(".crm-purchases-card .crm-inline-access").count(), 1);
-      assert.equal(await page.locator(".crm-purchases-card .crm-inline-access").getAttribute("open"), "");
+      assert.equal(await page.locator(".crm-course-access-card").count(), 1);
       assert.equal(await page.locator(".crm-course-progress-card").count(), 0);
       assert.equal(await page.locator(".crm-purchases-card .crm-inline-personal").count(), 1);
       assert.equal(await page.locator(".crm-purchases-card .crm-inline-personal").getAttribute("open"), null);
