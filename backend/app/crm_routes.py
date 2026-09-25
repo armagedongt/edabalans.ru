@@ -48,6 +48,7 @@ from app.crm_service import (
     course_access_states,
     update_course_access_state,
     create_manual_account,
+    set_manual_course_policy,
 )
 from app.account_onboarding_service import direct_credential_email_configuration_error
 from app.database import get_db
@@ -450,6 +451,24 @@ def admin_grant_access(user_id: uuid.UUID, payload: ResourceAction,
     if not grant_manual_access(db, user_id, payload.resource_code, admin):
         raise HTTPException(status_code=400, detail="user or resource not found")
     return {"status": "granted"}
+
+
+@router.put("/admin/api/users/{user_id}/course-policies/{resource_code}")
+def admin_set_course_policy(
+    user_id: uuid.UUID,
+    resource_code: str,
+    payload: CoursePolicyUpdate,
+    admin: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict[str, str]:
+    """Keep the pre-existing API working while CRM uses the three-state grid."""
+    ok, result = set_manual_course_policy(
+        db, user_id, resource_code, payload.unlock_mode, admin
+    )
+    if not ok:
+        status = 409 if result == "active_access_required" else 400
+        raise HTTPException(status_code=status, detail=result)
+    return {"status": "saved", "unlock_mode": result}
 
 
 @router.delete("/admin/api/users/{user_id}/accesses/{resource_code}")

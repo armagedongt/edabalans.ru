@@ -950,8 +950,109 @@ def test_direct_paid_personal_offer_creates_account_only_after_live_result() -> 
         assert user is not None
         assert db.get(AccountCredential, user.id) is not None
         assert db.scalar(select(UserAccess).where(UserAccess.user_id == user.id)) is not None
+        policy = db.scalar(select(UserCoursePolicy).where(UserCoursePolicy.user_id == user.id))
+        assert policy is not None and policy.start_mode == "open" and policy.unlock_mode == "fully_unlocked"
         assert link is not None and link.user_id == user.id and link.status == "paid"
         onboarding = db.scalar(select(AccountOnboarding).where(AccountOnboarding.user_id == user.id))
+        assert onboarding is not None and onboarding.delivery_mode == "direct_password"
+    app.dependency_overrides.clear()
+
+
+def test_cancelled_personal_offer_stops_new_opening_but_finishes_existing_invoice() -> None:
+    client, factory, key = make_client(test_mode=False, account_onboarding_enabled=True)
+    seed_catalog(factory)
+    app.dependency_overrides[require_admin] = lambda: "test-admin"
+    created = client.post(
+        "/admin/api/personal-access-links",
+        json={
+            "email": "cancelled-offer@example.test",
+            "resource_codes": ["ACCESS_MASTERCLASS"],
+            "resource_settings": [{"resource_code": "ACCESS_MASTERCLASS", "start_open": True, "all_lessons_open": False}],
+            "final_amount": 4900,
+        },
+    )
+    assert created.status_code == 200
+    path = urlsplit(created.json()["url"]).path
+    invoice = parse_qs(urlsplit(client.get(path, follow_redirects=False).headers["location"]).query)["InvId"][0]
+    with factory() as db:
+        link = db.scalar(select(PersonalAccessLink))
+        assert link is not None
+        link_id = str(link.id)
+    assert client.post(f"/admin/api/personal-access-links/{link_id}/cancel").status_code == 200
+    paid = client.post("/integrations/robokassa/result2", content=signed_result(key, invoice, "4900.00"))
+    assert paid.status_code == 200
+    with factory() as db:
+        assert db.scalar(select(func.count(User.id))) == 1
+        assert db.scalar(select(func.count(UserAccess.id))) == 1
+    app.dependency_overrides.clear()
+
+
+def test_personal_offer_for_existing_account_grants_rights_without_resetting_password() -> None:
+    client, factory, key = make_client(test_mode=False, account_onboarding_enabled=True)
+    seed_catalog(factory)
+    with factory() as db:
+        user = User(display_name="Existing")
+        db.add(user)
+        db.flush()
+        db.add_all([
+            UserEmail(user_id=user.id, email_original="existing-offer@example.test", email_normalized="existing-offer@example.test", is_primary=True, source="test"),
+            AccountCredential(user_id=user.id, password_hash="untouched", password_version=7, issued_via="test"),
+        ])
+        db.commit()
+        user_id = user.id
+    app.dependency_overrides[require_admin] = lambda: "test-admin"
+    created = client.post(
+        "/admin/api/personal-access-links",
+        json={
+            "email": "existing-offer@example.test",
+            "resource_codes": ["ACCESS_MASTERCLASS"],
+            "resource_settings": [{"resource_code": "ACCESS_MASTERCLASS", "start_open": False, "all_lessons_open": False}],
+            "final_amount": 4900,
+        },
+    )
+    assert created.status_code == 200
+    path = urlsplit(created.json()["url"]).path
+    invoice = parse_qs(urlsplit(client.get(path, follow_redirects=False).headers["location"]).query)["InvId"][0]
+    assert client.post("/integrations/robokassa/result2", content=signed_result(key, invoice, "4900.00")).status_code == 200
+    with factory() as db:
+        assert db.scalar(select(func.count(User.id))) == 1
+        credential = db.get(AccountCredential, user_id)
+        assert credential is not None and credential.password_hash == "untouched" and credential.password_version == 7
+        assert db.scalar(select(UserAccess).where(UserAccess.user_id == user_id)) is not None
+        assert db.scalar(select(AccountOnboarding).where(AccountOnboarding.user_id == user_id)) is None
+        policy = db.scalar(select(UserCoursePolicy).where(UserCoursePolicy.user_id == user_id))
+        assert policy is not None and policy.start_mode == "auto" and policy.unlock_mode == "paced"
+    app.dependency_overrides.clear()
+
+
+def test_personal_offer_issues_password_for_imported_email_without_credential() -> None:
+    client, factory, key = make_client(test_mode=False, account_onboarding_enabled=True)
+    seed_catalog(factory)
+    with factory() as db:
+        user = User(display_name="Imported")
+        db.add(user)
+        db.flush()
+        db.add(UserEmail(user_id=user.id, email_original="imported-offer@example.test", email_normalized="imported-offer@example.test", is_primary=True, source="legacy"))
+        db.commit()
+        user_id = user.id
+    app.dependency_overrides[require_admin] = lambda: "test-admin"
+    created = client.post(
+        "/admin/api/personal-access-links",
+        json={
+            "email": "imported-offer@example.test",
+            "resource_codes": ["ACCESS_MASTERCLASS"],
+            "resource_settings": [{"resource_code": "ACCESS_MASTERCLASS", "start_open": True, "all_lessons_open": False}],
+            "final_amount": 4900,
+        },
+    )
+    assert created.status_code == 200
+    path = urlsplit(created.json()["url"]).path
+    invoice = parse_qs(urlsplit(client.get(path, follow_redirects=False).headers["location"]).query)["InvId"][0]
+    assert client.post("/integrations/robokassa/result2", content=signed_result(key, invoice, "4900.00")).status_code == 200
+    with factory() as db:
+        credential = db.get(AccountCredential, user_id)
+        onboarding = db.scalar(select(AccountOnboarding).where(AccountOnboarding.user_id == user_id))
+        assert credential is not None and credential.issued_via == "personal_paid_link"
         assert onboarding is not None and onboarding.delivery_mode == "direct_password"
     app.dependency_overrides.clear()
 

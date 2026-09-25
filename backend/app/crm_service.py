@@ -44,6 +44,7 @@ from app.masterclass_routes import (
     questions,
 )
 from app.product_identity import purchased_products, tariff_name
+from app.course_access_service import set_course_unlock_mode
 
 CONFIRMED_PAYMENT_STATUSES = ("paid", "confirmed")
 MOSCOW_TZ = ZoneInfo("Europe/Moscow")
@@ -1126,6 +1127,56 @@ def update_course_access_state(
     ))
     db.commit()
     return course_access_states(db, user_id)
+
+
+def set_manual_course_policy(
+    db: Session,
+    user_id: uuid.UUID,
+    resource_code: str,
+    unlock_mode: str,
+    admin: str,
+) -> tuple[bool, str]:
+    """Compatibility adapter for the former one-setting CRM endpoint."""
+    before = db.scalar(
+        select(UserCoursePolicy.unlock_mode)
+        .join(Resource, Resource.id == UserCoursePolicy.resource_id)
+        .where(
+            UserCoursePolicy.user_id == user_id,
+            Resource.code == resource_code,
+        )
+    ) or "paced"
+    ok, result = set_course_unlock_mode(
+        db, user_id, resource_code, unlock_mode, source="manual_admin"
+    )
+    if not ok:
+        return False, result
+    # The former endpoint has one combined setting. A full unlock is an
+    # immediate entry override; returning to paced restores the ordinary gate.
+    policy = db.scalar(
+        select(UserCoursePolicy)
+        .join(Resource, Resource.id == UserCoursePolicy.resource_id)
+        .where(
+            UserCoursePolicy.user_id == user_id,
+            Resource.code == resource_code,
+        )
+    )
+    if policy is not None:
+        policy.start_mode = "open" if unlock_mode == "fully_unlocked" else "auto"
+    db.add(
+        AdminAppEdit(
+            admin_username=admin,
+            target_user_id=user_id,
+            app_code="crm",
+            action="set_course_unlock_mode",
+            details={
+                "resource_code": resource_code,
+                "before": before,
+                "after": unlock_mode,
+            },
+        )
+    )
+    db.commit()
+    return True, result
 
 
 def link_user_email(db: Session, user_id: uuid.UUID, email: str, admin: str) -> tuple[bool, str]:

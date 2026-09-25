@@ -48,7 +48,6 @@ from app.account_onboarding_service import (
     ensure_paid_account_onboarding,
     issue_initial_direct_password,
 )
-from app.access_service import active_link
 from app.owner_payment_notification_service import enqueue_paid_payment_notification
 
 
@@ -851,8 +850,9 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         .where(PersonalAccessLink.checkout_id == checkout.id)
         .with_for_update()
     )
-    if personal_link is not None and not active_link(personal_link, occurred_at):
-        raise RobokassaError("Персональное предложение отменено или срок его действия закончился")
+    # The invoice is created only while the offer is active and contains the
+    # immutable amount and resource snapshot.  A later cancellation must stop
+    # new checkouts, but cannot reject a payment that Robokassa already took.
     checkout_metadata = dict(payment.raw_payload or {})
     is_test_payment = bool(checkout_metadata.get("test_mode"))
     if personal_link is not None and is_test_payment:
@@ -873,7 +873,6 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         checkout.status = "test_paid"
         db.commit()
         return invoice_id
-    creates_account = personal_link is not None and personal_link.user_id is None
     if checkout.user_id is not None:
         user = db.get(User, checkout.user_id)
         if user is None:
@@ -950,7 +949,7 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         else:
             grant_payment_access(db, payment, checkout, occurred_at)
             _record_initial_direct_payment(db, payment, checkout, occurred_at)
-            if creates_account:
+            if personal_link is not None:
                 issue_initial_direct_password(
                     db,
                     user=user,

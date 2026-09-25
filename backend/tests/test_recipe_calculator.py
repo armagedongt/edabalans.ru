@@ -14,7 +14,7 @@ from app.config import Settings, get_settings  # noqa: E402
 from app.account_security import password_hash  # noqa: E402
 from app.main import app  # noqa: E402
 import app.main as main_module  # noqa: E402
-from app.models import AccountCredential, Resource, User, UserAccess, UserEmail, UserLegalAcceptance  # noqa: E402
+from app.models import AccountCredential, MasterclassEvent, Resource, User, UserAccess, UserCoursePolicy, UserEmail, UserLegalAcceptance  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.recipe_models import NutritionProduct  # noqa: E402
 from app.product_catalog_service import PRODUCT_CONNECTIONS  # noqa: E402
@@ -82,6 +82,27 @@ def test_recipe_api_keeps_personal_products_private_and_calculates_yield():
     assert created["recipe"]["totals"]["weight"] == "200"
     assert created["recipe"]["totals"]["yield"] == "180"
     assert created["recipe"]["totals"]["all"]["calories"] == "420"
+
+
+def test_recipe_api_respects_ordinary_course_start_gate():
+    client, factory = make_client()
+    with factory() as db:
+        user = grant_user(db, "gated@example.test")
+        course = Resource(code="ACCESS_RECIPES", name="Система рецептов", status="active")
+        db.add(course)
+        db.flush()
+        db.add(UserCoursePolicy(user_id=user.id, resource_id=course.id, start_mode="auto", source="test"))
+        db.commit()
+    sign_in(client, "gated@example.test")
+
+    blocked = client.get("/api/apps/recipes")
+    assert blocked.json() == {"ok": False, "error": "Система рецептов пока закрыта по условиям доступа"}
+
+    with factory() as db:
+        user_id = db.scalar(select(UserEmail.user_id).where(UserEmail.email_normalized == "gated@example.test"))
+        db.add(MasterclassEvent(user_id=user_id, event_key="recipes_part_1_opened", event_type="opened", details={}))
+        db.commit()
+    assert client.get("/api/apps/recipes").json()["ok"] is True
 
 
 def test_recipe_rejects_decimal_numeric_input_and_excessive_shrinkage():

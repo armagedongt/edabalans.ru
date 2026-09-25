@@ -33,6 +33,7 @@ from app.legal_service import (
 from app.models import (
     AdminAppEdit,
     OfferCheckout,
+    AccountCredential,
     PersonalAccessLink,
     Resource,
     User,
@@ -802,7 +803,8 @@ def create_paid_personal_link(
     target_user = user_for_email(db, email)
     if body.final_amount <= 0:
         raise HTTPException(422, "Для оплаты укажите сумму больше нуля")
-    if target_user is None and direct_credential_email_configuration_error(settings):
+    needs_initial_password = target_user is None or db.get(AccountCredential, target_user.id) is None
+    if needs_initial_password and direct_credential_email_configuration_error(settings):
         raise HTTPException(409, "Почта для нового аккаунта пока не настроена")
     settings_by_code = {item.resource_code: item for item in body.resource_settings}
     if len(settings_by_code) != len(body.resource_settings):
