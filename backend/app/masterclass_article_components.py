@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 
 from fastapi import HTTPException
 
-from app.article_markup import inline_markdown, safe_image_src, safe_video_source
+from app.article_markup import inline_markdown, safe_image_src, safe_video_source, safe_audio_arguments
 
 
 DQS_SCORE_CATEGORIES = {
@@ -107,6 +107,14 @@ def render_video(arguments: list[str]) -> str:
 
 
 def render_masterclass_component(name: str, arguments: list[str]) -> str:
+    if name == "audio":
+        if len(arguments) != 4 or not safe_audio_arguments(*arguments):
+            raise HTTPException(422, "Аудио принимает HTTPS-аудиофайл, аватарку, автора и длительность М:СС")
+        player = "/course-assets/masterclass/audio-player?" + urlencode(
+            dict(zip(("src", "avatar", "author", "duration"), arguments))
+        )
+        return (f'<div class="article-audio"><iframe src="{escape(player, quote=True)}"'
+                ' title="Голосовое Сергея Воронцова"></iframe></div>')
     if name == "video":
         return render_video(arguments)
     if name == "slider":
