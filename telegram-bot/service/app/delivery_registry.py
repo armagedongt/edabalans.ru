@@ -22,6 +22,9 @@ PROACTIVE_PRODUCERS = {
     "dqs_app_link": ProducerContract(
         "technical_payload", "portable_html", "portable_html", routing="explicit_exact"
     ),
+    "metabolism_app_link": ProducerContract(
+        "technical_payload", "portable_html", "portable_html", routing="explicit_exact"
+    ),
     "course_stalled_72h": ProducerContract("authored_post", "portable_html", "portable_html"),
     "course_day_unopened_18h": ProducerContract("authored_post", "portable_html", "portable_html"),
     "sales_last_chance_due": ProducerContract("authored_post", "portable_html", "portable_html"),

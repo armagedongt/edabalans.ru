@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 from app.account_auth_routes import require_native_user
 from app.app_service import AppAccessError, require_user_resource
 from app.calorie_course_material_service import publication_status, published_materials
+from app.calorie_course_application_service import reveal_metabolism
 from app.calorie_course_service import (
     DOCUMENT_KEY,
     CalorieCourseContext,
@@ -22,6 +23,7 @@ from app.calorie_course_service import (
 from app.database import get_db
 from app.course_access_service import course_fully_unlocked
 from app.metabolism_service import metabolism_is_unlocked
+from app.masterclass_routes import course_timezone, next_local_unlock_at
 from app.models import CourseEvent, CourseStageProgress, CourseStepProgress, User
 
 
@@ -137,7 +139,8 @@ def required_step_indexes(
 
 
 def stage_can_open(
-    db: Session, user_id: uuid.UUID, stage: int, context: CalorieCourseContext
+    db: Session, user_id: uuid.UUID, stage: int, context: CalorieCourseContext,
+    now: datetime | None = None,
 ) -> tuple[bool, str | None]:
     if course_fully_unlocked(db, user_id, RESOURCE_CODE):
         return True, None
@@ -150,6 +153,9 @@ def stage_can_open(
         return False, "previous_stage_not_opened"
     if previous.completed_at is None:
         return False, "previous_stage_not_completed"
+    current_time = aware_utc(now or datetime.now(timezone.utc))
+    if current_time < next_local_unlock_at(previous, current_time):
+        return False, "timer"
     return True, None
 
 
@@ -159,13 +165,14 @@ def open_stage(
     context: CalorieCourseContext,
     stage: int,
     now: datetime,
+    timezone_name: str | None = None,
 ) -> CourseStageProgress:
     if stage not in context.stages:
         raise HTTPException(404, "Этап курса не найден")
     existing = stage_progress(db, user.id, stage)
     if existing is not None:
         return existing
-    allowed, reason = stage_can_open(db, user.id, stage, context)
+    allowed, reason = stage_can_open(db, user.id, stage, context, now)
     if not allowed:
         raise HTTPException(409, detail={"reason": reason})
     progress = CourseStageProgress(
@@ -173,6 +180,7 @@ def open_stage(
         course_code=DOCUMENT_KEY,
         stage_number=stage,
         first_opened_at=now,
+        timezone_name=course_timezone(timezone_name)[0],
         structure_revision_no=context.revision.version_no,
         required_step_ids=current_required_step_ids(context, stage),
         required_check_ids=current_required_check_ids(context, stage),
@@ -247,7 +255,9 @@ def course_payload(
     stages = []
     for stage in range(1, context.last_stage + 1):
         progress = progress_rows.get(stage)
-        can_open, reason = stage_can_open(db, user.id, stage, context)
+        can_open, reason = stage_can_open(db, user.id, stage, context, now)
+        previous = progress_rows.get(stage - 1)
+        unlock_at = next_local_unlock_at(previous, now) if previous and previous.completed_at else None
         steps = context.stages[stage].get("steps", [])
         completed_indexes = step_rows[stage]
         required_ids = (
@@ -272,14 +282,14 @@ def course_payload(
                 "opened": progress is not None,
                 "can_open": progress is not None or can_open,
                 "locked_reason": None if progress or can_open else reason,
-                "unlock_at": None,
+                "unlock_at": unlock_at.isoformat() if unlock_at else None,
                 "first_opened_at": (
                     aware_utc(progress.first_opened_at).isoformat() if progress else None
                 ),
-                "timezone_name": None,
+                "timezone_name": progress.timezone_name if progress else None,
                 "next_day_unlock_at": (
-                    aware_utc(progress.completed_at).isoformat()
-                    if progress and progress.completed_at
+                    next_local_unlock_at(progress, now).isoformat()
+                    if progress
                     else None
                 ),
                 "steps_total": len([step for step in steps if not step.get("hidden", False)]),
@@ -314,7 +324,7 @@ def course_payload(
         "course_version": context.manifest["courseVersion"],
         "structure_version": context.revision.version_no,
         "server_now": now.isoformat(),
-        "unlock_schedule": "next_stage_after_completion",
+        "unlock_schedule": "next_local_day_at_06_after_completion",
         "accelerated_test": False,
         "fully_unlocked": fully_unlocked,
         "current_day": max(progress_rows) if progress_rows else 1,
@@ -337,6 +347,7 @@ def course_manifest(
 def course_materials(
     email: str,
     request: Request,
+    step_id: str | None = None,
     db: Session = Depends(get_db),
 ) -> dict:
     user = resolve_course_user(request, db, email)
@@ -346,7 +357,7 @@ def course_materials(
         for stage in state["stages"]
         if stage["opened"] or stage["can_open"]
     }
-    return published_materials(db, allowed_stages=allowed)
+    return published_materials(db, allowed_stages=allowed, step_id=step_id)
 
 
 @router.get("/course")
@@ -360,7 +371,7 @@ def course_state(
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
     context = course_context(db)
-    open_stage(db, user, context, 1, now)
+    open_stage(db, user, context, 1, now, timezone_name)
     course_event(
         db,
         user.id,
@@ -381,7 +392,7 @@ def course_open_stage(
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
     context = course_context(db)
-    open_stage(db, user, context, stage, now)
+    open_stage(db, user, context, stage, now, body.timezone_name)
     db.commit()
     return course_payload(db, user, now, context)
 
@@ -418,6 +429,8 @@ def course_complete_step(
     ):
         raise HTTPException(409, detail={"reason": "previous_step_not_completed"})
     step = steps[index]
+    if step.get("revealApp") == "metabolism":
+        reveal_metabolism(db, user, now)
     db.add(
         CourseStepProgress(
             user_id=user.id,

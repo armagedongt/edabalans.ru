@@ -296,6 +296,7 @@ owns_files = [
   "backend/app/static/embed.js", "backend/app/static/site-footer.js", "backend/app/static/content-gallery.js",
   "backend/app/static/app-shell.css",
   "backend/app/static/account-theme.css", "backend/app/static/account-theme.js",
+  "backend/app/static/course-product-popup.js", "backend/app/static/course-product-popup.css",
   "backend/tests/browser/account-theme.e2e.mjs",
   "backend/tests/browser/account-offers-layout.e2e.mjs",
   "backend/tests/browser/embed-loading.e2e.mjs",
@@ -432,7 +433,11 @@ reads_from = ["platform"]
 owns_files = [
   "backend/app/calorie_course_routes.py", "backend/app/calorie_course_service.py",
   "backend/app/calorie_course_material_service.py",
+  "backend/app/calorie_course_application_service.py",
+  "backend/scripts/publish_calorie_course_seed.py",
   "backend/migrations/versions/20260828_0028_calorie_course_runtime.py",
+  "backend/migrations/versions/20260925_0048_calories_local_timezone.py",
+  "backend/app/static/calories-course.css",
   "backend/tests/test_calorie_course_journey.py", "content/calories/**",
   "docs/knowledge-base/modules/calories/**",
 ]
@@ -812,6 +817,7 @@ owns_files = [
   "telegram-bot/service/app/maintenance.py", "telegram-bot/service/app/masterclass_dispatch.py",
   "telegram-bot/service/app/metrika.py",
   "telegram-bot/service/app/masterclass_link.py", "telegram-bot/service/app/masterclass_triggers.py",
+  "telegram-bot/service/app/calorie_application_delivery.py",
   "telegram-bot/service/app/models.py", "telegram-bot/service/app/schemas.py",
   "telegram-bot/service/app/seed.py", "telegram-bot/service/app/telegram.py",
   "telegram-bot/service/static/**", "telegram-bot/service/tests/**",

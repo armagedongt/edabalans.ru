@@ -608,7 +608,7 @@ def app_fragment(app_code: str) -> Response:
             encoding="utf-8"
         )
         replacements = {
-            "</head>": "<style>#calories-course-app .timer{display:none} #calories-course-app .unlock{justify-content:flex-end}</style></head>",
+            "</head>": '<link rel="stylesheet" href="/assets/calories-course.css?v=20260925"></head>',
             "Мастер-класс · первые дни": "Калорийный курс",
             'id="masterclass-course-app"': 'id="calories-course-app"',
             "edabalans_first_days_v2": "edabalans_calories_course_v1",
@@ -628,15 +628,10 @@ def app_fragment(app_code: str) -> Response:
             "Следующий день": "Следующий этап",
             "следующий день": "следующий этап",
             "следующего дня": "следующего этапа",
-            "Следующий этап откроется после выполнения задания и окончания таймера.": "Следующий этап откроется сразу после выполнения задания.",
-            "До открытия следующего этапа осталось": "Следующий этап",
             "Черновик · требуется редактура": "Материал готовится",
             "Нужна редактура": "Материал готовится",
             "Авторский материал для этой карточки ещё не загружен.": "Текст будет опубликован здесь.",
             "['dqs','recipes-part-1','recipes-part-2','closing-review']": "['dqs','recipes-part-1','recipes-part-2','closing-review','metabolism']",
-            "Следующий этап откроется утром": "Следующий этап откроется сразу",
-            "<strong>06:00</strong><span>по вашему местному времени</span>": "<strong>Сразу</strong><span>после задания</span>",
-            "Если завершить день до полуночи по вашему местному времени, продолжение откроется в ближайшие <strong>06:00</strong>. Если закончить после полуночи — в 06:00 уже через день. Точное время покажет таймер.": "После всех обязательных материалов и пунктов задания следующий этап можно открыть сразу.",
             "дню ": "этапу ",
             "Открыть день ": "Открыть этап ",
             "Перейти к дню ": "Перейти к этапу ",
@@ -647,6 +642,7 @@ def app_fragment(app_code: str) -> Response:
             "edabalans:masterclass-event": "edabalans:calories-event",
             "EdabalansMasterclassEventSink": "EdabalansCaloriesEventSink",
             "Masterclass load failed": "Calories course load failed",
+            "через день": "на следующие сутки",
             "День": "Этап",
             "дня": "этапа",
             "день": "этап",
@@ -730,7 +726,8 @@ def app_asset(asset_name: str) -> FileResponse:
     if asset_name not in {
         "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png",
         "content-gallery.js", "public-program-card.css", "public-program-card.js",
-        "account-visual.css", "course-visual.css",
+        "account-visual.css", "course-visual.css", "calories-course.css",
+        "course-product-popup.js", "course-product-popup.css",
         "account-theme.css", "account-theme.js",
         "questionnaire-person.js", "questionnaire-person.css",
     }:

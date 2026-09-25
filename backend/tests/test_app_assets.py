@@ -468,6 +468,8 @@ def test_unknown_application_fragment_is_404() -> None:
 def test_maintenance_blocks_direct_product_interfaces_without_running_the_app(monkeypatch) -> None:
     from app.product_catalog_service import PRODUCT_CONNECTIONS
 
+    monkeypatch.setitem(PRODUCT_CONNECTIONS["calories"], "maintenance", True)
+
     for app_code in ("calories-course", "recipes", "recipes-part-1", "recipes-part-2"):
         response = client.get(f"/apps/{app_code}.html")
         assert response.status_code == 200

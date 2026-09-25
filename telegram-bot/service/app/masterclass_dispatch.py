@@ -567,25 +567,26 @@ def notification_configuration(
     notification: MasterclassNotification,
     body_source: str,
 ) -> dict[str, object]:
-    if notification.notification_kind != "dqs_app_link":
+    if notification.notification_kind not in {"dqs_app_link", "metabolism_app_link"}:
         return {}
+    metabolism = notification.notification_kind == "metabolism_app_link"
     configuration = session.scalar(
         select(SequenceStep.configuration)
         .join(SequenceVersion, SequenceVersion.id == SequenceStep.sequence_version_id)
         .join(Sequence, Sequence.id == SequenceVersion.sequence_id)
         .where(
-            Sequence.code == "postpurchase_masterclass",
-            SequenceStep.step_key == "pp_dqs_app_link",
+            Sequence.code == ("calories_service_delivery" if metabolism else "postpurchase_masterclass"),
+            SequenceStep.step_key == ("calories_metabolism_link" if metabolism else "pp_dqs_app_link"),
         )
         .order_by(SequenceVersion.version_no.desc())
         .limit(1)
     ) or {}
     buttons = configuration.get("buttons") or []
     if not buttons:
-        raise RuntimeError("DQS link button is missing from the runtime graph")
+        raise RuntimeError(("Metabolism" if metabolism else "DQS") + " link button is missing from the runtime graph")
     link_url = buttons[0].get("url")
     if not link_url or link_url not in telegram_html_links(body_source):
-        raise RuntimeError("DQS text link and button destinations differ")
+        raise RuntimeError(("Metabolism" if metabolism else "DQS") + " text link and button destinations differ")
     return {"buttons": buttons}
 
 
@@ -717,6 +718,7 @@ def dispatch_due_masterclass_notifications(
         required_resource = (
             "dqs"
             if notification.notification_kind == "dqs_app_link"
+            else "ACCESS_CALORIES" if notification.notification_kind == "metabolism_app_link"
             else "ACCESS_MASTERCLASS"
         )
         if required_resource not in access:
@@ -724,6 +726,7 @@ def dispatch_due_masterclass_notifications(
             notification.error_message = (
                 "DQS access is no longer active"
                 if required_resource == "dqs"
+                else "calories access is no longer active" if required_resource == "ACCESS_CALORIES"
                 else "masterclass access is no longer active"
             )
             counters["skipped"] += 1

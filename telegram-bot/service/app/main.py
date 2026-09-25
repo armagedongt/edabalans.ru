@@ -471,6 +471,7 @@ def dispatch_masterclass_notifications(
             settings.masterclass_offers_url,
             notification_kinds={
                 "dqs_app_link",
+                "metabolism_app_link",
                 "closing_review_copy",
                 "current_diet_questionnaire",
                 "messenger_identity",
@@ -492,6 +493,7 @@ def dispatch_masterclass_notifications(
         settings.masterclass_offers_url,
         notification_kinds={
             "dqs_app_link",
+            "metabolism_app_link",
             "closing_review_copy",
             "messenger_identity",
             "messenger_questionnaire",

@@ -19,7 +19,7 @@ SCHEMA_VERSION = 2
 PRODUCT_CONNECTIONS = {
     "masterclass": {"resource": "ACCESS_MASTERCLASS", "app": "masterclass-course", "ready": True},
     "recipes": {"resource": "recipes", "app": "recipes", "ready": True, "maintenance": True},
-    "calories": {"resource": "ACCESS_CALORIES", "app": "calories-course", "ready": False, "maintenance": True},
+    "calories": {"resource": "ACCESS_CALORIES", "app": "calories-course", "ready": False, "maintenance": False},
     "training": {"resource": "ACCESS_STRENGTH", "app": None, "ready": False},
     "recordings": {"resource": "ACCESS_CONSULTATION_RECORDINGS", "app": None, "ready": False},
     "consultation": {"resource": "ACCESS_CONSULTATION", "app": None, "ready": False},

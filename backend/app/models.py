@@ -872,6 +872,9 @@ class CourseStageProgress(Base):
     first_opened_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+    timezone_name: Mapped[str] = mapped_column(
+        String(64), default="Europe/Moscow", server_default=text("'Europe/Moscow'"), nullable=False
+    )
     task_opened_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     structure_revision_no: Mapped[int] = mapped_column(
         Integer, default=1, server_default=text("1"), nullable=False

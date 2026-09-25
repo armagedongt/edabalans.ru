@@ -3,7 +3,7 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0px; background: var(--paper); color: var(--ink); }
-#masterclass-course-app { font: var(--weight-regular) var(--text-base)/1.55 var(--font); }
+:is(#masterclass-course-app,#calories-course-app) { font: var(--weight-regular) var(--text-base)/1.55 var(--font); }
 button, a { font: inherit; }
 .tlk-userbar { display: none !important; }
 .sidebar { position: fixed; inset: 0px auto 0px 0px; z-index: 40; width: 340px; overflow: auto; padding: 18px 18px 40px; background: var(--side); color: rgb(255, 255, 255); }
@@ -452,7 +452,7 @@ html { scroll-behavior: auto; }
 .dqs-material-buttons .secondary { background: rgb(238, 231, 221); color: var(--ink); }
 .dqs-material-buttons button:disabled { opacity: 0.5; cursor: not-allowed; }
 .dqs-material-status { min-height: 1.4em; margin: 12px 0px 0px; color: var(--muted); font-size: var(--text-sm); }
-:root, #masterclass-course-app { --ink: #17191e; --muted: #46515b; --paper: #f8fcfe; --card: #fff; --line: rgba(17,142,216,.28); --accent: #f46a35; --soft: #fff4ef; --green: #118ed8; --side: #259bd3; --side2: #1689c2; --violet: #118ed8; --shadow: 0 17px 34px -27px rgba(12,91,136,.5); --font: Manrope,Arial,sans-serif; }
+:root, :is(#masterclass-course-app,#calories-course-app) { --ink: #17191e; --muted: #46515b; --paper: #f8fcfe; --card: #fff; --line: rgba(17,142,216,.28); --accent: #f46a35; --soft: #fff4ef; --green: #118ed8; --side: #259bd3; --side2: #1689c2; --violet: #118ed8; --shadow: 0 17px 34px -27px rgba(12,91,136,.5); --font: Manrope,Arial,sans-serif; }
 body { background: linear-gradient(135deg, rgb(247, 252, 255) 0px, rgb(255, 255, 255) 46%, rgb(248, 252, 254) 100%); color: var(--ink); }
 .sidebar { width: 320px; padding-right: 16px; padding-bottom: 40px; padding-left: 16px; box-shadow: rgba(12, 91, 136, 0.85) 10px 0px 30px -26px; }
 .sidebar { background: linear-gradient(160deg, rgb(52, 186, 247) 0px, rgb(39, 175, 245) 48%, rgb(30, 159, 229) 100%); }
@@ -564,7 +564,7 @@ body { background: linear-gradient(135deg, rgb(247, 252, 255) 0px, rgb(255, 255,
 .topbar .mobile-content { display: inline-flex !important; }
 .topbar .mobile-account { grid-column: 3 !important; }
 }
-:root, #masterclass-course-app { --course-flow: 760px; --accent-gold-start: #ffc25a; --accent-gold-end: #f39a2f; --accent-gold-ink: #a75d10; }
+:root, :is(#masterclass-course-app,#calories-course-app) { --course-flow: 760px; --accent-gold-start: #ffc25a; --accent-gold-end: #f39a2f; --accent-gold-ink: #a75d10; }
 .content { max-width: calc(var(--course-flow) + 68px); }
 .content > *, #day > * { max-width: var(--course-flow); }
 .course-name::before { content: "КУРС:"; }
@@ -685,7 +685,7 @@ body:has(#article-view:not([hidden])) .mobile-content { visibility: visible; poi
 #days .day-button.active { border-color: rgba(255, 255, 255, 0.28) !important; background: rgba(17, 142, 216, 0.27) !important; }
 #days .day-button:hover { border-color: rgba(255, 255, 255, 0.38) !important; background: rgba(17, 142, 216, 0.32) !important; }
 @media (min-width: 901px) {
-:root, #masterclass-course-app { --preview-sidebar-width: 320px; }
+:root, :is(#masterclass-course-app,#calories-course-app) { --preview-sidebar-width: 320px; }
 .sidebar { width: var(--preview-sidebar-width); }
 .sidebar.open { transform: translateX(0px); }
 body:has(.sidebar.open) .main, body:has(.sidebar.preview-open) .main { margin-left: var(--preview-sidebar-width); }
@@ -743,7 +743,7 @@ body:has(.sidebar.open) .main, body:has(.sidebar.preview-open) .main { margin-le
 .article-nav { gap: 7px !important; }
 .article-nav button { font-size: 13px !important; padding: 10px 6px !important; }
 }
-#masterclass-course-app { font-family: Manrope, Arial, sans-serif; }
+:is(#masterclass-course-app,#calories-course-app) { font-family: Manrope, Arial, sans-serif; }
 .sidebar { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.48) transparent; }
 .sidebar::-webkit-scrollbar { width: 7px; }
 .sidebar::-webkit-scrollbar-track { background: transparent; }
@@ -751,20 +751,20 @@ body:has(.sidebar.open) .main, body:has(.sidebar.preview-open) .main { margin-le
 .sidebar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.7); }
 .sidebar::-webkit-scrollbar-button { display: none; width: 0px; height: 0px; }
 .topic-copy > .topic-badge { width: max-content; margin-top: 5px; padding: 2px 8px; border-radius: 7px; background: rgb(255, 241, 189); font-size: 12px; line-height: 1.4; display: inline-flex !important; color: rgb(102, 83, 41) !important; }
-#masterclass-course-app { --course-heading-size: clamp(32px,4vw,44px); --course-media-gap: 24px; }
-#masterclass-course-app .hero h1 { font: 800 var(--course-heading-size)/1.12 Manrope,Arial,sans-serif !important; letter-spacing: -0.035em !important; margin: 0 0 var(--course-media-gap) !important; }
-#masterclass-course-app .article h1 { font: 800 var(--course-heading-size)/1.12 Manrope,Arial,sans-serif !important; letter-spacing: -0.035em !important; margin: 0 0 var(--course-media-gap) !important; }
-#masterclass-course-app .hero { margin-bottom: var(--course-media-gap); }
-#masterclass-course-app .media { margin-block: var(--course-media-gap); background: rgb(234, 248, 255); }
-#masterclass-course-app .day-media-image { display: block; margin-block: var(--course-media-gap); height: auto; }
-#masterclass-course-app .article-hero-image { display: block; margin-block: var(--course-media-gap); height: auto; }
-#masterclass-course-app .article-inline-image { display: block; margin-block: var(--course-media-gap); height: auto; }
-html:has(#masterclass-course-app) { background: rgb(255, 255, 255); }
+:is(#masterclass-course-app,#calories-course-app) { --course-heading-size: clamp(32px,4vw,44px); --course-media-gap: 24px; }
+:is(#masterclass-course-app,#calories-course-app) .hero h1 { font: 800 var(--course-heading-size)/1.12 Manrope,Arial,sans-serif !important; letter-spacing: -0.035em !important; margin: 0 0 var(--course-media-gap) !important; }
+:is(#masterclass-course-app,#calories-course-app) .article h1 { font: 800 var(--course-heading-size)/1.12 Manrope,Arial,sans-serif !important; letter-spacing: -0.035em !important; margin: 0 0 var(--course-media-gap) !important; }
+:is(#masterclass-course-app,#calories-course-app) .hero { margin-bottom: var(--course-media-gap); }
+:is(#masterclass-course-app,#calories-course-app) .media { margin-block: var(--course-media-gap); background: rgb(234, 248, 255); }
+:is(#masterclass-course-app,#calories-course-app) .day-media-image { display: block; margin-block: var(--course-media-gap); height: auto; }
+:is(#masterclass-course-app,#calories-course-app) .article-hero-image { display: block; margin-block: var(--course-media-gap); height: auto; }
+:is(#masterclass-course-app,#calories-course-app) .article-inline-image { display: block; margin-block: var(--course-media-gap); height: auto; }
+html:has(:is(#masterclass-course-app,#calories-course-app)) { background: rgb(255, 255, 255); }
 .q-actions button:not(:disabled){cursor:pointer;transition:filter .15s ease}
 .q-actions button:not(:disabled):hover{filter:brightness(.92)}
 .q-actions button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 .q-actions button:disabled{cursor:default;opacity:.65}
-#masterclass-course-app .day-view .intro { white-space: normal; margin: 24px 0px 32px; }
-#masterclass-course-app .day-view .intro .hero-lead { max-width: none; white-space: normal; margin: 0px 0px 18px; }
-#masterclass-course-app .day-view .intro .hero-lead:last-child { margin-bottom: 0px; }
-#masterclass-course-app .day-view .intro .assignment-intro { white-space: normal; margin-top: 24px; }
+:is(#masterclass-course-app,#calories-course-app) .day-view .intro { white-space: normal; margin: 24px 0px 32px; }
+:is(#masterclass-course-app,#calories-course-app) .day-view .intro .hero-lead { max-width: none; white-space: normal; margin: 0px 0px 18px; }
+:is(#masterclass-course-app,#calories-course-app) .day-view .intro .hero-lead:last-child { margin-bottom: 0px; }
+:is(#masterclass-course-app,#calories-course-app) .day-view .intro .assignment-intro { white-space: normal; margin-top: 24px; }

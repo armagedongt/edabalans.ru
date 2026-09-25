@@ -1,5 +1,7 @@
 import os
 import time
+import pytest
+from copy import deepcopy
 from datetime import datetime, timezone
 from unittest.mock import patch
 
@@ -28,6 +30,8 @@ from app.models import (  # noqa: E402
     CourseStageProgress,
     CourseStepProgress,
     MasterclassEvent,
+    MasterclassNotification,
+    MessengerAccount,
     Resource,
     User,
     UserAccess,
@@ -36,11 +40,11 @@ from app.models import (  # noqa: E402
 )
 
 
-def setup(*, course_ready: bool = True, masterclass_completed: bool = True):
+def setup(*, course_ready: bool = True, masterclass_completed: bool = True, database_url: str = "sqlite+pysqlite:///:memory:"):
     engine = create_engine(
-        "sqlite+pysqlite:///:memory:",
+        database_url,
         connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
+        **({"poolclass": StaticPool} if database_url.endswith(":memory:") else {}),
     )
     Base.metadata.create_all(engine)
     factory = sessionmaker(engine, expire_on_commit=False)
@@ -152,7 +156,43 @@ def teardown_function() -> None:
     get_settings.cache_clear()
 
 
-def test_calorie_course_requires_access_and_exposes_five_stage_manifest():
+@pytest.mark.parametrize("block", ["none", "progress", "launched", "version"])
+def test_approved_seed_release_is_versioned_and_never_erases_progress(block):
+    from app.calorie_course_service import active_course_version
+    from app.managed_documents import document_hash
+    from scripts.publish_calorie_course_seed import publish_seed
+
+    _, factory = setup(course_ready=False)
+    with factory() as db:
+        current = active_course_version(db)
+        old = deepcopy(current.payload)
+        old["courseVersion"] = "previous-structure"
+        old["launchReady"] = block == "launched"
+        current.payload = old
+        current.content_hash = document_hash(old)
+        db.commit()
+        if block == "progress":
+            user_id = db.scalar(select(UserEmail.user_id).where(UserEmail.email_normalized == "calories@example.test"))
+            db.add(CourseEvent(user_id=user_id, course_code="calories", event_key="existing", event_type="calories_course_opened"))
+            db.commit()
+        version = current.version_no
+        if block != "none":
+            with pytest.raises(ValueError):
+                publish_seed(db, expected_version=version + (1 if block == "version" else 0), apply=True)
+            assert active_course_version(db).version_no == version
+            return
+        result = publish_seed(db, expected_version=version, apply=False)
+        assert result["applied"] is False
+        assert active_course_version(db).payload == old
+        result = publish_seed(db, expected_version=version, apply=True)
+        assert result["version"] == version + 1
+        assert current.payload == old
+        assert len(active_course_version(db).payload["stages"]) == 3
+        assert not active_course_version(db).payload["launchReady"]
+        assert publish_seed(db, expected_version=version+1, apply=True)["changed"] is False
+
+
+def test_calorie_course_requires_access_and_exposes_three_module_manifest():
     client, factory = setup()
     assert client.post("/api/account-auth/logout").status_code == 200
     assert client.post("/api/account-auth/login", json={"email": "denied@example.test", "password": "Test-Password-9"}).status_code == 200
@@ -164,7 +204,7 @@ def test_calorie_course_requires_access_and_exposes_five_stage_manifest():
     response = client.get("/api/calories/course?email=calories@example.test")
     assert response.status_code == 200
     body = response.json()
-    assert len(body["stages"]) == 5
+    assert len(body["stages"]) == 3
     assert body["stages"][0]["opened"] is True
     assert body["stages"][1]["can_open"] is False
 
@@ -172,15 +212,17 @@ def test_calorie_course_requires_access_and_exposes_five_stage_manifest():
         "/api/calories/course/manifest?email=calories@example.test"
     ).json()
     assert manifest["courseCode"] == "calories"
-    assert len(manifest["stages"]) == 5
+    assert len(manifest["stages"]) == 3
+    assert manifest["navigation"] == "materials"
+    assert [len(stage["steps"]) for stage in manifest["stages"]] == [5, 6, 4]
+    assert [len(stage["checks"]) for stage in manifest["stages"]] == [4, 4, 3]
     steps = [step for stage in manifest["stages"] for step in stage["steps"]]
     assert len(steps) == 15
-    assert len([step for step in steps if step["kind"] == "article"]) == 14
-    calculator = next(step for step in steps if step["id"] == "calories-stage-03-calculator")
-    assert calculator["kind"] == "metabolism"
-    assert calculator["code"] == "metabolism"
+    assert len([step for step in steps if step["kind"] == "article"]) == 15
+    assert all(stage["steps"][-1]["assignment"] for stage in manifest["stages"])
+    assert all(not stage["steps"][-1]["required"] for stage in manifest["stages"])
     assert all(
-        step["contentKind"] == "placeholder"
+        step["contentKind"] == "text"
         for step in steps
         if step["kind"] == "article"
     )
@@ -254,10 +296,27 @@ def test_calorie_course_requires_access_and_exposes_five_stage_manifest():
     assert legacy_saved.json()["ok"] is False
 
 
-def test_calorie_course_completes_stage_in_order_and_opens_next_immediately():
+def test_calorie_course_completes_stage_in_order_and_opens_next_at_local_six(monkeypatch):
+    import app.calorie_course_routes as routes
+
+    class Clock(datetime):
+        instant = datetime(2026, 9, 25, 7, tzinfo=timezone.utc)
+
+        @classmethod
+        def now(cls, tz=None):
+            return cls.instant.astimezone(tz) if tz else cls.instant.replace(tzinfo=None)
+
+    monkeypatch.setattr(routes, "datetime", Clock)
     client, factory = setup()
     email = "calories@example.test"
-    client.get(f"/api/calories/course?email={email}")
+    with factory() as db:
+        user = db.scalar(select(User).join(UserEmail).where(UserEmail.email_normalized == email))
+        db.add(MessengerAccount(user_id=user.id, platform="telegram", platform_user_id="calories-test-user", linked_at=Clock.instant, is_deliverable=True, is_preferred=True, source="test"))
+        db.commit()
+    opened = client.get(f"/api/calories/course?email={email}&timezone_name=Asia/Yekaterinburg")
+    assert opened.json()["stages"][0]["timezone_name"] == "Asia/Yekaterinburg"
+    reopened = client.get(f"/api/calories/course?email={email}&timezone_name=Pacific/Kiritimati")
+    assert reopened.json()["stages"][0]["timezone_name"] == "Asia/Yekaterinburg"
 
     early = client.post(
         "/api/calories/course/days/2/open", json={"email": email}
@@ -265,7 +324,12 @@ def test_calorie_course_completes_stage_in_order_and_opens_next_immediately():
     assert early.status_code == 409
     assert early.json()["detail"]["reason"] == "previous_stage_not_completed"
 
-    for index in range(3):
+    out_of_order = client.post("/api/calories/course/days/1/steps/2/complete", json={"email": email})
+    assert out_of_order.status_code == 409
+    assert client.post("/api/calories/course/days/1/task/open", json={"email": email}).status_code == 409
+    assert client.put("/api/calories/course/days/1/checks/0", json={"email": email, "checked": True}).status_code == 409
+
+    for index in range(4):
         completed = client.post(
             f"/api/calories/course/days/1/steps/{index}/complete",
             json={"email": email},
@@ -275,25 +339,40 @@ def test_calorie_course_completes_stage_in_order_and_opens_next_immediately():
         "/api/calories/course/days/1/task/open", json={"email": email}
     )
     assert opened_task.status_code == 200
-    for index in range(3):
+    for index in range(4):
         checked = client.put(
             f"/api/calories/course/days/1/checks/{index}",
             json={"email": email, "checked": True},
         )
         assert checked.status_code == 200
+        if index < 3:
+            assert checked.json()["stages"][0]["completed"] is False
+            assert checked.json()["stages"][1]["can_open"] is False
+            assert checked.json()["stages"][1]["locked_reason"] == "previous_stage_not_completed"
     assert checked.json()["stages"][0]["completed"] is True
-    assert checked.json()["stages"][1]["can_open"] is True
+    assert checked.json()["stages"][1]["can_open"] is False
+    assert checked.json()["stages"][1]["locked_reason"] == "timer"
+    assert checked.json()["stages"][1]["unlock_at"] == "2026-09-26T01:00:00+00:00"
+    assert client.get(f"/api/calories/course?email={email}").json()["stages"][0]["checkmarks"] == {str(i): True for i in range(4)}
+    Clock.instant = datetime(2026, 9, 26, 0, 59, 59, tzinfo=timezone.utc)
+    still_locked = client.post("/api/calories/course/days/2/open", json={"email": email, "timezone_name": "Pacific/Kiritimati"})
+    assert still_locked.status_code == 409
+    assert still_locked.json()["detail"]["reason"] == "timer"
+    Clock.instant = datetime(2026, 9, 26, 1, tzinfo=timezone.utc)
 
     second = client.post(
-        "/api/calories/course/days/2/open", json={"email": email}
+        "/api/calories/course/days/2/open", json={"email": email, "timezone_name": "Asia/Yekaterinburg"}
     )
     assert second.status_code == 200
     assert second.json()["stages"][1]["opened"] is True
     assert client.get("/api/apps/metabolism").json()["ok"] is True
 
     with factory() as db:
+        assert db.scalar(select(func.count(MasterclassNotification.id))) == 0
+
+    with factory() as db:
         assert db.scalar(select(func.count(CourseStageProgress.id))) == 2
-        assert db.scalar(select(func.count(CourseStepProgress.id))) == 3
+        assert db.scalar(select(func.count(CourseStepProgress.id))) == 4
         events = set(db.scalars(select(CourseEvent.event_type)))
         assert {
             "calories_course_opened",
@@ -303,14 +382,32 @@ def test_calorie_course_completes_stage_in_order_and_opens_next_immediately():
             "calories_stage_completed",
         } <= events
 
-    for index in range(3):
+    for index in range(5):
         assert client.post(f"/api/calories/course/days/2/steps/{index}/complete", json={"email": email}).status_code == 200
+    assert client.post("/api/calories/course/days/2/steps/0/complete", json={"email": email}).status_code == 200
+    with factory() as db:
+        notification = db.scalars(select(MasterclassNotification).where(MasterclassNotification.notification_kind == "metabolism_app_link")).one()
+        assert notification.content_code == "tpl_postpurchase_metabolism_app_link"
+        assert notification.payload["target_platform"] == "telegram"
+        assert notification.payload["target_platform_user_id"] == "calories-test-user"
+        assert db.scalar(select(func.count(MasterclassEvent.id)).where(MasterclassEvent.event_type == "app_revealed_metabolism")) == 1
     assert client.post("/api/calories/course/days/2/task/open", json={"email": email}).status_code == 200
-    for index in range(3):
+    for index in range(4):
         assert client.put(f"/api/calories/course/days/2/checks/{index}", json={"email": email, "checked": True}).status_code == 200
     assert client.get("/api/apps/metabolism").json()["ok"] is True
     application = next(row for row in client.get("/api/account-auth/account").json()["applications"] if row["code"] == "metabolism")
     assert application["app"] == "metabolism"
+    Clock.instant = datetime(2026, 9, 27, 1, tzinfo=timezone.utc)
+    assert client.post("/api/calories/course/days/3/open", json={"email": email}).status_code == 200
+    for index in range(3):
+        assert client.post(f"/api/calories/course/days/3/steps/{index}/complete", json={"email": email}).status_code == 200
+    assert client.post("/api/calories/course/days/3/task/open", json={"email": email}).status_code == 200
+    for index in range(3):
+        finished = client.put(f"/api/calories/course/days/3/checks/{index}", json={"email": email, "checked": True})
+        assert finished.status_code == 200
+    assert all(stage["completed"] for stage in finished.json()["stages"])
+    with factory() as db:
+        assert db.scalar(select(func.count(CourseEvent.id)).where(CourseEvent.event_type == "calories_course_completed")) == 1
 
 
 def test_calorie_course_and_calculator_are_blocked_until_masterclass_completion(monkeypatch):
@@ -357,28 +454,28 @@ def test_manual_full_unlock_bypasses_course_prerequisite_and_internal_sequence()
     assert all(stage["can_open"] for stage in course.json()["stages"])
 
     opened = client.post(
-        "/api/calories/course/days/5/open",
+        "/api/calories/course/days/3/open",
         json={"email": "calories@example.test"},
     )
     assert opened.status_code == 200
     completed = client.post(
-        "/api/calories/course/days/5/steps/2/complete",
+        "/api/calories/course/days/3/steps/2/complete",
         json={"email": "calories@example.test"},
     )
     assert completed.status_code == 200
     task = client.post(
-        "/api/calories/course/days/5/task/open",
+        "/api/calories/course/days/3/task/open",
         json={"email": "calories@example.test"},
     )
     assert task.status_code == 200
 
     linked = client.get(
         "/api/account/resource-link",
-        params={"target": "calories:calories-stage-05-exit"},
+        params={"target": "calories:calories-actions"},
     )
     assert linked.status_code == 200
     assert linked.json()["action"] == "open"
-    assert linked.json()["params"]["calories_stage"] == 5
+    assert linked.json()["params"]["calories_stage"] == 3
 
 
 def test_resource_link_discovers_newly_published_material_from_active_structure():
@@ -486,7 +583,7 @@ def test_course_editor_lists_calories_and_updates_stage_copy():
     calorie_card = next(
         item for item in courses.json()["courses"] if item["code"] == "calories"
     )
-    assert calorie_card["materials_total"] == 14
+    assert calorie_card["materials_total"] == 15
     assert calorie_card["materials_published"] == 0
     assert calorie_card["launch_ready"] is False
     assert calorie_card["ready"] is False
@@ -525,7 +622,7 @@ def test_calorie_course_stays_closed_until_every_material_and_launch_switch_are_
     assert direct.json()["detail"]["reason"] == "course_preparing"
 
     materials = client.get("/admin/api/courses/calories/materials").json()["materials"]
-    assert len(materials) == 14
+    assert len(materials) == 15
     for material in materials:
         published = client.put(
             f"/admin/api/courses/calories/materials/{material['step_id']}",
@@ -560,7 +657,7 @@ def test_calorie_course_stays_closed_until_every_material_and_launch_switch_are_
 
     runtime_materials = client.get(f"/api/calories/course/materials?email={email}")
     assert runtime_materials.status_code == 200
-    assert len(runtime_materials.json()["materials"]) == 3
+    assert len(runtime_materials.json()["materials"]) == 5
     assert all(
         item["html"].startswith("<h2>")
         for item in runtime_materials.json()["materials"].values()
@@ -606,6 +703,21 @@ def test_launch_switch_cannot_open_course_with_missing_materials():
     assert client.get(f"/api/calories/course/manifest?email={email}").status_code == 409
 
 
+def test_material_filter_does_not_expose_locked_modules_or_hidden_articles():
+    client, _ = setup()
+    endpoint = "/api/calories/course/materials"
+    params = {"email": "calories@example.test", "step_id": "calories-stage-01-app"}
+    assert set(client.get(endpoint, params=params).json()["materials"]) == {params["step_id"]}
+    for unavailable in ("calories-stage-03-expenditure", "calories-whats-next", "unknown"):
+        assert client.get(endpoint, params={**params, "step_id": unavailable}).json()["materials"] == {}
+    editor = client.get("/admin/api/courses/calories/structure").json()
+    manifest = editor["active"]["manifest"]
+    manifest["stages"][0]["steps"][1]["hidden"] = True
+    manifest["days"] = manifest["stages"]
+    assert client.put("/admin/api/courses/calories/structure", json={"expected_version": editor["active"]["version"], "manifest": manifest}).status_code == 200
+    assert client.get(endpoint, params=params).json()["materials"] == {}
+
+
 def test_hidden_article_does_not_block_launch_when_visible_articles_are_published():
     client, _ = setup(course_ready=False)
     email = "calories@example.test"
@@ -640,8 +752,8 @@ def test_hidden_article_does_not_block_launch_when_visible_articles_are_publishe
         for item in client.get("/admin/api/courses").json()["courses"]
         if item["code"] == "calories"
     )
-    assert admin_card["materials_total"] == 13
-    assert admin_card["materials_published"] == 13
+    assert admin_card["materials_total"] == 14
+    assert admin_card["materials_published"] == 14
     assert admin_card["ready"] is True
     assert client.get(f"/api/calories/course/manifest?email={email}").status_code == 200
 
@@ -660,10 +772,11 @@ def test_calorie_course_reuses_masterclass_shell_with_stage_routes(monkeypatch):
     assert "Калорийный курс завершён" in fragment.text
     assert "edabalans:calories-event" in fragment.text
     assert "edabalans:masterclass-event" not in fragment.text
-    assert "Следующий этап откроется сразу после выполнения задания." in fragment.text
-    assert "окончания таймера" not in fragment.text
-    assert "#calories-course-app .timer{display:none}" in fragment.text
-    assert "Следующий этап откроется сразу" in fragment.text
+    assert "Следующий этап откроется сразу после выполнения задания." not in fragment.text
+    assert "#calories-course-app .timer{display:none}" not in fragment.text
+    assert "06:00" in fragment.text
+    assert "/assets/calories-course.css" in fragment.text
+    assert "renderMaterialMenu" in fragment.text
     assert "через этап" not in fragment.text
 
     account = client.get("/apps/account.html").text

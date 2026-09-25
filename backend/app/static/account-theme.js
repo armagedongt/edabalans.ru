@@ -33,9 +33,9 @@
   };
   var mobile = matchMedia('(max-width: 900px)');
   function place() {
-    var course = document.querySelector('#masterclass-course-app .content');
+    var course = document.querySelector(':is(#masterclass-course-app,#calories-course-app) .content');
     var target = course && mobile.matches
-      ? document.querySelector('#masterclass-course-app .preview-sidebar-header')
+      ? document.querySelector(':is(#masterclass-course-app,#calories-course-app) .preview-sidebar-header')
       : course || document.querySelector('.account-shell');
     if (!target || button.parentElement === target) return;
     if (course && mobile.matches) target.insertBefore(button, target.querySelector('.close-menu'));

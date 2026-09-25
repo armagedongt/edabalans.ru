@@ -10,6 +10,7 @@ from app.masterclass_triggers import TRIGGERS, editorial_help
 from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE
 from app.content_formatting import is_placeholder_text
 from app.generated_intensive_content import APPROVED_INTENSIVE_CONTENT
+from app.calorie_application_delivery import seed_calorie_application_delivery
 
 
 START_ENTRY_CODE = "start_attribution_entry"
@@ -1101,6 +1102,8 @@ def seed_defaults(
             configuration={"reason": "requirements_not_approved"},
             enabled=True,
         ))
+    session.flush()
+    seed_calorie_application_delivery(session)
     session.flush()
     for version in session.scalars(select(SequenceVersion)):
         _ensure_edges(session, version)

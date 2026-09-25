@@ -295,7 +295,7 @@ def restore_material(
     )
 
 
-def published_materials(db: Session, *, allowed_stages: set[int]) -> dict:
+def published_materials(db: Session, *, allowed_stages: set[int], step_id: str | None = None) -> dict:
     context = course_context(db)
     allowed = {
         step["id"]: (stage_number, step)
@@ -304,6 +304,7 @@ def published_materials(db: Session, *, allowed_stages: set[int]) -> dict:
         if stage_number in allowed_stages
         and not step.get("hidden", False)
         and step.get("kind") == "article"
+        and (step_id is None or step["id"] == step_id)
     }
     source = material_source(db)
     if source is None:
@@ -311,7 +312,7 @@ def published_materials(db: Session, *, allowed_stages: set[int]) -> dict:
     rows = db.execute(
         select(ContentItem, ContentItemVersion)
         .join(ContentItemVersion, ContentItemVersion.id == ContentItem.latest_version_id)
-        .where(ContentItem.source_id == source.id)
+        .where(ContentItem.source_id == source.id, ContentItem.external_id.in_(allowed))
     ).all()
     materials = {}
     for item, version in rows:
