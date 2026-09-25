@@ -74,11 +74,20 @@ class LegalAcceptancesIn(LinkActionIn):
     document_codes: list[str] = Field(min_length=2, max_length=2)
 
 
+class PersonalLinkResourceSettingIn(BaseModel):
+    resource_code: str = Field(min_length=1, max_length=80)
+    start_open: bool = True
+    all_lessons_open: bool = False
+
+
 class PersonalLinkCreateIn(BaseModel):
     resource_codes: list[str] = Field(min_length=1, max_length=20)
+    resource_settings: list[PersonalLinkResourceSettingIn] = Field(default_factory=list, max_length=20)
     final_amount: Decimal = Field(ge=0, le=10_000_000)
     standard_amount: Decimal | None = Field(default=None, ge=0, le=10_000_000)
     expires_days: int = Field(default=14, ge=1, le=365)
+    # Legacy clients used one checkbox for every selected resource. Keep it
+    # accepted until the CRM is upgraded, then prefer resource_settings.
     fully_unlocked: bool = False
 
 
@@ -334,6 +343,7 @@ def link_payload(db: Session, link: PersonalAccessLink, user: User) -> dict:
             {
                 "code": code,
                 "name": resources[code].name,
+                "start_open": (link.start_modes or {}).get(code, "open") == "open",
                 "unlock_mode": (link.unlock_modes or {}).get(code, "paced"),
             }
             for code in link.resource_codes
@@ -647,6 +657,7 @@ def claim_personal_link(token: str, body: LinkActionIn, request: Request, db: Se
         list(link.resource_codes or []),
         source="personal_free_link",
         unlock_modes=dict(link.unlock_modes or {}),
+        start_modes=dict(link.start_modes or {}),
     )
     complete_review(user, "Права подтверждены персональной бесплатной ссылкой Сергея")
     link.status = "claimed"
@@ -695,11 +706,26 @@ def create_personal_link(
     user = db.get(User, user_id)
     if user is None or user.merged_into_user_id is not None:
         raise HTTPException(404, "Пользователь не найден")
+    settings_by_code = {item.resource_code: item for item in body.resource_settings}
+    if len(settings_by_code) != len(body.resource_settings):
+        raise HTTPException(422, "Один продукт нельзя указывать в ссылке дважды")
+    if any(item.all_lessons_open and not item.start_open for item in body.resource_settings):
+        raise HTTPException(422, "Нельзя открыть все уроки у закрытого для старта курса")
+    if settings_by_code and set(settings_by_code) != set(body.resource_codes):
+        raise HTTPException(422, "Настройки ссылки должны быть заданы для каждого выбранного продукта")
     resources = resources_for_codes(db, body.resource_codes)
     token, token_hash = create_link_token()
     mode = "free" if body.final_amount == 0 else "paid"
     unlock_modes = {
-        code: "fully_unlocked" if body.fully_unlocked else "paced"
+        code: (
+            "fully_unlocked"
+            if (settings_by_code.get(code).all_lessons_open if settings_by_code else body.fully_unlocked)
+            else "paced"
+        )
+        for code in resources
+    }
+    start_modes = {
+        code: "open" if (settings_by_code.get(code).start_open if settings_by_code else True) else "blocked"
         for code in resources
     }
     url = f"{settings.personal_access_page_url}?access_token={token}"
@@ -719,6 +745,7 @@ def create_personal_link(
         mode=mode,
         resource_codes=list(resources),
         unlock_modes=unlock_modes,
+        start_modes=start_modes,
         standard_amount=body.standard_amount,
         final_amount=body.final_amount,
         expires_at=datetime.now(timezone.utc) + timedelta(days=body.expires_days),
@@ -735,8 +762,9 @@ def create_personal_link(
             details={
                 "mode": mode,
                 "resource_codes": list(resources),
+                "start_modes": start_modes,
+                "unlock_modes": unlock_modes,
                 "final_amount": str(body.final_amount),
-                "fully_unlocked": body.fully_unlocked,
             },
         )
     )

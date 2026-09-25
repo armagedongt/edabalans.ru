@@ -588,6 +588,7 @@ def grant_payment_access(
                 source="paid_personal_link",
                 source_payment_id=payment.id,
                 unlock_modes=dict(personal_link.unlock_modes or {}),
+                start_modes=dict(personal_link.start_modes or {}),
             )
             personal_link.status = "paid"
             personal_link.resolved_at = occurred_at

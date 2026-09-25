@@ -273,6 +273,9 @@ class AccountOnboarding(Base):
         ForeignKey("payments.id", ondelete="CASCADE"), unique=True
     )
     claim_bundle_encrypted: Mapped[str] = mapped_column(Text, nullable=False)
+    delivery_mode: Mapped[str] = mapped_column(
+        String(32), default="messenger_claim", server_default=text("'messenger_claim'"), nullable=False
+    )
     status: Mapped[str] = mapped_column(
         String(32), default="ready", server_default=text("'ready'"), nullable=False
     )
@@ -992,6 +995,7 @@ class PersonalAccessLink(Base):
     mode: Mapped[str] = mapped_column(String(16), nullable=False)
     resource_codes: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
     unlock_modes: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    start_modes: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
     standard_amount: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
     final_amount: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False)
     currency: Mapped[str] = mapped_column(String(3), default="RUB", nullable=False)
@@ -1023,6 +1027,9 @@ class UserCoursePolicy(Base):
     )
     unlock_mode: Mapped[str] = mapped_column(
         String(32), default="paced", server_default=text("'paced'"), nullable=False
+    )
+    start_mode: Mapped[str] = mapped_column(
+        String(32), default="open", server_default=text("'open'"), nullable=False
     )
     source: Mapped[str] = mapped_column(String(64), nullable=False)
     course_policy_version: Mapped[int] = mapped_column(

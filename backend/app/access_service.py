@@ -47,6 +47,25 @@ def review_blocks_access(user: User) -> bool:
     return user.access_review_status in BLOCKING_REVIEW_STATUSES
 
 
+def course_start_is_open(db: Session, user_id: uuid.UUID, resource_code: str) -> bool:
+    """Return the explicit start gate for a course right.
+
+    Older rows have no policy (or no start_mode) and keep their historical
+    behaviour: an active right opens the course. A block is therefore only
+    introduced by a deliberate CRM or personal-link decision.
+    """
+    mode = db.scalar(
+        select(UserCoursePolicy.start_mode)
+        .join(Resource, Resource.id == UserCoursePolicy.resource_id)
+        .where(
+            UserCoursePolicy.user_id == user_id,
+            Resource.code == resource_code,
+        )
+        .limit(1)
+    )
+    return mode != "blocked"
+
+
 def create_link_token() -> tuple[str, str]:
     token = secrets.token_urlsafe(32)
     return token, hashlib.sha256(token.encode("utf-8")).hexdigest()
@@ -98,6 +117,7 @@ def grant_resources(
     source: str,
     source_payment_id: uuid.UUID | None = None,
     unlock_modes: dict[str, str] | None = None,
+    start_modes: dict[str, str] | None = None,
 ) -> list[str]:
     resources = resources_for_codes(db, resource_codes)
     now = datetime.now(timezone.utc)
@@ -130,6 +150,9 @@ def grant_resources(
         mode = (unlock_modes or {}).get(code, "paced")
         if mode not in {"paced", "fully_unlocked"}:
             raise ValueError(f"invalid unlock mode for {code}")
+        start_mode = (start_modes or {}).get(code, "open")
+        if start_mode not in {"open", "blocked"}:
+            raise ValueError(f"invalid start mode for {code}")
         policy = db.scalar(
             select(UserCoursePolicy).where(
                 UserCoursePolicy.user_id == user.id,
@@ -142,12 +165,18 @@ def grant_resources(
                     user_id=user.id,
                     resource_id=resource.id,
                     unlock_mode=mode,
+                    start_mode=start_mode,
                     source=source,
                     course_policy_version=(2 if code == "ACCESS_MASTERCLASS" else 1),
                 )
             )
-        elif mode == "fully_unlocked":
+        else:
+            # A new explicit manual or personal-link decision must be able to
+            # narrow as well as broaden a previous course policy. Purchases
+            # themselves remain in payment history; this is only the current
+            # availability policy.
             policy.unlock_mode = mode
+            policy.start_mode = start_mode
             policy.source = source
     return granted
 

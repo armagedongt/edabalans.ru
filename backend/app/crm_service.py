@@ -34,8 +34,11 @@ from app.models import (
     CourseStageProgress,
     DqsState,
     MasterclassDayProgress,
+    UserCoursePolicy,
 )
 from app.account_security import decrypt_password, encrypt_password, generate_password, password_hash
+from app.account_onboarding_service import queue_direct_credential_email
+from app.app_service import EMAIL_RE, normalize_email
 from app.config import Settings
 from app.masterclass_routes import (
     questions,
@@ -44,6 +47,12 @@ from app.product_identity import purchased_products, tariff_name
 
 CONFIRMED_PAYMENT_STATUSES = ("paid", "confirmed")
 MOSCOW_TZ = ZoneInfo("Europe/Moscow")
+COURSE_RESOURCE_CODES = (
+    "ACCESS_MASTERCLASS",
+    "ACCESS_RECIPES",
+    "ACCESS_CALORIES",
+    "ACCESS_STRENGTH",
+)
 
 
 def money(value: Decimal | None) -> float:
@@ -984,6 +993,141 @@ def list_resources(db: Session) -> list[dict]:
     )]
 
 
+def course_access_states(db: Session, user_id: uuid.UUID) -> list[dict]:
+    """Current availability settings for the four course products in CRM."""
+    resource_rows = {
+        item.code: item
+        for item in db.scalars(
+            select(Resource).where(Resource.code.in_(COURSE_RESOURCE_CODES), Resource.status == "active")
+        )
+    }
+    now = datetime.now(timezone.utc)
+    active_codes = set(
+        db.scalars(
+            select(Resource.code)
+            .join(UserAccess, UserAccess.resource_id == Resource.id)
+            .where(
+                UserAccess.user_id == user_id,
+                Resource.code.in_(COURSE_RESOURCE_CODES),
+                UserAccess.revoked_at.is_(None),
+                UserAccess.paused_at.is_(None),
+                UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now),
+            )
+        )
+    )
+    policies = {
+        resource_code: (unlock_mode, start_mode)
+        for resource_code, unlock_mode, start_mode in db.execute(
+            select(Resource.code, UserCoursePolicy.unlock_mode, UserCoursePolicy.start_mode)
+            .join(Resource, Resource.id == UserCoursePolicy.resource_id)
+            .where(UserCoursePolicy.user_id == user_id, Resource.code.in_(COURSE_RESOURCE_CODES))
+        )
+    }
+    names = {
+        "ACCESS_MASTERCLASS": "Мастер-класс",
+        "ACCESS_RECIPES": "Система рецептов",
+        "ACCESS_CALORIES": "Калорийный курс",
+        "ACCESS_STRENGTH": "Курс тренировок",
+    }
+    return [
+        {
+            "resource_code": code,
+            "name": names[code],
+            "available": code in resource_rows,
+            "entitled": code in active_codes,
+            # Existing rows without the new policy retain their established
+            # behaviour and are immediately startable.
+            "start_open": code in active_codes and policies.get(code, ("paced", "open"))[1] == "open",
+            "all_lessons_open": code in active_codes and policies.get(code, ("paced", "open"))[0] == "fully_unlocked",
+        }
+        for code in COURSE_RESOURCE_CODES
+    ]
+
+
+def update_course_access_state(
+    db: Session,
+    user_id: uuid.UUID,
+    resource_code: str,
+    *,
+    entitled: bool,
+    start_open: bool,
+    all_lessons_open: bool,
+    admin: str,
+) -> list[dict]:
+    if resource_code not in COURSE_RESOURCE_CODES:
+        raise ValueError("unknown_course")
+    if all_lessons_open and not start_open:
+        raise ValueError("all_lessons_requires_start")
+    if (start_open or all_lessons_open) and not entitled:
+        raise ValueError("course_state_requires_right")
+    user = db.get(User, user_id)
+    resource = db.scalar(
+        select(Resource).where(Resource.code == resource_code, Resource.status == "active")
+    )
+    if user is None or user.merged_into_user_id is not None or resource is None:
+        raise ValueError("user_or_resource_not_found")
+    now = datetime.now(timezone.utc)
+    rows = list(
+        db.scalars(
+            select(UserAccess).where(
+                UserAccess.user_id == user_id,
+                UserAccess.resource_id == resource.id,
+                UserAccess.revoked_at.is_(None),
+            )
+        )
+    )
+    if entitled:
+        usable = [item for item in rows if item.expires_at is None or item.expires_at > now]
+        if usable:
+            for item in usable:
+                item.paused_at = None
+        else:
+            db.add(UserAccess(
+                user_id=user_id,
+                resource_id=resource.id,
+                source_payment_id=None,
+                source="manual_admin",
+                granted_at=now,
+            ))
+        policy = db.scalar(
+            select(UserCoursePolicy).where(
+                UserCoursePolicy.user_id == user_id,
+                UserCoursePolicy.resource_id == resource.id,
+            )
+        )
+        if policy is None:
+            db.add(UserCoursePolicy(
+                user_id=user_id,
+                resource_id=resource.id,
+                unlock_mode="fully_unlocked" if all_lessons_open else "paced",
+                start_mode="open" if start_open else "blocked",
+                source="manual_admin",
+            ))
+        else:
+            policy.unlock_mode = "fully_unlocked" if all_lessons_open else "paced"
+            policy.start_mode = "open" if start_open else "blocked"
+            policy.source = "manual_admin"
+    else:
+        # Do not erase a payment record: pausing makes the right unavailable
+        # now but preserves purchase history and lets an administrator resume it.
+        for item in rows:
+            item.paused_at = now
+    db.add(AdminAppEdit(
+        admin_username=admin,
+        target_user_id=user_id,
+        app_code="crm",
+        action="set_course_access_state",
+        details={
+            "resource_code": resource_code,
+            "entitled": entitled,
+            "start_open": start_open,
+            "all_lessons_open": all_lessons_open,
+        },
+    ))
+    db.commit()
+    return course_access_states(db, user_id)
+
+
 def link_user_email(db: Session, user_id: uuid.UUID, email: str, admin: str) -> tuple[bool, str]:
     normalized = email.strip().lower()
     if "@" not in normalized or len(normalized) > 320:
@@ -1110,17 +1254,14 @@ def reveal_account_password(
     return password
 
 
-def reset_account_password(
-    db: Session, user_id: uuid.UUID, settings: Settings, admin: str
-) -> str | None:
-    user = db.get(User, user_id)
-    if user is None or user.merged_into_user_id is not None:
-        return None
+def _issue_account_password(
+    db: Session, user: User, settings: Settings, admin: str
+) -> tuple[str, AccountCredential]:
     password = generate_password()
-    credential = db.get(AccountCredential, user_id)
+    credential = db.get(AccountCredential, user.id)
     if credential is None:
         credential = AccountCredential(
-            user_id=user_id,
+            user_id=user.id,
             password_hash=password_hash(password, settings.app_auth_secret),
             password_ciphertext=encrypt_password(password, settings.app_auth_secret),
             password_version=1,
@@ -1134,10 +1275,73 @@ def reset_account_password(
         credential.issued_via = "admin"
     now = datetime.now(timezone.utc)
     db.execute(update(AccountSession).where(
-        AccountSession.user_id == user_id,
+        AccountSession.user_id == user.id,
         AccountSession.revoked_at.is_(None),
     ).values(revoked_at=now))
-    db.add(AdminAppEdit(admin_username=admin, target_user_id=user_id, app_code="crm",
+    db.flush()
+    db.add(AdminAppEdit(admin_username=admin, target_user_id=user.id, app_code="crm",
                         action="reset_account_password", details={"password_version": credential.password_version}))
+    return password, credential
+
+
+def reset_account_password(
+    db: Session, user_id: uuid.UUID, settings: Settings, admin: str
+) -> str | None:
+    user = db.get(User, user_id)
+    if user is None or user.merged_into_user_id is not None:
+        return None
+    password, _ = _issue_account_password(db, user, settings, admin)
     db.commit()
     return password
+
+
+def create_manual_account(
+    db: Session, *, email_original: str, display_name: str | None, settings: Settings, admin: str
+) -> tuple[User, str]:
+    """Create a no-access CRM person, issue a password and queue its email.
+
+    This intentionally does not invent a purchase. Course rights are set from
+    the newly created card, before the person ever signs in.
+    """
+    email = normalize_email(email_original)
+    if not EMAIL_RE.match(email):
+        raise ValueError("invalid_email")
+    existing = db.scalar(select(UserEmail).where(UserEmail.email_normalized == email))
+    if existing is not None:
+        raise ValueError("email_exists")
+    now = datetime.now(timezone.utc)
+    user = User(
+        display_name=(display_name or "").strip() or None,
+        status="active",
+        data_origin="native",
+        first_seen_at=now,
+        access_review_status="not_required",
+        tilda_access_status="not_required",
+    )
+    db.add(user)
+    db.flush()
+    db.add(UserEmail(
+        user_id=user.id,
+        email_original=email_original.strip(),
+        email_normalized=email,
+        is_primary=True,
+        verification_status="owner_confirmed",
+        source="manual_admin",
+        first_seen_at=now,
+    ))
+    password, credential = _issue_account_password(db, user, settings, admin)
+    email_row = queue_direct_credential_email(
+        db,
+        user=user,
+        password_version=credential.password_version,
+        settings=settings,
+    )
+    db.add(AdminAppEdit(
+        admin_username=admin,
+        target_user_id=user.id,
+        app_code="crm",
+        action="create_manual_account",
+        details={"email": email, "email_delivery": "queued", "onboarding_id": str(email_row.id)},
+    ))
+    db.commit()
+    return user, password
