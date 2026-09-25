@@ -512,6 +512,19 @@ for (const [name, route] of Object.entries(integratedPages)) {
   await page.close();
 }
 
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 560 } });
+  await page.goto(`http://127.0.0.1:${port}/crm?user=u1`);
+  await page.getByRole("link", { name: "DQS" }).waitFor();
+  assert.equal(await page.getByRole("link", { name: "CRM" }).getAttribute("href"), "/crm?user=u1");
+  assert.equal(await page.getByRole("link", { name: "DQS" }).getAttribute("href"), "/admin/dqs?user=u1");
+  assert.equal(await page.getByRole("link", { name: "Силовые" }).getAttribute("href"), "/admin/strength?user=u1");
+  assert.equal(await page.getByRole("link", { name: "Метаболизм" }).getAttribute("href"), "/admin/metabolism?user=u1");
+  assert.equal(await page.getByRole("link", { name: "Продукты и описания" }).getAttribute("href"), "/admin/products?user=u1");
+  assert.equal(await page.getByRole("link", { name: "Личный кабинет" }).getAttribute("href"), "/lk");
+  await page.close();
+}
+
 await browser.close();
 await new Promise((resolve) => server.close(resolve));
 console.log("admin shell e2e: ok");

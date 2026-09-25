@@ -18,6 +18,28 @@
   const stateKey = "edabalans-admin-shell-state";
   const scrollKey = "edabalans-admin-shell-scroll";
 
+  // A selected CRM person is transient browser context, not a second user record.
+  // Carry it through the administrative shell so a copied application URL opens
+  // the same person directly. Public pages and the owner's personal cabinet do
+  // not receive this context.
+  function withClientContext(rawUrl) {
+    const userId = new URLSearchParams(location.search).get("user");
+    if (!userId) return rawUrl;
+    let target;
+    try {
+      target = new URL(rawUrl, location.origin);
+    } catch (_) {
+      return rawUrl;
+    }
+    const isAdminRoute = target.pathname === "/crm"
+      || target.pathname === "/finance"
+      || target.pathname === "/admin"
+      || target.pathname.startsWith("/admin/");
+    if (target.origin !== location.origin || !isAdminRoute || target.searchParams.has("user")) return rawUrl;
+    target.searchParams.set("user", userId);
+    return `${target.pathname}${target.search}${target.hash}`;
+  }
+
   function esc(value) {
     return String(value == null ? "" : value).replace(/[&<>"']/g, function (char) {
       return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char];
@@ -44,8 +66,9 @@
     const copy = `<span class="admin-nav-icon${iconClass}">${esc(icon)}</span><span class="admin-nav-copy"><b>${esc(item.label)}</b>${disabled ? '<small>редактируется через Codex</small>' : ""}</span>`;
     const category = esc(item.category || "service");
     if (disabled) return `<span class="admin-nav-disabled" data-admin-category="${category}" title="${esc(item.description)}" aria-label="${esc(item.label)}" aria-disabled="true">${copy}</span>`;
-    const external = /^https:\/\//.test(item.url) && new URL(item.url).origin !== location.origin;
-    return `<a href="${esc(item.url)}" data-admin-category="${category}" title="${esc(item.label)}" aria-label="${esc(item.label)}"${selected(item) ? ' class="active" aria-current="page"' : ""}${external ? ' target="_blank" rel="noopener"' : ""}>${copy}</a>`;
+    const url = withClientContext(item.url);
+    const external = /^https:\/\//.test(url) && new URL(url).origin !== location.origin;
+    return `<a href="${esc(url)}" data-admin-category="${category}" title="${esc(item.label)}" aria-label="${esc(item.label)}"${selected(item) ? ' class="active" aria-current="page"' : ""}${external ? ' target="_blank" rel="noopener"' : ""}>${copy}</a>`;
   }
 
   function render(modules) {
@@ -89,13 +112,13 @@
   }
   sidebar.innerHTML = `
     <div class="admin-shell-brand-row">
-      <a class="admin-brand" href="/admin"><img src="/favicon.png" alt=""><span>Похудение — это есть.рф<small>админка</small></span></a>
+      <a class="admin-brand" href="${withClientContext("/admin")}"><img src="/favicon.png" alt=""><span>Похудение — это есть.рф<small>админка</small></span></a>
       <div class="admin-shell-controls">
         <button class="admin-shell-control" data-action="collapse" type="button" title="Свернуть меню" aria-label="Свернуть меню">‹</button>
         <button class="admin-shell-control" data-action="hide" type="button" title="Скрыть меню" aria-label="Скрыть меню">×</button>
       </div>
     </div>
-    <nav class="admin-nav admin-shell-nav" aria-label="Разделы админки"><a href="/crm"><span class="admin-nav-icon">👥</span><span class="admin-nav-copy"><b>CRM</b></span></a></nav>
+    <nav class="admin-nav admin-shell-nav" aria-label="Разделы админки"><a href="${withClientContext("/crm")}"><span class="admin-nav-icon">👥</span><span class="admin-nav-copy"><b>CRM</b></span></a></nav>
     <div class="admin-shell-footer"><a class="admin-shell-account" href="/lk"><span class="admin-nav-icon">⌂</span><span>Личный кабинет</span></a><button class="admin-shell-logout" type="button"><span class="admin-nav-icon">↪</span><span>Выйти</span></button></div>`;
 
   const backdrop = document.createElement("div");
