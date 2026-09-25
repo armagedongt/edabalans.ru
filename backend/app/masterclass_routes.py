@@ -17,6 +17,7 @@ from sqlalchemy import delete, func, select, text, update
 from sqlalchemy.orm import Session
 
 from app.app_service import AppAccessError, primary_email, require_user_resource, resolve_user_for_resource
+from app.access_service import course_start_is_open
 from app.dqs_access_service import DQS_REVEAL_EVENT_KEY, require_dqs_revealed
 from app.account_auth_routes import require_native_user
 from app.app_auth import create_placement_token, require_placement
@@ -302,11 +303,14 @@ def resolve_masterclass_user(
     settings: Settings,
 ) -> User:
     try:
-        return require_user_resource(
+        user = require_user_resource(
             db,
             require_native_user(request, db),
             "ACCESS_MASTERCLASS",
         )
+        if not course_start_is_open(db, user.id, "ACCESS_MASTERCLASS"):
+            raise AppAccessError("Мастер-класс пока закрыт по условиям доступа")
+        return user
     except AppAccessError as exc:
         raise HTTPException(403, str(exc)) from exc
 

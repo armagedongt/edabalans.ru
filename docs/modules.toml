@@ -89,6 +89,7 @@ owns_files = [
   "backend/migrations/versions/20260919_0045_access_pause.py",
   "backend/app/payment_browser_grant_service.py",
   "backend/migrations/versions/20260921_0047_purchase_auto_login_messenger_policy.py",
+  "backend/migrations/versions/20260925_0047_course_access_states_and_direct_credentials.py",
 ]
 owns_tables = [
   "products", "product_aliases", "resources", "product_access_rules",

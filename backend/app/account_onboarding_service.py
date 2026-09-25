@@ -16,7 +16,7 @@ from cryptography.fernet import Fernet, InvalidToken
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
-from app.account_security import encrypt_password, generate_password, password_hash, token_hash
+from app.account_security import decrypt_password, encrypt_password, generate_password, password_hash, token_hash
 from app.app_service import EMAIL_RE, normalize_email
 from app.config import Settings
 from app.database import SessionLocal
@@ -212,6 +212,52 @@ def ensure_free_account_onboarding(
     if active is not None:
         return active
     return _create_onboarding(db, user_id=user.id, settings=settings)
+
+
+def queue_direct_credential_email(
+    db: Session,
+    *,
+    user: User,
+    password_version: int,
+    settings: Settings,
+) -> AccountOnboarding:
+    """Queue the current direct credential in the existing durable mail worker."""
+    credential = db.get(AccountCredential, user.id)
+    if (
+        credential is None
+        or credential.password_version != password_version
+        or not credential.password_ciphertext
+    ):
+        raise ValueError("current credential is unavailable")
+    now = datetime.now(UTC)
+    pending = list(
+        db.scalars(
+            select(AccountOnboarding).where(
+                AccountOnboarding.user_id == user.id,
+                AccountOnboarding.delivery_mode == "direct_password",
+                AccountOnboarding.email_status.in_(("pending", "retry")),
+            )
+        )
+    )
+    for item in pending:
+        item.email_status = "superseded"
+        item.email_error = "A newer direct credential was issued"
+    row = AccountOnboarding(
+        user_id=user.id,
+        claim_bundle_encrypted=_encrypt_bundle(
+            {
+                "mode": "direct_credential",
+                "password": decrypt_password(credential.password_ciphertext, settings.app_auth_secret),
+            },
+            settings,
+        ),
+        delivery_mode="direct_password",
+        expires_at=now + CLAIM_TTL,
+        next_email_attempt_at=now,
+    )
+    db.add(row)
+    db.flush()
+    return row
 
 
 def onboarding_links(row: AccountOnboarding, settings: Settings) -> dict[str, str]:
