@@ -4,21 +4,26 @@
   "module_id": "platform.content",
   "scope": {
     "included": "Известные длинные авторские материалы Pikabu, Telegraph и VC.ru объёмом от 3000 знаков, а также опубликованные статьи собственного блога и подтверждённые Tilda-основы.",
-    "excluded": "Короткие Telegram-посты; их каталог ведётся отдельно.",
+    "excluded": "Редакторский разбор самостоятельных коротких постов. Telegram-анонсы, ссылки и длинные версии связываются с семьями статей в приватном производном отчёте.",
     "source_snapshot": "work/blog-audit-20260917/catalog.json",
     "source_snapshot_limits": [
       "Свежий Telegraph getPageList без токена не подтверждён; известные страницы были проверены поштучно 17.09.2026.",
       "Полнота текущего профиля Pikabu после даты локального корпуса не подтверждена.",
       "В проверенном локальном корпусе источников Дзен не найдено; это пробел discovery, а не доказательство отсутствия публикаций.",
-      "Серверная синхронизация Git-слоя решений ещё не выполнена; при следующем доступном сеансе Библиотекаря реестр нужно перенести в Knowledge Library без копирования полных текстов."
+      "Производная навигационная карта зарегистрирована в Knowledge Library; кандидаты на совпадение не превращены в подтверждённые связи семей."
     ]
   },
   "library_sync": {
-    "status": "pending",
+    "status": "navigation_registered",
     "target": "edabalans Knowledge Library",
-    "action": "Зарегистрировать canonical/deferred routing, подтверждённые связи семей и очередь возможных дублей; полные тексты не копировать."
+    "uri": "knowledge://resource/article-family-routing",
+    "action": "Пересобирать внутреннюю навигационную карту после изменения канонов; спорные пары оставлять в очереди сравнения. Сообщения автоматически не редактируются."
   },
   "rules": {
+    "content_forms": "Два представления единого каталога: long_material и short_post. Площадка Telegram не определяет тип; длинная статья может целиком помещаться в сообщении.",
+    "telegram_relations": "references_article означает анонс/ссылку, previous_version — подтверждённую старую редакцию; semantic_overlap_candidate требует сравнения. Анонс не становится дублем статьи.",
+    "publication_evidence": "Отдельно учитывать наличие полного текста, анонс в канале, шаблон бота и подтверждённую отправку. Не найдено в снимке не означает никогда не публиковалось.",
+    "private_link_map": "tools/build_article_channel_links.py создаёт приватную карту сообщений, версий и будущих замен. Сообщения автоматически не редактируются; перед заменой нужны свежий текст и однозначный опубликованный канон.",
     "two_buckets": "Каждая известная статья находится либо в canonical_blog, либо в deferred. Третьего пользовательского состояния нет.",
     "blog_canon": "Опубликованная запись content/blog/manifest.json — канон семьи. Внешние публикации являются проявлениями и не перезаписывают блог автоматически.",
     "safe_family_merge": "В одну семью объединяются только подтверждённые источники. Возможное текстовое пересечение хранится как possible_duplicate_catalog_ids и требует проверки.",
@@ -27,6 +32,7 @@
   },
   "summary": {
     "known_external_source_records": 282,
+    "additional_intensive_sources": 13,
     "external_sources": {
       "pikabu": 105,
       "telegraph": 163,
@@ -34,12 +40,12 @@
     },
     "canonical_blog_families": 44,
     "canonical_linked_external_records": 51,
-    "deferred_families": 231,
+    "deferred_families": 243,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 82,
+      "editorial_review": 93,
       "incomplete_draft": 14,
-      "owner_review_later": 2,
+      "owner_review_later": 3,
       "private_product_material": 47,
       "short_reserve": 43,
       "technical_or_service": 25
@@ -1406,6 +1412,24 @@
           "role": "platform_variant",
           "provenance": "public SSR article.content__blocks; owner verified profile id1426580",
           "text_sha256": "0b1401cbb126acb0af831180e1d3a288bd4114dc58dde2c3a7294292b278a858"
+        },
+        {
+          "catalog_id": "tilda-intensive-fpvaefo9e1",
+          "source": "tilda",
+          "external_id": "fpvaefo9e1",
+          "title": "Как формируются привычки и «Правило 1%»",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/fpvaefo9e1-kak-formiruyutsya-privichki-i-pravilo-1",
+          "published_at": "2026-02-03T00:00:00+03:00",
+          "role": "preferred_basis",
+          "provenance": {
+            "source_basis": "exact_live_full_source",
+            "html_sha256": "83033276dac180486c96529d3a4fdbb610285a1f9b29349b84bc02bd996288cf",
+            "retrieved_at": "2026-09-21",
+            "private_snapshot_path": "C:\\private\\edabalans-content-authoring\\source-snapshots\\tilda-intensive-fpvaefo9e1.md",
+            "private_snapshot_sha256": "c49868a9c9ac9c0231aef1b4066e17e5f45db3d815f270f0aadceac016ce7b0f",
+            "immutable_library_status": "pending_registration",
+            "note": "Полная живая страница прочитана и сохранена вне Git в приватном корпусе. Регистрация knowledge:// URI остаётся отдельной синхронизацией Библиотекаря."
+          }
         }
       ],
       "possible_duplicate_catalog_ids": [],
@@ -5668,7 +5692,7 @@
       "title": "Сделай сегодня — скажи себе спасибо завтра",
       "disposition": "deferred",
       "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
+      "reason": "Полный Telegraph-источник и старый шаблон рассылки «12 действий, которые вас изменят!» найдены 25.09.2026; прежний exact-source-not-found закрыт.",
       "members": [
         {
           "catalog_id": "A191",
@@ -5684,7 +5708,11 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "title_aliases": [
+        "12 простых изменений в вашем питании и образе жизни"
+      ],
+      "owner_decision": "prepare_for_blog"
     },
     {
       "family_id": "deferred:A199",
@@ -6867,6 +6895,118 @@
       "family_evidence": "single_source_pending_family_review"
     },
     {
+      "family_id": "deferred:tilda-post:e4441ism91",
+      "title": "⛔️ Почему эффекта плато не существует",
+      "disposition": "deferred",
+      "deferred_kind": "editorial_review",
+      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:e4441ism91",
+          "source": "tilda",
+          "external_id": "e4441ism91",
+          "title": "⛔️ Почему эффекта плато не существует",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet",
+          "characters": 7145,
+          "html_sha256": "f51a946347be2710c2dab650da36a6f58897ab2309272831f3dd190f73128be6",
+          "text_sha256": "a0a74e7b1a2b8f7a60db34101e45896ac39fdf4054fd9f768cc6a4ff1cebcbde",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "disposition": "deferred",
+          "deferred_kind": "editorial_review",
+          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+          "role": "unmerged_source"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_source_pending_family_review"
+    },
+    {
+      "family_id": "deferred:tilda-post:knian4e971",
+      "title": "✍️ Ваш новый план похудения",
+      "disposition": "deferred",
+      "deferred_kind": "editorial_review",
+      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:knian4e971",
+          "source": "tilda",
+          "external_id": "knian4e971",
+          "title": "✍️ Ваш новый план похудения",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/knian4e971-vash-novii-plan-pohudeniya",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/knian4e971-vash-novii-plan-pohudeniya",
+          "characters": 8272,
+          "html_sha256": "de6bc1212b686ae3f05e77c7a9adef92bd06db30710709130ff5cbe70c402ab8",
+          "text_sha256": "10c8898ba9ef85f1806d152b2de6e4c8a6e3b10c1e71602be38f102f449353ae",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "disposition": "deferred",
+          "deferred_kind": "editorial_review",
+          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+          "role": "unmerged_source"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_source_pending_family_review"
+    },
+    {
+      "family_id": "deferred:tilda-post:a75rtx6go1",
+      "title": "🍔 Что надо поменять в питании, чтобы лучше насыщаться?",
+      "disposition": "deferred",
+      "deferred_kind": "editorial_review",
+      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:a75rtx6go1",
+          "source": "tilda",
+          "external_id": "a75rtx6go1",
+          "title": "🍔 Что надо поменять в питании, чтобы лучше насыщаться?",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/a75rtx6go1-chto-nado-pomenyat-v-pitanii-chtobi-luc",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/a75rtx6go1-chto-nado-pomenyat-v-pitanii-chtobi-luc",
+          "characters": 7538,
+          "html_sha256": "8242c08e20c5e3b7998bbdcbed3576245c37f31502053c0d8de1c127a2fe5293",
+          "text_sha256": "2ddbffd47828b8a6c2ae77febd297a26c4f9402d029c18786850cf0bd54981f9",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "disposition": "deferred",
+          "deferred_kind": "editorial_review",
+          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+          "role": "unmerged_source"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_source_pending_family_review"
+    },
+    {
+      "family_id": "deferred:tilda-post:sgpfzdvvy1",
+      "title": "🍭 Вы едите 31кг сахара в год!",
+      "disposition": "deferred",
+      "deferred_kind": "editorial_review",
+      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:sgpfzdvvy1",
+          "source": "tilda",
+          "external_id": "sgpfzdvvy1",
+          "title": "🍭 Вы едите 31кг сахара в год!",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/sgpfzdvvy1-vi-edite-31kg-sahara-v-god",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/sgpfzdvvy1-vi-edite-31kg-sahara-v-god",
+          "characters": 6258,
+          "html_sha256": "178acf71c4ee4411c1f3b143e103ee127e4f3e43c2efc9fa7acb72df36d83306",
+          "text_sha256": "d45c9e4db6584d4443173423e133e738f34ceadb6121fce53f436be2218d2373",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "disposition": "deferred",
+          "deferred_kind": "editorial_review",
+          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+          "role": "unmerged_source"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_source_pending_family_review"
+    },
+    {
       "family_id": "deferred:A117",
       "title": "💎 13 правил  для организации домашних тренировок⁠⁠",
       "disposition": "deferred",
@@ -6892,6 +7032,90 @@
       "family_evidence": "single_source_pending_family_review"
     },
     {
+      "family_id": "deferred:tilda-post:amkbo7kgg1",
+      "title": "💪 Зачем нужны тренировки (кроме похудения)",
+      "disposition": "deferred",
+      "deferred_kind": "editorial_review",
+      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:amkbo7kgg1",
+          "source": "tilda",
+          "external_id": "amkbo7kgg1",
+          "title": "💪 Зачем нужны тренировки (кроме похудения)",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
+          "characters": 6355,
+          "html_sha256": "8248cfb39cf247e53382cdb9ff66b07492dfe5c9aa7b55a02443ee719f5344b3",
+          "text_sha256": "c9527dd9485bae761603d478520e81fa11102b58b07a3d00eb7011a72d404fac",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "disposition": "deferred",
+          "deferred_kind": "editorial_review",
+          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+          "role": "unmerged_source"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_source_pending_family_review"
+    },
+    {
+      "family_id": "deferred:tilda-post:pxukhjlca1",
+      "title": "📸 Как вести дневник питания БЕЗ калорий",
+      "disposition": "deferred",
+      "deferred_kind": "editorial_review",
+      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:pxukhjlca1",
+          "source": "tilda",
+          "external_id": "pxukhjlca1",
+          "title": "📸 Как вести дневник питания БЕЗ калорий",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/pxukhjlca1-kak-vesti-dnevnik-pitaniya-bez-kalorii",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/pxukhjlca1-kak-vesti-dnevnik-pitaniya-bez-kalorii",
+          "characters": 8726,
+          "html_sha256": "4f4dc894e505603a197baaa8a3e50f69939681583f3d95a4b20bcc8b99d77ffb",
+          "text_sha256": "7644853c01233d2f4fec0742020ac073df5c7b002ee30f6ceade8744f9429f34",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "disposition": "deferred",
+          "deferred_kind": "editorial_review",
+          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+          "role": "unmerged_source"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_source_pending_family_review"
+    },
+    {
+      "family_id": "deferred:tilda-post:7siam7t8k1",
+      "title": "😎 Как сократить тягу к сладкому и как есть сладкое с меньшим вредом для здоровья!",
+      "disposition": "deferred",
+      "deferred_kind": "editorial_review",
+      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:7siam7t8k1",
+          "source": "tilda",
+          "external_id": "7siam7t8k1",
+          "title": "😎 Как сократить тягу к сладкому и как есть сладкое с меньшим вредом для здоровья!",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/7siam7t8k1-kak-sokratit-tyagu-k-sladkomu-i-kak-est",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/7siam7t8k1-kak-sokratit-tyagu-k-sladkomu-i-kak-est",
+          "characters": 7098,
+          "html_sha256": "3bca83e633dce41141a7a4d82aa3ce781f0759768c10be1cee7ca41f2a453fc6",
+          "text_sha256": "6b90f3a3204aed25ca0959523a3f743f32399b5b9f4fabe4d9ec974f52a11b84",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "disposition": "deferred",
+          "deferred_kind": "editorial_review",
+          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+          "role": "unmerged_source"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_source_pending_family_review"
+    },
+    {
       "family_id": "deferred:A111",
       "title": "😡 Привычка за 21 день — это ложь!",
       "disposition": "deferred",
@@ -6909,6 +7133,90 @@
           "role": "unmerged_source",
           "provenance": "content://item/db8e2539-65ab-492a-bae3-5e5412d1bbd3",
           "text_sha256": "9ad93058a17ef650e09121ef7c30ad8c55bafab15ceaff16388c196519d779a8"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_source_pending_family_review"
+    },
+    {
+      "family_id": "deferred:tilda-post:x5ykn0tjc1",
+      "title": "🤦‍♂️ Три главные ошибки в начале похудения",
+      "disposition": "deferred",
+      "deferred_kind": "editorial_review",
+      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:x5ykn0tjc1",
+          "source": "tilda",
+          "external_id": "x5ykn0tjc1",
+          "title": "🤦‍♂️ Три главные ошибки в начале похудения",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/x5ykn0tjc1-tri-glavnie-oshibki-v-nachale-pohudeniy",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/x5ykn0tjc1-tri-glavnie-oshibki-v-nachale-pohudeniy",
+          "characters": 5734,
+          "html_sha256": "7ca70d361a995e65b6ce434b466554ab68f04446f1a4684d1690317e79d47982",
+          "text_sha256": "bd2fe14d74370d7d1205b88b1932bf1eb49b722355725119b9067fff399df475",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "disposition": "deferred",
+          "deferred_kind": "editorial_review",
+          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+          "role": "unmerged_source"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_source_pending_family_review"
+    },
+    {
+      "family_id": "deferred:tilda-post:jajp12c7j1",
+      "title": "🥄 Просто кладите ложку на стол!",
+      "disposition": "deferred",
+      "deferred_kind": "editorial_review",
+      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:jajp12c7j1",
+          "source": "tilda",
+          "external_id": "jajp12c7j1",
+          "title": "🥄 Просто кладите ложку на стол!",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/jajp12c7j1-prosto-kladite-lozhku-na-stol",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/jajp12c7j1-prosto-kladite-lozhku-na-stol",
+          "characters": 4238,
+          "html_sha256": "8a1b28e36c5c601543ed53eac2a10a50565dd52c99c02cc80e0650655a924e5d",
+          "text_sha256": "93ef029c6c7307c23225b14cf3314b030932ce042c4eb82dc254474dd7703e5f",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "disposition": "deferred",
+          "deferred_kind": "editorial_review",
+          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+          "role": "unmerged_source"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_source_pending_family_review"
+    },
+    {
+      "family_id": "deferred:tilda-post:5kegfp3o71",
+      "title": "🥐 Примеры реальных дневников",
+      "disposition": "deferred",
+      "deferred_kind": "owner_review_later",
+      "reason": "Реальные дневники: отдельно проверить права на клиентские материалы.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:5kegfp3o71",
+          "source": "tilda",
+          "external_id": "5kegfp3o71",
+          "title": "🥐 Примеры реальных дневников",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/5kegfp3o71-primeri-realnih-dnevnikov",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/5kegfp3o71-primeri-realnih-dnevnikov",
+          "characters": 6966,
+          "html_sha256": "b1ba26a341c54dd87a4ecf4120f1f9432b2a074b8a67ae8e4bada40e97d692a7",
+          "text_sha256": "e8b74f3b45c88d748ae7852fa1d25165316bc8d7f783496872ef78e5e3ca48f4",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "disposition": "deferred",
+          "deferred_kind": "owner_review_later",
+          "reason": "Реальные дневники: отдельно проверить права на клиентские материалы.",
+          "role": "unmerged_source"
         }
       ],
       "possible_duplicate_catalog_ids": [],
@@ -6940,6 +7248,34 @@
       "family_evidence": "single_source_pending_family_review"
     },
     {
+      "family_id": "deferred:tilda-post:hbfozma3y1",
+      "title": "🥕 Правило 30-ти растений",
+      "disposition": "deferred",
+      "deferred_kind": "editorial_review",
+      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:hbfozma3y1",
+          "source": "tilda",
+          "external_id": "hbfozma3y1",
+          "title": "🥕 Правило 30-ти растений",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/hbfozma3y1-pravilo-30-ti-rastenii",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/hbfozma3y1-pravilo-30-ti-rastenii",
+          "characters": 5508,
+          "html_sha256": "a6b4576b33f797f2b1dfa768482daddd8bafe9462493b8aca0ea27fa99a08c35",
+          "text_sha256": "f794486912ca13c882b1d70217ef57058df36baf9b8078b125f1e3facf2638eb",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "disposition": "deferred",
+          "deferred_kind": "editorial_review",
+          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+          "role": "unmerged_source"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_source_pending_family_review"
+    },
+    {
       "family_id": "deferred:A123",
       "title": "🥕Правило 40-ка растений",
       "disposition": "deferred",
@@ -6962,6 +7298,34 @@
       "possible_duplicate_catalog_ids": [
         "A130"
       ],
+      "family_evidence": "single_source_pending_family_review"
+    },
+    {
+      "family_id": "deferred:tilda-post:m0epglvrp1",
+      "title": "🧮 Зачем на самом деле надо считать калории",
+      "disposition": "deferred",
+      "deferred_kind": "editorial_review",
+      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:m0epglvrp1",
+          "source": "tilda",
+          "external_id": "m0epglvrp1",
+          "title": "🧮 Зачем на самом деле надо считать калории",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/m0epglvrp1-zachem-na-samom-dele-nado-schitat-kalor",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/m0epglvrp1-zachem-na-samom-dele-nado-schitat-kalor",
+          "characters": 12077,
+          "html_sha256": "7dedd3631c8746cfe9ce7d8ea86db649435ea8dacfde58e0098764b051fa8ef8",
+          "text_sha256": "bc7becfbd6f173f281e657c73da433837c7adc461822ab082b72993c6c992489",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "disposition": "deferred",
+          "deferred_kind": "editorial_review",
+          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+          "role": "unmerged_source"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
       "family_evidence": "single_source_pending_family_review"
     }
   ]

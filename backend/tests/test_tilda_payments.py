@@ -661,6 +661,8 @@ def test_paid_personal_link_grants_direct_resources_and_completes_review() -> No
         db.flush()
         link = PersonalAccessLink(
             user_id=user.id,
+            target_email_original="Client@Example.Test",
+            target_email_normalized="client@example.test",
             token_hash=hashlib.sha256(b"test-personal-token").hexdigest(),
             mode="paid",
             resource_codes=["ACCESS_MASTERCLASS"],

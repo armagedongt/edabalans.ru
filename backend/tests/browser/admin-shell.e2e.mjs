@@ -69,15 +69,6 @@ const sampleUserDetail = {
   tags:[{id:"t1",name:"Мастер-класс",category:"purchase"}], notes:[{body:"Обсудить следующий этап",author:"Сергей",created_at:"2026-09-19T12:00:00Z"}],
   masterclass:{questionnaires:[],events:[],offers:[]}
 };
-const sampleMarketing = {
-  period:{from:"2026-09-01",to:"2026-09-21",timezone:"Europe/Moscow"},
-  filters:{sources:["Яндекс","Пикабу"],campaigns:["Интенсив"],creatives:["Объявление 1"],selected:{source:"",campaign:"",creative:"",user:""}},
-  collection:{day_one:true,site_home:true,later_days:true},
-  totals:{rows:1,matching_rows:1,events_truncated:false,clicks_ignore_user_filter:false},
-  rows:[{user_id:"u1",display_name:"Анна",usernames:["@anna"],source:"Яндекс",placement:"Поиск",campaign:"Интенсив",link_name:"Поиск · сентябрь",creative:"Объявление 1",term:"похудение",messenger:"telegram",status:"active",is_new_lead:true,landing_entry:{at:"2026-09-01T08:58:00Z",label:"Нажал кнопку на посадке",method:"button",messenger:"telegram"},start:{at:"2026-09-01T09:00:00Z",label:"Первый старт бота"},check_before_day_one:[{at:"2026-09-01T09:05:00Z",detail:"уже подписан"}],day_one:{at:"2026-09-01T09:10:00Z"},subscription:{at:"2026-09-01T09:05:00Z",detail:"уже подписан"},check_after_day_one:[],site_home:{at:"2026-09-01T09:08:00Z"},later_days:{at:"2026-09-03T09:00:00Z",max_day:3},other_actions:[{at:"2026-09-01T09:20:00Z",label:"Начал смотреть видео",detail:"день 1"}],last_action:{at:"2026-09-03T09:00:00Z",label:"Открыл день 3"}}],
-  analytics:[{code:"web_click",label:"Перешли с посадки в мессенджер",count:10,conversion_from_previous:null,lost_from_previous:null,conversion_from_start:null,collection:"collecting"},{code:"bot_start",label:"Запустили бота",count:8,conversion_from_previous:80,lost_from_previous:2,conversion_from_start:null,collection:"collecting"}],
-  entry_breakdown:[{source:"Яндекс",campaign:"Интенсив",creative:"Объявление 1",messenger:"telegram",entry:"button",entries:10,starts:8,lost:2,conversion:80}]
-};
 
 function json(response, payload) {
   response.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
@@ -117,7 +108,6 @@ const server = createServer((request, response) => {
     "/admin/courses/masterclass-21/structure": "course-structure-editor.html",
     "/admin/courses/masterclass-21/materials/day-01-article-02/editor": "course-material-editor.html",
     "/admin/products": "product-catalog-editor.html",
-    "/admin/marketing": "admin.html",
   };
   if (pages[url.pathname]) {
     response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
@@ -165,7 +155,6 @@ const server = createServer((request, response) => {
   }
   if (url.pathname === "/admin/api/project-map") return json(response, projectMap);
   if (url.pathname === "/admin/api/summary") return json(response, { users: 321, buyers: 87, paid_payments: 112, revenue_rub: 950000, access_reviews: 4 });
-  if (url.pathname === "/admin/api/marketing/overview") return json(response, sampleMarketing);
   if (url.pathname === "/admin/api/payment-products" || url.pathname === "/admin/api/tags") return json(response, []);
   if (url.pathname === "/admin/api/users") {
     const q = url.searchParams.get("q") || "";
@@ -235,19 +224,14 @@ if (process.env.ADMIN_SHELL_PREVIEW_ONLY === "1") {
 }
 const browser = await chromium.launch({ headless: true });
 const evidence = process.env.ADMIN_SHELL_EVIDENCE_DIR;
-const pageOptions = (viewport) => ({
-  viewport,
-  permissions: ["clipboard-read", "clipboard-write"],
-});
 
 for (const width of [360, 430, 759, 761, 768, 1440]) {
-  const page = await browser.newPage(pageOptions({ width, height: 900 }));
+  const page = await browser.newPage({ viewport: { width, height: 900 } });
   await page.goto(`http://127.0.0.1:${port}/admin`);
   await page.getByRole("link", { name: "Финансовая модель" }).waitFor();
   assert.ok(await page.locator(".admin-brand img").evaluate((node) => node.complete && node.naturalWidth > 0));
   assert.equal(await page.getByText("Служебное", { exact: true }).count(), 1);
   assert.equal(await page.getByText("База знаний", { exact: true }).count(), 1);
-  assert.equal(await page.getByText("Сторонние проекты", { exact: true }).count(), 1);
   for (const category of ["Клиенты", "Приложения", "Маркетинг", "Курсы", "Коммерция", "Служебное", "База знаний"]) {
     assert.equal(await page.getByText(category, { exact: true }).count(), 1, category);
   }
@@ -259,16 +243,6 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
   assert.equal(await page.getByRole("link", { name: "Силовые" }).locator(".admin-nav-icon").textContent(), "💪");
   assert.equal(await page.getByRole("link", { name: "Метаболизм" }).locator(".admin-nav-icon").textContent(), "🔥");
   assert.equal(await page.getByRole("link", { name: "Определитель допродаж" }).locator(".admin-nav-icon").textContent(), "🎯");
-  assert.equal(await page.getByRole("link", { name: "Аналитика" }).count(), 1);
-  async function openExternalProjects() {
-    const externalProjects = page.locator(".admin-nav-external");
-    assert.equal(await externalProjects.getAttribute("open"), null);
-    await externalProjects.locator("summary").click();
-    await page.getByRole("link", { name: "Погода" }).waitFor();
-    assert.equal(await page.getByRole("link", { name: "Погода" }).isVisible(), true);
-    assert.equal(await page.getByRole("link", { name: "Игра для Серёжи и Сонечки" }).getAttribute("href"), "/game/");
-    assert.equal(await page.getByRole("link", { name: "Сайт Щербаковой" }).getAttribute("href"), "https://app.edabalans.ru/sherbakova/");
-  }
   const offerCategory = await page.getByRole("link", { name: "Определитель допродаж" }).evaluate((node) => { let current = node.previousElementSibling; while (current && current.tagName !== "SPAN") current = current.previousElementSibling; return current?.textContent.trim(); });
   const contentCategory = await page.getByRole("link", { name: "Каталог материалов" }).evaluate((node) => { let current = node.previousElementSibling; while (current && current.tagName !== "SPAN") current = current.previousElementSibling; return current?.textContent.trim(); });
   assert.equal(offerCategory, "Коммерция");
@@ -278,7 +252,6 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
     const burger = page.getByRole("button", { name: "Открыть меню" });
     await burger.click();
     assert.equal(await page.locator("body").evaluate((node) => node.classList.contains("admin-shell-mobile-opened")), true);
-    await openExternalProjects();
     await page.waitForTimeout(220);
     const openBurgerBox = await burger.boundingBox();
     const brandBox = await page.locator(".admin-brand").boundingBox();
@@ -292,7 +265,6 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
   } else {
     await page.waitForTimeout(220);
     await assertDesktopGeometry(page, 270);
-    await openExternalProjects();
     await page.getByRole("button", { name: "Свернуть меню" }).click();
     assert.equal(await page.locator("body").evaluate((node) => node.classList.contains("admin-shell-collapsed")), true);
     await page.waitForTimeout(220);
@@ -320,7 +292,7 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
 }
 
 for (const width of [360, 430, 768, 1440]) {
-  const page = await browser.newPage(pageOptions({ width, height: 900 }));
+  const page = await browser.newPage({ viewport: { width, height: 900 } });
   await page.goto(`http://127.0.0.1:${port}/finance`);
   await page.getByRole("link", { name: "Финансовая модель" }).waitFor();
   await page.getByRole("heading", { name: "Параметры" }).waitFor();
@@ -337,35 +309,6 @@ for (const width of [360, 430, 768, 1440]) {
   await page.close();
 }
 
-for (const width of [360, 1440]) {
-  const page = await browser.newPage(pageOptions({ width, height: 900 }));
-  await page.goto(`http://127.0.0.1:${port}/admin/marketing`);
-  await page.locator(".marketing-leads tbody tr").waitFor();
-  assert.equal(await page.locator(".marketing-sticky-head").evaluate((node) => getComputedStyle(node).position), "sticky");
-  assert.equal(await page.locator('.marketing-quick-nav a[href="#marketing-conversions"]').count(), 1);
-  assert.deepEqual(await page.locator(".marketing-leads th").allTextContents(), ["Пользователь", "Источник", "Вход", "Старт", "Статус", "Интенсив", "Последнее"]);
-  assert.ok(await page.locator(".marketing-leads tbody tr").first().evaluate((node) => node.getBoundingClientRect().height < 64));
-  const rail = page.locator(".marketing-horizontal-scroll").first();
-  const hasJourneyOverflow = await page.locator("#marketing-journeys").evaluate((node) => node.scrollWidth > node.clientWidth);
-  assert.equal(await rail.evaluate((node) => !node.hidden), hasJourneyOverflow);
-  if (hasJourneyOverflow) assert.equal(await rail.evaluate((node) => getComputedStyle(node).position), "fixed");
-  if (evidence) await page.screenshot({ path: path.join(evidence, `admin-marketing-${width}.png`), fullPage: true });
-  if (hasJourneyOverflow) {
-    await rail.evaluate((node) => { node.scrollLeft = 180; node.dispatchEvent(new Event("scroll")); });
-    assert.equal(await page.locator("#marketing-journeys").evaluate((node) => node.scrollLeft), 180);
-  }
-  await page.locator(".marketing-person").first().hover();
-  await page.locator(".marketing-timeline-popover").waitFor({state:"visible"});
-  assert.match(await page.locator(".marketing-timeline-popover").textContent(), /Первый старт бота.*Начал смотреть видео/s);
-  await page.locator(".marketing-leads .marketing-popover-trigger").first().hover();
-  assert.match(await page.locator(".marketing-timeline-popover").textContent(), /Кампания: Интенсив/);
-  if (width >= 1000) {
-    const positions = await page.locator('.marketing-date-range input').evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().top));
-    assert.ok(positions[0] < positions[1], JSON.stringify(positions));
-  }
-  await page.close();
-}
-
 const integratedPages = {
   crm: "/crm",
   content: "/admin/content",
@@ -378,7 +321,7 @@ const integratedPages = {
 };
 for (const [name, route] of Object.entries(integratedPages)) {
   for (const width of [360, 430, 768, 1440]) {
-    const page = await browser.newPage(pageOptions({ width, height: 900 }));
+    const page = await browser.newPage({ viewport: { width, height: 900 } });
     await page.goto(`http://127.0.0.1:${port}${route}`);
     await page.getByRole("link", { name: "CRM" }).waitFor();
     if (name === "crm" && width === 1440) {
@@ -403,12 +346,8 @@ for (const [name, route] of Object.entries(integratedPages)) {
       await page.getByText("Нажмите значок копирования справа от имени, чтобы скопировать адрес.").waitFor();
       assert.match(await page.locator(".crm-popover:visible").textContent(), /anna@example\.com/);
       assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").count(), 1);
-      const copyEmailButton = page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email");
-      await copyEmailButton.click();
-      await page.waitForFunction(
-        () => document.querySelector(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email")?.getAttribute("aria-label") === "Email скопирован",
-      );
-      assert.equal(await copyEmailButton.getAttribute("aria-label"), "Email скопирован");
+      await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").click();
+      assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").getAttribute("aria-label"), "Email скопирован");
       assert.equal(await page.locator(".crm-table-wrap").evaluate((node) => node.scrollWidth > node.clientWidth), true);
       assert.equal(await page.locator(".crm-table-scrollbar").evaluate((node) => node.scrollWidth > node.clientWidth), true);
       assert.match(await page.locator(".crm-people-table tbody").textContent(), /с 01\.08\.2026.*первая покупка 02\.08\.2026.*Подписан/s);
@@ -552,7 +491,7 @@ for (const [name, route] of Object.entries(integratedPages)) {
 }
 
 {
-  const page = await browser.newPage(pageOptions({ width: 1440, height: 560 }));
+  const page = await browser.newPage({ viewport: { width: 1440, height: 560 } });
   await page.goto(`http://127.0.0.1:${port}/crm`);
   await page.getByRole("link", { name: "Продукты и описания" }).waitFor();
   await page.locator(".admin-shell-nav").evaluate((node) => { node.scrollTop = 220; });

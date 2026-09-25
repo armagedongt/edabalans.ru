@@ -24,6 +24,7 @@ from app.account_onboarding_service import (
 )
 from app.account_security import token_hash, verify_password
 from app.app_service import AppAccessError, EMAIL_RE, normalize_email, require_user_resource
+from app.access_service import course_start_is_open
 from app.config import Settings, get_settings
 from app.database import get_db
 from app.legal_service import accept_current_legal_documents
@@ -353,6 +354,9 @@ def telegram_miniapp_login(
     }[body.app_code]
     try:
         require_user_resource(db, user, resource_codes, require_legal_acceptance=False)
+        course_resource = {"strength": "ACCESS_STRENGTH", "recipes": "ACCESS_RECIPES"}.get(body.app_code)
+        if course_resource and not course_start_is_open(db, user.id, course_resource):
+            raise AppAccessError("Приложение откроется на следующем этапе вашего обучения")
     except AppAccessError as exc:
         raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
     expires_at = set_native_session(response, db, user, settings)
@@ -395,6 +399,9 @@ def max_miniapp_login(
     if resource_codes is not None:
         try:
             require_user_resource(db, user, resource_codes, require_legal_acceptance=False)
+            course_resource = {"strength": "ACCESS_STRENGTH", "recipes": "ACCESS_RECIPES"}.get(body.app_code)
+            if course_resource and not course_start_is_open(db, user.id, course_resource):
+                raise AppAccessError("Приложение откроется на следующем этапе вашего обучения")
         except AppAccessError as exc:
             raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
     expires_at = set_native_session(response, db, user, settings)

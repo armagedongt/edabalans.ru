@@ -21,6 +21,7 @@ CONFIRMED_FAMILIES_PATH = (
     ROOT / "content/author-voice/source-selection/blog-source-families.json"
 )
 AUDIT_PATH = ROOT / "work/blog-audit-20260917/catalog.json"
+SUPPLEMENTS_PATH = ROOT / "content/author-voice/source-selection/article-source-supplements.json"
 REGISTRY_PATH = (
     ROOT / "content/author-voice/source-selection/article-source-registry.json"
 )
@@ -122,6 +123,7 @@ def build() -> tuple[dict[str, Any], str]:
     manifest = load_json(MANIFEST_PATH)
     audit = load_json(AUDIT_PATH)
     confirmed = load_json(CONFIRMED_FAMILIES_PATH)
+    supplements = load_json(SUPPLEMENTS_PATH)
 
     rows = audit["articles"]
     by_key = {row["key"]: row for row in rows}
@@ -174,6 +176,10 @@ def build() -> tuple[dict[str, Any], str]:
         for key, (row, role) in sorted(matched.items()):
             assigned.add(key)
             members.append(compact_source(row, role))
+        if accepted_family:
+            for member in accepted_family.get("members", []):
+                if member.get("catalog_id") not in by_key:
+                    members.append(dict(member))
 
         provenance = article.get("source_provenance") or {}
         if not members and provenance.get("platform") == "tilda":
@@ -200,7 +206,7 @@ def build() -> tuple[dict[str, Any], str]:
                 candidate
                 for key in matched
                 for candidate in (by_key[key].get("matching_candidates") or [])
-                if candidate not in assigned and candidate not in matched
+                if candidate not in matched
             }
         )
         published_families.append(
@@ -239,6 +245,23 @@ def build() -> tuple[dict[str, Any], str]:
             }
         )
 
+    canonical_external_ids = {str(m.get("external_id")) for f in published_families for m in f["members"]}
+    for source in supplements["sources"]:
+        if source["external_id"] in canonical_external_ids:
+            continue
+        deferred_families.append({
+            "family_id": "deferred:" + source["catalog_id"], "title": source["title"],
+            "disposition": "deferred", "deferred_kind": source["deferred_kind"],
+            "reason": source["reason"], "members": [{**source, "role": "unmerged_source"}],
+            "possible_duplicate_catalog_ids": [], "family_evidence": "single_source_pending_family_review",
+        })
+    for alias in supplements["title_aliases"]:
+        family = next(f for f in published_families + deferred_families
+                      if any(m["catalog_id"] == alias["catalog_id"] for m in f["members"]))
+        family["title_aliases"] = [alias["requested_title"]]
+        if family["disposition"] == "deferred":
+            family["owner_decision"] = alias["decision"]
+            family["reason"] = alias["basis"]
     deferred_counts = Counter(item["deferred_kind"] for item in deferred_families)
     source_counts = Counter(row["source"] for row in rows)
     registry = {
@@ -247,21 +270,26 @@ def build() -> tuple[dict[str, Any], str]:
         "module_id": "platform.content",
         "scope": {
             "included": "Известные длинные авторские материалы Pikabu, Telegraph и VC.ru объёмом от 3000 знаков, а также опубликованные статьи собственного блога и подтверждённые Tilda-основы.",
-            "excluded": "Короткие Telegram-посты; их каталог ведётся отдельно.",
+            "excluded": "Редакторский разбор самостоятельных коротких постов. Telegram-анонсы, ссылки и длинные версии связываются с семьями статей в приватном производном отчёте.",
             "source_snapshot": "work/blog-audit-20260917/catalog.json",
             "source_snapshot_limits": [
                 "Свежий Telegraph getPageList без токена не подтверждён; известные страницы были проверены поштучно 17.09.2026.",
                 "Полнота текущего профиля Pikabu после даты локального корпуса не подтверждена.",
                 "В проверенном локальном корпусе источников Дзен не найдено; это пробел discovery, а не доказательство отсутствия публикаций.",
-                "Серверная синхронизация Git-слоя решений ещё не выполнена; при следующем доступном сеансе Библиотекаря реестр нужно перенести в Knowledge Library без копирования полных текстов.",
+                "Производная навигационная карта зарегистрирована в Knowledge Library; кандидаты на совпадение не превращены в подтверждённые связи семей.",
             ],
         },
         "library_sync": {
-            "status": "pending",
+            "status": "navigation_registered",
             "target": "edabalans Knowledge Library",
-            "action": "Зарегистрировать canonical/deferred routing, подтверждённые связи семей и очередь возможных дублей; полные тексты не копировать.",
+            "uri": "knowledge://resource/article-family-routing",
+            "action": "Пересобирать внутреннюю навигационную карту после изменения канонов; спорные пары оставлять в очереди сравнения. Сообщения автоматически не редактируются.",
         },
         "rules": {
+            "content_forms": "Два представления единого каталога: long_material и short_post. Площадка Telegram не определяет тип; длинная статья может целиком помещаться в сообщении.",
+            "telegram_relations": "references_article означает анонс/ссылку, previous_version — подтверждённую старую редакцию; semantic_overlap_candidate требует сравнения. Анонс не становится дублем статьи.",
+            "publication_evidence": "Отдельно учитывать наличие полного текста, анонс в канале, шаблон бота и подтверждённую отправку. Не найдено в снимке не означает никогда не публиковалось.",
+            "private_link_map": "tools/build_article_channel_links.py создаёт приватную карту сообщений, версий и будущих замен. Сообщения автоматически не редактируются; перед заменой нужны свежий текст и однозначный опубликованный канон.",
             "two_buckets": "Каждая известная статья находится либо в canonical_blog, либо в deferred. Третьего пользовательского состояния нет.",
             "blog_canon": "Опубликованная запись content/blog/manifest.json — канон семьи. Внешние публикации являются проявлениями и не перезаписывают блог автоматически.",
             "safe_family_merge": "В одну семью объединяются только подтверждённые источники. Возможное текстовое пересечение хранится как possible_duplicate_catalog_ids и требует проверки.",
@@ -270,6 +298,7 @@ def build() -> tuple[dict[str, Any], str]:
         },
         "summary": {
             "known_external_source_records": len(rows),
+            "additional_intensive_sources": len(supplements["sources"]),
             "external_sources": dict(sorted(source_counts.items())),
             "canonical_blog_families": len(published_families),
             "canonical_linked_external_records": len(assigned),
@@ -291,6 +320,7 @@ def build() -> tuple[dict[str, Any], str]:
         member["catalog_id"]
         for family in registry["deferred"]
         for member in family["members"]
+        if member["catalog_id"].startswith("A")
     }
     expected_catalog_ids = set(by_key)
     if catalog_ids_in_canon & catalog_ids_deferred:
@@ -322,9 +352,10 @@ def build() -> tuple[dict[str, Any], str]:
         f"- В блоге: **{len(published_families)}** канонические семьи.",
         f"- В известном внешнем корпусе: **{len(rows)}** проявления — Pikabu {source_counts['pikabu']}, Telegraph {source_counts['telegraph']}, VC.ru {source_counts['vc.ru']}.",
         f"- Уже привязано к канонам блога: **{len(assigned)}** внешних проявлений.",
+        f"- Дополнительно прочитано статей старого интенсива: **{len(supplements['sources'])}**; подтверждённые источники канона не создают вторую семью.",
         f"- Отложено как отдельные безопасные семьи до подтверждения дублей: **{len(deferred_families)}**.",
         f"- Возможных пар пересечения: **{len(audit.get('version_pairs') or [])}**; это очередь проверки, а не автоматически склеенные дубли.",
-        "- Telegram-посты в этот реестр не входят.",
+        "- Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).",
         "",
         "## Канон в блоге",
         "",
@@ -375,7 +406,7 @@ def build() -> tuple[dict[str, Any], str]:
         "## Непокрытые источники и синхронизация",
         "",
         "- В текущем локальном корпусе нет источников Дзен. Нужен отдельный discovery по аккаунту/экспорту, если такие публикации существуют.",
-        "- Серверная синхронизация Git-слоя решений ещё не выполнена. При следующем доступном сеансе Библиотекаря нужно зарегистрировать маршруты, подтверждённые семейные связи и очередь возможных дублей без копирования полных текстов.",
+        "- Производная карта зарегистрирована в серверном Библиотекаре: `knowledge://resource/article-family-routing`. Она хранит маршруты, ссылки и очередь сравнения; неподтверждённые пары не повышены до доказанных дублей.",
         "- Telegraph: известные 211 страниц были перечитаны 17.09.2026, но свежий список аккаунта без токена не подтверждён.",
         "- Pikabu: использованы серверная библиотека и локальные полные корпуса; публикации после даты снимка требуют следующего refresh.",
         "",

@@ -215,8 +215,6 @@ button { cursor: pointer; }
 .crm-access-heading { margin:10px 0 6px; color:var(--muted); font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
 .crm-access-row { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 10px; border:1px solid var(--line); border-radius:9px; background:#fafdff; }
 .crm-access-row > div { display:flex; align-items:center; gap:7px; }
-.crm-access-row > div:first-child { flex-wrap:wrap; min-width:0; }
-.crm-access-row .crm-check { align-items:center; margin-left:2px; padding:4px 7px; }
 .crm-access-row span { color:var(--muted); font-size:12px; }
 .crm-access-row .crm-btn { min-height:29px; }
 .crm-inline-personal { margin-top:12px; padding-top:11px; border-top:1px solid var(--line); }
@@ -225,6 +223,42 @@ button { cursor: pointer; }
 .crm-inline-personal > summary::after { content:"＋"; margin-left:auto; color:var(--crm-blue-deep); font-size:15px; }
 .crm-inline-personal[open] > summary::after { content:"−"; }
 .crm-inline-personal[open] > :not(summary) { margin-top:11px; }
+.crm-course-access-card { overflow:visible; }
+.crm-course-access-card .crm-card-title { align-items:baseline; }
+.crm-access-matrix { width:100%; min-width:0; border:1px solid var(--line); border-radius:10px; overflow:visible; }
+.crm-access-matrix-head,.crm-access-matrix-row { display:grid; grid-template-columns:minmax(105px,1fr) 68px 78px 88px 84px; align-items:center; column-gap:6px; }
+.crm-access-matrix-head { min-height:44px; padding:0 8px; color:var(--muted); background:#f7fbfe; font-size:10px; font-weight:700; line-height:1.15; }
+.crm-access-matrix-head span:not(:first-child) { text-align:center; }
+.crm-access-matrix-row { position:relative; min-height:48px; padding:7px 8px; border-top:1px solid var(--line); }
+.crm-access-matrix-row > strong { min-width:0; font-size:13px; }
+.crm-access-matrix-cell { display:grid; place-items:center; width:100%; min-height:28px; border-radius:7px; font-size:14px; font-weight:800; }
+.crm-access-matrix-cell.is-empty { color:#a3acb4; background:#f1f4f5; }
+.crm-access-matrix-cell.is-right { color:#8a4d16; background:#fff1df; }
+.crm-access-matrix-cell.is-start { color:var(--crm-blue-deep); background:var(--crm-blue-soft); }
+.crm-access-matrix-cell.is-all { color:var(--crm-success); background:var(--crm-success-soft); }
+.crm-personal-access-matrix .crm-access-matrix-cell { cursor:pointer; }
+.crm-personal-access-matrix .crm-access-matrix-cell input { position:absolute; inline-size:1px; block-size:1px; opacity:0; pointer-events:none; }
+.crm-personal-access-matrix .crm-access-matrix-cell span { opacity:0; }
+.crm-personal-access-matrix .crm-access-matrix-cell:has(input:checked) span { opacity:1; }
+.crm-personal-access-matrix .crm-access-matrix-cell:has(input:disabled) { cursor:not-allowed; filter:saturate(.25); opacity:.52; }
+.crm-new-account .crm-access-matrix-head,.crm-new-account .crm-access-matrix-row { grid-template-columns:minmax(150px,1fr) 68px 78px 88px; }
+.crm-course-access-control { position:relative; }
+.crm-course-access-control summary { min-width:84px; padding:6px 5px; border:1px solid rgba(17,142,216,.34); border-radius:7px; color:var(--crm-blue-deep); background:#fff; cursor:pointer; font-size:11px; font-weight:700; list-style:none; text-align:center; }
+.crm-course-access-control summary::-webkit-details-marker { display:none; }
+.crm-course-access-control[open] summary { border-color:var(--crm-blue); background:var(--crm-blue-soft); }
+.crm-course-access-popover { grid-column:1 / -1; display:grid; gap:6px; margin-top:2px; padding:10px; border:1px solid rgba(17,142,216,.25); border-radius:10px; background:#fff; box-shadow:0 12px 26px -22px rgba(20,53,74,.55); }
+.crm-course-check { display:flex; gap:8px; align-items:flex-start; padding:8px; border-radius:8px; background:#f7fbfe; font-size:12px; }
+.crm-course-check input { width:16px; height:16px; margin:1px 0 0; accent-color:var(--crm-blue); }
+.crm-course-check span { display:grid; gap:2px; }
+.crm-course-check small { color:var(--muted); font-size:11px; line-height:1.35; }
+.crm-access-applications { margin-top:10px; padding-top:10px; border-top:1px solid var(--line); }
+.crm-access-applications > summary { display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--text); font-size:12px; font-weight:700; list-style:none; }
+.crm-access-applications > summary::-webkit-details-marker { display:none; }
+.crm-access-applications > summary::after { content:"＋"; margin-left:auto; color:var(--crm-blue-deep); font-size:15px; }
+.crm-access-applications[open] > summary::after { content:"−"; }
+.crm-access-applications > summary span { color:var(--muted); font-weight:400; }
+.crm-access-app-list { display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; }
+.crm-access-app-list span { padding:6px 8px; border-radius:7px; color:var(--crm-violet); background:var(--crm-violet-soft); font-size:12px; font-weight:700; }
 .crm-two { display: grid; grid-template-columns: 1fr auto; gap: 7px; }
 .crm-form { display: grid; gap: 8px; }
 .crm-resource-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
@@ -386,5 +420,6 @@ button { cursor: pointer; }
   .crm-purchases-card .crm-tags { justify-content:flex-start; }
   .crm-access-row { align-items:flex-start; flex-direction:column; }
   .crm-access-row > div:last-child { width:100%; }
-  .crm-access-row .crm-check { margin-left:0; }
+  .crm-access-matrix { overflow-x:auto; }
+  .crm-access-matrix-head,.crm-access-matrix-row { min-width:440px; }
 }

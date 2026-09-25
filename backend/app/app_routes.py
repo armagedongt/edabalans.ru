@@ -34,6 +34,7 @@ from app.app_service import (
     resolve_user_for_resource,
     utc_iso,
 )
+from app.access_service import course_start_is_open
 from app.dqs_access_service import require_dqs_revealed
 from app.auth import admin_identity, require_admin, security, session_admin
 from app.database import get_db
@@ -1512,6 +1513,8 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
                 raise HTTPException(status_code=404, detail="user not found")
         else:
             user = require_user_resource(db, require_native_user(request, db), "strength")
+            if not course_start_is_open(db, user.id, "ACCESS_STRENGTH"):
+                raise AppAccessError("Курс тренировок откроется после Мастер-класса")
         state = db.scalar(select(StrengthState).where(StrengthState.user_id == user.id))
         if not state:
             if admin_username:

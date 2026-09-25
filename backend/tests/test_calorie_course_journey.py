@@ -477,6 +477,13 @@ def test_manual_full_unlock_bypasses_course_prerequisite_and_internal_sequence()
     assert linked.json()["action"] == "open"
     assert linked.json()["params"]["calories_stage"] == 3
 
+    paced = client.put(
+        f"/admin/api/users/{user_id}/course-policies/ACCESS_CALORIES",
+        json={"unlock_mode": "paced"},
+    )
+    assert paced.status_code == 200
+    assert client.get("/api/calories/course?email=calories@example.test").status_code == 403
+
 
 def test_resource_link_discovers_newly_published_material_from_active_structure():
     client, factory = setup()

@@ -5,7 +5,8 @@
   const state = {
     view: "users", query: "", summary: null, users: [], payments: [], tags: [], offset: 0,
     paymentOffset: 0, paymentSnapshotAt: null, userProducts: null, userTags: null, userRequest: null, userDetails: new Map(),
-    paymentFilters: { q: "", product_code: "", date_from: "", date_to: "", amount_kind: "all" }, userFilters: { buyer_kind: "all", product_code: "", first_seen_from: "", first_seen_to: "", masterclass_access: "", accompaniment_status: "all", tag_id: "" }
+    paymentFilters: { q: "", product_code: "", date_from: "", date_to: "", amount_kind: "all" }, userFilters: { buyer_kind: "all", product_code: "", first_seen_from: "", first_seen_to: "", masterclass_access: "", accompaniment_status: "all", tag_id: "" },
+    courseAccessPreview: null, addManualAccountOpen: false, addPaidOfferOpen: false
   };
   const pageSize = 100;
   const paymentPageSize = 100;
@@ -74,7 +75,7 @@
             <button class="crm-tab ${active === "users" || active === "buyers" ? "active" : ""}" data-view="users">Люди</button>
             <button class="crm-tab ${active === "payments" ? "active" : ""}" data-view="payments">Оплаты</button>
             <button class="crm-tab ${active === "tags" ? "active" : ""}" data-view="tags">Теги</button>
-          </div>
+          </div>${active === "users" ? '<div class="crm-head-actions"><button class="crm-btn alt small" id="add-paid-offer">Персональное предложение</button><button class="crm-btn small" id="add-manual-account">Добавить человека</button></div>' : ""}
         </div>
       </div>`;
   }
@@ -248,7 +249,7 @@
     }
     if (kind === "messengers") {
       const messengers = user.messengers || [];
-      if (!messengers.length) return '<div class="crm-popover-empty">Мессенджер не подключён</div>';
+      if (!messengers.length) return '<div class="crm-popover-empty">Мессенджер не привязан</div>';
       return `<div class="crm-popover-title">Мессенджеры</div>${messengers.map((item) => `<div class="crm-popover-item"><strong>${messengerIcon(item.platform)} ${esc(item.platform === "telegram" ? "Telegram" : item.platform === "max" ? "MAX" : item.platform)}</strong><span>${item.username ? `@${esc(item.username)} · ` : ""}в боте ${botAge(item.main_scenario_seen_at || item.first_seen_at)} · ${channelState({ messengers: [item] }).label.toLowerCase()}</span></div>`).join("")}`;
     }
     if (kind === "notes") {
@@ -327,6 +328,10 @@
         load();
       });
     });
+    const addManual = document.getElementById("add-manual-account");
+    if (addManual) addManual.addEventListener("click", () => { state.addManualAccountOpen = !state.addManualAccountOpen; renderUsers(false).catch(showError); });
+    const addPaidOffer = document.getElementById("add-paid-offer");
+    if (addPaidOffer) addPaidOffer.addEventListener("click", () => { state.addPaidOfferOpen = !state.addPaidOfferOpen; renderUsers(false).catch(showError); });
   }
 
   function peopleMode() {
@@ -446,6 +451,10 @@
     const tags = state.userTags || [];
     const filters = state.userFilters;
     root.innerHTML = top("users") + `
+      ${state.addPaidOfferOpen ? `<section class="crm-card crm-new-account"><div class="crm-card-title">Персональное платное предложение</div><div class="crm-card-sub">Карточка не создаётся до оплаты. После оплаты доступы добавятся к существующему ЛК либо будет создан новый и пароль уйдёт на эту почту.</div><form class="crm-form" id="paid-offer-form"><label><div class="crm-k">EMAIL ПОЛУЧАТЕЛЯ</div><input class="crm-input" id="paid-offer-email" type="email" required placeholder="name@example.com"></label><div class="crm-access-matrix crm-personal-access-matrix" role="table" aria-label="Что откроется после оплаты"><div class="crm-access-matrix-head" role="row"><span>Продукт</span><span>Право</span><span>Старт</span><span>Все уроки</span></div>${[
+        ["ACCESS_MASTERCLASS", "Мастер-класс"], ["ACCESS_RECIPES", "Система рецептов"], ["ACCESS_CALORIES", "Калорийный курс"], ["ACCESS_STRENGTH", "Курс тренировок"]
+      ].map(([code, name]) => `<div class="crm-access-matrix-row" data-paid-offer-course="${code}"><strong>${name}</strong><label class="crm-access-matrix-cell is-right"><input type="checkbox" data-paid-offer-setting="entitled"><span>✓</span></label><label class="crm-access-matrix-cell is-start"><input type="checkbox" data-paid-offer-setting="start-open" disabled><span>✓</span></label><label class="crm-access-matrix-cell is-all"><input type="checkbox" data-paid-offer-setting="all-lessons-open" disabled><span>✓</span></label></div>`).join("")}</div><div class="crm-two-fields"><label><div class="crm-k">ОБЫЧНАЯ СТОИМОСТЬ</div><input class="crm-input" id="paid-offer-standard" type="number" min="0" step="1" placeholder="например 10800"></label><label><div class="crm-k">ИТОГО К ОПЛАТЕ</div><input class="crm-input" id="paid-offer-final" type="number" min="1" step="1" required placeholder="например 6900"></label></div><label><div class="crm-k">ССЫЛКА ДЕЙСТВУЕТ, ДНЕЙ</div><input class="crm-input" id="paid-offer-days" type="number" min="1" max="365" value="14"></label><button class="crm-btn small">Сформировать ссылку и сообщение</button></form><div id="paid-offer-result"></div><div class="crm-card-sub" style="margin-top:12px">Активные предложения можно отменить; саму секретную ссылку после закрытия окна безопасно не восстанавливаем — вместо этого создайте новую.</div><div id="paid-offer-active"></div></section>` : ""}
+      ${state.addManualAccountOpen ? `<section class="crm-card crm-new-account"><div class="crm-card-title">Новый человек</div><div class="crm-card-sub">Создастся пустая карточка без покупок и доступов. Пароль появится здесь и будет поставлен в очередь на отправку по указанной почте.</div><form class="crm-two-fields" id="manual-account-form"><label><div class="crm-k">EMAIL</div><input class="crm-input" id="manual-account-email" type="email" required placeholder="name@example.com"></label><label><div class="crm-k">ИМЯ, ЕСЛИ ИЗВЕСТНО</div><input class="crm-input" id="manual-account-name" maxlength="255"></label><button class="crm-btn small">Создать и отправить пароль</button></form><div id="manual-account-result"></div></section>` : ""}
       <div class="crm-toolbar">
         <input class="crm-search" id="crm-search" placeholder="Поиск по имени, email или Telegram" value="${esc(state.query)}">
         <button class="crm-btn alt" id="crm-refresh">Обновить</button>
@@ -717,13 +726,95 @@
     tableWrap.addEventListener("scroll", () => sync(tableWrap, scrollbar), {passive:true});
   }
 
+  function previewCourseAccesses(userId, courses) {
+    if (state.courseAccessPreview && state.courseAccessPreview.userId === userId) return state.courseAccessPreview;
+    state.courseAccessPreview = {
+      userId,
+      openCode: "ACCESS_CALORIES",
+      items: (courses || []).map((item) => ({ code:item.resource_code, name:item.name, entitled:item.entitled, startOpen:item.start_open, allLessonsOpen:item.all_lessons_open, available:item.available }))
+    };
+    return state.courseAccessPreview;
+  }
+
+  function accessMatrixCell(value, tone, title) {
+    return `<span class="crm-access-matrix-cell ${value ? `is-${tone}` : "is-empty"}" title="${esc(title)}">${value ? "✓" : "—"}</span>`;
+  }
+
+  function courseAccessPreview(userId, courses) {
+    const preview = previewCourseAccesses(userId, courses);
+    const rows = preview.items.map((item) => `
+      <div class="crm-access-matrix-row" data-course-code="${esc(item.code)}">
+        <strong>${esc(item.name)}</strong>
+        ${accessMatrixCell(item.entitled, "right", "Право на курс")}
+        ${accessMatrixCell(item.startOpen, "start", "Открыт для старта")}
+        ${accessMatrixCell(item.allLessonsOpen, "all", "Все уроки открыты")}
+        <details class="crm-course-access-control" ${preview.openCode === item.code ? "open" : ""}>
+          <summary aria-label="Настроить доступ к курсу ${esc(item.name)}">Настроить</summary>
+        </details>
+        ${preview.openCode === item.code ? `<div class="crm-course-access-popover">
+            <label class="crm-course-check"><input type="checkbox" data-course-setting="entitled" ${item.entitled ? "checked" : ""}><span><strong>Право на курс</strong><small>Выдано после покупки либо вручную.</small></span></label>
+            <label class="crm-course-check"><input type="checkbox" data-course-setting="start-open" ${item.startOpen ? "checked" : ""} ${item.entitled ? "" : "disabled"}><span><strong>Открыт для старта</strong><small>Ученик может начать курс сейчас.</small></span></label>
+            <label class="crm-course-check"><input type="checkbox" data-course-setting="all-lessons-open" ${item.allLessonsOpen ? "checked" : ""} ${item.entitled && item.startOpen ? "" : "disabled"}><span><strong>Все уроки открыты</strong><small>Иначе действует обычный порядок открытия.</small></span></label>
+          </div>` : ""}
+      </div>`).join("");
+    return `<section class="crm-card crm-course-access-card" id="course-access-preview">
+      <div class="crm-card-title">Курсы и доступы</div>
+      <div class="crm-access-matrix" role="table" aria-label="Настройка курсовых доступов">
+        <div class="crm-access-matrix-head" role="row"><span>Курс</span><span>Право на курс</span><span>Открыт для старта</span><span>Все уроки открыты</span><span></span></div>
+        ${rows}
+      </div>
+      <details class="crm-access-applications">
+        <summary>Приложения <span>отдельные права</span></summary>
+        <div class="crm-access-app-list"><span>DQS</span><span>Дневник силовых тренировок</span><span>Калькулятор метаболизма</span></div>
+      </details>
+    </section>`;
+  }
+
+  function bindCourseAccessPreview(userId) {
+    const previewElement = document.getElementById("course-access-preview");
+    if (!previewElement) return;
+    previewElement.querySelectorAll(".crm-course-access-control").forEach((details) => {
+      details.addEventListener("toggle", () => {
+        const preview = previewCourseAccesses(userId);
+        preview.openCode = details.open ? details.closest("[data-course-code]").dataset.courseCode : null;
+        previewElement.outerHTML = courseAccessPreview(userId);
+        bindCourseAccessPreview(userId);
+      });
+    });
+    previewElement.querySelectorAll("[data-course-setting]").forEach((input) => {
+      input.addEventListener("change", async () => {
+        const preview = previewCourseAccesses(userId);
+        const code = input.closest("[data-course-code]").dataset.courseCode;
+        const item = preview.items.find((course) => course.code === code);
+        if (!item) return;
+        preview.openCode = code;
+        if (input.dataset.courseSetting === "entitled") {
+          item.entitled = input.checked;
+          if (!item.entitled) { item.startOpen = false; item.allLessonsOpen = false; }
+        }
+        if (input.dataset.courseSetting === "start-open") {
+          item.startOpen = input.checked;
+          if (!item.startOpen) item.allLessonsOpen = false;
+        }
+        if (input.dataset.courseSetting === "all-lessons-open") item.allLessonsOpen = input.checked;
+        try {
+          const result = await api(`/admin/api/users/${userId}/course-accesses/${code}`, {method:"PUT", body:JSON.stringify({entitled:item.entitled,start_open:item.startOpen,all_lessons_open:item.allLessonsOpen})});
+          preview.items = result.courses.map((course) => ({code:course.resource_code,name:course.name,entitled:course.entitled,startOpen:course.start_open,allLessonsOpen:course.all_lessons_open,available:course.available}));
+        } catch (error) { alert(error.message); }
+        previewElement.outerHTML = courseAccessPreview(userId);
+        bindCourseAccessPreview(userId);
+      });
+    });
+  }
+
   async function openUser(id) {
     root.innerHTML = top("") + '<div class="crm-loading">Открываю карточку…</div>';
     const user = await loadUserDetail(id);
-    const resources = await api("/admin/api/resources");
-    const [moduleResult, personalLinkResult] = await Promise.all([
+    state.courseAccessPreview = null;
+    const [moduleResult, personalLinkResult, courseResult] = await Promise.all([
       api(`/admin/api/users/${id}/modules`),
-      api(`/admin/api/users/${id}/personal-access-links`)
+      api(`/admin/api/users/${id}/personal-access-links`),
+      api(`/admin/api/users/${id}/course-accesses`)
     ]);
     const modules = moduleResult.modules;
     const personalLinks = personalLinkResult.links || [];
@@ -771,20 +862,18 @@
       </section>
       <div class="crm-profile-main-grid">
         <div class="crm-profile-stack">
-        <section class="crm-card crm-purchases-card"><div class="crm-card-title">Покупки и тарифы</div>
+        ${courseAccessPreview(id, courseResult.courses)}
+        <section class="crm-card crm-purchases-card"><div class="crm-card-title">История покупок</div>
           <div class="crm-purchase-grid">${purchaseHistory.map((item) => purchaseCard(item, user)).join("") || '<div class="crm-empty">Подтверждённых покупок пока нет</div>'}</div>
-          <details class="crm-inline-access" open><summary><strong>Управление доступами</strong><span>${accessByCode.filter((item)=>!item.paused_at).length} активных</span></summary>
-            <div class="crm-access-heading">Текущие доступы</div>
-            <div class="crm-access-list">${accessByCode.map((item)=>`<div class="crm-access-row"><div><strong>${esc(item.name)}</strong><span>${item.paused_at ? "Приостановлен" : "Действует"}</span>${item.course_policy_supported ? `<label class="crm-check"><input class="course-unlock-policy" data-code="${esc(item.code)}" type="checkbox" ${item.unlock_mode === "fully_unlocked" ? "checked" : ""} ${item.paused_at ? "disabled" : ""}><span>Открыть весь курс сразу</span></label>` : ""}</div><div><button class="crm-btn alt small ${item.paused_at ? "resume-access" : "pause-access"}" data-code="${esc(item.code)}" type="button">${item.paused_at ? "Возобновить" : "Приостановить"}</button><button class="crm-btn alt small revoke-access" data-code="${esc(item.code)}" type="button">Отозвать</button></div></div>`).join("") || '<div class="crm-empty">Доступов нет</div>'}</div>
-            <div class="crm-access-heading">Выдать доступ</div>
-            <form class="crm-two" id="grant-form"><select class="crm-input" id="resource-code"><option value="" selected disabled>Выберите доступ</option>${resources.map((r)=>`<option value="${esc(r.code)}">${esc(r.name)}</option>`).join("")}</select><button class="crm-btn small">Выдать</button></form>
-            <div class="crm-access-explainer">Приостановить — временно закрыть, сохранив запись. Возобновить — вернуть её. Отозвать — окончательно закрыть текущую выдачу.</div>
-          </details>
-          <details class="crm-inline-personal"><summary><strong>Персональная ссылка на доступ</strong></summary>
+          <details class="crm-inline-personal"><summary><strong>Ссылка для текущего ЛК</strong></summary>
             <form class="crm-form" id="personal-link-form">
-              <div class="crm-resource-grid">${resources.map((r)=>`<label><input type="checkbox" name="personal-resource" value="${esc(r.code)}"> <span>${esc(r.name)}</span></label>`).join("")}</div>
+              <div class="crm-card-sub">Для каждого выбранного курса задайте право, старт и порядок открытия материалов.</div>
+              <div class="crm-access-matrix crm-personal-access-matrix" role="table" aria-label="Настройка доступа в персональной ссылке">
+                <div class="crm-access-matrix-head" role="row"><span>Курс</span><span>Право на курс</span><span>Открыт для старта</span><span>Все уроки открыты</span><span></span></div>
+                ${courseResult.courses.map((course) => `<div class="crm-access-matrix-row" data-personal-course="${esc(course.resource_code)}"><strong>${esc(course.name)}</strong><label class="crm-access-matrix-cell is-right"><input type="checkbox" data-personal-setting="entitled"><span>✓</span></label><label class="crm-access-matrix-cell is-start"><input type="checkbox" data-personal-setting="start-open" disabled><span>✓</span></label><label class="crm-access-matrix-cell is-all"><input type="checkbox" data-personal-setting="all-lessons-open" disabled><span>✓</span></label><span></span></div>`).join("")}
+              </div>
               <div class="crm-two-fields"><label><div class="crm-k">ОБЫЧНАЯ СТОИМОСТЬ</div><input class="crm-input" id="personal-standard" type="number" min="0" step="1" placeholder="например 10800"></label><label><div class="crm-k">ИТОГО</div><input class="crm-input" id="personal-final" type="number" min="0" step="1" value="0"></label></div>
-              <div class="crm-two-fields"><label><div class="crm-k">ССЫЛКА ДЕЙСТВУЕТ, ДНЕЙ</div><input class="crm-input" id="personal-days" type="number" min="1" max="365" value="14"></label><label class="crm-check"><input id="personal-unlock" type="checkbox"><span>Открыть все дни выбранных курсов сразу</span></label></div>
+              <label><div class="crm-k">ССЫЛКА ДЕЙСТВУЕТ, ДНЕЙ</div><input class="crm-input" id="personal-days" type="number" min="1" max="365" value="14"></label>
               <button class="crm-btn small">Сформировать ссылку и сообщение</button>
             </form>
             <div id="personal-link-result"></div>
@@ -813,7 +902,54 @@
       </div>`;
 
     bindTop();
+    const paidOfferForm = document.getElementById("paid-offer-form");
+    if (paidOfferForm) {
+      const activeOffers = document.getElementById("paid-offer-active");
+      const loadActiveOffers = async () => {
+        try {
+          const result = await api("/admin/api/personal-access-links");
+          const rows = result.links || [];
+          activeOffers.innerHTML = rows.length ? rows.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.email)} · ${esc((item.resources || []).join(", "))}</span><strong>${esc(String(item.final_amount))} ₽</strong></div><div class="crm-row-meta">до ${esc((item.expires_at || "").slice(0, 10))}${item.checkout_started ? " · оплата начата" : ""}</div><button class="crm-btn alt small" type="button" data-cancel-paid-offer="${esc(item.id)}">Отменить</button></div>`).join("") : "";
+          activeOffers.querySelectorAll("[data-cancel-paid-offer]").forEach((button) => button.addEventListener("click", async () => {
+            if (!window.confirm("Отменить это предложение? Уже открытая ссылка больше не оплатится.")) return;
+            await api(`/admin/api/personal-access-links/${button.dataset.cancelPaidOffer}/cancel`, {method:"POST"});
+            await loadActiveOffers();
+          }));
+        } catch (_) { activeOffers.innerHTML = ""; }
+      };
+      void loadActiveOffers();
+      const synchronize = (input) => {
+        const row = input.closest("[data-paid-offer-course]");
+        const right = row.querySelector('[data-paid-offer-setting="entitled"]');
+        const start = row.querySelector('[data-paid-offer-setting="start-open"]');
+        const all = row.querySelector('[data-paid-offer-setting="all-lessons-open"]');
+        if (input.dataset.paidOfferSetting === "entitled" && !right.checked) { start.checked = false; all.checked = false; }
+        if (input.dataset.paidOfferSetting === "start-open" && !start.checked) all.checked = false;
+        start.disabled = !right.checked; all.disabled = !right.checked || !start.checked;
+      };
+      root.querySelectorAll("[data-paid-offer-setting]").forEach((input) => input.addEventListener("change", () => synchronize(input)));
+      paidOfferForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const resourceSettings = Array.from(root.querySelectorAll("[data-paid-offer-course]")).map((row) => ({ resource_code:row.dataset.paidOfferCourse, start_open:row.querySelector('[data-paid-offer-setting="start-open"]').checked, all_lessons_open:row.querySelector('[data-paid-offer-setting="all-lessons-open"]').checked, entitled:row.querySelector('[data-paid-offer-setting="entitled"]').checked })).filter((item) => item.entitled);
+        if (!resourceSettings.length) { document.getElementById("paid-offer-result").innerHTML = '<div class="crm-review-banner">Выберите хотя бы один продукт.</div>'; return; }
+        const standardValue = document.getElementById("paid-offer-standard").value;
+        const result = await api("/admin/api/personal-access-links", {method:"POST", body:JSON.stringify({email:document.getElementById("paid-offer-email").value, resource_codes:resourceSettings.map((item)=>item.resource_code), resource_settings:resourceSettings.map(({entitled,...item})=>item), standard_amount:standardValue===""?null:Number(standardValue), final_amount:Number(document.getElementById("paid-offer-final").value), expires_days:Number(document.getElementById("paid-offer-days").value||14)})});
+        document.getElementById("paid-offer-result").innerHTML = `<textarea class="crm-textarea" id="paid-offer-ready-text" readonly>${esc(result.telegram_text)}</textarea><button class="crm-btn small" id="copy-paid-offer-text" type="button">Скопировать сообщение</button>`;
+        document.getElementById("copy-paid-offer-text").onclick = async () => { await copyText(result.telegram_text); document.getElementById("copy-paid-offer-text").textContent = "Скопировано"; };
+        await loadActiveOffers();
+      });
+    }
+    const manualAccountForm = document.getElementById("manual-account-form");
+    if (manualAccountForm) manualAccountForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const result = await api("/admin/api/users", { method:"POST", body:JSON.stringify({ email:document.getElementById("manual-account-email").value, display_name:document.getElementById("manual-account-name").value }) });
+      document.getElementById("manual-account-result").innerHTML = `<div class="crm-review-banner">Карточка создана, письмо поставлено в очередь. Пароль: <code>${esc(result.password)}</code> <button class="crm-btn small" id="manual-password-copy" type="button">Скопировать</button></div>`;
+      document.getElementById("manual-password-copy").addEventListener("click", async () => { await copyText(result.password); document.getElementById("manual-password-copy").textContent = "Скопировано"; });
+      state.userDetails.delete(result.user_id);
+      await loadUserRows();
+    });
     bindUserPreviews();
+    bindCourseAccessPreview(id);
     document.getElementById("crm-back").addEventListener("click", () => showView(state.view));
     document.getElementById("name-form").addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -831,20 +967,28 @@
       const result = await api(`/admin/api/users/${id}/credential/reset`, {method:"POST"});
       document.getElementById("account-password-value").textContent = result.password;
     });
-    document.getElementById("grant-form").addEventListener("submit", async (event) => { event.preventDefault(); await api(`/admin/api/users/${id}/accesses`, {method:"POST", body:JSON.stringify({resource_code:document.getElementById("resource-code").value})}); await refreshUser(id); });
+    root.querySelectorAll("[data-personal-setting]").forEach((input) => input.addEventListener("change", () => {
+      const row = input.closest("[data-personal-course]");
+      const right = row.querySelector('[data-personal-setting="entitled"]');
+      const start = row.querySelector('[data-personal-setting="start-open"]');
+      const all = row.querySelector('[data-personal-setting="all-lessons-open"]');
+      if (input.dataset.personalSetting === "entitled" && !right.checked) { start.checked = false; all.checked = false; }
+      if (input.dataset.personalSetting === "start-open" && !start.checked) all.checked = false;
+      start.disabled = !right.checked; all.disabled = !right.checked || !start.checked;
+    }));
     document.getElementById("personal-link-form").addEventListener("submit", async (event) => {
       event.preventDefault();
-      const resourceCodes = Array.from(root.querySelectorAll('input[name="personal-resource"]:checked')).map((input) => input.value);
+      const resourceSettings = Array.from(root.querySelectorAll("[data-personal-course]")).map((row) => ({ resource_code:row.dataset.personalCourse, start_open:row.querySelector('[data-personal-setting="start-open"]').checked, all_lessons_open:row.querySelector('[data-personal-setting="all-lessons-open"]').checked, entitled:row.querySelector('[data-personal-setting="entitled"]').checked })).filter((item) => item.entitled);
+      const resourceCodes = resourceSettings.map((item) => item.resource_code);
       if (!resourceCodes.length) { document.getElementById("personal-link-result").innerHTML = '<div class="crm-review-banner">Выберите хотя бы один продукт.</div>'; return; }
       const standardValue = document.getElementById("personal-standard").value;
-      const result = await api(`/admin/api/users/${id}/personal-access-links`, {method:"POST",body:JSON.stringify({resource_codes:resourceCodes,standard_amount:standardValue===""?null:Number(standardValue),final_amount:Number(document.getElementById("personal-final").value||0),expires_days:Number(document.getElementById("personal-days").value||14),fully_unlocked:document.getElementById("personal-unlock").checked})});
+      const result = await api(`/admin/api/users/${id}/personal-access-links`, {method:"POST",body:JSON.stringify({resource_codes:resourceCodes,resource_settings:resourceSettings.map(({entitled,...item})=>item),standard_amount:standardValue===""?null:Number(standardValue),final_amount:Number(document.getElementById("personal-final").value||0),expires_days:Number(document.getElementById("personal-days").value||14)})});
       document.getElementById("personal-link-result").innerHTML = `<textarea class="crm-textarea" id="personal-ready-text" readonly>${esc(result.telegram_text)}</textarea><button class="crm-btn small" id="copy-personal-text" type="button">Скопировать сообщение</button>`;
       document.getElementById("copy-personal-text").onclick = async () => { await navigator.clipboard.writeText(result.telegram_text); document.getElementById("copy-personal-text").textContent = "Скопировано"; };
     });
     root.querySelectorAll(".revoke-access").forEach((button)=>button.addEventListener("click", async()=>{ if (!window.confirm("Закрыть этот доступ?")) return; await api(`/admin/api/users/${id}/accesses/${button.dataset.code}`, {method:"DELETE"}); await refreshUser(id); }));
     root.querySelectorAll(".pause-access").forEach((button)=>button.addEventListener("click", async()=>{ await api(`/admin/api/users/${id}/accesses/${button.dataset.code}/pause`, {method:"POST"}); await refreshUser(id); }));
     root.querySelectorAll(".resume-access").forEach((button)=>button.addEventListener("click", async()=>{ await api(`/admin/api/users/${id}/accesses/${button.dataset.code}/resume`, {method:"POST"}); await refreshUser(id); }));
-    root.querySelectorAll(".course-unlock-policy").forEach((input)=>input.addEventListener("change", async()=>{ input.disabled=true; try { await api(`/admin/api/users/${id}/course-policies/${input.dataset.code}`, {method:"PUT", body:JSON.stringify({unlock_mode:input.checked?"fully_unlocked":"paced"})}); await refreshUser(id); } catch (error) { input.checked=!input.checked; input.disabled=false; throw error; } }));
     document.getElementById("tag-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       const name = document.getElementById("tag-name").value.trim();

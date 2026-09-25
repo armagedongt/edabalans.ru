@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from app.models import (
     PersonalAccessLink,
     Resource,
+    MasterclassEvent,
     User,
     UserAccess,
     UserCoursePolicy,
@@ -45,6 +46,52 @@ def user_for_email(db: Session, email: str | None) -> User | None:
 
 def review_blocks_access(user: User) -> bool:
     return user.access_review_status in BLOCKING_REVIEW_STATUSES
+
+
+def course_start_is_open(db: Session, user_id: uuid.UUID, resource_code: str) -> bool:
+    """Return the explicit start gate for a course right.
+
+    Older rows have no policy (or no start_mode) and keep their historical
+    behaviour: an active right opens the course. A block is therefore only
+    introduced by a deliberate CRM or personal-link decision.
+    """
+    mode = db.scalar(
+        select(UserCoursePolicy.start_mode)
+        .join(Resource, Resource.id == UserCoursePolicy.resource_id)
+        .where(
+            UserCoursePolicy.user_id == user_id,
+            Resource.code == resource_code,
+        )
+        .limit(1)
+    )
+    if mode is None:
+        # Rights issued before the three-state policy existed retain their
+        # historical behaviour until an administrator explicitly configures
+        # the course.
+        return True
+    if mode == "blocked":
+        return False
+    if mode == "open":
+        return True
+    # In the ordinary mode a purchase grants the right but does not bypass
+    # the product's own start condition. The event is already the canonical
+    # fact used by the relevant course runtime; CRM only adds an explicit
+    # override on top of it.
+    if resource_code in {"ACCESS_CALORIES", "ACCESS_STRENGTH"}:
+        return db.scalar(
+            select(MasterclassEvent.id).where(
+                MasterclassEvent.user_id == user_id,
+                MasterclassEvent.event_type == "masterclass_completed",
+            )
+        ) is not None
+    if resource_code == "ACCESS_RECIPES":
+        return db.scalar(
+            select(MasterclassEvent.id).where(
+                MasterclassEvent.user_id == user_id,
+                MasterclassEvent.event_key == "recipes_part_1_opened",
+            )
+        ) is not None
+    return True
 
 
 def create_link_token() -> tuple[str, str]:
@@ -98,6 +145,7 @@ def grant_resources(
     source: str,
     source_payment_id: uuid.UUID | None = None,
     unlock_modes: dict[str, str] | None = None,
+    start_modes: dict[str, str] | None = None,
 ) -> list[str]:
     resources = resources_for_codes(db, resource_codes)
     now = datetime.now(timezone.utc)
@@ -130,6 +178,13 @@ def grant_resources(
         mode = (unlock_modes or {}).get(code, "paced")
         if mode not in {"paced", "fully_unlocked"}:
             raise ValueError(f"invalid unlock mode for {code}")
+        # ``auto`` means that the product's own ordinary progression rule is
+        # in force.  ``open`` is an explicit CRM override; ``blocked`` is a
+        # deliberate manual hold.  Older rows remain ``open`` for backwards
+        # compatibility.
+        start_mode = (start_modes or {}).get(code, "auto")
+        if start_mode not in {"auto", "open", "blocked"}:
+            raise ValueError(f"invalid start mode for {code}")
         policy = db.scalar(
             select(UserCoursePolicy).where(
                 UserCoursePolicy.user_id == user.id,
@@ -142,12 +197,18 @@ def grant_resources(
                     user_id=user.id,
                     resource_id=resource.id,
                     unlock_mode=mode,
+                    start_mode=start_mode,
                     source=source,
                     course_policy_version=(2 if code == "ACCESS_MASTERCLASS" else 1),
                 )
             )
-        elif mode == "fully_unlocked":
+        else:
+            # A new explicit manual or personal-link decision must be able to
+            # narrow as well as broaden a previous course policy. Purchases
+            # themselves remain in payment history; this is only the current
+            # availability policy.
             policy.unlock_mode = mode
+            policy.start_mode = start_mode
             policy.source = source
     return granted
 

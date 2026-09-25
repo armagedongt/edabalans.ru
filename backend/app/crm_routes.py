@@ -39,14 +39,18 @@ from app.crm_service import (
     link_user_email,
     set_access_review,
     grant_manual_access,
-    set_manual_course_policy,
     revoke_manual_access,
     pause_manual_access,
     resume_manual_access,
     reveal_account_password,
     reset_account_password,
     list_resources,
+    course_access_states,
+    update_course_access_state,
+    create_manual_account,
+    set_manual_course_policy,
 )
+from app.account_onboarding_service import direct_credential_email_configuration_error
 from app.database import get_db
 from scripts.generate_masterclass_offer_simulator import render_simulator_page
 
@@ -92,6 +96,17 @@ class ResourceAction(BaseModel):
 
 class CoursePolicyUpdate(BaseModel):
     unlock_mode: str = Field(pattern="^(paced|fully_unlocked)$")
+
+
+class CourseAccessStateIn(BaseModel):
+    entitled: bool
+    start_open: bool
+    all_lessons_open: bool
+
+
+class ManualAccountCreateIn(BaseModel):
+    email: str = Field(min_length=3, max_length=320)
+    display_name: str | None = Field(default=None, max_length=255)
 
 
 class AdminLogin(BaseModel):
@@ -446,6 +461,7 @@ def admin_set_course_policy(
     admin: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> dict[str, str]:
+    """Keep the pre-existing API working while CRM uses the three-state grid."""
     ok, result = set_manual_course_policy(
         db, user_id, resource_code, payload.unlock_mode, admin
     )
@@ -508,6 +524,55 @@ def admin_reset_credential(
     if password is None:
         raise HTTPException(404, "user not found")
     return JSONResponse({"password": password}, headers={"Cache-Control": "no-store"})
+
+
+@router.post("/admin/api/users")
+def admin_create_manual_account(
+    payload: ManualAccountCreateIn,
+    admin: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> JSONResponse:
+    if direct_credential_email_configuration_error(settings):
+        raise HTTPException(409, "Почта для нового аккаунта пока не настроена")
+    try:
+        user, password = create_manual_account(
+            db, email_original=payload.email, display_name=payload.display_name,
+            settings=settings, admin=admin,
+        )
+    except ValueError as exc:
+        messages = {"invalid_email": "Введите корректный email", "email_exists": "Этот email уже есть в CRM — откройте существующую карточку"}
+        raise HTTPException(409, messages.get(str(exc), "Не удалось создать аккаунт")) from exc
+    return JSONResponse({"user_id": str(user.id), "password": password, "email_status": "queued"}, headers={"Cache-Control": "no-store"})
+
+
+@router.get("/admin/api/users/{user_id}/course-accesses")
+def admin_course_accesses(
+    user_id: uuid.UUID,
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    return {"courses": course_access_states(db, user_id)}
+
+
+@router.put("/admin/api/users/{user_id}/course-accesses/{resource_code}")
+def admin_update_course_access(
+    user_id: uuid.UUID,
+    resource_code: str,
+    payload: CourseAccessStateIn,
+    admin: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    try:
+        courses = update_course_access_state(
+            db, user_id, resource_code, entitled=payload.entitled,
+            start_open=payload.start_open, all_lessons_open=payload.all_lessons_open,
+            admin=admin,
+        )
+    except ValueError as exc:
+        messages = {"unknown_course": "Этот продукт не является курсом", "all_lessons_requires_start": "Сначала откройте курс для старта", "course_state_requires_right": "Сначала выдайте право на курс", "user_or_resource_not_found": "Пользователь или курс не найден"}
+        raise HTTPException(422, messages.get(str(exc), "Не удалось изменить доступ")) from exc
+    return {"courses": courses}
 
 
 @router.get("/admin/api/payments")

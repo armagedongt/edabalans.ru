@@ -70,6 +70,7 @@ owns_files = [
   "backend/tests/test_pricing_catalog.py", "backend/tests/test_robokassa_payments.py",
   "backend/tests/test_tilda_payments.py", "backend/tests/test_owner_payment_notifications.py",
   "backend/tests/test_purchase_auto_login_migration.py",
+  "backend/tests/test_course_access_states_migration.py",
   "docs/TILDA_PAYMENTS.md", "docs/ROBOKASSA_PAYMENTS.md", "docs/TILDA_PERSONAL_ACCESS_EMBED.md",
   "docs/knowledge-base/ACCESS_MANAGEMENT_GUIDE.md",
   "docs/knowledge-base/ACCESS_RULES.md", "docs/knowledge-base/ACCOUNT_LEGAL_GATE.md",
@@ -89,6 +90,7 @@ owns_files = [
   "backend/migrations/versions/20260919_0045_access_pause.py",
   "backend/app/payment_browser_grant_service.py",
   "backend/migrations/versions/20260921_0047_purchase_auto_login_messenger_policy.py",
+  "backend/migrations/versions/20260925_0047_course_access_states_and_direct_credentials.py",
 ]
 owns_tables = [
   "products", "product_aliases", "resources", "product_access_rules",
@@ -175,6 +177,7 @@ owns_files = [
   "content/author-voice/skill/edabalans-writer/SKILL.md",
   "content/external-references/**",
   "tools/analyze_saved_telegram_notes.py", "tools/build_author_*.py",
+  "tools/build_article_source_registry.py", "tools/build_article_channel_links.py",
   "tools/build_rhetorical_library.py", "tools/build_voice_core.py",
   "tools/catalog_saved_notes_editorially.py", "tools/collect_public_site.py",
   "tools/collect_telegraph.py", "tools/enrich_author_catalog.py",

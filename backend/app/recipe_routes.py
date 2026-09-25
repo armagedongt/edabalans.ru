@@ -10,6 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.account_auth_routes import require_native_user
+from app.access_service import course_start_is_open
 from app.app_service import AppAccessError, require_user_resource
 from app.database import get_db
 from app.recipe_models import NutritionProduct, RecipeBook, RecipeIngredient
@@ -23,7 +24,10 @@ def _error(exc: Exception, status: int = 400) -> JSONResponse:
 
 
 def _user(request: Request, db: Session):
-    return require_user_resource(db, require_native_user(request, db), "recipes")
+    user = require_user_resource(db, require_native_user(request, db), "recipes")
+    if not course_start_is_open(db, user.id, "ACCESS_RECIPES"):
+        raise AppAccessError("Система рецептов пока закрыта по условиям доступа")
+    return user
 
 
 @router.get("/api/apps/recipes")
