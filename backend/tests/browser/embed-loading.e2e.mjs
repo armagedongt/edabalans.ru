@@ -789,7 +789,7 @@ try {
   await sessionRetry.close()
 
   // Every registered app uses the same loader, including direct standalone entry.
-  const appRoots={account:'account-app','masterclass-course':'masterclass-course-app','calories-course':'calories-course-app','masterclass-sales':'masterclass-sales-app',dqs:'dqs-app',strength:'strength-app',metabolism:'metabolism-app','onboarding-questionnaire':'onboarding-questionnaire-app','masterclass-offers':'masterclass-offers-app','recipes-part-1':'recipes-part-1-app','recipes-part-2':'recipes-part-2-app',recipes:'recipes-app','closing-review':'closing-review-app','personal-access':'personal-access-app'}
+  const appRoots={account:'account-app','masterclass-course':'masterclass-course-app','calories-course':'calories-course-app','recipes-course':'recipes-course-app','masterclass-sales':'masterclass-sales-app',dqs:'dqs-app',strength:'strength-app',metabolism:'metabolism-app','onboarding-questionnaire':'onboarding-questionnaire-app','masterclass-offers':'masterclass-offers-app','recipes-part-1':'recipes-part-1-app','recipes-part-2':'recipes-part-2-app',recipes:'recipes-app','closing-review':'closing-review-app','personal-access':'personal-access-app'}
   for(const [code,id] of Object.entries(appRoots)) {
     console.log('Checking shared loader: '+code)
     const app=await browser.newPage()
