@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editor",
+  "reviewed_at": "2026-09-26T14:36:27.507652+00:00",
+  "pack_sha256": "a015564a05fe82b0c088aa02f800040b69ab6631241f4e7009e062f3bf360f0b",
+  "draft_sha256": "65f30f3bde7bc57fb66b4630edce902461b33b1ac95abeb61eb853942a28889a",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "13 локальных замен: согласование контролируют, опечатки и пунктуация. Кракена, каомодзи, сарказм и четыре сферы сохранены; неподтверждённые зачёркивания не придуманы."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editor",
+  "reviewed_at": "2026-09-26T14:36:25.980637+00:00",
+  "pack_sha256": "10b9af411307bb00e5c58c9bc485f0b02926c740ba21425fd9692fb7f224bc9f",
+  "draft_sha256": "a992b0d52a9af4f04b1d393ce89a0761cb3d32884043ab56535b377150a84013",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Пять несмысловых замен: пробелы у единиц, пунктуация и а не с места в карьер. Числа и содержание интервью не переписаны. Спорные проценты остаются отдельным замечанием."
+    }
+  ]
+}

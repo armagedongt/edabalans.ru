@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editor",
+  "reviewed_at": "2026-09-26T14:36:24.639573+00:00",
+  "pack_sha256": "b7baf29734f29413f9e7d7a71aaacacc8c95ef4fcc480033957efe39c832b706",
+  "draft_sha256": "f8a547cd1867c5fad8aedaf6b39f342d4d9d8856af4083766d63398ec713a8b9",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Исправлены 13 опечаток, согласований и знаков. Числа исследования, история Хатано и выводы не изменены; намеренные нцатый и воображаемые подойдут сохранены."
+    }
+  ]
+}
