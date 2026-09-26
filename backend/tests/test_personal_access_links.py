@@ -454,9 +454,9 @@ def test_product_maintenance_preserves_entitlements_and_reopens_owned_products(m
     assert courses["strength"]["ready"] is False
     recipe_app = next(item for item in data["applications"] if item["code"] == "recipes")
     assert recipe_app["owned"] is True
-    assert recipe_app["state"] == "maintenance"
-    assert recipe_app["app"] is None
-    assert next(item for item in account_applications({"recipes", "ACCESS_APPLICATION_PREVIEW"}, False) if item["code"] == "recipes")["app"] is None
+    assert recipe_app["state"] == "available"
+    assert recipe_app["app"] == "recipes"
+    assert next(item for item in account_applications({"recipes", "ACCESS_APPLICATION_PREVIEW"}, False) if item["code"] == "recipes")["app"] == "recipes"
 
     login_user(client, "other@example.test")
     empty = client.get("/api/account-auth/account").json()
@@ -472,7 +472,7 @@ def test_product_maintenance_preserves_entitlements_and_reopens_owned_products(m
     restored = client.get("/api/account-auth/account").json()
     restored_courses = {item["code"]: item for item in restored["courses"]}
     assert restored_courses["calories"]["app"] == "calories-course"
-    assert restored_courses["recipes"]["app"] == "recipes"
+    assert restored_courses["recipes"]["app"] == "recipes-course"
     assert next(item for item in restored["applications"] if item["code"] == "recipes")["app"] == "recipes"
     with factory() as db:
         after = [(row.id, row.resource_id, row.revoked_at, row.expires_at)

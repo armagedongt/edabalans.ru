@@ -469,9 +469,8 @@ def test_maintenance_blocks_direct_product_interfaces_without_running_the_app(mo
     from app.product_catalog_service import PRODUCT_CONNECTIONS
 
     monkeypatch.setitem(PRODUCT_CONNECTIONS["calories"], "maintenance", True)
-    monkeypatch.setitem(PRODUCT_CONNECTIONS["recipes"], "maintenance", True)
 
-    for app_code in ("calories-course", "recipes", "recipes-part-1", "recipes-part-2"):
+    for app_code in ("calories-course",):
         response = client.get(f"/apps/{app_code}.html")
         assert response.status_code == 200
         assert f'id="{app_code}-app"' in response.text
@@ -481,9 +480,9 @@ def test_maintenance_blocks_direct_product_interfaces_without_running_the_app(mo
         assert 'href="/lk"' in response.text
         assert "<script" not in response.text
         assert response.headers["cache-control"] == "no-cache"
-    for code in ("recipes", "calories"):
-        monkeypatch.setitem(PRODUCT_CONNECTIONS[code], "maintenance", False)
+    monkeypatch.setitem(PRODUCT_CONNECTIONS["calories"], "maintenance", False)
     assert "/api/calories/course" in client.get("/apps/calories-course.html").text
+    assert "/api/recipes/course" in client.get("/apps/recipes-course.html").text
     assert "<script" in client.get("/apps/recipes.html").text
 
 

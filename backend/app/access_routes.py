@@ -41,7 +41,7 @@ from app.models import (
     UserEmail,
 )
 from app.product_identity import purchased_products
-from app.product_catalog_service import PRODUCT_CONNECTIONS, product_public
+from app.product_catalog_service import MAINTENANCE_APPS, PRODUCT_CONNECTIONS, product_public
 from app.course_access_service import (
     active_resource_codes,
     course_entry_unlocked,
@@ -454,10 +454,10 @@ def account_applications(
             "summary": summary,
             "resource": resource,
             "owned": bool(application_states.get(code, {}).get("entitled", resource in owned)),
-            "maintenance": bool(PRODUCT_CONNECTIONS.get(code, {}).get("maintenance")),
-            "ready": (ready or preview_enabled) and not PRODUCT_CONNECTIONS.get(code, {}).get("maintenance"),
-            "state": "maintenance" if PRODUCT_CONNECTIONS.get(code, {}).get("maintenance") else "available" if application_states.get(code, {}).get("start_open", resource in owned) and (ready or preview_enabled) else "entitled_locked" if application_states.get(code, {}).get("entitled", resource in owned) else "not_owned",
-            "app": app if application_states.get(code, {}).get("start_open", resource in owned) and (ready or preview_enabled) and not legal_required and not PRODUCT_CONNECTIONS.get(code, {}).get("maintenance") else None,
+            "maintenance": app in MAINTENANCE_APPS,
+            "ready": (ready or preview_enabled) and app not in MAINTENANCE_APPS,
+            "state": "maintenance" if app in MAINTENANCE_APPS else "available" if application_states.get(code, {}).get("start_open", resource in owned) and (ready or preview_enabled) else "entitled_locked" if application_states.get(code, {}).get("entitled", resource in owned) else "not_owned",
+            "app": app if application_states.get(code, {}).get("start_open", resource in owned) and (ready or preview_enabled) and not legal_required and app not in MAINTENANCE_APPS else None,
         }
         for code, title, summary, resource, app, ready in definitions
     ]
@@ -606,6 +606,26 @@ def resolve_account_resource_link(
         return resolve_masterclass_resource_link(db, user, normalized, step_id, settings)
     if course_code == "calories":
         return resolve_calorie_resource_link(db, user, normalized, step_id)
+    if course_code == "recipes":
+        from app.recipe_course_routes import resolve_course_user
+        from app.recipe_course_service import course_manifest, material_position
+
+        if "ACCESS_RECIPES" not in active_resource_codes(db, user.id):
+            return missing_resource_offer(normalized, "ACCESS_RECIPES")
+        resolve_course_user(request, db)
+        found = material_position(course_manifest(db), step_id)
+        if found is None or found[2]["locked"]:
+            return resource_link_response(
+                "unavailable",
+                target=normalized,
+                reason_code="target_not_published",
+            )
+        return resource_link_response(
+            "open",
+            target=normalized,
+            app="recipes-course",
+            params={"recipes_section": found[0], "recipes_material": step_id},
+        )
     return resource_link_response(
         "unavailable", target=normalized, reason_code="course_not_registered"
     )

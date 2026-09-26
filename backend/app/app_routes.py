@@ -590,7 +590,7 @@ def homepage_mobile_preview_asset(asset_name: str) -> FileResponse:
 
 @router.get("/apps/{app_code}.html", include_in_schema=False)
 def app_fragment(app_code: str) -> Response:
-    if app_code not in {"account", "dqs", "strength", "metabolism", "metabolism-old", "metabolism-visual-v2", "recipes", "masterclass-course", "calories-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access", "video-player"}:
+    if app_code not in {"account", "dqs", "strength", "metabolism", "metabolism-old", "metabolism-visual-v2", "recipes", "masterclass-course", "calories-course", "recipes-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access", "video-player"}:
         raise HTTPException(status_code=404, detail="app not found")
     product_code = "recipes" if app_code in {"recipes-part-1", "recipes-part-2"} else next(
         (code for code, connection in PRODUCT_CONNECTIONS.items() if connection["app"] == app_code),
@@ -607,6 +607,28 @@ def app_fragment(app_code: str) -> Response:
         )
     if app_code == "masterclass-course":
         return public_asset(STATIC_DIR / "masterclass-first-days-preview.html")
+    if app_code == "recipes-course":
+        template = (STATIC_DIR / "masterclass-first-days-preview.html").read_text(
+            encoding="utf-8"
+        )
+        replacements = {
+            "</head>": '<link rel="stylesheet" href="/assets/calories-course.css?v=20260926-recipes"></head>',
+            "Мастер-класс · первые дни": "Система рецептов",
+            'id="masterclass-course-app"': 'id="recipes-course-app"',
+            "edabalans_first_days_v2": "edabalans_recipes_course_v1",
+            "COURSE_APP_REVEALS=true": "COURSE_APP_REVEALS=false",
+            "/api/masterclass/course": "/api/recipes/course",
+            "masterclass-course": "recipes-course",
+            "course_day": "recipes_section",
+            "course_material": "recipes_material",
+            "К материалам дня": "К оглавлению",
+        }
+        for source, target in replacements.items():
+            template = template.replace(source, target)
+        return HTMLResponse(
+            template,
+            headers={"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+        )
     if app_code == "calories-course":
         template = (STATIC_DIR / "masterclass-first-days-preview.html").read_text(
             encoding="utf-8"

@@ -18,6 +18,7 @@
     account: 'account-app',
     'masterclass-course': 'masterclass-course-app',
     'calories-course': 'calories-course-app',
+    'recipes-course': 'recipes-course-app',
     'masterclass-sales': 'masterclass-sales-app',
     dqs: 'dqs-app',
     strength: 'strength-app',
@@ -316,12 +317,12 @@
   function legalFooterHost(mount) {
     var dqsMount = mount.querySelector('[data-edabalans-app="dqs"]');
     if (dqsMount) return dqsMount;
-    var isCourse = ['masterclass-course', 'calories-course'].indexOf(
+    var isCourse = ['masterclass-course', 'calories-course', 'recipes-course'].indexOf(
       mount.getAttribute('data-edabalans-app')
     ) >= 0;
     var courseMount = isCourse
       ? mount
-      : mount.querySelector('[data-edabalans-app="masterclass-course"],[data-edabalans-app="calories-course"]');
+      : mount.querySelector('[data-edabalans-app="masterclass-course"],[data-edabalans-app="calories-course"],[data-edabalans-app="recipes-course"]');
     var courseMain = courseMount && courseMount.querySelector(':scope > .main');
     return courseMain || mount;
   }

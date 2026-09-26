@@ -18,7 +18,7 @@ SCHEMA_VERSION = 2
 # not appear in the editorial editor. The product catalog owns public wording.
 PRODUCT_CONNECTIONS = {
     "masterclass": {"resource": "ACCESS_MASTERCLASS", "app": "masterclass-course", "ready": True},
-    "recipes": {"resource": "ACCESS_RECIPES", "app": "recipes", "ready": True, "maintenance": False},
+    "recipes": {"resource": "ACCESS_RECIPES", "app": "recipes-course", "ready": True, "maintenance": False},
     "calories": {"resource": "ACCESS_CALORIES", "app": "calories-course", "ready": False, "maintenance": False},
     "training": {"resource": "ACCESS_STRENGTH", "app": None, "ready": False},
     "recordings": {"resource": "ACCESS_CONSULTATION_RECORDINGS", "app": None, "ready": False},
@@ -26,6 +26,11 @@ PRODUCT_CONNECTIONS = {
     "coaching": {"resource": "ACCESS_COACHING", "app": None, "ready": False},
     "intensive": {"resource": None, "app": None, "ready": False},
 }
+
+# Учебный продукт и нативное приложение могут иметь одинаковый короткий код,
+# но их готовность не должна протекать друг в друга. Сейчас приложения активны;
+# когда появится самостоятельное управление ремонтом, оно задаётся здесь.
+MAINTENANCE_APPS = frozenset()
 
 PRODUCT_CATALOG_SEED = {
     "schemaVersion": SCHEMA_VERSION,

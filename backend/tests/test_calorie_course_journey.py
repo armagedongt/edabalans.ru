@@ -283,7 +283,7 @@ def test_calorie_course_requires_access_and_exposes_three_module_manifest():
     assert client.post("/api/account-auth/login", json={"email": "denied@example.test", "password": "Test-Password-9"}).status_code == 200
     legacy_metabolism = client.get("/api/apps/metabolism")
     assert legacy_metabolism.status_code == 200
-    assert legacy_metabolism.json()["ok"] is False
+    assert legacy_metabolism.json()["ok"] is True
     legacy_saved = client.put(
         "/api/apps/metabolism",
         json={
@@ -292,8 +292,8 @@ def test_calorie_course_requires_access_and_exposes_three_module_manifest():
             "activeVariant": 1,
         },
     )
-    assert legacy_saved.status_code == 400
-    assert legacy_saved.json()["ok"] is False
+    assert legacy_saved.status_code == 200
+    assert legacy_saved.json()["ok"] is True
 
 
 def test_calorie_course_completes_stage_in_order_and_opens_next_at_local_six(monkeypatch):

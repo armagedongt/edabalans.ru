@@ -84,13 +84,8 @@ def course_start_is_open(db: Session, user_id: uuid.UUID, resource_code: str) ->
                 MasterclassEvent.event_type == "masterclass_completed",
             )
         ) is not None
-    if resource_code == "ACCESS_RECIPES":
-        return db.scalar(
-            select(MasterclassEvent.id).where(
-                MasterclassEvent.user_id == user_id,
-                MasterclassEvent.event_key == "recipes_part_1_opened",
-            )
-        ) is not None
+    # «Система рецептов» — самостоятельный курс: право открывает его без
+    # прохождения Мастер-класса. Явный CRM-блок выше по-прежнему действует.
     return True
 
 

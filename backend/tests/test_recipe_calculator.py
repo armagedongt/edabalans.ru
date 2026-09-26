@@ -84,7 +84,7 @@ def test_recipe_api_keeps_personal_products_private_and_calculates_yield():
     assert created["recipe"]["totals"]["all"]["calories"] == "420"
 
 
-def test_recipe_api_respects_ordinary_course_start_gate():
+def test_recipe_calculator_does_not_depend_on_course_start_gate():
     client, factory = make_client()
     with factory() as db:
         user = grant_user(db, "gated@example.test")
@@ -95,13 +95,6 @@ def test_recipe_api_respects_ordinary_course_start_gate():
         db.commit()
     sign_in(client, "gated@example.test")
 
-    blocked = client.get("/api/apps/recipes")
-    assert blocked.json() == {"ok": False, "error": "Система рецептов пока закрыта по условиям доступа"}
-
-    with factory() as db:
-        user_id = db.scalar(select(UserEmail.user_id).where(UserEmail.email_normalized == "gated@example.test"))
-        db.add(MasterclassEvent(user_id=user_id, event_key="recipes_part_1_opened", event_type="opened", details={}))
-        db.commit()
     assert client.get("/api/apps/recipes").json()["ok"] is True
 
 
@@ -159,10 +152,10 @@ def test_personal_product_hides_from_search_but_keeps_saved_recipe_and_recipe_is
 
 def test_recipe_product_retains_base_readiness():
     connection = PRODUCT_CONNECTIONS["recipes"]
-    # Temporary interface maintenance does not remove the underlying product.
+    # Учебная карточка открывает самостоятельный курс, а не калькулятор.
     assert {key: connection[key] for key in ("resource", "app", "ready")} == {
         "resource": "ACCESS_RECIPES",
-        "app": "recipes",
+        "app": "recipes-course",
         "ready": True,
     }
 

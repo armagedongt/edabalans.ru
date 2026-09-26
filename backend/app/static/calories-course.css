@@ -1,21 +1,21 @@
 /* Материалы Калорика внутри общей оболочки МК. */
-#calories-course-app { --course-heading-size: clamp(32px,4vw,44px); --course-media-gap: 24px; font-family: Manrope,Arial,sans-serif; }
-#calories-course-app .article h1 { font: 800 var(--course-heading-size)/1.12 Manrope,Arial,sans-serif; letter-spacing: -.035em; margin-bottom: 24px; }
-#calories-course-app .course-module { --module-color: #c8a2f8; margin: 14px 0 22px; }
-#calories-course-app .course-module-2 { --module-color: #f7c569; }
-#calories-course-app .course-module-3 { --module-color: #89d8af; }
-#calories-course-app .course-module h2 { color: #fff; text-transform: uppercase; font: 800 12px/1.5 Manrope,Arial,sans-serif; letter-spacing: .035em; margin: 0 8px 10px; }
-#calories-course-app .course-module-items { position: relative; padding-left: 11px; display: grid; gap: 7px; }
-#calories-course-app .course-module-items::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 22px; border-left: 3px solid var(--module-color); border-radius: 22px 0 0 22px; mask-image: linear-gradient(to bottom,transparent,#000 14px,#000 calc(100% - 14px),transparent); pointer-events: none; }
-#calories-course-app #days .day-button { min-width: 0; }
-#calories-course-app .day-copy strong { overflow-wrap: anywhere; }
-#calories-course-app .course-material-assignment { margin: 20px 0; }
-#calories-course-app .course-material-assignment .checkline { display: grid; grid-template-columns: 24px minmax(0,1fr); gap: 12px; align-items: start; padding: 8px 0; }
-#calories-course-app .course-material-assignment input { width: 22px; height: 22px; margin: 4px 0 0; accent-color: #118ed8; }
-#calories-course-app .course-material-assignment input:focus-visible { outline: 3px solid #118ed8; outline-offset: 3px; }
-#calories-course-app .course-material-assignment .assign-status { margin-top: 18px; }
+:is(#calories-course-app, #recipes-course-app) { --course-heading-size: clamp(32px,4vw,44px); --course-media-gap: 24px; font-family: Manrope,Arial,sans-serif; }
+:is(#calories-course-app, #recipes-course-app) .article h1 { font: 800 var(--course-heading-size)/1.12 Manrope,Arial,sans-serif; letter-spacing: -.035em; margin-bottom: 24px; }
+:is(#calories-course-app, #recipes-course-app) .course-module { --module-color: #c8a2f8; margin: 14px 0 22px; }
+:is(#calories-course-app, #recipes-course-app) .course-module-2 { --module-color: #f7c569; }
+:is(#calories-course-app, #recipes-course-app) .course-module-3 { --module-color: #89d8af; }
+:is(#calories-course-app, #recipes-course-app) .course-module h2 { color: #fff; text-transform: uppercase; font: 800 12px/1.5 Manrope,Arial,sans-serif; letter-spacing: .035em; margin: 0 8px 10px; }
+:is(#calories-course-app, #recipes-course-app) .course-module-items { position: relative; padding-left: 11px; display: grid; gap: 7px; }
+:is(#calories-course-app, #recipes-course-app) .course-module-items::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 22px; border-left: 3px solid var(--module-color); border-radius: 22px 0 0 22px; mask-image: linear-gradient(to bottom,transparent,#000 14px,#000 calc(100% - 14px),transparent); pointer-events: none; }
+:is(#calories-course-app, #recipes-course-app) #days .day-button { min-width: 0; }
+:is(#calories-course-app, #recipes-course-app) .day-copy strong { overflow-wrap: anywhere; }
+:is(#calories-course-app, #recipes-course-app) .course-material-assignment { margin: 20px 0; }
+:is(#calories-course-app, #recipes-course-app) .course-material-assignment .checkline { display: grid; grid-template-columns: 24px minmax(0,1fr); gap: 12px; align-items: start; padding: 8px 0; }
+:is(#calories-course-app, #recipes-course-app) .course-material-assignment input { width: 22px; height: 22px; margin: 4px 0 0; accent-color: #118ed8; }
+:is(#calories-course-app, #recipes-course-app) .course-material-assignment input:focus-visible { outline: 3px solid #118ed8; outline-offset: 3px; }
+:is(#calories-course-app, #recipes-course-app) .course-material-assignment .assign-status { margin-top: 18px; }
 @media (min-width: 901px) and (max-width: 1200px) {
-  #calories-course-app .course-final-offers .mc-offer-card { grid-template-columns: 1fr; gap: 15px; padding: 17px 16px; }
-  #calories-course-app .course-final-offers .mc-offer-terms { grid-template-columns: minmax(0,1fr) auto; align-items: end; column-gap: 12px; padding: 14px 0 0; border-top: 1px solid var(--line); }
-  #calories-course-app .course-final-offers .offer-saving { grid-column: 1; margin-top: 4px; }
+  :is(#calories-course-app, #recipes-course-app) .course-final-offers .mc-offer-card { grid-template-columns: 1fr; gap: 15px; padding: 17px 16px; }
+  :is(#calories-course-app, #recipes-course-app) .course-final-offers .mc-offer-terms { grid-template-columns: minmax(0,1fr) auto; align-items: end; column-gap: 12px; padding: 14px 0 0; border-top: 1px solid var(--line); }
+  :is(#calories-course-app, #recipes-course-app) .course-final-offers .offer-saving { grid-column: 1; margin-top: 4px; }
 }

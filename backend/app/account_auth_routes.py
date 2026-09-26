@@ -354,7 +354,7 @@ def telegram_miniapp_login(
     }[body.app_code]
     try:
         require_user_resource(db, user, resource_codes, require_legal_acceptance=False)
-        course_resource = {"strength": "ACCESS_STRENGTH", "recipes": "ACCESS_RECIPES"}.get(body.app_code)
+        course_resource = {"strength": "ACCESS_STRENGTH"}.get(body.app_code)
         if course_resource and not course_start_is_open(db, user.id, course_resource):
             raise AppAccessError("Приложение откроется на следующем этапе вашего обучения")
     except AppAccessError as exc:
@@ -399,7 +399,7 @@ def max_miniapp_login(
     if resource_codes is not None:
         try:
             require_user_resource(db, user, resource_codes, require_legal_acceptance=False)
-            course_resource = {"strength": "ACCESS_STRENGTH", "recipes": "ACCESS_RECIPES"}.get(body.app_code)
+            course_resource = {"strength": "ACCESS_STRENGTH"}.get(body.app_code)
             if course_resource and not course_start_is_open(db, user.id, course_resource):
                 raise AppAccessError("Приложение откроется на следующем этапе вашего обучения")
         except AppAccessError as exc:
