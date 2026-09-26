@@ -1,9 +1,21 @@
 {
-  "package_version": "2.8.2-20260925",
+  "package_version": "2.9.0-20260926",
   "files": [
     {
+      "path": "content/author-voice/skill/edabalans-neuroslop-auditor/SKILL.md",
+      "sha256": "82169edb08bc0e72a0772f22fb3b88d94c9e028518c498caa7ea88c46877290a"
+    },
+    {
+      "path": "content/author-voice/cases/calories-masterclass-neuroslop.md",
+      "sha256": "69bcdc20222d6c6048a2e0a1576951226048c9c5deae600d39d2a61448ded10e"
+    },
+    {
+      "path": "content/author-voice/voice-rules-v1.json",
+      "sha256": "cdb5a5f1542154876bacd2f0f83df1730e82d10f4efc9e3e988ed429cc0b65b1"
+    },
+    {
       "path": "content/author-voice/skill/edabalans-writer/SKILL.md",
-      "sha256": "5c8884b3ba399d622b82354d6ddc5e5d5b0dfb1286fd9a3ec8309d1228ce9333"
+      "sha256": "85c588c4ba878ff24d0bc7fa0265b3ee7f9c128671da4c46b34034242f3dc456"
     },
     {
       "path": "content/author-voice/authoring-work-profiles-v1.md",
@@ -15,7 +27,7 @@
     },
     {
       "path": "content/author-voice/writer-contract-v1.md",
-      "sha256": "6f7ac7f315a351fe965282ce613d1e4b2e2ef5cb2fead71d9b599b964ca66716"
+      "sha256": "991f723d00a73ee0b25626d238cc8992f7a5c779cced26f66ab6220abe807702"
     },
     {
       "path": "docs/knowledge-base/ARTICLE_STANDARD.md",
@@ -47,7 +59,7 @@
     },
     {
       "path": "content/author-voice/README.md",
-      "sha256": "4467a98d033d50bab1406322df99157f31b1f93a9a33dad7b7b074f61cbc656d"
+      "sha256": "f0a02a6059b315942a6e0fedf71fb4b7c293f365c8d0f462f2699d2e98690971"
     },
     {
       "path": "docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md",

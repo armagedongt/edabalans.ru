@@ -1509,6 +1509,10 @@
       "path": "backend/tests/browser/admin-shell.e2e.mjs"
     },
     {
+      "module_id": "products.masterclass.course",
+      "path": "backend/tests/browser/article-audio.e2e.mjs"
+    },
+    {
       "module_id": "platform.blog",
       "path": "backend/tests/browser/blog-draft-authoring.e2e.mjs"
     },
@@ -1730,6 +1734,10 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "backend/tests/test_masterclass_article_audio.py"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "backend/tests/test_masterclass_article_video.py"
     },
     {
@@ -1891,6 +1899,10 @@
     {
       "module_id": "platform.content",
       "path": "content/author-voice/authoring-work-profiles-v1.md"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "content/author-voice/cases/calories-masterclass-neuroslop.md"
     },
     {
       "module_id": "platform.content",
@@ -3791,6 +3803,10 @@
     {
       "module_id": "products.masterclass.course",
       "path": "content/masterclass/components/README.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/components/article-audio/player.html"
     },
     {
       "module_id": "products.masterclass.course",
@@ -12246,6 +12262,7 @@
         "сворачивать и скрывать меню на компьютере, открывать его burger-кнопкой на телефоне;",
         "вести к карте, памятке, планам и техническим документам;",
         "открывать DQS, силовые и метаболизм сразу в настоящем интерфейсе выбранного",
+        "сохранять выбранный в CRM `user_id` в адресе при переходах по внутренним",
         "держать над приложением одну компактную полосу: текущий человек, поиск другого",
         "в списке сначала показывать людей с данными, затем с доступом, а через поиск —",
         "открывать силовые в специальной мобильной оболочке `?mobile=1`: оболочка скрывает"
@@ -13178,7 +13195,15 @@
         {
           "file": "backend/app/static/admin-shell.js",
           "kind": "function",
-          "line": 20,
+          "line": 25,
+          "module_id": "admin.control",
+          "name": "withClientContext",
+          "qualname": "withClientContext"
+        },
+        {
+          "file": "backend/app/static/admin-shell.js",
+          "kind": "function",
+          "line": 42,
           "module_id": "admin.control",
           "name": "esc",
           "qualname": "esc"
@@ -13186,7 +13211,7 @@
         {
           "file": "backend/app/static/admin-shell.js",
           "kind": "function",
-          "line": 26,
+          "line": 48,
           "module_id": "admin.control",
           "name": "selected",
           "qualname": "selected"
@@ -13194,7 +13219,7 @@
         {
           "file": "backend/app/static/admin-shell.js",
           "kind": "function",
-          "line": 33,
+          "line": 55,
           "module_id": "admin.control",
           "name": "compactIcon",
           "qualname": "compactIcon"
@@ -13202,7 +13227,7 @@
         {
           "file": "backend/app/static/admin-shell.js",
           "kind": "function",
-          "line": 40,
+          "line": 62,
           "module_id": "admin.control",
           "name": "itemMarkup",
           "qualname": "itemMarkup"
@@ -13210,7 +13235,7 @@
         {
           "file": "backend/app/static/admin-shell.js",
           "kind": "function",
-          "line": 50,
+          "line": 73,
           "module_id": "admin.control",
           "name": "render",
           "qualname": "render"
@@ -13218,7 +13243,7 @@
         {
           "file": "backend/app/static/admin-shell.js",
           "kind": "function",
-          "line": 53,
+          "line": 76,
           "module_id": "admin.control",
           "name": "uniqueIcon",
           "qualname": "uniqueIcon"
@@ -13226,7 +13251,7 @@
         {
           "file": "backend/app/static/admin-shell.js",
           "kind": "function",
-          "line": 120,
+          "line": 143,
           "module_id": "admin.control",
           "name": "setState",
           "qualname": "setState"
@@ -13234,7 +13259,7 @@
         {
           "file": "backend/app/static/admin-shell.js",
           "kind": "function",
-          "line": 136,
+          "line": 159,
           "module_id": "admin.control",
           "name": "closeMobile",
           "qualname": "closeMobile"
@@ -13908,13 +13933,29 @@
           "kind": "function",
           "line": 135,
           "module_id": "admin.control",
+          "name": "crmUrlForUser",
+          "qualname": "crmUrlForUser"
+        },
+        {
+          "file": "backend/app/static/crm.js",
+          "kind": "function",
+          "line": 142,
+          "module_id": "admin.control",
+          "name": "setCurrentUserUrl",
+          "qualname": "setCurrentUserUrl"
+        },
+        {
+          "file": "backend/app/static/crm.js",
+          "kind": "function",
+          "line": 147,
+          "module_id": "admin.control",
           "name": "botAge",
           "qualname": "botAge"
         },
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 143,
+          "line": 155,
           "module_id": "admin.control",
           "name": "telegramPlaneIcon",
           "qualname": "telegramPlaneIcon"
@@ -13922,7 +13963,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 147,
+          "line": 159,
           "module_id": "admin.control",
           "name": "copyIcon",
           "qualname": "copyIcon"
@@ -13930,7 +13971,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 151,
+          "line": 163,
           "module_id": "admin.control",
           "name": "messengerIcon",
           "qualname": "messengerIcon"
@@ -13938,7 +13979,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 160,
+          "line": 172,
           "module_id": "admin.control",
           "name": "botStart",
           "qualname": "botStart"
@@ -13946,7 +13987,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 168,
+          "line": 180,
           "module_id": "admin.control",
           "name": "channelState",
           "qualname": "channelState"
@@ -13954,7 +13995,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 175,
+          "line": 187,
           "module_id": "admin.control",
           "name": "accessCodes",
           "qualname": "accessCodes"
@@ -13962,7 +14003,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 179,
+          "line": 191,
           "module_id": "admin.control",
           "name": "clientStage",
           "qualname": "clientStage"
@@ -13970,7 +14011,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 187,
+          "line": 199,
           "module_id": "admin.control",
           "name": "messengerContact",
           "qualname": "messengerContact"
@@ -13978,7 +14019,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 199,
+          "line": 211,
           "module_id": "admin.control",
           "name": "profileMessengerButton",
           "qualname": "profileMessengerButton"
@@ -13986,7 +14027,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 217,
+          "line": 229,
           "module_id": "admin.control",
           "name": "courseProgressPreview",
           "qualname": "courseProgressPreview"
@@ -13994,7 +14035,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 223,
+          "line": 235,
           "module_id": "admin.control",
           "name": "paymentDelayFromBot",
           "qualname": "paymentDelayFromBot"
@@ -14002,7 +14043,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 233,
+          "line": 245,
           "module_id": "admin.control",
           "name": "previewTrigger",
           "qualname": "previewTrigger"
@@ -14010,7 +14051,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 242,
+          "line": 254,
           "module_id": "admin.control",
           "name": "previewContent",
           "qualname": "previewContent"
@@ -14018,7 +14059,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 291,
+          "line": 303,
           "module_id": "admin.control",
           "name": "bindUserPreviews",
           "qualname": "bindUserPreviews"
@@ -14026,7 +14067,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 297,
+          "line": 309,
           "module_id": "admin.control",
           "name": "place",
           "qualname": "place"
@@ -14034,7 +14075,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 308,
+          "line": 320,
           "module_id": "admin.control",
           "name": "load",
           "qualname": "load"
@@ -14042,7 +14083,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 336,
+          "line": 348,
           "module_id": "admin.control",
           "name": "peopleMode",
           "qualname": "peopleMode"
@@ -14050,7 +14091,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 343,
+          "line": 355,
           "module_id": "admin.control",
           "name": "userRow",
           "qualname": "userRow"
@@ -14058,7 +14099,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 347,
+          "line": 359,
           "module_id": "admin.control",
           "name": "messengerButton",
           "qualname": "messengerButton"
@@ -14066,7 +14107,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 375,
+          "line": 387,
           "module_id": "admin.control",
           "name": "bindUserCards",
           "qualname": "bindUserCards"
@@ -14074,7 +14115,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 387,
+          "line": 399,
           "module_id": "admin.control",
           "name": "bindEmailCopyButtons",
           "qualname": "bindEmailCopyButtons"
@@ -14082,7 +14123,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 404,
+          "line": 416,
           "module_id": "admin.control",
           "name": "loadUserRows",
           "qualname": "loadUserRows"
@@ -14090,7 +14131,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 434,
+          "line": 446,
           "module_id": "admin.control",
           "name": "columnClass",
           "qualname": "columnClass"
@@ -14098,7 +14139,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 444,
+          "line": 456,
           "module_id": "admin.control",
           "name": "renderUsers",
           "qualname": "renderUsers"
@@ -14106,7 +14147,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 494,
+          "line": 506,
           "module_id": "admin.control",
           "name": "renderTags",
           "qualname": "renderTags"
@@ -14114,7 +14155,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 565,
+          "line": 577,
           "module_id": "admin.control",
           "name": "renderTagAudit",
           "qualname": "renderTagAudit"
@@ -14122,7 +14163,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 598,
+          "line": 610,
           "module_id": "admin.control",
           "name": "renderAccessReviews",
           "qualname": "renderAccessReviews"
@@ -14130,7 +14171,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 608,
+          "line": 620,
           "module_id": "admin.control",
           "name": "renderPayments",
           "qualname": "renderPayments"
@@ -14138,7 +14179,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 667,
+          "line": 679,
           "module_id": "admin.control",
           "name": "renderStructure",
           "qualname": "renderStructure"
@@ -14146,7 +14187,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 697,
+          "line": 709,
           "module_id": "admin.control",
           "name": "purchaseCard",
           "qualname": "purchaseCard"
@@ -14154,7 +14195,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 710,
+          "line": 722,
           "module_id": "admin.control",
           "name": "bindTableScroll",
           "qualname": "bindTableScroll"
@@ -14162,7 +14203,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 718,
+          "line": 730,
           "module_id": "admin.control",
           "name": "sync",
           "qualname": "sync"
@@ -14170,7 +14211,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 728,
+          "line": 740,
           "module_id": "admin.control",
           "name": "previewCourseAccesses",
           "qualname": "previewCourseAccesses"
@@ -14178,7 +14219,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 738,
+          "line": 750,
           "module_id": "admin.control",
           "name": "accessMatrixCell",
           "qualname": "accessMatrixCell"
@@ -14186,7 +14227,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 742,
+          "line": 754,
           "module_id": "admin.control",
           "name": "courseAccessPreview",
           "qualname": "courseAccessPreview"
@@ -14194,7 +14235,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 772,
+          "line": 784,
           "module_id": "admin.control",
           "name": "bindCourseAccessPreview",
           "qualname": "bindCourseAccessPreview"
@@ -14202,7 +14243,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 809,
+          "line": 821,
           "module_id": "admin.control",
           "name": "openUser",
           "qualname": "openUser"
@@ -14210,7 +14251,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 908,
+          "line": 923,
           "module_id": "admin.control",
           "name": "loadActiveOffers",
           "qualname": "loadActiveOffers"
@@ -14218,7 +14259,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 921,
+          "line": 936,
           "module_id": "admin.control",
           "name": "synchronize",
           "qualname": "synchronize"
@@ -14226,7 +14267,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 1016,
+          "line": 1034,
           "module_id": "admin.control",
           "name": "refreshUser",
           "qualname": "refreshUser"
@@ -14234,7 +14275,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 1021,
+          "line": 1039,
           "module_id": "admin.control",
           "name": "loadHome",
           "qualname": "loadHome"
@@ -14242,7 +14283,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 1026,
+          "line": 1044,
           "module_id": "admin.control",
           "name": "showView",
           "qualname": "showView"
@@ -14250,7 +14291,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 1037,
+          "line": 1055,
           "module_id": "admin.control",
           "name": "showError",
           "qualname": "showError"
@@ -14258,7 +14299,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 1043,
+          "line": 1061,
           "module_id": "admin.control",
           "name": "initialise",
           "qualname": "initialise"
@@ -24216,7 +24257,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 61,
+          "line": 63,
           "module_id": "messaging.telegram.engine",
           "name": "test_audit_reports_enabled_message_step_without_content",
           "qualname": "test_audit_reports_enabled_message_step_without_content"
@@ -24224,7 +24265,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 87,
+          "line": 89,
           "module_id": "messaging.telegram.engine",
           "name": "test_new_text_trigger_gets_an_empty_writer_slot_by_default",
           "qualname": "test_new_text_trigger_gets_an_empty_writer_slot_by_default"
@@ -24232,7 +24273,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 107,
+          "line": 109,
           "module_id": "messaging.telegram.engine",
           "name": "test_confirmed_publish_is_versioned_and_skipped_by_writer",
           "qualname": "test_confirmed_publish_is_versioned_and_skipped_by_writer"
@@ -24240,7 +24281,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 115,
+          "line": 117,
           "module_id": "messaging.telegram.engine",
           "name": "db_override",
           "qualname": "test_confirmed_publish_is_versioned_and_skipped_by_writer.db_override"
@@ -24248,7 +24289,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 151,
+          "line": 153,
           "module_id": "messaging.telegram.engine",
           "name": "test_admin_cannot_mark_placeholder_as_approved",
           "qualname": "test_admin_cannot_mark_placeholder_as_approved"
@@ -24256,7 +24297,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 159,
+          "line": 161,
           "module_id": "messaging.telegram.engine",
           "name": "db_override",
           "qualname": "test_admin_cannot_mark_placeholder_as_approved.db_override"
@@ -24264,7 +24305,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 171,
+          "line": 173,
           "module_id": "messaging.telegram.engine",
           "name": "test_admin_approved_edit_becomes_runtime_published",
           "qualname": "test_admin_approved_edit_becomes_runtime_published"
@@ -24272,7 +24313,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 179,
+          "line": 181,
           "module_id": "messaging.telegram.engine",
           "name": "db_override",
           "qualname": "test_admin_approved_edit_becomes_runtime_published.db_override"
@@ -24280,7 +24321,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 199,
+          "line": 201,
           "module_id": "messaging.telegram.engine",
           "name": "test_telegram_html_validator_accepts_supported_markup_and_templates",
           "qualname": "test_telegram_html_validator_accepts_supported_markup_and_templates"
@@ -24288,7 +24329,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 214,
+          "line": 216,
           "module_id": "messaging.telegram.engine",
           "name": "test_telegram_html_validator_rejects_unsupported_html",
           "qualname": "test_telegram_html_validator_rejects_unsupported_html"
@@ -24296,7 +24337,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 219,
+          "line": 221,
           "module_id": "messaging.telegram.engine",
           "name": "test_publish_rejects_unknown_variable_and_oversized_text",
           "qualname": "test_publish_rejects_unknown_variable_and_oversized_text"
@@ -24304,7 +24345,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 227,
+          "line": 229,
           "module_id": "messaging.telegram.engine",
           "name": "db_override",
           "qualname": "test_publish_rejects_unknown_variable_and_oversized_text.db_override"
@@ -24312,7 +24353,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 262,
+          "line": 264,
           "module_id": "messaging.telegram.engine",
           "name": "test_validate_endpoint_runs_publish_checks_without_writing",
           "qualname": "test_validate_endpoint_runs_publish_checks_without_writing"
@@ -24320,7 +24361,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 270,
+          "line": 272,
           "module_id": "messaging.telegram.engine",
           "name": "db_override",
           "qualname": "test_validate_endpoint_runs_publish_checks_without_writing.db_override"
@@ -24328,7 +24369,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 286,
+          "line": 288,
           "module_id": "messaging.telegram.engine",
           "name": "test_status_only_approval_revalidates_saved_html",
           "qualname": "test_status_only_approval_revalidates_saved_html"
@@ -24336,7 +24377,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 300,
+          "line": 302,
           "module_id": "messaging.telegram.engine",
           "name": "db_override",
           "qualname": "test_status_only_approval_revalidates_saved_html.db_override"
@@ -24344,7 +24385,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 314,
+          "line": 316,
           "module_id": "messaging.telegram.engine",
           "name": "test_approved_html_link_is_not_treated_as_placeholder",
           "qualname": "test_approved_html_link_is_not_treated_as_placeholder"
@@ -24352,7 +24393,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 328,
+          "line": 330,
           "module_id": "messaging.telegram.engine",
           "name": "test_runtime_rejects_invalid_approved_telegram_html",
           "qualname": "test_runtime_rejects_invalid_approved_telegram_html"
@@ -24360,7 +24401,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 342,
+          "line": 344,
           "module_id": "messaging.telegram.engine",
           "name": "test_seed_content_change_increments_optimistic_version",
           "qualname": "test_seed_content_change_increments_optimistic_version"
@@ -24368,7 +24409,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 357,
+          "line": 359,
           "module_id": "messaging.telegram.engine",
           "name": "test_runtime_html_fragment_reaches_telegram_without_format_conversion",
           "qualname": "test_runtime_html_fragment_reaches_telegram_without_format_conversion"
@@ -24376,7 +24417,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 369,
+          "line": 371,
           "module_id": "messaging.telegram.engine",
           "name": "handler",
           "qualname": "test_runtime_html_fragment_reaches_telegram_without_format_conversion.handler"
@@ -24384,7 +24425,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 377,
+          "line": 379,
           "module_id": "messaging.telegram.engine",
           "name": "test_start_router_rejects_unapproved_system_content",
           "qualname": "test_start_router_rejects_unapproved_system_content"
@@ -24392,7 +24433,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "class",
-          "line": 388,
+          "line": 390,
           "module_id": "messaging.telegram.engine",
           "name": "Sender",
           "qualname": "test_start_router_rejects_unapproved_system_content.Sender"
@@ -24400,7 +24441,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "method",
-          "line": 389,
+          "line": 391,
           "module_id": "messaging.telegram.engine",
           "name": "send_content",
           "qualname": "test_start_router_rejects_unapproved_system_content.Sender.send_content"
@@ -24408,7 +24449,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 396,
+          "line": 398,
           "module_id": "messaging.telegram.engine",
           "name": "test_chat_working_file_preserves_metadata_and_publishes_confirmed",
           "qualname": "test_chat_working_file_preserves_metadata_and_publishes_confirmed"
@@ -24416,7 +24457,7 @@
         {
           "file": "telegram-bot/service/tests/test_content_authoring.py",
           "kind": "function",
-          "line": 431,
+          "line": 433,
           "module_id": "messaging.telegram.engine",
           "name": "test_media_only_video_note_working_file_can_be_parsed",
           "qualname": "test_media_only_video_note_working_file_can_be_parsed"
@@ -46914,7 +46955,7 @@
         "принимать смешанные комментарии внутри голосового наброска, черновика или",
         "считать структурирование одной пользовательской операцией: обычная корректура",
         "перед отдельным материалом курса учитывать оболочку всего дня и соседние",
-        "прогонять новые фразы через функциональную проверку «Антинейрослоп», не",
+        "применять функциональные критерии «Антинейрослоп» при написании и проверке",
         "маршрутизировать любую писательскую задачу через обязательный skill",
         "давать Сергею единый интерфейс работы со всем авторским контентом: отдельную",
         "собирать task/pack с явным рабочим профилем, проверять сохранность исходника,",
@@ -47046,6 +47087,10 @@
         {
           "module_id": "platform.content",
           "path": "content/author-voice/authoring-work-profiles-v1.md"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "content/author-voice/cases/calories-masterclass-neuroslop.md"
         },
         {
           "module_id": "platform.content",
@@ -47552,13 +47597,37 @@
           "kind": "function",
           "line": 93,
           "module_id": "platform.content",
+          "name": "safe_audio_arguments",
+          "qualname": "safe_audio_arguments"
+        },
+        {
+          "file": "backend/app/article_markup.py",
+          "kind": "function",
+          "line": 95,
+          "module_id": "platform.content",
+          "name": "media_url",
+          "qualname": "safe_audio_arguments.media_url"
+        },
+        {
+          "file": "backend/app/article_markup.py",
+          "kind": "function",
+          "line": 113,
+          "module_id": "platform.content",
+          "name": "safe_audio_frame",
+          "qualname": "safe_audio_frame"
+        },
+        {
+          "file": "backend/app/article_markup.py",
+          "kind": "function",
+          "line": 124,
+          "module_id": "platform.content",
           "name": "safe_image_src",
           "qualname": "safe_image_src"
         },
         {
           "file": "backend/app/article_markup.py",
           "kind": "class",
-          "line": 104,
+          "line": 135,
           "module_id": "platform.content",
           "name": "ArticleSanitizer",
           "qualname": "ArticleSanitizer"
@@ -47566,7 +47635,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 105,
+          "line": 136,
           "module_id": "platform.content",
           "name": "__init__",
           "qualname": "ArticleSanitizer.__init__"
@@ -47574,7 +47643,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 120,
+          "line": 151,
           "module_id": "platform.content",
           "name": "handle_starttag",
           "qualname": "ArticleSanitizer.handle_starttag"
@@ -47582,7 +47651,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 200,
+          "line": 237,
           "module_id": "platform.content",
           "name": "handle_startendtag",
           "qualname": "ArticleSanitizer.handle_startendtag"
@@ -47590,7 +47659,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 206,
+          "line": 243,
           "module_id": "platform.content",
           "name": "handle_endtag",
           "qualname": "ArticleSanitizer.handle_endtag"
@@ -47598,7 +47667,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 217,
+          "line": 254,
           "module_id": "platform.content",
           "name": "handle_data",
           "qualname": "ArticleSanitizer.handle_data"
@@ -47606,7 +47675,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 222,
+          "line": 259,
           "module_id": "platform.content",
           "name": "sanitize_article_html",
           "qualname": "sanitize_article_html"
@@ -47614,7 +47683,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 248,
+          "line": 285,
           "module_id": "platform.content",
           "name": "inline_markdown",
           "qualname": "inline_markdown"
@@ -47622,7 +47691,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 251,
+          "line": 288,
           "module_id": "platform.content",
           "name": "render_link",
           "qualname": "inline_markdown.render_link"
@@ -47630,7 +47699,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 267,
+          "line": 304,
           "module_id": "platform.content",
           "name": "markdown_table_cells",
           "qualname": "markdown_table_cells"
@@ -47638,7 +47707,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 277,
+          "line": 314,
           "module_id": "platform.content",
           "name": "is_markdown_table_separator",
           "qualname": "is_markdown_table_separator"
@@ -47646,7 +47715,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 282,
+          "line": 319,
           "module_id": "platform.content",
           "name": "markdown_to_article_html",
           "qualname": "markdown_to_article_html"
@@ -47654,7 +47723,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 296,
+          "line": 333,
           "module_id": "platform.content",
           "name": "is_boundary",
           "qualname": "markdown_to_article_html.is_boundary"
@@ -47662,7 +47731,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "class",
-          "line": 465,
+          "line": 502,
           "module_id": "platform.content",
           "name": "PlainTextExtractor",
           "qualname": "PlainTextExtractor"
@@ -47670,7 +47739,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 466,
+          "line": 503,
           "module_id": "platform.content",
           "name": "__init__",
           "qualname": "PlainTextExtractor.__init__"
@@ -47678,7 +47747,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 470,
+          "line": 507,
           "module_id": "platform.content",
           "name": "handle_data",
           "qualname": "PlainTextExtractor.handle_data"
@@ -47686,7 +47755,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 475,
+          "line": 512,
           "module_id": "platform.content",
           "name": "article_plain_text",
           "qualname": "article_plain_text"
@@ -49070,7 +49139,7 @@
         {
           "file": "tools/build_article_source_registry.py",
           "kind": "function",
-          "line": 71,
+          "line": 75,
           "module_id": "platform.content",
           "name": "load_json",
           "qualname": "load_json"
@@ -49078,7 +49147,7 @@
         {
           "file": "tools/build_article_source_registry.py",
           "kind": "function",
-          "line": 75,
+          "line": 79,
           "module_id": "platform.content",
           "name": "source_urls",
           "qualname": "source_urls"
@@ -49086,7 +49155,7 @@
         {
           "file": "tools/build_article_source_registry.py",
           "kind": "function",
-          "line": 83,
+          "line": 87,
           "module_id": "platform.content",
           "name": "source_external_ids",
           "qualname": "source_external_ids"
@@ -49094,7 +49163,7 @@
         {
           "file": "tools/build_article_source_registry.py",
           "kind": "function",
-          "line": 92,
+          "line": 96,
           "module_id": "platform.content",
           "name": "compact_source",
           "qualname": "compact_source"
@@ -49102,7 +49171,7 @@
         {
           "file": "tools/build_article_source_registry.py",
           "kind": "function",
-          "line": 107,
+          "line": 111,
           "module_id": "platform.content",
           "name": "classify_deferred",
           "qualname": "classify_deferred"
@@ -49110,7 +49179,7 @@
         {
           "file": "tools/build_article_source_registry.py",
           "kind": "function",
-          "line": 122,
+          "line": 126,
           "module_id": "platform.content",
           "name": "build",
           "qualname": "build"
@@ -49118,7 +49187,7 @@
         {
           "file": "tools/build_article_source_registry.py",
           "kind": "function",
-          "line": 417,
+          "line": 422,
           "module_id": "platform.content",
           "name": "main",
           "qualname": "main"
@@ -51948,6 +52017,7 @@
         "вручную выдавать, приостанавливать, возвращать и отзывать отдельные продуктовые права;",
         "фильтровать список по первому появлению, покупке, продукту, доступу Мастер-класса,",
         "показывать людей плотной таблицей с быстрыми фильтрами без потери фокуса поиска;",
+        "при открытии карточки ставить в адресную строку постоянный `?user=<user_id>`;",
         "в таблице держать колонки «Имя», «Мессенджеры», «Источник» и далее по",
         "в «Мессенджерах» показывать только небольшие логотипы: постоянная левая ячейка",
         "кнопки Telegram/MAX берутся из `messenger_accounts`: это контакт человека, а",
@@ -55303,7 +55373,7 @@
         }
       ],
       "id": "products.calories",
-      "implementation_status": "in_development",
+      "implementation_status": "implemented",
       "parent": "products",
       "plans": [],
       "public_urls": [],
@@ -58956,11 +59026,19 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "backend/tests/browser/article-audio.e2e.mjs"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "backend/tests/test_course_structure_multiline.py"
         },
         {
           "module_id": "products.masterclass.course",
           "path": "backend/tests/test_github_content_editor.py"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "backend/tests/test_masterclass_article_audio.py"
         },
         {
           "module_id": "products.masterclass.course",
@@ -59005,6 +59083,10 @@
         {
           "module_id": "products.masterclass.course",
           "path": "content/masterclass/components/README.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/components/article-audio/player.html"
         },
         {
           "module_id": "products.masterclass.course",
@@ -60167,7 +60249,7 @@
       "routes": [
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 244,
+          "line": 260,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials",
@@ -60175,7 +60257,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 254,
+          "line": 270,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials/{step_id}",
@@ -60183,7 +60265,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 265,
+          "line": 281,
           "method": "PUT",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials/{step_id}",
@@ -60191,7 +60273,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 288,
+          "line": 304,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials/{step_id}/versions",
@@ -60199,7 +60281,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 305,
+          "line": 321,
           "method": "POST",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials/{step_id}/versions/{version_no}/restore",
@@ -60207,7 +60289,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 137,
+          "line": 153,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/editorial/masterclass/materials/{step_id}",
@@ -60215,7 +60297,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 178,
+          "line": 194,
           "method": "PUT",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/editorial/masterclass/materials/{step_id}/draft",
@@ -60223,7 +60305,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 217,
+          "line": 233,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/editorial/masterclass/materials/{step_id}/history",
@@ -60231,7 +60313,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 151,
+          "line": 167,
           "method": "POST",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/editorial/masterclass/materials/{step_id}/preview",
@@ -60239,7 +60321,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 200,
+          "line": 216,
           "method": "POST",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/editorial/masterclass/materials/{step_id}/publish",
@@ -60247,7 +60329,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 227,
+          "line": 243,
           "method": "POST",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/editorial/masterclass/materials/{step_id}/rollback",
@@ -60255,7 +60337,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 73,
+          "line": 88,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/course-assets/masterclass/article-components.css",
@@ -60263,7 +60345,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 87,
+          "line": 103,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/course-assets/masterclass/article-components.js",
@@ -60271,7 +60353,15 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 56,
+          "line": 58,
+          "method": "GET",
+          "module_id": "products.masterclass.course",
+          "path": "/course-assets/masterclass/audio-player",
+          "symbol": "masterclass_audio_player"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "line": 71,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/course-assets/masterclass/media/{asset_path:path}",
@@ -60358,7 +60448,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 36,
+          "line": 38,
           "module_id": "products.masterclass.course",
           "name": "material_service",
           "qualname": "material_service"
@@ -60366,7 +60456,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 51,
+          "line": 53,
           "module_id": "products.masterclass.course",
           "name": "component_asset",
           "qualname": "component_asset"
@@ -60374,7 +60464,15 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 56,
+          "line": 58,
+          "module_id": "products.masterclass.course",
+          "name": "masterclass_audio_player",
+          "qualname": "masterclass_audio_player"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "kind": "function",
+          "line": 71,
           "module_id": "products.masterclass.course",
           "name": "masterclass_article_media",
           "qualname": "masterclass_article_media"
@@ -60382,7 +60480,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 73,
+          "line": 88,
           "module_id": "products.masterclass.course",
           "name": "masterclass_article_component_styles",
           "qualname": "masterclass_article_component_styles"
@@ -60390,7 +60488,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 87,
+          "line": 103,
           "module_id": "products.masterclass.course",
           "name": "masterclass_article_component_script",
           "qualname": "masterclass_article_component_script"
@@ -60398,7 +60496,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "class",
-          "line": 95,
+          "line": 111,
           "module_id": "products.masterclass.course",
           "name": "CourseMaterialUpdate",
           "qualname": "CourseMaterialUpdate"
@@ -60406,7 +60504,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "class",
-          "line": 101,
+          "line": 117,
           "module_id": "products.masterclass.course",
           "name": "CourseMaterialRestore",
           "qualname": "CourseMaterialRestore"
@@ -60414,7 +60512,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "class",
-          "line": 105,
+          "line": 121,
           "module_id": "products.masterclass.course",
           "name": "EditorialPreview",
           "qualname": "EditorialPreview"
@@ -60422,7 +60520,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "class",
-          "line": 109,
+          "line": 125,
           "module_id": "products.masterclass.course",
           "name": "EditorialDraftSave",
           "qualname": "EditorialDraftSave"
@@ -60430,7 +60528,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "class",
-          "line": 114,
+          "line": 130,
           "module_id": "products.masterclass.course",
           "name": "EditorialPublish",
           "qualname": "EditorialPublish"
@@ -60438,7 +60536,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "class",
-          "line": 119,
+          "line": 135,
           "module_id": "products.masterclass.course",
           "name": "EditorialRollback",
           "qualname": "EditorialRollback"
@@ -60446,7 +60544,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 124,
+          "line": 140,
           "module_id": "products.masterclass.course",
           "name": "editorial_editor",
           "qualname": "editorial_editor"
@@ -60454,7 +60552,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 128,
+          "line": 144,
           "module_id": "products.masterclass.course",
           "name": "editorial_title",
           "qualname": "editorial_title"
@@ -60462,7 +60560,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 137,
+          "line": 153,
           "module_id": "products.masterclass.course",
           "name": "admin_editorial_material",
           "qualname": "admin_editorial_material"
@@ -60470,7 +60568,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 151,
+          "line": 167,
           "module_id": "products.masterclass.course",
           "name": "admin_editorial_preview",
           "qualname": "admin_editorial_preview"
@@ -60478,7 +60576,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 178,
+          "line": 194,
           "module_id": "products.masterclass.course",
           "name": "admin_editorial_save_draft",
           "qualname": "admin_editorial_save_draft"
@@ -60486,7 +60584,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 200,
+          "line": 216,
           "module_id": "products.masterclass.course",
           "name": "admin_editorial_publish",
           "qualname": "admin_editorial_publish"
@@ -60494,7 +60592,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 217,
+          "line": 233,
           "module_id": "products.masterclass.course",
           "name": "admin_editorial_history",
           "qualname": "admin_editorial_history"
@@ -60502,7 +60600,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 227,
+          "line": 243,
           "module_id": "products.masterclass.course",
           "name": "admin_editorial_rollback",
           "qualname": "admin_editorial_rollback"
@@ -60510,7 +60608,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 244,
+          "line": 260,
           "module_id": "products.masterclass.course",
           "name": "admin_course_materials",
           "qualname": "admin_course_materials"
@@ -60518,7 +60616,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 254,
+          "line": 270,
           "module_id": "products.masterclass.course",
           "name": "admin_course_material",
           "qualname": "admin_course_material"
@@ -60526,7 +60624,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 265,
+          "line": 281,
           "module_id": "products.masterclass.course",
           "name": "admin_publish_course_material",
           "qualname": "admin_publish_course_material"
@@ -60534,7 +60632,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 288,
+          "line": 304,
           "module_id": "products.masterclass.course",
           "name": "admin_course_material_versions",
           "qualname": "admin_course_material_versions"
@@ -60542,7 +60640,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 305,
+          "line": 321,
           "module_id": "products.masterclass.course",
           "name": "admin_restore_course_material",
           "qualname": "admin_restore_course_material"
@@ -61860,6 +61958,38 @@
           "qualname": "test_github_write_requires_token_before_network"
         },
         {
+          "file": "backend/tests/test_masterclass_article_audio.py",
+          "kind": "function",
+          "line": 15,
+          "module_id": "products.masterclass.course",
+          "name": "test_audio_component_survives_published_html_roundtrip",
+          "qualname": "test_audio_component_survives_published_html_roundtrip"
+        },
+        {
+          "file": "backend/tests/test_masterclass_article_audio.py",
+          "kind": "function",
+          "line": 36,
+          "module_id": "products.masterclass.course",
+          "name": "test_audio_rejects_unsafe_or_invalid_arguments",
+          "qualname": "test_audio_rejects_unsafe_or_invalid_arguments"
+        },
+        {
+          "file": "backend/tests/test_masterclass_article_audio.py",
+          "kind": "function",
+          "line": 43,
+          "module_id": "products.masterclass.course",
+          "name": "test_audio_frame_rejects_duplicate_and_unknown_parameters",
+          "qualname": "test_audio_frame_rejects_duplicate_and_unknown_parameters"
+        },
+        {
+          "file": "backend/tests/test_masterclass_article_audio.py",
+          "kind": "function",
+          "line": 50,
+          "module_id": "products.masterclass.course",
+          "name": "test_player_endpoint_escapes_text_and_has_controls_without_autoplay",
+          "qualname": "test_player_endpoint_escapes_text_and_has_controls_without_autoplay"
+        },
+        {
           "file": "backend/tests/test_masterclass_article_video.py",
           "kind": "function",
           "line": 11,
@@ -62722,7 +62852,7 @@
         "Active `managed_document_versions` — runtime truth структуры;\n`content/masterclass/course/course.json` — seed; смысловой контракт —\n`COURSE_STRUCTURE_CONTRACT.md`; изменяемые размеры, отступы и цвета —\n`COURSE_VISUAL_SYSTEM.md`.",
         "`content/masterclass/editorial/` — authoring truth редакции. Команда\n`backend/scripts/publish_masterclass_editorial.py --publish` создаёт новую active\nrevision структуры и отдельные versioned-редакции обычных статей. Не вошедшие в\nпрограмму прежние шаги не удаляются, а остаются скрытыми.\nДля согласованного частичного выпуска `--through-day 5` ограничивает изменения\nднями 1–5; структура, тексты и редакторские поля более поздних дней сохраняются.",
         "Для `day-01-article-02` Markdown из `content/masterclass/editorial/materials/` уже\nявляется одновременно authoring и runtime truth после deploy. Экран\n`/admin/courses/masterclass-21/materials/day-01-article-02/editor` читает и пишет\nтот же файл через GitHub Contents API. Ветка `content-drafts` не развёртывается;\n`main` публикуется обычным CI/deploy. GitHub token хранится только в серверном `.env`.\nНа тот же Git-backed маршрут подключены восемь вложенных рецептов дня 7;\nих стабильные ID перечислены в `app.masterclass_editorial.EDITABLE_MATERIALS`.\nДругие статьи не переводятся на этот маршрут автоматически.",
-        "При частичном выпуске `--exclude-day` и `--exclude-step` сохраняют указанные дни\nи материалы из active runtime без изменений. Заглушки не публикуются как статьи.\nВидео внутри статьи задаётся закрытым компонентом `video(...)` из продуктового\nкаталога: HTTPS MP4, короткий служебный заголовок и учебный плеер без подписи или ссылки.",
+        "При частичном выпуске `--exclude-day` и `--exclude-step` сохраняют указанные дни\nи материалы из active runtime без изменений. Заглушки не публикуются как статьи.\nВидео внутри статьи задаётся закрытым компонентом `video(...)` из продуктового\nкаталога: HTTPS MP4, короткий служебный заголовок и учебный плеер без подписи или ссылки.\nГолосовое внутри статьи задаётся `audio(...)`: HTTPS-аудиофайл, аватарка,\nавтор и длительность. Закрытый плеер на всю ширину статьи использует оформление\nголосовых главной страницы, без автозапуска; исходный звук и аватарка не входят в Git.",
         "`content/masterclass/source-current/` хранит миграционные исходники прежней\nредакции и после первичного переноса не является местом новой редактуры. Для DQS\nпрежний полный исходник — `13-dqs-system.md`; `.txt` сохранён как неизменяемый\nlegacy-источник. Повторно используемые авторские вставки и код\nнаходятся в `content/masterclass/components/`: код слайдера отделён от ссылок на\nизображения, а таблицы получают данные из одного продуктового allowlist. Локальные\nизображения новых авторских материалов хранятся внутри Obsidian-хранилища в\n`editorial/assets/`, а прежние миграционные изображения остаются в\n`source-current/assets/`. Оба каталога выдаются только через ограниченный маршрут\n`/course-assets/masterclass/media/*`; Markdown-публикатор заменяет относительные\nпрефиксы `../assets/` и legacy `assets/` на этот маршрут. Страница\nкурса загружает CSS и JavaScript напрямую из этого каталога через\n`/course-assets/masterclass/article-components.*`; копии runtime-кода в HTML нет.\nСырой HTML статьи не получает доверенные component-классы и `data-*` атрибуты:\nих может добавить только закрытый Markdown renderer продукта."
       ]
     },
@@ -70951,7 +71081,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 244,
+      "line": 260,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials",
@@ -70959,7 +71089,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 254,
+      "line": 270,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials/{step_id}",
@@ -70967,7 +71097,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 265,
+      "line": 281,
       "method": "PUT",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials/{step_id}",
@@ -70975,7 +71105,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 288,
+      "line": 304,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials/{step_id}/versions",
@@ -70983,7 +71113,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 305,
+      "line": 321,
       "method": "POST",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials/{step_id}/versions/{version_no}/restore",
@@ -71015,7 +71145,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 137,
+      "line": 153,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/editorial/masterclass/materials/{step_id}",
@@ -71023,7 +71153,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 178,
+      "line": 194,
       "method": "PUT",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/editorial/masterclass/materials/{step_id}/draft",
@@ -71031,7 +71161,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 217,
+      "line": 233,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/editorial/masterclass/materials/{step_id}/history",
@@ -71039,7 +71169,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 151,
+      "line": 167,
       "method": "POST",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/editorial/masterclass/materials/{step_id}/preview",
@@ -71047,7 +71177,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 200,
+      "line": 216,
       "method": "POST",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/editorial/masterclass/materials/{step_id}/publish",
@@ -71055,7 +71185,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 227,
+      "line": 243,
       "method": "POST",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/editorial/masterclass/materials/{step_id}/rollback",
@@ -73127,7 +73257,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 73,
+      "line": 88,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/course-assets/masterclass/article-components.css",
@@ -73135,7 +73265,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 87,
+      "line": 103,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/course-assets/masterclass/article-components.js",
@@ -73143,7 +73273,15 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 56,
+      "line": 58,
+      "method": "GET",
+      "module_id": "products.masterclass.course",
+      "path": "/course-assets/masterclass/audio-player",
+      "symbol": "masterclass_audio_player"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "line": 71,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/course-assets/masterclass/media/{asset_path:path}",
@@ -75709,13 +75847,37 @@
       "kind": "function",
       "line": 93,
       "module_id": "platform.content",
+      "name": "safe_audio_arguments",
+      "qualname": "safe_audio_arguments"
+    },
+    {
+      "file": "backend/app/article_markup.py",
+      "kind": "function",
+      "line": 95,
+      "module_id": "platform.content",
+      "name": "media_url",
+      "qualname": "safe_audio_arguments.media_url"
+    },
+    {
+      "file": "backend/app/article_markup.py",
+      "kind": "function",
+      "line": 113,
+      "module_id": "platform.content",
+      "name": "safe_audio_frame",
+      "qualname": "safe_audio_frame"
+    },
+    {
+      "file": "backend/app/article_markup.py",
+      "kind": "function",
+      "line": 124,
+      "module_id": "platform.content",
       "name": "safe_image_src",
       "qualname": "safe_image_src"
     },
     {
       "file": "backend/app/article_markup.py",
       "kind": "class",
-      "line": 104,
+      "line": 135,
       "module_id": "platform.content",
       "name": "ArticleSanitizer",
       "qualname": "ArticleSanitizer"
@@ -75723,7 +75885,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 105,
+      "line": 136,
       "module_id": "platform.content",
       "name": "__init__",
       "qualname": "ArticleSanitizer.__init__"
@@ -75731,7 +75893,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 120,
+      "line": 151,
       "module_id": "platform.content",
       "name": "handle_starttag",
       "qualname": "ArticleSanitizer.handle_starttag"
@@ -75739,7 +75901,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 200,
+      "line": 237,
       "module_id": "platform.content",
       "name": "handle_startendtag",
       "qualname": "ArticleSanitizer.handle_startendtag"
@@ -75747,7 +75909,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 206,
+      "line": 243,
       "module_id": "platform.content",
       "name": "handle_endtag",
       "qualname": "ArticleSanitizer.handle_endtag"
@@ -75755,7 +75917,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 217,
+      "line": 254,
       "module_id": "platform.content",
       "name": "handle_data",
       "qualname": "ArticleSanitizer.handle_data"
@@ -75763,7 +75925,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 222,
+      "line": 259,
       "module_id": "platform.content",
       "name": "sanitize_article_html",
       "qualname": "sanitize_article_html"
@@ -75771,7 +75933,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 248,
+      "line": 285,
       "module_id": "platform.content",
       "name": "inline_markdown",
       "qualname": "inline_markdown"
@@ -75779,7 +75941,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 251,
+      "line": 288,
       "module_id": "platform.content",
       "name": "render_link",
       "qualname": "inline_markdown.render_link"
@@ -75787,7 +75949,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 267,
+      "line": 304,
       "module_id": "platform.content",
       "name": "markdown_table_cells",
       "qualname": "markdown_table_cells"
@@ -75795,7 +75957,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 277,
+      "line": 314,
       "module_id": "platform.content",
       "name": "is_markdown_table_separator",
       "qualname": "is_markdown_table_separator"
@@ -75803,7 +75965,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 282,
+      "line": 319,
       "module_id": "platform.content",
       "name": "markdown_to_article_html",
       "qualname": "markdown_to_article_html"
@@ -75811,7 +75973,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 296,
+      "line": 333,
       "module_id": "platform.content",
       "name": "is_boundary",
       "qualname": "markdown_to_article_html.is_boundary"
@@ -75819,7 +75981,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "class",
-      "line": 465,
+      "line": 502,
       "module_id": "platform.content",
       "name": "PlainTextExtractor",
       "qualname": "PlainTextExtractor"
@@ -75827,7 +75989,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 466,
+      "line": 503,
       "module_id": "platform.content",
       "name": "__init__",
       "qualname": "PlainTextExtractor.__init__"
@@ -75835,7 +75997,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 470,
+      "line": 507,
       "module_id": "platform.content",
       "name": "handle_data",
       "qualname": "PlainTextExtractor.handle_data"
@@ -75843,7 +76005,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 475,
+      "line": 512,
       "module_id": "platform.content",
       "name": "article_plain_text",
       "qualname": "article_plain_text"
@@ -77419,7 +77581,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 36,
+      "line": 38,
       "module_id": "products.masterclass.course",
       "name": "material_service",
       "qualname": "material_service"
@@ -77427,7 +77589,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 51,
+      "line": 53,
       "module_id": "products.masterclass.course",
       "name": "component_asset",
       "qualname": "component_asset"
@@ -77435,7 +77597,15 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 56,
+      "line": 58,
+      "module_id": "products.masterclass.course",
+      "name": "masterclass_audio_player",
+      "qualname": "masterclass_audio_player"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "kind": "function",
+      "line": 71,
       "module_id": "products.masterclass.course",
       "name": "masterclass_article_media",
       "qualname": "masterclass_article_media"
@@ -77443,7 +77613,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 73,
+      "line": 88,
       "module_id": "products.masterclass.course",
       "name": "masterclass_article_component_styles",
       "qualname": "masterclass_article_component_styles"
@@ -77451,7 +77621,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 87,
+      "line": 103,
       "module_id": "products.masterclass.course",
       "name": "masterclass_article_component_script",
       "qualname": "masterclass_article_component_script"
@@ -77459,7 +77629,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "class",
-      "line": 95,
+      "line": 111,
       "module_id": "products.masterclass.course",
       "name": "CourseMaterialUpdate",
       "qualname": "CourseMaterialUpdate"
@@ -77467,7 +77637,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "class",
-      "line": 101,
+      "line": 117,
       "module_id": "products.masterclass.course",
       "name": "CourseMaterialRestore",
       "qualname": "CourseMaterialRestore"
@@ -77475,7 +77645,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "class",
-      "line": 105,
+      "line": 121,
       "module_id": "products.masterclass.course",
       "name": "EditorialPreview",
       "qualname": "EditorialPreview"
@@ -77483,7 +77653,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "class",
-      "line": 109,
+      "line": 125,
       "module_id": "products.masterclass.course",
       "name": "EditorialDraftSave",
       "qualname": "EditorialDraftSave"
@@ -77491,7 +77661,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "class",
-      "line": 114,
+      "line": 130,
       "module_id": "products.masterclass.course",
       "name": "EditorialPublish",
       "qualname": "EditorialPublish"
@@ -77499,7 +77669,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "class",
-      "line": 119,
+      "line": 135,
       "module_id": "products.masterclass.course",
       "name": "EditorialRollback",
       "qualname": "EditorialRollback"
@@ -77507,7 +77677,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 124,
+      "line": 140,
       "module_id": "products.masterclass.course",
       "name": "editorial_editor",
       "qualname": "editorial_editor"
@@ -77515,7 +77685,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 128,
+      "line": 144,
       "module_id": "products.masterclass.course",
       "name": "editorial_title",
       "qualname": "editorial_title"
@@ -77523,7 +77693,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 137,
+      "line": 153,
       "module_id": "products.masterclass.course",
       "name": "admin_editorial_material",
       "qualname": "admin_editorial_material"
@@ -77531,7 +77701,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 151,
+      "line": 167,
       "module_id": "products.masterclass.course",
       "name": "admin_editorial_preview",
       "qualname": "admin_editorial_preview"
@@ -77539,7 +77709,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 178,
+      "line": 194,
       "module_id": "products.masterclass.course",
       "name": "admin_editorial_save_draft",
       "qualname": "admin_editorial_save_draft"
@@ -77547,7 +77717,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 200,
+      "line": 216,
       "module_id": "products.masterclass.course",
       "name": "admin_editorial_publish",
       "qualname": "admin_editorial_publish"
@@ -77555,7 +77725,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 217,
+      "line": 233,
       "module_id": "products.masterclass.course",
       "name": "admin_editorial_history",
       "qualname": "admin_editorial_history"
@@ -77563,7 +77733,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 227,
+      "line": 243,
       "module_id": "products.masterclass.course",
       "name": "admin_editorial_rollback",
       "qualname": "admin_editorial_rollback"
@@ -77571,7 +77741,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 244,
+      "line": 260,
       "module_id": "products.masterclass.course",
       "name": "admin_course_materials",
       "qualname": "admin_course_materials"
@@ -77579,7 +77749,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 254,
+      "line": 270,
       "module_id": "products.masterclass.course",
       "name": "admin_course_material",
       "qualname": "admin_course_material"
@@ -77587,7 +77757,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 265,
+      "line": 281,
       "module_id": "products.masterclass.course",
       "name": "admin_publish_course_material",
       "qualname": "admin_publish_course_material"
@@ -77595,7 +77765,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 288,
+      "line": 304,
       "module_id": "products.masterclass.course",
       "name": "admin_course_material_versions",
       "qualname": "admin_course_material_versions"
@@ -77603,7 +77773,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 305,
+      "line": 321,
       "module_id": "products.masterclass.course",
       "name": "admin_restore_course_material",
       "qualname": "admin_restore_course_material"
@@ -85107,7 +85277,15 @@
     {
       "file": "backend/app/static/admin-shell.js",
       "kind": "function",
-      "line": 20,
+      "line": 25,
+      "module_id": "admin.control",
+      "name": "withClientContext",
+      "qualname": "withClientContext"
+    },
+    {
+      "file": "backend/app/static/admin-shell.js",
+      "kind": "function",
+      "line": 42,
       "module_id": "admin.control",
       "name": "esc",
       "qualname": "esc"
@@ -85115,7 +85293,7 @@
     {
       "file": "backend/app/static/admin-shell.js",
       "kind": "function",
-      "line": 26,
+      "line": 48,
       "module_id": "admin.control",
       "name": "selected",
       "qualname": "selected"
@@ -85123,7 +85301,7 @@
     {
       "file": "backend/app/static/admin-shell.js",
       "kind": "function",
-      "line": 33,
+      "line": 55,
       "module_id": "admin.control",
       "name": "compactIcon",
       "qualname": "compactIcon"
@@ -85131,7 +85309,7 @@
     {
       "file": "backend/app/static/admin-shell.js",
       "kind": "function",
-      "line": 40,
+      "line": 62,
       "module_id": "admin.control",
       "name": "itemMarkup",
       "qualname": "itemMarkup"
@@ -85139,7 +85317,7 @@
     {
       "file": "backend/app/static/admin-shell.js",
       "kind": "function",
-      "line": 50,
+      "line": 73,
       "module_id": "admin.control",
       "name": "render",
       "qualname": "render"
@@ -85147,7 +85325,7 @@
     {
       "file": "backend/app/static/admin-shell.js",
       "kind": "function",
-      "line": 53,
+      "line": 76,
       "module_id": "admin.control",
       "name": "uniqueIcon",
       "qualname": "uniqueIcon"
@@ -85155,7 +85333,7 @@
     {
       "file": "backend/app/static/admin-shell.js",
       "kind": "function",
-      "line": 120,
+      "line": 143,
       "module_id": "admin.control",
       "name": "setState",
       "qualname": "setState"
@@ -85163,7 +85341,7 @@
     {
       "file": "backend/app/static/admin-shell.js",
       "kind": "function",
-      "line": 136,
+      "line": 159,
       "module_id": "admin.control",
       "name": "closeMobile",
       "qualname": "closeMobile"
@@ -86541,13 +86719,29 @@
       "kind": "function",
       "line": 135,
       "module_id": "admin.control",
+      "name": "crmUrlForUser",
+      "qualname": "crmUrlForUser"
+    },
+    {
+      "file": "backend/app/static/crm.js",
+      "kind": "function",
+      "line": 142,
+      "module_id": "admin.control",
+      "name": "setCurrentUserUrl",
+      "qualname": "setCurrentUserUrl"
+    },
+    {
+      "file": "backend/app/static/crm.js",
+      "kind": "function",
+      "line": 147,
+      "module_id": "admin.control",
       "name": "botAge",
       "qualname": "botAge"
     },
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 143,
+      "line": 155,
       "module_id": "admin.control",
       "name": "telegramPlaneIcon",
       "qualname": "telegramPlaneIcon"
@@ -86555,7 +86749,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 147,
+      "line": 159,
       "module_id": "admin.control",
       "name": "copyIcon",
       "qualname": "copyIcon"
@@ -86563,7 +86757,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 151,
+      "line": 163,
       "module_id": "admin.control",
       "name": "messengerIcon",
       "qualname": "messengerIcon"
@@ -86571,7 +86765,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 160,
+      "line": 172,
       "module_id": "admin.control",
       "name": "botStart",
       "qualname": "botStart"
@@ -86579,7 +86773,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 168,
+      "line": 180,
       "module_id": "admin.control",
       "name": "channelState",
       "qualname": "channelState"
@@ -86587,7 +86781,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 175,
+      "line": 187,
       "module_id": "admin.control",
       "name": "accessCodes",
       "qualname": "accessCodes"
@@ -86595,7 +86789,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 179,
+      "line": 191,
       "module_id": "admin.control",
       "name": "clientStage",
       "qualname": "clientStage"
@@ -86603,7 +86797,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 187,
+      "line": 199,
       "module_id": "admin.control",
       "name": "messengerContact",
       "qualname": "messengerContact"
@@ -86611,7 +86805,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 199,
+      "line": 211,
       "module_id": "admin.control",
       "name": "profileMessengerButton",
       "qualname": "profileMessengerButton"
@@ -86619,7 +86813,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 217,
+      "line": 229,
       "module_id": "admin.control",
       "name": "courseProgressPreview",
       "qualname": "courseProgressPreview"
@@ -86627,7 +86821,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 223,
+      "line": 235,
       "module_id": "admin.control",
       "name": "paymentDelayFromBot",
       "qualname": "paymentDelayFromBot"
@@ -86635,7 +86829,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 233,
+      "line": 245,
       "module_id": "admin.control",
       "name": "previewTrigger",
       "qualname": "previewTrigger"
@@ -86643,7 +86837,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 242,
+      "line": 254,
       "module_id": "admin.control",
       "name": "previewContent",
       "qualname": "previewContent"
@@ -86651,7 +86845,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 291,
+      "line": 303,
       "module_id": "admin.control",
       "name": "bindUserPreviews",
       "qualname": "bindUserPreviews"
@@ -86659,7 +86853,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 297,
+      "line": 309,
       "module_id": "admin.control",
       "name": "place",
       "qualname": "place"
@@ -86667,7 +86861,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 308,
+      "line": 320,
       "module_id": "admin.control",
       "name": "load",
       "qualname": "load"
@@ -86675,7 +86869,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 336,
+      "line": 348,
       "module_id": "admin.control",
       "name": "peopleMode",
       "qualname": "peopleMode"
@@ -86683,7 +86877,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 343,
+      "line": 355,
       "module_id": "admin.control",
       "name": "userRow",
       "qualname": "userRow"
@@ -86691,7 +86885,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 347,
+      "line": 359,
       "module_id": "admin.control",
       "name": "messengerButton",
       "qualname": "messengerButton"
@@ -86699,7 +86893,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 375,
+      "line": 387,
       "module_id": "admin.control",
       "name": "bindUserCards",
       "qualname": "bindUserCards"
@@ -86707,7 +86901,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 387,
+      "line": 399,
       "module_id": "admin.control",
       "name": "bindEmailCopyButtons",
       "qualname": "bindEmailCopyButtons"
@@ -86715,7 +86909,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 404,
+      "line": 416,
       "module_id": "admin.control",
       "name": "loadUserRows",
       "qualname": "loadUserRows"
@@ -86723,7 +86917,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 434,
+      "line": 446,
       "module_id": "admin.control",
       "name": "columnClass",
       "qualname": "columnClass"
@@ -86731,7 +86925,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 444,
+      "line": 456,
       "module_id": "admin.control",
       "name": "renderUsers",
       "qualname": "renderUsers"
@@ -86739,7 +86933,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 494,
+      "line": 506,
       "module_id": "admin.control",
       "name": "renderTags",
       "qualname": "renderTags"
@@ -86747,7 +86941,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 565,
+      "line": 577,
       "module_id": "admin.control",
       "name": "renderTagAudit",
       "qualname": "renderTagAudit"
@@ -86755,7 +86949,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 598,
+      "line": 610,
       "module_id": "admin.control",
       "name": "renderAccessReviews",
       "qualname": "renderAccessReviews"
@@ -86763,7 +86957,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 608,
+      "line": 620,
       "module_id": "admin.control",
       "name": "renderPayments",
       "qualname": "renderPayments"
@@ -86771,7 +86965,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 667,
+      "line": 679,
       "module_id": "admin.control",
       "name": "renderStructure",
       "qualname": "renderStructure"
@@ -86779,7 +86973,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 697,
+      "line": 709,
       "module_id": "admin.control",
       "name": "purchaseCard",
       "qualname": "purchaseCard"
@@ -86787,7 +86981,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 710,
+      "line": 722,
       "module_id": "admin.control",
       "name": "bindTableScroll",
       "qualname": "bindTableScroll"
@@ -86795,7 +86989,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 718,
+      "line": 730,
       "module_id": "admin.control",
       "name": "sync",
       "qualname": "sync"
@@ -86803,7 +86997,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 728,
+      "line": 740,
       "module_id": "admin.control",
       "name": "previewCourseAccesses",
       "qualname": "previewCourseAccesses"
@@ -86811,7 +87005,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 738,
+      "line": 750,
       "module_id": "admin.control",
       "name": "accessMatrixCell",
       "qualname": "accessMatrixCell"
@@ -86819,7 +87013,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 742,
+      "line": 754,
       "module_id": "admin.control",
       "name": "courseAccessPreview",
       "qualname": "courseAccessPreview"
@@ -86827,7 +87021,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 772,
+      "line": 784,
       "module_id": "admin.control",
       "name": "bindCourseAccessPreview",
       "qualname": "bindCourseAccessPreview"
@@ -86835,7 +87029,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 809,
+      "line": 821,
       "module_id": "admin.control",
       "name": "openUser",
       "qualname": "openUser"
@@ -86843,7 +87037,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 908,
+      "line": 923,
       "module_id": "admin.control",
       "name": "loadActiveOffers",
       "qualname": "loadActiveOffers"
@@ -86851,7 +87045,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 921,
+      "line": 936,
       "module_id": "admin.control",
       "name": "synchronize",
       "qualname": "synchronize"
@@ -86859,7 +87053,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 1016,
+      "line": 1034,
       "module_id": "admin.control",
       "name": "refreshUser",
       "qualname": "refreshUser"
@@ -86867,7 +87061,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 1021,
+      "line": 1039,
       "module_id": "admin.control",
       "name": "loadHome",
       "qualname": "loadHome"
@@ -86875,7 +87069,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 1026,
+      "line": 1044,
       "module_id": "admin.control",
       "name": "showView",
       "qualname": "showView"
@@ -86883,7 +87077,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 1037,
+      "line": 1055,
       "module_id": "admin.control",
       "name": "showError",
       "qualname": "showError"
@@ -86891,7 +87085,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 1043,
+      "line": 1061,
       "module_id": "admin.control",
       "name": "initialise",
       "qualname": "initialise"
@@ -94239,6 +94433,38 @@
       "module_id": "marketing.analytics",
       "name": "test_generate_and_store_replaces_same_daily_snapshot",
       "qualname": "test_generate_and_store_replaces_same_daily_snapshot"
+    },
+    {
+      "file": "backend/tests/test_masterclass_article_audio.py",
+      "kind": "function",
+      "line": 15,
+      "module_id": "products.masterclass.course",
+      "name": "test_audio_component_survives_published_html_roundtrip",
+      "qualname": "test_audio_component_survives_published_html_roundtrip"
+    },
+    {
+      "file": "backend/tests/test_masterclass_article_audio.py",
+      "kind": "function",
+      "line": 36,
+      "module_id": "products.masterclass.course",
+      "name": "test_audio_rejects_unsafe_or_invalid_arguments",
+      "qualname": "test_audio_rejects_unsafe_or_invalid_arguments"
+    },
+    {
+      "file": "backend/tests/test_masterclass_article_audio.py",
+      "kind": "function",
+      "line": 43,
+      "module_id": "products.masterclass.course",
+      "name": "test_audio_frame_rejects_duplicate_and_unknown_parameters",
+      "qualname": "test_audio_frame_rejects_duplicate_and_unknown_parameters"
+    },
+    {
+      "file": "backend/tests/test_masterclass_article_audio.py",
+      "kind": "function",
+      "line": 50,
+      "module_id": "products.masterclass.course",
+      "name": "test_player_endpoint_escapes_text_and_has_controls_without_autoplay",
+      "qualname": "test_player_endpoint_escapes_text_and_has_controls_without_autoplay"
     },
     {
       "file": "backend/tests/test_masterclass_article_video.py",
@@ -103811,7 +104037,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 61,
+      "line": 63,
       "module_id": "messaging.telegram.engine",
       "name": "test_audit_reports_enabled_message_step_without_content",
       "qualname": "test_audit_reports_enabled_message_step_without_content"
@@ -103819,7 +104045,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 87,
+      "line": 89,
       "module_id": "messaging.telegram.engine",
       "name": "test_new_text_trigger_gets_an_empty_writer_slot_by_default",
       "qualname": "test_new_text_trigger_gets_an_empty_writer_slot_by_default"
@@ -103827,7 +104053,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 107,
+      "line": 109,
       "module_id": "messaging.telegram.engine",
       "name": "test_confirmed_publish_is_versioned_and_skipped_by_writer",
       "qualname": "test_confirmed_publish_is_versioned_and_skipped_by_writer"
@@ -103835,7 +104061,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 115,
+      "line": 117,
       "module_id": "messaging.telegram.engine",
       "name": "db_override",
       "qualname": "test_confirmed_publish_is_versioned_and_skipped_by_writer.db_override"
@@ -103843,7 +104069,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 151,
+      "line": 153,
       "module_id": "messaging.telegram.engine",
       "name": "test_admin_cannot_mark_placeholder_as_approved",
       "qualname": "test_admin_cannot_mark_placeholder_as_approved"
@@ -103851,7 +104077,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 159,
+      "line": 161,
       "module_id": "messaging.telegram.engine",
       "name": "db_override",
       "qualname": "test_admin_cannot_mark_placeholder_as_approved.db_override"
@@ -103859,7 +104085,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 171,
+      "line": 173,
       "module_id": "messaging.telegram.engine",
       "name": "test_admin_approved_edit_becomes_runtime_published",
       "qualname": "test_admin_approved_edit_becomes_runtime_published"
@@ -103867,7 +104093,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 179,
+      "line": 181,
       "module_id": "messaging.telegram.engine",
       "name": "db_override",
       "qualname": "test_admin_approved_edit_becomes_runtime_published.db_override"
@@ -103875,7 +104101,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 199,
+      "line": 201,
       "module_id": "messaging.telegram.engine",
       "name": "test_telegram_html_validator_accepts_supported_markup_and_templates",
       "qualname": "test_telegram_html_validator_accepts_supported_markup_and_templates"
@@ -103883,7 +104109,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 214,
+      "line": 216,
       "module_id": "messaging.telegram.engine",
       "name": "test_telegram_html_validator_rejects_unsupported_html",
       "qualname": "test_telegram_html_validator_rejects_unsupported_html"
@@ -103891,7 +104117,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 219,
+      "line": 221,
       "module_id": "messaging.telegram.engine",
       "name": "test_publish_rejects_unknown_variable_and_oversized_text",
       "qualname": "test_publish_rejects_unknown_variable_and_oversized_text"
@@ -103899,7 +104125,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 227,
+      "line": 229,
       "module_id": "messaging.telegram.engine",
       "name": "db_override",
       "qualname": "test_publish_rejects_unknown_variable_and_oversized_text.db_override"
@@ -103907,7 +104133,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 262,
+      "line": 264,
       "module_id": "messaging.telegram.engine",
       "name": "test_validate_endpoint_runs_publish_checks_without_writing",
       "qualname": "test_validate_endpoint_runs_publish_checks_without_writing"
@@ -103915,7 +104141,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 270,
+      "line": 272,
       "module_id": "messaging.telegram.engine",
       "name": "db_override",
       "qualname": "test_validate_endpoint_runs_publish_checks_without_writing.db_override"
@@ -103923,7 +104149,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 286,
+      "line": 288,
       "module_id": "messaging.telegram.engine",
       "name": "test_status_only_approval_revalidates_saved_html",
       "qualname": "test_status_only_approval_revalidates_saved_html"
@@ -103931,7 +104157,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 300,
+      "line": 302,
       "module_id": "messaging.telegram.engine",
       "name": "db_override",
       "qualname": "test_status_only_approval_revalidates_saved_html.db_override"
@@ -103939,7 +104165,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 314,
+      "line": 316,
       "module_id": "messaging.telegram.engine",
       "name": "test_approved_html_link_is_not_treated_as_placeholder",
       "qualname": "test_approved_html_link_is_not_treated_as_placeholder"
@@ -103947,7 +104173,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 328,
+      "line": 330,
       "module_id": "messaging.telegram.engine",
       "name": "test_runtime_rejects_invalid_approved_telegram_html",
       "qualname": "test_runtime_rejects_invalid_approved_telegram_html"
@@ -103955,7 +104181,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 342,
+      "line": 344,
       "module_id": "messaging.telegram.engine",
       "name": "test_seed_content_change_increments_optimistic_version",
       "qualname": "test_seed_content_change_increments_optimistic_version"
@@ -103963,7 +104189,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 357,
+      "line": 359,
       "module_id": "messaging.telegram.engine",
       "name": "test_runtime_html_fragment_reaches_telegram_without_format_conversion",
       "qualname": "test_runtime_html_fragment_reaches_telegram_without_format_conversion"
@@ -103971,7 +104197,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 369,
+      "line": 371,
       "module_id": "messaging.telegram.engine",
       "name": "handler",
       "qualname": "test_runtime_html_fragment_reaches_telegram_without_format_conversion.handler"
@@ -103979,7 +104205,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 377,
+      "line": 379,
       "module_id": "messaging.telegram.engine",
       "name": "test_start_router_rejects_unapproved_system_content",
       "qualname": "test_start_router_rejects_unapproved_system_content"
@@ -103987,7 +104213,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "class",
-      "line": 388,
+      "line": 390,
       "module_id": "messaging.telegram.engine",
       "name": "Sender",
       "qualname": "test_start_router_rejects_unapproved_system_content.Sender"
@@ -103995,7 +104221,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "method",
-      "line": 389,
+      "line": 391,
       "module_id": "messaging.telegram.engine",
       "name": "send_content",
       "qualname": "test_start_router_rejects_unapproved_system_content.Sender.send_content"
@@ -104003,7 +104229,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 396,
+      "line": 398,
       "module_id": "messaging.telegram.engine",
       "name": "test_chat_working_file_preserves_metadata_and_publishes_confirmed",
       "qualname": "test_chat_working_file_preserves_metadata_and_publishes_confirmed"
@@ -104011,7 +104237,7 @@
     {
       "file": "telegram-bot/service/tests/test_content_authoring.py",
       "kind": "function",
-      "line": 431,
+      "line": 433,
       "module_id": "messaging.telegram.engine",
       "name": "test_media_only_video_note_working_file_can_be_parsed",
       "qualname": "test_media_only_video_note_working_file_can_be_parsed"
@@ -107403,7 +107629,7 @@
     {
       "file": "tools/build_article_source_registry.py",
       "kind": "function",
-      "line": 71,
+      "line": 75,
       "module_id": "platform.content",
       "name": "load_json",
       "qualname": "load_json"
@@ -107411,7 +107637,7 @@
     {
       "file": "tools/build_article_source_registry.py",
       "kind": "function",
-      "line": 75,
+      "line": 79,
       "module_id": "platform.content",
       "name": "source_urls",
       "qualname": "source_urls"
@@ -107419,7 +107645,7 @@
     {
       "file": "tools/build_article_source_registry.py",
       "kind": "function",
-      "line": 83,
+      "line": 87,
       "module_id": "platform.content",
       "name": "source_external_ids",
       "qualname": "source_external_ids"
@@ -107427,7 +107653,7 @@
     {
       "file": "tools/build_article_source_registry.py",
       "kind": "function",
-      "line": 92,
+      "line": 96,
       "module_id": "platform.content",
       "name": "compact_source",
       "qualname": "compact_source"
@@ -107435,7 +107661,7 @@
     {
       "file": "tools/build_article_source_registry.py",
       "kind": "function",
-      "line": 107,
+      "line": 111,
       "module_id": "platform.content",
       "name": "classify_deferred",
       "qualname": "classify_deferred"
@@ -107443,7 +107669,7 @@
     {
       "file": "tools/build_article_source_registry.py",
       "kind": "function",
-      "line": 122,
+      "line": 126,
       "module_id": "platform.content",
       "name": "build",
       "qualname": "build"
@@ -107451,7 +107677,7 @@
     {
       "file": "tools/build_article_source_registry.py",
       "kind": "function",
-      "line": 417,
+      "line": 422,
       "module_id": "platform.content",
       "name": "main",
       "qualname": "main"
