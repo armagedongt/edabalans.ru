@@ -1,6 +1,122 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-25",
+  "updated_at": "2026-09-26",
+  "owner_review": {
+    "schema_version": 1,
+    "module_id": "platform.content",
+    "updated_at": "2026-09-26",
+    "authority": "Прямой поимённый разбор Сергея в задаче блога 26.09.2026. Последнее указание в сообщении имеет приоритет.",
+    "execution_gate": "Только каталогизация и подготовка очереди. Не редактировать авторские тексты и не публиковать до следующей команды Сергея.",
+    "editing_constraint": "Минимальное удаление площадочных обращений, старой навигации и концовок; допустимая перестановка. Не переписывать и не дописывать нейросетевые абзацы. Исключение для будущей правки растений описано отдельно.",
+    "states": {
+      "approved_update": "Обновление существующего канона согласовано — выбор основы и правка после команды",
+      "publish_next": "В блог — одобрено направление, подготовка и публикация ждут отдельной команды",
+      "manual_review": "На подумать — Сергей отдельно просмотрит вручную; не смешивать с банком",
+      "family_review": "Разобрать версии семьи отдельно — не банк и не новая публикация",
+      "bank": "Банк — пока не планируется брать",
+      "educational": "Учебное — не открытая статья",
+      "old_educational": "Старое учебное / архив — сохранить, можно обратиться позднее; не считать актуальным каноном",
+      "mk_candidate": "Кандидат в актуальный Мастер-класс — только подготовить передачу",
+      "recipe_candidate": "Кандидат в актуальные рецепты — только подготовить передачу"
+    },
+    "assignments": {
+      "approved_update": "A123 A130 tilda-post:hbfozma3y1 A062 A064 A108",
+      "publish_next": "A191 A002 A043 A049 A037 A019 A183 A210 A076 A217 A071 A034 A236 A102 A083 A184 A016 A117 A031 A161 A281 A021 A195 A082 A078 A091 A012 A156 A085 A056 tilda-post:e4441ism91 tilda-post:amkbo7kgg1",
+      "bank": "A041 A020 A166 A278 A018 A238 A100 A069 A010 A014 A279 A133 A235 A003 A053 A271 A067 A159 tilda-post:jajp12c7j1 tilda-post:m0epglvrp1 tilda-post:5kegfp3o71",
+      "manual_review": "A006 A035 A017 A008 A181 A024 A029 A023 A058 A025 A262 A065 A047 A177 A050 A270 A039 A198 A202 A116 A155 A057 A079 A060 A073 A273 A104 A088 tilda-post:knian4e971 tilda-post:a75rtx6go1 tilda-post:sgpfzdvvy1 tilda-post:pxukhjlca1 tilda-post:7siam7t8k1 A004 A107 A011 A158 A212 A110 A145 A167 A172 A176 A211",
+      "family_review": "A221 A152 A252 A256 A272 A092 A132 A193",
+      "educational": "A237 A113 A115 A157 A136 A185 A232 A144 A135 A222",
+      "old_educational": "A137 A139 A140 A246 A247 A231 A248 A171 A223 A138 A228 A266 A267 A142 A124 A163 A203 A255",
+      "mk_candidate": "A162 A227 A149 A200",
+      "recipe_candidate": "A131"
+    },
+    "family_groups": [
+      {
+        "ids": "A123 A130 tilda-post:hbfozma3y1",
+        "blog_slug": "pravilo-30-rasteniy",
+        "evidence": "owner_confirmed",
+        "note": "Одна семья: блог, /30-rastenij, старый интенсив и обе Telegraph-версии. Сравнить полноту всех источников. Основа объяснения — 30 растений; в финальном задании объяснить изменение авторского подсчёта: вместо 0,25 за специи считаем по 1 баллу, цель — 40 баллов за неделю. Не подменять этим научный порог. Тексты пока не менять."
+      },
+      {
+        "ids": "A062 A064 A108",
+        "blog_slug": "kak-ya-reshil-proyti-100000-shagov",
+        "evidence": "owner_confirmed",
+        "note": "Объединить подготовку к походу и рассказ после похода в одну личную статью блога. Сначала проверить, какие части уже присутствуют в Telegraph-основе; не дублировать их."
+      },
+      {
+        "ids": "A005 A253",
+        "blog_slug": "odin-nebolshoy-pryzhok-bolshie-peremeny",
+        "evidence": "owner_confirmed",
+        "note": "Открытая личная статья, не internal."
+      },
+      {
+        "ids": "A137 A139 A140",
+        "evidence": "owner_confirmed",
+        "note": "Одна семья DQS. Всё — старые учебные версии; открытой статьи не делать."
+      },
+      {
+        "ids": "A246 A247",
+        "evidence": "owner_confirmed",
+        "note": "Одна семья старого МК; публичную версию не делать."
+      },
+      {
+        "ids": "A231 A248",
+        "evidence": "owner_confirmed",
+        "note": "Одна семья старого МК; публичную версию не делать."
+      },
+      {
+        "ids": "A221 A152",
+        "blog_slug": "15-sovetov-tem-kto-hudeet",
+        "evidence": "comparison_pending",
+        "note": "Отдельный разбор блица: сравнить пересечение и уникальные блоки. Не сливать и не публиковать вторую статью до решения."
+      },
+      {
+        "ids": "A054 A252 A256 A272 A092 A132 A193",
+        "blog_slug": "pohudenie-nachinaetsya-ne-s-pohudeniya",
+        "evidence": "comparison_pending",
+        "note": "Отдельная группа сравнения начала похудения. Не объявлять все версии дублями. Включить сайт /starts и материал «Первые шаги» с переходами к дням интенсива. Существующий канон не скрывать."
+      },
+      {
+        "ids": "A077 A182",
+        "blog_slug": "pochemu-yapontsy-hudye-a-ty-net",
+        "evidence": "owner_confirmed",
+        "note": "Обязательно сравнить Pikabu, Telegraph, сайт /jpn и блог. Полнота и актуальность важнее даты. Текущий блог уже содержит provenance Tilda /jpn."
+      },
+      {
+        "ids": "A088 tilda-post:7siam7t8k1",
+        "evidence": "owner_requested_comparison",
+        "note": "Последняя семейная поправка владельца: обе версии объединить для сравнения и на подумать. Ранее сказанное про публикацию Pikabu не запускает выпуск этой семьи. Не считать доказанными дублями до сравнения."
+      },
+      {
+        "ids": "A078 A091",
+        "evidence": "owner_confirmed_series",
+        "note": "Две части «Долбанной бедности». Обе одобрены; перед подготовкой выбрать форму, не потерять продолжение."
+      },
+      {
+        "ids": "A076 A217",
+        "evidence": "owner_confirmed",
+        "note": "Именно эту семью про взрослую женщину теперь брать. Общая статья «Перекусы мешают или помогают» остаётся в банке."
+      },
+      {
+        "ids": "A047 A177",
+        "evidence": "comparison_pending",
+        "note": "Пикадильо — на ручную редактуру Сергея, не путать с разрешением публиковать рецепт."
+      }
+    ],
+    "special_notes": {
+      "A162": "Конструктор целей — актуальный кандидат в МК. Не внедрять сейчас, сохранить назначение.",
+      "A227": "Из «Гигиены питания» возможно взять фрагменты для МК; не разрешение публиковать целиком.",
+      "A149": "Вариант семьи гигиены питания; сохранить для выбора фрагментов.",
+      "A200": "Учебные советы, пересекающиеся с гигиеной питания; сохранить для сравнения.",
+      "A131": "Цельнозерновой рис передать в очередь актуальных рецептов; запрет на открытый блог остаётся.",
+      "A104": "Последняя поправка владельца — на подумать, нужно отредактировать; предыдущее «в блог» отменено.",
+      "tilda-post:pxukhjlca1": "Последняя поправка — на подумать; предыдущее «в блог» отменено.",
+      "A193": "Проверен локальный полный источник: содержит текст про срывы, подготовку, DQS, переходы между днями бесплатного интенсива и МК. Не доказано, что это именно платный урок; отнести на разбор семей, не публиковать.",
+      "A184": "Проверить против уже опубликованного Великого поста: разрешение не означает выпуск дубля.",
+      "A110": "Остальные неразобранные черновики владелец попросил отдать на ручной просмотр.",
+      "archive_policy": "Последнее уточнение отменяет полный запрет обращаться к четырём старым учебным материалам: хранить как архив, можно извлекать по явной задаче, но не использовать как актуальный канон и не предлагать публичный выпуск."
+    }
+  },
   "module_id": "platform.content",
   "scope": {
     "included": "Известные длинные авторские материалы Pikabu, Telegraph и VC.ru объёмом от 3000 знаков, а также опубликованные статьи собственного блога и подтверждённые Tilda-основы.",
@@ -20,11 +136,12 @@
     "action": "Пересобирать внутреннюю навигационную карту после изменения канонов; спорные пары оставлять в очереди сравнения. Сообщения автоматически не редактируются."
   },
   "rules": {
+    "owner_decisions": "Решения 26.09.2026 из article-owner-decisions.json имеют приоритет над legacy deferred_kind. Единый файл для владельца — ARTICLE_FAMILIES.md. Банк, ручной разбор, разбор версий и учебный архив не смешиваются. Редактирование и публикация ждут отдельной команды.",
     "content_forms": "Два представления единого каталога: long_material и short_post. Площадка Telegram не определяет тип; длинная статья может целиком помещаться в сообщении.",
     "telegram_relations": "references_article означает анонс/ссылку, previous_version — подтверждённую старую редакцию; semantic_overlap_candidate требует сравнения. Анонс не становится дублем статьи.",
     "publication_evidence": "Отдельно учитывать наличие полного текста, анонс в канале, шаблон бота и подтверждённую отправку. Не найдено в снимке не означает никогда не публиковалось.",
     "private_link_map": "tools/build_article_channel_links.py создаёт приватную карту сообщений, версий и будущих замен. Сообщения автоматически не редактируются; перед заменой нужны свежий текст и однозначный опубликованный канон.",
-    "two_buckets": "Каждая известная статья находится либо в canonical_blog, либо в deferred. Третьего пользовательского состояния нет.",
+    "two_buckets": "canonical_blog/deferred — только техническое разделение наличия канона. Редакционное назначение определяется owner_review; банк, ручной разбор и учебный архив различаются.",
     "blog_canon": "Опубликованная запись content/blog/manifest.json — канон семьи. Внешние публикации являются проявлениями и не перезаписывают блог автоматически.",
     "safe_family_merge": "В одну семью объединяются только подтверждённые источники. Возможное текстовое пересечение хранится как possible_duplicate_catalog_ids и требует проверки.",
     "private_boundary": "Материалы Мастер-класса и курсов остаются в deferred/private_product_material и не получают разрешение на открытую публикацию.",
@@ -80,7 +197,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:15-sovetov-tem-kto-hudeet",
@@ -111,7 +229,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:sladkoezhka-uvelichte-dozu-vitaminov",
@@ -139,7 +258,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:a-mne-trener-posovetoval",
@@ -169,7 +289,8 @@
       "possible_duplicate_catalog_ids": [
         "A126"
       ],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:borba-s-lishnim-vesom-pochemu-shagov-nedostatochno",
@@ -197,7 +318,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:velikiy-post-pohudenie-i-zdorove",
@@ -225,7 +347,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "owner_confirmed"
+      "family_evidence": "owner_confirmed",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:vesy-instrukciya-po-primeneniyu",
@@ -256,7 +379,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:glavnye-oshibki-v-pohudenii-do-goloda",
@@ -284,7 +408,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:glikemicheskiy-indeks-eto-lishnee",
@@ -314,7 +439,8 @@
       "possible_duplicate_catalog_ids": [
         "A147"
       ],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:dieta-sryv-i-matematika",
@@ -342,7 +468,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:zadacha-pohudet-uroven-slozhnosti-zima",
@@ -394,7 +521,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "owner_confirmed"
+      "family_evidence": "owner_confirmed",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:izmeryaem-vashu-zhirnost",
@@ -434,7 +562,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "owner_confirmed"
+      "family_evidence": "owner_confirmed",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:intuitivnoe-pitanie-vy-vse-nepravilno-ponyali",
@@ -474,7 +603,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "owner_confirmed"
+      "family_evidence": "owner_confirmed",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:kak-nachat-trenirovki-i-ne-brosit",
@@ -530,7 +660,8 @@
         "A201",
         "A261"
       ],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:kak-ya-reshil-proyti-100000-shagov",
@@ -560,7 +691,10 @@
       "possible_duplicate_catalog_ids": [
         "A064"
       ],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {
+        "A108": "approved_update"
+      }
     },
     {
       "family_id": "blog:kakaya-samaya-vrednaya-dieta",
@@ -600,7 +734,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "owner_confirmed"
+      "family_evidence": "owner_confirmed",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:minus-12-kilogrammov-za-2-mesyaca",
@@ -628,7 +763,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "owner_confirmed"
+      "family_evidence": "owner_confirmed",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:mozhno-li-pit-vo-vremya-edy",
@@ -659,7 +795,8 @@
         "A001",
         "A204"
       ],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:musornaya-ryba-ili-musornye-nutriciologi",
@@ -699,7 +836,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "owner_confirmed"
+      "family_evidence": "owner_confirmed",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:nepriyatnaya-pravda-pro-med",
@@ -727,7 +865,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:net-vremeni-obyasnyat-prosto-hudey",
@@ -755,7 +894,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:nutriciolog-ili-dietolog-komu-verit",
@@ -783,7 +923,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:o-yarlykah",
@@ -811,7 +952,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:odin-nebolshoy-pryzhok-bolshie-peremeny",
@@ -841,7 +983,8 @@
       "possible_duplicate_catalog_ids": [
         "A005"
       ],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:poterya-myshc-pri-pohudenii",
@@ -869,7 +1012,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:pohudenie-nachinaetsya-ne-s-pohudeniya",
@@ -900,7 +1044,8 @@
         "A256",
         "A272"
       ],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:pochemu-lyudi-hudeyut-i-snova-nabirayut-ves",
@@ -928,7 +1073,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:pochemu-yapontsy-hudye-a-ty-net",
@@ -958,7 +1104,8 @@
       "possible_duplicate_catalog_ids": [
         "A182"
       ],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:pp-recepty-eto-ploho",
@@ -989,7 +1136,8 @@
         "A174",
         "A242"
       ],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:pravila-bezopasnosti-za-shvedskim-stolom",
@@ -1019,7 +1167,8 @@
       "possible_duplicate_catalog_ids": [
         "A196"
       ],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:pravilo-30-rasteniy",
@@ -1050,7 +1199,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:professionalnyy-edok",
@@ -1078,7 +1228,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:samyy-zdorovyy-chelovek-na-planete",
@@ -1106,7 +1257,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:saharozamenitel-vyzyvaet-rak-net",
@@ -1136,7 +1288,8 @@
       "possible_duplicate_catalog_ids": [
         "A015"
       ],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:sdelat-pohudenie-proshche",
@@ -1164,7 +1317,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:skolko-vremeni-nuzhno-na-pohudenie",
@@ -1192,7 +1346,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:skrytye-zapory-i-banalnyy-syuzhet",
@@ -1220,7 +1375,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:temperatura-vody-dlya-priema-vnutr",
@@ -1250,7 +1406,8 @@
       "possible_duplicate_catalog_ids": [
         "A269"
       ],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:tri-oshibki-v-nachale-pohudeniya",
@@ -1278,7 +1435,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:ukolol-i-pohudel-ozempik-semavik-nyuansy",
@@ -1308,7 +1466,8 @@
       "possible_duplicate_catalog_ids": [
         "A173"
       ],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:hodit-chtoby-hudet",
@@ -1336,7 +1495,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:hochesh-hudet-esh-kartoshku",
@@ -1364,7 +1524,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:chto-vy-ne-ponimaete-o-formirovanii-privychek",
@@ -1434,7 +1595,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "owner_confirmed"
+      "family_evidence": "owner_confirmed",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "blog:eti-dolbannye-10000-shagov",
@@ -1462,7 +1624,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance"
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {}
     }
   ],
   "deferred": [
@@ -1487,7 +1650,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A041": "bank"
+      }
     },
     {
       "family_id": "deferred:A237",
@@ -1510,7 +1676,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A237": "educational"
+      }
     },
     {
       "family_id": "deferred:A107",
@@ -1535,7 +1704,10 @@
       "possible_duplicate_catalog_ids": [
         "A004"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A107": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A004",
@@ -1560,7 +1732,10 @@
       "possible_duplicate_catalog_ids": [
         "A107"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A004": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A062",
@@ -1583,7 +1758,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A062": "approved_update"
+      }
     },
     {
       "family_id": "deferred:A119",
@@ -1606,7 +1784,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A016",
@@ -1631,7 +1810,10 @@
       "possible_duplicate_catalog_ids": [
         "A117"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A016": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A050",
@@ -1656,7 +1838,10 @@
       "possible_duplicate_catalog_ids": [
         "A270"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A050": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A026",
@@ -1679,7 +1864,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A125",
@@ -1705,7 +1891,8 @@
         "A009",
         "A277"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A154",
@@ -1728,7 +1915,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A209",
@@ -1751,7 +1939,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A273",
@@ -1776,7 +1965,10 @@
       "possible_duplicate_catalog_ids": [
         "A073"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A273": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A217",
@@ -1799,7 +1991,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A217": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A076",
@@ -1822,7 +2017,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A076": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A126",
@@ -1847,7 +2045,8 @@
       "possible_duplicate_catalog_ids": [
         "A089"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A127",
@@ -1870,7 +2069,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A043",
@@ -1893,7 +2093,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A043": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A228",
@@ -1916,7 +2119,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A228": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A049",
@@ -1939,7 +2145,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A049": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A238",
@@ -1962,7 +2171,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A238": "bank"
+      }
     },
     {
       "family_id": "deferred:A271",
@@ -1987,7 +2199,10 @@
       "possible_duplicate_catalog_ids": [
         "A053"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A271": "bank"
+      }
     },
     {
       "family_id": "deferred:A263",
@@ -2010,7 +2225,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A216",
@@ -2033,7 +2249,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A211",
@@ -2056,7 +2273,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A211": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A210",
@@ -2082,7 +2302,10 @@
         "A019",
         "A183"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A210": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A212",
@@ -2105,7 +2328,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A212": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A214",
@@ -2128,7 +2354,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A037",
@@ -2151,7 +2378,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A037": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A002",
@@ -2174,7 +2404,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A002": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A250",
@@ -2199,7 +2432,8 @@
       "possible_duplicate_catalog_ids": [
         "A164"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A018",
@@ -2222,7 +2456,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A018": "bank"
+      }
     },
     {
       "family_id": "deferred:A110",
@@ -2245,7 +2482,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A110": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A149",
@@ -2271,7 +2511,10 @@
         "A227",
         "A200"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A149": "mk_candidate"
+      }
     },
     {
       "family_id": "deferred:A227",
@@ -2297,7 +2540,10 @@
         "A149",
         "A200"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A227": "mk_candidate"
+      }
     },
     {
       "family_id": "deferred:A164",
@@ -2322,7 +2568,8 @@
       "possible_duplicate_catalog_ids": [
         "A250"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A147",
@@ -2347,7 +2594,8 @@
       "possible_duplicate_catalog_ids": [
         "A044"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A148",
@@ -2370,7 +2618,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A143",
@@ -2393,7 +2642,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A194",
@@ -2416,7 +2666,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A239",
@@ -2439,7 +2690,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A134",
@@ -2462,7 +2714,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A200",
@@ -2488,7 +2741,10 @@
         "A227",
         "A149"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A200": "mk_candidate"
+      }
     },
     {
       "family_id": "deferred:A141",
@@ -2511,7 +2767,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A213",
@@ -2534,7 +2791,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A142",
@@ -2557,7 +2815,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A142": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A224",
@@ -2582,7 +2843,8 @@
       "possible_duplicate_catalog_ids": [
         "A170"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A091",
@@ -2605,7 +2867,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A091": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A078",
@@ -2628,7 +2893,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A078": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A169",
@@ -2653,7 +2921,8 @@
       "possible_duplicate_catalog_ids": [
         "A225"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A129",
@@ -2678,7 +2947,8 @@
       "possible_duplicate_catalog_ids": [
         "A121"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A116",
@@ -2701,7 +2971,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A116": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A104",
@@ -2724,7 +2997,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A104": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A031",
@@ -2750,7 +3026,10 @@
         "A161",
         "A281"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A031": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A281",
@@ -2776,7 +3055,10 @@
         "A031",
         "A161"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A281": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A057",
@@ -2799,7 +3081,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A057": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A219",
@@ -2822,7 +3107,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A068",
@@ -2847,7 +3133,8 @@
       "possible_duplicate_catalog_ids": [
         "A229"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A229",
@@ -2872,7 +3159,8 @@
       "possible_duplicate_catalog_ids": [
         "A068"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A150",
@@ -2895,7 +3183,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A003",
@@ -2918,7 +3207,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A003": "bank"
+      }
     },
     {
       "family_id": "deferred:A151",
@@ -2941,7 +3233,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A145",
@@ -2964,7 +3257,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A145": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A223",
@@ -2987,7 +3283,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A223": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A033",
@@ -3010,7 +3309,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A032",
@@ -3033,7 +3333,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A155",
@@ -3056,7 +3357,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A155": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A012",
@@ -3081,7 +3385,10 @@
       "possible_duplicate_catalog_ids": [
         "A156"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A012": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A156",
@@ -3106,7 +3413,10 @@
       "possible_duplicate_catalog_ids": [
         "A012"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A156": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A115",
@@ -3129,7 +3439,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A115": "educational"
+      }
     },
     {
       "family_id": "deferred:A027",
@@ -3152,7 +3465,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A100",
@@ -3175,7 +3489,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A100": "bank"
+      }
     },
     {
       "family_id": "deferred:A240",
@@ -3198,7 +3515,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A157",
@@ -3221,7 +3539,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A157": "educational"
+      }
     },
     {
       "family_id": "deferred:A024",
@@ -3244,7 +3565,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A024": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A131",
@@ -3267,7 +3591,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A131": "recipe_candidate"
+      }
     },
     {
       "family_id": "deferred:A158",
@@ -3292,7 +3619,10 @@
       "possible_duplicate_catalog_ids": [
         "A011"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A158": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A011",
@@ -3317,7 +3647,10 @@
       "possible_duplicate_catalog_ids": [
         "A158"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A011": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A064",
@@ -3342,7 +3675,10 @@
       "possible_duplicate_catalog_ids": [
         "A108"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A064": "approved_update"
+      }
     },
     {
       "family_id": "deferred:A159",
@@ -3365,7 +3701,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A159": "bank"
+      }
     },
     {
       "family_id": "deferred:A218",
@@ -3388,7 +3727,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A246",
@@ -3413,7 +3753,10 @@
       "possible_duplicate_catalog_ids": [
         "A247"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A246": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A247",
@@ -3438,7 +3781,10 @@
       "possible_duplicate_catalog_ids": [
         "A246"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A247": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A042",
@@ -3461,7 +3807,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A153",
@@ -3484,7 +3831,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A160",
@@ -3507,7 +3855,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A161",
@@ -3533,7 +3882,10 @@
         "A031",
         "A281"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A161": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A162",
@@ -3556,7 +3908,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A162": "mk_candidate"
+      }
     },
     {
       "family_id": "deferred:A248",
@@ -3581,7 +3936,10 @@
       "possible_duplicate_catalog_ids": [
         "A231"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A248": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A085",
@@ -3604,7 +3962,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A085": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A121",
@@ -3629,7 +3990,8 @@
       "possible_duplicate_catalog_ids": [
         "A129"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A120",
@@ -3652,7 +4014,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A122",
@@ -3675,7 +4038,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A163",
@@ -3698,7 +4062,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A163": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A167",
@@ -3721,7 +4088,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A167": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A025",
@@ -3746,7 +4116,10 @@
       "possible_duplicate_catalog_ids": [
         "A262"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A025": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A262",
@@ -3771,7 +4144,10 @@
       "possible_duplicate_catalog_ids": [
         "A025"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A262": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A221",
@@ -3796,7 +4172,10 @@
       "possible_duplicate_catalog_ids": [
         "A152"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A221": "family_review"
+      }
     },
     {
       "family_id": "deferred:A058",
@@ -3819,7 +4198,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A058": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A235",
@@ -3842,7 +4224,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A235": "bank"
+      }
     },
     {
       "family_id": "deferred:A056",
@@ -3865,7 +4250,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A056": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A023",
@@ -3888,7 +4276,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A023": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A128",
@@ -3911,7 +4302,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A020",
@@ -3937,7 +4329,10 @@
         "A166",
         "A278"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A020": "bank"
+      }
     },
     {
       "family_id": "deferred:A166",
@@ -3963,7 +4358,10 @@
         "A020",
         "A278"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A166": "bank"
+      }
     },
     {
       "family_id": "deferred:A278",
@@ -3989,7 +4387,10 @@
         "A020",
         "A166"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A278": "bank"
+      }
     },
     {
       "family_id": "deferred:A069",
@@ -4012,7 +4413,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A069": "bank"
+      }
     },
     {
       "family_id": "deferred:A079",
@@ -4035,7 +4439,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A079": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A080",
@@ -4058,7 +4465,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A039",
@@ -4081,7 +4489,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A039": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A171",
@@ -4104,7 +4515,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A171": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A005",
@@ -4129,7 +4543,8 @@
       "possible_duplicate_catalog_ids": [
         "A253"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A173",
@@ -4154,7 +4569,8 @@
       "possible_duplicate_catalog_ids": [
         "A094"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A266",
@@ -4177,7 +4593,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A266": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A267",
@@ -4200,7 +4619,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A267": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A205",
@@ -4223,7 +4645,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A172",
@@ -4246,7 +4669,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A172": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A270",
@@ -4271,7 +4697,10 @@
       "possible_duplicate_catalog_ids": [
         "A050"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A270": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A035",
@@ -4294,7 +4723,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A035": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A060",
@@ -4317,7 +4749,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A060": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A008",
@@ -4342,7 +4777,10 @@
       "possible_duplicate_catalog_ids": [
         "A181"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A008": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A017",
@@ -4365,7 +4803,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A017": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A055",
@@ -4388,7 +4829,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A073",
@@ -4413,7 +4855,10 @@
       "possible_duplicate_catalog_ids": [
         "A273"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A073": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A007",
@@ -4436,7 +4881,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A082",
@@ -4459,7 +4905,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A082": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A006",
@@ -4482,7 +4931,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A006": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A268",
@@ -4505,7 +4957,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A192",
@@ -4528,7 +4981,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A170",
@@ -4553,7 +5007,8 @@
       "possible_duplicate_catalog_ids": [
         "A224"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A178",
@@ -4576,7 +5031,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A193",
@@ -4599,7 +5055,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A193": "family_review"
+      }
     },
     {
       "family_id": "deferred:A176",
@@ -4622,7 +5081,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A176": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A022",
@@ -4648,7 +5110,8 @@
         "A175",
         "A276"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A175",
@@ -4674,7 +5137,8 @@
         "A022",
         "A276"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A276",
@@ -4700,7 +5164,8 @@
         "A022",
         "A175"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A177",
@@ -4723,7 +5188,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A177": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A047",
@@ -4746,7 +5214,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A047": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A013",
@@ -4769,7 +5240,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A185",
@@ -4792,7 +5264,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A185": "educational"
+      }
     },
     {
       "family_id": "deferred:A146",
@@ -4817,7 +5292,8 @@
       "possible_duplicate_catalog_ids": [
         "A254"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A254",
@@ -4842,7 +5318,8 @@
       "possible_duplicate_catalog_ids": [
         "A146"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A019",
@@ -4868,7 +5345,10 @@
         "A183",
         "A210"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A019": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A183",
@@ -4894,7 +5374,10 @@
         "A019",
         "A210"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A183": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A184",
@@ -4917,7 +5400,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A184": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A152",
@@ -4942,7 +5428,10 @@
       "possible_duplicate_catalog_ids": [
         "A221"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A152": "family_review"
+      }
     },
     {
       "family_id": "deferred:A106",
@@ -4965,7 +5454,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A132",
@@ -4990,7 +5480,10 @@
       "possible_duplicate_catalog_ids": [
         "A092"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A132": "family_review"
+      }
     },
     {
       "family_id": "deferred:A092",
@@ -5015,7 +5508,10 @@
       "possible_duplicate_catalog_ids": [
         "A132"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A092": "family_review"
+      }
     },
     {
       "family_id": "deferred:A252",
@@ -5038,7 +5534,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A252": "family_review"
+      }
     },
     {
       "family_id": "deferred:A256",
@@ -5064,7 +5563,10 @@
         "A054",
         "A272"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A256": "family_review"
+      }
     },
     {
       "family_id": "deferred:A272",
@@ -5090,7 +5592,10 @@
         "A054",
         "A256"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A272": "family_review"
+      }
     },
     {
       "family_id": "deferred:A040",
@@ -5115,7 +5620,8 @@
       "possible_duplicate_catalog_ids": [
         "A230"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A230",
@@ -5140,7 +5646,8 @@
       "possible_duplicate_catalog_ids": [
         "A040"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A181",
@@ -5165,7 +5672,10 @@
       "possible_duplicate_catalog_ids": [
         "A008"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A181": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A071",
@@ -5188,7 +5698,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A071": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A182",
@@ -5213,7 +5726,8 @@
       "possible_duplicate_catalog_ids": [
         "A077"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A174",
@@ -5239,7 +5753,8 @@
         "A038",
         "A242"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A053",
@@ -5264,7 +5779,10 @@
       "possible_duplicate_catalog_ids": [
         "A271"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A053": "bank"
+      }
     },
     {
       "family_id": "deferred:A196",
@@ -5289,7 +5807,8 @@
       "possible_duplicate_catalog_ids": [
         "A087"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A255",
@@ -5312,7 +5831,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A255": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A136",
@@ -5335,7 +5857,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A136": "educational"
+      }
     },
     {
       "family_id": "deferred:A189",
@@ -5358,7 +5883,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A234",
@@ -5381,7 +5907,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A138",
@@ -5404,7 +5931,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A138": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A187",
@@ -5427,7 +5957,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A232",
@@ -5450,7 +5981,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A232": "educational"
+      }
     },
     {
       "family_id": "deferred:A244",
@@ -5473,7 +6007,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A190",
@@ -5496,7 +6031,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A124",
@@ -5519,7 +6055,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A124": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A065",
@@ -5542,7 +6081,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A065": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A010",
@@ -5565,7 +6107,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A010": "bank"
+      }
     },
     {
       "family_id": "deferred:A021",
@@ -5590,7 +6135,10 @@
       "possible_duplicate_catalog_ids": [
         "A195"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A021": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A195",
@@ -5615,7 +6163,10 @@
       "possible_duplicate_catalog_ids": [
         "A021"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A195": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A118",
@@ -5638,7 +6189,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A015",
@@ -5663,7 +6215,8 @@
       "possible_duplicate_catalog_ids": [
         "A197"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A198",
@@ -5686,7 +6239,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A198": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A191",
@@ -5713,7 +6269,10 @@
       "title_aliases": [
         "12 простых изменений в вашем питании и образе жизни"
       ],
-      "owner_decision": "prepare_for_blog"
+      "owner_decision": "prepare_for_blog",
+      "owner_source_decisions": {
+        "A191": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A199",
@@ -5736,7 +6295,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A137",
@@ -5759,7 +6319,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A137": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A139",
@@ -5784,7 +6347,10 @@
       "possible_duplicate_catalog_ids": [
         "A140"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A139": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A140",
@@ -5809,7 +6375,10 @@
       "possible_duplicate_catalog_ids": [
         "A139"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A140": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A034",
@@ -5834,7 +6403,10 @@
       "possible_duplicate_catalog_ids": [
         "A236"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A034": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A236",
@@ -5859,7 +6431,10 @@
       "possible_duplicate_catalog_ids": [
         "A034"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A236": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A029",
@@ -5882,7 +6457,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A029": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A202",
@@ -5905,7 +6483,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A202": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A249",
@@ -5928,7 +6509,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A231",
@@ -5953,7 +6535,10 @@
       "possible_duplicate_catalog_ids": [
         "A248"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A231": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A203",
@@ -5976,7 +6561,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A203": "old_educational"
+      }
     },
     {
       "family_id": "deferred:A102",
@@ -5999,7 +6587,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A102": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A251",
@@ -6022,7 +6613,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A112",
@@ -6045,7 +6637,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A168",
@@ -6068,7 +6661,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A109",
@@ -6091,7 +6685,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A264",
@@ -6114,7 +6709,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A001",
@@ -6140,7 +6736,8 @@
         "A204",
         "A275"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A204",
@@ -6166,7 +6763,8 @@
         "A001",
         "A275"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A114",
@@ -6189,7 +6787,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A269",
@@ -6214,7 +6813,8 @@
       "possible_duplicate_catalog_ids": [
         "A046"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A083",
@@ -6237,7 +6837,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A083": "publish_next"
+      }
     },
     {
       "family_id": "deferred:A220",
@@ -6260,7 +6863,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A206",
@@ -6285,7 +6889,8 @@
       "possible_duplicate_catalog_ids": [
         "A260"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A258",
@@ -6310,7 +6915,8 @@
       "possible_duplicate_catalog_ids": [
         "A259"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A226",
@@ -6335,7 +6941,8 @@
       "possible_duplicate_catalog_ids": [
         "A208"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A088",
@@ -6358,7 +6965,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A088": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A225",
@@ -6383,7 +6993,8 @@
       "possible_duplicate_catalog_ids": [
         "A169"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A215",
@@ -6406,7 +7017,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A259",
@@ -6431,7 +7043,8 @@
       "possible_duplicate_catalog_ids": [
         "A258"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A260",
@@ -6456,7 +7069,8 @@
       "possible_duplicate_catalog_ids": [
         "A206"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A208",
@@ -6481,7 +7095,8 @@
       "possible_duplicate_catalog_ids": [
         "A226"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A179",
@@ -6506,7 +7121,8 @@
       "possible_duplicate_catalog_ids": [
         "A265"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A265",
@@ -6531,7 +7147,8 @@
       "possible_duplicate_catalog_ids": [
         "A179"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A207",
@@ -6554,7 +7171,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A261",
@@ -6580,7 +7198,8 @@
         "A030",
         "A201"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A241",
@@ -6603,7 +7222,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A201",
@@ -6629,7 +7249,8 @@
         "A030",
         "A261"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A014",
@@ -6654,7 +7275,10 @@
       "possible_duplicate_catalog_ids": [
         "A279"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A014": "bank"
+      }
     },
     {
       "family_id": "deferred:A279",
@@ -6679,7 +7303,10 @@
       "possible_duplicate_catalog_ids": [
         "A014"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A279": "bank"
+      }
     },
     {
       "family_id": "deferred:A133",
@@ -6702,7 +7329,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A133": "bank"
+      }
     },
     {
       "family_id": "deferred:A135",
@@ -6727,7 +7357,10 @@
       "possible_duplicate_catalog_ids": [
         "A222"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A135": "educational"
+      }
     },
     {
       "family_id": "deferred:A222",
@@ -6752,7 +7385,10 @@
       "possible_duplicate_catalog_ids": [
         "A135"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A222": "educational"
+      }
     },
     {
       "family_id": "deferred:A188",
@@ -6775,7 +7411,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A097",
@@ -6798,7 +7435,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A242",
@@ -6824,7 +7462,8 @@
         "A038",
         "A174"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A067",
@@ -6847,7 +7486,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A067": "bank"
+      }
     },
     {
       "family_id": "deferred:A113",
@@ -6870,7 +7512,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A113": "educational"
+      }
     },
     {
       "family_id": "deferred:A144",
@@ -6893,7 +7538,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A144": "educational"
+      }
     },
     {
       "family_id": "deferred:tilda-post:e4441ism91",
@@ -6921,7 +7569,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "tilda-post:e4441ism91": "publish_next"
+      }
     },
     {
       "family_id": "deferred:tilda-post:knian4e971",
@@ -6949,7 +7600,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "tilda-post:knian4e971": "manual_review"
+      }
     },
     {
       "family_id": "deferred:tilda-post:a75rtx6go1",
@@ -6977,7 +7631,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "tilda-post:a75rtx6go1": "manual_review"
+      }
     },
     {
       "family_id": "deferred:tilda-post:sgpfzdvvy1",
@@ -7005,7 +7662,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "tilda-post:sgpfzdvvy1": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A117",
@@ -7030,7 +7690,10 @@
       "possible_duplicate_catalog_ids": [
         "A016"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A117": "publish_next"
+      }
     },
     {
       "family_id": "deferred:tilda-post:amkbo7kgg1",
@@ -7058,7 +7721,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "tilda-post:amkbo7kgg1": "publish_next"
+      }
     },
     {
       "family_id": "deferred:tilda-post:pxukhjlca1",
@@ -7086,7 +7752,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "tilda-post:pxukhjlca1": "manual_review"
+      }
     },
     {
       "family_id": "deferred:tilda-post:7siam7t8k1",
@@ -7114,7 +7783,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "tilda-post:7siam7t8k1": "manual_review"
+      }
     },
     {
       "family_id": "deferred:A111",
@@ -7137,7 +7809,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:tilda-post:x5ykn0tjc1",
@@ -7165,7 +7838,8 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:tilda-post:jajp12c7j1",
@@ -7193,7 +7867,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "tilda-post:jajp12c7j1": "bank"
+      }
     },
     {
       "family_id": "deferred:tilda-post:5kegfp3o71",
@@ -7221,7 +7898,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "tilda-post:5kegfp3o71": "bank"
+      }
     },
     {
       "family_id": "deferred:A130",
@@ -7246,7 +7926,10 @@
       "possible_duplicate_catalog_ids": [
         "A123"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A130": "approved_update"
+      }
     },
     {
       "family_id": "deferred:tilda-post:hbfozma3y1",
@@ -7274,7 +7957,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "tilda-post:hbfozma3y1": "approved_update"
+      }
     },
     {
       "family_id": "deferred:A123",
@@ -7299,7 +7985,10 @@
       "possible_duplicate_catalog_ids": [
         "A130"
       ],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "A123": "approved_update"
+      }
     },
     {
       "family_id": "deferred:tilda-post:m0epglvrp1",
@@ -7327,7 +8016,10 @@
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review"
+      "family_evidence": "single_source_pending_family_review",
+      "owner_source_decisions": {
+        "tilda-post:m0epglvrp1": "bank"
+      }
     }
   ]
 }

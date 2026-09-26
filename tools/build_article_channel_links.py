@@ -126,6 +126,7 @@ def sync_navigation(result, registry, output):
         current = library_call('read_knowledge', {'uri':'knowledge://resource/'+key})
         version = current.get('version', 0)
     snapshot = {**result,'article_families':registry['canonical_blog']+registry['deferred'],
+                'owner_review':registry.get('owner_review'),
                 'authority':'Derived navigation snapshot; Git registry owns article decisions. Source bodies are not copied.'}
     text = json.dumps(snapshot,ensure_ascii=False,sort_keys=True)
     saved = library_call('register_knowledge_resource', {

@@ -5,6 +5,7 @@
 Обновлено: 25.09.2026
 
 Машиночитаемый канон решений — [`article-source-registry.json`](article-source-registry.json). Полные тексты остаются в собственных источниках и серверном Knowledge Library; этот реестр хранит только маршрутизацию, provenance и семейные связи.
+Актуальный поимённый разбор владельца: [единый файл семей](ARTICLE_FAMILIES.md). Категории deferred_kind ниже — исторический результат классификатора, а не последняя команда о публикации; приоритет у article-owner-decisions.json и owner_source_decisions.
 
 ## Сводка
 

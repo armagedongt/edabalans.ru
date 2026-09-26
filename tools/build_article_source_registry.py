@@ -267,10 +267,23 @@ def build() -> tuple[dict[str, Any], str]:
             family["owner_decision"] = alias["decision"]
             family["reason"] = alias["basis"]
     deferred_counts = Counter(item["deferred_kind"] for item in deferred_families)
+    owner_decisions = load_json(ROOT / "content/author-voice/source-selection/article-owner-decisions.json")
+    owner_states = {}
+    for state, ids in owner_decisions["assignments"].items():
+        for source_id in ids.split():
+            if source_id in owner_states:
+                raise ValueError(f"Duplicate owner decision: {source_id}")
+            owner_states[source_id] = state
+    for family in published_families + deferred_families:
+        family["owner_source_decisions"] = {
+            m["catalog_id"]: owner_states[m["catalog_id"]]
+            for m in family["members"] if m["catalog_id"] in owner_states
+        }
     source_counts = Counter(row["source"] for row in rows)
     registry = {
         "schema_version": 1,
-        "updated_at": "2026-09-25",
+        "updated_at": "2026-09-26",
+        "owner_review": owner_decisions,
         "module_id": "platform.content",
         "scope": {
             "included": "Известные длинные авторские материалы Pikabu, Telegraph и VC.ru объёмом от 3000 знаков, а также опубликованные статьи собственного блога и подтверждённые Tilda-основы.",
@@ -290,11 +303,12 @@ def build() -> tuple[dict[str, Any], str]:
             "action": "Пересобирать внутреннюю навигационную карту после изменения канонов; спорные пары оставлять в очереди сравнения. Сообщения автоматически не редактируются.",
         },
         "rules": {
+            "owner_decisions": "Решения 26.09.2026 из article-owner-decisions.json имеют приоритет над legacy deferred_kind. Единый файл для владельца — ARTICLE_FAMILIES.md. Банк, ручной разбор, разбор версий и учебный архив не смешиваются. Редактирование и публикация ждут отдельной команды.",
             "content_forms": "Два представления единого каталога: long_material и short_post. Площадка Telegram не определяет тип; длинная статья может целиком помещаться в сообщении.",
             "telegram_relations": "references_article означает анонс/ссылку, previous_version — подтверждённую старую редакцию; semantic_overlap_candidate требует сравнения. Анонс не становится дублем статьи.",
             "publication_evidence": "Отдельно учитывать наличие полного текста, анонс в канале, шаблон бота и подтверждённую отправку. Не найдено в снимке не означает никогда не публиковалось.",
             "private_link_map": "tools/build_article_channel_links.py создаёт приватную карту сообщений, версий и будущих замен. Сообщения автоматически не редактируются; перед заменой нужны свежий текст и однозначный опубликованный канон.",
-            "two_buckets": "Каждая известная статья находится либо в canonical_blog, либо в deferred. Третьего пользовательского состояния нет.",
+            "two_buckets": "canonical_blog/deferred — только техническое разделение наличия канона. Редакционное назначение определяется owner_review; банк, ручной разбор и учебный архив различаются.",
             "blog_canon": "Опубликованная запись content/blog/manifest.json — канон семьи. Внешние публикации являются проявлениями и не перезаписывают блог автоматически.",
             "safe_family_merge": "В одну семью объединяются только подтверждённые источники. Возможное текстовое пересечение хранится как possible_duplicate_catalog_ids и требует проверки.",
             "private_boundary": "Материалы Мастер-класса и курсов остаются в deferred/private_product_material и не получают разрешение на открытую публикацию.",
@@ -350,6 +364,7 @@ def build() -> tuple[dict[str, Any], str]:
         "Обновлено: 25.09.2026",
         "",
         "Машиночитаемый канон решений — [`article-source-registry.json`](article-source-registry.json). Полные тексты остаются в собственных источниках и серверном Knowledge Library; этот реестр хранит только маршрутизацию, provenance и семейные связи.",
+        "Актуальный поимённый разбор владельца: [единый файл семей](ARTICLE_FAMILIES.md). Категории deferred_kind ниже — исторический результат классификатора, а не последняя команда о публикации; приоритет у article-owner-decisions.json и owner_source_decisions.",
         "",
         "## Сводка",
         "",

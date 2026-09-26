@@ -146,7 +146,10 @@ PostgreSQL content tables, `docs/CONTENT_CATALOG.md`,
 Единый редакционный статус длинных статей хранится в
 `content/author-voice/source-selection/article-source-registry.json`: каждая
 известная статья относится либо к опубликованному канону блога, либо к
-отложенному корпусу с причиной. Человекочитаемая таблица находится рядом в
+неопубликованному корпусу. Последние поимённые решения владельца задаёт
+`article-owner-decisions.json`: банк, ручной просмотр, разбор версий и учебный
+архив не смешиваются; исторический `deferred_kind` их не отменяет. Единый файл
+для владельца — `ARTICLE_FAMILIES.md`, техническая таблица —
 `article-source-registry.md`. Подтверждённые связи нескольких площадочных версий
 и выбор полной основы остаются в
 `content/author-voice/source-selection/blog-source-families.json`; предполагаемое
