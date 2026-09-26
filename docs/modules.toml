@@ -350,6 +350,7 @@ owns_files = [
 owns_routes = [
   "*/homepage.js", "*/preview/homepage-recognition*", "*/preview/homepage-mobile*",
   "*/public-site-errors/*",
+  "*/preview/members-moved",
   "*/preview/homepage-release-candidate*",
   "*/preview/homepage-version/*",
   "*/preview/homepage-tilda-shell*",

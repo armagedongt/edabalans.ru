@@ -33,6 +33,23 @@ def page() -> str:
     )
 
 
+def members_moved_fragment() -> str:
+    return (ASSET_DIR / "members-moved.html").read_text(encoding="utf-8").replace(
+        "{{origin}}", ORIGIN
+    )
+
+
+def members_moved_page() -> str:
+    return (
+        '<!doctype html><html lang="ru"><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        '<meta name="robots" content="noindex,nofollow">'
+        '<title>Личный кабинет переехал</title></head><body style="margin:0">'
+        + members_moved_fragment()
+        + "</body></html>"
+    )
+
+
 def browser_navigation(request: Request) -> bool:
     path = request.url.path
     if request.method not in {"GET", "HEAD"}:
@@ -73,3 +90,8 @@ def not_found_loader():
 @router.get("/public-site-errors/shrug-character-v1.svg", include_in_schema=False)
 def not_found_illustration():
     return FileResponse(ASSET_DIR / "shrug-character-v1.svg", media_type="image/svg+xml", headers={"Cache-Control": "public, max-age=86400", "Access-Control-Allow-Origin": "*"})
+
+
+@router.get("/preview/members-moved", include_in_schema=False)
+def preview_members_moved():
+    return HTMLResponse(members_moved_page(), headers=HEADERS)

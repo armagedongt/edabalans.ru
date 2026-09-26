@@ -1,0 +1,40 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Unbounded:wght@700&display=swap');
+.ed-moved{--blue:#27aff5;--deep:#118ed8;--ink:#17191e;--muted:#58616c;box-sizing:border-box;min-height:100svh;color:var(--ink);font-family:Manrope,Arial,sans-serif;background:radial-gradient(circle at 18% 8%,#dff4ff 0,transparent 38%),radial-gradient(circle at 92% 88%,#fff0c9 0,transparent 34%),#f5fbff;overflow-wrap:anywhere}
+.ed-moved *{box-sizing:border-box}.ed-moved__shell{width:min(1020px,100%);margin:auto;padding:30px 28px 56px}
+.ed-moved__brand{display:inline-flex;align-items:center;gap:10px;color:#167eb9;text-decoration:none;font-weight:800;font-size:15px}.ed-moved__brand img{width:36px;height:36px;border-radius:11px}
+.ed-moved__card{margin-top:42px;padding:clamp(28px,5vw,60px);border:1px solid #cdeafb;border-radius:30px;background:#ffffffed;box-shadow:0 24px 70px #168bc51a;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:clamp(28px,5vw,64px);align-items:center}
+.ed-moved__badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 18px;padding:8px 12px;border-radius:999px;background:#e4f6ff;color:#1178b4;font-size:13px;font-weight:800}.ed-moved__badge::before{content:'✓';display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--blue);color:white;font-size:13px}
+.ed-moved h1{margin:0 0 20px;font-family:Unbounded,Manrope,sans-serif;font-size:clamp(30px,4.4vw,52px);line-height:1.08;letter-spacing:-.045em}.ed-moved__lead{margin:0 0 24px;color:var(--muted);font-size:clamp(17px,2vw,20px);line-height:1.58}
+.ed-moved__mail{margin:0 0 26px;padding:18px 20px;border-left:4px solid #f3a632;border-radius:0 16px 16px 0;background:#fff8e8;color:#3d4045;font-size:15px;line-height:1.55}
+.ed-moved__primary{display:flex;align-items:center;justify-content:center;min-height:58px;width:min(100%,410px);padding:15px 22px;border-radius:16px;background:var(--blue);box-shadow:0 12px 28px #27aff53d;color:#fff;text-align:center;text-decoration:none;font-size:16px;font-weight:800;transition:transform .15s,background .15s}.ed-moved__primary:hover{background:var(--deep);transform:translateY(-2px)}
+.ed-moved__primary:focus-visible,.ed-moved__contact:focus-visible,.ed-moved__brand:focus-visible{outline:3px solid #0b79bb;outline-offset:4px}
+.ed-moved__help{padding:26px;border:1px solid #d8edf8;border-radius:22px;background:#f7fcff}.ed-moved__help h2{margin:0 0 12px;font-size:22px;line-height:1.25;letter-spacing:-.025em}.ed-moved__help p{margin:0 0 20px;color:var(--muted);font-size:15px;line-height:1.58}
+.ed-moved__contacts{display:grid;gap:10px}.ed-moved__contact{display:flex;align-items:center;justify-content:space-between;min-height:52px;padding:13px 16px;border:1px solid #cce8f7;border-radius:14px;background:white;color:#116da7;text-decoration:none;font-size:14px;font-weight:800;transition:background .15s,border-color .15s}.ed-moved__contact::after{content:'→';font-size:18px}.ed-moved__contact:hover{background:#eaf8ff;border-color:#8ed5f8}
+.ed-moved__note{margin:20px 0 0;color:#7a838c;font-size:13px;line-height:1.5}
+@media(max-width:760px){.ed-moved__shell{padding:20px 16px 38px}.ed-moved__card{margin-top:24px;padding:26px 20px;border-radius:22px;grid-template-columns:1fr;gap:24px}.ed-moved h1{font-size:32px}.ed-moved__lead{font-size:17px}.ed-moved__primary{width:100%}.ed-moved__help{padding:21px}.ed-moved__help h2{font-size:20px}}
+@media(prefers-reduced-motion:reduce){.ed-moved__primary,.ed-moved__contact{transition:none}.ed-moved__primary:hover{transform:none}}
+</style>
+<div class="ed-moved">
+  <main class="ed-moved__shell">
+    <a class="ed-moved__brand" href="https://похудение-это-есть.рф/" aria-label="Похудение — это есть! На главную"><img src="{{origin}}/favicon.png" width="36" height="36" alt="">Похудение — это есть!</a>
+    <section class="ed-moved__card" aria-labelledby="ed-moved-title">
+      <div>
+        <p class="ed-moved__badge">Личный кабинет обновлён</p>
+        <h1 id="ed-moved-title">Личный кабинет переехал</h1>
+        <p class="ed-moved__lead">Сайт переехал на новый сервер, и Мастер-класс теперь доступен в новом личном кабинете.</p>
+        <p class="ed-moved__mail">Если у вас уже был доступ к Мастер-классу, мы отправили на вашу почту письмо с новым паролем. Войдите с тем же адресом почты, на который был оформлен доступ.</p>
+        <a class="ed-moved__primary" href="https://похудение-это-есть.рф/lk">Войти в новый личный кабинет</a>
+      </div>
+      <aside class="ed-moved__help" aria-labelledby="ed-moved-help-title">
+        <h2 id="ed-moved-help-title">Не нашли письмо или не получается войти?</h2>
+        <p>Проверьте папку «Спам». Если письма нет или возникла другая проблема со входом, напишите мне — помогу восстановить доступ.</p>
+        <div class="ed-moved__contacts">
+          <a class="ed-moved__contact" href="https://t.me/FitnessSergey" target="_blank" rel="noopener">Написать в Telegram</a>
+          <a class="ed-moved__contact" href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener">Написать в MAX</a>
+        </div>
+        <p class="ed-moved__note">Старые ссылки Tilda больше не используются для входа.</p>
+      </aside>
+    </section>
+  </main>
+</div>

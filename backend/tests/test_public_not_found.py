@@ -91,3 +91,23 @@ def test_tilda_assets_are_public_and_cors_enabled(path, mime):
     if path == "404-fragment.html":
         assert "{{" not in response.text
         assert "<iframe" not in response.text
+
+
+def test_members_moved_preview_is_ready_but_does_not_capture_legacy_paths():
+    client = TestClient(app)
+    response = client.get("/preview/members-moved", headers={"Accept": "text/html"})
+    assert response.status_code == 200
+    assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    assert response.headers["cache-control"] == "no-store"
+    assert '<meta name="robots" content="noindex,nofollow">' in response.text
+    assert "Личный кабинет переехал" in response.text
+    assert "мы отправили на вашу почту письмо с новым паролем" in response.text
+    assert 'href="https://похудение-это-есть.рф/lk"' in response.text
+    assert 'href="https://t.me/FitnessSergey"' in response.text
+    assert 'href="https://max.ru/u/' in response.text
+    assert "{{" not in response.text
+
+    legacy = client.get("/members/courses/old-course-code/material", headers={"Accept": "text/html"})
+    assert legacy.status_code == 404
+    assert "Страница не найдена" in legacy.text
+    assert "Личный кабинет переехал" not in legacy.text
