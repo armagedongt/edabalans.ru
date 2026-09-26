@@ -9,7 +9,16 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = Path('D:/CodexPrivate/blog-quality-corrections-20260926')
 parser = argparse.ArgumentParser()
 parser.add_argument('--batch', type=int)
-articles = selected_articles(parser.parse_args().batch)
+parser.add_argument('--source-id')
+parser.add_argument('--round', choices=['initial', 'full-review'], default='initial')
+options = parser.parse_args()
+articles = selected_articles(options.batch)
+if options.source_id:
+    articles = [item for item in articles if str(item['source_id']) == options.source_id]
+    if not articles:
+        parser.error('source-id not present in selected batch')
+if options.round != 'initial':
+    OUT = OUT/options.round
 for article in articles:
     target = OUT/str(article['source_id'])/'runtime-before.json'
     target.parent.mkdir(parents=True, exist_ok=True)

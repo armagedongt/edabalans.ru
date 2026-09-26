@@ -15,12 +15,19 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--apply', action='store_true')
     parser.add_argument('--batch', type=int)
-    parser.add_argument('--stage', choices=['proofread', 'structure'], default='proofread')
+    parser.add_argument('--stage', choices=['proofread', 'structure', 'targeted'], default='proofread')
+    parser.add_argument('--source-id')
+    parser.add_argument('--round', choices=['initial', 'full-review'], default='initial')
     options = parser.parse_args()
     articles = selected_articles(options.batch)
+    if options.source_id:
+        articles = [item for item in articles if str(item['source_id']) == options.source_id]
+        if not articles:
+            parser.error('source-id not present in selected batch')
+    private_root = PRIVATE if options.round == 'initial' else PRIVATE/options.round
     for item in articles:
         identity = str(item['source_id'])
-        directory = PRIVATE/identity
+        directory = private_root/identity
         snapshot = directory/'runtime-before.json'
         if not snapshot.exists():
             print(identity, 'SKIP: no runtime baseline', flush=True)

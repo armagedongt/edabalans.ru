@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editor",
+  "reviewed_at": "2026-09-26T14:10:40.149456+00:00",
+  "pack_sha256": "615db63758500c744b0674cea79feebe6f1ba623b250e3416c296ef77a991ec2",
+  "draft_sha256": "e9198db0e278e2731511f834830c4031ecb8f4ebf2cca728e803273211ebd0ad",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Диапазоны и спорная арифметика сохранены для отдельной авторской проверки; исправления не меняют величин и рекомендаций."
+    }
+  ]
+}

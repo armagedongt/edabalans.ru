@@ -1,0 +1,34 @@
+{
+  "schema_version": "author-validation-v1",
+  "status": "pass",
+  "pack_sha256": "43272ae943dec724f0c20d275b66ba49ee3a97ea7d3a025c26314fc67d586273",
+  "draft_sha256": "8f4cc9991a1f1aae92d5f8c67984406d6332f46a01707333c559dd6404b679b0",
+  "review_sha256": "48d22f67be6eafdda8f2101a3d6b73dcea9ca6f918711fd255312401a455f790",
+  "validated_at": "2026-09-26T14:10:39.529616+00:00",
+  "missing_verbatim": [],
+  "unresolved_placeholders": [],
+  "protected_layer_errors": [],
+  "inline_binding_review_required_once": null,
+  "proofread_change_review_required_once": {
+    "instruction": "Confirm that every wording change is only spelling, punctuation, or explicit agreement correction.",
+    "similarity": 0.9984680199157411
+  },
+  "rewrite_continuity_review_required_once": null,
+  "semantic_fact_review_required_once": [],
+  "forbidden_claims_to_check_once": [],
+  "preservation_metrics": {
+    "source_significant_tokens": 723,
+    "token_coverage": 0.9903181189488244,
+    "source_visible_characters": 5169,
+    "draft_visible_characters": 5173,
+    "visible_length_ratio": 1.00077384407042
+  },
+  "pending_manual_reviews": [
+    {
+      "id": "proofread_changes",
+      "instruction": "Confirm every wording change is only spelling, punctuation, or an explicitly requested agreement correction."
+    }
+  ],
+  "manual_review_errors": [],
+  "fact_review_expires_at": null
+}

@@ -1,0 +1,28 @@
+{
+  "source_id": "0d583f6ad1cea0eef750",
+  "title": "Один небольшой прыжок — большие перемены в жизни",
+  "batch": 4,
+  "git_sha256": "cf3eabd357b0b219b2a3195524ee4119fbd5f78247331331eb4cac8145f1833a",
+  "checked_at": "2026-09-26T14:29:11.140620+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/odin-nebolshoy-pryzhok-bolshie-peremeny",
+  "http_status": 200,
+  "public_html_sha256": "8585425fb27c8fb68d8c86789168d9170ac9a39315aab85cf2616c6ce0e22378",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "f84c266c0c1336e230d8671e05a429305a6da5eadd5013c85e0ff293ae7f946f",
+  "public_body_images": [
+    "/blog/media/0d583f6ad1cea0eef750/02.webp",
+    "/blog/media/0d583f6ad1cea0eef750/03.webp",
+    "/blog/media/0d583f6ad1cea0eef750/04.webp",
+    "/blog/media/0d583f6ad1cea0eef750/05.webp"
+  ],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/intensive"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\0d583f6ad1cea0eef750.html"
+}

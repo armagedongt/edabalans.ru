@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editor",
+  "reviewed_at": "2026-09-26T14:10:32.049336+00:00",
+  "pack_sha256": "60400631fb616463f58d0aa864420cb0419de73b314f394b1edde4c85b475223",
+  "draft_sha256": "16933cdb2a1c2d657e22510a1be3edafb67bdc79c3879646d7cd0f5e5ac8190a",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Локальная корректура. Диалоги, медицинские оценки, сроки и личные воспоминания не переписаны. Латинская c в слове вопрос исправлена; надеть шлем исправляет управление, не событие."
+    }
+  ]
+}

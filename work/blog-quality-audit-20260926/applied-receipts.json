@@ -103,20 +103,6 @@
   },
   {
     "validation_status": "pass",
-    "source_id": "habits-formation-and-one-percent",
-    "delivery_status": "published",
-    "pack_sha256": "e71384f347dbb9b1f21c93897c8e4a3c3fd2f02072ba3c395f0894629db153b6",
-    "draft_sha256": "6213b65f2a474459b3a0651460016e1740381efff2ffec61b5592a75c139220a",
-    "receipt": {
-      "status": "already_published",
-      "version": 2,
-      "source_id": "habits-formation-and-one-percent",
-      "markdown_sha256": "6213b65f2a474459b3a0651460016e1740381efff2ffec61b5592a75c139220a"
-    },
-    "review_sha256": "fba4f20c7b3a1a254f076decf8f525f07f45bf56f5330dca124aedb9d2231f9b"
-  },
-  {
-    "validation_status": "pass",
     "source_id": "intuitivnoe-pitanie-04-27-2",
     "delivery_status": "published",
     "pack_sha256": "14a60840cb00c69f2d355d77176d4aafa0ecefbc63c311ad3e2c856372186c68",
@@ -223,5 +209,97 @@
     "draft_sha256": "94e9327262466eceb669cd680bb93389db36b14e7e5999ccc4e84dba7a926965",
     "stage": "structure",
     "validation_status": "pass"
+  },
+  {
+    "source_id": "2e269fdc52d600a64753",
+    "validation_status": "pass",
+    "delivery_status": "published",
+    "pack_sha256": "02a5b48fa614a2c5df629abefcee4a7be24d2072c686cab448bfc55c00822894",
+    "draft_sha256": "decdb2a305c6632058c8eb028c0c78a2d5e1a4ccca66af8aa72042ecbdd9fcd5",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "2e269fdc52d600a64753",
+      "markdown_sha256": "decdb2a305c6632058c8eb028c0c78a2d5e1a4ccca66af8aa72042ecbdd9fcd5"
+    },
+    "review_sha256": null
+  },
+  {
+    "source_id": "13327360",
+    "validation_status": "pass",
+    "delivery_status": "published",
+    "pack_sha256": "a782450bf5a697170ee2ef5aed884e28ea7d2cc76728b2aa8272700da819956b",
+    "draft_sha256": "2099c74f8999e6fc156590165c5a2590c56270223d0e7c483ad611456b674f7c",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "13327360",
+      "markdown_sha256": "2099c74f8999e6fc156590165c5a2590c56270223d0e7c483ad611456b674f7c"
+    },
+    "review_sha256": null
+  },
+  {
+    "source_id": "11494317",
+    "validation_status": "pass",
+    "delivery_status": "published",
+    "pack_sha256": "da3b0c521691da4fad561ffdade8fb616bf5f5b26d6453297939272240ea2fc0",
+    "draft_sha256": "452e54ca14d2c3b72e5c640d44f9e1c571ddf505613360a2f50b10d0c3ca27aa",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/dieta-sryv-i-matematika",
+      "source_id": "11494317",
+      "markdown_sha256": "452e54ca14d2c3b72e5c640d44f9e1c571ddf505613360a2f50b10d0c3ca27aa"
+    },
+    "review_sha256": null
+  },
+  {
+    "source_id": "habits-formation-and-one-percent",
+    "validation_status": "pass",
+    "delivery_status": "published",
+    "pack_sha256": "8ad371dff6360be60ddf8f7aeeab2010b8104f086c1735f963a57eee06d9c3d5",
+    "draft_sha256": "0f13d62c8f0050840293113c8640a61c7beff38af7182570746ae35aefa749fb",
+    "receipt": {
+      "status": "published",
+      "version": 3,
+      "published_version": 2,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/chto-vy-ne-ponimaete-o-formirovanii-privychek",
+      "source_id": "habits-formation-and-one-percent",
+      "markdown_sha256": "0f13d62c8f0050840293113c8640a61c7beff38af7182570746ae35aefa749fb"
+    },
+    "review_sha256": null
+  },
+  {
+    "source_id": "11277666",
+    "validation_status": "pass",
+    "delivery_status": "published",
+    "pack_sha256": "eeab06dcf5caacf8e5ea2a2b7737eeba2ba299edb0232c45c724f72232a97904",
+    "draft_sha256": "794d8959939b053a8a15a0b72368076e9e3734b2955a232852651a0bcccf1ae8",
+    "receipt": {
+      "status": "published",
+      "version": 3,
+      "published_version": 2,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/skrytye-zapory-i-banalnyy-syuzhet",
+      "source_id": "11277666",
+      "markdown_sha256": "794d8959939b053a8a15a0b72368076e9e3734b2955a232852651a0bcccf1ae8"
+    },
+    "review_sha256": null
+  },
+  {
+    "source_id": "0d583f6ad1cea0eef750",
+    "validation_status": "pass",
+    "delivery_status": "published",
+    "pack_sha256": "f08b382f8bf15560405babc6bab9259707b4513200863b297c34cb31a3d067fb",
+    "draft_sha256": "e4b334009189f82572663f4a66f8bf718700553ffb8845f8fb7db17cd5dc77da",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/odin-nebolshoy-pryzhok-bolshie-peremeny",
+      "source_id": "0d583f6ad1cea0eef750",
+      "markdown_sha256": "e4b334009189f82572663f4a66f8bf718700553ffb8845f8fb7db17cd5dc77da"
+    },
+    "review_sha256": null
   }
 ]

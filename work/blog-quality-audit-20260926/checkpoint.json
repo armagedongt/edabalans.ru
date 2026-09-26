@@ -3,21 +3,28 @@
   "updated_at": "2026-09-26",
   "batch_size": 5,
   "article_count": 44,
-  "full_current_text_read_count": 15,
-  "archive_source_text_compared_count": 5,
+  "full_current_text_read_count": 20,
+  "archive_source_text_compared_count": 6,
   "publish_ready_count": 0,
-  "article_changes_applied": 15,
-  "proofread_validation_pass_count": 15,
-  "structure_validation_pass_count": 5,
-  "individual_corrections_applied": 106,
+  "article_changes_applied": 20,
+  "proofread_validation_pass_count": 20,
+  "structure_validation_pass_count": 7,
+  "individual_corrections_applied": 226,
   "headings_restored": 24,
-  "new_articles_prepared_locally": ["10123213"],
+  "new_articles_prepared_locally": [
+    "10123213"
+  ],
   "new_articles_published": [],
   "production_receipts": "applied-receipts.json",
-  "production_changes_applied": 15,
-  "next_independent_batch": 4,
-  "next_source_id": "2e269fdc52d600a64753",
-  "diagnostic_reports": ["batches/01-review.md", "batches/02-review.md", "batches/03-review.md"],
+  "production_changes_applied": 20,
+  "next_independent_batch": 5,
+  "next_source_id": "11522121",
+  "diagnostic_reports": [
+    "batches/01-review.md",
+    "batches/02-review.md",
+    "batches/03-review.md",
+    "batches/04-review.md"
+  ],
   "pending_for_reviewed_articles": [
     "Сверка оригинального DOM, ссылок и медиа: plain-text snapshot не подтверждает полноту форматирования",
     "Визуальный просмотр картинок и страницы",
@@ -27,5 +34,10 @@
   ],
   "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
   "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
-  "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей"
+  "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей",
+  "format_targeted_validation_pass_count": 5,
+  "full_review_reports": [
+    "full-review/habits.md",
+    "full-review/dieta-sryv.md"
+  ]
 }

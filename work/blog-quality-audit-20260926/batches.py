@@ -64,7 +64,11 @@ def main():
         raw = (ROOT / 'content/blog/articles' / article['body_file']).read_bytes()
         if path.exists():
             previous = json.loads(path.read_text(encoding='utf-8'))
-            if previous.get('git_sha256') == sha(raw) and previous.get('http_status') == 200:
+            if (previous.get('git_sha256') == sha(raw)
+                    and previous.get('http_status') == 200
+                    and all(previous.get(key) is True for key in (
+                        'rendered_text_matches', 'body_image_urls_match',
+                        'body_links_match', 'heading_levels_match'))):
                 print(identity, 'cached')
                 continue
         evidence = {'source_id': identity, 'title': article['title'], 'batch': args.batch,

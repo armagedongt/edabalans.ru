@@ -1,0 +1,23 @@
+{
+  "source_id": "11494317",
+  "title": "Диета. Срыв. И математика",
+  "batch": 4,
+  "git_sha256": "3db6c0f4a7f89ed3fdcbe99d3a0df6f3e08a3864bb997f750086368a0e37376a",
+  "checked_at": "2026-09-26T14:27:13.197588+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/dieta-sryv-i-matematika",
+  "http_status": 200,
+  "public_html_sha256": "19cc607eb22cdc6849c5eba696bf9a45c2f70247299a979913b321edda253ddc",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "594639064dedeb41f295f970bf62e86fbbcf1245e7e736f47d812bc01c8a9c0a",
+  "public_body_images": [],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\11494317.html"
+}

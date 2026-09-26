@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editor",
+  "reviewed_at": "2026-09-26T14:10:18.211988+00:00",
+  "pack_sha256": "937cc9819c66c542b6f9b8a5a317e2c611ababf41f30f27c119240c304ba0f6a",
+  "draft_sha256": "a7a5239b578814ceb9580204533c8acb80fafd4a50494404fea2a6b398df2e3b",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Сохранены личная история, часы, маршрут, все числа и разговорные формы. Исправлены опечатки и пунктуация. Теления восстановлено как течения по контексту реки, не заменено событие."
+    }
+  ]
+}
