@@ -3,13 +3,13 @@
   "updated_at": "2026-09-26",
   "batch_size": 5,
   "article_count": 44,
-  "full_current_text_read_count": 25,
+  "full_current_text_read_count": 30,
   "archive_source_text_compared_count": 6,
   "publish_ready_count": 0,
-  "article_changes_applied": 25,
-  "proofread_validation_pass_count": 25,
+  "article_changes_applied": 30,
+  "proofread_validation_pass_count": 30,
   "structure_validation_pass_count": 7,
-  "individual_corrections_applied": 285,
+  "individual_corrections_applied": 368,
   "headings_restored_first_three_batches": 24,
   "new_articles_prepared_locally": [
     "10123213"
@@ -17,7 +17,7 @@
   "new_articles_published": [],
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 20,
-  "next_independent_batch": 5,
+  "next_independent_batch": 7,
   "next_source_id": "11522121",
   "active_stage": "batch05_media_recovery_and_delivery_reconciliation",
   "delivery_unconfirmed_source_ids": ["11522121", "11762932", "12296286", "13436070", "13785403"],
@@ -26,7 +26,8 @@
     "batches/02-review.md",
     "batches/03-review.md",
     "batches/04-review.md",
-    "batches/05-review.md"
+    "batches/05-review.md",
+    "batches/06-review.md"
   ],
   "pending_for_reviewed_articles": [
     "Сверка оригинального DOM, ссылок и медиа: plain-text snapshot не подтверждает полноту форматирования",
@@ -38,7 +39,9 @@
   "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
   "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
   "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей",
-  "format_targeted_validation_pass_count": 9,
+  "format_targeted_validation_pass_count": 14,
+  "publication_hold_source_ids": ["693339"],
+  "publication_hold_reason": "Конкретный риск формулировки о безопасности 5–15 литров; смысловая замена требует решения владельца. Действующая статья не снята.",
   "full_review_reports": [
     "full-review/habits.md",
     "full-review/dieta-sryv.md"

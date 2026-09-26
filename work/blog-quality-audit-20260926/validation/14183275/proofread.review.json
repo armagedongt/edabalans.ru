@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editorial-batch06",
+  "reviewed_at": "2026-09-26T15:06:39.075990+00:00",
+  "pack_sha256": "35dd4b20c5a9c1e27c7b0db47a95c23feff58da9dc65f77b27b6a2256db19c8e",
+  "draft_sha256": "c2de8d9cea7a5f03204ecb0f99997c0dcf42f47b0767c01379551673754a84db",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Полный текст и локальные замены проверены: запятые, пробелы единиц, лайфхак. Сохранены все количества, рецепт, грубоватый голос и прямо защищённая владельцем фраза о гликемическом индексе. Не заявляется фактчек всей статьи."
+    }
+  ]
+}
