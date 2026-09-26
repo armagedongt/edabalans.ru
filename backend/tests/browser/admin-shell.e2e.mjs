@@ -414,6 +414,9 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.equal(await page.locator("#review-form").count(), 0);
       assert.equal(await page.locator("#course-access-preview [data-course-code='ACCESS_CALORIES']").count(), 1);
       assert.equal(await page.locator("#course-access-preview [data-course-code='ACCESS_MASTERCLASS'] .is-right").count(), 1);
+      assert.equal(await page.locator("#course-access-preview [data-course-setting]").count(), 0);
+      await page.getByRole("button", { name:"Настроить доступ к курсу Курс о калориях" }).click();
+      assert.equal(await page.getByRole("button", { name:"Скрыть доступ к курсу Курс о калориях" }).getAttribute("aria-expanded"), "true");
       assert.equal(await page.locator("#course-access-preview [data-course-code='ACCESS_CALORIES'] [data-course-setting='start-open']").isDisabled(), true);
       assert.equal(await page.locator(".crm-access-applications", { hasText:"Дневник силовых тренировок" }).count(), 1);
       assert.equal(await page.locator(".crm-card-title", { hasText:"Этапы рассылки" }).count(), 1);
@@ -515,12 +518,12 @@ for (const [name, route] of Object.entries(integratedPages)) {
 {
   const page = await browser.newPage({ viewport: { width: 1440, height: 560 } });
   await page.goto(`http://127.0.0.1:${port}/crm?user=u1`);
-  await page.getByRole("link", { name: "DQS" }).waitFor();
+  await page.locator(".admin-shell-nav").getByRole("link", { name: "DQS", exact: true }).waitFor();
   assert.equal(await page.getByRole("link", { name: "CRM" }).getAttribute("href"), "/crm?user=u1");
-  assert.equal(await page.getByRole("link", { name: "DQS" }).getAttribute("href"), "/admin/dqs?user=u1");
-  assert.equal(await page.getByRole("link", { name: "Силовые" }).getAttribute("href"), "/admin/strength?user=u1");
-  assert.equal(await page.getByRole("link", { name: "Метаболизм" }).getAttribute("href"), "/admin/metabolism?user=u1");
-  assert.equal(await page.getByRole("link", { name: "Продукты и описания" }).getAttribute("href"), "/admin/products?user=u1");
+  assert.equal(await page.locator(".admin-shell-nav").getByRole("link", { name: "DQS", exact: true }).getAttribute("href"), "/admin/dqs?user=u1");
+  assert.equal(await page.locator(".admin-shell-nav").getByRole("link", { name: "Силовые", exact: true }).getAttribute("href"), "/admin/strength?user=u1");
+  assert.equal(await page.locator(".admin-shell-nav").getByRole("link", { name: "Метаболизм", exact: true }).getAttribute("href"), "/admin/metabolism?user=u1");
+  assert.equal(await page.locator(".admin-shell-nav").getByRole("link", { name: "Продукты и описания", exact: true }).getAttribute("href"), "/admin/products?user=u1");
   assert.equal(await page.getByRole("link", { name: "Личный кабинет" }).getAttribute("href"), "/lk");
   await page.close();
 }

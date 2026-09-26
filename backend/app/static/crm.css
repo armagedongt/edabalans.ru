@@ -103,12 +103,12 @@ button { cursor: pointer; }
 .crm-tag.empty { color: var(--muted); background: #f1f1f4; }
 
 .crm-table-area { position:relative; }
-.crm-table-scrollbar { position:sticky; top:66px; z-index:8; width:100%; height:14px; overflow-x:auto; overflow-y:hidden; scrollbar-color:rgba(17,142,216,.68) #e8f5fb; scrollbar-width:auto; border:1px solid var(--line); border-bottom:0; border-radius:12px 12px 0 0; background:#fff; box-shadow:0 7px 16px -15px rgba(12,91,136,.66); touch-action:pan-x; }
+.crm-table-scrollbar { position:sticky; top:66px; z-index:8; width:100%; height:14px; overflow-x:auto; overflow-y:hidden; scrollbar-color:rgba(17,142,216,.68) #e8f5fb; scrollbar-width:auto; border:1px solid var(--line); border-bottom:0; border-radius:12px 12px 0 0; background:#fff; box-shadow:0 7px 16px -15px rgba(12,91,136,.66); touch-action:pan-x pan-y; }
 .crm-table-scrollbar i { display:block; height:1px; }
 .crm-table-scrollbar::-webkit-scrollbar { height:12px; }
 .crm-table-scrollbar::-webkit-scrollbar-track { background:#e8f5fb; }
 .crm-table-scrollbar::-webkit-scrollbar-thumb { border:3px solid #e8f5fb; border-radius:999px; background:rgba(17,142,216,.68); }
-.crm-table-wrap { width:100%; max-width:100%; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; scrollbar-color:rgba(17,142,216,.54) #e8f5fb; scrollbar-width:auto; border:1px solid var(--line); border-radius:0 0 12px 12px; background:var(--card); box-shadow:var(--shadow); touch-action:pan-x; }
+.crm-table-wrap { width:100%; max-width:100%; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; scrollbar-color:rgba(17,142,216,.54) #e8f5fb; scrollbar-width:auto; border:1px solid var(--line); border-radius:0 0 12px 12px; background:var(--card); box-shadow:var(--shadow); touch-action:pan-x pan-y; }
 .crm-table-wrap::-webkit-scrollbar { height:12px; }
 .crm-table-wrap::-webkit-scrollbar-track { background:#e8f5fb; }
 .crm-table-wrap::-webkit-scrollbar-thumb { border:3px solid #e8f5fb; border-radius:999px; background:rgba(17,142,216,.54); }
@@ -242,10 +242,8 @@ button { cursor: pointer; }
 .crm-personal-access-matrix .crm-access-matrix-cell:has(input:checked) span { opacity:1; }
 .crm-personal-access-matrix .crm-access-matrix-cell:has(input:disabled) { cursor:not-allowed; filter:saturate(.25); opacity:.52; }
 .crm-new-account .crm-access-matrix-head,.crm-new-account .crm-access-matrix-row { grid-template-columns:minmax(150px,1fr) 68px 78px 88px; }
-.crm-course-access-control { position:relative; }
-.crm-course-access-control summary { min-width:84px; padding:6px 5px; border:1px solid rgba(17,142,216,.34); border-radius:7px; color:var(--crm-blue-deep); background:#fff; cursor:pointer; font-size:11px; font-weight:700; list-style:none; text-align:center; }
-.crm-course-access-control summary::-webkit-details-marker { display:none; }
-.crm-course-access-control[open] summary { border-color:var(--crm-blue); background:var(--crm-blue-soft); }
+.crm-course-access-control { position:relative; min-width:84px; padding:6px 5px; border:1px solid rgba(17,142,216,.34); border-radius:7px; color:var(--crm-blue-deep); background:#fff; cursor:pointer; font:700 11px/1.2 Manrope,Inter,Arial,sans-serif; text-align:center; }
+.crm-course-access-control[aria-expanded="true"] { border-color:var(--crm-blue); background:var(--crm-blue-soft); }
 .crm-course-access-popover { grid-column:1 / -1; display:grid; gap:6px; margin-top:2px; padding:10px; border:1px solid rgba(17,142,216,.25); border-radius:10px; background:#fff; box-shadow:0 12px 26px -22px rgba(20,53,74,.55); }
 .crm-course-check { display:flex; gap:8px; align-items:flex-start; padding:8px; border-radius:8px; background:#f7fbfe; font-size:12px; }
 .crm-course-check input { width:16px; height:16px; margin:1px 0 0; accent-color:var(--crm-blue); }

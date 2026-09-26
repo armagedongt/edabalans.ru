@@ -742,7 +742,7 @@
     if (state.courseAccessPreview && state.courseAccessPreview.userId === userId) return state.courseAccessPreview;
     state.courseAccessPreview = {
       userId,
-      openCode: "ACCESS_CALORIES",
+      openCode: null,
       items: (courses || []).map((item) => ({ code:item.resource_code, name:item.name, entitled:item.entitled, startOpen:item.start_open, allLessonsOpen:item.all_lessons_open, available:item.available }))
     };
     return state.courseAccessPreview;
@@ -760,9 +760,7 @@
         ${accessMatrixCell(item.entitled, "right", "Право на курс")}
         ${accessMatrixCell(item.startOpen, "start", "Открыт для старта")}
         ${accessMatrixCell(item.allLessonsOpen, "all", "Все уроки открыты")}
-        <details class="crm-course-access-control" ${preview.openCode === item.code ? "open" : ""}>
-          <summary aria-label="Настроить доступ к курсу ${esc(item.name)}">Настроить</summary>
-        </details>
+        <button class="crm-course-access-control" type="button" data-course-configure aria-expanded="${String(preview.openCode === item.code)}" aria-label="Настроить доступ к курсу ${esc(item.name)}">${preview.openCode === item.code ? "Скрыть" : "Настроить"}</button>
         ${preview.openCode === item.code ? `<div class="crm-course-access-popover">
             <label class="crm-course-check"><input type="checkbox" data-course-setting="entitled" ${item.entitled ? "checked" : ""}><span><strong>Право на курс</strong><small>Выдано после покупки либо вручную.</small></span></label>
             <label class="crm-course-check"><input type="checkbox" data-course-setting="start-open" ${item.startOpen ? "checked" : ""} ${item.entitled ? "" : "disabled"}><span><strong>Открыт для старта</strong><small>Ученик может начать курс сейчас.</small></span></label>
@@ -785,10 +783,11 @@
   function bindCourseAccessPreview(userId) {
     const previewElement = document.getElementById("course-access-preview");
     if (!previewElement) return;
-    previewElement.querySelectorAll(".crm-course-access-control").forEach((details) => {
-      details.addEventListener("toggle", () => {
+    previewElement.querySelectorAll("[data-course-configure]").forEach((button) => {
+      button.addEventListener("click", () => {
         const preview = previewCourseAccesses(userId);
-        preview.openCode = details.open ? details.closest("[data-course-code]").dataset.courseCode : null;
+        const code = button.closest("[data-course-code]").dataset.courseCode;
+        preview.openCode = preview.openCode === code ? null : code;
         previewElement.outerHTML = courseAccessPreview(userId);
         bindCourseAccessPreview(userId);
       });
