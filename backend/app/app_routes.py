@@ -1271,11 +1271,16 @@ def apply_dqs_action(
                 ))
                 db.flush()
         days = [state.days.get(str(index)) for index in range(1, DAY_COUNT + 1)]
+        tutorial_completed = db.scalar(select(MasterclassEvent.id).where(
+            MasterclassEvent.user_id == user.id,
+            MasterclassEvent.event_key == "dqs_tutorial_completed",
+        )) is not None
         payload = {
             "ok": True,
             "email": primary_email(db, user.id),
             "startDate": state.start_date or "",
             "needsStartDate": not bool(state.start_date),
+            "tutorialCompleted": tutorial_completed,
             "days": days,
             "version": state.version,
         }

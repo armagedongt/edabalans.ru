@@ -3231,6 +3231,10 @@ function tutorialStorageKey(){
 
 function tutorialWasSeen(){
 
+  if(currentUser && (currentUser.tutorialCompleted || currentUser.tutorialSeen)){
+    return true;
+  }
+
   const key =
     tutorialStorageKey();
 
@@ -3238,26 +3242,28 @@ function tutorialWasSeen(){
     return false;
   }
 
-  return (
-    localStorage
-      .getItem(key) ===
-      '1'
-  );
+  try{
+    return localStorage.getItem(key) === '1';
+  }catch(error){
+    return false;
+  }
 }
 
 
 function markTutorialSeen(){
+
+  if(currentUser){
+    currentUser.tutorialSeen = true;
+  }
 
   const key =
     tutorialStorageKey();
 
   if(key){
 
-    localStorage
-      .setItem(
-        key,
-        '1'
-      );
+    try{
+      localStorage.setItem(key, '1');
+    }catch(error){}
   }
 }
 
@@ -3286,6 +3292,9 @@ async function completeTutorial(){
     );
   }
 
+  currentUser.tutorialCompleted = true;
+  markTutorialSeen();
+
   window.dispatchEvent(
     new CustomEvent(
       'edabalans:app-completed',
@@ -3308,7 +3317,9 @@ function maybeShowTutorial(){
 
     setTimeout(
       () => {
-        openTutorial(0);
+        if(!tutorialWasSeen()){
+          openTutorial(0);
+        }
       },
       250
     );

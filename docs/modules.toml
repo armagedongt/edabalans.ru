@@ -394,6 +394,7 @@ owns_files = [
   "legacy/google/sheets/DQS_SCHEMA.md", "backend/tests/test_masterclass_dqs_gate.py", "backend/tests/browser/dqs-access.e2e.mjs",
   "backend/migrations/versions/20260822_0004_application_states.py",
   "docs/knowledge-base/modules/dqs/**",
+  "tools/tests/test_dqs_tutorial_runtime.py",
 ]
 owns_tables = ["dqs_states"]
 owns_routes = ["*/apps/dqs*", "*/api/apps/dqs*", "*/dqs"]

@@ -13,6 +13,7 @@ from app.models import (
     MasterclassEvent,
     MasterclassStepProgress,
     Resource,
+    User,
     UserAccess,
     UserEmail,
     UserLegalAcceptance,
@@ -37,6 +38,13 @@ def test_day_four_dqs_step_waits_for_completed_tutorial():
             )
         )
         dqs_resource = Resource(code="dqs", name="DQS", status="active")
+        other_user = User(display_name="Other tutorial user")
+        db.add(other_user)
+        db.flush()
+        db.add(MasterclassEvent(
+            user_id=other_user.id, event_key="dqs_tutorial_completed",
+            event_type="dqs_tutorial_completed",
+        ))
         db.add(dqs_resource)
         db.flush()
         db.add(
@@ -75,6 +83,7 @@ def test_day_four_dqs_step_waits_for_completed_tutorial():
     )
     assert opened.status_code == 200
     assert opened.json()["ok"] is True
+    assert opened.json()["tutorialCompleted"] is False
 
     not_completed = client.post(
         "/api/masterclass/course/days/4/steps/1/complete",
@@ -92,6 +101,24 @@ def test_day_four_dqs_step_waits_for_completed_tutorial():
     )
     assert tutorial.status_code == 200
     assert tutorial.json() == {"ok": True, "completed": True}
+
+    reopened = client.get(
+        "/api/apps/dqs", params={"action": "openUser", "email": email}
+    )
+    assert reopened.json()["tutorialCompleted"] is True
+    assert reopened.json()["days"] == opened.json()["days"]
+    assert reopened.json()["startDate"] == opened.json()["startDate"]
+
+    repeated = client.get(
+        "/api/apps/dqs", params={"action": "completeTutorial", "email": email}
+    )
+    assert repeated.json() == {"ok": True, "completed": True}
+    with factory() as db:
+        events = list(db.scalars(select(MasterclassEvent).where(
+            MasterclassEvent.user_id == user_id,
+            MasterclassEvent.event_key == "dqs_tutorial_completed",
+        )))
+        assert len(events) == 1
 
     completed = client.post(
         "/api/masterclass/course/days/4/steps/1/complete",
