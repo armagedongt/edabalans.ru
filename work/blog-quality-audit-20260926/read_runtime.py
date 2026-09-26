@@ -1,11 +1,15 @@
 """Read existing admin API through SSH; credentials stay inside backend container."""
 import json
+import argparse
 import subprocess
 from pathlib import Path
+from edit_batch import selected_articles
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = Path('D:/CodexPrivate/blog-quality-corrections-20260926')
-articles = json.loads((ROOT/'content/blog/manifest.json').read_text(encoding='utf-8'))['articles'][:10]
+parser = argparse.ArgumentParser()
+parser.add_argument('--batch', type=int)
+articles = selected_articles(parser.parse_args().batch)
 for article in articles:
     target = OUT/str(article['source_id'])/'runtime-before.json'
     target.parent.mkdir(parents=True, exist_ok=True)

@@ -151,5 +151,77 @@
     "draft_sha256": "9c21b225763cd1076a7d87384a73c1b68f4a3a7e2f5ba40253d963e867b96ee3",
     "receipt": null,
     "review_sha256": "467cc7fd2e3d0386ac77eb5fc60ad440ae50472981bedaee403fc91105675f33"
+  },
+  {
+    "source_id": "11833079",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "11833079",
+      "markdown_sha256": "ac4172c6712033f8a89f3fe0ffc6350c3a837151e04e747ba02e8da6cb80b8fb"
+    },
+    "pack_sha256": "6728c8173b352d39d6cb383b3a7df69ad86f820f300a7efd564f45660fddc3c6",
+    "draft_sha256": "ac4172c6712033f8a89f3fe0ffc6350c3a837151e04e747ba02e8da6cb80b8fb",
+    "stage": "structure",
+    "validation_status": "pass"
+  },
+  {
+    "source_id": "11857250",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "11857250",
+      "markdown_sha256": "80059def2712f84974b56b034430336f51a6780f8d00c15df00981076db4a0f6"
+    },
+    "pack_sha256": "c2fefac49c2370a833a0ba970c4078dcc355ffbf8c031bda1f3f25d6705fb747",
+    "draft_sha256": "80059def2712f84974b56b034430336f51a6780f8d00c15df00981076db4a0f6",
+    "stage": "structure",
+    "validation_status": "pass"
+  },
+  {
+    "source_id": "13355824",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "13355824",
+      "markdown_sha256": "6d68cc1966e11957f6ea7f056dd7c5b745433c5bc758df593b536227cb233877"
+    },
+    "pack_sha256": "5e83958d954d379a8536c69855ec51346719ac1a0253bbd87d7d675f6437417d",
+    "draft_sha256": "6d68cc1966e11957f6ea7f056dd7c5b745433c5bc758df593b536227cb233877",
+    "stage": "structure",
+    "validation_status": "pass"
+  },
+  {
+    "source_id": "d1baceb9e2b6b72013b6",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "d1baceb9e2b6b72013b6",
+      "markdown_sha256": "b05d52db44f5a25e0ed5ac3845e277a63b4f073ce0ac86610237cb08c4bd77ef"
+    },
+    "pack_sha256": "ca8b8f15d97e1f017cfb812ef87cc2f98c8f1373e19f99dc90148351a8c75287",
+    "draft_sha256": "b05d52db44f5a25e0ed5ac3845e277a63b4f073ce0ac86610237cb08c4bd77ef",
+    "stage": "structure",
+    "validation_status": "pass"
+  },
+  {
+    "source_id": "30e4d208f2cbd8e57201",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/pochemu-lyudi-hudeyut-i-snova-nabirayut-ves",
+      "source_id": "30e4d208f2cbd8e57201",
+      "markdown_sha256": "94e9327262466eceb669cd680bb93389db36b14e7e5999ccc4e84dba7a926965"
+    },
+    "pack_sha256": "c9473e792d3805b2e7717f83395c2ecbc81d61e3899d4be82c8287293c28c022",
+    "draft_sha256": "94e9327262466eceb669cd680bb93389db36b14e7e5999ccc4e84dba7a926965",
+    "stage": "structure",
+    "validation_status": "pass"
   }
 ]

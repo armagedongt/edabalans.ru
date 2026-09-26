@@ -1,0 +1,31 @@
+{
+  "source_id": "d1baceb9e2b6b72013b6",
+  "title": "Главные ошибки в похудении: что нужно знать до того, как испытывать голод",
+  "batch": 3,
+  "git_sha256": "bc391fb306543206daeb186ada752800395d6f40997b31e7650ccdf9694aead1",
+  "checked_at": "2026-09-26T13:36:17.336964+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/glavnye-oshibki-v-pohudenii-do-goloda",
+  "http_status": 200,
+  "public_html_sha256": "5a0c3d0153cf0639f16331cedca6eb27f45038de0b6e6f09ca7d55725cd89875",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "6cd1ae549ffe9123b3dc2103767e16c8d9c6e229518f8e5651312633514b10dc",
+  "public_body_images": [
+    "/blog/media/d1baceb9e2b6b72013b6/02.webp",
+    "/blog/media/d1baceb9e2b6b72013b6/03.webp",
+    "/blog/media/d1baceb9e2b6b72013b6/04.webp",
+    "/blog/media/d1baceb9e2b6b72013b6/05.webp",
+    "/blog/media/d1baceb9e2b6b72013b6/06.webp",
+    "/blog/media/d1baceb9e2b6b72013b6/07.webp",
+    "/blog/media/d1baceb9e2b6b72013b6/08.webp"
+  ],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\d1baceb9e2b6b72013b6.html"
+}

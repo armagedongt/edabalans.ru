@@ -6,7 +6,7 @@ import json
 import subprocess
 from pathlib import Path
 
-from edit_batch import PRIVATE, ROOT, body, run_writer
+from edit_batch import PRIVATE, ROOT, body, run_writer, selected_articles
 
 def sha(data):
     return hashlib.sha256(data).hexdigest()
@@ -14,8 +14,10 @@ def sha(data):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--apply', action='store_true')
+    parser.add_argument('--batch', type=int)
+    parser.add_argument('--stage', choices=['proofread', 'structure'], default='proofread')
     options = parser.parse_args()
-    articles = json.loads((ROOT/'content/blog/manifest.json').read_text(encoding='utf-8'))['articles'][:10]
+    articles = selected_articles(options.batch)
     for item in articles:
         identity = str(item['source_id'])
         directory = PRIVATE/identity
@@ -28,10 +30,13 @@ def main():
         if body(before['markdown']) != original or before['editorial_status'] != 'published':
             print(identity, 'SKIP: baseline differs or contains unpublished changes', flush=True)
             continue
-        draft = directory/'proofread.md'
-        report = directory/'proofread.validation.json'
-        run_writer(['validate', '--pack', str(directory/'proofread.pack.json'), '--draft', str(draft),
-                    '--review', str(directory/'proofread.review.json'), '--output', str(report)])
+        draft = directory/(options.stage+'.md')
+        report = directory/(options.stage+'.validation.json')
+        args = ['validate', '--pack', str(directory/(options.stage+'.pack.json')), '--draft', str(draft), '--output', str(report)]
+        review = directory/(options.stage+'.review.json')
+        if review.exists():
+            args += ['--review', str(review)]
+        run_writer(args)
         validation = json.loads(report.read_text(encoding='utf-8'))
         if validation['status'] != 'pass' or validation['draft_sha256'] != sha(draft.read_bytes()):
             raise ValueError(identity + ': writer gate is not pass')

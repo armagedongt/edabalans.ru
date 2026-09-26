@@ -1,0 +1,26 @@
+{
+  "schema_version": "author-validation-v1",
+  "status": "pass",
+  "pack_sha256": "c9473e792d3805b2e7717f83395c2ecbc81d61e3899d4be82c8287293c28c022",
+  "draft_sha256": "94e9327262466eceb669cd680bb93389db36b14e7e5999ccc4e84dba7a926965",
+  "review_sha256": null,
+  "validated_at": "2026-09-26T13:33:50.719297+00:00",
+  "missing_verbatim": [],
+  "unresolved_placeholders": [],
+  "protected_layer_errors": [],
+  "inline_binding_review_required_once": null,
+  "proofread_change_review_required_once": null,
+  "rewrite_continuity_review_required_once": null,
+  "semantic_fact_review_required_once": [],
+  "forbidden_claims_to_check_once": [],
+  "preservation_metrics": {
+    "source_significant_tokens": 1241,
+    "token_coverage": 1.0,
+    "source_visible_characters": 8545,
+    "draft_visible_characters": 8545,
+    "visible_length_ratio": 1.0
+  },
+  "pending_manual_reviews": [],
+  "manual_review_errors": [],
+  "fact_review_expires_at": null
+}

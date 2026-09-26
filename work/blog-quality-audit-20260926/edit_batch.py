@@ -1,5 +1,6 @@
 """Prepare private, version-bound writer jobs for the first correction batches."""
 import json
+import argparse
 import re
 import subprocess
 import sys
@@ -14,6 +15,22 @@ ANCHORS = ['«Правило 1%»', 'Спасибо за внимание.', 'П
            'Кушайте белок, не занимайтесь чревоугодием, носите шапку!', 'И баеньки...',
            'Учился 6 лет, а может и больше.', 'Скучно, зато эффективно 👇']
 
+EXTRA_ANCHORS = {
+    '11833079': 'Ууууъъъ!!!',
+    '11857250': 'Нет, шаги — это тема!',
+    '13355824': 'тооооолстыми кусками',
+    'd1baceb9e2b6b72013b6': 'оооооченьььь медлеееенннооо...',
+    '30e4d208f2cbd8e57201': 'Вот вес и возвращается.',
+}
+
+def selected_articles(batch=None):
+    articles = json.loads((ROOT/'content/blog/manifest.json').read_text(encoding='utf-8'))['articles']
+    if batch is None:
+        return articles[:10]
+    if batch < 1 or (batch - 1) * 5 >= len(articles):
+        raise ValueError('batch outside manifest')
+    return articles[(batch-1)*5:batch*5]
+
 def body(text):
     return re.sub(r'\n*blog_cta\(\s*\w+\s*\)\s*$', '', text).strip() + '\n'
 
@@ -23,11 +40,18 @@ def run_writer(args):
         raise RuntimeError(result.stdout + result.stderr)
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--batch', type=int)
+    parser.add_argument('--apply', action='store_true')
+    options = parser.parse_args()
     PRIVATE.mkdir(parents=True, exist_ok=True)
-    articles = json.loads((ROOT/'content/blog/manifest.json').read_text(encoding='utf-8'))['articles'][:10]
+    articles = selected_articles(options.batch)
+    anchors = {str(article['source_id']): anchor for article, anchor in zip(selected_articles(), ANCHORS)}
+    anchors.update(EXTRA_ANCHORS)
     corrections = json.loads((Path(__file__).parent/'corrections.json').read_text(encoding='utf-8'))
-    for article, anchor in zip(articles, ANCHORS):
+    for article in articles:
         identity = str(article['source_id'])
+        anchor = anchors[identity]
         directory = PRIVATE/identity
         directory.mkdir(exist_ok=True)
         original = directory/'original.md'

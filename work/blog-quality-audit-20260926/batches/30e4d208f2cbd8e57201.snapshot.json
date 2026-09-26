@@ -1,0 +1,23 @@
+{
+  "source_id": "30e4d208f2cbd8e57201",
+  "title": "Почему люди худеют и снова набирают вес",
+  "batch": 3,
+  "git_sha256": "f410354783aab983962ff0a6afd3a1337fa82fa0f17d2bd6551dc5be516b007c",
+  "checked_at": "2026-09-26T13:36:23.885435+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/pochemu-lyudi-hudeyut-i-snova-nabirayut-ves",
+  "http_status": 200,
+  "public_html_sha256": "ed0ff582a8c7f07fcefef2f747d7844ce91adaaaefd140d1aa82b7652288ede0",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "5fa962ef771b52e99f710592b99bcd7c7bcff72dcdcf3a7cd354799d4b17fab2",
+  "public_body_images": [],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\30e4d208f2cbd8e57201.html"
+}

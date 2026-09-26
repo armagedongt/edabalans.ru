@@ -1,0 +1,25 @@
+{
+  "source_id": "11857250",
+  "title": "Борьба с лишним весом: почему одних шагов недостаточно",
+  "batch": 3,
+  "git_sha256": "ad4620ffe9841fbd6b1e52373f291b4264a820120f3921c981faf1f681c0529f",
+  "checked_at": "2026-09-26T13:36:14.440528+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/borba-s-lishnim-vesom-pochemu-shagov-nedostatochno",
+  "http_status": 200,
+  "public_html_sha256": "eadab47eb6b65fd8e8023fec59e808e8ec0ddca20abeabbb2717ccf1be9c59b0",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "ebe5e6166d336894e67f7fef625046ab99f7691399070740cb96cd3d717bc809",
+  "public_body_images": [
+    "/blog/media/11857250/01.webp"
+  ],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/intensive"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\11857250.html"
+}
