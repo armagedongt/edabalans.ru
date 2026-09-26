@@ -14,7 +14,8 @@ from sqlalchemy.orm import Session  # noqa: E402
 
 from app.config import get_settings  # noqa: E402
 from app.database import Base  # noqa: E402
-from app.crm_service import set_manual_app_access, user_detail  # noqa: E402
+from app.application_access_service import application_access_state, set_manual_application_start  # noqa: E402
+from app.crm_service import user_detail  # noqa: E402
 from app.models import Payment, Resource, User, UserAccess  # noqa: E402
 
 get_settings.cache_clear()
@@ -74,7 +75,8 @@ def test_standalone_app_checkbox_does_not_change_course_rights() -> None:
         ))
         db.commit()
 
-        assert set_manual_app_access(db, user.id, "dqs", enabled=True, admin="test")
+        state = set_manual_application_start(db, user.id, "dqs", start_open=True, admin="test")
+        assert state == {"entitled": True, "start_open": True, "manual_start_open": True}
         active_codes = set(db.scalars(
             select(Resource.code).join(UserAccess).where(
                 UserAccess.user_id == user.id,
@@ -84,7 +86,8 @@ def test_standalone_app_checkbox_does_not_change_course_rights() -> None:
         ))
         assert active_codes == {"dqs", "ACCESS_CALORIES"}
 
-        assert set_manual_app_access(db, user.id, "dqs", enabled=False, admin="test")
+        state = set_manual_application_start(db, user.id, "dqs", start_open=False, admin="test")
+        assert state == {"entitled": True, "start_open": False, "manual_start_open": False}
         active_codes = set(db.scalars(
             select(Resource.code).join(UserAccess).where(
                 UserAccess.user_id == user.id,
@@ -92,7 +95,8 @@ def test_standalone_app_checkbox_does_not_change_course_rights() -> None:
                 UserAccess.paused_at.is_(None),
             )
         ))
-        assert active_codes == {"ACCESS_CALORIES"}
+        assert active_codes == {"dqs", "ACCESS_CALORIES"}
+        assert application_access_state(db, user.id, "dqs")["start_open"] is False
 
 
 def test_legacy_control_and_people_redirect_to_single_admin_surfaces() -> None:

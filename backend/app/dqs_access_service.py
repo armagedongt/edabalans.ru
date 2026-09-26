@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.app_service import AppAccessError
+from app.application_access_service import application_access_state
 from app.models import DqsState, MasterclassEvent
 
 
@@ -40,7 +41,7 @@ def dqs_is_revealed(db: Session, user_id: uuid.UUID) -> bool:
 
 
 def require_dqs_revealed(db: Session, user_id: uuid.UUID) -> None:
-    if not dqs_is_revealed(db, user_id):
+    if not application_access_state(db, user_id, "dqs")["start_open"]:
         raise AppAccessError(
             "DQS куплен, но откроется в четвёртом дне Мастер-класса"
         )

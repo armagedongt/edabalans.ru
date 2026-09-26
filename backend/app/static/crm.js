@@ -744,7 +744,14 @@
       userId,
       openCode: null,
       items: (courses || []).map((item) => ({ code:item.resource_code, name:item.name, entitled:item.entitled, startOpen:item.start_open, allLessonsOpen:item.all_lessons_open, available:item.available })),
-      apps: Object.fromEntries(["dqs", "strength", "metabolism"].map((code) => [code, Boolean(modules && modules[code] && modules[code].has_direct_access)]))
+      apps: Object.fromEntries(["dqs", "strength", "metabolism"].map((code) => {
+        const item = modules && modules[code] || {};
+        return [code, {
+          entitled: Boolean(item.entitled),
+          startOpen: Boolean(item.start_open),
+          manualStartOpen: Boolean(item.manual_start_open)
+        }];
+      }))
     };
     return state.courseAccessPreview;
   }
@@ -776,11 +783,21 @@
       </div>
       <details class="crm-access-applications" open>
         <summary>Приложения <span>отдельные права</span></summary>
-        <div class="crm-access-app-list">${[
+        <div class="crm-access-app-list">
+          <div class="crm-access-app-head"><span>Приложение</span><span>Право</span><span>Открыто</span></div>${[
           ["dqs", "DQS"],
           ["strength", "Дневник силовых тренировок"],
           ["metabolism", "Калькулятор метаболизма"],
-        ].map(([code, name]) => `<label class="crm-app-access"><input type="checkbox" data-app-access="${code}" ${preview.apps[code] ? "checked" : ""}><span>${name}</span></label>`).join("")}</div>
+        ].map(([code, name]) => {
+          const item = preview.apps[code];
+          const state = item.startOpen ? "✓" : "—";
+          const note = item.manualStartOpen ? "вручную" : item.startOpen ? "по правилу" : "по программе";
+          return `<div class="crm-app-access">
+            <strong>${name}</strong>
+            ${accessMatrixCell(item.entitled, "right", item.entitled ? "Право есть" : "Права нет")}
+            <label class="crm-app-start" title="Включает или отменяет только ручное открытие сейчас"><input type="checkbox" aria-label="Открыть сейчас: ${esc(name)}" data-app-access="${code}" ${item.manualStartOpen ? "checked" : ""}><span class="crm-app-start-state ${item.startOpen ? "is-open" : ""}">${state}</span><small>${note}</small></label>
+          </div>`;
+        }).join("")}</div>
       </details>
     </section>`;
   }
@@ -803,7 +820,7 @@
         input.disabled = true;
         try {
           await api(`/admin/api/users/${userId}/app-accesses/${input.dataset.appAccess}`, {
-            method:"PUT", body:JSON.stringify({enabled:checked})
+            method:"PUT", body:JSON.stringify({start_open:checked})
           });
           await refreshUser(userId);
         } catch (error) {

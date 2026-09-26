@@ -42,7 +42,6 @@ from app.crm_service import (
     revoke_manual_access,
     pause_manual_access,
     resume_manual_access,
-    set_manual_app_access,
     reveal_account_password,
     reset_account_password,
     list_resources,
@@ -51,6 +50,7 @@ from app.crm_service import (
     create_manual_account,
     set_manual_course_policy,
 )
+from app.application_access_service import set_manual_application_start
 from app.account_onboarding_service import direct_credential_email_configuration_error
 from app.database import get_db
 from scripts.generate_masterclass_offer_simulator import render_simulator_page
@@ -106,7 +106,7 @@ class CourseAccessStateIn(BaseModel):
 
 
 class AppAccessStateIn(BaseModel):
-    enabled: bool
+    start_open: bool
 
 
 class ManualAccountCreateIn(BaseModel):
@@ -508,11 +508,13 @@ def admin_set_app_access(
     admin: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> dict[str, bool]:
-    if not set_manual_app_access(
-        db, user_id, resource_code, enabled=payload.enabled, admin=admin
-    ):
-        raise HTTPException(status_code=400, detail="user or standalone app not found")
-    return {"enabled": payload.enabled}
+    try:
+        state = set_manual_application_start(
+            db, user_id, resource_code, start_open=payload.start_open, admin=admin
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"start_open": bool(state["start_open"]), "entitled": bool(state["entitled"])}
 
 
 @router.post("/admin/api/users/{user_id}/credential/reveal")

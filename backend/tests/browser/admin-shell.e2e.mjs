@@ -70,9 +70,9 @@ const sampleUserDetail = {
   masterclass:{questionnaires:[],events:[],offers:[]}
 };
 const sampleModules = {
-  dqs:{exists:true,has_access:true,has_direct_access:true},
-  strength:{exists:false,has_access:false,has_direct_access:false},
-  metabolism:{exists:false,has_access:false,has_direct_access:false},
+  dqs:{exists:true,has_access:true,has_direct_access:true,entitled:true,start_open:true,manual_start_open:false},
+  strength:{exists:false,has_access:false,has_direct_access:false,entitled:false,start_open:false,manual_start_open:false},
+  metabolism:{exists:false,has_access:false,has_direct_access:false,entitled:false,start_open:false,manual_start_open:false},
   telegram:{exists:true,has_access:true}
 };
 
@@ -192,7 +192,10 @@ const server = createServer((request, response) => {
     const code = url.pathname.split("/").at(-1);
     sampleModules[code].has_direct_access = true;
     sampleModules[code].has_access = true;
-    return json(response, {enabled: true});
+    sampleModules[code].entitled = true;
+    sampleModules[code].start_open = true;
+    sampleModules[code].manual_start_open = true;
+    return json(response, {start_open: true, entitled: true});
   }
   if (url.pathname === "/admin/api/users/u1/modules") return json(response, {modules:sampleModules});
   if (url.pathname === "/admin/api/users/u1/personal-access-links") return json(response, {links:[]});
@@ -429,10 +432,10 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.equal(await page.getByRole("button", { name:"Скрыть доступ к курсу Курс о калориях" }).getAttribute("aria-expanded"), "true");
       assert.equal(await page.locator("#course-access-preview [data-course-code='ACCESS_CALORIES'] [data-course-setting='start-open']").isDisabled(), true);
       assert.equal(await page.locator(".crm-access-applications", { hasText:"Дневник силовых тренировок" }).count(), 1);
-      assert.equal(await page.getByRole("checkbox", { name:"DQS" }).isChecked(), true);
-      await page.getByRole("checkbox", { name:"Дневник силовых тренировок" }).check();
-      await page.getByRole("checkbox", { name:"Дневник силовых тренировок" }).waitFor({state:"attached"});
-      assert.equal(await page.getByRole("checkbox", { name:"Дневник силовых тренировок" }).isChecked(), true);
+      assert.equal(await page.getByRole("checkbox", { name:"Открыть сейчас: DQS" }).isChecked(), false);
+      await page.getByRole("checkbox", { name:"Открыть сейчас: Дневник силовых тренировок" }).check();
+      await page.getByRole("checkbox", { name:"Открыть сейчас: Дневник силовых тренировок" }).waitFor({state:"attached"});
+      assert.equal(await page.getByRole("checkbox", { name:"Открыть сейчас: Дневник силовых тренировок" }).isChecked(), true);
       assert.equal(await page.locator(".crm-card-title", { hasText:"Этапы рассылки" }).count(), 1);
       assert.equal(await page.locator(".crm-avatar").count(), 0);
       assert.match(await page.locator(".crm-profile-summary").textContent(), /Первая оплата.*02\.08\.2026.*через 1 дн\. после старта бота/s);

@@ -5,16 +5,16 @@ import uuid
 from sqlalchemy.orm import Session
 
 from app.app_service import AppAccessError, require_user_resource
-from app.course_access_service import course_entry_unlocked
+from app.application_access_service import application_access_state
 from app.models import User
 
 
 def metabolism_is_unlocked(db: Session, user_id: uuid.UUID) -> bool:
-    return course_entry_unlocked(db, user_id, "ACCESS_CALORIES")
+    return bool(application_access_state(db, user_id, "metabolism")["start_open"])
 
 
 def require_metabolism_user(db: Session, user: User) -> User:
-    require_user_resource(db, user, "ACCESS_CALORIES")
+    require_user_resource(db, user, ("metabolism", "ACCESS_CALORIES"))
     if not metabolism_is_unlocked(db, user.id):
-        raise AppAccessError("Калькулятор откроется после завершения Мастер-класса")
+        raise AppAccessError("Калькулятор откроется после нужного этапа курса")
     return user

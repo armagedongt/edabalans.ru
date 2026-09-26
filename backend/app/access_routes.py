@@ -42,13 +42,12 @@ from app.models import (
 )
 from app.product_identity import purchased_products
 from app.product_catalog_service import PRODUCT_CONNECTIONS, product_public
-from app.metabolism_service import metabolism_is_unlocked
 from app.course_access_service import (
     active_resource_codes,
     course_entry_unlocked,
     course_fully_unlocked,
 )
-from app.dqs_access_service import dqs_is_revealed
+from app.application_access_service import application_access_state
 
 
 router = APIRouter(tags=["access-links"])
@@ -438,6 +437,7 @@ def account_applications(
     *,
     metabolism_unlocked: bool = False,
     dqs_revealed: bool = False,
+    application_states: dict[str, dict] | None = None,
 ) -> list[dict]:
     preview_enabled = APPLICATION_PREVIEW_RESOURCE in owned
     definitions = (
@@ -446,23 +446,25 @@ def account_applications(
         ("recipes", "Калькулятор и каталог рецептов", "Считайте блюда и сохраняйте подходящие рецепты.", "recipes", "recipes", True),
         ("metabolism", "Калькулятор метаболизма", "Оценивайте расход энергии и сравнивайте три варианта расчёта.", "metabolism", "metabolism", True),
     )
+    application_states = application_states or {}
     result = [
         {
             "code": code,
             "title": title,
             "summary": summary,
             "resource": resource,
-            "owned": resource in owned,
+            "owned": bool(application_states.get(code, {}).get("entitled", resource in owned)),
             "maintenance": bool(PRODUCT_CONNECTIONS.get(code, {}).get("maintenance")),
             "ready": (ready or preview_enabled) and not PRODUCT_CONNECTIONS.get(code, {}).get("maintenance"),
-            "state": "maintenance" if PRODUCT_CONNECTIONS.get(code, {}).get("maintenance") else "available" if resource in owned and (ready or preview_enabled) else "preparing" if resource in owned else "not_owned",
-            "app": app if resource in owned and (ready or preview_enabled) and not legal_required and not PRODUCT_CONNECTIONS.get(code, {}).get("maintenance") else None,
+            "state": "maintenance" if PRODUCT_CONNECTIONS.get(code, {}).get("maintenance") else "available" if application_states.get(code, {}).get("start_open", resource in owned) and (ready or preview_enabled) else "entitled_locked" if application_states.get(code, {}).get("entitled", resource in owned) else "not_owned",
+            "app": app if application_states.get(code, {}).get("start_open", resource in owned) and (ready or preview_enabled) and not legal_required and not PRODUCT_CONNECTIONS.get(code, {}).get("maintenance") else None,
         }
         for code, title, summary, resource, app, ready in definitions
     ]
     metabolism = next(item for item in result if item["code"] == "metabolism")
     metabolism["title"] = "Калькулятор метаболизма"
-    metabolism["owned"] = "ACCESS_CALORIES" in owned
+    metabolism_state = application_states.get("metabolism", {})
+    metabolism["owned"] = bool(metabolism_state.get("entitled", "ACCESS_CALORIES" in owned))
     metabolism["unlock_after_masterclass"] = True
     metabolism["state"] = "available" if metabolism["owned"] and metabolism_unlocked else "masterclass_locked" if metabolism["owned"] else "not_owned"
     metabolism["app"] = "metabolism" if metabolism["owned"] and metabolism_unlocked and not legal_required else None
@@ -527,7 +529,11 @@ def account_payload(email: str, db: Session, *, progress_user_id: uuid.UUID | No
         (item for item in purchases if str(item.get("product_code") or "").startswith("MASTERCLASS_")),
         None,
     )
-    calories_unlocked = progress_user_id == user.id and metabolism_is_unlocked(db, user.id)
+    application_states = {
+        code: application_access_state(db, user.id, code)
+        for code in ("dqs", "strength", "metabolism")
+    }
+    calories_unlocked = progress_user_id == user.id and application_states["metabolism"]["start_open"]
     training_unlocked = progress_user_id == user.id and course_entry_unlocked(
         db, user.id, "ACCESS_STRENGTH"
     )
@@ -562,7 +568,8 @@ def account_payload(email: str, db: Session, *, progress_user_id: uuid.UUID | No
             owned,
             legal["required"],
             metabolism_unlocked=calories_unlocked,
-            dqs_revealed=dqs_is_revealed(db, user.id),
+            dqs_revealed=bool(application_states["dqs"]["start_open"]),
+            application_states=application_states,
         ),
         "legacy_portal": {
             "available": bool({"ACCESS_MASTERCLASS_LEGACY", "ACCESS_CALORIES_LEGACY"} & owned),

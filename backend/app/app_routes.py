@@ -35,6 +35,7 @@ from app.app_service import (
     utc_iso,
 )
 from app.access_service import course_start_is_open
+from app.application_access_service import application_access_state
 from app.dqs_access_service import require_dqs_revealed
 from app.auth import admin_identity, require_admin, security, session_admin
 from app.database import get_db
@@ -1512,8 +1513,10 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             if user is None or user.merged_into_user_id is not None:
                 raise HTTPException(status_code=404, detail="user not found")
         else:
-            user = require_user_resource(db, require_native_user(request, db), "strength")
-            if not course_start_is_open(db, user.id, "ACCESS_STRENGTH"):
+            user = require_user_resource(
+                db, require_native_user(request, db), ("strength", "ACCESS_STRENGTH")
+            )
+            if not application_access_state(db, user.id, "strength")["start_open"]:
                 raise AppAccessError("Курс тренировок откроется после Мастер-класса")
         state = db.scalar(select(StrengthState).where(StrengthState.user_id == user.id))
         if not state:
@@ -2001,10 +2004,14 @@ def admin_user_modules(
     result: dict[str, Any] = {}
     for code, model in {"dqs": DqsState, "strength": StrengthState, "metabolism": MetabolismState}.items():
         state = db.scalar(select(model).where(model.user_id == user_id))
+        access_state = application_access_state(db, user_id, code)
         result[code] = {
             "exists": state is not None,
-            "has_access": bool(access_codes.intersection(app_resource_codes(code))),
+            "has_access": access_state["entitled"],
             "has_direct_access": code in access_codes,
+            "entitled": access_state["entitled"],
+            "start_open": access_state["start_open"],
+            "manual_start_open": access_state["manual_start_open"],
             "updated_at": utc_iso(state.updated_at) if state else "",
             "version": state.version if state else None,
             "summary": admin_state_summary(code, state) if state else {},

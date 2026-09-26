@@ -1048,6 +1048,26 @@ class UserCoursePolicy(Base):
     )
 
 
+class UserApplicationPolicy(Base):
+    __tablename__ = "user_application_policies"
+    __table_args__ = (
+        UniqueConstraint("user_id", "app_code", name="uq_user_application_policy"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    app_code: Mapped[str] = mapped_column(String(80), nullable=False)
+    start_mode: Mapped[str] = mapped_column(
+        String(32), default="auto", server_default=text("'auto'"), nullable=False
+    )
+    source: Mapped[str] = mapped_column(String(64), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+
 class UserLegalAcceptance(Base):
     __tablename__ = "user_legal_acceptances"
     __table_args__ = (
