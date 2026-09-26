@@ -1,0 +1,24 @@
+{
+  "task": "Пакетная проверка опубликованных статей без смысловой редактуры",
+  "updated_at": "2026-09-26",
+  "batch_size": 5,
+  "article_count": 44,
+  "full_current_text_read_count": 10,
+  "archive_source_text_compared_count": 5,
+  "publish_ready_count": 0,
+  "article_changes_applied": 0,
+  "production_changes_applied": 0,
+  "next_independent_batch": 3,
+  "next_source_id": "11833079",
+  "diagnostic_reports": ["batches/01-review.md", "batches/02-review.md"],
+  "pending_for_reviewed_articles": [
+    "Сверка оригинального DOM, ссылок и медиа: plain-text snapshot не подтверждает полноту форматирования",
+    "Визуальный просмотр картинок и страницы",
+    "Полная первичная проверка значимых фактов, без исправления позиции автора",
+    "Адресная корректура и площадочная адаптация через Писаря, validation/review",
+    "Технические SEO и аналитика отдельным этапом"
+  ],
+  "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
+  "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
+  "review": "Независимая проверка скрипта и первой пачки: clean; не является редакционной приёмкой всех статей"
+}

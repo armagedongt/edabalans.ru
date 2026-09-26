@@ -1,0 +1,35 @@
+{
+  "source_id": "13178972",
+  "title": "Измеряем вашу жирность",
+  "batch": 2,
+  "git_sha256": "c19a5f09e9c4b147a0ef3dd375173d29ab293727ed8e01964f0031fffbd91117",
+  "checked_at": "2026-09-26T12:11:56.361190+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/izmeryaem-vashu-zhirnost",
+  "http_status": 200,
+  "public_html_sha256": "c18144b4c827af0e9348036974a3b929a8736421d10c1ed815e0b0f62db069c9",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "6b2a9fc15e99308d16960446c111e51a9b494b2beb71d304929362d38dfec264",
+  "public_body_images": [
+    "/blog/media/13178972/02.webp",
+    "/blog/media/13178972/03.webp",
+    "/blog/media/13178972/04.webp",
+    "/blog/media/13178972/05.webp",
+    "/blog/media/13178972/06.webp",
+    "/blog/media/13178972/07.webp",
+    "/blog/media/13178972/08.webp",
+    "/blog/media/13178972/09.webp",
+    "/blog/media/13178972/10.webp",
+    "/blog/media/13178972/11.webp",
+    "/blog/media/13178972/12.webp"
+  ],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\13178972.html"
+}

@@ -1,0 +1,23 @@
+{
+  "source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
+  "title": "Минус 12 килограммов за 2 месяца",
+  "batch": 2,
+  "git_sha256": "a6e2a11fa36a4f8060a20a3774a2f3e13bce30b90cef38557fb75628df6dffdd",
+  "checked_at": "2026-09-26T12:12:04.100553+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/minus-12-kilogrammov-za-2-mesyaca",
+  "http_status": 200,
+  "public_html_sha256": "b55aa80082372d75dc29b8268a03cf59a4311e2123922ad8941fcc6bb9926f75",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "3b59e937f6d4d469bb2fc4e89a10dace68cf4927420155946ba45729a17572bd",
+  "public_body_images": [],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/intensive"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\Minus-12-kilogramm-za-2-mesyaca-07-13.html"
+}
