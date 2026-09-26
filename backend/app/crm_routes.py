@@ -42,6 +42,7 @@ from app.crm_service import (
     revoke_manual_access,
     pause_manual_access,
     resume_manual_access,
+    set_manual_app_access,
     reveal_account_password,
     reset_account_password,
     list_resources,
@@ -102,6 +103,10 @@ class CourseAccessStateIn(BaseModel):
     entitled: bool
     start_open: bool
     all_lessons_open: bool
+
+
+class AppAccessStateIn(BaseModel):
+    enabled: bool
 
 
 class ManualAccountCreateIn(BaseModel):
@@ -493,6 +498,21 @@ def admin_resume_access(user_id: uuid.UUID, resource_code: str,
     if not resume_manual_access(db, user_id, resource_code, admin):
         raise HTTPException(status_code=404, detail="paused access not found")
     return {"status": "active"}
+
+
+@router.put("/admin/api/users/{user_id}/app-accesses/{resource_code}")
+def admin_set_app_access(
+    user_id: uuid.UUID,
+    resource_code: str,
+    payload: AppAccessStateIn,
+    admin: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict[str, bool]:
+    if not set_manual_app_access(
+        db, user_id, resource_code, enabled=payload.enabled, admin=admin
+    ):
+        raise HTTPException(status_code=400, detail="user or standalone app not found")
+    return {"enabled": payload.enabled}
 
 
 @router.post("/admin/api/users/{user_id}/credential/reveal")

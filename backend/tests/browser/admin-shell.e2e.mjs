@@ -69,6 +69,12 @@ const sampleUserDetail = {
   tags:[{id:"t1",name:"Мастер-класс",category:"purchase"}], notes:[{body:"Обсудить следующий этап",author:"Сергей",created_at:"2026-09-19T12:00:00Z"}],
   masterclass:{questionnaires:[],events:[],offers:[]}
 };
+const sampleModules = {
+  dqs:{exists:true,has_access:true,has_direct_access:true},
+  strength:{exists:false,has_access:false,has_direct_access:false},
+  metabolism:{exists:false,has_access:false,has_direct_access:false},
+  telegram:{exists:true,has_access:true}
+};
 
 function json(response, payload) {
   response.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
@@ -182,9 +188,13 @@ const server = createServer((request, response) => {
     {code:"ACCESS_CONSULTATION",name:"Консультация"},
     {code:"ACCESS_COACHING",name:"Сопровождение"}
   ]);
-  if (url.pathname === "/admin/api/users/u1/modules") return json(response, {modules:{
-    dqs:{exists:true,has_access:true}, strength:{exists:false,has_access:false}, metabolism:{exists:false,has_access:false}, telegram:{exists:true,has_access:true}
-  }});
+  if (url.pathname.startsWith("/admin/api/users/u1/app-accesses/") && request.method === "PUT") {
+    const code = url.pathname.split("/").at(-1);
+    sampleModules[code].has_direct_access = true;
+    sampleModules[code].has_access = true;
+    return json(response, {enabled: true});
+  }
+  if (url.pathname === "/admin/api/users/u1/modules") return json(response, {modules:sampleModules});
   if (url.pathname === "/admin/api/users/u1/personal-access-links") return json(response, {links:[]});
   if (url.pathname === "/admin/api/payments") {
     paymentQueries.push(new URLSearchParams(url.searchParams));
@@ -419,6 +429,10 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.equal(await page.getByRole("button", { name:"Скрыть доступ к курсу Курс о калориях" }).getAttribute("aria-expanded"), "true");
       assert.equal(await page.locator("#course-access-preview [data-course-code='ACCESS_CALORIES'] [data-course-setting='start-open']").isDisabled(), true);
       assert.equal(await page.locator(".crm-access-applications", { hasText:"Дневник силовых тренировок" }).count(), 1);
+      assert.equal(await page.getByRole("checkbox", { name:"DQS" }).isChecked(), true);
+      await page.getByRole("checkbox", { name:"Дневник силовых тренировок" }).check();
+      await page.getByRole("checkbox", { name:"Дневник силовых тренировок" }).waitFor({state:"attached"});
+      assert.equal(await page.getByRole("checkbox", { name:"Дневник силовых тренировок" }).isChecked(), true);
       assert.equal(await page.locator(".crm-card-title", { hasText:"Этапы рассылки" }).count(), 1);
       assert.equal(await page.locator(".crm-avatar").count(), 0);
       assert.match(await page.locator(".crm-profile-summary").textContent(), /Первая оплата.*02\.08\.2026.*через 1 дн\. после старта бота/s);

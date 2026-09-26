@@ -54,6 +54,7 @@ COURSE_RESOURCE_CODES = (
     "ACCESS_CALORIES",
     "ACCESS_STRENGTH",
 )
+APP_RESOURCE_CODES = ("dqs", "strength", "metabolism")
 
 
 def money(value: Decimal | None) -> float:
@@ -1285,6 +1286,63 @@ def resume_manual_access(db: Session, user_id: uuid.UUID, resource_code: str, ad
         access.paused_at = None
     db.add(AdminAppEdit(admin_username=admin, target_user_id=user_id, app_code="crm",
                         action="resume_access", details={"resource_code": resource_code}))
+    db.commit()
+    return True
+
+
+def set_manual_app_access(
+    db: Session,
+    user_id: uuid.UUID,
+    resource_code: str,
+    *,
+    enabled: bool,
+    admin: str,
+) -> bool:
+    """Toggle one standalone app right without changing any course right."""
+    if resource_code not in APP_RESOURCE_CODES:
+        return False
+    user = db.get(User, user_id)
+    resource = db.scalar(
+        select(Resource).where(Resource.code == resource_code, Resource.status == "active")
+    )
+    if user is None or user.merged_into_user_id is not None or resource is None:
+        return False
+    now = datetime.now(timezone.utc)
+    rows = list(db.scalars(select(UserAccess).where(
+        UserAccess.user_id == user_id,
+        UserAccess.resource_id == resource.id,
+    )))
+    if enabled:
+        # A prior manually/imported standalone-app row can be safely reused.
+        # It keeps the unique user/resource/manual row stable and does not touch
+        # a course resource such as ACCESS_CALORIES.
+        reusable = next((item for item in rows if item.source_payment_id is None), None)
+        if reusable is None:
+            db.add(UserAccess(
+                user_id=user_id,
+                resource_id=resource.id,
+                source_payment_id=None,
+                source="manual_admin",
+                granted_at=now,
+            ))
+        else:
+            reusable.revoked_at = None
+            reusable.paused_at = None
+            reusable.expires_at = None
+    else:
+        # Closing a checkbox only pauses the standalone manual row created by
+        # this control.  It must never take a paid right away and never touch
+        # a course resource that may independently open an application.
+        for item in rows:
+            if item.source_payment_id is None and item.revoked_at is None:
+                item.paused_at = now
+    db.add(AdminAppEdit(
+        admin_username=admin,
+        target_user_id=user_id,
+        app_code="crm",
+        action="set_manual_app_access",
+        details={"resource_code": resource_code, "enabled": enabled},
+    ))
     db.commit()
     return True
 

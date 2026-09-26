@@ -2004,6 +2004,7 @@ def admin_user_modules(
         result[code] = {
             "exists": state is not None,
             "has_access": bool(access_codes.intersection(app_resource_codes(code))),
+            "has_direct_access": code in access_codes,
             "updated_at": utc_iso(state.updated_at) if state else "",
             "version": state.version if state else None,
             "summary": admin_state_summary(code, state) if state else {},

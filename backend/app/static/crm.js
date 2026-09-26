@@ -738,12 +738,13 @@
     tableWrap.addEventListener("scroll", () => sync(tableWrap, scrollbar), {passive:true});
   }
 
-  function previewCourseAccesses(userId, courses) {
+  function previewCourseAccesses(userId, courses, modules) {
     if (state.courseAccessPreview && state.courseAccessPreview.userId === userId) return state.courseAccessPreview;
     state.courseAccessPreview = {
       userId,
       openCode: null,
-      items: (courses || []).map((item) => ({ code:item.resource_code, name:item.name, entitled:item.entitled, startOpen:item.start_open, allLessonsOpen:item.all_lessons_open, available:item.available }))
+      items: (courses || []).map((item) => ({ code:item.resource_code, name:item.name, entitled:item.entitled, startOpen:item.start_open, allLessonsOpen:item.all_lessons_open, available:item.available })),
+      apps: Object.fromEntries(["dqs", "strength", "metabolism"].map((code) => [code, Boolean(modules && modules[code] && modules[code].has_direct_access)]))
     };
     return state.courseAccessPreview;
   }
@@ -752,15 +753,15 @@
     return `<span class="crm-access-matrix-cell ${value ? `is-${tone}` : "is-empty"}" title="${esc(title)}">${value ? "✓" : "—"}</span>`;
   }
 
-  function courseAccessPreview(userId, courses) {
-    const preview = previewCourseAccesses(userId, courses);
+  function courseAccessPreview(userId, courses, modules) {
+    const preview = previewCourseAccesses(userId, courses, modules);
     const rows = preview.items.map((item) => `
       <div class="crm-access-matrix-row" data-course-code="${esc(item.code)}">
         <strong>${esc(item.name)}</strong>
         ${accessMatrixCell(item.entitled, "right", "Право на курс")}
         ${accessMatrixCell(item.startOpen, "start", "Открыт для старта")}
         ${accessMatrixCell(item.allLessonsOpen, "all", "Все уроки открыты")}
-        <button class="crm-course-access-control" type="button" data-course-configure aria-expanded="${String(preview.openCode === item.code)}" aria-label="Настроить доступ к курсу ${esc(item.name)}">${preview.openCode === item.code ? "Скрыть" : "Настроить"}</button>
+        <button class="crm-course-access-control" type="button" data-course-configure aria-expanded="${String(preview.openCode === item.code)}" aria-label="${preview.openCode === item.code ? "Скрыть" : "Настроить"} доступ к курсу ${esc(item.name)}">${preview.openCode === item.code ? "Скрыть" : "Настроить"}</button>
         ${preview.openCode === item.code ? `<div class="crm-course-access-popover">
             <label class="crm-course-check"><input type="checkbox" data-course-setting="entitled" ${item.entitled ? "checked" : ""}><span><strong>Право на курс</strong><small>Выдано после покупки либо вручную.</small></span></label>
             <label class="crm-course-check"><input type="checkbox" data-course-setting="start-open" ${item.startOpen ? "checked" : ""} ${item.entitled ? "" : "disabled"}><span><strong>Открыт для старта</strong><small>Ученик может начать курс сейчас.</small></span></label>
@@ -773,9 +774,13 @@
         <div class="crm-access-matrix-head" role="row"><span>Курс</span><span>Право на курс</span><span>Открыт для старта</span><span>Все уроки открыты</span><span></span></div>
         ${rows}
       </div>
-      <details class="crm-access-applications">
+      <details class="crm-access-applications" open>
         <summary>Приложения <span>отдельные права</span></summary>
-        <div class="crm-access-app-list"><span>DQS</span><span>Дневник силовых тренировок</span><span>Калькулятор метаболизма</span></div>
+        <div class="crm-access-app-list">${[
+          ["dqs", "DQS"],
+          ["strength", "Дневник силовых тренировок"],
+          ["metabolism", "Калькулятор метаболизма"],
+        ].map(([code, name]) => `<label class="crm-app-access"><input type="checkbox" data-app-access="${code}" ${preview.apps[code] ? "checked" : ""}><span>${name}</span></label>`).join("")}</div>
       </details>
     </section>`;
   }
@@ -790,6 +795,22 @@
         preview.openCode = preview.openCode === code ? null : code;
         previewElement.outerHTML = courseAccessPreview(userId);
         bindCourseAccessPreview(userId);
+      });
+    });
+    previewElement.querySelectorAll("[data-app-access]").forEach((input) => {
+      input.addEventListener("change", async () => {
+        const checked = input.checked;
+        input.disabled = true;
+        try {
+          await api(`/admin/api/users/${userId}/app-accesses/${input.dataset.appAccess}`, {
+            method:"PUT", body:JSON.stringify({enabled:checked})
+          });
+          await refreshUser(userId);
+        } catch (error) {
+          input.checked = !checked;
+          input.disabled = false;
+          alert(error.message);
+        }
       });
     });
     previewElement.querySelectorAll("[data-course-setting]").forEach((input) => {
@@ -876,7 +897,7 @@
       </section>
       <div class="crm-profile-main-grid">
         <div class="crm-profile-stack">
-        ${courseAccessPreview(id, courseResult.courses)}
+        ${courseAccessPreview(id, courseResult.courses, modules)}
         <section class="crm-card crm-purchases-card"><div class="crm-card-title">История покупок</div>
           <div class="crm-purchase-grid">${purchaseHistory.map((item) => purchaseCard(item, user)).join("") || '<div class="crm-empty">Подтверждённых покупок пока нет</div>'}</div>
           <details class="crm-inline-personal"><summary><strong>Ссылка для текущего ЛК</strong></summary>

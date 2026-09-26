@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timezone
 
 os.environ.setdefault(
     "DATABASE_URL",
@@ -8,13 +9,13 @@ os.environ.setdefault("ADMIN_USERNAME", "admin@example.com")
 os.environ.setdefault("ADMIN_PASSWORD", "test-admin-password")
 
 from fastapi.testclient import TestClient  # noqa: E402
-from sqlalchemy import create_engine  # noqa: E402
+from sqlalchemy import create_engine, select  # noqa: E402
 from sqlalchemy.orm import Session  # noqa: E402
 
 from app.config import get_settings  # noqa: E402
 from app.database import Base  # noqa: E402
-from app.crm_service import user_detail  # noqa: E402
-from app.models import Payment, User  # noqa: E402
+from app.crm_service import set_manual_app_access, user_detail  # noqa: E402
+from app.models import Payment, Resource, User, UserAccess  # noqa: E402
 
 get_settings.cache_clear()
 
@@ -53,6 +54,45 @@ def test_user_detail_opens_and_marks_an_unmapped_historical_tariff() -> None:
 
     assert detail is not None
     assert detail["payments"][0]["tariff"] == "Загружено · тариф не определён"
+
+
+def test_standalone_app_checkbox_does_not_change_course_rights() -> None:
+    """The app control is an independent, reversible right, not a course switch."""
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    with Session(engine) as db:
+        user = User(display_name="Standalone app test")
+        dqs = Resource(code="dqs", name="DQS")
+        calories = Resource(code="ACCESS_CALORIES", name="Курс о калориях")
+        db.add_all([user, dqs, calories])
+        db.flush()
+        db.add(UserAccess(
+            user_id=user.id,
+            resource_id=calories.id,
+            source="paid_product_rule",
+            granted_at=datetime.now(timezone.utc),
+        ))
+        db.commit()
+
+        assert set_manual_app_access(db, user.id, "dqs", enabled=True, admin="test")
+        active_codes = set(db.scalars(
+            select(Resource.code).join(UserAccess).where(
+                UserAccess.user_id == user.id,
+                UserAccess.revoked_at.is_(None),
+                UserAccess.paused_at.is_(None),
+            )
+        ))
+        assert active_codes == {"dqs", "ACCESS_CALORIES"}
+
+        assert set_manual_app_access(db, user.id, "dqs", enabled=False, admin="test")
+        active_codes = set(db.scalars(
+            select(Resource.code).join(UserAccess).where(
+                UserAccess.user_id == user.id,
+                UserAccess.revoked_at.is_(None),
+                UserAccess.paused_at.is_(None),
+            )
+        ))
+        assert active_codes == {"ACCESS_CALORIES"}
 
 
 def test_legacy_control_and_people_redirect_to_single_admin_surfaces() -> None:
