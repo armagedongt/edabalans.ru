@@ -3,9 +3,24 @@
   "title": "Что вы не понимаете о формировании привычек?",
   "batch": 1,
   "git_sha256": "52f4565f078c8fa2f9f011f04ee920ae62a14aff4b2ebc4f604f112529b4fb91",
-  "checked_at": "2026-09-26T13:18:48.162126+00:00",
+  "checked_at": "2026-09-26T13:20:23.053808+00:00",
   "editorial_status": "pending",
   "runtime_raw_markdown": "not_read",
   "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/chto-vy-ne-ponimaete-o-formirovanii-privychek",
-  "error": "<urlopen error _ssl.c:993: The handshake operation timed out>"
+  "http_status": 200,
+  "public_html_sha256": "d4a17e14ea8de40280ed81ea1886dc227656258b760bf2a9bfc25bf8513d4b88",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "31a3dfc9dbd1b4b0cf31b09640b29d3fcb4e36416359a85e15147484af7f217c",
+  "public_body_images": [
+    "/blog/media/habits-formation-and-one-percent/02.webp",
+    "/blog/media/habits-formation-and-one-percent/03.webp"
+  ],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\habits-formation-and-one-percent.html"
 }

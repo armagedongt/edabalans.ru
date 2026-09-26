@@ -3,9 +3,23 @@
   "title": "Великий пост, похудение и здоровье",
   "batch": 2,
   "git_sha256": "1979ccf7a3077c71348b1ebc59ef3757a7d3278f4e471233bd32f5f2dbc73391",
-  "checked_at": "2026-09-26T13:19:19.104231+00:00",
+  "checked_at": "2026-09-26T13:20:25.527485+00:00",
   "editorial_status": "pending",
   "runtime_raw_markdown": "not_read",
   "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/velikiy-post-pohudenie-i-zdorove",
-  "error": "<urlopen error _ssl.c:993: The handshake operation timed out>"
+  "http_status": 200,
+  "public_html_sha256": "7d41ad5bedabedbc5f4c07bd95ff3a9b6ac03b9def6e0b108b49d2958db28e38",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "423072edce1b01c37735cbec636dafffbb1b91bf7463888607a8aba7aaefa7a6",
+  "public_body_images": [
+    "/blog/media/13762311/02.webp"
+  ],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\13762311.html"
 }
