@@ -1,0 +1,6 @@
+.ed-soft-sky-sunrise-background {
+  background:
+    radial-gradient(circle at 18% 8%, #dff4ff 0, transparent 38%),
+    radial-gradient(circle at 92% 88%, #fff0c9 0, transparent 34%),
+    #f5fbff;
+}

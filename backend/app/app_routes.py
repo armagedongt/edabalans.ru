@@ -84,6 +84,7 @@ HOMEPAGE_VERSIONS_DIR = STATIC_DIR / "homepage-preview" / "versions"
 HOMEPAGE_VERSIONS_MANIFEST = HOMEPAGE_VERSIONS_DIR / "manifest.json"
 HOMEPAGE_VERSION_ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
 PUBLIC_SITE_ASSETS = {
+    "soft-sky-sunrise-background.css",
     "education-documents.webp",
     "education-documents-original.png",
     "education-certificate-10900.webp",
@@ -158,6 +159,7 @@ def public_site_asset(asset_path: str) -> FileResponse:
     if asset_path not in PUBLIC_SITE_ASSETS:
         raise HTTPException(status_code=404, detail="asset not found")
     media_type = {
+        "soft-sky-sunrise-background.css": "text/css",
         "education-documents.webp": "image/webp",
         "education-documents-original.png": "image/png",
         "education-certificate-10900.webp": "image/webp",

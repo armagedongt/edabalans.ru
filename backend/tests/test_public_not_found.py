@@ -1,4 +1,5 @@
 import os
+import re
 from html.parser import HTMLParser
 
 os.environ.setdefault("DATABASE_URL", "postgresql+psycopg://test:test@127.0.0.1:5432/test")
@@ -101,7 +102,14 @@ def test_members_moved_preview_is_ready_but_does_not_capture_legacy_paths():
     assert response.headers["cache-control"] == "no-store"
     assert '<meta name="robots" content="noindex,nofollow">' in response.text
     assert "Личный кабинет переехал" in response.text
-    assert "мы отправили на вашу почту письмо с новым паролем" in response.text
+    assert "я отправил вам на почту письмо с новым паролем" in response.text
+    assert "Эта старая ссылка больше не используется для входа" in response.text
+    normalized = response.text.lower()
+    assert re.search(r"\bмы\b", normalized) is None
+    assert "tilda" not in normalized
+    assert "тильд" not in normalized
+    assert 'href="/public-site-assets/soft-sky-sunrise-background.css"' in response.text
+    assert 'class="ed-moved ed-soft-sky-sunrise-background"' in response.text
     assert 'href="https://похудение-это-есть.рф/lk"' in response.text
     assert 'href="https://t.me/FitnessSergey"' in response.text
     assert 'href="https://max.ru/u/' in response.text
@@ -111,3 +119,12 @@ def test_members_moved_preview_is_ready_but_does_not_capture_legacy_paths():
     assert legacy.status_code == 404
     assert "Страница не найдена" in legacy.text
     assert "Личный кабинет переехал" not in legacy.text
+
+
+def test_members_moved_background_is_a_reusable_public_asset():
+    response = TestClient(app).get("/public-site-assets/soft-sky-sunrise-background.css")
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/css")
+    assert response.headers["access-control-allow-origin"] == "*"
+    assert ".ed-soft-sky-sunrise-background" in response.text
+    assert "radial-gradient" in response.text
