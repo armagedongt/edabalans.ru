@@ -46061,7 +46061,7 @@
         {
           "file": "backend/tests/test_personal_access_links.py",
           "kind": "function",
-          "line": 374,
+          "line": 375,
           "module_id": "platform.commerce",
           "name": "test_published_application_requires_only_its_concrete_resource",
           "qualname": "test_published_application_requires_only_its_concrete_resource"
@@ -46069,7 +46069,7 @@
         {
           "file": "backend/tests/test_personal_access_links.py",
           "kind": "function",
-          "line": 404,
+          "line": 405,
           "module_id": "platform.commerce",
           "name": "test_product_maintenance_preserves_entitlements_and_reopens_owned_products",
           "qualname": "test_product_maintenance_preserves_entitlements_and_reopens_owned_products"
@@ -55250,7 +55250,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 489,
+          "line": 490,
           "module_id": "products",
           "name": "test_app_visual_catalog_is_public_noindex_preview",
           "qualname": "test_app_visual_catalog_is_public_noindex_preview"
@@ -55258,7 +55258,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 546,
+          "line": 547,
           "module_id": "products",
           "name": "test_shared_content_gallery_asset_is_public_without_captions",
           "qualname": "test_shared_content_gallery_asset_is_public_without_captions"
@@ -55266,7 +55266,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 561,
+          "line": 562,
           "module_id": "products",
           "name": "test_masterclass_fragments_and_shared_assets_are_public",
           "qualname": "test_masterclass_fragments_and_shared_assets_are_public"
@@ -55274,7 +55274,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 796,
+          "line": 797,
           "module_id": "products",
           "name": "test_masterclass_first_day_article_and_image_layout_contract",
           "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -55282,7 +55282,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1023,
+          "line": 1024,
           "module_id": "products",
           "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
           "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -55290,7 +55290,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1038,
+          "line": 1039,
           "module_id": "products",
           "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
           "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -55298,7 +55298,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1065,
+          "line": 1066,
           "module_id": "products",
           "name": "test_emotional_hunger_guide_is_published_and_navigable",
           "qualname": "test_emotional_hunger_guide_is_published_and_navigable"
@@ -55306,7 +55306,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1093,
+          "line": 1094,
           "module_id": "products",
           "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
           "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -55314,7 +55314,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1107,
+          "line": 1108,
           "module_id": "products",
           "name": "test_masterclass_manifest_is_the_complete_canonical_program",
           "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -55322,7 +55322,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1170,
+          "line": 1171,
           "module_id": "products",
           "name": "test_masterclass_nested_recipe_pages_stay_out_of_outline_and_return_to_parent",
           "qualname": "test_masterclass_nested_recipe_pages_stay_out_of_outline_and_return_to_parent"
@@ -55330,7 +55330,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1183,
+          "line": 1184,
           "module_id": "products",
           "name": "test_masterclass_media_uses_present_links_and_player_route",
           "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -55338,7 +55338,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1199,
+          "line": 1200,
           "module_id": "products",
           "name": "test_legal_friendly_routes_are_public",
           "qualname": "test_legal_friendly_routes_are_public"
@@ -55346,7 +55346,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1218,
+          "line": 1219,
           "module_id": "products",
           "name": "test_legal_navigation_uses_permanent_public_domain",
           "qualname": "test_legal_navigation_uses_permanent_public_domain"
@@ -55354,7 +55354,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1230,
+          "line": 1231,
           "module_id": "products",
           "name": "test_checkout_and_cookie_legal_links_use_permanent_public_domain",
           "qualname": "test_checkout_and_cookie_legal_links_use_permanent_public_domain"
@@ -55362,7 +55362,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1253,
+          "line": 1254,
           "module_id": "products",
           "name": "test_intensive_concept_pages_are_public",
           "qualname": "test_intensive_concept_pages_are_public"
@@ -55370,7 +55370,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1343,
+          "line": 1344,
           "module_id": "products",
           "name": "test_removed_video_player_preview_routes_are_unavailable",
           "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -55378,7 +55378,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1349,
+          "line": 1350,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -55386,7 +55386,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1362,
+          "line": 1363,
           "module_id": "products",
           "name": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page",
           "qualname": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page"
@@ -55394,7 +55394,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1398,
+          "line": 1399,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -55402,7 +55402,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1409,
+          "line": 1410,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -55410,7 +55410,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1423,
+          "line": 1424,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -68989,7 +68989,7 @@
         }
       ],
       "id": "products.recipes",
-      "implementation_status": "in_development",
+      "implementation_status": "implemented",
       "parent": "products",
       "plans": [],
       "public_urls": [],
@@ -91556,7 +91556,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 489,
+      "line": 490,
       "module_id": "products",
       "name": "test_app_visual_catalog_is_public_noindex_preview",
       "qualname": "test_app_visual_catalog_is_public_noindex_preview"
@@ -91564,7 +91564,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 546,
+      "line": 547,
       "module_id": "products",
       "name": "test_shared_content_gallery_asset_is_public_without_captions",
       "qualname": "test_shared_content_gallery_asset_is_public_without_captions"
@@ -91572,7 +91572,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 561,
+      "line": 562,
       "module_id": "products",
       "name": "test_masterclass_fragments_and_shared_assets_are_public",
       "qualname": "test_masterclass_fragments_and_shared_assets_are_public"
@@ -91580,7 +91580,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 796,
+      "line": 797,
       "module_id": "products",
       "name": "test_masterclass_first_day_article_and_image_layout_contract",
       "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -91588,7 +91588,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1023,
+      "line": 1024,
       "module_id": "products",
       "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
       "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -91596,7 +91596,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1038,
+      "line": 1039,
       "module_id": "products",
       "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
       "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -91604,7 +91604,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1065,
+      "line": 1066,
       "module_id": "products",
       "name": "test_emotional_hunger_guide_is_published_and_navigable",
       "qualname": "test_emotional_hunger_guide_is_published_and_navigable"
@@ -91612,7 +91612,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1093,
+      "line": 1094,
       "module_id": "products",
       "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
       "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -91620,7 +91620,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1107,
+      "line": 1108,
       "module_id": "products",
       "name": "test_masterclass_manifest_is_the_complete_canonical_program",
       "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -91628,7 +91628,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1170,
+      "line": 1171,
       "module_id": "products",
       "name": "test_masterclass_nested_recipe_pages_stay_out_of_outline_and_return_to_parent",
       "qualname": "test_masterclass_nested_recipe_pages_stay_out_of_outline_and_return_to_parent"
@@ -91636,7 +91636,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1183,
+      "line": 1184,
       "module_id": "products",
       "name": "test_masterclass_media_uses_present_links_and_player_route",
       "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -91644,7 +91644,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1199,
+      "line": 1200,
       "module_id": "products",
       "name": "test_legal_friendly_routes_are_public",
       "qualname": "test_legal_friendly_routes_are_public"
@@ -91652,7 +91652,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1218,
+      "line": 1219,
       "module_id": "products",
       "name": "test_legal_navigation_uses_permanent_public_domain",
       "qualname": "test_legal_navigation_uses_permanent_public_domain"
@@ -91660,7 +91660,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1230,
+      "line": 1231,
       "module_id": "products",
       "name": "test_checkout_and_cookie_legal_links_use_permanent_public_domain",
       "qualname": "test_checkout_and_cookie_legal_links_use_permanent_public_domain"
@@ -91668,7 +91668,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1253,
+      "line": 1254,
       "module_id": "products",
       "name": "test_intensive_concept_pages_are_public",
       "qualname": "test_intensive_concept_pages_are_public"
@@ -91676,7 +91676,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1343,
+      "line": 1344,
       "module_id": "products",
       "name": "test_removed_video_player_preview_routes_are_unavailable",
       "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -91684,7 +91684,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1349,
+      "line": 1350,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -91692,7 +91692,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1362,
+      "line": 1363,
       "module_id": "products",
       "name": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page",
       "qualname": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page"
@@ -91700,7 +91700,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1398,
+      "line": 1399,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -91708,7 +91708,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1409,
+      "line": 1410,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -91716,7 +91716,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1423,
+      "line": 1424,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -96180,7 +96180,7 @@
     {
       "file": "backend/tests/test_personal_access_links.py",
       "kind": "function",
-      "line": 374,
+      "line": 375,
       "module_id": "platform.commerce",
       "name": "test_published_application_requires_only_its_concrete_resource",
       "qualname": "test_published_application_requires_only_its_concrete_resource"
@@ -96188,7 +96188,7 @@
     {
       "file": "backend/tests/test_personal_access_links.py",
       "kind": "function",
-      "line": 404,
+      "line": 405,
       "module_id": "platform.commerce",
       "name": "test_product_maintenance_preserves_entitlements_and_reopens_owned_products",
       "qualname": "test_product_maintenance_preserves_entitlements_and_reopens_owned_products"

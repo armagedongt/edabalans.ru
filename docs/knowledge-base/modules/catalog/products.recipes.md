@@ -2,7 +2,7 @@
 title: "Калькулятор рецептов"
 summary: "Личный калькулятор рецептов с общим каталогом продуктов и расчётом порций."
 document_status: current
-implementation_status: in_development
+implementation_status: implemented
 ---
 
 # Калькулятор рецептов

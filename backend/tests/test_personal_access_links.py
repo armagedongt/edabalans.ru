@@ -274,7 +274,7 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
     assert masterclass_card["state"] == "available"
     assert masterclass_card["app"] is None
     recipes_card = next(item for item in data["courses"] if item["code"] == "recipes")
-    assert recipes_card["state"] == "maintenance"
+    assert recipes_card["state"] == "not_owned"
     assert recipes_card["owned"] is False
     assert recipes_card["app"] is None
     dqs_card = next(item for item in data["applications"] if item["code"] == "dqs")
@@ -365,9 +365,10 @@ def test_application_preview_entitlement_opens_only_owned_unreleased_apps(monkey
     applications = {item["code"]: item for item in accepted["applications"]}
     assert applications["strength"]["app"] == "strength"
     assert applications["recipes"]["app"] == "recipes"
-    # Preview and a legacy technical entitlement do not bypass course progression.
+    # A direct application right is visible as ownership, but does not bypass
+    # the course checkpoint required to open metabolism.
     assert applications["metabolism"]["app"] is None
-    assert applications["metabolism"]["owned"] is False
+    assert applications["metabolism"]["owned"] is True
     app.dependency_overrides.clear()
 
 

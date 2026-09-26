@@ -469,6 +469,7 @@ def test_maintenance_blocks_direct_product_interfaces_without_running_the_app(mo
     from app.product_catalog_service import PRODUCT_CONNECTIONS
 
     monkeypatch.setitem(PRODUCT_CONNECTIONS["calories"], "maintenance", True)
+    monkeypatch.setitem(PRODUCT_CONNECTIONS["recipes"], "maintenance", True)
 
     for app_code in ("calories-course", "recipes", "recipes-part-1", "recipes-part-2"):
         response = client.get(f"/apps/{app_code}.html")
