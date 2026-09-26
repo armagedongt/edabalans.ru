@@ -53,6 +53,7 @@ depends_on = ["platform.auth", "platform.crm", "messaging.telegram"]
 events_out = ["messaging.telegram.postpurchase"]
 owns_files = [
   "backend/app/access_routes.py", "backend/app/access_service.py",
+  "backend/app/application_access_service.py",
   "backend/app/course_access_service.py",
   "backend/app/checkout_reference.py",
   "backend/app/legal_service.py", "backend/app/pricing_routes.py",
@@ -91,6 +92,7 @@ owns_files = [
   "backend/app/payment_browser_grant_service.py",
   "backend/migrations/versions/20260921_0047_purchase_auto_login_messenger_policy.py",
   "backend/migrations/versions/20260925_0047_course_access_states_and_direct_credentials.py",
+  "backend/migrations/versions/20260926_0049_application_start_policies.py",
 ]
 owns_tables = [
   "products", "product_aliases", "resources", "product_access_rules",
@@ -98,6 +100,7 @@ owns_tables = [
   "personal_access_links", "user_course_policies", "user_legal_acceptances",
   "account_onboardings", "recurring_subscriptions", "owner_payment_notifications",
   "payment_browser_grants",
+  "user_application_policies",
 ]
 owns_routes = [
   "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/robokassa*", "*/tilda/*", "*/personal-access*", "*/pay", "*/subscription*",
