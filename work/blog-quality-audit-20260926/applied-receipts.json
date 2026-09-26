@@ -1,0 +1,155 @@
+[
+  {
+    "validation_status": "pass",
+    "source_id": "11210930",
+    "delivery_status": "published",
+    "pack_sha256": "c3210ecd03c2185254214e958d320665608c85d129ea6653ff1673bd464fc309",
+    "draft_sha256": "ec7c1c34ff3a503ae60f121d9cb6170274eb6c20f6b5b3532344f1b25bf162fb",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "11210930",
+      "markdown_sha256": "ec7c1c34ff3a503ae60f121d9cb6170274eb6c20f6b5b3532344f1b25bf162fb"
+    },
+    "review_sha256": "3e4009242594fdd609a95d1b39cdb7b9b5b926fe19891f0f5e43ada694212017"
+  },
+  {
+    "validation_status": "pass",
+    "source_id": "11339712",
+    "delivery_status": "published",
+    "pack_sha256": "121def7331ae4cd1d8dd454a5f9e1e1a6b45923f20108e96c65a9c5df2d26d6b",
+    "draft_sha256": "d959a6b80a66bbaa3956c6c30c0b4c2bfab5e9ad4904ec461d002ebea1b22f9c",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "11339712",
+      "markdown_sha256": "d959a6b80a66bbaa3956c6c30c0b4c2bfab5e9ad4904ec461d002ebea1b22f9c"
+    },
+    "review_sha256": "2e81171a0685692c6f6696581dcb0edbda318a6453c28e6daf87faa27c3997c1"
+  },
+  {
+    "validation_status": "pass",
+    "source_id": "11534645",
+    "delivery_status": "published",
+    "pack_sha256": "c0c40ec930575cc9e8bc39e0191a465aa499b05568a24864728ee7dd1082b7a9",
+    "draft_sha256": "c202ea81eac6aa9adbd5728c6816c4d9c4de6b52220da29f5dc1219c8a3846a8",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "11534645",
+      "markdown_sha256": "c202ea81eac6aa9adbd5728c6816c4d9c4de6b52220da29f5dc1219c8a3846a8"
+    },
+    "review_sha256": "4c7652da46aace2f0e4f4aa60fb55f7c48221b97186a86c60fcae9298b33a248"
+  },
+  {
+    "validation_status": "pass",
+    "source_id": "11665295",
+    "delivery_status": "published",
+    "pack_sha256": "e4959fb372035184edebe833a35813a344d214d2267248962a94e8e58bcdbda6",
+    "draft_sha256": "a6e71aec0d3eea08298349fe6e9b34d012f9cffb5ad400bd63ecf3cdfa7dc97b",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/musornaya-ryba-ili-musornye-nutriciologi",
+      "source_id": "11665295",
+      "markdown_sha256": "a6e71aec0d3eea08298349fe6e9b34d012f9cffb5ad400bd63ecf3cdfa7dc97b"
+    },
+    "review_sha256": "55c01224fe42d9330d461322d489ed6a4fc720e0e248c98c20b3b99eb98f535c"
+  },
+  {
+    "validation_status": "pass",
+    "source_id": "12109482",
+    "delivery_status": "published",
+    "pack_sha256": "3afbfbae9c3de23149ecfd25192681ddce2f65e8aa37127477df8ef283dfe948",
+    "draft_sha256": "2c125888ecbe8fc6542449f745e2d300df1c6decd5e0dfcf8d050e2446641d00",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "12109482",
+      "markdown_sha256": "2c125888ecbe8fc6542449f745e2d300df1c6decd5e0dfcf8d050e2446641d00"
+    },
+    "review_sha256": "5e424ae6f3f74ef45c354d6048effe37fe469bd4ad48e5a778f4065879733e9e"
+  },
+  {
+    "validation_status": "pass",
+    "source_id": "13178972",
+    "delivery_status": "published",
+    "pack_sha256": "d49cd5cf4e77919e18156ad6c54c8211e6fb9abb7a09eff9ed23b8aac26f243e",
+    "draft_sha256": "9b8eb1c0cda9b7ac2c3944d8dd6059528fd7b63629fcd474a53e65503e281a7f",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/izmeryaem-vashu-zhirnost",
+      "source_id": "13178972",
+      "markdown_sha256": "9b8eb1c0cda9b7ac2c3944d8dd6059528fd7b63629fcd474a53e65503e281a7f"
+    },
+    "review_sha256": "e8ab3cea8cc1deeede58c57be6f89a5e161e85b92bcbe68f6e02286b8f8ed9db"
+  },
+  {
+    "validation_status": "pass",
+    "source_id": "13762311",
+    "delivery_status": "published",
+    "pack_sha256": "d274ff688f7e52c363f4d3de58b52358fc329cd03f88fb48dee2fbc504f56c4d",
+    "draft_sha256": "f1ca6179bf92eb2086c137a8561733f59262f891aa6471d8752e122db0ae80ec",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "13762311",
+      "markdown_sha256": "f1ca6179bf92eb2086c137a8561733f59262f891aa6471d8752e122db0ae80ec"
+    },
+    "review_sha256": "043073a67a37384657e736a6ffe34263870e201f05760a9541d329f91dea8770"
+  },
+  {
+    "validation_status": "pass",
+    "source_id": "habits-formation-and-one-percent",
+    "delivery_status": "published",
+    "pack_sha256": "e71384f347dbb9b1f21c93897c8e4a3c3fd2f02072ba3c395f0894629db153b6",
+    "draft_sha256": "6213b65f2a474459b3a0651460016e1740381efff2ffec61b5592a75c139220a",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "habits-formation-and-one-percent",
+      "markdown_sha256": "6213b65f2a474459b3a0651460016e1740381efff2ffec61b5592a75c139220a"
+    },
+    "review_sha256": "fba4f20c7b3a1a254f076decf8f525f07f45bf56f5330dca124aedb9d2231f9b"
+  },
+  {
+    "validation_status": "pass",
+    "source_id": "intuitivnoe-pitanie-04-27-2",
+    "delivery_status": "published",
+    "pack_sha256": "14a60840cb00c69f2d355d77176d4aafa0ecefbc63c311ad3e2c856372186c68",
+    "draft_sha256": "39f7e62c6c61c984aac3ff6513641dbe842d33cec7eb47b91d8d79072d597c24",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "intuitivnoe-pitanie-04-27-2",
+      "markdown_sha256": "39f7e62c6c61c984aac3ff6513641dbe842d33cec7eb47b91d8d79072d597c24"
+    },
+    "review_sha256": "92b08ecfae7f367335123eae69d0f66117f25b870f7829a48c0f6f176b98d0fd"
+  },
+  {
+    "validation_status": "pass",
+    "source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
+    "delivery_status": "published",
+    "pack_sha256": "dbd574a70698c5147b0e5fbdfc323a3267feadb947da7aaef69d26fe1112e01f",
+    "draft_sha256": "9b67c23522d55a82b3a92f99a65469af6ab3ef3dc9abfd92f8f0ef38e34063fc",
+    "receipt": {
+      "status": "already_published",
+      "version": 2,
+      "source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
+      "markdown_sha256": "9b67c23522d55a82b3a92f99a65469af6ab3ef3dc9abfd92f8f0ef38e34063fc"
+    },
+    "review_sha256": "1a7b4481e09963b7fac438c4ab3ddd669c357ced80efeedb12ff4f991e7e30a2"
+  },
+  {
+    "validation_status": "pass",
+    "source_id": "new-10123213",
+    "delivery_status": "local",
+    "pack_sha256": "8d67553e128f6976cff1c603e597c676444d153508802658bd144994c7917fe3",
+    "draft_sha256": "9c21b225763cd1076a7d87384a73c1b68f4a3a7e2f5ba40253d963e867b96ee3",
+    "receipt": null,
+    "review_sha256": "467cc7fd2e3d0386ac77eb5fc60ad440ae50472981bedaee403fc91105675f33"
+  }
+]

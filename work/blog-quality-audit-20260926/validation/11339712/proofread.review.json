@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editor",
+  "reviewed_at": "2026-09-26T13:09:29.216856+00:00",
+  "pack_sha256": "121def7331ae4cd1d8dd454a5f9e1e1a6b45923f20108e96c65a9c5df2d26d6b",
+  "draft_sha256": "d959a6b80a66bbaa3956c6c30c0b4c2bfab5e9ad4904ec461d002ebea1b22f9c",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Проверены все 4 адресных замен из corrections.json: орфография, опечатки, пунктуация и согласование. Числа, аргументы, цитаты, шутки, изображения, ссылки и порядок абзацев сохранены. Примеры: что они бесполезна → что она бесполезна; давайте посмотри что → давайте посмотрим, что"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editor",
+  "reviewed_at": "2026-09-26T13:09:41.101579+00:00",
+  "pack_sha256": "3afbfbae9c3de23149ecfd25192681ddce2f65e8aa37127477df8ef283dfe948",
+  "draft_sha256": "2c125888ecbe8fc6542449f745e2d300df1c6decd5e0dfcf8d050e2446641d00",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Проверены все 7 адресных замен из corrections.json: орфография, опечатки, пунктуация и согласование. Числа, аргументы, цитаты, шутки, изображения, ссылки и порядок абзацев сохранены. Примеры: Нет, в там ни витаминов → Нет там ни витаминов; Разница всего-лишь → Разница всего лишь"
+    }
+  ]
+}

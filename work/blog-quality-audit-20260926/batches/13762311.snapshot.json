@@ -2,24 +2,10 @@
   "source_id": "13762311",
   "title": "Великий пост, похудение и здоровье",
   "batch": 2,
-  "git_sha256": "246fc5cb784a1b78ccfae5ea8a54398ffe5eadc24fe86bbce74a9f8f97c4ef04",
-  "checked_at": "2026-09-26T12:12:02.243509+00:00",
+  "git_sha256": "1979ccf7a3077c71348b1ebc59ef3757a7d3278f4e471233bd32f5f2dbc73391",
+  "checked_at": "2026-09-26T13:19:19.104231+00:00",
   "editorial_status": "pending",
   "runtime_raw_markdown": "not_read",
   "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/velikiy-post-pohudenie-i-zdorove",
-  "http_status": 200,
-  "public_html_sha256": "69e096725d4a49f886020c6567c47a6279581f1fa3809c903e8e4d609fee7863",
-  "body_found": true,
-  "rendered_text_matches": true,
-  "body_image_urls_match": true,
-  "body_links_match": true,
-  "heading_levels_match": true,
-  "public_body_text_sha256": "518bdc001568ee5c2dfd4ef62efc9e1bf9b438212797f3bb0d72d1c3f3fe6d9d",
-  "public_body_images": [
-    "/blog/media/13762311/02.webp"
-  ],
-  "public_body_links": [
-    "https://похудение-это-есть.рф/"
-  ],
-  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\13762311.html"
+  "error": "<urlopen error _ssl.c:993: The handshake operation timed out>"
 }
