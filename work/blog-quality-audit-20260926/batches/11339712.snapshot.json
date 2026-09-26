@@ -1,0 +1,30 @@
+{
+  "source_id": "11339712",
+  "title": "Какая самая вредная диета?",
+  "batch": 1,
+  "git_sha256": "bb5e2f3c42dc12d8ddc8b655ac69bda02cf0bc6594d26b37be0bb7126223d267",
+  "checked_at": "2026-09-26T11:58:52.512925+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/kakaya-samaya-vrednaya-dieta",
+  "http_status": 200,
+  "public_html_sha256": "f5af07df5b40e17f1fe61bda988dac38c7dada0f3373ed0c39ebd87c156a0eef",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "afddd7a4d3860c9120ae6b600709dff2af4663b312254e10f0acc77248cb5d18",
+  "public_body_images": [
+    "/blog/media/11339712/02.webp",
+    "/blog/media/11339712/03.webp",
+    "/blog/media/11339712/04.webp",
+    "/blog/media/11339712/05.webp",
+    "/blog/media/11339712/06.webp",
+    "/blog/media/11339712/07.webp"
+  ],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\11339712.html"
+}

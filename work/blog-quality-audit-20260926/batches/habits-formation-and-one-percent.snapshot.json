@@ -1,0 +1,26 @@
+{
+  "source_id": "habits-formation-and-one-percent",
+  "title": "Что вы не понимаете о формировании привычек?",
+  "batch": 1,
+  "git_sha256": "b1b2c9ae473eb934eb5aff700e7b6f3f217e709f7ac6964a54a1eed657b6aafd",
+  "checked_at": "2026-09-26T11:58:50.554488+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/chto-vy-ne-ponimaete-o-formirovanii-privychek",
+  "http_status": 200,
+  "public_html_sha256": "718e59429bb1990dcf80d07ebc6dd97961ef077c45fbafef0cd1e2bc992465fe",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "a6f71bb13c71ca9cd364687a991894382e19588338b6399e58d6adf4ebfa9998",
+  "public_body_images": [
+    "/blog/media/habits-formation-and-one-percent/02.webp",
+    "/blog/media/habits-formation-and-one-percent/03.webp"
+  ],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\habits-formation-and-one-percent.html"
+}

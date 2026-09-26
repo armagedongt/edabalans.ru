@@ -1,0 +1,30 @@
+{
+  "source_id": "12109482",
+  "title": "Задача — похудеть. Уровень сложности — ЗИМА",
+  "batch": 1,
+  "git_sha256": "b8ab8844b4d96dee2567816e1c35046671dcbda95c53d23703b6c5f679fe00f1",
+  "checked_at": "2026-09-26T11:59:30.774836+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/zadacha-pohudet-uroven-slozhnosti-zima",
+  "http_status": 200,
+  "public_html_sha256": "dc71e9782e3f20fe470bd81e0d3b5fa787aec8aa091e8bce30331b03a9b496fa",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "a3f9f73a004070dbcb4e400b5dfc0aa73883defbdf45c0c5b8679b95114c9837",
+  "public_body_images": [
+    "/blog/media/12109482/02.webp",
+    "/blog/media/12109482/03.webp",
+    "/blog/media/12109482/04.webp",
+    "/blog/media/12109482/05.webp",
+    "/blog/media/12109482/06.webp",
+    "/blog/media/12109482/07.webp"
+  ],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/intensive"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\12109482.html"
+}
