@@ -161,7 +161,7 @@ def test_recipe_product_retains_base_readiness():
     connection = PRODUCT_CONNECTIONS["recipes"]
     # Temporary interface maintenance does not remove the underlying product.
     assert {key: connection[key] for key in ("resource", "app", "ready")} == {
-        "resource": "recipes",
+        "resource": "ACCESS_RECIPES",
         "app": "recipes",
         "ready": True,
     }

@@ -363,8 +363,12 @@ def test_application_preview_entitlement_opens_only_owned_unreleased_apps(monkey
         },
     ).json()
     applications = {item["code"]: item for item in accepted["applications"]}
+    courses = {item["code"]: item for item in accepted["courses"]}
     assert applications["strength"]["app"] == "strength"
     assert applications["recipes"]["app"] == "recipes"
+    # The calculator right is not the paid course "Система рецептов".
+    assert courses["recipes"]["owned"] is False
+    assert courses["recipes"]["app"] is None
     # A direct application right is visible as ownership, but does not bypass
     # the course checkpoint required to open metabolism.
     assert applications["metabolism"]["app"] is None
@@ -412,10 +416,13 @@ def test_product_maintenance_preserves_entitlements_and_reopens_owned_products(m
     with factory() as db:
         db.get(User, user_id).access_review_status = "completed"
         recipe_resource = Resource(code="recipes", name="Рецепты", status="active")
-        db.add(recipe_resource)
+        recipe_course_resource = Resource(
+            code="ACCESS_RECIPES", name="Система рецептов", status="active"
+        )
+        db.add_all([recipe_resource, recipe_course_resource])
         db.flush()
         resources = list(db.scalars(select(Resource).where(Resource.code.in_(
-            ["ACCESS_MASTERCLASS", "ACCESS_CALORIES", "recipes"]
+            ["ACCESS_MASTERCLASS", "ACCESS_CALORIES", "ACCESS_RECIPES", "recipes"]
         ))))
         for resource in resources:
             db.add(UserAccess(user_id=user_id, resource_id=resource.id, source="test",

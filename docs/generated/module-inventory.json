@@ -46061,7 +46061,7 @@
         {
           "file": "backend/tests/test_personal_access_links.py",
           "kind": "function",
-          "line": 375,
+          "line": 379,
           "module_id": "platform.commerce",
           "name": "test_published_application_requires_only_its_concrete_resource",
           "qualname": "test_published_application_requires_only_its_concrete_resource"
@@ -46069,7 +46069,7 @@
         {
           "file": "backend/tests/test_personal_access_links.py",
           "kind": "function",
-          "line": 405,
+          "line": 409,
           "module_id": "platform.commerce",
           "name": "test_product_maintenance_preserves_entitlements_and_reopens_owned_products",
           "qualname": "test_product_maintenance_preserves_entitlements_and_reopens_owned_products"
@@ -69533,7 +69533,7 @@
       "telegram": null,
       "title": "Калькулятор рецептов",
       "truths": [
-        "PostgreSQL: общий и личный каталог, рецепты, ингредиенты и доступ `recipes`.\n- `data/calorizator/calorizator.sqlite`: локальный входной файл для контролируемого\n  импорта общего каталога; в нём не меняются данные этой функцией.\n- `backend/scripts/import_recipe_catalog.py`: импортирует только карточки с полным\n  набором Б/Ж/У/ккал."
+        "PostgreSQL: общий и личный каталог, рецепты, ингредиенты, право полного курса\n  `ACCESS_RECIPES` и отдельное право приложения `recipes`.\n- `data/calorizator/calorizator.sqlite`: локальный входной файл для контролируемого\n  импорта общего каталога; в нём не меняются данные этой функцией.\n- `backend/scripts/import_recipe_catalog.py`: импортирует только карточки с полным\n  набором Б/Ж/У/ккал."
       ]
     },
     {
@@ -96180,7 +96180,7 @@
     {
       "file": "backend/tests/test_personal_access_links.py",
       "kind": "function",
-      "line": 375,
+      "line": 379,
       "module_id": "platform.commerce",
       "name": "test_published_application_requires_only_its_concrete_resource",
       "qualname": "test_published_application_requires_only_its_concrete_resource"
@@ -96188,7 +96188,7 @@
     {
       "file": "backend/tests/test_personal_access_links.py",
       "kind": "function",
-      "line": 405,
+      "line": 409,
       "module_id": "platform.commerce",
       "name": "test_product_maintenance_preserves_entitlements_and_reopens_owned_products",
       "qualname": "test_product_maintenance_preserves_entitlements_and_reopens_owned_products"
