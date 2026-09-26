@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editorial-batch09",
+  "reviewed_at": "2026-09-26T16:13:49.050497+00:00",
+  "pack_sha256": "7ee9b1c7c5bb37b95eb105acb3cb7ebabde914f0d59f524c5a4fe382786af95d",
+  "draft_sha256": "b7040cdc92aeaea561a39e2dce9552daebafa8a0d1928406e5ca3d23b0f3bb34",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Проверены 11 замен: знаки, пробел, такой же, было бы и согласование. Правило баллов, арифметика примера и результаты исследования оставлены без смысловой подмены."
+    }
+  ]
+}

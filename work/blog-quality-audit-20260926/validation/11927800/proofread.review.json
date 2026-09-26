@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editorial-batch08",
+  "reviewed_at": "2026-09-26T16:12:53.971668+00:00",
+  "pack_sha256": "1e143c8a2de2bca4fda338f0f40d3102e4894586dcca172d5731488b1a71ca85",
+  "draft_sha256": "b45ca98091f063ab7ad7fd9a6c28d856c792a7463fdf991211ad1434cff5ff7a",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Проверены все точные замены по списку: опечатки, регистр, запятые и согласование. Осуждать/обсуждать исправлено по однозначному контексту обучения чувству насыщения. Статистика и утверждения о японских школах сохранены."
+    }
+  ]
+}

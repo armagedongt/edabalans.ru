@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editorial-batch08",
+  "reviewed_at": "2026-09-26T16:13:15.732359+00:00",
+  "pack_sha256": "90ee357904b49aa46546766f64ab98aaea7a159ce71a55a3d7016be5042afc81",
+  "draft_sha256": "a3c6b80bdb2e0fdabbad46aa37156f15c010eb7030633bc07c3c770c80ac0072",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Полный текст прочитан; корректурных замен нет. Медицинские тезисы, пересказ распорядка и статус цитат не считаются проверенными этой корректурой."
+    }
+  ]
+}

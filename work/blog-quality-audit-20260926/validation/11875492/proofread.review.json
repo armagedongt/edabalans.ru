@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editorial-batch09",
+  "reviewed_at": "2026-09-26T16:13:38.035113+00:00",
+  "pack_sha256": "1c5c0dc696180a33440b562120e161a6f2176cf3ca6d92c15262c9c50ba57b35",
+  "draft_sha256": "5802744dc76a806ca5a7a34f6a930c7780906b68cc1eff0523f4307f6c059b25",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Полный текст прочитан; корректурных замен нет. Отличия от старого исходника, численные иллюстрации и CTA перед источниками вынесены в отдельный слой."
+    }
+  ]
+}

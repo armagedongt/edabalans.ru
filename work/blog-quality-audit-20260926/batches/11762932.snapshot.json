@@ -1,0 +1,29 @@
+{
+  "source_id": "11762932",
+  "title": "Профессиональный едок",
+  "batch": 5,
+  "git_sha256": "a02c20e2ce702c710249d027a745e2e81b3dee8441ef7b3d7de8f8c772cad06e",
+  "checked_at": "2026-09-26T16:16:10.824016+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/professionalnyy-edok",
+  "http_status": 200,
+  "public_html_sha256": "794ce596c85827e7f450f70210c3cf9d7d09631cb6c92a3f1cc9dea81e444eb3",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "0f9c3ef197099b92aa2dde5d22b61a0ca4ac280f1c9f84ef00874c6dbd2b3e0b",
+  "public_body_images": [
+    "/blog/media/11762932/02.webp",
+    "/blog/media/11762932/03.webp"
+  ],
+  "public_body_links": [
+    "/articles/dieta-sryv-i-matematika",
+    "/articles/skrytye-zapory-i-banalnyy-syuzhet",
+    "/articles/pohudenie-nachinaetsya-ne-s-pohudeniya",
+    "https://похудение-это-есть.рф/"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\11762932.html"
+}

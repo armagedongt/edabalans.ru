@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editorial-batch09",
+  "reviewed_at": "2026-09-26T16:14:07.490703+00:00",
+  "pack_sha256": "9151dfc50a1152546824aad576f6f95814c01442ff4ba9a4c1edc765b209fad2",
+  "draft_sha256": "8604428a1a3e6995a0341d68e98102380b410aa6d3fafbdac03c6d69c3a3e4f6",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Проверены 43 точные замены: пунктуация, накануне, опечатки и очевидное согласование. Рекомендации по РПП, формула средней, приборы и частота измерений не исправлены смысловым рерайтом."
+    }
+  ]
+}

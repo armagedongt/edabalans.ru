@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editorial-batch07",
+  "reviewed_at": "2026-09-26T15:20:12.325422+00:00",
+  "pack_sha256": "e6600732198795560fd394ba7827c9b555d28d42f9cdaf4e947254b22c112747",
+  "draft_sha256": "7471ff70b8bb5308eebdb28fe51a28da253e9dc396f2d4a3ec72b31494ae0161",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Полный текст и шестнадцать замен сопоставлены: собственно, комментариев, жаждете, то же, ПП-мороженым и пунктуация. Авторское мнение, резкость, все цифры и упоминания исходных роликов сохранены."
+    }
+  ]
+}

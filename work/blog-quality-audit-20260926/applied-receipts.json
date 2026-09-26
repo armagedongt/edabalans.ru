@@ -301,5 +301,229 @@
       "markdown_sha256": "e4b334009189f82572663f4a66f8bf718700553ffb8845f8fb7db17cd5dc77da"
     },
     "review_sha256": null
+  },
+  {
+    "pack_sha256": "19ae607b9315893b869cea2ffdd52867df09620c604d66ab7eca702cdde16981",
+    "draft_sha256": "782f4b33a76f503cf2b094151e674397050ec055d633a562c9e4732a245d8cbe",
+    "review_sha256": null,
+    "validation_status": "pass",
+    "source_id": "11522121",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 3,
+      "published_version": 2,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/eti-dolbannye-10000-shagov",
+      "source_id": "11522121",
+      "markdown_sha256": "782f4b33a76f503cf2b094151e674397050ec055d633a562c9e4732a245d8cbe"
+    }
+  },
+  {
+    "pack_sha256": "caa5847531e61570b352fdd61c6a3c5b9417b2ccf552f661c5f73046726df26d",
+    "draft_sha256": "61ee9a413fa622467dc3d6c1cb67f8c0eb1459c4e289987d551ee00b45191bae",
+    "review_sha256": null,
+    "validation_status": "pass",
+    "source_id": "11762932",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/professionalnyy-edok",
+      "source_id": "11762932",
+      "markdown_sha256": "61ee9a413fa622467dc3d6c1cb67f8c0eb1459c4e289987d551ee00b45191bae"
+    }
+  },
+  {
+    "pack_sha256": "5810ad2a4c3c8b812fb657108ac91932fad441d42464e4597ea9193db9358409",
+    "draft_sha256": "dc47a1363887874077cae208b31b39928c3ca832c44020212df0b50df038b12e",
+    "review_sha256": null,
+    "validation_status": "pass",
+    "source_id": "12296286",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/net-vremeni-obyasnyat-prosto-hudey",
+      "source_id": "12296286",
+      "markdown_sha256": "dc47a1363887874077cae208b31b39928c3ca832c44020212df0b50df038b12e"
+    }
+  },
+  {
+    "pack_sha256": "ff02e732b95ced37339e41b96bba8141fa5bd3820bc8368deb18a001131920a5",
+    "draft_sha256": "cfd74ea3c48bc2e3cb92652f99f142883bced57a4a7b1c8f19b7b01af176cbd3",
+    "review_sha256": null,
+    "validation_status": "pass",
+    "source_id": "13436070",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/poterya-myshc-pri-pohudenii",
+      "source_id": "13436070",
+      "markdown_sha256": "cfd74ea3c48bc2e3cb92652f99f142883bced57a4a7b1c8f19b7b01af176cbd3"
+    }
+  },
+  {
+    "pack_sha256": "339c4006235e22270b182215cdf67654a338c7462d76c7638e3fec4bc82f8994",
+    "draft_sha256": "0903d1b8f2f5bdc7c7771eb5d692ea77a641407414c03a8b5a911684d957f044",
+    "review_sha256": null,
+    "validation_status": "pass",
+    "source_id": "13785403",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/tri-oshibki-v-nachale-pohudeniya",
+      "source_id": "13785403",
+      "markdown_sha256": "0903d1b8f2f5bdc7c7771eb5d692ea77a641407414c03a8b5a911684d957f044"
+    }
+  },
+  {
+    "pack_sha256": "dacc6cb2347520f1580b59b61738b5ae96e8c224db34ed2fe59ce9193be7c3d8",
+    "draft_sha256": "3df5cfccc0177c8c6d42142f493d7189af865b04cc0e3bbf139afa8b24fe0e77",
+    "review_sha256": "b371fe93737eec9e3049096bbf998665bc126364972e770efcc5739676737eb8",
+    "validation_status": "pass",
+    "source_id": "14021584",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/sdelat-pohudenie-proshche",
+      "source_id": "14021584",
+      "markdown_sha256": "3df5cfccc0177c8c6d42142f493d7189af865b04cc0e3bbf139afa8b24fe0e77"
+    }
+  },
+  {
+    "pack_sha256": "2cea872bb960175271d7aee5b23e50ad3c5954d9ebb7dc5cba3938c82eed7948",
+    "draft_sha256": "d8672ff5231aa29e6b7554ffd69f605287d333d96b90d09e5397f6c1660ab208",
+    "review_sha256": "aecc5ef9362bc79d954178ef19d6cfa1ec58de15536816e47c395f1c722de206",
+    "validation_status": "pass",
+    "source_id": "14102926",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/hodit-chtoby-hudet",
+      "source_id": "14102926",
+      "markdown_sha256": "d8672ff5231aa29e6b7554ffd69f605287d333d96b90d09e5397f6c1660ab208"
+    }
+  },
+  {
+    "pack_sha256": "35dd4b20c5a9c1e27c7b0db47a95c23feff58da9dc65f77b27b6a2256db19c8e",
+    "draft_sha256": "c2de8d9cea7a5f03204ecb0f99997c0dcf42f47b0767c01379551673754a84db",
+    "review_sha256": "61d633be61ff67901af07d37ddda1b31905f68f29d72b9f814055688f871fccd",
+    "validation_status": "pass",
+    "source_id": "14183275",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/hochesh-hudet-esh-kartoshku",
+      "source_id": "14183275",
+      "markdown_sha256": "c2de8d9cea7a5f03204ecb0f99997c0dcf42f47b0767c01379551673754a84db"
+    }
+  },
+  {
+    "pack_sha256": "d71742fb91d6a0ba1ad7d215eacaf7e055011faf58f60838d28cffd6d8dd5ef9",
+    "draft_sha256": "e4bcf7708e4d69a3fcb8ffe501ba43d8522d312775b5eb3afddcd9be9c76312e",
+    "review_sha256": "a326d2d43efefbf15b594bf8bc24762b0b7e896b985c59f251a07f1c8884d78e",
+    "validation_status": "pass",
+    "source_id": "12857458",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/pravila-bezopasnosti-za-shvedskim-stolom",
+      "source_id": "12857458",
+      "markdown_sha256": "e4bcf7708e4d69a3fcb8ffe501ba43d8522d312775b5eb3afddcd9be9c76312e"
+    }
+  },
+  {
+    "pack_sha256": "83c6e84f809c7d3099c2183db2a0debfeb84d0e61b8f8951820e0c51700c8f46",
+    "draft_sha256": "2cb8c8aa255f9a7674b5aa95f789ff657b503f1d8888d291e14060846ba56003",
+    "review_sha256": "ea26f150e11e18f8aed628f58dde0aac7e19aa28f2a3df9d1f449c2266e8da44",
+    "validation_status": "pass",
+    "source_id": "Sahar-09-18",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/saharozamenitel-vyzyvaet-rak-net",
+      "source_id": "Sahar-09-18",
+      "markdown_sha256": "2cb8c8aa255f9a7674b5aa95f789ff657b503f1d8888d291e14060846ba56003"
+    }
+  },
+  {
+    "pack_sha256": "78ec9fcce5b402dd6b129963df40ca2716b9693cdb04d57a62c43dc640e92257",
+    "draft_sha256": "8a003f7276b6d6d28a9c7ea7081be22a5954f56a161e8cd56495e891052df14e",
+    "review_sha256": "8d3925f74a753aacad584260e2a25da55c70b2f811e4dc66f300f6c21bc9598e",
+    "validation_status": "pass",
+    "source_id": "11207593",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/glikemicheskiy-indeks-eto-lishnee",
+      "source_id": "11207593",
+      "markdown_sha256": "8a003f7276b6d6d28a9c7ea7081be22a5954f56a161e8cd56495e891052df14e"
+    }
+  },
+  {
+    "pack_sha256": "e6600732198795560fd394ba7827c9b555d28d42f9cdaf4e947254b22c112747",
+    "draft_sha256": "7471ff70b8bb5308eebdb28fe51a28da253e9dc396f2d4a3ec72b31494ae0161",
+    "review_sha256": "ba525e48d27235673a52170c0158acb9548a66f55c643a003b4d8da3f18c39a6",
+    "validation_status": "pass",
+    "source_id": "10999474",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/pp-recepty-eto-ploho",
+      "source_id": "10999474",
+      "markdown_sha256": "7471ff70b8bb5308eebdb28fe51a28da253e9dc396f2d4a3ec72b31494ae0161"
+    }
+  },
+  {
+    "pack_sha256": "a5393b77e395dace7e32f6c50fd9c96a8bdd56ceedae2c6978ef1fed7a1525eb",
+    "draft_sha256": "e4bb5b732bac6f1c63e02ed30f516dd6c083ad6ccd548c82221d25ab7af4e236",
+    "review_sha256": "a2e2d1f4355164b1e149050c9025d7e56e6772bb0a5321715ea87f2ae0997142",
+    "validation_status": "pass",
+    "source_id": "training-combined-2023",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/kak-nachat-trenirovki-i-ne-brosit",
+      "source_id": "training-combined-2023",
+      "markdown_sha256": "e4bb5b732bac6f1c63e02ed30f516dd6c083ad6ccd548c82221d25ab7af4e236"
+    }
+  },
+  {
+    "pack_sha256": "243c74b3c57c15100090c075431bccb53efb19052ddb48821eac88e2a6b1dd06",
+    "draft_sha256": "506605792dbb1dc3b7a3e79f773263a7c84f0c3938b0d7ebcc3a016cba837958",
+    "review_sha256": "771f8df70137e6d7972e090a8e8350bca065adfc1958492c1391fd2f9e995b24",
+    "validation_status": "pass",
+    "source_id": "12922345",
+    "delivery_status": "published",
+    "receipt": {
+      "status": "published",
+      "version": 2,
+      "published_version": 1,
+      "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/a-mne-trener-posovetoval",
+      "source_id": "12922345",
+      "markdown_sha256": "506605792dbb1dc3b7a3e79f773263a7c84f0c3938b0d7ebcc3a016cba837958"
+    }
   }
 ]

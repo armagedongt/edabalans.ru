@@ -1,0 +1,15 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "codex-editorial-batch08",
+  "reviewed_at": "2026-09-26T16:12:29.378916+00:00",
+  "pack_sha256": "30a405c29d6af00358efe31c78fbbc723c3bb5eb49821f296ada41499ab54ed0",
+  "draft_sha256": "f43f13272c37f5c1d415d5e8d311cd11001a2f43857476e063226c59f5df2992",
+  "fact_sources": [],
+  "checks": [
+    {
+      "id": "proofread_changes",
+      "result": "pass",
+      "notes": "Проверены 22 точные замены: орфография, запятые, очевидное согласование. Не менялись рекомендации, цифры, примеры и авторские шутки. Разметка, повторные слова и ссылки остаются отдельной задачей."
+    }
+  ]
+}

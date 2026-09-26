@@ -1,0 +1,26 @@
+{
+  "source_id": "11522121",
+  "title": "Эти долбанные 10 000 шагов",
+  "batch": 5,
+  "git_sha256": "2b863e679360597dac7e3df196c8dd964df4a6f20b411f0641482fbdbd53e65b",
+  "checked_at": "2026-09-26T16:16:08.220670+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/eti-dolbannye-10000-shagov",
+  "http_status": 200,
+  "public_html_sha256": "7ddb1c4c26cc6586581993c948564e949c04c47f2329b7af21b9f6a539841567",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "fc1826088ad6c38c8cdb4b5bdedeafe8ef0f2112dc6d1552953ccf8e064f9b24",
+  "public_body_images": [
+    "/blog/media/11522121/02.webp",
+    "/blog/media/11522121/03.webp"
+  ],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/intensive"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\11522121.html"
+}

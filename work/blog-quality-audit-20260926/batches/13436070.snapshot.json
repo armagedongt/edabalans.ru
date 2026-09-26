@@ -1,0 +1,27 @@
+{
+  "source_id": "13436070",
+  "title": "Потеря мышц при похудении",
+  "batch": 5,
+  "git_sha256": "7db806af7415ae76c6f2b5021686a0a3b01391801926ec50800ce98f2496ef2c",
+  "checked_at": "2026-09-26T16:16:15.254498+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/poterya-myshc-pri-pohudenii",
+  "http_status": 200,
+  "public_html_sha256": "8b3d11bac1a09190fcef696d88dca3b38989dd96c48b31f2c57ed81a1ca3c406",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "091fa768f69a13df9c2b78838c96e025bdcca72a128f43ef3c604aa0f5b77fce",
+  "public_body_images": [
+    "/blog/media/13436070/02.webp",
+    "/blog/media/13436070/04.webp",
+    "/blog/media/13436070/05.webp"
+  ],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\13436070.html"
+}

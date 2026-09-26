@@ -1,0 +1,30 @@
+{
+  "source_id": "12296286",
+  "title": "Нет времени объяснять. Просто худей!",
+  "batch": 5,
+  "git_sha256": "cb8d3dfeb75f251db6b720fa4f4cd44e33f3782245e5e4d0f93c966babf31206",
+  "checked_at": "2026-09-26T16:16:13.267063+00:00",
+  "editorial_status": "pending",
+  "runtime_raw_markdown": "not_read",
+  "public_url": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/net-vremeni-obyasnyat-prosto-hudey",
+  "http_status": 200,
+  "public_html_sha256": "517eff9df3d011b8287f784c2407c6eced648ff9687c3d24d6f412834388d019",
+  "body_found": true,
+  "rendered_text_matches": true,
+  "body_image_urls_match": true,
+  "body_links_match": true,
+  "heading_levels_match": true,
+  "public_body_text_sha256": "c916f6a70fa5a1d798b6dac8a86eaa7096cea4c89c2d663143fe0e15db67c222",
+  "public_body_images": [
+    "/blog/media/12296286/02.webp",
+    "/blog/media/12296286/03.webp",
+    "/blog/media/12296286/05.webp",
+    "/blog/media/12296286/06.webp",
+    "/blog/media/12296286/07.webp",
+    "/blog/media/12296286/08.webp"
+  ],
+  "public_body_links": [
+    "https://похудение-это-есть.рф/"
+  ],
+  "snapshot_path": "D:\\CodexPrivate\\blog-quality-audit-20260926\\12296286.html"
+}
