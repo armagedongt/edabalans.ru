@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-01",
+  "scope": "local modal popup and two-paragraph owner copy",
+  "status": "verified",
+  "browser_checks": {
+    "native_modal": true,
+    "focus_inside": "close button",
+    "root_overflow_open": "hidden",
+    "page_down_scroll_y_before": 0,
+    "page_down_scroll_y_after": 0,
+    "escape_closes": true,
+    "root_overflow_closed": "visible"
+  },
+  "widths": [360,430,768,900,901,1440],
+  "evidence": "D:/CodexPrivate/blog-reader-evidence-20261001-v4",
+  "evidence_selection": "Use final-modal-* replacements for 360 both themes, 768 both themes and 1440 dark; modal-*-verified for 430/900/901 both themes and 1440 light. Exclude earlier stale captures.",
+  "inline_evidence": "inline-*-light-verified and inline-*-dark at 360/430/768/1440",
+  "writer_validation": "D:/CodexPrivate/blog-reader-copy-20261001/modal-validation.json",
+  "checks": {"gate_tests_passed":5,"python_compile":"pass","diff_check":"pass"},
+  "description_diagnosis": "Related, meta description and Open Graph currently share target article excerpt from manifest. Automatic opening-sentence selection and manual excerpt editing in the editor remain unimplemented.",
+  "production_changed": false,
+  "article_body_changed": false
+}

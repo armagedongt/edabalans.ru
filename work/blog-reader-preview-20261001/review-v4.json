@@ -1,0 +1,1 @@
+{"date":"2026-10-01","wave":1,"scope":"local modal popup and two-paragraph copy","reviews":[{"agent":"modal_code_review","role":"code-reviewer","status":"clean","findings":[]},{"agent":"modal_layout_review","role":"layout-reviewer","status":"clean","findings":[]}],"validation":"verification-v4.json","production_changed":false}

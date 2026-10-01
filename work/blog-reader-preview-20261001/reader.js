@@ -48,7 +48,7 @@
   function openPopup(manual) {
     if (!permitted() || clicked || contentsOpen()) return;
     if (!manual && (shownThisPage || !due(lastShown(), Date.now()))) return;
-    popup.hidden = false;
+    if (!popup.open) popup.showModal();
     shownThisPage = true;
     if (!manual) { try { localStorage.setItem(key, String(Date.now())); } catch (_) {} }
   }
@@ -56,22 +56,22 @@
     state = select.value;
     inline.hidden = !permitted();
     sourcePlaque.hidden = !origin.checked;
-    popup.hidden = true;
+    popup.close();
     show.disabled = !permitted();
   }
   select.addEventListener('change', updatePresentation);
   origin.addEventListener('change', updatePresentation);
   show.addEventListener('click', () => openPopup(true));
-  popup.querySelector('button').addEventListener('click', () => { popup.hidden = true; });
+  popup.querySelector('button').addEventListener('click', () => popup.close());
   function suppressAfterClick(event) {
-    if (event.target.closest('a')) { clicked = true; popup.hidden = true; show.disabled = true; }
+    if (event.target.closest('a')) { clicked = true; popup.close(); show.disabled = true; }
   }
   popup.addEventListener('click', suppressAfterClick);
   inline.addEventListener('click', suppressAfterClick);
-  document.addEventListener('keydown', event => { if (event.key === 'Escape') popup.hidden = true; });
-  document.addEventListener('click', event => { if (event.target.closest('.toc-mobile, .toc-dock')) popup.hidden = true; });
-  document.addEventListener('mouseover', event => { if (event.target.closest('.toc-dock')) popup.hidden = true; });
-  menu.addEventListener('click', () => { popup.hidden = true; sheet.showModal(); });
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') popup.close(); });
+  document.addEventListener('click', event => { if (event.target.closest('.toc-mobile, .toc-dock')) popup.close(); });
+  document.addEventListener('mouseover', event => { if (event.target.closest('.toc-dock')) popup.close(); });
+  menu.addEventListener('click', () => { popup.close(); sheet.showModal(); });
   sheet.querySelector('.reader-close').addEventListener('click', () => sheet.close());
   sheet.addEventListener('close', () => menu.focus());
   sheet.addEventListener('click', event => { if (event.target.closest('a')) sheet.close(); });
@@ -80,7 +80,7 @@
   const headings = Array.from(document.querySelectorAll('#article > h2'));
   function onScroll() {
     document.querySelector('.reader-bottom').classList.toggle('reader-scrolled', window.scrollY > 300);
-    if (contentsOpen()) popup.hidden = true;
+    if (contentsOpen()) popup.close();
     let current = headings[0];
     headings.forEach(h => { if (h.getBoundingClientRect().top <= 150) current = h; });
     links.forEach(a => {

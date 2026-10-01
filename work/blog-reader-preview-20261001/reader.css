@@ -57,13 +57,14 @@ html[data-theme="dark"] .reader-bottom button { background: #fafafa; color: #171
 .reader-account[open] summary::after { content: '⌃'; }
 .reader-account div { margin-top: 8px; padding: 8px; border: 1px solid var(--border); border-radius: 10px; }
 .reader-account a { display: block; padding: 10px; color: var(--text); text-decoration: none; }
-#reader-popup { position: fixed; z-index: 45; bottom: 22px; right: 22px; width: min(360px, calc(100% - 32px)); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); background: var(--surface); }
+#reader-popup { position: fixed; z-index: 45; inset: auto 22px 22px auto; margin: 0; padding: 0; max-height: calc(100dvh - 44px); overflow-y: auto; color: var(--text); width: min(360px, calc(100% - 32px)); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); background: var(--surface); }
+#reader-popup::backdrop { background: rgba(0,0,0,.4); }
 #reader-popup .reader-close { position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; font-size: 26px; }
 #reader-popup .blog-cta { margin: 0; padding: 24px; border: 0; border-radius: 14px; }
 #reader-popup h3 { font-size: 20px; margin: 18px 0 10px; line-height: 1.3; }
 #reader-popup p { color: var(--muted); font-size: 14px; }
 [hidden] { display: none !important; }
-html:has(#reader-sheet[open]) { overflow: hidden; }
+html:has(#reader-sheet[open]), html:has(#reader-popup[open]) { overflow: hidden; }
 .toc-dock { right: 80px; }
 :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 @media (max-width: 1360px) { .reader-sidebar { display: none; } }

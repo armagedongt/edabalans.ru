@@ -34,7 +34,8 @@ def page():
     telegram_icon = re.search(r'channel-button--telegram[^>]*>(<svg.*?</svg>)', intensive_markup).group(1)
     channel = '''<section class="reader-channel blog-cta">
 <header class="reader-channel-author"><img class="reader-avatar" src="/preview/avatar.webp" width="48" height="48" alt="Сергей Воронцов"><span><strong>Сергей Воронцов 🍌</strong><span class="reader-channel-role">Тренер по питанию</span></span></header>
-<p class="reader-channel-copy">Пишу о питании и похудении так, чтобы вы менялись. Подпишитесь, чтобы не потерять и читать больше моих постов.</p>
+<p class="reader-channel-copy">Пишу о питании и похудении так, чтобы вы менялись.</p>
+<p class="reader-channel-copy">Подпишитесь, чтобы не потерять и читать больше моих постов. А потом вернётесь обратно в эту статью.</p>
 <div class="reader-channel-actions"><a class="reader-bot-telegram" href="https://t.me/Fitness_Talks_bot" target="_blank" rel="noopener">''' + telegram_icon + '''<span>Telegram</span></a><a class="reader-bot-max" href="https://max.ru/id230409966750_bot" target="_blank" rel="noopener"><img src="/preview/max-logo.png" alt="" width="20" height="20"><span>MAX</span></a></div></section>'''
     inline = '<div id="reader-channel-inline">' + channel + '</div>'
     body = re.sub(r'(<h2 id="[^"]+">Принцип №4\.)', lambda m: inline + m[0], body, count=1)
@@ -64,7 +65,7 @@ def page():
 <aside class="reader-sidebar" aria-label="Новое содержание">{panel}</aside>
 <div class="reader-bottom"><button type="button" id="reader-menu" aria-label="Содержание и меню" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5H3M16 12H3M16 19H3M21 5h.01M21 12h.01M21 19h.01"/></svg></button><button type="button" id="reader-top" aria-label="Наверх"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 7-7 7 7M12 19V5"/></svg></button></div>
 <dialog id="reader-sheet" aria-label="Содержание и меню"><button class="reader-close" type="button" aria-label="Закрыть содержание">×</button>{navigation}<nav aria-label="Новое содержание">{panel}</nav></dialog>
-<aside id="reader-popup" aria-label="Приглашение читать мои посты" hidden><button class="reader-close" type="button" aria-label="Закрыть приглашение">×</button>{channel}</aside>
+<dialog id="reader-popup" aria-label="Приглашение читать мои посты"><button class="reader-close" type="button" aria-label="Закрыть приглашение">×</button>{channel}</dialog>
 '''
     template = (STATIC / "article.html").read_text(encoding="utf-8")
     replacements = {"{{TITLE}}": escape(article.title), "{{DESCRIPTION}}": escape(article.excerpt, quote=True), "{{CATEGORY}}": escape(article.category), "{{CANONICAL}}": "", "{{HERO_ABSOLUTE}}": "", "{{HERO}}": "", "{{ARTICLE_BODY}}": body, "{{TOC_DESKTOP}}": toc_html(toc, mobile=False), "{{TOC_MOBILE}}": toc_html(toc, mobile=True), "{{RELATED_CARDS}}": related_cards_html(catalog, article), "{{STRUCTURED_DATA}}": "{}"}
