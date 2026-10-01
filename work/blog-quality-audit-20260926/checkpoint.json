@@ -20,13 +20,14 @@
   "next_independent_batch": null,
   "next_source_id": "training-combined-2023",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
-  "delivery_unconfirmed_source_ids": ["tilda-67280331"],
+  "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "tilda-67280331",
+  "current_sequential_source_id": "13277231",
   "current_sequential_stage": "full_source_and_remaining_media_review",
-  "autonomous_safe_review_completed_source_ids": ["11927800", "11401696", "tilda-49734795", "tilda-49745867"],
+  "autonomous_safe_review_completed_source_ids": ["11927800", "11401696", "tilda-49734795", "tilda-49745867", "tilda-67280331"],
+  "weights_confirmed_delivery": {"source_id":"tilda-67280331", "editor_version":3, "public_version":2, "markdown_sha256_crlf":"d76272db509bd8aac476ab14a7e6916bfe08e9b9ce1bbedf1d6d06f581efc403", "production_revision":"ab71d160ef9ecf70df6569dbdcf0e8dc11487873", "media_unique_http_hash_pass_count":2},
   "autonomous_safe_review_is_not_full_scientific_pass": true,
   "plants_confirmed_delivery": {"source_id":"tilda-49745867", "editor_version":4, "public_version":3, "markdown_sha256_crlf":"d85663be25e404e8031f87c993b2d3ed1ce9a03241b3314ec4fbc98d6cba2445", "markdown_sha256_lf":"0213794f25c341eb14111674a37d57d89147b31e39dddfe222b3897f0dc31a57", "production_revision":"f57925e146dbe7f03486b5529d5f4a7c50673679", "media_http_hash_pass_count":6},
   "confirmed_delivery_after_checkpoint": {"11927800": {"editor_version": 4, "public_version": 3, "markdown_sha256": "5a3bb433a349ca5ebdbdd1fe6c537200e5907d0806346893684c3143cca9be30"}, "11401696": {"editor_version": 4, "public_version": 3, "markdown_sha256": "e1978e42cc944288d776ac2385a63750ef14b1b5188a1dfb4de37b29d6834a91"}, "tilda-49734795": {"editor_version": 3, "public_version": 2, "markdown_sha256": "87f241d08e70ef3cef67395b201659b5d70428fe6cb0a313f9cf832e2aa4e477"}},
@@ -60,6 +61,7 @@
     "full-review/japan-20261001.md",
     "full-review/before-weight-loss-20261001.md",
     "full-review/blits-20261001.md",
-    "full-review/plants-20261001.md"
+    "full-review/plants-20261001.md",
+    "full-review/weights-20261001.md"
   ]
 }
