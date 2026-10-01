@@ -433,8 +433,15 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.equal(await page.locator("#course-access-preview [data-course-code='ACCESS_CALORIES'] [data-course-setting='start-open']").isDisabled(), true);
       assert.equal(await page.locator(".crm-access-applications", { hasText:"Дневник силовых тренировок" }).count(), 1);
       assert.equal(await page.getByRole("checkbox", { name:"Открыть сейчас: DQS" }).isChecked(), false);
+      const accessSaved = page.waitForResponse((response) =>
+        new URL(response.url()).pathname === "/admin/api/users/u1/app-accesses/strength"
+        && response.request().method() === "PUT"
+      );
       await page.getByRole("checkbox", { name:"Открыть сейчас: Дневник силовых тренировок" }).check();
-      await page.getByRole("checkbox", { name:"Открыть сейчас: Дневник силовых тренировок" }).waitFor({state:"attached"});
+      assert.equal((await accessSaved).ok(), true);
+      // Saving disables the old input; only the completed profile refresh
+      // creates an enabled replacement. Attached alone can match the old DOM.
+      await page.locator('[data-app-access="strength"]:not([disabled])').waitFor();
       assert.equal(await page.getByRole("checkbox", { name:"Открыть сейчас: Дневник силовых тренировок" }).isChecked(), true);
       assert.equal(await page.locator(".crm-card-title", { hasText:"Этапы рассылки" }).count(), 1);
       assert.equal(await page.locator(".crm-avatar").count(), 0);
