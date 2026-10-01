@@ -5494,6 +5494,10 @@
     },
     {
       "module_id": "operations.project-work",
+      "path": "docs/plans/MASTERCLASS_EDITORIAL_DEFERRED_20261001.md"
+    },
+    {
+      "module_id": "operations.project-work",
       "path": "docs/plans/MASTERCLASS_EDITORIAL_SEQUENCE.md"
     },
     {
@@ -10685,6 +10689,10 @@
       "path": "work/course-structure-editor/user-spec.md"
     },
     {
+      "module_id": "operations.project-work",
+      "path": "work/crm-admin-handoff-20261001/README.md"
+    },
+    {
       "module_id": "messaging.cross-messenger",
       "path": "work/cross-messenger-bridge/checkpoint.md"
     },
@@ -11307,6 +11315,18 @@
     {
       "module_id": "operations.project-work",
       "path": "work/masterclass-editorial-finalization-2026-08-31/validate_and_publish_remaining.py"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-handoff-20261001/20-what-next-approved.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-handoff-20261001/README.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-handoff-20261001/sources.md"
     },
     {
       "module_id": "products.metabolism",
@@ -31803,6 +31823,10 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "docs/plans/MASTERCLASS_EDITORIAL_DEFERRED_20261001.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "docs/plans/MASTERCLASS_EDITORIAL_SEQUENCE.md"
         },
         {
@@ -34571,6 +34595,10 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/crm-admin-handoff-20261001/README.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/dqs-day4-activation/HANDOFF.md"
         },
         {
@@ -35176,6 +35204,18 @@
         {
           "module_id": "operations.project-work",
           "path": "work/masterclass-editorial-finalization-2026-08-31/validate_and_publish_remaining.py"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-handoff-20261001/20-what-next-approved.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-handoff-20261001/README.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-handoff-20261001/sources.md"
         },
         {
           "module_id": "operations.project-work",
@@ -60431,6 +60471,14 @@
         },
         {
           "cross_project": false,
+          "date": "2026-10-01",
+          "module_id": "products.masterclass.course",
+          "origin": "owner-explicit",
+          "path": "docs/plans/MASTERCLASS_EDITORIAL_DEFERRED_20261001.md",
+          "title": "Отложенная редакционная работа Мастер-класса"
+        },
+        {
+          "cross_project": false,
           "date": "2026-08-27",
           "module_id": "products.masterclass.course",
           "origin": "owner-explicit",
@@ -63062,7 +63110,8 @@
       "title": "Структура и материалы мастер-класса",
       "truths": [
         "Active `managed_document_versions` — runtime truth структуры;\n`content/masterclass/course/course.json` — seed; смысловой контракт —\n`COURSE_STRUCTURE_CONTRACT.md`; изменяемые размеры, отступы и цвета —\n`COURSE_VISUAL_SYSTEM.md`.",
-        "`content/masterclass/editorial/` — authoring truth редакции. Команда\n`backend/scripts/publish_masterclass_editorial.py --publish` создаёт новую active\nrevision структуры и отдельные versioned-редакции обычных статей. Не вошедшие в\nпрограмму прежние шаги не удаляются, а остаются скрытыми.\nДля согласованного частичного выпуска `--through-day 5` ограничивает изменения\nднями 1–5; структура, тексты и редакторские поля более поздних дней сохраняются.",
+        "`content/masterclass/editorial/` — authoring truth редакции.\nДля дальнейшей редактуры уже выпущенного материала исходной авторской основой\nсчитается его актуальная опубликованная версия, полученная через API, а не старый\nлокальный MD или транскрипт. Рабочий MD синхронизируют с ней до адресной правки.\nДля незавершённого материала сохраняются принятый черновик и исходники с\nпроисхождением; публикация принятой версии обновляет основу следующих правок.",
+        "Команда\n`backend/scripts/publish_masterclass_editorial.py --publish` создаёт новую active\nrevision структуры и отдельные versioned-редакции обычных статей. Не вошедшие в\nпрограмму прежние шаги не удаляются, а остаются скрытыми.\nДля согласованного частичного выпуска `--through-day 5` ограничивает изменения\nднями 1–5; структура, тексты и редакторские поля более поздних дней сохраняются.",
         "Для `day-01-article-02` Markdown из `content/masterclass/editorial/materials/` уже\nявляется одновременно authoring и runtime truth после deploy. Экран\n`/admin/courses/masterclass-21/materials/day-01-article-02/editor` читает и пишет\nтот же файл через GitHub Contents API. Ветка `content-drafts` не развёртывается;\n`main` публикуется обычным CI/deploy. GitHub token хранится только в серверном `.env`.\nНа тот же Git-backed маршрут подключены восемь вложенных рецептов дня 7;\nих стабильные ID перечислены в `app.masterclass_editorial.EDITABLE_MATERIALS`.\nДругие статьи не переводятся на этот маршрут автоматически.",
         "При частичном выпуске `--exclude-day` и `--exclude-step` сохраняют указанные дни\nи материалы из active runtime без изменений. Заглушки не публикуются как статьи.\nВидео внутри статьи задаётся закрытым компонентом `video(...)` из продуктового\nкаталога: HTTPS MP4, короткий служебный заголовок и учебный плеер без подписи или ссылки.\nГолосовое внутри статьи задаётся `audio(...)`: HTTPS-аудиофайл, аватарка,\nавтор и длительность. Закрытый плеер на всю ширину статьи использует оформление\nголосовых главной страницы, без автозапуска; исходный звук и аватарка не входят в Git.",
         "`content/masterclass/source-current/` хранит миграционные исходники прежней\nредакции и после первичного переноса не является местом новой редактуры. Для DQS\nпрежний полный исходник — `13-dqs-system.md`; `.txt` сохранён как неизменяемый\nlegacy-источник. Повторно используемые авторские вставки и код\nнаходятся в `content/masterclass/components/`: код слайдера отделён от ссылок на\nизображения, а таблицы получают данные из одного продуктового allowlist. Локальные\nизображения новых авторских материалов хранятся внутри Obsidian-хранилища в\n`editorial/assets/`, а прежние миграционные изображения остаются в\n`source-current/assets/`. Оба каталога выдаются только через ограниченный маршрут\n`/course-assets/masterclass/media/*`; Markdown-публикатор заменяет относительные\nпрефиксы `../assets/` и legacy `assets/` на этот маршрут. Страница\nкурса загружает CSS и JavaScript напрямую из этого каталога через\n`/course-assets/masterclass/article-components.*`; копии runtime-кода в HTML нет.\nСырой HTML статьи не получает доверенные component-классы и `data-*` атрибуты:\nих может добавить только закрытый Markdown renderer продукта."
@@ -70464,6 +70513,14 @@
       "origin": "owner-explicit",
       "path": "docs/plans/MASTERCLASS_QUESTIONNAIRE_METABOLISM_PREFILL.md",
       "title": "Данные человека из анкеты для калькулятора"
+    },
+    {
+      "cross_project": false,
+      "date": "2026-10-01",
+      "module_id": "products.masterclass.course",
+      "origin": "owner-explicit",
+      "path": "docs/plans/MASTERCLASS_EDITORIAL_DEFERRED_20261001.md",
+      "title": "Отложенная редакционная работа Мастер-класса"
     }
   ],
   "relations": [
