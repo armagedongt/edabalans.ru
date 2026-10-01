@@ -1,0 +1,36 @@
+{
+  "module_id": "platform.blog",
+  "date": "2026-10-01",
+  "scope": "local_preview_selected_areas",
+  "source_id": "11927800",
+  "author_markdown_changed": false,
+  "production_changed": false,
+  "checks": {
+    "node_gate_tests": {"passed": 4, "failed": 0},
+    "python_compile": "pass",
+    "module_toml_parse": "pass",
+    "diff_check": "pass",
+    "viewport_widths": [360, 430, 768, 900, 901, 1360, 1361, 1440],
+    "horizontal_overflow": false,
+    "identity_fixtures": ["unknown_hidden", "subscriber_hidden", "confirmed_nonmember_visible"],
+    "ui": ["sheet_open_close", "contacts_open", "escape_close", "focus_return", "old_toc_preserved"],
+    "theme": "light_only"
+  },
+  "review_dispositions": {
+    "progress_included_insertions": "fixed_and_tested",
+    "old_toc_popup_overlap": "fixed",
+    "contacts_squeezed_on_360": "fixed_and_recaptured",
+    "storage_write_failure": "known_preview_limitation_deferred_before_production",
+    "documentation_final": "clean",
+    "layout_final": "clean_selected_light_areas",
+    "code_final": "known_storage_write_limitation_only",
+    "tests_review_final": "known_storage_write_coverage_limitation_only"
+  },
+  "evidence_root": "D:/CodexPrivate/blog-reader-evidence-20261001",
+  "limitations": [
+    "Identity fixtures are not real authorization or membership checks",
+    "Analytics are not connected",
+    "24h persistence is not guaranteed across reload when storage reads succeed but writes fail",
+    "No whole-page, dark-theme, or production acceptance claim"
+  ]
+}

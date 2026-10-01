@@ -246,6 +246,7 @@ owns_files = [
   "content/blog/**", "docs/knowledge-base/BLOG_EDITORIAL_WORKFLOW.md",
   "docs/knowledge-base/BLOG_API_AUTHORING.md",
   "docs/knowledge-base/modules/blog/**", "work/blog-seo-analytics/**",
+  "work/blog-reader-preview-20261001/**",
   "work/blog-canonical-library/**",
 ]
 owns_routes = ["*/blog", "*/blog/*", "*/admin/api/blog/articles*"]
