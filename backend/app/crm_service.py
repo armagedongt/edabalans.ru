@@ -661,6 +661,10 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             "closing-review": questions("closing-review", db),
         }.items()
     }
+    from app.masterclass_feedback import KINDS, PULSES, COMMENT
+    for day, kind in KINDS.items():
+        question_titles[kind] = {item["code"]: item["title"] for item in PULSES[day]["questions"]}
+        question_titles[kind]["comment"] = COMMENT
     paid = [payment for payment, _, _ in payments if payment.payment_status in CONFIRMED_PAYMENT_STATUSES]
     actual_paid = [payment for payment in paid if not payment.amount_is_estimated]
     estimated_paid = [payment for payment in paid if payment.amount_is_estimated]

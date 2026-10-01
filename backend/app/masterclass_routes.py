@@ -34,6 +34,7 @@ from app.models import (
     QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail, UserOffer,
     UserCoursePolicy,
 )
+from app.masterclass_feedback import KINDS, eligible_payment, pending_pulse, should_block_completion, store_feedback, validated_answers
 from app.masterclass_offer_catalog import (
     ACTIVE_OFFER_PRESENTATION,
     DIGITAL_OFFER_PRODUCT_CODES,
@@ -167,6 +168,11 @@ class AppRevealIn(BaseModel):
 class CourseCheckIn(BaseModel):
     email: str
     checked: bool
+
+
+class FeedbackPulseIn(BaseModel):
+    email: str
+    answers: dict
 
 
 class EventIn(BaseModel):
@@ -677,7 +683,7 @@ def reconcile_course_progress(
             checkmarks.get(item["id"]) is True
             for item in context.checks.get(day, [])
             if not item.get("hidden", False)
-        ):
+        ) and not should_block_completion(db, user, day):
             finalize_course_day(db, user, progress, day, context, now)
 
 
@@ -824,6 +830,7 @@ def course_payload(
         "fully_unlocked": masterclass_fully_unlocked(db, user.id),
         "current_day": max(progress_rows) if progress_rows else 1,
         "masterclass_tariff": masterclass_purchase["tariff"] if masterclass_purchase else None,
+        "feedback_pulse": pending_pulse(db, user, progress_rows),
         "days": days,
     }
 
@@ -1185,8 +1192,41 @@ def course_update_check(
         for item in checks
         if not item.get("hidden", False)
     )
-    if has_checked and not progress.completed_at:
+    if has_checked and not progress.completed_at and not should_block_completion(db, user, day):
         finalize_course_day(db, user, progress, day, context, now)
+    db.commit()
+    return course_payload(db, user, settings, now, context)
+
+
+@router.post("/course/feedback/{day}")
+def course_submit_feedback(
+    day: int,
+    body: FeedbackPulseIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    if day not in KINDS:
+        raise HTTPException(404, "Feedback checkpoint not found")
+    user = resolve_masterclass_user(request, db, body.email, settings)
+    db.execute(select(User.id).where(User.id == user.id).with_for_update())
+    payment = eligible_payment(db, user)
+    if payment is None:
+        raise HTTPException(403, "Feedback checkpoint is unavailable")
+    now = datetime.now(timezone.utc)
+    context = course_context_for_member(db, user.id)
+    progress = day_progress(db, user.id, day)
+    if progress is None or progress.completed_at or not progress.task_opened_at:
+        raise HTTPException(409, "Feedback checkpoint is not pending")
+    # A formerly visible checked item may have been hidden by a later course edit.
+    # The persisted trigger still allows its pending feedback to be submitted.
+    if not any(value is True for value in (progress.checkmarks or {}).values()):
+        raise HTTPException(409, "Feedback checkpoint is not pending")
+    if not should_block_completion(db, user, day):
+        raise HTTPException(409, "Feedback checkpoint is not pending")
+    answers = validated_answers(day, body.answers)
+    store_feedback(db, user, payment, day, answers, now)
+    finalize_course_day(db, user, progress, day, context, now)
     db.commit()
     return course_payload(db, user, settings, now, context)
 

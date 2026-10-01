@@ -583,6 +583,7 @@ events_out = ["messaging.telegram.postpurchase", "messaging.telegram.apps", "mes
 owns_files = [
   "backend/app/masterclass_routes.py", "backend/app/static/masterclass.css",
   "backend/app/static/masterclass.js", "backend/app/static/apps/closing-review.html",
+  "backend/app/static/masterclass-feedback.js", "backend/app/static/masterclass-feedback.css",
   "backend/app/static/video-player-development/**",
   "backend/tests/test_masterclass_journey.py",
   "backend/tests/test_masterclass_unlock_schedule.py",
@@ -603,10 +604,10 @@ reads_from = ["platform", "products.masterclass.course", "products.dqs"]
 id = "products.masterclass.questionnaires"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.questionnaires.md"
-owns_files = ["backend/app/static/apps/onboarding-questionnaire.html", "backend/app/questionnaire_person_service.py", "backend/app/static/questionnaire-person.*"]
+owns_files = ["backend/app/static/apps/onboarding-questionnaire.html", "backend/app/questionnaire_person_service.py", "backend/app/masterclass_feedback.py", "backend/app/static/questionnaire-person.*"]
 owns_tables = ["questionnaire_runs", "questionnaire_answers"]
-owns_routes = ["*/api/masterclass/*questionnaire*", "*/api/masterclass/*closing-review*"]
-depends_on = ["products.masterclass.runtime"]
+owns_routes = ["*/api/masterclass/*questionnaire*", "*/api/masterclass/*closing-review*", "*/api/masterclass/course/feedback*"]
+depends_on = ["products.masterclass.runtime", "platform.commerce"]
 events_out = ["messaging.telegram.postpurchase"]
 
 [[modules]]

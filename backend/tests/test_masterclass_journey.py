@@ -1025,6 +1025,138 @@ def setup():
     return client, factory
 
 
+def test_feedback_day_five_waits_for_real_answers_then_completes_once():
+    client, factory = setup()
+    assert client.get("/assets/masterclass-feedback.js").status_code == 200
+    assert client.get("/assets/masterclass-feedback.css").status_code == 200
+    with factory() as db:
+        user = db.scalar(select(User).where(User.display_name == "Участник"))
+        payment = db.scalar(select(Payment).where(Payment.user_id == user.id))
+        payment.source = "robokassa"
+        payment.paid_at = datetime(2026, 9, 25, 8, tzinfo=timezone.utc)
+        access = db.scalar(select(UserAccess).where(UserAccess.user_id == user.id))
+        access.granted_at = payment.paid_at + timedelta(seconds=1)
+        db.add(MasterclassDayProgress(user_id=user.id, day_number=5, task_opened_at=datetime.now(timezone.utc), checkmarks={}))
+        db.commit()
+        context = course_context(db)
+        check_id = next(item["id"] for item in context.checks[5] if not item.get("hidden"))
+        check_index = next(index for index, item in enumerate(context.checks[5]) if item["id"] == check_id)
+    marked = client.put(f"/api/masterclass/course/days/5/checks/{check_index}", json={"email": "member@example.test", "checked": True})
+    assert marked.status_code == 200
+    assert marked.json()["days"][4]["completed"] is False
+    assert marked.json()["feedback_pulse"]["day"] == 5
+    assert client.get("/api/masterclass/course?email=member@example.test").json()["feedback_pulse"]["day"] == 5
+    bad = client.post("/api/masterclass/course/feedback/5", json={"email": "member@example.test", "answers": {"dqs_tried": "Да"}})
+    assert bad.status_code == 422
+    assert client.get("/api/masterclass/course?email=member@example.test").json()["days"][4]["completed"] is False
+    answers = {"dqs_tried": "Нет, пока только читаю", "dqs_rating": 7, "other_rating": 8, "account_rating": 6, "depth": "Нормально", "format": "Больше видео", "comment": "Хорошо"}
+    sent = client.post("/api/masterclass/course/feedback/5", json={"email": "member@example.test", "answers": answers})
+    assert sent.status_code == 200
+    assert sent.json()["feedback_pulse"] is None
+    assert sent.json()["days"][4]["completed"] is True
+    assert client.post("/api/masterclass/course/feedback/5", json={"email": "member@example.test", "answers": answers}).status_code == 409
+    with factory() as db:
+        run = db.scalar(select(QuestionnaireRun).where(QuestionnaireRun.kind == "feedback-day-5"))
+        assert run.status == "submitted"
+        assert db.scalar(select(func.count(QuestionnaireAnswer.id)).where(QuestionnaireAnswer.run_id == run.id)) == len(answers)
+        from app.models import OwnerPaymentNotification
+        outbox = db.scalar(select(OwnerPaymentNotification).where(OwnerPaymentNotification.event_kind == "feedback-day-5"))
+        assert "Хорошо" in outbox.message_text
+
+
+def test_feedback_cohort_and_recipe_access_filter():
+    from app.masterclass_feedback import eligible_payment, should_block_completion
+    _, factory = setup()
+    with factory() as db:
+        user = db.scalar(select(User).where(User.display_name == "Участник"))
+        payment = db.scalar(select(Payment).where(Payment.user_id == user.id))
+        assert eligible_payment(db, user) is None
+        payment.source = "robokassa"
+        payment.paid_at = datetime(2026, 9, 24, 20, tzinfo=timezone.utc)
+        assert eligible_payment(db, user) is None
+        payment.paid_at = datetime(2026, 9, 25, 8, tzinfo=timezone.utc)
+        access = db.scalar(select(UserAccess).where(UserAccess.user_id == user.id))
+        access.granted_at = payment.paid_at + timedelta(seconds=1)
+        assert should_block_completion(db, user, 5)
+        assert not should_block_completion(db, user, 8)
+        recipe = db.scalar(select(Resource).where(Resource.code == "ACCESS_RECIPES"))
+        db.add(UserAccess(user_id=user.id, resource_id=recipe.id, source="test", granted_at=payment.paid_at + timedelta(seconds=1)))
+        db.flush()
+        assert should_block_completion(db, user, 8)
+        payment.raw_payload = {"test_mode": True}
+        assert not should_block_completion(db, user, 5)
+        payment.raw_payload = {}
+        user.data_origin = "tilda"
+        assert not should_block_completion(db, user, 5)
+        user.data_origin = "native"
+        access.granted_at = payment.paid_at - timedelta(days=2)
+        assert not should_block_completion(db, user, 5)
+
+
+@pytest.mark.parametrize("day,with_recipes", [(8, False), (8, True), (14, False)])
+def test_feedback_later_checkpoints_respect_recipe_gate(day, with_recipes):
+    client, factory = setup()
+    with factory() as db:
+        user = db.scalar(select(User).where(User.display_name == "Участник"))
+        payment = db.scalar(select(Payment).where(Payment.user_id == user.id))
+        payment.source = "robokassa"
+        payment.paid_at = datetime(2026, 9, 25, 8, tzinfo=timezone.utc)
+        access = db.scalar(select(UserAccess).where(UserAccess.user_id == user.id))
+        access.granted_at = payment.paid_at + timedelta(seconds=1)
+        if with_recipes:
+            recipe = db.scalar(select(Resource).where(Resource.code == "ACCESS_RECIPES"))
+            db.add(UserAccess(user_id=user.id, resource_id=recipe.id, source="test", granted_at=payment.paid_at + timedelta(seconds=1)))
+        db.add(MasterclassDayProgress(user_id=user.id, day_number=day, task_opened_at=datetime.now(timezone.utc), checkmarks={}))
+        db.commit()
+        context = course_context(db)
+        check_index = next(index for index, item in enumerate(context.checks[day]) if not item.get("hidden"))
+    marked = client.put(f"/api/masterclass/course/days/{day}/checks/{check_index}", json={"email": "member@example.test", "checked": True})
+    assert marked.status_code == 200
+    blocked = day == 14 or with_recipes
+    assert marked.json()["days"][day - 1]["completed"] is not blocked
+    if blocked:
+        assert marked.json()["feedback_pulse"]["day"] == day
+        from app.masterclass_feedback import PULSES
+        answers = {
+            item["code"]: (6 if item["type"] == "rating" else item["options"][0])
+            for item in PULSES[day]["questions"]
+        }
+        bad = dict(answers)
+        rating = next((item for item in PULSES[day]["questions"] if item["type"] == "rating"), None)
+        if rating:
+            bad[rating["code"]] = 11
+            assert client.post(f"/api/masterclass/course/feedback/{day}", json={"email": "member@example.test", "answers": bad}).status_code == 422
+        posted = client.post(f"/api/masterclass/course/feedback/{day}", json={"email": "member@example.test", "answers": answers})
+        assert posted.status_code == 200
+        assert posted.json()["days"][day - 1]["completed"] is True
+        assert posted.json()["feedback_pulse"] is None
+        with factory() as db:
+            run = db.scalar(select(QuestionnaireRun).where(QuestionnaireRun.kind == f"feedback-day-{day}"))
+            assert run.status == "submitted"
+            assert db.scalar(select(func.count(QuestionnaireAnswer.id)).where(QuestionnaireAnswer.run_id == run.id)) == len(answers) + 1
+    else:
+        assert marked.json()["feedback_pulse"] is None
+
+
+def test_feedback_trigger_remains_answerable_after_checked_item_is_hidden():
+    client, factory = setup()
+    from app.masterclass_feedback import PULSES
+    with factory() as db:
+        user = db.scalar(select(User).where(User.display_name == "Участник"))
+        payment = db.scalar(select(Payment).where(Payment.user_id == user.id))
+        payment.source = "robokassa"
+        payment.paid_at = datetime(2026, 9, 25, 8, tzinfo=timezone.utc)
+        access = db.scalar(select(UserAccess).where(UserAccess.user_id == user.id))
+        access.granted_at = payment.paid_at + timedelta(seconds=1)
+        db.add(MasterclassDayProgress(user_id=user.id, day_number=5, task_opened_at=datetime.now(timezone.utc), checkmarks={"now-hidden-check": True}))
+        db.commit()
+    assert client.get("/api/masterclass/course?email=member@example.test").json()["feedback_pulse"]["day"] == 5
+    answers = {item["code"]: (7 if item["type"] == "rating" else item["options"][0]) for item in PULSES[5]["questions"]}
+    response = client.post("/api/masterclass/course/feedback/5", json={"email": "member@example.test", "answers": answers})
+    assert response.status_code == 200
+    assert response.json()["days"][4]["completed"] is True
+
+
 def test_masterclass_personal_data_uses_tilda_email_and_server_access():
     client, _ = setup()
     response = client.get(
