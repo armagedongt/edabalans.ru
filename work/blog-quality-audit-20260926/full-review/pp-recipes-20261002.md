@@ -1,7 +1,7 @@
 # ПП-рецепты: проверка 02.10.2026
 
 Статус: current. Source ID 10999474, A038; канон семьи — блог
-`blog:pp-recepty-eto-ploho`. Стадия доставки: проверяется, не завершена.
+`blog:pp-recepty-eto-ploho`. Стадия доставки: подтверждена в Production.
 
 ## Полные источники
 
@@ -73,7 +73,17 @@ Writer targeted/review/validation pass:
 повторный результат. Списки выводятся двумя ol, всего семь li.
 Повторный независимый review CLEAN: все 22 exact replacements однократны,
 полный body совпал с baseline плюс разрешёнными заменами. 12 tests PASS.
-Deploy, HTTP-хеши, API и публичная страница ожидаются.
+Production revision 7b390c9eb73b84368caf68eacfe9b51f1762e82d,
+CI 36928019276 success, deploy journal 01.10.2026 21:27:48 UTC.
+Все 13 whitelist media URL HTTP 200 и совпадают по SHA-256 с локальными файлами.
+API editor version 3 / public version 2, опубликованный текст подтверждён.
+Публичная страница desktop/mobile 390: один H1, пять H2 тела, два ol с 4+3 li,
+11 картинок в теле, отдельного hero нет, мем 01 один раз после вступления.
+Карточка 01 осталась прежней. Горизонтального overflow нет. CTA сохранён.
+Description, OG description и Article description одинаковы, из первых двух
+предложений. Self-canonical корректен. Научная полная приёмка не заявлена.
+Фактическое опубликованное использование A038 записано в серверном Библиотекаре:
+task_key blog-full-review-10999474-20261002.
 Description остаётся из первых предложений. Никаких SEO-абзацев в тело не добавлено.
 
 ## Смысловые замечания — не применены
