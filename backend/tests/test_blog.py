@@ -76,11 +76,8 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert first_card.index('class="card-visual"') < first_card.index('class="card-tag"')
     assert first_card.index('class="card-tag"') < first_card.index('class="card-title"')
     assert "Ответ на вопрос о сроках либо поставит жирный крест" in response.text
-    assert (
-        "На фотографии — Брайан Джонсон. В 47 лет предприниматель называл себя "
-        "самым здоровым человеком на планете и тратил огромные деньги на проект "
-        "Blueprint: анализы, режим, оборудование и попытку замедлить старение."
-    ) in response.text
+    from html import escape
+    assert escape(load_blog_catalog().by_source_id("12237133").excerpt) in response.text
     assert 'data-category-filter="Личное"' in response.text
     assert 'data-category-filter="Ну, типа... ЗОЖ"' in response.text
     assert 'data-category-filter="ЗОЖ"' not in response.text

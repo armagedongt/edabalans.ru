@@ -111,6 +111,8 @@ implementation_status: implemented
   умолчанию, видимость заставки, CTA, связанные статьи и канонические опубликованные
   идентичности семей;
 - `content/blog/articles/*.md` — seed и fallback до первого API-выпуска;
+- description берётся из опубликованного Markdown: явный начальный блок либо
+  первые два предложения. Формат ручной правки — в `BLOG_API_AUTHORING.md`;
 - `backend/app/blog_content.py` — валидация каталога и безопасный renderer;
 - `backend/app/public_cta_catalog.py` — типизированная сборка разрешённых CTA;
 - `backend/app/blog_routes.py` — публичные маршруты, metadata, sitemap и media;

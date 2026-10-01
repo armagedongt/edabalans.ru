@@ -92,6 +92,41 @@ def _required_text(raw: dict, key: str) -> str:
     return value.strip()
 
 
+def split_blog_metadata(markdown: str) -> tuple[str | None, str]:
+    """A small editable description header, not arbitrary YAML execution."""
+    if not markdown.startswith("---\n") and not markdown.startswith("---\r\n"):
+        return None, markdown
+    match = re.match(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|$)", markdown, re.DOTALL)
+    if match is None:
+        raise HTTPException(422, "Не закрыт блок description в начале Markdown")
+    fields = [line for line in match[1].splitlines() if line.strip()]
+    if len(fields) != 1 or not fields[0].startswith("description:"):
+        raise HTTPException(422, "В начале Markdown поддерживается только description")
+    value = fields[0].split(":", 1)[1].strip()
+    if value.startswith('"'):
+        try:
+            value = json.loads(value)
+        except json.JSONDecodeError as exc:
+            raise HTTPException(422, "description: проверьте кавычки JSON") from exc
+    if not isinstance(value, str) or not value.strip() or len(value) > 500 or "\n" in value or "\r" in value:
+        raise HTTPException(422, "description должен быть одной непустой строкой до 500 символов")
+    return value.strip(), markdown[match.end():]
+
+
+def blog_description(markdown: str) -> str:
+    explicit, body = split_blog_metadata(markdown)
+    if explicit is not None:
+        return explicit
+    html = markdown_to_article_html(body, component_renderer=lambda *_: "")
+    paragraphs = re.findall(r"<(?:p|blockquote|li)>(.*?)</(?:p|blockquote|li)>", html, re.DOTALL)
+    text = " ".join(" ".join(article_plain_text(p).split()) for p in paragraphs)
+    sentences = re.split(r"(?<=[.!?…])\s+", text)
+    opening = " ".join(sentences[:2]).strip()
+    if len(opening) > 300:
+        opening = opening[:297].rsplit(" ", 1)[0].rstrip() + "…"
+    return opening
+
+
 def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
     root = (content_dir or default_content_dir()).resolve()
     payload = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
@@ -108,6 +143,8 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
         excerpt = _required_text(raw, "excerpt")
         category = _required_text(raw, "category")
         body_file = _required_text(raw, "body_file")
+        if not _safe_relative_file(body_file) or not (root / "articles" / body_file).is_file():
+            raise ValueError(f"missing blog body: {body_file}")
         cta = _required_text(raw, "cta")
         status = _required_text(raw, "status")
         hero_raw = raw.get("hero")
@@ -141,7 +178,7 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
             source_id=source_id,
             slug=slug,
             title=title,
-            excerpt=excerpt,
+            excerpt=blog_description((root / "articles" / body_file).read_text(encoding="utf-8")),
             category=category,
             body_file=body_file,
             hero=hero,
@@ -186,6 +223,7 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
         if not _safe_relative_file(article.body_file) or not (catalog.content_dir / "articles" / article.body_file).is_file():
             raise ValueError(f"missing blog body: {article.body_file}")
         body = (catalog.content_dir / "articles" / article.body_file).read_text(encoding="utf-8")
+        _, body = split_blog_metadata(body)
         declared_media = (article.hero.file, article.card.file, *article.media)
         for media_file in declared_media:
             if not _safe_relative_file(media_file) or not (catalog.content_dir / "media" / media_file).is_file():
@@ -271,6 +309,7 @@ def add_heading_anchors(rendered: str) -> tuple[str, tuple[tuple[str, str], ...]
 
 def render_article_body(catalog: BlogCatalog, article: BlogArticle) -> tuple[str, tuple[tuple[str, str], ...]]:
     source = (catalog.content_dir / "articles" / article.body_file).read_text(encoding="utf-8")
+    _, source = split_blog_metadata(source)
     rendered = markdown_to_article_html(source, component_renderer=render_blog_component)
     return add_heading_anchors(rendered)
 

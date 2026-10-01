@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from html import escape
+from dataclasses import replace
 import json
 import mimetypes
+import re
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -18,7 +20,7 @@ from app.blog_content import (
     toc_html,
 )
 from app.blog_draft_routes import optional_blog_admin, owner_cards_html, PRIVATE_HEADERS
-from app.blog_draft_service import public_payload, published_card_overrides, render_article
+from app.blog_draft_service import public_payload, published_card_overrides, published_description_overrides, render_article
 from app.database import get_db
 from sqlalchemy.orm import Session
 
@@ -54,13 +56,22 @@ def _html_response(value: str) -> HTMLResponse:
     return response
 
 
+def _public_catalog(db: Session):
+    catalog = load_blog_catalog()
+    descriptions = published_description_overrides(db)
+    return replace(catalog, articles=tuple(
+        replace(article, excerpt=descriptions.get(article.slug, article.excerpt))
+        for article in catalog.articles
+    ))
+
+
 @router.get("/blog", include_in_schema=False)
 @router.get("/blog/", include_in_schema=False)
 def blog_home(
     identity: str | None = Depends(optional_blog_admin),
     db: Session = Depends(get_db),
 ) -> HTMLResponse:
-    catalog = load_blog_catalog()
+    catalog = _public_catalog(db)
     card_overrides = published_card_overrides(db)
     categories = "".join(
         f'<li><button type="button" data-category-filter="{escape(category, quote=True)}">{escape(category)}</button></li>'
@@ -112,7 +123,7 @@ def favicon_test_page(variant: str) -> HTMLResponse:
 
 @router.get("/blog/articles/{slug}", include_in_schema=False)
 def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
-    catalog = load_blog_catalog()
+    catalog = _public_catalog(db)
     card_overrides = published_card_overrides(db)
     article = catalog.by_slug(slug)
     if article is None:
@@ -161,9 +172,11 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         ),
         "{{STRUCTURED_DATA}}": structured_data,
     }
-    rendered = _template("article.html")
-    for marker, value in replacements.items():
-        rendered = rendered.replace(marker, value)
+    rendered = re.sub(
+        r"\{\{[A-Z_]+\}\}",
+        lambda match: replacements.get(match.group(0), match.group(0)),
+        _template("article.html"),
+    )
     return _html_response(rendered)
 
 
