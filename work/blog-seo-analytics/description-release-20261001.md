@@ -1,6 +1,6 @@
 # Выпуск description — 01.10.2026
 
-Статус: `draft`. Модуль: `platform.blog`.
+Статус: `current`. Модуль: `platform.blog`.
 
 ## Согласованное поведение
 
@@ -43,7 +43,10 @@ Open Graph и Article JSON-LD. Старое поле excerpt манифеста 
 
 Целевой production commit: `7722197ab5602ca2f2d91b65f181d9625ffd79cd`.
 CI: `https://github.com/armagedongt/edabalans.ru/actions/runs/36896555304`.
-На момент записи CI в процессе; установка и live-проверка ещё не подтверждены.
+CI `Test`: `success`; сервер установил этот commit. Backend healthy;
+публичная проверка description/canonical прошла после перезапуска.
+Первая проверка пересеклась с штатным restart: последние три страницы временно
+отдали 502. Повторный полный проход на установленной ревизии: 44/44 pass.
 
 ## Последовательная production-проверка
 
@@ -54,5 +57,8 @@ CI: `https://github.com/armagedongt/edabalans.ru/actions/runs/36896555304`.
 доступа к приватному хранилищу или вывода credentials.
 
 Результат хранится в `descriptions-production-20261001.json`.
+Все 44 статьи сейчас используют режим `opening_sentences`: специально
+записанного description в начале опубликованного Markdown нет. Отдельно
+проверены 44 карточки публичного каталога: описания совпали с ledger, 0 расхождений.
 Его scope — только `description_only`: это не полный pass медиа, первичных
 научных утверждений, редакционной структуры, аналитики или всего SEO статьи.
