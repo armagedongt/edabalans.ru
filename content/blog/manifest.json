@@ -1441,12 +1441,13 @@
       "body_file": "Sahar-09-18.md",
       "hero": {
         "file": "Sahar-09-18/01.webp",
-        "alt": "Обложка материала «Сахарозаменитель в диетических напитках вызывает рак? Нет»",
+        "alt": "Женщина с банкой Diet Coke",
+        "show": false,
         "provenance": "https://telegra.ph/file/3c8a5e3e47b3b61448be2.jpg"
       },
       "card": {
         "file": "Sahar-09-18/card.webp",
-        "alt": "Обложка карточки «Сахарозаменитель в диетических напитках вызывает рак? Нет»",
+        "alt": "Женщина с банкой Diet Coke",
         "provenance": "https://cs13.pikabu.ru/post_img/2023/06/30/10/1688147664283326713.jpg"
       },
       "related_source_ids": [
