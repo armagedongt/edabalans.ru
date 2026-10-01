@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-25",
+  "updated_at": "2026-10-01",
   "module_id": "platform.content",
   "purpose": "Канонический редакционный выбор исходной основы и правило перехода семьи под опубликованную статью собственного блога без удаления истории проявлений.",
   "rules": {
@@ -18,6 +18,21 @@
     "selection_policy": "Полнота и качество текста важнее формально более поздней даты публикации. Площадочные хвосты не считаются полезной полнотой."
   },
   "families": [
+    {
+      "family_id": "prepare-before-weight-loss",
+      "title": "Похудение начинается не с похудения",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {"source_id": "11401696", "slug": "pohudenie-nachinaetsya-ne-s-pohudeniya"},
+      "preferred_basis": "tilda-starts-49216621",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Принятая полная версия /starts уже лежит в блоге. Прочитаны все исходные блоки Tilda, полный Telegraph DOM и публичная статья VC. Это одна работа о подготовке питания, активности и мотивации, но не побайтные дубли: старые площадочные версии используют пример 1800 ккал, нынешняя основа — 1700; отличается вступление, детали и продуктовые переходы. Старые версии не подменяют канон и не служат разрешением на новый смысловой монтаж.",
+      "members": [
+        {"catalog_id": "tilda-starts-49216621", "source": "tilda", "external_id": "49216621", "title": "Главные ошибки в похудении! Что нужно знать перед тем как испытывать голод?", "url": "https://похудение-это-есть.рф/starts", "role": "preferred_basis", "provenance": {"source_basis": "exact_full_source", "html_sha256": "90e6b203468c60c76d8f850b579505fe4a22ab50780791b7e0598ee28b818a89", "retrieved_at": "2026-09-17", "source_mapping": "work/tilda-blog-transfer-20260917/machine/11401696.source-mapping.json", "immutable_library_status": "pending_registration"}},
+        {"catalog_id": "A054", "source": "pikabu", "external_id": "11401696", "title": "Похудение начинается не с похудения", "url": "https://pikabu.ru/story/pokhudenie_nachinaetsya_ne_s_pokhudeniya_11401696", "published_at": "2024-05-10T13:59:36+03:00", "role": "previous_version", "content_item": "content://item/e7277532-850a-4ab9-8f9f-5196fce90ace", "text_sha256": "ecd845a3bf2c681517b5cda2096ce06794f32574aed7b3444675c90085e32bc9"},
+        {"catalog_id": "A256", "source": "telegraph", "external_id": "teksty-10-31", "title": "Похудение начинается не с похудения!", "url": "https://telegra.ph/teksty-10-31", "published_at": "2023-10-31T15:20:13+03:00", "role": "previous_version", "content_item": "content://item/d1c9657e-a76f-4134-8cbc-e5f4a44c272a", "text_sha256": "cd567111449df3e090d387784747997059f00cc34e329feb5b90b6d661bc6da7"},
+        {"catalog_id": "A272", "source": "vc.ru", "external_id": "1169131", "title": "Похудение начинается не с похудения!", "url": "https://vc.ru/flood/1169131-pohudenie-nachinaetsya-ne-s-pohudeniya", "published_at": "2024-05-12", "role": "platform_variant_of_previous_version", "text_sha256": "d07c9ee39bd28a49e2f03123e834284efe428a5e72891cbefbb8199e21eb1eba"}
+      ]
+    },
     {
       "family_id": "japanese-weight-and-food-environment",
       "title": "Почему японцы худые, а ты нет?",

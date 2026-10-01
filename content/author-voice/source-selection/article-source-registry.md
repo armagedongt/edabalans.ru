@@ -11,9 +11,9 @@
 
 - В блоге: **44** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **52** внешних проявлений.
+- Уже привязано к канонам блога: **54** внешних проявлений.
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **242**.
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **240**.
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -46,7 +46,7 @@
 | О ярлыках | [blog:o-yarlykah](https://blog.похудение-это-есть.рф/articles/o-yarlykah) | 1 | 0 |
 | Один небольшой прыжок — большие перемены в жизни | [blog:odin-nebolshoy-pryzhok-bolshie-peremeny](https://blog.похудение-это-есть.рф/articles/odin-nebolshoy-pryzhok-bolshie-peremeny) | 1 | 1 |
 | Потеря мышц при похудении | [blog:poterya-myshc-pri-pohudenii](https://blog.похудение-это-есть.рф/articles/poterya-myshc-pri-pohudenii) | 1 | 0 |
-| Похудение начинается не с похудения | [blog:pohudenie-nachinaetsya-ne-s-pohudeniya](https://blog.похудение-это-есть.рф/articles/pohudenie-nachinaetsya-ne-s-pohudeniya) | 1 | 2 |
+| Похудение начинается не с похудения | [blog:pohudenie-nachinaetsya-ne-s-pohudeniya](https://blog.похудение-это-есть.рф/articles/pohudenie-nachinaetsya-ne-s-pohudeniya) | 4 | 0 |
 | Почему люди худеют и снова набирают вес | [blog:pochemu-lyudi-hudeyut-i-snova-nabirayut-ves](https://blog.похудение-это-есть.рф/articles/pochemu-lyudi-hudeyut-i-snova-nabirayut-ves) | 1 | 0 |
 | Почему японцы худые, а ты нет? | [blog:pochemu-yapontsy-hudye-a-ty-net](https://blog.похудение-это-есть.рф/articles/pochemu-yapontsy-hudye-a-ty-net) | 3 | 0 |
 | ПП-рецепты — это плохо. И вот почему | [blog:pp-recepty-eto-ploho](https://blog.похудение-это-есть.рф/articles/pp-recepty-eto-ploho) | 1 | 2 |
@@ -71,8 +71,8 @@
 | Тип | Количество | Что означает |
 |---|---:|---|
 | `deferred_not_now` | 18 | Владелец прямо решил пока не брать. |
-| `editorial_review` | 92 | Полная статья-кандидат: проверить семейство, пользу, актуальность и выбрать основу. |
-| `incomplete_draft` | 14 | Черновик/заметка: не считать готовой статьёй. |
+| `editorial_review` | 91 | Полная статья-кандидат: проверить семейство, пользу, актуальность и выбрать основу. |
+| `incomplete_draft` | 13 | Черновик/заметка: не считать готовой статьёй. |
 | `obsolete_product_archive` | 4 | Неактуальный архив старого МК: сохранить для истории, не предлагать к публикации и не использовать как актуальную авторскую основу. |
 | `owner_review_later` | 3 | Нужен отдельный просмотр владельцем. |
 | `private_product_material` | 43 | Курс или Мастер-класс: не публиковать автоматически. |
@@ -233,8 +233,6 @@
 | A132 | telegraph | [Похудение начинается не с голода!](https://telegra.ph/CHernovik-10-14-3) | `editorial_review` | 1 |
 | A092 | pikabu | [Похудение начинается не с голода!2](https://pikabu.ru/story/pokhudenie_nachinaetsya_ne_s_goloda_13251257) | `editorial_review` | 1 |
 | A252 | telegraph | [Похудение начинается не с похудения!](https://telegra.ph/stop-golod-04-05) | `editorial_review` | 0 |
-| A256 | telegraph | [Похудение начинается не с похудения!](https://telegra.ph/teksty-10-31) | `incomplete_draft` | 2 |
-| A272 | vc.ru | [Похудение начинается не с похудения!⁠⁠ ](https://vc.ru/flood/1169131-pohudenie-nachinaetsya-ne-s-pohudeniya) | `editorial_review` | 2 |
 | A040 | pikabu | [Похудеть не получается... какая самая частая причина?](https://pikabu.ru/story/pokhudet_ne_poluchaetsya_kakaya_samaya_chastaya_prichina_11118483) | `owner_review_later` | 1 |
 | A230 | telegraph | [Похудеть не получается... какая самая частая причина?⁠⁠](https://telegra.ph/hochu-hudet-03-21) | `owner_review_later` | 1 |
 | A181 | telegraph | [Почему дефицит калорий не работает?](https://telegra.ph/Pochemu-deficit-kalorij-ne-rabotaet-06-16) | `editorial_review` | 1 |
