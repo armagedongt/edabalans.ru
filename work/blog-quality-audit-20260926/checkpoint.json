@@ -24,9 +24,10 @@
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "11269472",
+  "current_sequential_source_id": "12237133",
   "current_sequential_stage": "full_source_and_remaining_media_review",
-  "autonomous_safe_review_completed_source_ids": ["11927800", "11401696", "tilda-49734795", "tilda-49745867", "tilda-67280331", "13277231"],
+  "autonomous_safe_review_completed_source_ids": ["11927800", "11401696", "tilda-49734795", "tilda-49745867", "tilda-67280331", "13277231", "11269472"],
+  "water_confirmed_api_delivery": {"source_id":"11269472", "editor_version":2, "public_version":1, "markdown_sha256_crlf":"647154c317561642a245e94c43fad43c3ef48c004c60f39422c550def415ffd6", "media_unique_http_hash_pass_count":3, "git_mirror_revision":"e8a0b63aaf8807d923143e2247bc991d0b96d6a0", "git_mirror_deploy":"pending_CI; reader_content_already_published_API"},
   "weights_confirmed_delivery": {"source_id":"tilda-67280331", "editor_version":3, "public_version":2, "markdown_sha256_crlf":"d76272db509bd8aac476ab14a7e6916bfe08e9b9ce1bbedf1d6d06f581efc403", "production_revision":"ab71d160ef9ecf70df6569dbdcf0e8dc11487873", "media_unique_http_hash_pass_count":2},
   "autonomous_safe_review_is_not_full_scientific_pass": true,
   "plants_confirmed_delivery": {"source_id":"tilda-49745867", "editor_version":4, "public_version":3, "markdown_sha256_crlf":"d85663be25e404e8031f87c993b2d3ed1ce9a03241b3314ec4fbc98d6cba2445", "markdown_sha256_lf":"0213794f25c341eb14111674a37d57d89147b31e39dddfe222b3897f0dc31a57", "production_revision":"f57925e146dbe7f03486b5529d5f4a7c50673679", "media_http_hash_pass_count":6},
@@ -63,6 +64,7 @@
     "full-review/blits-20261001.md",
     "full-review/plants-20261001.md",
     "full-review/weights-20261001.md",
-    "full-review/timing-20261001.md"
+    "full-review/timing-20261001.md",
+    "full-review/water-20261001.md"
   ]
 }
