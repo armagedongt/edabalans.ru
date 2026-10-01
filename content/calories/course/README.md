@@ -1,64 +1,73 @@
 # Калорийный курс
 
-`course.json` — seed и локальный fallback структуры Калорийного курса. После
-первой публикации активная структура хранится в `managed_document_versions` с
-ключом `calories`.
+`course.json` — seed и локальный fallback трёхмодульной редакции «Калорик»,
+принятой 25.09.2026. Активная структура хранится в
+`managed_document_versions` с ключом `calories`; статьи — отдельно в
+`content_items`/`content_item_versions` источника `calories-course-materials`.
+Следующий редактор начинает с административного API и текущих версий статей.
 
-Тексты обычных материалов публикуются отдельно по стабильному `step.id`; замена
-статьи не требует изменения структуры курса. Пока статья не опубликована,
-интерфейс показывает редакционную заглушку из `summary`.
+## Открытие курса
 
-## Защита от преждевременного открытия
+Готовность запуска требует публикации всех видимых статей и включённого
+`launchReady`. В seed он намеренно выключен: локальный fallback не разрешает
+самостоятельно открыть черновик. Активный серверный manifest может иметь другое
+значение. Кроме готовности действуют ACCESS_CALORIES и правила завершения МК либо
+индивидуального полного открытия. Следующий модуль открывается после задания и
+паузы до 06:00 следующего местного дня по календарному правилу МК.
 
-Курс появляется доступным участнику только при выполнении двух условий:
+## Стабильные ID текущей редакции
 
-1. опубликованы все видимые статьи;
-2. в редакторе структуры включён `launchReady`.
+Числа в старых ID — исторические идентификаторы, а не номер нынешнего модуля.
+Не переименовывать их и не подставлять в них тексты отвергнутых сборок.
 
-По умолчанию переключатель выключен. Поэтому загрузка черновиков и проверка
-структуры не открывают недоделанный курс людям с уже существующим
-`ACCESS_CALORIES`.
-
-## Файлы, ID и публикация
-
-Ниже зафиксирована привязка текущего пятиэтапного runtime к ближайшей совместимой
-редакторской сборке v5. Эти тексты прошли внутренние проверки, но Сергей их не
-принимал; публиковать их до отдельного авторского просмотра нельзя. Полная
-текстовая v6, отвергнутый структурный checkpoint v7 и последняя сокращённая
-программа v8 имеют другую четырёхэтапную архитектуру и описаны в
-`work/calorie-course-rebuild/README.md`; автоматически подставлять их в эти ID нельзя.
-
-| Этап | `step.id` | Файл черновика |
+| Модуль | ID | Материал |
 |---|---|---|
-| 1 | `calories-stage-01-app` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/01-app-tracking.md` |
-| 1 | `calories-stage-01-food-cases` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/02-counting-different-food.md` |
-| 1 | `calories-stage-01-accuracy` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/03-accuracy-baseline-diary.md` |
-| 2 | `calories-stage-02-metrics` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/01-app-metrics.md` |
-| 2 | `calories-stage-02-sources` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/02-calorie-sources.md` |
-| 2 | `calories-stage-02-adjust` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/03-adjust-current-diet.md` |
-| 3 | `calories-stage-03-expenditure` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/01-expenditure-calculator.md` |
-| 3 | `calories-stage-03-activity` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/02-steps-training-double-count.md` |
-| 4 | `calories-stage-04-deficit` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/01-phase-deficit-pace.md` |
-| 4 | `calories-stage-04-data` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/02-comparable-data.md` |
-| 4 | `calories-stage-04-correction` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/03-correct-the-model.md` |
-| 5 | `calories-stage-05-catalog` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/01-repeat-meals-household-measures.md` |
-| 5 | `calories-stage-05-hunger` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/02-rhythm-hunger-snacking.md` |
-| 5 | `calories-stage-05-exit` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/03-stop-tracking.md` |
+| 1 | calories-introduction | Зачем считать калории и с чего начать |
+| 1 | calories-stage-01-app | Приложение для записи еды |
+| 1 | calories-stage-01-accuracy | Как считать точно |
+| 1 | calories-simplify | Как упростить учёт |
+| 1 | calories-accounting-tasks | Задания: учёт калорий |
+| 2 | calories-stage-03-expenditure | Из чего складывается расход калорий |
+| 2 | calories-activity-diary | Сколько вы на самом деле двигаетесь |
+| 2 | calories-stage-03-activity | Как учитывать тренировки |
+| 2 | calories-exercise-snacks | Как увеличить активность без «тренировок» |
+| 2 | calories-stage-04-deficit | Как назначить себе дефицит калорий |
+| 2 | calories-energy-tasks | Задания: расход и дефицит |
+| 3 | calories-stage-05-hunger | Блоки в питании |
+| 3 | calories-stage-05-catalog | Собственный каталог приёмов пищи |
+| 3 | calories-actions | Перевести цифры в действия |
+| 3 | calories-whats-next | Что дальше |
 
-Помимо четырнадцати статей, в этапе 3 есть обязательный технический шаг
-`calories-stage-03-calculator`. Он открывает существующее приложение `metabolism`
-внутри оболочки курса и не требует отдельного Markdown-файла. Право
-`ACCESS_CALORIES` разрешает использовать этот инструмент; отдельная формула и
-вторая копия пользовательских данных для курса не создаются.
+Три модуля содержат 15 материалов, распределение 5 + 6 + 4. Задания третьего
+модуля включены в «Что дальше». Статьи непосредственно отображаются в меню с
+визуальными разделителями модулей, без дополнительной страницы каждого дня.
+Калькулятор — существующее приложение metabolism, доступное по ссылке из курса;
+отдельного обязательного шага `calories-stage-03-calculator` в этой редакции нет.
+Формула и пользовательские данные не копируются в курс.
 
-Публикация одного проверенного файла:
+## Публикация и источники
+
+Один согласованный файл публикуется штатным инструментом:
 
 ```powershell
-python tools/publish_course_material.py --course calories publish <step.id> <путь-к-файлу>
+python tools/publish_course_material.py --course calories publish <step.id> <путь-к-файлу> --pack <pack.json> --validation-report <validation.json>
 ```
 
-Скрипт сам получает текущую редакцию статьи и не перезаписывает параллельное
-изменение молча.
+Pack и validation-report обязательны; они должны относиться к этому файлу и
+его текущему хешу. Публикатор проверяет текущую версию статьи и не перезаписывает параллельную
+редакцию молча. При неизвестном сетевом результате сначала получить текущую
+версию и проверить её, а не повторять запись вслепую.
 
-Курс состоит из этапов, а не календарных дней. Следующий этап открывается после
-прохождения обязательных материалов и подтверждения задания текущего этапа.
+Принятый авторский пакет сохранён приватно:
+`D:/CodexWork/private-authoring/calorie-stage3-20260925/publication-proofread-v1`;
+технический перенос — соседняя `publication-ready-v1/publication-map.json`.
+Позднейшая точечная редактура 26.09.2026 и квитанции публикации:
+`D:/CodexWork/private-authoring/calorie-editorial-correction-20260926/`.
+Это история происхождения, а не повод заменить более свежую активную статью.
+
+Пятиэтапная v5 и четырёхэтапные кандидаты v6–v8 в
+`work/calorie-course-rebuild/` — архивные промежуточные решения. Сергей их не
+принял; прежняя таблица привязки runtime к v5 больше не действует.
+
+Исполняемый контракт: [COURSE_RUNTIME.md](../../../docs/knowledge-base/modules/calories/COURSE_RUNTIME.md).
+Карточка продукта: [products.calories.md](../../../docs/knowledge-base/modules/catalog/products.calories.md).
