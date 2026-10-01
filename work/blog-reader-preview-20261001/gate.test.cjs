@@ -1,10 +1,21 @@
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const {eligible, due, parseLastShown, readingProgress} = require('./reader.js');
-test('Only identified and confirmed unsubscribed visitors qualify', () => {
-  assert.equal(eligible(true, 'not_subscribed'), true);
-  for (const identity of [false, null, undefined]) assert.equal(eligible(identity, 'not_subscribed'), false);
-  for (const status of ['subscribed', 'unknown', 'error', null, undefined]) assert.equal(eligible(true, status), false);
+test('Only identified confirmed subscribers are excluded; unknown visitors qualify', () => {
+  for (const identity of [true, false, null, undefined]) {
+    for (const status of ['not_subscribed', 'unknown', 'error', null, undefined]) assert.equal(eligible(identity, status), true);
+  }
+  assert.equal(eligible(true, 'subscribed'), false);
+  assert.equal(eligible(false, 'subscribed'), true);
+});
+
+test('Telegram-origin articles suppress inline and popup invitation for every visitor', () => {
+  for (const identity of [true, false, null, undefined]) {
+    for (const status of ['subscribed', 'not_subscribed', 'unknown', 'error', null]) {
+      assert.equal(eligible(identity, status, true), false);
+    }
+  }
+  assert.equal(eligible(false, 'unknown', false), true);
 });
 test('Persisted time cannot silently treat corrupt storage as no prior popup', () => {
   assert.equal(parseLastShown(null), null);

@@ -1,8 +1,8 @@
 (function () {
   'use strict';
   const DAY = 86400000;
-  function eligible(identity, subscription) {
-    return identity === true && subscription === 'not_subscribed';
+  function eligible(identity, subscription, fromTelegram = false) {
+    return !fromTelegram && !(identity === true && subscription === 'subscribed');
   }
   function due(last, now) {
     return last === null || (Number.isFinite(last) && now - last >= DAY);
@@ -28,12 +28,14 @@
   const sheet = document.getElementById('reader-sheet');
   const menu = document.getElementById('reader-menu');
   const show = document.getElementById('reader-show-popup');
+  const origin = document.getElementById('reader-origin-telegram');
+  const sourcePlaque = document.getElementById('reader-telegram-source');
   let state = 'unknown';
   let clicked = false;
   let shownThisPage = false;
   // Preview-specific persistence cannot affect the production blog.
   const key = 'edabalans-reader-preview-popup-at';
-  function permitted() { return eligible(state !== 'unknown', state === 'unsubscribed' ? 'not_subscribed' : state); }
+  function permitted() { return eligible(state !== 'unknown', state === 'unsubscribed' ? 'not_subscribed' : state, origin.checked); }
   function lastShown() {
     try { return parseLastShown(localStorage.getItem(key)); }
     catch (_) { return NaN; }
@@ -50,12 +52,15 @@
     shownThisPage = true;
     if (!manual) { try { localStorage.setItem(key, String(Date.now())); } catch (_) {} }
   }
-  select.addEventListener('change', () => {
+  function updatePresentation() {
     state = select.value;
     inline.hidden = !permitted();
+    sourcePlaque.hidden = !origin.checked;
     popup.hidden = true;
     show.disabled = !permitted();
-  });
+  }
+  select.addEventListener('change', updatePresentation);
+  origin.addEventListener('change', updatePresentation);
   show.addEventListener('click', () => openPopup(true));
   popup.querySelector('button').addEventListener('click', () => { popup.hidden = true; });
   function suppressAfterClick(event) {
@@ -80,6 +85,7 @@
   const links = Array.from(document.querySelectorAll('.reader-sidebar a, #reader-sheet ol a'));
   const headings = Array.from(document.querySelectorAll('#article > h2'));
   function onScroll() {
+    document.querySelector('.reader-bottom').classList.toggle('reader-scrolled', window.scrollY > 300);
     if (contentsOpen()) popup.hidden = true;
     let current = headings[0];
     headings.forEach(h => { if (h.getBoundingClientRect().top <= 150) current = h; });

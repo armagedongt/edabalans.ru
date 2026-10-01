@@ -1,0 +1,46 @@
+{
+  "module_id": "platform.blog",
+  "date": "2026-10-01",
+  "scope": "local_preview_selected_areas",
+  "source_id": "11927800",
+  "author_markdown_changed": false,
+  "production_changed": false,
+  "checks": {
+    "node_gate_tests": {"passed": 5, "failed": 0},
+    "python_compile": "pass",
+    "diff_check": "pass",
+    "viewport_widths_menu": [360, 430, 768, 900, 901, 1360, 1361, 1440],
+    "viewport_widths_body_insertions": [360, 430, 768, 1440],
+    "horizontal_overflow": false,
+    "themes": ["light", "dark"],
+    "guest_inline_visible": true,
+    "confirmed_subscriber_inline_hidden": true,
+    "telegram_origin_fixture": {"inline_hidden": true, "popup_hidden": true, "manual_popup_disabled": true, "source_visible": true},
+    "mobile_sheet": {"width": 360, "height": 900, "top": 0, "blog_links": 0},
+    "related_actual_hover": {"border_text_alpha": 0.4, "underline": true, "arrow_translate": [2, -2]},
+    "dark_inline_avatar_shadow_after_fix": "rgba(255,255,255,.25)",
+    "avatar_bytes": 19124,
+    "avatar_sha256": "2abcdcf040e803bd8b5431b819edf84b330c26d289a2b507c816f6ec852249af"
+  },
+  "review_dispositions": {
+    "inline_button_specificity": "fixed_and_browser_computed_styles_checked_both_themes",
+    "excerpt_intro_documentation": "fixed_docs_review_clean",
+    "dark_inline_avatar_specificity": "fixed_after_second_review_browser_computed_shadow_and_screenshots_checked",
+    "body_430_768_evidence_gap": "captured_after_second_review_and_inspected_by_main_agent",
+    "tests_review": "clean_five_tests",
+    "documentation_review": "clean_latest_telegram_origin_revision",
+    "review_rounds": 2,
+    "fresh_review_after_last_avatar_fix": false
+  },
+  "evidence_root": "D:/CodexPrivate/blog-reader-evidence-20261001-v2",
+  "writer_artifacts": "D:/CodexPrivate/blog-reader-copy-20261001",
+  "writer_validation": {"subscription": "pass", "telegram_source": "pass"},
+  "limitations": [
+    "Local identity and Telegram-origin controls are fixtures, not real authorization or production metadata",
+    "Japan has not been reassigned a Telegram origin; discussion URL remains explicitly unassigned",
+    "Manual excerpt editing, real membership checks and analytics are not implemented in this preview",
+    "24h persistence is not guaranteed across reload if storage reads succeed but writes fail",
+    "Reference-derived composition and measured styles do not assert a pixel-identical copy of the whole site",
+    "No whole-page or production acceptance claim"
+  ]
+}
