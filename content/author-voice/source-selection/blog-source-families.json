@@ -19,6 +19,35 @@
   },
   "families": [
     {
+      "family_id": "japanese-weight-and-food-environment",
+      "title": "Почему японцы худые, а ты нет?",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {"source_id": "11927800", "slug": "pochemu-yapontsy-hudye-a-ty-net"},
+      "preferred_basis": "tilda-jpn-61175321",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Полная авторская версия сайта /jpn с шестью принципами уже перенесена в блог с writer review/validation pass. Pikabu и Telegraph принадлежат той же семье, но не заменяют опубликованный канон автоматически. Telegraph содержит четыре принципа и отдельный рассказ журналиста о любимой еде школьников: уникальный блок сохранён как дополнительный источник, вставка ожидает решения владельца. Более поздняя дата каталога сама по себе не означает более полную основу.",
+      "members": [
+        {
+          "catalog_id": "tilda-jpn-61175321",
+          "source": "tilda",
+          "external_id": "61175321",
+          "title": "Почему японцы худые, а ты нет?",
+          "url": "https://похудение-это-есть.рф/jpn",
+          "role": "preferred_basis",
+          "provenance": {
+            "source_basis": "exact_full_source",
+            "html_sha256": "0e080acdf6dadda56f34f71e20bf2ed8a963a891fd6664f5eb98af31a9f2bccd",
+            "semantic_markdown_sha256": "a8987c1c780311e2fd5c0aee8a860c0c1dff1cb80ea5502156a9cd39abee730b",
+            "retrieved_at": "2026-09-17",
+            "source_mapping": "work/tilda-blog-transfer-20260917/machine/11927800.source-mapping.json",
+            "immutable_library_status": "pending_registration"
+          }
+        },
+        {"catalog_id": "A077", "source": "pikabu", "external_id": "11927800", "title": "Почему японцы худые, а ты нет?", "url": "https://pikabu.ru/story/pochemu_yapontsyi_khudyie_a_tyi_net_11927800", "published_at": "2024-10-19T14:27:13+03:00", "role": "previous_version", "content_item": "content://item/d5390fb6-c9a0-49a6-924b-cd8337da7d72", "text_sha256": "43e5b32bd74e13c043cab351dbbb8122ab06614d6d8f4f809e85e9617c18e72b"},
+        {"catalog_id": "A182", "source": "telegraph", "external_id": "Pochemu-yaponcy-hudye-a-ty-net-11-07", "title": "Почему японцы худые, а ты нет?", "url": "https://telegra.ph/Pochemu-yaponcy-hudye-a-ty-net-11-07", "published_at": "2025-11-07T17:47:25+03:00", "role": "supplementary_source", "content_item": "content://item/0ac08683-c35a-484b-9a1f-f6a10c402e8b", "text_sha256": "03194894f21a62f478b28bcfdf2b0789a79a83f0c0ce99cbf1d12892d24e5961"}
+      ]
+    },
+    {
       "family_id": "habits-formation-and-one-percent",
       "title": "Что вы не понимаете о формировании привычек",
       "owner_decision": "published_blog_canon",

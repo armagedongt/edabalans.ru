@@ -11,9 +11,9 @@
 
 - В блоге: **44** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **51** внешних проявлений.
+- Уже привязано к канонам блога: **52** внешних проявлений.
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **243**.
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **242**.
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -48,7 +48,7 @@
 | Потеря мышц при похудении | [blog:poterya-myshc-pri-pohudenii](https://blog.похудение-это-есть.рф/articles/poterya-myshc-pri-pohudenii) | 1 | 0 |
 | Похудение начинается не с похудения | [blog:pohudenie-nachinaetsya-ne-s-pohudeniya](https://blog.похудение-это-есть.рф/articles/pohudenie-nachinaetsya-ne-s-pohudeniya) | 1 | 2 |
 | Почему люди худеют и снова набирают вес | [blog:pochemu-lyudi-hudeyut-i-snova-nabirayut-ves](https://blog.похудение-это-есть.рф/articles/pochemu-lyudi-hudeyut-i-snova-nabirayut-ves) | 1 | 0 |
-| Почему японцы худые, а ты нет? | [blog:pochemu-yapontsy-hudye-a-ty-net](https://blog.похудение-это-есть.рф/articles/pochemu-yapontsy-hudye-a-ty-net) | 1 | 1 |
+| Почему японцы худые, а ты нет? | [blog:pochemu-yapontsy-hudye-a-ty-net](https://blog.похудение-это-есть.рф/articles/pochemu-yapontsy-hudye-a-ty-net) | 3 | 0 |
 | ПП-рецепты — это плохо. И вот почему | [blog:pp-recepty-eto-ploho](https://blog.похудение-это-есть.рф/articles/pp-recepty-eto-ploho) | 1 | 2 |
 | Правила безопасности за шведским столом | [blog:pravila-bezopasnosti-za-shvedskim-stolom](https://blog.похудение-это-есть.рф/articles/pravila-bezopasnosti-za-shvedskim-stolom) | 1 | 1 |
 | Правило 30-ти растений | [blog:pravilo-30-rasteniy](https://blog.похудение-это-есть.рф/articles/pravilo-30-rasteniy) | 1 | 0 |
@@ -71,7 +71,7 @@
 | Тип | Количество | Что означает |
 |---|---:|---|
 | `deferred_not_now` | 18 | Владелец прямо решил пока не брать. |
-| `editorial_review` | 93 | Полная статья-кандидат: проверить семейство, пользу, актуальность и выбрать основу. |
+| `editorial_review` | 92 | Полная статья-кандидат: проверить семейство, пользу, актуальность и выбрать основу. |
 | `incomplete_draft` | 14 | Черновик/заметка: не считать готовой статьёй. |
 | `obsolete_product_archive` | 4 | Неактуальный архив старого МК: сохранить для истории, не предлагать к публикации и не использовать как актуальную авторскую основу. |
 | `owner_review_later` | 3 | Нужен отдельный просмотр владельцем. |
@@ -239,7 +239,6 @@
 | A230 | telegraph | [Похудеть не получается... какая самая частая причина?⁠⁠](https://telegra.ph/hochu-hudet-03-21) | `owner_review_later` | 1 |
 | A181 | telegraph | [Почему дефицит калорий не работает?](https://telegra.ph/Pochemu-deficit-kalorij-ne-rabotaet-06-16) | `editorial_review` | 1 |
 | A071 | pikabu | [Почему питание всегда важнее тренировок!!](https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517) | `short_reserve` | 0 |
-| A182 | telegraph | [Почему японцы худые, а ты нет?](https://telegra.ph/Pochemu-yaponcy-hudye-a-ty-net-11-07) | `editorial_review` | 1 |
 | A174 | telegraph | [ПП рецепты — это плохо И вот почему!](https://telegra.ph/PP-recepty--hren-i-vot-pochemu-01-03) | `editorial_review` | 2 |
 | A053 | pikabu | [ПП-кулич — вам не нужен!](https://pikabu.ru/story/ppkulich__vam_ne_nuzhen_11385251) | `short_reserve` | 1 |
 | A196 | telegraph | [Правила безопасности за шведским столом](https://telegra.ph/SHS-06-18-2) | `editorial_review` | 1 |
