@@ -75,12 +75,6 @@
   sheet.querySelector('.reader-close').addEventListener('click', () => sheet.close());
   sheet.addEventListener('close', () => menu.focus());
   sheet.addEventListener('click', event => { if (event.target.closest('a')) sheet.close(); });
-  const contactTrigger = sheet.querySelector('.nav-contact-trigger');
-  const contactPanel = sheet.querySelector('.nav-contact-panel');
-  contactTrigger.addEventListener('click', () => {
-    contactPanel.hidden = !contactPanel.hidden;
-    contactTrigger.setAttribute('aria-expanded', String(!contactPanel.hidden));
-  });
   document.getElementById('reader-top').addEventListener('click', () => window.scrollTo({top:0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'}));
   const links = Array.from(document.querySelectorAll('.reader-sidebar a, #reader-sheet ol a'));
   const headings = Array.from(document.querySelectorAll('#article > h2'));

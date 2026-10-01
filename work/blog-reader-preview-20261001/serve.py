@@ -30,11 +30,12 @@ def page():
                 f'<small><span class="reader-related-arrow" aria-hidden="true">↗</span> Читайте также</small><strong>{escape(target.title)}</strong>'
                 f'<span>{escape(target.excerpt)}</span></a></aside>')
         body = re.sub(r'(<h2 id="[^"]+">' + re.escape(heading) + r'</h2>)', lambda m: card + m[0], body, count=1)
+    intensive_markup = (ROOT / 'backend/app/static/intensive/index.html').read_text(encoding='utf-8')
+    telegram_icon = re.search(r'channel-button--telegram[^>]*>(<svg.*?</svg>)', intensive_markup).group(1)
     channel = '''<section class="reader-channel blog-cta">
-<header class="reader-channel-author"><img class="reader-avatar" src="/preview/avatar.webp" width="64" height="64" alt="Сергей Воронцов"><span>🍌 Сергей Воронцов — тренер по питанию</span></header>
-<h3>Подпишитесь, чтобы не потерять и читать больше моих постов.</h3>
-<p>Пишу, чтобы вы менялись.</p>
-<div class="reader-channel-actions"><a class="reader-bot-telegram" href="https://t.me/Fitness_Talks_bot" target="_blank" rel="noopener">Telegram</a><a class="reader-bot-max" href="https://max.ru/id230409966750_bot" target="_blank" rel="noopener">MAX</a></div></section>'''
+<header class="reader-channel-author"><img class="reader-avatar" src="/preview/avatar.webp" width="48" height="48" alt="Сергей Воронцов"><span><strong>Сергей Воронцов 🍌</strong><span class="reader-channel-role">Тренер по питанию</span></span></header>
+<p class="reader-channel-copy">Пишу о питании и похудении так, чтобы вы менялись. Подпишитесь, чтобы не потерять и читать больше моих постов.</p>
+<div class="reader-channel-actions"><a class="reader-bot-telegram" href="https://t.me/Fitness_Talks_bot" target="_blank" rel="noopener">''' + telegram_icon + '''<span>Telegram</span></a><a class="reader-bot-max" href="https://max.ru/id230409966750_bot" target="_blank" rel="noopener"><img src="/preview/max-logo.png" alt="" width="20" height="20"><span>MAX</span></a></div></section>'''
     inline = '<div id="reader-channel-inline">' + channel + '</div>'
     body = re.sub(r'(<h2 id="[^"]+">Принцип №4\.)', lambda m: inline + m[0], body, count=1)
     # The requested demo uses intensive; the production masterclass assignment is untouched.
@@ -47,10 +48,12 @@ def page():
     items = ''.join(f'<li><a href="#{escape(a, quote=True)}">{escape(t)}</a></li>' for a, t in toc)
     navigation = (STATIC / "article.html").read_text(encoding="utf-8").split('<nav class="nav"')[1].split('</nav>')[0]
     # Reuse the current destinations. The preview sheet gets independent ids.
-    navigation = '<nav class="reader-site-menu"' + navigation + '</nav>'
+    contacts = re.search(r'<div class="nav-contact-panel"[^>]*>(.*?)</div>', navigation, flags=re.DOTALL).group(1)
+    navigation = '<nav class="reader-site-menu"' + navigation.split('<div class="nav-contact">')[0]
     navigation = navigation.replace('id="public-blog-nav"', 'id="reader-site-nav"').replace('blog-contact-panel', 'reader-contact-panel')
     navigation = re.sub(r'<a[^>]+href="https://[^\"]+/blog"[^>]*>Блог</a>', '', navigation)
     navigation += '''<details class="reader-account"><summary>Личный кабинет</summary><div><a href="https://похудение-это-есть.рф/lk">Войти</a><a href="https://похудение-это-есть.рф/lk?mode=register">Зарегистрироваться</a></div></details>'''
+    navigation += '<details class="reader-account"><summary>Контакты</summary><div>' + contacts + '</div></details>'
     navigation = navigation.replace('</nav>', '') + '</nav>'
     panel = f'<strong>В этом материале</strong><ol>{items}</ol>'
     extra = f'''
@@ -80,7 +83,9 @@ class Handler(BaseHTTPRequestHandler):
             self.send_data(page().encode(), 'text/html; charset=utf-8')
             return
         roots = {'/preview/': HERE, '/blog/assets/': STATIC / 'assets', '/blog/fonts/': STATIC / 'fonts', '/blog/media/': ROOT / 'content/blog/media'}
-        if path in ('/blog/assets/article-typography.css', '/blog/assets/article-note.css'):
+        if path == '/preview/max-logo.png':
+            file = ROOT / 'backend/app/static/max-logo.png'
+        elif path in ('/blog/assets/article-typography.css', '/blog/assets/article-note.css'):
             name = 'typography.css' if 'typography' in path else 'note.css'
             file = ROOT / 'content/article-components' / name
         else:

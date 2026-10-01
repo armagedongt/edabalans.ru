@@ -1,0 +1,39 @@
+{
+  "status": "verified",
+  "date": "2026-10-01",
+  "scope": "local compact subscription and mobile menu corrections; not production",
+  "route": "http://127.0.0.1:8771/articles/pochemu-yapontsy-hudye-a-ty-net",
+  "evidence_directory": "D:/CodexPrivate/blog-reader-evidence-20261001-v3",
+  "actual_viewports": [360, 430, 768, 900, 901, 1440],
+  "viewport_height": 900,
+  "checks": {
+    "horizontal_overflow": false,
+    "subscription_buttons_height_px": 44,
+    "avatar_size_px": 48,
+    "round_buttons_size_px": 40,
+    "round_icons_size_px": 16,
+    "round_icons_center_error_px": 0,
+    "mobile_navigation_font_px": 15,
+    "mobile_navigation_row_height_px": 48.5833,
+    "both_native_disclosures_open": true,
+    "light_and_dark_theme": true,
+    "unchanged_gate_tests_passed": 5,
+    "python_compile": "pass"
+  },
+  "source_reference": {
+    "url": "https://molyanov.ru/blog/kak-rabotat-s-ii-agentami-chtoby-oni-ne-tupili",
+    "observed": "Both round buttons use flex centering, zero padding, 40px boxes and 16px SVGs. Arrow and table-of-contents SVG paths match the reference DOM."
+  },
+  "copy": {
+    "name": "Сергей Воронцов 🍌",
+    "role": "Тренер по питанию",
+    "body": "Пишу о питании и похудении так, чтобы вы менялись. Подпишитесь, чтобы не потерять и читать больше моих постов.",
+    "authority": "latest owner dictation; not a quote of current bot bio",
+    "writer_validation": "D:/CodexPrivate/blog-reader-copy-20261001/compact-validation.json"
+  },
+  "limitations": [
+    "Identity and subscription remain explicit local fixtures, not real shared authentication.",
+    "Existing article body and production site are unchanged.",
+    "Discard popup-360-light.jpg as viewport evidence: its actual screenshot size is 427x533; use popup-360-verified-light.jpg instead."
+  ]
+}
