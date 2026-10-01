@@ -75,6 +75,7 @@ def test_git_catalog_ignores_legacy_manifest_excerpt(monkeypatch):
 @pytest.mark.parametrize('description', ['Ручной анонс & интрига.', '{{STRUCTURED_DATA}}"><img src=x onerror=alert(1)>'])
 def test_description_stays_draft_until_publish_and_drives_catalog_and_page(description):
     from html import escape
+    from html.parser import HTMLParser
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
     from sqlalchemy import create_engine
@@ -104,7 +105,12 @@ def test_description_stays_draft_until_publish_and_drives_catalog_and_page(descr
         publish_article(db, slug=slug, expected_version=draft.version_no, admin='test')
         page = client.get('/blog/articles/' + slug).text
         assert '<meta name="description" content="' + escape(description, quote=True) + '">' in page
-        assert '<img src=x onerror=alert(1)>' not in page
+        class ImageParser(HTMLParser):
+            def handle_starttag(self, tag, attrs):
+                if tag == 'img':
+                    assert 'onerror' not in dict(attrs)
+
+        ImageParser().feed(page)
         assert 'description:' not in page
         assert escape(description, quote=True) in client.get('/blog').text
         assert escape(description, quote=True) in client.get('/blog/articles/skolko-vremeni-nuzhno-na-pohudenie').text
