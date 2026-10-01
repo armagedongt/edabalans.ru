@@ -156,11 +156,11 @@
       "vc.ru": 14
     },
     "canonical_blog_families": 44,
-    "canonical_linked_external_records": 51,
-    "deferred_families": 243,
+    "canonical_linked_external_records": 52,
+    "deferred_families": 242,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 93,
+      "editorial_review": 92,
       "incomplete_draft": 14,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
@@ -1096,15 +1096,41 @@
           "url": "https://pikabu.ru/story/pochemu_yapontsyi_khudyie_a_tyi_net_11927800",
           "published_at": "2024-10-19T14:27:13+03:00",
           "characters": 6725,
-          "role": "direct_source",
+          "role": "previous_version",
           "provenance": "content://item/d5390fb6-c9a0-49a6-924b-cd8337da7d72",
           "text_sha256": "43e5b32bd74e13c043cab351dbbb8122ab06614d6d8f4f809e85e9617c18e72b"
+        },
+        {
+          "catalog_id": "A182",
+          "source": "telegraph",
+          "external_id": "Pochemu-yaponcy-hudye-a-ty-net-11-07",
+          "title": "Почему японцы худые, а ты нет?",
+          "url": "https://telegra.ph/Pochemu-yaponcy-hudye-a-ty-net-11-07",
+          "published_at": "2025-11-07T14:47:25+0000",
+          "characters": 6796,
+          "role": "supplementary_source",
+          "provenance": "content://item/0ac08683-c35a-484b-9a1f-f6a10c402e8b",
+          "text_sha256": "03194894f21a62f478b28bcfdf2b0789a79a83f0c0ce99cbf1d12892d24e5961"
+        },
+        {
+          "catalog_id": "tilda-jpn-61175321",
+          "source": "tilda",
+          "external_id": "61175321",
+          "title": "Почему японцы худые, а ты нет?",
+          "url": "https://похудение-это-есть.рф/jpn",
+          "role": "preferred_basis",
+          "provenance": {
+            "source_basis": "exact_full_source",
+            "html_sha256": "0e080acdf6dadda56f34f71e20bf2ed8a963a891fd6664f5eb98af31a9f2bccd",
+            "semantic_markdown_sha256": "a8987c1c780311e2fd5c0aee8a860c0c1dff1cb80ea5502156a9cd39abee730b",
+            "retrieved_at": "2026-09-17",
+            "source_mapping": "work/tilda-blog-transfer-20260917/machine/11927800.source-mapping.json",
+            "immutable_library_status": "pending_registration"
+          }
         }
       ],
-      "possible_duplicate_catalog_ids": [
-        "A182"
-      ],
-      "family_evidence": "direct_provenance",
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "owner_confirmed",
       "owner_source_decisions": {}
     },
     {
@@ -5702,32 +5728,6 @@
       "owner_source_decisions": {
         "A071": "publish_next"
       }
-    },
-    {
-      "family_id": "deferred:A182",
-      "title": "Почему японцы худые, а ты нет?",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A182",
-          "source": "telegraph",
-          "external_id": "Pochemu-yaponcy-hudye-a-ty-net-11-07",
-          "title": "Почему японцы худые, а ты нет?",
-          "url": "https://telegra.ph/Pochemu-yaponcy-hudye-a-ty-net-11-07",
-          "published_at": "2025-11-07T14:47:25+0000",
-          "characters": 6796,
-          "role": "unmerged_source",
-          "provenance": "content://item/0ac08683-c35a-484b-9a1f-f6a10c402e8b",
-          "text_sha256": "03194894f21a62f478b28bcfdf2b0789a79a83f0c0ce99cbf1d12892d24e5961"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A077"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A174",
