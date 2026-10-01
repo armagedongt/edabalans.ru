@@ -47,6 +47,27 @@ def test_long_opening_is_bounded_without_keyword_generation():
     assert value[:-1].endswith('слово')
 
 
+def test_repeated_description_reuses_render_but_changed_text_is_fresh(monkeypatch):
+    from app import blog_content
+
+    original_render = blog_content.markdown_to_article_html
+    rendered = []
+
+    def record_render(markdown, **kwargs):
+        rendered.append(markdown)
+        return original_render(markdown, **kwargs)
+
+    blog_description.cache_clear()
+    monkeypatch.setattr(blog_content, 'markdown_to_article_html', record_render)
+    first = blog_description('Первое начало. Второе предложение.')
+    second = blog_description('Первое начало. Второе предложение.')
+    assert len(rendered) == 1
+    assert first == second
+    assert blog_description('Изменённое начало. Новое второе предложение.') == 'Изменённое начало. Новое второе предложение.'
+    assert len(rendered) == 2
+    blog_description.cache_clear()
+
+
 def test_git_catalog_ignores_legacy_manifest_excerpt(monkeypatch):
     from pathlib import Path
     from app.blog_content import load_blog_catalog, default_content_dir

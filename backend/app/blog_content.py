@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 from html import escape
 import json
 import os
@@ -113,6 +114,7 @@ def split_blog_metadata(markdown: str) -> tuple[str | None, str]:
     return value.strip(), markdown[match.end():]
 
 
+@lru_cache(maxsize=128)
 def blog_description(markdown: str) -> str:
     explicit, body = split_blog_metadata(markdown)
     if explicit is not None:
@@ -200,6 +202,29 @@ def _safe_relative_file(value: str) -> bool:
     return bool(value) and not candidate.is_absolute() and ".." not in candidate.parts and "\\" not in value
 
 
+@lru_cache(maxsize=128)
+def _validate_published_components(body: str, cta: str, source_id: str, cta_html: str) -> None:
+    component_count = 0
+
+    def validate_component(name: str, arguments: list[str]) -> str:
+        nonlocal component_count
+        if name != "blog_cta" or arguments != [cta]:
+            raise HTTPException(422, "Article component does not match its manifest CTA")
+        component_count += 1
+        return cta_html
+
+    try:
+        markdown_to_article_html(body, component_renderer=validate_component)
+    except HTTPException as exc:
+        raise ValueError(
+            f"published blog article {source_id} has an invalid directive: {exc.detail}"
+        ) from exc
+    if component_count != 1:
+        raise ValueError(
+            f"published blog article {source_id} must contain exactly one CTA directive"
+        )
+
+
 def validate_blog_catalog(catalog: BlogCatalog) -> None:
     source_ids = [article.source_id for article in catalog.articles]
     slugs = [article.slug for article in catalog.articles]
@@ -235,24 +260,10 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
                 raise ValueError(f"published blog article {article.source_id} hotlinks an external image")
             if re.search(r"<\s*/?\s*[A-Za-z][^>]*>", body):
                 raise ValueError(f"published blog article {article.source_id} contains forbidden HTML")
-            component_count = 0
-            def validate_component(name: str, arguments: list[str]) -> str:
-                nonlocal component_count
-                if name != "blog_cta" or arguments != [article.cta]:
-                    raise HTTPException(422, "Article component does not match its manifest CTA")
-                component_count += 1
-                return render_blog_component(name, arguments)
-
-            try:
-                markdown_to_article_html(body, component_renderer=validate_component)
-            except HTTPException as exc:
-                raise ValueError(
-                    f"published blog article {article.source_id} has an invalid directive: {exc.detail}"
-                ) from exc
-            if component_count != 1:
-                raise ValueError(
-                    f"published blog article {article.source_id} must contain exactly one CTA directive"
-                )
+            _validate_published_components(
+                body, article.cta, article.source_id,
+                render_blog_component("blog_cta", [article.cta]),
+            )
             referenced_media = set(re.findall(r"!\[[^\]]*\]\(/blog/media/([^)]+)\)", body))
             undeclared_media = referenced_media - set(declared_media)
             if undeclared_media:

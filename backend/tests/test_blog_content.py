@@ -157,6 +157,39 @@ def test_catalog_resolves_directives_against_manifest_cta(tmp_path: Path) -> Non
         load_blog_catalog(tmp_path)
 
 
+def test_catalog_reuses_parse_but_revalidates_changed_body_and_media(tmp_path, monkeypatch):
+    from app import blog_content
+
+    write_catalog(tmp_path)
+    original_render = blog_content.markdown_to_article_html
+    rendered = []
+
+    def record_render(markdown, **kwargs):
+        rendered.append(markdown)
+        return original_render(markdown, **kwargs)
+
+    blog_content.blog_description.cache_clear()
+    blog_content._validate_published_components.cache_clear()
+    monkeypatch.setattr(blog_content, 'markdown_to_article_html', record_render)
+    first = load_blog_catalog(tmp_path)
+    count = len(rendered)
+    assert count > 0
+    assert load_blog_catalog(tmp_path) == first
+    assert len(rendered) == count
+
+    body = tmp_path / 'articles' / '1.md'
+    original = body.read_text(encoding='utf-8')
+    body.write_text(original.replace('intensive\n)', 'telegram\n)'), encoding='utf-8')
+    with pytest.raises(ValueError, match='does not match its manifest CTA'):
+        load_blog_catalog(tmp_path)
+    body.write_text(original, encoding='utf-8')
+    (tmp_path / 'media' / 'hero.jpg').unlink()
+    with pytest.raises(ValueError, match='missing blog media'):
+        load_blog_catalog(tmp_path)
+    blog_content.blog_description.cache_clear()
+    blog_content._validate_published_components.cache_clear()
+
+
 def test_heading_anchors_are_deterministic_and_unique() -> None:
     rendered, toc = add_heading_anchors(
         "<h2>Первый шаг</h2><p>Текст</p><h2>Первый шаг</h2>"
