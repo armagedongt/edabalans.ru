@@ -2136,7 +2136,7 @@
         "provenance": "https://static.tildacdn.com/tild3363-3631-4565-b831-373036323431/image.png"
       },
       "card": {
-        "file": "tilda-49745867/tilda-04-v2-card.webp",
+        "file": "tilda-49745867/tilda-04-v3-card.webp",
         "alt": "Разноцветные овощи на прилавке",
         "provenance": "https://static.tildacdn.com/tild3466-3036-4631-b237-636161656438/image.png"
       },
@@ -2158,7 +2158,10 @@
         "tilda-49745867/tilda-04-v2-card.webp",
         "tilda-49745867/tilda-04.png",
         "tilda-49745867/tilda-05-v2-body.webp",
-        "tilda-49745867/tilda-05.png"
+        "tilda-49745867/tilda-05.png",
+        "tilda-49745867/tilda-03-v3-body.webp",
+        "tilda-49745867/tilda-04-v3-body.webp",
+        "tilda-49745867/tilda-04-v3-card.webp"
       ],
       "source_provenance": {
         "platform": "tilda",
