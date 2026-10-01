@@ -24,10 +24,11 @@
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "Sahar-09-18",
+  "current_sequential_source_id": "11207593",
   "current_sequential_stage": "full_source_and_media_review",
-  "autonomous_safe_review_completed_source_ids": ["11927800", "11401696", "tilda-49734795", "tilda-49745867", "tilda-67280331", "13277231", "11269472", "12237133", "11875492"],
-  "honey_confirmed_delivery": {"source_id":"11875492", "editor_version":2, "public_version":1, "markdown_sha256_crlf":"2189ab1073a281ada18062b22e432d625af26febf632e78eb81a0d849a50c09e", "media_unique_http_hash_pass_count":7, "delivery":"API_and_public_page_confirmed; Git_mirror_pending"},
+  "autonomous_safe_review_completed_source_ids": ["11927800", "11401696", "tilda-49734795", "tilda-49745867", "tilda-67280331", "13277231", "11269472", "12237133", "11875492", "Sahar-09-18"],
+  "aspartame_confirmed_delivery": {"editor_version":4,"public_version":3,"markdown_sha256_crlf":"d984b02acc0a8e7c42de5f86287b8e9b3216037d790f0abd88efc0a22baa7483","production_revision":"c2480dfdf98f72d144b7bc1eaf2b1e11b04eaa04","media_http_hash_pass_count":3,"hero_duplicate_hidden":true,"full_scientific_pass":false},
+  "honey_confirmed_delivery": {"source_id":"11875492", "editor_version":2, "public_version":1, "markdown_sha256_crlf":"2189ab1073a281ada18062b22e432d625af26febf632e78eb81a0d849a50c09e", "media_unique_http_hash_pass_count":7, "delivery":"API_and_public_page_confirmed; Git_mirror_45bb86b_confirmed_production_journal_20261001_202915_UTC"},
   "bryan_confirmed_delivery": {"source_id":"12237133", "editor_version":1, "public_version":0, "delivery":"canonical_Git_seed; API_already_published_confirmed", "markdown_sha256_crlf":"e83cb1c7b382ecbff73d233d06e560f8b33c252918489223ef252bb59a9ad4b7", "markdown_sha256_lf":"bfd7ac33e81483ffcf68418f94988b5305d8bb4be41344d9034df928049a68c3", "production_revision":"d4ef076139681495d98d437e44910c9103b1ef77", "media_unique_http_hash_pass_count":19},
   "water_confirmed_api_delivery": {"source_id":"11269472", "editor_version":2, "public_version":1, "markdown_sha256_crlf":"647154c317561642a245e94c43fad43c3ef48c004c60f39422c550def415ffd6", "media_unique_http_hash_pass_count":3, "git_mirror_revision":"e8a0b63aaf8807d923143e2247bc991d0b96d6a0", "git_mirror_deploy":"confirmed_production_journal_20261001_194857_UTC"},
   "weights_confirmed_delivery": {"source_id":"tilda-67280331", "editor_version":3, "public_version":2, "markdown_sha256_crlf":"d76272db509bd8aac476ab14a7e6916bfe08e9b9ce1bbedf1d6d06f581efc403", "production_revision":"ab71d160ef9ecf70df6569dbdcf0e8dc11487873", "media_unique_http_hash_pass_count":2},
@@ -69,6 +70,7 @@
     "full-review/timing-20261001.md",
     "full-review/water-20261001.md",
     "full-review/bryan-20261001.md",
-    "full-review/honey-20261001.md"
+    "full-review/honey-20261001.md",
+    "full-review/aspartame-20261001.md"
   ]
 }
