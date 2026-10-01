@@ -590,8 +590,12 @@ def test_existing_publish_keeps_manifest_media_contract(authoring) -> None:
 def test_largest_existing_article_seeds_without_inline_media(authoring) -> None:
     client, _ = authoring
     slug = "samyy-zdorovyy-chelovek-na-planete"
-    article = client.get(f"/admin/api/blog/articles/{slug}").json()["article"]
-    assert len(article["media"]) == 39
+    expected = load_blog_catalog().by_slug(slug)
+    assert expected is not None
+    response = client.get(f"/admin/api/blog/articles/{slug}")
+    assert response.status_code == 200
+    article = response.json()["article"]
+    assert sorted(item["name"] for item in article["media"]) == sorted(expected.media)
     assert "content_base64" not in json.dumps(article)
 
 
