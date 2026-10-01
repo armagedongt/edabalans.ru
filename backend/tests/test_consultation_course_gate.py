@@ -6,7 +6,7 @@ from sqlalchemy import select
 from test_calorie_course_journey import setup, teardown_function
 from app.access_service import course_start_is_open, course_waits_for_consultation
 from app.course_access_service import course_entry_unlocked
-from app.models import Resource, UserAccess, UserCoursePolicy, UserEmail
+from app.models import MessengerAccount, Resource, UserAccess, UserCoursePolicy, UserEmail
 
 
 def configure(db, *, resource_code="ACCESS_CALORIES", mode="auto", consultation="active"):
@@ -112,6 +112,46 @@ def test_recipes_and_masterclass_are_not_delayed_by_consultation():
             assert course_start_is_open(db, user_id, "ACCESS_RECIPES")
             assert course_entry_unlocked(db, user_id, "ACCESS_RECIPES")
             assert not course_waits_for_consultation(db, user_id, "ACCESS_MASTERCLASS")
+    finally:
+        client.close()
+        factory.kw["bind"].dispose()
+
+
+@pytest.mark.parametrize("platform", ["telegram", "max"])
+def test_consultation_hold_does_not_close_independent_strength_miniapp(platform):
+    from test_account_password_auth import settings, telegram_init_data, max_init_data
+    from app.config import get_settings
+    from app.main import app
+
+    client, factory = setup(course_ready=False)
+    app.dependency_overrides[get_settings] = settings
+    try:
+        with factory() as db:
+            user_id, _ = configure(db, resource_code="ACCESS_STRENGTH")
+            resource = Resource(code="strength", name="Дневник тренировок", status="active")
+            db.add(resource)
+            db.flush()
+            access = UserAccess(user_id=user_id, resource_id=resource.id, source="test", granted_at=datetime.now(timezone.utc))
+            db.add_all([access, MessengerAccount(
+                user_id=user_id, platform=platform, platform_user_id="123456",
+                source="test", linked_at=datetime.now(timezone.utc),
+            )])
+            db.commit()
+            assert not course_entry_unlocked(db, user_id, "ACCESS_STRENGTH")
+            access_id = access.id
+        client.cookies.clear()
+        signed_data = telegram_init_data if platform == "telegram" else max_init_data
+        response = client.post(f"/api/account-auth/{platform}-miniapp", json={
+            "init_data": signed_data(123456), "app_code": "strength",
+        })
+        assert response.status_code == 200, response.text
+        assert client.get("/api/account-auth/session").json()["authenticated"]
+        with factory() as db:
+            db.get(UserAccess, access_id).revoked_at = datetime.now(timezone.utc)
+            db.commit()
+        assert client.post(f"/api/account-auth/{platform}-miniapp", json={
+            "init_data": signed_data(123456), "app_code": "strength",
+        }).status_code == 403
     finally:
         client.close()
         factory.kw["bind"].dispose()
