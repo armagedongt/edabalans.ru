@@ -25,6 +25,8 @@ from app.blog_content import (
     default_content_dir,
     load_blog_catalog,
     render_blog_component,
+    split_blog_metadata,
+    blog_description,
 )
 from app.managed_documents import (
     active_document,
@@ -87,6 +89,8 @@ def _validate_markdown(markdown: str, media: list[dict]) -> str:
         raise _invalid("Markdown статьи не может быть пустым")
     if len(markdown.encode("utf-8")) > MAX_MARKDOWN_BYTES:
         raise _invalid("Markdown статьи превышает 250 KiB")
+    original = markdown
+    _, markdown = split_blog_metadata(markdown)
     if re.search(r"(?m)^\s*#\s+", markdown) or re.search(
         r"(?m)^\s{0,3}\S[^\n]*\n\s{0,3}=+\s*$", markdown
     ):
@@ -103,7 +107,7 @@ def _validate_markdown(markdown: str, media: list[dict]) -> str:
     if any(source not in allowed for source in image_sources):
         raise _invalid("Изображение должно ссылаться на media из того же пакета")
     markdown_to_article_html(markdown)
-    return hashlib.sha256(markdown.encode("utf-8")).hexdigest()
+    return hashlib.sha256(original.encode("utf-8")).hexdigest()
 
 
 def _decode_media(item: dict) -> tuple[dict, int]:
@@ -376,6 +380,7 @@ def effective_article_payload(version: ManagedDocumentVersion) -> dict:
         return seed
     seed["markdown"] = version.payload["markdown"]
     seed["markdown_sha256"] = version.payload["markdown_sha256"]
+    seed["excerpt"] = blog_description(seed["markdown"])
     seed["visibility"] = version.payload.get("visibility", "public")
     allowed_cards = {item["name"] for item in seed["media"]}
     selected_card = version.payload.get("card", seed["card"])
@@ -582,6 +587,7 @@ def render_article(
 ) -> tuple[str, tuple]:
     value = payload["markdown"] if markdown is None else markdown
     _validate_markdown(value, payload["media"])
+    _, value = split_blog_metadata(value)
     for item in payload["media"]:
         if item.get("storage") == "git":
             continue
@@ -664,6 +670,7 @@ def public_payload(db: Session, slug: str) -> dict | None:
     payload = _git_seed_payload(slug)
     payload["markdown"] = published.payload["markdown"]
     payload["markdown_sha256"] = published.payload["markdown_sha256"]
+    payload["excerpt"] = blog_description(payload["markdown"])
     allowed_cards = {item["name"] for item in payload["media"]}
     selected_card = published.payload.get("card", payload["card"])
     selected_fit = published.payload.get("card_fit", payload["card_fit"])
@@ -698,3 +705,11 @@ def published_card_overrides(db: Session) -> dict[str, tuple[str, str]]:
         if card in allowed and fit in CARD_FITS:
             result[row.document_key] = (card, fit)
     return result
+
+
+def published_description_overrides(db: Session) -> dict[str, str]:
+    rows = db.scalars(select(ManagedDocumentVersion).where(
+        ManagedDocumentVersion.document_type == PUBLISHED_DOCUMENT_TYPE,
+        ManagedDocumentVersion.is_active.is_(True),
+    ))
+    return {row.document_key: blog_description(row.payload["markdown"]) for row in rows}
