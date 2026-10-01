@@ -1,6 +1,6 @@
 {
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
-  "updated_at": "2026-09-26",
+  "updated_at": "2026-10-01",
   "batch_size": 5,
   "article_count": 44,
   "full_current_text_read_count": 44,
@@ -20,7 +20,13 @@
   "next_independent_batch": null,
   "next_source_id": "training-combined-2023",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
-  "delivery_unconfirmed_source_ids": ["11401696", "11927800", "tilda-49734795", "tilda-49745867", "tilda-67280331"],
+  "delivery_unconfirmed_source_ids": ["11401696", "tilda-49734795", "tilda-49745867", "tilda-67280331"],
+  "description_production_pass_count": 44,
+  "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
+  "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
+  "current_sequential_source_id": "11927800",
+  "current_sequential_stage": "media_release_and_api_verification",
+  "confirmed_delivery_after_checkpoint": {"11927800": {"editor_version": 3, "public_version": 2, "markdown_sha256": "984cef7fc39c51b303e749b51759a6bb3ced96a6ab1937a8ea15de103a732b18"}},
   "diagnostic_reports": [
     "batches/01-review.md",
     "batches/02-review.md",
@@ -47,6 +53,7 @@
   "publication_hold_reason": "Конкретный риск формулировки о безопасности 5–15 литров; смысловая замена требует решения владельца. Действующая статья не снята.",
   "full_review_reports": [
     "full-review/habits.md",
-    "full-review/dieta-sryv.md"
+    "full-review/dieta-sryv.md",
+    "full-review/japan-20261001.md"
   ]
 }
