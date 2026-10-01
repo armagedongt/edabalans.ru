@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.access_service import course_start_mode, course_waits_for_consultation
 from app.models import MasterclassEvent, Resource, UserAccess, UserCoursePolicy
 
 
@@ -65,6 +66,11 @@ def masterclass_completed(db: Session, user_id: uuid.UUID) -> bool:
 
 
 def course_entry_unlocked(db: Session, user_id: uuid.UUID, resource_code: str) -> bool:
+    mode = course_start_mode(db, user_id, resource_code)
+    if mode == "blocked" or course_waits_for_consultation(db, user_id, resource_code):
+        return False
+    if mode == "open":
+        return True
     if course_fully_unlocked(db, user_id, resource_code):
         return True
     if resource_code in MASTERCLASS_PREREQUISITE_RESOURCES:

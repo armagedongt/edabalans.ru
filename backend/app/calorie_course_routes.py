@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from app.account_auth_routes import require_native_user
 from app.app_service import AppAccessError, require_user_resource
-from app.access_service import course_start_is_open
+from app.access_service import course_waits_for_consultation
 from app.calorie_course_material_service import publication_status, published_materials
 from app.calorie_course_application_service import reveal_metabolism
 from app.calorie_course_service import (
@@ -22,8 +22,7 @@ from app.calorie_course_service import (
     effective_required_step_ids,
 )
 from app.database import get_db
-from app.course_access_service import course_fully_unlocked
-from app.metabolism_service import metabolism_is_unlocked
+from app.course_access_service import course_entry_unlocked, course_fully_unlocked
 from app.masterclass_routes import course_timezone, next_local_unlock_at
 from app.models import CourseEvent, CourseStageProgress, CourseStepProgress, User
 
@@ -51,9 +50,9 @@ def resolve_course_user(request: Request, db: Session, email: str) -> User:
         user = require_user_resource(db, require_native_user(request, db), RESOURCE_CODE)
     except AppAccessError as exc:
         raise HTTPException(403, str(exc)) from exc
-    if not course_start_is_open(db, user.id, RESOURCE_CODE):
-        raise HTTPException(403, "Курс пока закрыт по условиям доступа")
-    if not metabolism_is_unlocked(db, user.id):
+    if course_waits_for_consultation(db, user.id, RESOURCE_CODE):
+        raise HTTPException(403, "Курс откроется после консультации. Напишите мне.")
+    if not course_entry_unlocked(db, user.id, RESOURCE_CODE):
         raise HTTPException(403, "Курс откроется после завершения Мастер-класса")
     if not publication_status(db)["ready"]:
         raise HTTPException(409, detail={"reason": "course_preparing"})

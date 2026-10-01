@@ -48,14 +48,8 @@ def review_blocks_access(user: User) -> bool:
     return user.access_review_status in BLOCKING_REVIEW_STATUSES
 
 
-def course_start_is_open(db: Session, user_id: uuid.UUID, resource_code: str) -> bool:
-    """Return the explicit start gate for a course right.
-
-    Older rows have no policy (or no start_mode) and keep their historical
-    behaviour: an active right opens the course. A block is therefore only
-    introduced by a deliberate CRM or personal-link decision.
-    """
-    mode = db.scalar(
+def course_start_mode(db: Session, user_id: uuid.UUID, resource_code: str) -> str | None:
+    return db.scalar(
         select(UserCoursePolicy.start_mode)
         .join(Resource, Resource.id == UserCoursePolicy.resource_id)
         .where(
@@ -64,6 +58,21 @@ def course_start_is_open(db: Session, user_id: uuid.UUID, resource_code: str) ->
         )
         .limit(1)
     )
+
+
+def course_waits_for_consultation(db: Session, user_id: uuid.UUID, resource_code: str) -> bool:
+    if resource_code not in {"ACCESS_CALORIES", "ACCESS_STRENGTH"}:
+        return False
+    if course_start_mode(db, user_id, resource_code) != "auto":
+        return False
+    from app.course_access_service import active_resource_codes
+
+    return "ACCESS_CONSULTATION" in active_resource_codes(db, user_id)
+
+
+def course_start_is_open(db: Session, user_id: uuid.UUID, resource_code: str) -> bool:
+    """Apply the automatic start condition without overriding historical/manual access."""
+    mode = course_start_mode(db, user_id, resource_code)
     if mode is None:
         # Rights issued before the three-state policy existed retain their
         # historical behaviour until an administrator explicitly configures
@@ -73,6 +82,8 @@ def course_start_is_open(db: Session, user_id: uuid.UUID, resource_code: str) ->
         return False
     if mode == "open":
         return True
+    if course_waits_for_consultation(db, user_id, resource_code):
+        return False
     # In the ordinary mode a purchase grants the right but does not bypass
     # the product's own start condition. The event is already the canonical
     # fact used by the relevant course runtime; CRM only adds an explicit

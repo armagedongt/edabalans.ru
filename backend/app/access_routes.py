@@ -14,6 +14,7 @@ from app.access_service import (
     active_link,
     amount_number,
     complete_review,
+    course_waits_for_consultation,
     create_link_token,
     grant_resources,
     link_by_token,
@@ -263,6 +264,12 @@ def resolve_calorie_resource_link(
     owned = active_resource_codes(db, user.id)
     if "ACCESS_CALORIES" not in owned:
         return missing_resource_offer(target, "ACCESS_CALORIES")
+    if course_waits_for_consultation(db, user.id, "ACCESS_CALORIES"):
+        return resource_link_response(
+            "locked", target=target, reason_code="consultation_required",
+            title="Курс откроется после консультации",
+            explanation="Напишите мне — после консультации я открою вам курс.",
+        )
     if not course_entry_unlocked(db, user.id, "ACCESS_CALORIES"):
         return resource_link_response(
             "locked",
@@ -533,7 +540,9 @@ def account_payload(email: str, db: Session, *, progress_user_id: uuid.UUID | No
         code: application_access_state(db, user.id, code)
         for code in ("dqs", "strength", "metabolism")
     }
-    calories_unlocked = progress_user_id == user.id and application_states["metabolism"]["start_open"]
+    calories_unlocked = progress_user_id == user.id and course_entry_unlocked(
+        db, user.id, "ACCESS_CALORIES"
+    )
     training_unlocked = progress_user_id == user.id and course_entry_unlocked(
         db, user.id, "ACCESS_STRENGTH"
     )
@@ -542,6 +551,14 @@ def account_payload(email: str, db: Session, *, progress_user_id: uuid.UUID | No
         code = item["code"]
         if code == "masterclass" and masterclass_purchase:
             item["tariff"] = masterclass_purchase["tariff"]
+        if (
+            code in {"calories", "strength"} and item["owned"]
+            and item["ready"] and not item["maintenance"]
+            and course_waits_for_consultation(db, user.id, item["resource"])
+        ):
+            item["state"] = "consultation_locked"
+            item["app"] = None
+            continue
         if code == "calories" and item["owned"] and not calories_unlocked and not item["maintenance"]:
             item["state"] = "masterclass_locked"
             item["app"] = None
@@ -567,7 +584,7 @@ def account_payload(email: str, db: Session, *, progress_user_id: uuid.UUID | No
         "applications": account_applications(
             owned,
             legal["required"],
-            metabolism_unlocked=calories_unlocked,
+            metabolism_unlocked=progress_user_id == user.id and bool(application_states["metabolism"]["start_open"]),
             dqs_revealed=bool(application_states["dqs"]["start_open"]),
             application_states=application_states,
         ),
