@@ -1,0 +1,152 @@
+{
+  "source_id": "12296286",
+  "original_image_count": 8,
+  "all_unique_images_visually_inspected": true,
+  "media_http_hash_pass_count": 10,
+  "checked_at": "2026-10-03",
+  "media": [
+    {
+      "file": "12296286/01.webp",
+      "bytes": 26504,
+      "width": 735,
+      "height": 562,
+      "sha256": "27fe6e9c578cf7ef965d00808836c135928074e126aa03bee5217bf837bdf9bf",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "27fe6e9c578cf7ef965d00808836c135928074e126aa03bee5217bf837bdf9bf",
+      "active": true,
+      "original_url": "https://cs15.pikabu.ru/post_img/big/2025/01/25/6/1737798565157363834.png"
+    },
+    {
+      "file": "12296286/02.webp",
+      "bytes": 15448,
+      "width": 570,
+      "height": 267,
+      "sha256": "8c3062f968a583609de004df5e2c5cc595b6f1ec34b4a6d26e121eae9658e69e",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "8c3062f968a583609de004df5e2c5cc595b6f1ec34b4a6d26e121eae9658e69e",
+      "active": true,
+      "original_url": "https://cs15.pikabu.ru/post_img/2025/01/22/11/1737568857132742440.jpg"
+    },
+    {
+      "file": "12296286/03.webp",
+      "bytes": 265690,
+      "width": 1800,
+      "height": 1517,
+      "sha256": "fdf559682d9348b3cd5e641f9052e6c67246f3873f905aac144e57a752ecb2b6",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "fdf559682d9348b3cd5e641f9052e6c67246f3873f905aac144e57a752ecb2b6",
+      "active": true,
+      "original_url": "https://cs15.pikabu.ru/post_img/big/2025/01/25/7/173780314618592719.jpg"
+    },
+    {
+      "file": "12296286/04.webp",
+      "bytes": 265690,
+      "width": 1800,
+      "height": 1517,
+      "sha256": "fdf559682d9348b3cd5e641f9052e6c67246f3873f905aac144e57a752ecb2b6",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "fdf559682d9348b3cd5e641f9052e6c67246f3873f905aac144e57a752ecb2b6",
+      "active": false,
+      "note": "Неиспользуемый старый файл; URL не перезаписан."
+    },
+    {
+      "file": "12296286/05.webp",
+      "bytes": 86800,
+      "width": 1520,
+      "height": 855,
+      "sha256": "a5527b1ff20135592eab8ca019410662a582e1114d306894f308d217997e8aee",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "a5527b1ff20135592eab8ca019410662a582e1114d306894f308d217997e8aee",
+      "active": true,
+      "original_url": "https://cs15.pikabu.ru/post_img/big/2025/01/25/7/1737800256157099235.png"
+    },
+    {
+      "file": "12296286/06.webp",
+      "bytes": 47070,
+      "width": 650,
+      "height": 539,
+      "sha256": "54c3593ba75717fdcfe0a90b6d3c499a2104a448a33747f09474463bd39b7aad",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "54c3593ba75717fdcfe0a90b6d3c499a2104a448a33747f09474463bd39b7aad",
+      "active": true,
+      "original_url": "https://cs15.pikabu.ru/post_img/2025/01/22/11/1737573514140414213.jpg"
+    },
+    {
+      "file": "12296286/07.webp",
+      "bytes": 100448,
+      "width": 1483,
+      "height": 964,
+      "sha256": "fedf0d65135db10b3d7a19f643ae7c0ed13d466a23016d707423464f48ce5435",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "fedf0d65135db10b3d7a19f643ae7c0ed13d466a23016d707423464f48ce5435",
+      "active": true,
+      "original_url": "https://cs15.pikabu.ru/post_img/big/2025/01/25/7/1737803263159874244.png"
+    },
+    {
+      "file": "12296286/08.webp",
+      "bytes": 90948,
+      "width": 1600,
+      "height": 924,
+      "sha256": "f3adab15ac064cee2d62c0097e15e48b270ae7d614e2ea32fb48f5c2b684f315",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "f3adab15ac064cee2d62c0097e15e48b270ae7d614e2ea32fb48f5c2b684f315",
+      "active": true,
+      "original_url": "https://cs15.pikabu.ru/post_img/big/2025/01/25/7/17378033111549355.png"
+    },
+    {
+      "file": "12296286/card.webp",
+      "bytes": 65280,
+      "width": 1280,
+      "height": 720,
+      "sha256": "d50b43451a266c802a4061a72b5118eeae84184336230084b3a19a56e559bbda",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "d50b43451a266c802a4061a72b5118eeae84184336230084b3a19a56e559bbda",
+      "active": false,
+      "note": "Неиспользуемый старый файл; URL не перезаписан."
+    },
+    {
+      "file": "12296286/09-source-ending.webp",
+      "bytes": 77392,
+      "width": 1000,
+      "height": 1000,
+      "sha256": "7793ac50b4c51f0198b081f6e57e508d54392843c349171fda182ff6ddd349ec",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "7793ac50b4c51f0198b081f6e57e508d54392843c349171fda182ff6ddd349ec",
+      "active": true,
+      "original_url": "https://cs15.pikabu.ru/post_img/big/2025/01/25/7/1737799735155257443.png"
+    }
+  ],
+  "video": {
+    "url": "https://cs15.pikabu.ru/video/2025/01/25/1737802289244723711_c4641cb3_1080x1920.webm",
+    "duration_seconds": 17,
+    "bytes": 3022195,
+    "http": 200,
+    "content_type": "video/webm",
+    "delivery": "ordinary_external_link; not own-hosted"
+  },
+  "public_browser": {
+    "desktop_width": 1280,
+    "mobile_width": 390,
+    "horizontal_overflow": false,
+    "all_eight_images_loaded": true,
+    "hero_occurrences": 1,
+    "ending_occurrences": 1,
+    "h1_count": 1,
+    "author_h2_count": 6,
+    "author_ol_count": 2,
+    "author_li_count": 7,
+    "source_bold_count_restored": 9,
+    "screenshots": "unavailable; DOM/geometry/load checks passed"
+  },
+  "full_scientific_pass": false
+}
