@@ -155,12 +155,12 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 44,
-    "canonical_linked_external_records": 54,
-    "deferred_families": 240,
+    "canonical_blog_families": 45,
+    "canonical_linked_external_records": 55,
+    "deferred_families": 239,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 91,
+      "editorial_review": 90,
       "incomplete_draft": 13,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
@@ -381,6 +381,37 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:vse-znayut-nikto-ne-delaet",
+      "title": "Все знают, никто не делает",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "10123213",
+        "slug": "vse-znayut-nikto-ne-delaet",
+        "url": "https://blog.похудение-это-есть.рф/articles/vse-znayut-nikto-ne-delaet",
+        "body_file": "content/blog/articles/10123213.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A002",
+          "source": "pikabu",
+          "external_id": "10123213",
+          "title": "Все знают, никто не делает",
+          "url": "https://pikabu.ru/story/vse_znayut_nikto_ne_delaet_10123213",
+          "published_at": "2023-04-08T21:18:52+03:00",
+          "characters": 5012,
+          "role": "direct_source",
+          "provenance": "content://item/b871a971-6389-41d4-92ca-cc761d1be56b",
+          "text_sha256": "b47661efb2f9d8b895f2097b4f8e3663b50df229366ff4415d41283172000ea9"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "direct_provenance",
+      "owner_source_decisions": {
+        "A002": "publish_next"
+      }
     },
     {
       "family_id": "blog:glavnye-oshibki-v-pohudenii-do-goloda",
@@ -2446,32 +2477,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A037": "publish_next"
-      }
-    },
-    {
-      "family_id": "deferred:A002",
-      "title": "Все знают, никто не делает",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A002",
-          "source": "pikabu",
-          "external_id": "10123213",
-          "title": "Все знают, никто не делает",
-          "url": "https://pikabu.ru/story/vse_znayut_nikto_ne_delaet_10123213",
-          "published_at": "2023-04-08T21:18:52+03:00",
-          "characters": 5012,
-          "role": "unmerged_source",
-          "provenance": "content://item/b871a971-6389-41d4-92ca-cc761d1be56b",
-          "text_sha256": "b47661efb2f9d8b895f2097b4f8e3663b50df229366ff4415d41283172000ea9"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A002": "publish_next"
       }
     },
     {
