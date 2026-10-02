@@ -2,8 +2,9 @@
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
   "updated_at": "2026-10-03",
   "batch_size": 5,
-  "article_count": 44,
-  "full_current_text_read_count": 44,
+  "article_count": 45,
+  "old_article_count": 44,
+  "full_current_text_read_count": 45,
   "archive_source_text_compared_count": 6,
   "publish_ready_count": 0,
   "article_changes_applied": 40,
@@ -14,18 +15,21 @@
   "new_articles_prepared_locally": [
     "10123213"
   ],
-  "new_articles_published": [],
+  "new_articles_published": ["10123213"],
+  "new_full_safe_review_pass_count": 1,
+  "total_old_and_new_full_safe_review_delivered_count": 21,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 34,
   "next_independent_batch": null,
-  "next_source_id": "10123213",
+  "next_source_id": "12296286",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "10123213",
-  "current_sequential_stage": "new_10123213_writer_and_independent_review_pass; content_main_a291521; CI_false_positive_fixture_title_collision_fixed_locally_and_direct_test_pass; pending_fresh_test_review_and_release; not_yet_in_production",
+  "current_sequential_source_id": "12296286",
+  "current_sequential_stage": "new_10123213_completed_in_production_and_Library; next_old_12296286_fresh_runtime_baseline",
+  "charge_confirmed_delivery": {"source_id":"10123213","editor_version":1,"public_version":0,"delivery":"canonical Git seed; API already published exact hash confirmed","writer_validation":"pass","fresh_safe_review":"clean","production_revision":"96dc5f57484f61f960f74f7f368dcd7fe94617bf","ci_run":37073621984,"media_http_hash_pass_count":3,"desktop_mobile_pass":true,"library_use_recorded":true,"library_navigation_version":5,"full_scientific_pass":false},
   "eater_confirmed_delivery": {"source_id":"11762932","editor_version":4,"public_version":3,"writer_validation":"pass","fresh_safe_review":"clean","production_revision":"5001aee08c6901cec259d046a267a421852135b6","ci_run":37069687303,"media_http_hash_pass_count":6,"desktop_mobile_pass":true,"library_use_recorded":true,"full_scientific_pass":false},
   "steps_confirmed_delivery": {"source_id":"11522121","editor_version":4,"public_version":3,"writer_validation":"pass","fresh_safe_review":"clean","production_revision":"9cea8db4d111e2bfaacf0848d1c59ff03bd5e249","ci_run":37065428185,"media_http_hash_pass_count":4,"desktop_mobile_pass":true,"library_use_recorded":true,"full_scientific_pass":false},
   "buffet_confirmed_delivery": {"source_id":"12857458","editor_version":4,"public_version":3,"writer_validation":"pass","fresh_safe_review":"clean","production_revision":"25ffc166179833fbc47a942e96e38fc77689f67e","ci_run":37061348932,"media_http_hash_pass_count":15,"desktop_mobile_pass":true,"library_use_recorded":true,"full_scientific_pass":false},
@@ -91,6 +95,7 @@
     "full-review/potato-20261002.md",
     "full-review/buffet-20261002.md",
     "full-review/steps-20261003.md",
-    "full-review/eater-20261003.md"
+    "full-review/eater-20261003.md",
+    "full-review/new-charge-20261003.md"
   ]
 }

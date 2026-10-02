@@ -11,7 +11,7 @@
       "sha256": "6fa04fdfd82346449ed8811d55c09f7ee409b2e93c9ce199838e7272fc31b060",
       "provenance": "https://cs13.pikabu.ru/post_img/big/2023/04/08/10/1680970929192046544.jpg",
       "visual_review": "original checked; no generated replacement",
-      "delivery": "pending"
+      "delivery": "HTTP200 image/webp, own-backend hash equals local; public browser loaded"
     },
     {
       "file": "10123213/02.webp",
@@ -23,7 +23,7 @@
       "sha256": "636ced4e5045a324071d5a1873e7fea4e6e2f6f3d1e837f3f4edf878a6ad7618",
       "provenance": "https://cs13.pikabu.ru/post_img/2023/04/08/11/168097692626304490.jpg",
       "visual_review": "original checked; no generated replacement",
-      "delivery": "pending"
+      "delivery": "HTTP200 image/webp, own-backend hash equals local; public browser loaded"
     },
     {
       "file": "10123213/03.webp",
@@ -35,7 +35,7 @@
       "sha256": "abb8781d51a3e90761f036d02febd3952b14e211d0d6f4be014fa36373178e68",
       "provenance": "https://cs14.pikabu.ru/post_img/2023/04/08/10/1680975208176954410.jpg",
       "visual_review": "original checked; no generated replacement",
-      "delivery": "pending"
+      "delivery": "HTTP200 image/webp, own-backend hash equals local; public browser loaded"
     }
   ]
 }
