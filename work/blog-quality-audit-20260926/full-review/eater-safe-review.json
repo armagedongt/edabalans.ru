@@ -1,0 +1,18 @@
+{
+  "source_id": "11762932",
+  "draft_sha256_crlf": "d7ac76c8ba96d63760c268a781a79a88697ad269776176097df57cde9f0aa038",
+  "markdown_sha256_lf": "700f3d8ba6dc2c6f61fb903d72dc02e2ab6d86247b665ffcd7bc9b783fbb4a65",
+  "writer_validation": "pass",
+  "independent_reviewer": "/root/batch03_publisher_review",
+  "editorial_review": "clean",
+  "source_dom_independently_confirmed": true,
+  "exact_replacements": 13,
+  "rendered_h2_count": 10,
+  "rendered_strong_count": 12,
+  "body_image_count": 3,
+  "original_unique_image_count_including_hero": 4,
+  "author_meaning_numbers_humor_preserved": true,
+  "full_scientific_pass": false,
+  "production_delivery": "pending",
+  "findings": []
+}
