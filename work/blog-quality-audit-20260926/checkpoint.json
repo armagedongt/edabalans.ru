@@ -25,7 +25,7 @@
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "10123213",
-  "current_sequential_stage": "new_10123213_compare_server_draft_first; do_not_duplicate_existing_slug; previous_11762932_completed",
+  "current_sequential_stage": "new_10123213_writer_and_independent_review_pass; content_main_a291521; CI_false_positive_fixture_title_collision_fixed_locally_and_direct_test_pass; pending_fresh_test_review_and_release; not_yet_in_production",
   "eater_confirmed_delivery": {"source_id":"11762932","editor_version":4,"public_version":3,"writer_validation":"pass","fresh_safe_review":"clean","production_revision":"5001aee08c6901cec259d046a267a421852135b6","ci_run":37069687303,"media_http_hash_pass_count":6,"desktop_mobile_pass":true,"library_use_recorded":true,"full_scientific_pass":false},
   "steps_confirmed_delivery": {"source_id":"11522121","editor_version":4,"public_version":3,"writer_validation":"pass","fresh_safe_review":"clean","production_revision":"9cea8db4d111e2bfaacf0848d1c59ff03bd5e249","ci_run":37065428185,"media_http_hash_pass_count":4,"desktop_mobile_pass":true,"library_use_recorded":true,"full_scientific_pass":false},
   "buffet_confirmed_delivery": {"source_id":"12857458","editor_version":4,"public_version":3,"writer_validation":"pass","fresh_safe_review":"clean","production_revision":"25ffc166179833fbc47a942e96e38fc77689f67e","ci_run":37061348932,"media_http_hash_pass_count":15,"desktop_mobile_pass":true,"library_use_recorded":true,"full_scientific_pass":false},
