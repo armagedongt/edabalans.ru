@@ -1,0 +1,48 @@
+{
+  "source_id": "14102926",
+  "source_uri": "content://item/bb9582a1-61a6-47eb-91de-6eab32a20863",
+  "source_text_sha256": "ca7d25a7f226b91cc7e9bbec93a6de91ac5bc6880432678a237c7d4be5f463e5",
+  "channel_reference": {
+    "uri": "content://item/da684c6b-caba-44a7-b158-5c8c421bce4c",
+    "url": "https://t.me/Fitness_Talks/798",
+    "role": "announcement_with_direct_article_link_not_full_version"
+  },
+  "media": [
+    {
+      "file": "14102926/01.webp",
+      "source_url": "https://cs18.pikabu.ru/s/2026/06/28/15/ytnbeolo.webp",
+      "sha256": "854abf6e7af2c55bb07a07b408939068801637d399b150f51f33401e72ed07c3",
+      "bytes": 50852,
+      "width": 700,
+      "height": 693,
+      "change": "unchanged_original"
+    },
+    {
+      "file": "14102926/02.webp",
+      "source_url": "https://cs14.pikabu.ru/post_img/2023/08/31/8/1693484018186191233.jpg",
+      "sha256": "61620ac85b8033bf1f2d6327f623559ac2dafc4b33d9f57dc16c31a89749e63e",
+      "bytes": 49656,
+      "width": 570,
+      "height": 294,
+      "change": "unchanged_original"
+    },
+    {
+      "file": "14102926/03.webp",
+      "source_url": "https://cs18.pikabu.ru/s/2026/06/28/16/linrehoc.jpg",
+      "sha256": "2bfad04107c76b344ce6cdd16d9b76fa89d9d221b819d1ee062992a21045a9a2",
+      "bytes": 13086,
+      "width": 400,
+      "height": 500,
+      "change": "unchanged_original"
+    },
+    {
+      "file": "14102926/card.webp",
+      "source_url": "https://cs18.pikabu.ru/s/2026/06/28/16/linrehoc.jpg",
+      "sha256": "4a37628d53f5253ada4866704e88988f739ed7a430707dcfb524bf749f7a5b1c",
+      "bytes": 11604,
+      "width": 1280,
+      "height": 720,
+      "change": "full_original_letterbox_no_crop_q82"
+    }
+  ]
+}
