@@ -823,11 +823,13 @@ def test_idempotency_and_retention_keep_last_twenty_versions(authoring) -> None:
 def test_owner_catalog_is_private_and_public_catalog_stays_git_backed(authoring) -> None:
     client, _ = authoring
     internal = _real_package(visibility="internal")
+    internal["title"] = "Служебная редакция — не публичный канон"
     assert _put(client, internal).status_code == 200
     owner_page = client.get("/blog")
     assert owner_page.status_code == 200
     assert "Редакция блога" in owner_page.text
     assert "data-owner-visibility=\"internal\"" in owner_page.text
+    assert internal["title"] in owner_page.text
     assert owner_page.headers["x-robots-tag"] == "noindex, nofollow"
     sitemap = client.get("/blog/sitemap.xml")
     assert SLUG in sitemap.text
@@ -835,7 +837,8 @@ def test_owner_catalog_is_private_and_public_catalog_stays_git_backed(authoring)
     app.dependency_overrides[optional_blog_admin] = lambda: None
     public_page = client.get("/blog")
     assert "Редакция блога" not in public_page.text
-    assert _real_package()["title"] not in public_page.text
+    assert internal["title"] not in public_page.text
+    assert load_blog_catalog().by_slug(SLUG).title in public_page.text
     hidden = client.get(f"/blog/drafts/{SLUG}")
     assert hidden.status_code == 404
     assert hidden.headers["cache-control"] == "private, no-store"
