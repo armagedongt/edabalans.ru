@@ -1,0 +1,139 @@
+{
+  "source_id": "12922345",
+  "source_sha256": "eb757031d04c7e9c8b3f8d0bd51a8acc869fe3ce2a4173259880c9b785be0c9c",
+  "media": [
+    {
+      "file": "12922345/01.webp",
+      "source_url": "https://cs17.pikabu.ru/s/2025/07/04/18/zizfkebg.jpg",
+      "bytes": 38424,
+      "sha256": "ca72890c80c2df7801412f855b4de57fbe9157c9361c99fb8bc928fff4ad2daa",
+      "transformation": "existing WebP unchanged",
+      "dimensions": [
+        600,
+        432
+      ]
+    },
+    {
+      "file": "12922345/02.webp",
+      "source_url": "https://cs16.pikabu.ru/s/2025/07/04/18/kndcjs6o.jpg",
+      "bytes": 17676,
+      "sha256": "afe94861ee113d0b2c24b2ff1e926ef4f1952647ba577014136e06a00811492b",
+      "transformation": "existing WebP unchanged",
+      "dimensions": [
+        524,
+        196
+      ]
+    },
+    {
+      "file": "12922345/03.webp",
+      "source_url": "https://cs19.pikabu.ru/s/2025/07/05/11/cgsngvcy.jpg",
+      "bytes": 56950,
+      "sha256": "41b86cde6afd370a3132d84834e1c061b0b60fc2bd9decb879234ee0ce980e85",
+      "transformation": "existing WebP unchanged",
+      "dimensions": [
+        700,
+        364
+      ]
+    },
+    {
+      "file": "12922345/05.webp",
+      "source_url": "https://cs20.pikabu.ru/s/2025/07/04/19/zkx2xerf_lg.png",
+      "bytes": 36158,
+      "sha256": "8f2e19249c8d9309ed9fa3cc4abc53bbf207f3b03802175f134ef7f0133c0380",
+      "transformation": "existing WebP unchanged",
+      "dimensions": [
+        800,
+        800
+      ]
+    },
+    {
+      "file": "12922345/06.webp",
+      "source_url": "https://cs20.pikabu.ru/s/2025/07/04/19/2ockwysy_lg.png",
+      "bytes": 27622,
+      "sha256": "7f4e12e91a8508bce98a45769299e2207719e65944c54d902a67a16b0e9d3c32",
+      "transformation": "existing WebP unchanged",
+      "dimensions": [
+        880,
+        320
+      ]
+    },
+    {
+      "file": "12922345/08.webp",
+      "source_url": "https://cs16.pikabu.ru/s/2025/07/05/11/zgxsizvv_lg.png",
+      "bytes": 191360,
+      "sha256": "f37185037cd7623e55bd51938f2e9e905a78525c70a4de5bee49f34a461ddf25",
+      "transformation": "existing WebP unchanged",
+      "dimensions": [
+        1800,
+        1202
+      ]
+    },
+    {
+      "file": "12922345/10-body.webp",
+      "source_url": "https://cs17.pikabu.ru/s/2025/07/04/20/uehvlsey_lg.png",
+      "bytes": 70106,
+      "sha256": "9f86ba9b14263490b397b62d90f2e436aecd9d4b536036b3b490581311affd81",
+      "transformation": "WebP q82 method6; no crop",
+      "dimensions": [
+        750,
+        1000
+      ]
+    },
+    {
+      "file": "12922345/11-body.webp",
+      "source_url": "https://cs18.pikabu.ru/s/2025/07/04/20/sfsrcdwr.jpg",
+      "bytes": 6830,
+      "sha256": "a11b1edb334100fe0589b6ef49edb4caca642f7d5fb5d0575ca2e1aa8318a4bb",
+      "transformation": "WebP q82 method6; no crop",
+      "dimensions": [
+        346,
+        264
+      ]
+    },
+    {
+      "file": "12922345/12-body.webp",
+      "source_url": "https://cs18.pikabu.ru/s/2025/07/04/20/yforcpbm.jpg",
+      "bytes": 10584,
+      "sha256": "ccedcfb4840b0359dad14b190ff728b5700c15fe8f712243b15997872d683cf6",
+      "transformation": "WebP q82 method6; no crop",
+      "dimensions": [
+        465,
+        111
+      ]
+    },
+    {
+      "file": "12922345/13-body.webp",
+      "source_url": "https://cs20.pikabu.ru/s/2025/07/04/20/xif2wzkp.jpg",
+      "bytes": 41740,
+      "sha256": "db9f6fa8ce045716d1c0ec1dd3ea81470f318a8e2e9bbbf8ad0b75b665ae5087",
+      "transformation": "WebP q82 method6; no crop",
+      "dimensions": [
+        529,
+        571
+      ]
+    },
+    {
+      "file": "12922345/card.webp",
+      "source_url": "https://cs16.pikabu.ru/s/2025/07/05/11/zgxsizvv_lg.png",
+      "bytes": 86694,
+      "sha256": "e9a8669cf857d8155a91174baf17f335804f5a46cfe87f17dcaf6bac87bd76b3",
+      "transformation": "full-image letterbox 1280x720, WebP q82",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "12922345/reaction.mp4",
+      "source_url": "https://cs16.pikabu.ru/s/2025/07/04/20/omlsiswv_s0f0d11m0_360x360.mp4",
+      "bytes": 423169,
+      "sha256": "a8b33866625bd48e3ecc23fd83bdbcb88f5aa5d9cdcd131e1de2c8ab135c1a04",
+      "transformation": "original MP4; ordinary link only"
+    }
+  ],
+  "retained_unreferenced_duplicates": [
+    "12922345/04.webp",
+    "12922345/07.webp"
+  ],
+  "not_released_duplicate": "12922345/09-body.webp"
+}
