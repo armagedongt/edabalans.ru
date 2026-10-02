@@ -1,0 +1,19 @@
+{
+  "source_id": "10123213",
+  "writer_validation": "pass",
+  "draft_sha256": "3f0d07e3dc1522e6bc2950cce0ded5f42c0962cad94d0c94847f53b695226641",
+  "independent_reviewer": "/root/batch03_publisher_review",
+  "editorial_review": "clean",
+  "source_dom_independently_confirmed": true,
+  "exact_replacements": 13,
+  "original_media_count": 3,
+  "body_media_count": 3,
+  "rendered_strong_count": 8,
+  "rendered_em_count": 2,
+  "rendered_h2_count": 5,
+  "hero_show": false,
+  "author_meaning_numbers_humor_preserved": true,
+  "full_scientific_pass": false,
+  "production_delivery": "pending",
+  "findings": []
+}

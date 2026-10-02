@@ -2,6 +2,39 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "10123213",
+      "slug": "vse-znayut-nikto-ne-delaet",
+      "title": "Все знают, никто не делает",
+      "excerpt": "Зарядка — забавная штука. Ни разу не встречал человека, кто бы не знал, что это такое. При этом знаю лишь единицы тех, кто ее реально делает, хотя бы от раза к разу.",
+      "category": "Тренировки",
+      "body_file": "10123213.md",
+      "hero": {
+        "file": "10123213/01.webp",
+        "alt": "Кадр из телесюжета",
+        "provenance": "https://cs13.pikabu.ru/post_img/big/2023/04/08/10/1680970929192046544.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "10123213/01.webp",
+        "alt": "Кадр из телесюжета",
+        "provenance": "https://cs13.pikabu.ru/post_img/big/2023/04/08/10/1680970929192046544.jpg",
+        "fit": "cover"
+      },
+      "related_source_ids": ["training-combined-2023", "11522121", "14102926"],
+      "cta": "masterclass",
+      "status": "published",
+      "media": ["10123213/01.webp", "10123213/02.webp", "10123213/03.webp"],
+      "source_provenance": {
+        "urls": ["https://pikabu.ru/story/vse_znayut_nikto_ne_delaet_10123213"],
+        "external_ids": ["10123213"],
+        "source_uri": "content://item/b871a971-6389-41d4-92ca-cc761d1be56b",
+        "source_revision": 1,
+        "source_date": "2023-04-08T21:18:52+03:00",
+        "sha256": ["b47661efb2f9d8b895f2097b4f8e3663b50df229366ff4415d41283172000ea9"],
+        "source_basis": "full_source"
+      }
+    },
+    {
         "source_id": "habits-formation-and-one-percent",
         "slug": "chto-vy-ne-ponimaete-o-formirovanii-privychek",
         "title": "Что вы не понимаете о формировании привычек?",

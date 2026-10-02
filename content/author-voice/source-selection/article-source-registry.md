@@ -9,11 +9,11 @@
 
 ## Сводка
 
-- В блоге: **44** канонические семьи.
+- В блоге: **45** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **54** внешних проявлений.
+- Уже привязано к канонам блога: **55** внешних проявлений.
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **240**.
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **239**.
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -28,6 +28,7 @@
 | Борьба с лишним весом: почему одних шагов недостаточно | [blog:borba-s-lishnim-vesom-pochemu-shagov-nedostatochno](https://blog.похудение-это-есть.рф/articles/borba-s-lishnim-vesom-pochemu-shagov-nedostatochno) | 1 | 0 |
 | Великий пост, похудение и здоровье | [blog:velikiy-post-pohudenie-i-zdorove](https://blog.похудение-это-есть.рф/articles/velikiy-post-pohudenie-i-zdorove) | 1 | 0 |
 | Весы — инструкция по применению | [blog:vesy-instrukciya-po-primeneniyu](https://blog.похудение-это-есть.рф/articles/vesy-instrukciya-po-primeneniyu) | 1 | 0 |
+| Все знают, никто не делает | [blog:vse-znayut-nikto-ne-delaet](https://blog.похудение-это-есть.рф/articles/vse-znayut-nikto-ne-delaet) | 1 | 0 |
 | Главные ошибки в похудении: что нужно знать до того, как испытывать голод | [blog:glavnye-oshibki-v-pohudenii-do-goloda](https://blog.похудение-это-есть.рф/articles/glavnye-oshibki-v-pohudenii-do-goloda) | 1 | 0 |
 | Гликемический индекс — это лишнее! | [blog:glikemicheskiy-indeks-eto-lishnee](https://blog.похудение-это-есть.рф/articles/glikemicheskiy-indeks-eto-lishnee) | 1 | 1 |
 | Диета. Срыв. И математика | [blog:dieta-sryv-i-matematika](https://blog.похудение-это-есть.рф/articles/dieta-sryv-i-matematika) | 1 | 0 |
@@ -71,7 +72,7 @@
 | Тип | Количество | Что означает |
 |---|---:|---|
 | `deferred_not_now` | 18 | Владелец прямо решил пока не брать. |
-| `editorial_review` | 91 | Полная статья-кандидат: проверить семейство, пользу, актуальность и выбрать основу. |
+| `editorial_review` | 90 | Полная статья-кандидат: проверить семейство, пользу, актуальность и выбрать основу. |
 | `incomplete_draft` | 13 | Черновик/заметка: не считать готовой статьёй. |
 | `obsolete_product_archive` | 4 | Неактуальный архив старого МК: сохранить для истории, не предлагать к публикации и не использовать как актуальную авторскую основу. |
 | `owner_review_later` | 3 | Нужен отдельный просмотр владельцем. |
@@ -112,7 +113,6 @@
 | A212 | telegraph | [Витамин N](https://telegra.ph/Vitamin-N-11-16) | `incomplete_draft` | 0 |
 | A214 | telegraph | [Вода](https://telegra.ph/Voda-01-07-2) | `private_product_material` | 0 |
 | A037 | pikabu | [Вот вам и ОЛИВЬЕ!1](https://pikabu.ru/story/vot_vam_i_olive_10978866) | `short_reserve` | 0 |
-| A002 | pikabu | [Все знают, никто не делает](https://pikabu.ru/story/vse_znayut_nikto_ne_delaet_10123213) | `editorial_review` | 0 |
 | A250 | telegraph | [Гайд по добавленному сахару](https://telegra.ph/slipnetsa-01-25) | `private_product_material` | 1 |
 | A018 | pikabu | [Гарвардская тарелка курильщика и алкоритмы Пикабу!](https://pikabu.ru/story/garvardskaya_tarelka_kurilshchika_i_alkoritmyi_pikabu_10510751) | `short_reserve` | 0 |
 | A110 | telegraph | [Где справедливость?](https://telegra.ph/111-07-23-18) | `incomplete_draft` | 0 |
