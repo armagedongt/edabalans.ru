@@ -1,0 +1,18 @@
+{
+  "source_id": "11522121",
+  "draft_sha256_crlf": "d3bea5c3aeeb20a70678ad69ed7535f180a02952ce37572fe73140fe33904417",
+  "writer_validation": "pass",
+  "independent_reviewer": "/root/batch03_publisher_review",
+  "editorial_review": "clean",
+  "exact_replacements": 7,
+  "rendered_h2_count": 5,
+  "rendered_strong_count": 5,
+  "author_meaning_numbers_humor_preserved": true,
+  "manifest_media_unchanged": true,
+  "full_scientific_pass": false,
+  "production_delivery": "API_confirmed_Git_mirror_pending",
+  "editor_version": 4,
+  "public_version": 3,
+  "findings": [],
+  "review_limitations": ["Исходный DOM оформления прочитан исполнителем; независимый reviewer проверил его по предоставленному evidence, не по собственному DOM-снимку."]
+}
