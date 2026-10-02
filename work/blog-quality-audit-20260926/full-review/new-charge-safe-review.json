@@ -14,6 +14,27 @@
   "hero_show": false,
   "author_meaning_numbers_humor_preserved": true,
   "full_scientific_pass": false,
-  "production_delivery": "pending",
-  "findings": []
+  "production_delivery": "confirmed Git canonical seed; API already-published readback, no redundant POST",
+  "findings": [],
+  "production_revision": "96dc5f57484f61f960f74f7f368dcd7fe94617bf",
+  "ci_run": 37073621984,
+  "editor_version": 1,
+  "public_version": 0,
+  "desktop_mobile_pass": true,
+  "own_media_http_hash_pass_count": 3,
+  "media_verification": "HTTP200/hash via backend with public Host; public browser loaded all3; Windows direct TLS revocation lookup offline, not treated as hash pass",
+  "library_use_recorded": true,
+  "library_navigation_version": 5,
+  "canonical_blog_families": 45,
+  "site_health": "ok",
+  "technical_seo": {
+    "description": "first2 author sentences",
+    "canonical": "self",
+    "og_image": "10123213/01.webp",
+    "jsonld": "Article/Person Sergey Vorontsov",
+    "date_fields": "absent; shared technical limitation, not complete SEO pass"
+  },
+  "fixture_code_review": "clean",
+  "fixture_test_review": "clean",
+  "fixture_direct_test": "pass"
 }
