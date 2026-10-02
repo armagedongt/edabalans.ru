@@ -285,7 +285,7 @@ def test_blog_is_indexable_and_sitemap_lists_all_articles() -> None:
     assert "/articles/nepriyatnaya-pravda-pro-med" in sitemap.text
 
 
-def test_every_published_article_and_declared_image_is_served() -> None:
+def test_every_published_article_and_declared_media_is_served() -> None:
     catalog = load_blog_catalog()
     media_root = Path(__file__).resolve().parents[2] / "content" / "blog" / "media"
 
@@ -304,6 +304,10 @@ def test_every_published_article_and_declared_image_is_served() -> None:
         for media_name in (article.hero.file, article.card.file, *article.media):
             media = client.get(f"/blog/media/{media_name}")
             assert media.status_code == 200
+            if Path(media_name).suffix.lower() == ".mp4":
+                assert media.headers["content-type"].startswith("video/mp4")
+                assert media.content == (media_root / media_name).read_bytes()
+                continue
             assert media.headers["content-type"].startswith("image/")
             with Image.open(media_root / media_name) as image:
                 image.load()
