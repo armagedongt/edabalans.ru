@@ -18,15 +18,16 @@
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 34,
   "next_independent_batch": null,
-  "next_source_id": "training-combined-2023",
+  "next_source_id": "12922345",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "training-combined-2023",
+  "current_sequential_source_id": "12922345",
   "current_sequential_stage": "full_source_and_media_review",
-  "autonomous_safe_review_completed_source_ids": ["11927800", "11401696", "tilda-49734795", "tilda-49745867", "tilda-67280331", "13277231", "11269472", "12237133", "11875492", "Sahar-09-18", "11207593", "10999474"],
+  "autonomous_safe_review_completed_source_ids": ["11927800", "11401696", "tilda-49734795", "tilda-49745867", "tilda-67280331", "13277231", "11269472", "12237133", "11875492", "Sahar-09-18", "11207593", "10999474", "training-combined-2023"],
+  "training_confirmed_delivery": {"editor_version":3,"public_version":2,"markdown_sha256_crlf":"470d79c6034365360354bf1fe75f51edf17f1aef5443eb35ee0f200a734edbd9","markdown_sha256_lf":"e924afd3a3bb546bfbf8458355a4ed5fbe906d271f88b879405f29a169f2563b","production_revision":"45d0f1a1e9c3bb672a71cf765fa24c4078bb6cf3","media_http_hash_pass_count":9,"full_scientific_pass":false},
   "pp_recipes_confirmed_delivery": {"editor_version":3,"public_version":2,"markdown_sha256_crlf":"4695018bbfe73bc28764fa28c9e23c6d3ff3c4836fa0c33b70c92b08375c9cbe","production_revision":"7b390c9eb73b84368caf68eacfe9b51f1762e82d","media_http_hash_pass_count":13,"full_scientific_pass":false},
   "gi_confirmed_delivery": {"editor_version":3,"public_version":2,"markdown_sha256_crlf":"008e8cf131ac256167514a87c8be16b857a724b65d9246917855c9373ff3f87c","production_revision":"e7e087d12a7a19be2d53b0e7721f716a715f33ad","media_http_hash_pass_count":9,"full_scientific_pass":false},
   "aspartame_confirmed_delivery": {"editor_version":4,"public_version":3,"markdown_sha256_crlf":"d984b02acc0a8e7c42de5f86287b8e9b3216037d790f0abd88efc0a22baa7483","production_revision":"c2480dfdf98f72d144b7bc1eaf2b1e11b04eaa04","media_http_hash_pass_count":3,"hero_duplicate_hidden":true,"full_scientific_pass":false},
@@ -75,6 +76,7 @@
     "full-review/honey-20261001.md",
     "full-review/aspartame-20261001.md",
     "full-review/gi-20261001.md",
-    "full-review/pp-recipes-20261002.md"
+    "full-review/pp-recipes-20261002.md",
+    "full-review/training-20261002.md"
   ]
 }
