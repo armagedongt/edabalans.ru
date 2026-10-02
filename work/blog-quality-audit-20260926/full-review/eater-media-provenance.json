@@ -6,7 +6,9 @@
   "hero": "01.webp",
   "active_card_after_api_patch": "01.webp",
   "all_visually_inspected": true,
-  "delivery_state": "pending",
+  "delivery_state": "confirmed_Git_assets_API_4_3_browser_desktop_mobile",
+  "declared_media_http_hash_pass_count": 6,
+  "public_browser": {"desktop_width":1280,"mobile_width":390,"horizontal_overflow":false,"all_four_original_images_loaded":true,"body_h2_count":10,"page_h1_count":1,"description":"first_author_paragraph","og_image":"01.webp"},
   "media": [
     {
       "file": "01.webp",
