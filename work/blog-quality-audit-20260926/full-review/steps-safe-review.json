@@ -10,9 +10,18 @@
   "author_meaning_numbers_humor_preserved": true,
   "manifest_media_unchanged": true,
   "full_scientific_pass": false,
-  "production_delivery": "API_confirmed_Git_mirror_pending",
+  "production_delivery": "confirmed",
+  "production_revision": "9cea8db4d111e2bfaacf0848d1c59ff03bd5e249",
+  "ci_run": 37065428185,
+  "markdown_sha256_lf": "78d2bd8e58ed4cd080ba03e1649b494291a42450a798d743cce18fc3443acb11",
+  "desktop_mobile_pass": true,
+  "media_http_hash_pass_count": 4,
+  "library_use_recorded": true,
   "editor_version": 4,
   "public_version": 3,
   "findings": [],
-  "review_limitations": ["Исходный DOM оформления прочитан исполнителем; независимый reviewer проверил его по предоставленному evidence, не по собственному DOM-снимку."]
+  "source_dom_independently_confirmed": true,
+  "release_conflict_resolution_review": "clean; release normalized LF exactly equals reviewed integration article",
+  "neuroslop_risk": "low",
+  "review_limitations": ["Исходное двоеточие после Результаты находится вне bold, в Markdown внутри bold: только оформление, смысл неизменен."]
 }

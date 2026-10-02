@@ -1,0 +1,20 @@
+{
+  "source_id": "11522121",
+  "source_uri": "content://item/8e36c0d2-454f-4e6f-9663-622377f440a8",
+  "original_unique_image_count": 3,
+  "active_body_image_count": 2,
+  "hero": "01.webp",
+  "active_card": "02.webp",
+  "card_fit": "contain",
+  "all_visually_inspected": true,
+  "declared_media_http_hash_pass_count": 4,
+  "checked_at": "2026-10-03",
+  "media": [
+    {"file":"01.webp","bytes":68104,"width":944,"height":934,"sha256":"2f2a66627b9155882c47d69bef7049af206eaa97bc798929728c0b3cb9dca921","http":200,"content_type":"image/webp","active":true},
+    {"file":"02.webp","bytes":31198,"width":825,"height":540,"sha256":"e6ad1ef0a4e47a812ea385437a619585694b1ec75f9b628a8dce3b81b6d289cd","http":200,"content_type":"image/webp","active":true},
+    {"file":"03.webp","bytes":88044,"width":1280,"height":527,"sha256":"9200341b6b3e9f58e226bf025e86f30c64636e34642e48fc5f31066c2c0f4816","http":200,"content_type":"image/webp","active":true},
+    {"file":"card.webp","bytes":85966,"width":1280,"height":720,"sha256":"f6e10d927d37b64cb0c684f7ccf582a7cd09c2b9493c953fb473401b45a95925","http":200,"content_type":"image/webp","active":false,"note":"Старый обрезанный производный файл; не используется и не перезаписан."}
+  ],
+  "public_browser": {"desktop_width":1280,"mobile_width":390,"horizontal_overflow":false,"all_three_images_loaded":true,"body_h2_count":5,"page_h1_count":1,"description":"first_author_paragraph"},
+  "full_scientific_pass": false
+}

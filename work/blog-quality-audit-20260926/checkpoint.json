@@ -1,6 +1,6 @@
 {
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
-  "updated_at": "2026-10-02",
+  "updated_at": "2026-10-03",
   "batch_size": 5,
   "article_count": 44,
   "full_current_text_read_count": 44,
@@ -18,20 +18,21 @@
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 34,
   "next_independent_batch": null,
-  "next_source_id": "11522121",
+  "next_source_id": "11762932",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "11522121",
-  "current_sequential_stage": "full_source_and_current_runtime_read",
+  "current_sequential_source_id": "11762932",
+  "current_sequential_stage": "not_started; previous_11522121_completed",
+  "steps_confirmed_delivery": {"source_id":"11522121","editor_version":4,"public_version":3,"writer_validation":"pass","fresh_safe_review":"clean","production_revision":"9cea8db4d111e2bfaacf0848d1c59ff03bd5e249","ci_run":37065428185,"media_http_hash_pass_count":4,"desktop_mobile_pass":true,"library_use_recorded":true,"full_scientific_pass":false},
   "buffet_confirmed_delivery": {"source_id":"12857458","editor_version":4,"public_version":3,"writer_validation":"pass","fresh_safe_review":"clean","production_revision":"25ffc166179833fbc47a942e96e38fc77689f67e","ci_run":37061348932,"media_http_hash_pass_count":15,"desktop_mobile_pass":true,"library_use_recorded":true,"full_scientific_pass":false},
   "potato_confirmed_delivery": {"source_id":"14183275","editor_version":3,"public_version":2,"writer_validation":"pass","fresh_safe_review":"clean","production_revision":"5db6a86694dcd25327cc3bf7cdb6ae265e654166","ci_run":37059299263,"media_http_hash_pass_count":4,"desktop_mobile_pass":true,"library_use_recorded":true,"full_scientific_pass":false},
   "trainer_confirmed_delivery": {"source_id":"12922345","editor_version":3,"public_version":2,"writer_validation":"pass","fresh_safe_review":"clean","draft_sha256_crlf":"c2acd3a6e46731179a5449152548f60384e98a732c5f3ec094bc91ff7c01b49f","draft_sha256_lf":"547ed4fd3482df995791c65e596f618e1664a65b640af996a6d81890ae572a58","release_revision":"ad8646ce4378bac8842a4ce42232f98673f97d48","ci_run":37052484709,"media_http_hash_pass_count":14,"api_published":true,"desktop_mobile_pass":true,"full_scientific_pass":false},
   "easier_confirmed_delivery": {"source_id":"14021584","editor_version":3,"public_version":2,"writer_validation":"pass","fresh_safe_review":"clean","production_revision":"510f76c0871f5790a03f89b7b40038bb75fcfa84","ci_run":37054559098,"media_http_hash_pass_count":5,"desktop_mobile_pass":true,"full_scientific_pass":false},
   "walking_confirmed_delivery": {"source_id":"14102926","editor_version":4,"public_version":3,"draft_sha256_crlf":"593e65f0329dc4a5191ac8f3501184efbec875ae1530d526e07d3cc130da0128","draft_sha256_lf":"718f931d7c9859003ccedbc7612e4cbc74f38eeef6eb1bc1c0e6434beea6e811","production_revision":"a7b4a669dd22a2fdb55da374443c9358a3e47bfc","ci_run":37057072588,"media_http_hash_pass_count":5,"desktop_mobile_pass":true,"card_versioned_for_immutable_cache":true,"full_scientific_pass":false},
-  "autonomous_safe_review_completed_source_ids": ["11927800", "11401696", "tilda-49734795", "tilda-49745867", "tilda-67280331", "13277231", "11269472", "12237133", "11875492", "Sahar-09-18", "11207593", "10999474", "training-combined-2023", "12922345", "14021584", "14102926", "14183275", "12857458"],
+  "autonomous_safe_review_completed_source_ids": ["11927800", "11401696", "tilda-49734795", "tilda-49745867", "tilda-67280331", "13277231", "11269472", "12237133", "11875492", "Sahar-09-18", "11207593", "10999474", "training-combined-2023", "12922345", "14021584", "14102926", "14183275", "12857458", "11522121"],
   "training_confirmed_delivery": {"editor_version":3,"public_version":2,"markdown_sha256_crlf":"470d79c6034365360354bf1fe75f51edf17f1aef5443eb35ee0f200a734edbd9","markdown_sha256_lf":"e924afd3a3bb546bfbf8458355a4ed5fbe906d271f88b879405f29a169f2563b","production_revision":"45d0f1a1e9c3bb672a71cf765fa24c4078bb6cf3","media_http_hash_pass_count":9,"full_scientific_pass":false},
   "pp_recipes_confirmed_delivery": {"editor_version":3,"public_version":2,"markdown_sha256_crlf":"4695018bbfe73bc28764fa28c9e23c6d3ff3c4836fa0c33b70c92b08375c9cbe","production_revision":"7b390c9eb73b84368caf68eacfe9b51f1762e82d","media_http_hash_pass_count":13,"full_scientific_pass":false},
   "gi_confirmed_delivery": {"editor_version":3,"public_version":2,"markdown_sha256_crlf":"008e8cf131ac256167514a87c8be16b857a724b65d9246917855c9373ff3f87c","production_revision":"e7e087d12a7a19be2d53b0e7721f716a715f33ad","media_http_hash_pass_count":9,"full_scientific_pass":false},
@@ -64,7 +65,7 @@
   "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
   "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
   "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей",
-  "format_targeted_validation_pass_count": 18,
+  "format_targeted_validation_pass_count": 19,
   "publication_hold_source_ids": ["693339"],
   "publication_hold_reason": "Конкретный риск формулировки о безопасности 5–15 литров; смысловая замена требует решения владельца. Действующая статья не снята.",
   "full_review_reports": [
@@ -87,6 +88,7 @@
     "full-review/easier-20261002.md",
     "full-review/walking-20261002.md",
     "full-review/potato-20261002.md",
-    "full-review/buffet-20261002.md"
+    "full-review/buffet-20261002.md",
+    "full-review/steps-20261003.md"
   ]
 }
