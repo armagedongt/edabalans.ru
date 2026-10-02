@@ -1262,7 +1262,7 @@
         "provenance": "https://cs18.pikabu.ru/s/2026/06/28/15/ytnbeolo.webp"
       },
       "card": {
-        "file": "14102926/card.webp",
+        "file": "14102926/card-v2-full.webp",
         "alt": "Обложка карточки «Ходить, чтобы худеть»",
         "provenance": "https://cs18.pikabu.ru/s/2026/06/28/16/linrehoc.jpg"
       },
@@ -1277,7 +1277,8 @@
         "14102926/01.webp",
         "14102926/02.webp",
         "14102926/03.webp",
-        "14102926/card.webp"
+        "14102926/card.webp",
+        "14102926/card-v2-full.webp"
       ],
       "source_provenance": {
         "urls": [
