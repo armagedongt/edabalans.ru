@@ -1,0 +1,55 @@
+{
+  "source_id": "14183275",
+  "source_uri": "content://item/dc313fba-f66a-4ab1-99fd-63a6022af67b",
+  "source_text_sha256": "38d590cc78fd16c4d05346ae858f8fbf24dcdc89e4f723c1a4d5560cfcf5f6dd",
+  "media": [
+    {
+      "file": "14183275/01.webp",
+      "source_url": "https://cs20.pikabu.ru/s/2026/07/23/13/yhncpzvk.webp",
+      "sha256": "2986a743e5c10403f8af006a3a074b64de27dcbbc2ebd59db84b4fd85f4f47a0",
+      "bytes": 17290,
+      "width": 576,
+      "height": 484,
+      "change": "unchanged_existing_asset",
+      "http_status": 200,
+      "mime": "image/webp",
+      "remote_bytes_match": true
+    },
+    {
+      "file": "14183275/02.webp",
+      "source_url": "https://cs18.pikabu.ru/s/2026/07/23/13/klbreual.jpg",
+      "sha256": "c2abf64bc58797bf70ee951d0fe757f80e597eee526412ad9cb51202d11fc49d",
+      "bytes": 23816,
+      "width": 364,
+      "height": 590,
+      "change": "unchanged_existing_asset",
+      "http_status": 200,
+      "mime": "image/webp",
+      "remote_bytes_match": true
+    },
+    {
+      "file": "14183275/03.webp",
+      "source_url": "https://cs20.pikabu.ru/s/2026/07/23/14/5qbsol67.jpg",
+      "sha256": "8e724c26c4381b042bdf30faf8d38dd1abe662a298d1d2e73e41989d4c0a6ad2",
+      "bytes": 17344,
+      "width": 437,
+      "height": 319,
+      "change": "unchanged_existing_asset",
+      "http_status": 200,
+      "mime": "image/webp",
+      "remote_bytes_match": true
+    },
+    {
+      "file": "14183275/card.webp",
+      "source_url": "https://cs20.pikabu.ru/s/2026/07/23/14/5qbsol67.jpg",
+      "sha256": "aecd87850add27e83a40d1fb5dc22037ecadf9cacc87ed9e0ad9f7c8d6a284de",
+      "bytes": 48098,
+      "width": 1280,
+      "height": 720,
+      "change": "unchanged_existing_asset",
+      "http_status": 200,
+      "mime": "image/webp",
+      "remote_bytes_match": true
+    }
+  ]
+}
