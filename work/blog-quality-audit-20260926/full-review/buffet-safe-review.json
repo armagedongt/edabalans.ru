@@ -1,0 +1,19 @@
+{
+  "source_id": "12857458",
+  "draft_sha256_crlf": "75c5221210549ae70ca01196fc2e35bb4466180c4f4159ee25fce5228f4805d6",
+  "writer_validation": "pass",
+  "independent_reviewer": "/root/plants_safe_change_review",
+  "editorial_review": "clean",
+  "delivery_amend_review": "clean",
+  "exact_replacements": 15,
+  "body_image_count": 9,
+  "original_unique_image_count_including_hero": 10,
+  "rendered_list_sizes": [4, 4, 3, 3, 9],
+  "rendered_h2_count": 6,
+  "rendered_h3_count": 6,
+  "author_meaning_numbers_humor_preserved": true,
+  "new_card_url_no_immutable_overwrite": true,
+  "full_scientific_pass": false,
+  "production_delivery": "pending",
+  "findings": []
+}
