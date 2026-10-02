@@ -25,7 +25,7 @@
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "11762932",
-  "current_sequential_stage": "not_started; previous_11522121_completed",
+  "current_sequential_stage": "11762932_writer_pass_fresh_review_pending; API_and_Git_release_not_started",
   "steps_confirmed_delivery": {"source_id":"11522121","editor_version":4,"public_version":3,"writer_validation":"pass","fresh_safe_review":"clean","production_revision":"9cea8db4d111e2bfaacf0848d1c59ff03bd5e249","ci_run":37065428185,"media_http_hash_pass_count":4,"desktop_mobile_pass":true,"library_use_recorded":true,"full_scientific_pass":false},
   "buffet_confirmed_delivery": {"source_id":"12857458","editor_version":4,"public_version":3,"writer_validation":"pass","fresh_safe_review":"clean","production_revision":"25ffc166179833fbc47a942e96e38fc77689f67e","ci_run":37061348932,"media_http_hash_pass_count":15,"desktop_mobile_pass":true,"library_use_recorded":true,"full_scientific_pass":false},
   "potato_confirmed_delivery": {"source_id":"14183275","editor_version":3,"public_version":2,"writer_validation":"pass","fresh_safe_review":"clean","production_revision":"5db6a86694dcd25327cc3bf7cdb6ae265e654166","ci_run":37059299263,"media_http_hash_pass_count":4,"desktop_mobile_pass":true,"library_use_recorded":true,"full_scientific_pass":false},

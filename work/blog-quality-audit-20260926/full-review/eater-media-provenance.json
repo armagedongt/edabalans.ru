@@ -1,0 +1,72 @@
+{
+  "source_id": "11762932",
+  "source_uri": "content://item/3319df5e-3788-4161-bd2d-a61dbf05946f",
+  "original_unique_image_count": 4,
+  "active_body_image_count": 3,
+  "hero": "01.webp",
+  "active_card_after_api_patch": "01.webp",
+  "all_visually_inspected": true,
+  "delivery_state": "pending",
+  "media": [
+    {
+      "file": "01.webp",
+      "source_url": "https://cs15.pikabu.ru/post_img/big/2024/08/30/11/1725043008284128702.png",
+      "sha256": "83658ee6ab41d56ab625a77f9a97d833d2748ebc013b6a02a3816f17efb0a89f",
+      "bytes": 149316,
+      "width": 1200,
+      "height": 675,
+      "active": true
+    },
+    {
+      "file": "02.webp",
+      "source_url": "https://cs15.pikabu.ru/post_img/big/2024/08/30/11/1725043160191574298.png",
+      "sha256": "51ad1d9971c330f52057fb9eb894041924d6043b5c3a001f3ef95d97a0afad72",
+      "bytes": 92984,
+      "width": 717,
+      "height": 772,
+      "active": true
+    },
+    {
+      "file": "03.webp",
+      "source_url": "https://cs15.pikabu.ru/post_img/2024/08/30/11/1725044816173262097.jpg",
+      "sha256": "892681f42835797dced14f848091120a6c23755279a5bf8a48571cf5c5604b32",
+      "bytes": 22878,
+      "width": 570,
+      "height": 381,
+      "active": true
+    },
+    {
+      "file": "04.webp",
+      "source_url": "https://cs15.pikabu.ru/post_img/2024/08/30/11/1725044816173262097.jpg",
+      "sha256": "892681f42835797dced14f848091120a6c23755279a5bf8a48571cf5c5604b32",
+      "bytes": 22878,
+      "width": 570,
+      "height": 381,
+      "active": false
+    },
+    {
+      "file": "card.webp",
+      "source_url": "https://cs15.pikabu.ru/post_img/2024/08/30/11/1725044816173262097.jpg",
+      "sha256": "055f0b7f1d093adc91c1eae8bba2ab94e7df3323f978965f1f77111715252395",
+      "bytes": 45792,
+      "width": 1280,
+      "height": 720,
+      "active": false
+    },
+    {
+      "file": "05-source.webp",
+      "source_url": "https://cs15.pikabu.ru/post_img/big/2024/08/30/11/1725042827194494724.png",
+      "sha256": "8a0d0b04775847efb13c3f16ffe874ffe3e6ed772ef9d2bc9c5d600530ed6e8a",
+      "bytes": 89816,
+      "width": 766,
+      "height": 765,
+      "active": true
+    }
+  ],
+  "notes": [
+    "04 duplicates 03; retained not used",
+    "old card derived from03 not original04; retained not overwritten",
+    "05 original missing image restored at source position"
+  ],
+  "full_scientific_pass": false
+}
