@@ -14,6 +14,13 @@
   "author_meaning_numbers_humor_preserved": true,
   "new_card_url_no_immutable_overwrite": true,
   "full_scientific_pass": false,
-  "production_delivery": "pending",
+  "production_delivery": "confirmed",
+  "production_revision": "25ffc166179833fbc47a942e96e38fc77689f67e",
+  "ci_run": 37061348932,
+  "editor_version": 4,
+  "public_version": 3,
+  "markdown_sha256_lf": "de886d62a8b4762100728e6e1bf2c9f988e302e74c07607f1893e6a3e1f8e03b",
+  "desktop_mobile_pass": true,
+  "media_http_hash_pass_count": 15,
   "findings": []
 }
