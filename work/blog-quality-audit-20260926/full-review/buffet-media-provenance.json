@@ -5,7 +5,8 @@
   "active_body_image_count": 9,
   "hero": "01.webp",
   "all_visually_inspected": true,
-  "delivery_state": "awaiting_Git_assets_and_API",
+  "delivery_state": "confirmed_Git_assets_API_4_3_browser_desktop_mobile",
+  "declared_media_http_hash_pass_count": 15,
   "media": [
     {
       "file": "01.webp",
