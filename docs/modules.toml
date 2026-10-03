@@ -376,9 +376,11 @@ admin_catalog = [{ category = "commerce", order = 10, url = "/admin/products", l
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.catalog.md"
 depends_on = ["platform.auth", "platform.commerce"]
+reads_from = ["products.public-site", "platform", "platform.commerce", "messaging.telegram", "messaging.max", "operations.proxy", "operations.health"]
 owns_files = [
   "backend/app/product_catalog_service.py", "backend/app/product_catalog_routes.py",
   "backend/app/static/product-catalog-editor.*", "docs/knowledge-base/PRODUCT_CATALOG.md",
+  "docs/knowledge-base/PROJECT_IDENTITY.md",
   "backend/migrations/versions/20260830_0031_product_copy.py",
   "backend/tests/test_product_copy_migration.py",
 ]

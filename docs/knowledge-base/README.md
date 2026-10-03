@@ -52,6 +52,7 @@ commit только ради производной карты.
 
 | Область | Канонический вход |
 |---|---|
+| Названия сайта, адреса, каналы, боты и поиск продуктовых фактов | `PROJECT_IDENTITY.md` → владелец конкретного факта |
 | Мастер-класс | `modules/masterclass/README.md` |
 | Telegram | `modules/telegram/README.md` |
 | Продукты и тарифы | `PRODUCTS.md`, `PRICING_CATALOG.md` |
