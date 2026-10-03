@@ -407,7 +407,22 @@ def test_confirmed_static_batch_is_published_and_excluded_stories_are_not_public
         if article["status"] == "published"
         for source_id in article.get("source_provenance", {}).get("external_ids", [])
     }
-    assert excluded_source_ids.isdisjoint(published_provenance_ids)
+    # The owner approved these two historical posts only as sources of the
+    # existing combined walking article, not as separate publications.
+    merged_walk_ids = {"11528528", "11553382"}
+    assert (excluded_source_ids - merged_walk_ids).isdisjoint(published_provenance_ids)
+    walk = next(
+        article for article in manifest["articles"]
+        if article["slug"] == "kak-ya-reshil-proyti-100000-shagov"
+    )
+    assert walk["status"] == "published"
+    assert walk["source_id"] == "2e269fdc52d600a64753"
+    assert merged_walk_ids <= set(walk["source_provenance"]["external_ids"])
+    for article in manifest["articles"]:
+        if article["status"] == "published" and article["slug"] != walk["slug"]:
+            assert merged_walk_ids.isdisjoint(
+                article.get("source_provenance", {}).get("external_ids", [])
+            )
     manifest_by_slug = {article["slug"]: article for article in manifest["articles"]}
     for slug, source_id in batch_sources.items():
         article = manifest_by_slug[slug]
