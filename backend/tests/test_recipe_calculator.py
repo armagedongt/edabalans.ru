@@ -496,7 +496,7 @@ def test_original_copy_is_exact_private_and_independent_of_later_original_edits(
     assert personal_copy.json()["recipe"]["totals"]["all"]["protein"] == "3.0"
     sign_in(client, "original-stranger@example.test")
     assert client.get(f"/api/apps/recipes/{saved['id']}").status_code == 404
-    assert client.post("/api/apps/recipes", json={**body, "ingredients": updated_body["ingredients"]}).status_code == 400
+    assert client.post("/api/apps/recipes", json={**body, "ingredients": copy_ingredients}).status_code == 400
     assert client.get("/api/apps/recipes/originals").json() == originals
 
 
