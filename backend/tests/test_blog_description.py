@@ -11,6 +11,19 @@ def test_opening_sentences_skip_heading_media_and_preserve_inline_text():
     assert blog_description(source) == 'Первое предложение? Второе предложение!'
 
 
+@pytest.mark.parametrize(('source', 'expected'), [
+    ('Первое. **Сначала база**. Третье.', 'Первое. Сначала база.'),
+    ('**Первое**? [Второе](https://example.com). Третье.', 'Первое? Второе.'),
+    ('*Первое* (со [ссылкой](https://example.com)). Второе & <3.',
+     'Первое (со ссылкой). Второе & <3.'),
+    ('> **Первое** предложение.\n> Второе со *словом*.\n> Третье.',
+     'Первое предложение. Второе со словом.'),
+    ('> Первая\n> фраза. Вторая фраза. Третья.', 'Первая фраза. Вторая фраза.'),
+])
+def test_inline_formatting_does_not_insert_description_spaces(source, expected):
+    assert blog_description(source) == expected
+
+
 def test_explicit_description_wins_without_becoming_article_body():
     body = '\nПервое. Второе.\n'
     source = '---\ndescription: ' + json.dumps('Мой "ручной" анонс.', ensure_ascii=False) + '\n---\n' + body

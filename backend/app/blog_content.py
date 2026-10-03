@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import lru_cache
-from html import escape
+from html import escape, unescape
 import json
 import os
 from pathlib import Path
@@ -121,7 +121,11 @@ def blog_description(markdown: str) -> str:
         return explicit
     html = markdown_to_article_html(body, component_renderer=lambda *_: "")
     paragraphs = re.findall(r"<(?:p|blockquote|li)>(.*?)</(?:p|blockquote|li)>", html, re.DOTALL)
-    text = " ".join(" ".join(article_plain_text(p).split()) for p in paragraphs)
+    # The renderer has sanitized these paragraphs; inline tags do not add spaces.
+    text = " ".join(
+        " ".join(unescape(re.sub(r"<[^>]+>", "", p.replace("<br>", " "))).split())
+        for p in paragraphs
+    )
     sentences = re.split(r"(?<=[.!?…])\s+", text)
     opening = " ".join(sentences[:2]).strip()
     if len(opening) > 300:
