@@ -1,0 +1,12 @@
+{
+  "status": "clean",
+  "findings": [],
+  "reviewer": "/root/batch03_publisher_review",
+  "draft_sha256": "450ec5958d556feecfda6be3b74f6a70e4e321da3921068a9b94091060b87e91",
+  "checks": ["exact source DOM and API baseline compared", "four replacements reproduce draft with all author words preserved", "15 strong, 2 em, 3 H2, 8 blockquote verified", "three source MP4 associations confirmed; ordinary links, not embedding", "FAQ paragraph and generated card retained unchanged", "writer artifacts and validation hashes agree"],
+  "full_scientific_pass": false,
+  "video_content_reviewed": false,
+  "original_videos_hosted_on_own_server": false,
+  "source_strikethrough_restored": false,
+  "production_delivery_verified": false
+}
