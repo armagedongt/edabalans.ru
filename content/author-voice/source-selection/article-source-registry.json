@@ -155,9 +155,9 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 47,
-    "canonical_linked_external_records": 68,
-    "deferred_families": 232,
+    "canonical_blog_families": 48,
+    "canonical_linked_external_records": 69,
+    "deferred_families": 231,
     "deferred_by_kind": {
       "deferred_not_now": 18,
       "editorial_review": 84,
@@ -165,7 +165,7 @@
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
       "private_product_material": 43,
-      "short_reserve": 42,
+      "short_reserve": 41,
       "technical_or_service": 25
     },
     "candidate_duplicate_pairs": 75
@@ -415,6 +415,40 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:vot-vam-i-olive",
+      "title": "Вот вам и ОЛИВЬЕ!",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "10978866",
+        "slug": "vot-vam-i-olive",
+        "url": "https://blog.похудение-это-есть.рф/articles/vot-vam-i-olive",
+        "body_file": "content/blog/articles/10978866.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A037",
+          "source": "pikabu",
+          "external_id": "10978866",
+          "title": "Вот вам и ОЛИВЬЕ!1",
+          "url": "https://pikabu.ru/story/vot_vam_i_olive_10978866",
+          "published_at": "2023-12-31T12:14:56+03:00",
+          "characters": 3204,
+          "role": "direct_source",
+          "provenance": "content://item/d2e91831-5123-4747-8ad5-2696f72f04a5",
+          "text_sha256": "fe7b4c6f70539d0e8d00e72133e6bc2ab5af9e8fed8b2fdbcf70133ffd553639"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_exact_source_verified",
+      "owner_source_decisions": {
+        "A037": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": "A037",
+      "source_comparison": "work/blog-quality-audit-20260926/new/10978866/preparation-20261003.md"
     },
     {
       "family_id": "blog:vse-znayut-nikto-ne-delaet",
@@ -2303,7 +2337,7 @@
       "title": "В своем уме, что ли? Фрукты... ограничивать... просто так, без мед. показаний?!",
       "disposition": "deferred",
       "deferred_kind": "short_reserve",
-      "reason": "Материал 3000–3999 знаков; сначала оценить самостоятельную пользу.",
+      "reason": "Последняя поимённая поправка владельца: банк, прежнее в блог отменено. Историческая размерная метка short_reserve не разрешает публикацию.",
       "members": [
         {
           "catalog_id": "A049",
@@ -2321,7 +2355,7 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
-        "A049": "publish_next"
+        "A049": "bank"
       }
     },
     {
@@ -2530,32 +2564,6 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {}
-    },
-    {
-      "family_id": "deferred:A037",
-      "title": "Вот вам и ОЛИВЬЕ!1",
-      "disposition": "deferred",
-      "deferred_kind": "short_reserve",
-      "reason": "Материал 3000–3999 знаков; сначала оценить самостоятельную пользу.",
-      "members": [
-        {
-          "catalog_id": "A037",
-          "source": "pikabu",
-          "external_id": "10978866",
-          "title": "Вот вам и ОЛИВЬЕ!1",
-          "url": "https://pikabu.ru/story/vot_vam_i_olive_10978866",
-          "published_at": "2023-12-31T12:14:56+03:00",
-          "characters": 3204,
-          "role": "unmerged_source",
-          "provenance": "content://item/d2e91831-5123-4747-8ad5-2696f72f04a5",
-          "text_sha256": "fe7b4c6f70539d0e8d00e72133e6bc2ab5af9e8fed8b2fdbcf70133ffd553639"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A037": "publish_next"
-      }
     },
     {
       "family_id": "deferred:A250",
