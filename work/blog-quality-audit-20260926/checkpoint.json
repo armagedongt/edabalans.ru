@@ -30,7 +30,7 @@
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "11277666",
-  "current_sequential_stage": "ozempik_published_verified_next_exact_source_pending",
+  "current_sequential_stage": "constipation_reviewed_main_ci_pending",
   "ozempik_prepared": {
     "source_id": "13327360",
     "writer_validation": "pass",
@@ -726,5 +726,17 @@
     "media_http_hash_pass": 1,
     "writer_validation": "pass",
     "desktop_mobile_dom_geometry_pass": true
+  },
+  "constipation_prepared": {
+    "source_id": "11277666",
+    "baseline_editor_version": 3,
+    "writer_validation": "pass",
+    "draft_sha256": "29b07008a52e4bd87f825eef1eb546c4f49901b07956078534fe52ff02d171de",
+    "independent_review": "clean",
+    "main_revision": "fab1de76999fd48560354733cbbaebb4c6911a01",
+    "ci_run": 37121628901,
+    "ci_conclusion": null,
+    "published_verified": false,
+    "full_scientific_pass": false
   }
 }
