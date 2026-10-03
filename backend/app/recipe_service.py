@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import uuid
+from copy import deepcopy
 from decimal import Decimal, ROUND_HALF_UP
 from fractions import Fraction
 from typing import Any
@@ -14,6 +15,7 @@ from app.recipe_models import NutritionProduct, RecipeBook, RecipeIngredient
 
 INTEGER_RE = re.compile(r"^[0-9]+$")
 NUTRITION_RE = re.compile(r"^[0-9]+(?:[.,][0-9]{1,3})?$")
+QUANTITY_RE = re.compile(r"^[0-9]+(?:[.,][0-9]{1,28})?$")
 NUTRIENTS = ("protein", "fat", "carbohydrate", "calories")
 MAX_WEIGHT = 99999
 CURATED_CATALOG_PREFIX = "curated://recipe-catalog/"
@@ -42,6 +44,20 @@ def integer(value: Any, field: str, *, positive: bool = False, maximum: int | No
     if maximum is not None and result > maximum:
         raise ValueError(f"{field}: максимум {maximum}")
     return result
+
+
+def quantity(value: Any, field: str) -> Decimal:
+    raw = str(value).strip()
+    if isinstance(value, bool) or len(raw) > 35 or not QUANTITY_RE.fullmatch(raw):
+        raise ValueError(f"{field}: введите вес цифрами")
+    number = Decimal(raw.replace(",", "."))
+    if not 1 <= number <= MAX_WEIGHT:
+        raise ValueError(f"{field}: от 1 до 99 999 г")
+    return number
+
+
+def quantity_payload(value: Decimal) -> int | str:
+    return int(value) if value == int(value) else format(value, "f").rstrip("0")
 
 
 def nutrition_decimal(value: Any, field: str, maximum: int) -> Decimal:
@@ -112,7 +128,11 @@ def _recipe_totals(
     total.update(weight=0, yield_g=recipe.yield_g, rows=[])
     try:
         for item in _ingredients(db, recipe.id):
-            if item.nutrition_product_id:
+            if item.nutrition_snapshot is not None:
+                source = deepcopy(item.nutrition_snapshot)
+                source.update(id=str(item.id), kind="snapshot", isPersonal=True)
+                coefficients = {key: Fraction(int(source["exact"][key]["numerator"]), int(source["exact"][key]["denominator"])) for key in NUTRIENTS}
+            elif item.nutrition_product_id:
                 product = db.get(NutritionProduct, item.nutrition_product_id)
                 if product is None or product.owner_user_id not in (None, recipe.owner_user_id):
                     raise ValueError("Продукт в рецепте недоступен")
@@ -123,7 +143,7 @@ def _recipe_totals(
                 if nested is None or nested.deleted_at is not None or nested.owner_user_id != recipe.owner_user_id:
                     raise ValueError("Вложенный рецепт больше недоступен")
                 nested_total = _recipe_totals(db, nested, seen, cache)
-                coefficients = {key: nested_total[key] / nested.yield_g for key in NUTRIENTS}
+                coefficients = {key: nested_total[key] / Fraction(nested.yield_g) for key in NUTRIENTS}
                 source = _recipe_source(nested, nested_total)
             # Values are in 1e-5 units; a product's per100_milli times grams is exact.
             values = {key: Fraction(coefficients[key]) * item.weight_g for key in NUTRIENTS}
@@ -151,8 +171,8 @@ def _values_payload(values: dict[str, Any], factor: Fraction = Fraction(1)) -> d
 def _recipe_source(recipe: RecipeBook, totals: dict[str, Any]) -> dict[str, Any]:
     return {
         "id": str(recipe.id), "kind": "recipe", "name": recipe.title,
-        **_values_payload(totals, Fraction(100, recipe.yield_g)), "isPersonal": True,
-        "exact": _exact_payload({key: totals[key] / recipe.yield_g for key in NUTRIENTS}, "per100_milli"),
+        **_values_payload(totals, Fraction(100) / Fraction(recipe.yield_g)), "isPersonal": True,
+        "exact": _exact_payload({key: totals[key] / Fraction(recipe.yield_g) for key in NUTRIENTS}, "per100_milli"),
     }
 
 
@@ -178,13 +198,13 @@ def recipe_payload(db: Session, recipe: RecipeBook) -> dict[str, Any]:
             "exact": _exact_payload(row["values"], "1e-5"), "ranks": rank,
         })
     return {
-        "id": str(recipe.id), "title": recipe.title, "yield": recipe.yield_g,
-        "portion": recipe.portion_g, "version": recipe.version, "ingredients": rows,
+        "id": str(recipe.id), "title": recipe.title, "notes": recipe.notes, "yield": quantity_payload(recipe.yield_g),
+        "portion": quantity_payload(recipe.portion_g), "version": recipe.version, "ingredients": rows,
         "totals": {
-            "weight": str(totals["weight"]), "yield": str(recipe.yield_g), "portion": str(recipe.portion_g),
+            "weight": str(totals["weight"]), "yield": str(quantity_payload(recipe.yield_g)), "portion": str(quantity_payload(recipe.portion_g)),
             "all": _values_payload(totals),
-            "per100": _values_payload(totals, Fraction(100, recipe.yield_g)),
-            "perPortion": _values_payload(totals, Fraction(recipe.portion_g, recipe.yield_g)),
+            "per100": _values_payload(totals, Fraction(100) / Fraction(recipe.yield_g)),
+            "perPortion": _values_payload(totals, Fraction(recipe.portion_g) / Fraction(recipe.yield_g)),
             "exact": _exact_payload(totals, "1e-5"),
         },
     }
@@ -239,16 +259,38 @@ def validate_ingredients(db: Session, owner_id: uuid.UUID, recipe_id: uuid.UUID 
     if len(values) > 100:
         raise ValueError("В рецепте может быть не более 100 продуктов")
     prepared: list[dict[str, Any]] = []
-    existing_products = {item.nutrition_product_id for item in _ingredients(db, recipe_id)} if recipe_id else set()
+    existing_rows = _ingredients(db, recipe_id) if recipe_id else []
+    existing_products = {item.nutrition_product_id for item in existing_rows}
+    existing_snapshots = {str(item.id): item.nutrition_snapshot for item in existing_rows if item.nutrition_snapshot is not None}
+    originals = None
     for index, row in enumerate(values):
         if not isinstance(row, dict):
             raise ValueError("Некорректная строка продукта")
         kind, source_id = row.get("kind"), row.get("sourceId")
+        weight = integer(row.get("weight"), "Вес", positive=True, maximum=MAX_WEIGHT)
+        if kind in ("original", "snapshot"):
+            if kind == "original":
+                from app.recipe_originals import original_records, resolve_original_source
+                if originals is None:
+                    originals = {card["id"]: card for card in original_records(db)}
+                snapshot = resolve_original_source(db, source_id, cards=originals)
+            else:
+                snapshot = existing_snapshots.get(str(source_id))
+                if snapshot is None:
+                    try:
+                        snapshot_id = uuid.UUID(str(source_id))
+                    except (ValueError, TypeError) as exc:
+                        raise ValueError("Ингредиент сохранённого рецепта недоступен") from exc
+                    owned = db.scalar(select(RecipeIngredient).join(RecipeBook, RecipeBook.id == RecipeIngredient.recipe_id).where(RecipeIngredient.id == snapshot_id, RecipeBook.owner_user_id == owner_id, RecipeIngredient.nutrition_snapshot.is_not(None)))
+                    if owned is None:
+                        raise ValueError("Ингредиент сохранённого рецепта недоступен")
+                    snapshot = owned.nutrition_snapshot
+            prepared.append({"nutrition_product_id": None, "nested_recipe_id": None, "nutrition_snapshot": deepcopy(snapshot), "weight_g": weight, "sort_order": index})
+            continue
         try:
             parsed_id = uuid.UUID(str(source_id))
         except (TypeError, ValueError, AttributeError) as exc:
             raise ValueError("Выберите продукт из подсказки") from exc
-        weight = integer(row.get("weight"), "Вес", positive=True, maximum=MAX_WEIGHT)
         if kind == "product":
             product = db.scalar(select(NutritionProduct).where(NutritionProduct.id == parsed_id, (NutritionProduct.owner_user_id.is_(None)) | (NutritionProduct.owner_user_id == owner_id)))
             if product is None or (not product.is_active and product.id not in existing_products):

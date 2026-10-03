@@ -375,7 +375,7 @@ def test_hidden_source_grandfathered_only_within_original_recipe(recipe_client):
     assert client.put(f"/api/apps/recipes/{other['id']}", json={**body, "version": other["version"]}).status_code == 400
 
 
-@pytest.mark.parametrize("field,value", [("yield", 0), ("yield", 100000), ("portion", 0), ("portion", 101), ("portion", 100000), ("yield", True), ("portion", "1.5")])
+@pytest.mark.parametrize("field,value", [("yield", 0), ("yield", 100000), ("portion", 0), ("portion", 101), ("portion", 100000), ("yield", True), ("portion", "1e2")])
 def test_recipe_weight_parameters_reject_out_of_range_without_write(recipe_client, field, value):
     client, factory = recipe_client
     body = recipe_body(add_product(client))
@@ -432,3 +432,94 @@ def test_foreign_product_recipe_write_and_revoked_resource_are_denied(recipe_cli
         access.revoked_at = datetime.now(timezone.utc)
         db.commit()
     assert client.get("/api/apps/recipes").json()["ok"] is False
+
+
+def seed_original(db, *, active=True):
+    from app.course_material_service import material_source
+    from app.models import ContentItem, ContentItemVersion
+    from scripts.publish_recipe_originals import publish
+
+    source = material_source(db, create=True)
+    item = ContentItem(source_id=source.id, external_id="day-15-recipe-synthetic", canonical_url="https://example.test/synthetic", title="Синтетическая статья", metadata_json={"other_owner": "preserved"})
+    db.add(item); db.flush()
+    version = ContentItemVersion(item_id=item.id, version_no=1, content_hash="1" * 64, text_content="<p>Синтетическое описание.</p>", parser_version="test")
+    db.add(version); db.flush(); item.latest_version_id = version.id; db.flush()
+    card = {"id": "synthetic", "title": "Синтетический оригинал", "active": active, "yield": "75.5", "portion": "37.75", "rows": [["Тестовый ингредиент", "3", "1", "0.01", "0", "4"]]}
+    bundle = {"materials": [{"step_id": item.external_id, "expected_version": 1, "source_hash": "2" * 64, "cards": [card, {"id": "inactive", "title": "Без БЖУ", "active": False}]}]}
+    assert publish(db, bundle, apply=True) == {"materials": 1, "active": int(active), "inactive": 2 - int(active), "applied": True}
+    assert item.metadata_json["other_owner"] == "preserved"
+    return item, bundle
+
+
+def test_original_copy_is_exact_private_and_independent_of_later_original_edits(recipe_client):
+    client, factory = recipe_client
+    with factory() as db:
+        seed_original(db)
+        grant_user(db, "original-stranger@example.test")
+        db.commit()
+    originals = client.get("/api/apps/recipes/originals").json()
+    assert originals == {"ok": True, "originals": [{"id": "synthetic", "title": "Синтетический оригинал"}]}
+    assert client.get("/api/apps/recipes/originals/inactive").status_code == 404
+    original = client.get("/api/apps/recipes/originals/synthetic").json()["recipe"]
+    source = original["ingredients"][0]["source"]
+    assert exact_value(source["exact"], "protein") == Fraction(100000, 3)
+    body = {key: original[key] for key in ("title", "yield", "portion", "notes")}
+    body["ingredients"] = [{"kind": "original", "sourceId": source["id"], "weight": "6", "nutrition_snapshot": {"protein": "forged"}}]
+    response = client.post("/api/apps/recipes", json=body)
+    assert response.status_code == 200, response.text
+    saved = response.json()["recipe"]
+    assert saved["totals"]["all"]["protein"] == "2.0"
+    assert saved["yield"] == "75.5" and saved["portion"] == "37.75"
+    assert saved["notes"] == original["notes"]
+    assert saved["ingredients"][0]["source"]["kind"] == "snapshot"
+    assert client.get("/api/apps/recipes/originals/synthetic").json()["recipe"] == original
+    with factory() as db:
+        from app.course_material_service import material_item
+        from scripts.publish_recipe_originals import publish
+        item = material_item(db, "day-15-recipe-synthetic")
+        metadata = item.metadata_json["recipe_calculator"]
+        cards = metadata["cards"]
+        cards[0]["rows"][0][2] = "100"
+        bundle = {"materials": [{"step_id": item.external_id, "expected_version": 1, "source_hash": "3" * 64, "cards": cards}]}
+        publish(db, bundle, apply=True); db.commit()
+    assert client.post("/api/apps/recipes", json=body).status_code == 400, "a stale original source cannot silently use new data"
+    reopened = client.get(f"/api/apps/recipes/{saved['id']}").json()["recipe"]
+    assert reopened["totals"]["all"]["protein"] == "2.0"
+    snapshot = reopened["ingredients"][0]["source"]
+    updated_body = {**body, "notes": "Порядок\nhttps://example.test/source", "version": reopened["version"], "ingredients": [{"kind": "snapshot", "sourceId": snapshot["id"], "weight": "9"}]}
+    updated = client.put(f"/api/apps/recipes/{saved['id']}", json=updated_body).json()["recipe"]
+    assert updated["totals"]["all"]["protein"] == "3.0"
+    assert updated["notes"] == updated_body["notes"]
+    copy_ingredients = [{"kind": "snapshot", "sourceId": updated["ingredients"][0]["source"]["id"], "weight": "9"}]
+    personal_copy = client.post("/api/apps/recipes", json={**body, "ingredients": copy_ingredients})
+    assert personal_copy.status_code == 200
+    assert personal_copy.json()["recipe"]["totals"]["all"]["protein"] == "3.0"
+    sign_in(client, "original-stranger@example.test")
+    assert client.get(f"/api/apps/recipes/{saved['id']}").status_code == 404
+    assert client.post("/api/apps/recipes", json={**body, "ingredients": updated_body["ingredients"]}).status_code == 400
+    assert client.get("/api/apps/recipes/originals").json() == originals
+
+
+def test_recipe_notes_validation_and_tutorial_completion_are_native_and_idempotent(recipe_client):
+    client, factory = recipe_client
+    with factory() as db:
+        grant_user(db, "tutorial-stranger@example.test")
+        db.commit()
+    home = client.get("/api/apps/recipes").json()
+    assert home["tutorialCompleted"] is False and len(home["help"]) == 6
+    assert "разработ" in home["help"][0]["title"].lower()
+    assert client.post("/api/apps/recipes/tutorial", json={"email": "tutorial-stranger@example.test"}).status_code == 403
+    for _ in range(2):
+        assert client.post("/api/apps/recipes/tutorial", json={}).json() == {"ok": True, "completed": True}
+    assert client.get("/api/apps/recipes").json()["tutorialCompleted"] is True
+    with factory() as db:
+        assert len(db.scalars(select(MasterclassEvent).where(MasterclassEvent.event_key == "recipes_tutorial_completed")).all()) == 1
+    product = add_product(client)
+    for notes in (None, [], 0, "x" * 10001):
+        assert client.post("/api/apps/recipes", json={**recipe_body(product), "notes": notes}).status_code == 400
+    saved = client.post("/api/apps/recipes", json={**recipe_body(product), "notes": "x" * 10000}).json()["recipe"]
+    assert len(saved["notes"]) == 10000
+    without_notes = client.put(f"/api/apps/recipes/{saved['id']}", json={**recipe_body(product), "version": saved["version"]}).json()["recipe"]
+    assert without_notes["notes"] == saved["notes"]
+    sign_in(client, "tutorial-stranger@example.test")
+    assert client.get("/api/apps/recipes").json()["tutorialCompleted"] is False

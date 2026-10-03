@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Index, Integer, Numeric, String, Text, UniqueConstraint, func, text
+from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Index, Integer, JSON, Numeric, String, Text, UniqueConstraint, func, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -42,8 +42,9 @@ class RecipeBook(TimestampMixin, Base):
     id: Mapped[uuid.UUID] = uuid_pk()
     owner_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
-    yield_g: Mapped[int] = mapped_column(Integer, nullable=False)
-    portion_g: Mapped[int] = mapped_column(Integer, nullable=False)
+    notes: Mapped[str] = mapped_column(Text, default="", server_default="", nullable=False)
+    yield_g: Mapped[Decimal] = mapped_column(Numeric(34, 28), nullable=False)
+    portion_g: Mapped[Decimal] = mapped_column(Numeric(34, 28), nullable=False)
     version: Mapped[int] = mapped_column(Integer, default=1, server_default=text("1"), nullable=False)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
@@ -54,13 +55,14 @@ class RecipeIngredient(Base):
         Index("ix_recipe_ingredients_recipe_order", "recipe_id", "sort_order"),
         Index("ix_recipe_ingredients_nested_recipe", "nested_recipe_id"),
         CheckConstraint("weight_g BETWEEN 1 AND 99999", name="ck_recipe_ingredient_weight_bounds"),
-        CheckConstraint("(nutrition_product_id IS NOT NULL) <> (nested_recipe_id IS NOT NULL)", name="ck_recipe_ingredient_single_source"),
+        CheckConstraint("(CASE WHEN nutrition_product_id IS NOT NULL THEN 1 ELSE 0 END + CASE WHEN nested_recipe_id IS NOT NULL THEN 1 ELSE 0 END + CASE WHEN nutrition_snapshot IS NOT NULL THEN 1 ELSE 0 END) = 1", name="ck_recipe_ingredient_single_source"),
     )
 
     id: Mapped[uuid.UUID] = uuid_pk()
     recipe_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("recipe_books.id", ondelete="CASCADE"), index=True)
     nutrition_product_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("nutrition_products.id", ondelete="RESTRICT"))
     nested_recipe_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("recipe_books.id", ondelete="RESTRICT"))
+    nutrition_snapshot: Mapped[dict | None] = mapped_column(JSON(none_as_null=True), nullable=True)
     weight_g: Mapped[int] = mapped_column(Integer, nullable=False)
     sort_order: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)

@@ -467,13 +467,16 @@ parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.recipes.md"
 owns_files = [
   "backend/app/recipe_models.py", "backend/app/recipe_service.py", "backend/app/recipe_routes.py",
+  "backend/app/recipe_originals.py", "backend/scripts/publish_recipe_originals.py",
   "backend/app/recipe_course_service.py", "backend/app/recipe_course_routes.py",
   "backend/tests/test_recipe_course.py",
   "backend/app/static/apps/recipes.html", "backend/scripts/import_recipe_catalog.py",
+  "backend/app/static/apps/recipes-help.md",
   "backend/scripts/curate_recipe_catalog.py", "backend/data/recipe_catalog/**",
   "backend/tests/test_recipe_calculator.py", "backend/tests/test_recipe_catalog_curation.py",
   "backend/migrations/versions/20260827_0027_recipe_calculator.py",
   "backend/migrations/versions/20261003_0050_recipe_yield_portion.py",
+  "backend/migrations/versions/20261003_0051_recipe_notes.py",
   "backend/tests/test_recipe_calculator_migration.py",
   "backend/tests/test_recipe_calculator_vectors.py",
   "backend/tests/browser/recipe-calculator.e2e.mjs",
@@ -483,6 +486,7 @@ owns_files = [
 owns_tables = ["nutrition_products", "recipe_books", "recipe_ingredients"]
 owns_routes = ["*/apps/recipes*", "*/api/apps/recipes*", "*/api/recipes/course*", "*/recipes", "*/recipe-calculator"]
 depends_on = ["platform.auth", "platform.commerce", "operations.imports", "products.masterclass.course"]
+reads_from = ["platform.content"]
 
 [[modules]]
 id = "products.intensive"

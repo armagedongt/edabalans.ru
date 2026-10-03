@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import uuid
+from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -11,10 +12,18 @@ from sqlalchemy.orm import Session
 from app.account_auth_routes import require_native_user
 from app.app_service import AppAccessError, require_user_resource
 from app.database import get_db
+from app.models import MasterclassEvent, User
 from app.recipe_models import NutritionProduct, RecipeBook, RecipeIngredient
-from app.recipe_service import MAX_WEIGHT, assert_recipe_owner, catalog_search, integer, normalize_name, normalized_key, product_payload, product_values, recipe_payload, validate_ingredients
+from app.recipe_service import MAX_WEIGHT, assert_recipe_owner, catalog_search, integer, normalize_name, normalized_key, product_payload, product_values, quantity, recipe_payload, validate_ingredients
+from app.recipe_originals import original_records, original_record, original_source
 
 router = APIRouter()
+TUTORIAL_EVENT = "recipes_tutorial_completed"
+
+
+def _tutorial_slides() -> list[dict[str, str]]:
+    text = (Path(__file__).parent / "static/apps/recipes-help.md").read_text(encoding="utf-8")
+    return [{"title": section.split("\n", 1)[0], "body": section.split("\n", 1)[1].strip()} for section in text.split("\n## ")[1:]]
 
 
 def _error(exc: Exception, status: int = 400) -> JSONResponse:
@@ -37,9 +46,25 @@ def recipes_home(request: Request, db: Session = Depends(get_db)) -> dict[str, A
     try:
         user = _user(request, db)
         recipes = db.scalars(select(RecipeBook).where(RecipeBook.owner_user_id == user.id, RecipeBook.deleted_at.is_(None)).order_by(RecipeBook.updated_at.desc())).all()
-        return {"ok": True, "recipes": [{"id": str(recipe.id), "title": recipe.title, "version": recipe.version, "updatedAt": recipe.updated_at.isoformat()} for recipe in recipes]}
+        completed = db.scalar(select(MasterclassEvent.id).where(MasterclassEvent.user_id == user.id, MasterclassEvent.event_key == TUTORIAL_EVENT)) is not None
+        return {"ok": True, "tutorialCompleted": completed, "help": _tutorial_slides(), "recipes": [{"id": str(recipe.id), "title": recipe.title, "version": recipe.version, "updatedAt": recipe.updated_at.isoformat()} for recipe in recipes]}
     except AppAccessError as exc:
         return {"ok": False, "error": str(exc)}
+
+
+@router.post("/api/apps/recipes/tutorial")
+def recipe_tutorial_complete(request: Request, db: Session = Depends(get_db)) -> JSONResponse:
+    try:
+        user = _user(request, db)
+        # Serialize completions from the same user's tabs before the unique event insert.
+        db.scalar(select(User.id).where(User.id == user.id).with_for_update())
+        event = db.scalar(select(MasterclassEvent.id).where(MasterclassEvent.user_id == user.id, MasterclassEvent.event_key == TUTORIAL_EVENT))
+        if event is None:
+            db.add(MasterclassEvent(user_id=user.id, event_key=TUTORIAL_EVENT, event_type=TUTORIAL_EVENT, placement="recipes", details={}))
+        db.commit()
+        return JSONResponse({"ok": True, "completed": True})
+    except AppAccessError as exc:
+        return _error(exc)
 
 
 @router.get("/api/apps/recipes/catalog")
@@ -48,6 +73,27 @@ def recipes_catalog(request: Request, q: str = Query(min_length=1, max_length=25
         user = _user(request, db)
         return {"ok": True, "items": catalog_search(db, user.id, q)}
     except (AppAccessError, ValueError) as exc:
+        return {"ok": False, "error": str(exc)}
+
+
+@router.get("/api/apps/recipes/originals")
+def originals_list(request: Request, db: Session = Depends(get_db)) -> dict:
+    try:
+        _user(request, db)
+        return {"ok": True, "originals": [{"id": card["id"], "title": card["title"]} for card in original_records(db)]}
+    except AppAccessError as exc:
+        return {"ok": False, "error": str(exc)}
+
+
+@router.get("/api/apps/recipes/originals/{key}")
+def original_get(key: str, request: Request, db: Session = Depends(get_db)) -> dict:
+    try:
+        _user(request, db)
+        card = original_record(db, key)
+        if card is None:
+            raise HTTPException(404, "Оригинальный рецепт недоступен")
+        return {"ok": True, "recipe": {"original": True, "title": card["title"], "yield": card["yield"], "portion": card["portion"], "notes": "Подробный рецепт: https://edabalans.ru/lk?open=masterclass-21:" + card["step_id"], "ingredients": [{"id": original_source(card, index)["id"], "source": original_source(card, index), "weight": int(row[1])} for index, row in enumerate(card["rows"])]}}
+    except AppAccessError as exc:
         return {"ok": False, "error": str(exc)}
 
 
@@ -120,19 +166,22 @@ def _save_recipe(db: Session, user_id: uuid.UUID, body: dict[str, Any], recipe: 
     if "shrinkage" in body:
         raise ValueError("Старый формат с усушкой больше не поддерживается. Обновите приложение и укажите выход и порцию.")
     title = normalize_name(body.get("title"))
-    yield_g = integer(body.get("yield"), "Вес готового блюда", positive=True, maximum=MAX_WEIGHT)
-    portion_g = integer(body.get("portion"), "Вес порции", positive=True, maximum=MAX_WEIGHT)
+    yield_g = quantity(body.get("yield"), "Вес готового блюда")
+    portion_g = quantity(body.get("portion"), "Вес порции")
     if portion_g > yield_g:
         raise ValueError("Вес порции не должен превышать готовый выход")
     if recipe is not None:
         recipe = assert_recipe_owner(db, recipe.id, user_id, lock=True)
         if integer(body.get("version"), "Версия", positive=True) != recipe.version:
             raise HTTPException(status_code=409, detail="Рецепт изменён в другой вкладке. Обновите страницу.")
+    notes = body.get("notes", recipe.notes if recipe else "")
+    if not isinstance(notes, str) or len(notes) > 10000:
+        raise ValueError("Примечания: не более 10 000 символов")
     prepared = validate_ingredients(db, user_id, recipe.id if recipe else None, body.get("ingredients"))
     if recipe is None:
-        recipe = RecipeBook(owner_user_id=user_id, title=title, yield_g=yield_g, portion_g=portion_g); db.add(recipe); db.flush()
+        recipe = RecipeBook(owner_user_id=user_id, title=title, notes=notes, yield_g=yield_g, portion_g=portion_g); db.add(recipe); db.flush()
     else:
-        recipe.title = title; recipe.yield_g = yield_g; recipe.portion_g = portion_g; recipe.version += 1
+        recipe.title = title; recipe.notes = notes; recipe.yield_g = yield_g; recipe.portion_g = portion_g; recipe.version += 1
         db.query(RecipeIngredient).filter(RecipeIngredient.recipe_id == recipe.id).delete(synchronize_session=False)
     for data in prepared: db.add(RecipeIngredient(recipe_id=recipe.id, **data))
     db.flush()

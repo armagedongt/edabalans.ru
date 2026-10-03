@@ -22,12 +22,13 @@ from app.main import app  # noqa: E402
 from app.models import Resource, UserCoursePolicy  # noqa: E402
 from app.product_catalog_service import PRODUCT_CONNECTIONS  # noqa: E402
 from app.recipe_models import NutritionProduct  # noqa: E402
-from test_recipe_calculator import grant_user  # noqa: E402
+from test_recipe_calculator import grant_user, seed_original  # noqa: E402
 
 PRODUCT_CONNECTIONS["recipes"]["maintenance"] = False
 Base.metadata.create_all(engine)
 vectors = json.loads(Path(__file__).with_name("recipe-calculator-vectors.json").read_text(encoding="utf-8"))
 with SessionLocal() as db:
+    seed_original(db)
     user = grant_user(db, "recipe-browser@example.test")
     grant_user(db, "recipe-other@example.test")
     course = Resource(code="ACCESS_RECIPES", name="Тестовый курс", status="active")

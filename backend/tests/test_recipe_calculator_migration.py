@@ -3,6 +3,7 @@
 import importlib.util
 import os
 import uuid
+from decimal import Decimal
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
@@ -52,7 +53,7 @@ def migration_engine(request):
     return engine
 
 
-def legacy_tables(engine):
+def legacy_tables(engine, *, full_source=False):
     metadata = sa.MetaData()
     books = sa.Table(
         "recipe_books", metadata,
@@ -66,6 +67,7 @@ def legacy_tables(engine):
         sa.Column("id", sa.Uuid(), primary_key=True),
         sa.Column("recipe_id", sa.Uuid(), sa.ForeignKey("recipe_books.id"), nullable=False),
         sa.Column("nested_recipe_id", sa.Uuid(), sa.ForeignKey("recipe_books.id")),
+        *([sa.Column("nutrition_product_id", sa.Uuid()), sa.CheckConstraint("(nutrition_product_id IS NOT NULL AND nested_recipe_id IS NULL) OR (nutrition_product_id IS NULL AND nested_recipe_id IS NOT NULL)", name="ck_recipe_ingredient_single_source")] if full_source else []),
         sa.Column("weight_g", sa.Integer(), nullable=False),
         sa.CheckConstraint("weight_g > 0", name="ck_recipe_ingredient_weight_positive"),
     )
@@ -73,13 +75,52 @@ def legacy_tables(engine):
     return books, ingredients
 
 
-def migrate(connection):
-    path = Path(__file__).parents[1] / "migrations/versions/20261003_0050_recipe_yield_portion.py"
+def migrate(connection, filename="20261003_0050_recipe_yield_portion.py"):
+    path = Path(__file__).parents[1] / "migrations/versions" / filename
     spec = importlib.util.spec_from_file_location("recipe_mass_migration", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     with Operations.context(MigrationContext.configure(connection)):
         module.upgrade()
+
+
+def test_notes_snapshot_migration_preserves_legacy_and_enforces_one_source(migration_engine):
+    engine = migration_engine
+    books, ingredients = legacy_tables(engine, full_source=True)
+    recipe_id, product_id, row_id = (uuid.uuid4() for _ in range(3))
+    with engine.begin() as connection:
+        connection.execute(books.insert(), {"id": recipe_id, "shrinkage_g": 25})
+        connection.execute(ingredients.insert(), {"id": row_id, "recipe_id": recipe_id, "nutrition_product_id": product_id, "weight_g": 100})
+        migrate(connection)
+        migrate(connection, "20261003_0051_recipe_notes.py")
+    metadata = sa.MetaData()
+    new_books = sa.Table("recipe_books", metadata, autoload_with=engine)
+    new_rows = sa.Table("recipe_ingredients", metadata, autoload_with=engine)
+    if engine.dialect.name == "sqlite":
+        for table, columns in ((new_books, ("id",)), (new_rows, ("id", "recipe_id", "nutrition_product_id", "nested_recipe_id"))):
+            for name in columns:
+                table.c[name].type = sa.Uuid()
+    with engine.connect() as connection:
+        saved = connection.execute(sa.select(new_books)).mappings().one()
+        assert saved["notes"] == "" and saved["yield_g"] == saved["portion_g"] == 75
+        old_row = connection.execute(sa.select(new_rows)).mappings().one()
+        assert uuid.UUID(str(old_row["nutrition_product_id"])) == product_id and old_row["nutrition_snapshot"] is None
+    snapshot = {"exact": {"unit": "per100_milli", "protein": {"numerator": "100000", "denominator": "3"}}}
+    with engine.begin() as connection:
+        connection.execute(new_rows.insert(), {"id": uuid.uuid4(), "recipe_id": recipe_id, "weight_g": 6, "nutrition_snapshot": snapshot})
+    for values in ({}, {"nutrition_product_id": product_id, "nutrition_snapshot": snapshot}, {"nested_recipe_id": recipe_id, "nutrition_snapshot": snapshot}):
+        with pytest.raises(sa.exc.IntegrityError):
+            with engine.begin() as connection:
+                connection.execute(new_rows.insert(), {"id": uuid.uuid4(), "recipe_id": recipe_id, "weight_g": 1, **values})
+    if engine.dialect.name == "postgresql":
+        periodic = Decimal("320.6666666666666666666666667")
+        with engine.begin() as connection:
+            connection.execute(new_books.update().values(yield_g=Decimal("962"), portion_g=periodic, notes="Порядок\nhttps://example.test/recipe"))
+        with engine.connect() as connection:
+            saved = connection.execute(sa.select(new_books)).mappings().one()
+            assert saved["portion_g"] == periodic
+            assert saved["notes"] == "Порядок\nhttps://example.test/recipe"
+            assert connection.scalar(sa.select(new_rows.c.nutrition_snapshot).where(new_rows.c.nutrition_snapshot.is_not(None))) == snapshot
 
 
 def test_migration_backfills_active_deleted_and_nested_recipes(migration_engine):
