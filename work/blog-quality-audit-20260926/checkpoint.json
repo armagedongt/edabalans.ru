@@ -30,7 +30,7 @@
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "11534645",
-  "current_sequential_stage": "nutritionist_completed_vitamins_exact_source_and_fresh_runtime_pending",
+  "current_sequential_stage": "vitamins_API_published_main_CI_and_rollout_pending",
   "three_errors_confirmed_delivery": {
     "source_id": "13785403",
     "editor_version": 3,
@@ -527,5 +527,18 @@
     "git_production_revision_verified": true,
     "full_scientific_pass": false,
     "ci_run": 37097288427
+  },
+  "vitamins_prepared": {
+    "source_id": "11534645",
+    "writer_validation": "pass",
+    "independent_review": "clean",
+    "baseline_editor_version": 2,
+    "api_version": 3,
+    "public_version": 2,
+    "main_revision": "36737656c211f33025dd183988455d6c7fcdd782",
+    "ci_run": 37098469368,
+    "published_verified": true,
+    "git_production_revision_verified": false,
+    "full_scientific_pass": false
   }
 }
