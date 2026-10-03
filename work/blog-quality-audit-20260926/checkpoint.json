@@ -30,7 +30,7 @@
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "11833079",
-  "current_sequential_stage": "vitamins_completed_harmful_products_exact_source_and_fresh_runtime_pending",
+  "current_sequential_stage": "harmful_products_API_published_main_CI_and_rollout_pending",
   "three_errors_confirmed_delivery": {
     "source_id": "13785403",
     "editor_version": 3,
@@ -546,5 +546,20 @@
     "media_http_hash_pass": 6,
     "library_usage": "recorded",
     "source_strikethrough_restored": false
+  },
+  "harmful_products_prepared": {
+    "source_id": "11833079",
+    "writer_validation": "pass",
+    "independent_review": "clean",
+    "baseline_editor_version": 2,
+    "api_version": 4,
+    "public_version": 3,
+    "main_revision": "9ea30ba7389427a924b9f60cb2f3c3ad7f6ad73b",
+    "published_verified": true,
+    "git_production_revision_verified": false,
+    "full_scientific_pass": false,
+    "ci_run": 37099482475,
+    "writer_phase2_validation": "pass",
+    "writer_phase2_sha256": "3a50d69561fba762be4bb4c66df048dace3972e81c86a9e91555632e25ed6d77"
   }
 }
