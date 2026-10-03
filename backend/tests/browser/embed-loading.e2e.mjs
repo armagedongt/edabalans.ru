@@ -105,6 +105,38 @@ try {
     assert.deepEqual(events,alreadyOpened?['day-15-recipe-caesar']:[['/api/masterclass/course/days/15/open','POST'],'applied','day-15-recipe-caesar'])
     assert.equal(localState.day,15)
   }
+  const recipeNavSource=courseHtml.slice(courseHtml.indexOf('function recipeArticleNavigation('),courseHtml.indexOf('function openArticle('))
+  const recipeOpenSource=courseHtml.slice(courseHtml.indexOf('function openArticle('),courseHtml.indexOf('function openDqsMaterial('))
+  const recipeHandlers=['prev','next','article-outline'].map(id=>courseHtml.split('\n').find(line=>line.includes("document.querySelector('#"+id+"').onclick=")))
+  const recipeNavChecks=await recipeLinks.evaluate(({source,handlers,openSource})=>{
+    document.body.innerHTML='<button id="prev"></button><button id="article-outline"></button><button id="next"></button>'+['article','article-view','day','inline-app-view','questionnaire','messenger-popup','count'].map(id=>'<div id="'+id+'"></div>').join('')
+    const d={number:15,steps:[{id:'kitchen'},{id:'day-15-recipes-part-2'},
+      {id:'caesar',nested:true,parentStepId:'day-15-recipes-part-2'},
+      {id:'closed',nested:true,parentStepId:'day-15-recipes-part-2',hidden:true},
+      {id:'tuna',nested:true,parentStepId:'day-15-recipes-part-2'},
+      {id:'vinaigrette',nested:true,parentStepId:'day-15-recipes-part-2'}]}
+    d.topics=d.steps.map(step=>({stepId:step.id,title:step.id,contentLoaded:true}));const days=Array(15).fill(null);days[14]=d
+    const courseManifest={courseCode:'masterclass-21'},state={day:15},calls=[]
+    const run=new Function('courseManifest','stepIndexById','stepNavigable','stepUnlocked','days','state','openCourseStep','previousVisibleStep','linearNeighbor','openLinearMaterial','advanceCourseStep','returnToDay','openMenu','writeCourseRoute','materialMenu','materialMetaHtml','materialButtonText','renderMenu','renderArticleTopic',
+      'var currentStep,current;'+source+openSource+handlers.join('\n')+';return function(i){openArticle(i)}')(
+        courseManifest,(day,id)=>day.steps.findIndex(s=>s.id===id),(day,i)=>!day.steps[i].hidden&&!day.steps[i].locked,()=>true,days,state,
+        (day,i)=>calls.push(day.steps[i].id),()=>0,()=>null,()=>{},()=>calls.push('advance'),()=>calls.push('day'),()=>calls.push('menu'),()=>{},()=>false,()=>'',()=> 'Далее',()=>{},()=>{})
+    const result=[]
+    for(const index of [2,4,5]){
+      run(index);const prev=document.querySelector('#prev'),next=document.querySelector('#next'),outline=document.querySelector('#article-outline')
+      const start=calls.length;prev.click();outline.click();next.click()
+      result.push({previousDisabled:prev.disabled,nextDisabled:next.disabled,outline:outline.textContent,calls:calls.slice(start)})
+    }
+    run(0);document.querySelector('#article-outline').click()
+    result.push({outline:document.querySelector('#article-outline').textContent,nextDisabled:document.querySelector('#next').disabled,calls:calls.slice(-2)})
+    return result
+  },{source:recipeNavSource,handlers:recipeHandlers,openSource:recipeOpenSource})
+  assert.deepEqual(recipeNavChecks,[
+    {previousDisabled:true,nextDisabled:false,outline:'Полный каталог',calls:['day-15-recipes-part-2','tuna']},
+    {previousDisabled:false,nextDisabled:false,outline:'Полный каталог',calls:['caesar','day-15-recipes-part-2','vinaigrette']},
+    {previousDisabled:false,nextDisabled:true,outline:'Полный каталог',calls:['tuna','day-15-recipes-part-2']},
+    {outline:'Оглавление',nextDisabled:false,calls:['day','menu']}
+  ])
   await recipeLinks.close()
   // The boundary is the real embed + browser DOM/CSS lifecycle, not a mocked loader.
   const page = await browser.newPage()
