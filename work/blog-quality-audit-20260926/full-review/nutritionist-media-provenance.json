@@ -1,0 +1,23 @@
+{
+  "source_id": "11210930",
+  "checked_at": "2026-10-03",
+  "immutable_existing_files_preserved": true,
+  "media": [
+    {
+      "file": "11210930/card.webp",
+      "bytes": 90892,
+      "width": 1200,
+      "height": 800,
+      "sha256": "d6cb6a7b4b8d1fcb9afc7015b15b310b9200ee6bc4387327a5fd46c577dd6398",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "d6cb6a7b4b8d1fcb9afc7015b15b310b9200ee6bc4387327a5fd46c577dd6398",
+      "visually_checked": true,
+      "in_article_body": false,
+      "original_source_url": null,
+      "provenance": "OpenAI ImageGen, редакционная обложка без текста, 2026-09-21"
+    }
+  ],
+  "video_links_http_pass": 3,
+  "original_video_files_own_server": false
+}
