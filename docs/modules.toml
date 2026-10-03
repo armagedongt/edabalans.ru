@@ -589,6 +589,7 @@ owns_files = [
   "backend/app/static/masterclass-feedback.js", "backend/app/static/masterclass-feedback.css",
   "backend/app/static/video-player-development/**",
   "backend/tests/test_masterclass_journey.py",
+  "backend/tests/test_recipe_catalog_access.py",
   "backend/tests/test_masterclass_unlock_schedule.py",
   "backend/migrations/versions/20260822_0015_masterclass_journey.py",
   "backend/migrations/versions/20260823_0017_masterclass_course_progress.py",

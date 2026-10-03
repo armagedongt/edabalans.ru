@@ -336,11 +336,45 @@ def day_access_allowed(day_payload: dict, owned_resources: set[str]) -> bool:
     return not resource or resource in owned_resources
 
 
+def recipe_article_parent(day_payload: dict, step: dict) -> dict | None:
+    """Find the paid catalog converted from the existing part-2 application.
+
+    The earlier day-7 selection keeps its independent publication contract.
+    Children inherit the catalog's existing resource, never a URL permission.
+    """
+    if step.get("kind") != "article" or step.get("contentKind") == "tutorial":
+        return None
+    parent = step
+    if step.get("nested"):
+        parent = next((item for item in day_payload.get("steps", [])
+                       if item.get("id") == step.get("parentStepId")), None)
+    if (not parent or parent.get("kind") != "article" or parent.get("nested")
+            or parent.get("code") != "recipes-part-2"):
+        return None
+    return parent
+
+
 def manifest_for_resources(manifest: dict, owned_resources: set[str]) -> dict:
     result = deepcopy(manifest)
     for day in result.get("days", []):
         if day_access_allowed(day, owned_resources):
             day["accessDenied"] = False
+            protected = [(step, recipe_article_parent(day, step))
+                         for step in day.get("steps", [])]
+            for step, parent in protected:
+                if parent is None:
+                    continue
+                if parent.get("hidden") or parent.get("locked"):
+                    if step.get("nested"):
+                        step.update(hidden=True, locked=True)
+                    continue
+                resource = parent.get("accessResource")
+                if resource and resource not in owned_resources:
+                    if step.get("nested"):
+                        step.update(hidden=True, locked=True)
+                    else:
+                        # Restore the existing purchase application for non-buyers.
+                        step.update(kind="recipes-part-2", accessGate=True)
             continue
         access_code = str(day["accessCode"])
         gate_placement = f"{access_code}-gate"

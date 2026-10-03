@@ -156,7 +156,9 @@ def resolve_masterclass_resource_link(
     settings: Settings,
 ) -> dict:
     from app.course_structure_service import course_context
-    from app.masterclass_routes import course_context_for_member, course_payload
+    from app.masterclass_routes import (
+        course_context_for_member, course_payload, recipe_article_parent,
+    )
 
     base = course_context(db)
     found = next(
@@ -173,7 +175,10 @@ def resolve_masterclass_resource_link(
             "unavailable", target=target, reason_code="target_not_found"
         )
     day, step_index, step = found
-    if step.get("hidden", False) or step.get("locked", False) or step.get("nested", False):
+    parent = recipe_article_parent(base.days[day], step)
+    if (step.get("hidden", False) or step.get("locked", False)
+            or (step.get("nested", False) and parent is None)
+            or (parent is not None and (parent.get("hidden") or parent.get("locked")))):
         return resource_link_response(
             "unavailable", target=target, reason_code="target_not_published"
         )
@@ -183,6 +188,9 @@ def resolve_masterclass_resource_link(
     day_resource = str(base.days[day].get("accessResource") or "ACCESS_MASTERCLASS")
     if day_resource not in owned:
         return missing_resource_offer(target, day_resource)
+    catalog_resource = str(parent.get("accessResource") or "") if parent else ""
+    if catalog_resource and catalog_resource not in owned:
+        return missing_resource_offer(target, catalog_resource)
 
     member = course_context_for_member(db, user.id)
     state = course_payload(db, user, settings, datetime.now(timezone.utc), member)
