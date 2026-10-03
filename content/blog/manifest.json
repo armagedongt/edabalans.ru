@@ -666,7 +666,7 @@
           "file": "d1baceb9e2b6b72013b6/01.webp",
           "alt": "Иллюстрация к статье «Главные ошибки в похудении: что нужно знать до того, как испытывать голод»",
           "provenance": "https://optim.tildacdn.com/tild3536-3763-4064-b739-333335313931/-/format/webp/image.png.webp",
-          "show": true
+          "show": false
         },
         "card": {
           "file": "d1baceb9e2b6b72013b6/01.webp",
@@ -689,7 +689,10 @@
           "d1baceb9e2b6b72013b6/05.webp",
           "d1baceb9e2b6b72013b6/06.webp",
           "d1baceb9e2b6b72013b6/07.webp",
-          "d1baceb9e2b6b72013b6/08.webp"
+          "d1baceb9e2b6b72013b6/08.webp",
+          "d1baceb9e2b6b72013b6/09-source.webp",
+          "11401696/tilda-09-v3-body.webp",
+          "d1baceb9e2b6b72013b6/10-source.webp"
         ],
         "source_provenance": {
           "urls": [

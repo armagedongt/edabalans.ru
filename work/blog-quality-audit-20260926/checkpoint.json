@@ -30,7 +30,7 @@
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "d1baceb9e2b6b72013b6",
-  "current_sequential_stage": "labels_completed_next_full_source_pending",
+  "current_sequential_stage": "errors_source_structure_media_prepared_writer_pass_pending_independent_review_and_release",
   "three_errors_confirmed_delivery": {
     "source_id": "13785403",
     "editor_version": 3,
