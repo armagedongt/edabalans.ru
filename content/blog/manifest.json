@@ -2,6 +2,73 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+      "slug": "12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
+      "title": "12 простых изменений в питании и образе жизни",
+      "excerpt": "Двигаться к своей цели маленькими шагами — не стыдно! Стыдно вообще никуда не двигаться.",
+      "category": "Похудение",
+      "body_file": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11.md",
+      "hero": {
+        "file": "12-changes/01.webp",
+        "alt": "12 простых изменений",
+        "provenance": "https://telegra.ph/file/8e8fdec649e9a5edaf91c.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "12-changes/01.webp",
+        "alt": "12 простых изменений",
+        "provenance": "https://telegra.ph/file/8e8fdec649e9a5edaf91c.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11401696",
+        "Sahar-09-18",
+        "693339"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "12-changes/01.webp",
+        "12-changes/02.webp",
+        "12-changes/03.webp",
+        "12-changes/04.webp",
+        "12-changes/05.webp",
+        "12-changes/06.webp",
+        "12-changes/07.webp",
+        "12-changes/08.webp",
+        "12-changes/09.webp",
+        "12-changes/10.webp",
+        "12-changes/11.webp",
+        "12-changes/12.webp",
+        "12-changes/13.webp",
+        "12-changes/14.webp",
+        "12-changes/15.webp",
+        "12-changes/16.webp",
+        "12-changes/17.webp",
+        "12-changes/18.webp",
+        "12-changes/19.webp",
+        "12-changes/20.webp",
+        "12-changes/21.webp",
+        "12-changes/22.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11"
+        ],
+        "external_ids": [
+          "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11"
+        ],
+        "source_uri": "content://item/a7252010-8672-491b-83a5-23c7b725000c",
+        "source_revision": 1,
+        "source_date": "2024-08-11",
+        "sha256": "ed520ced3e280a3f29e5471353261fa86f51d9684e9404f66bf056564da0d4af",
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "adaptation": "minimal_proofread_original_claims_and_22_images_preserved"
+      }
+    },
+    {
       "source_id": "11448583",
       "slug": "mama-s-dnyom-rozhdeniya",
       "title": "Мама, с днём рождения!!!",

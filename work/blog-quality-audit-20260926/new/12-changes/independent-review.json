@@ -1,0 +1,20 @@
+{
+  "reviewer": "insurance_article_review",
+  "waves": 2,
+  "status": "technical_pass",
+  "reviewed_draft_sha256": "2767d94a41ca015320af70dcb6bbc2fb575cdf3b8e79ccf50dc2b69777dc2751",
+  "final_draft_sha256": "4c92d1f9146157e5a26eea2c5515c6553901598a8d667221a322328ebc78c2dd",
+  "pack_sha256": "b86abf23b5e5e0e5a4ed0598aa9fa552d8b0c2b493cb1b2f56136f3859e15515",
+  "post_review_mechanical_fixes": [
+    "безсознанке→бессознанке",
+    "лишняя запятая после ссылки Мастер-класс удалена"
+  ],
+  "source_members": [
+    "A191"
+  ],
+  "level_3_found": false,
+  "full_scientific_pass": false,
+  "media_count": 22,
+  "author_numbers_changed": false,
+  "owner_notes": "owner-review/12-changes-20261003.md"
+}
