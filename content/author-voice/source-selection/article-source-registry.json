@@ -156,11 +156,11 @@
       "vc.ru": 14
     },
     "canonical_blog_families": 60,
-    "canonical_linked_external_records": 89,
-    "deferred_families": 211,
+    "canonical_linked_external_records": 90,
+    "deferred_families": 210,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 72,
+      "editorial_review": 71,
       "incomplete_draft": 12,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
@@ -476,11 +476,30 @@
           "role": "preferred_basis",
           "provenance": "content://item/7b56622c-c4a8-4935-bf36-366db14c291c",
           "text_sha256": "03f915f794b9c4887960c81450a31b69f58d4e90b009b6f5b772748592e065c4"
+        },
+        {
+          "catalog_id": "A184",
+          "source": "telegraph",
+          "external_id": "Post-02-22-12",
+          "title": "Пост 2026",
+          "url": "https://telegra.ph/Post-02-22-12",
+          "published_at": "2026-02-22T18:29:28+0000",
+          "characters": 13187,
+          "role": "earlier_draft_version",
+          "provenance": "content://item/7ececae6-a9cb-4295-bb2e-e8460a18b510",
+          "text_sha256": "47e500ac47b92f6e05f7c57a08732456a6f40dbe50ed59873c595fb091c216c1"
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "owner_confirmed",
-      "owner_source_decisions": {}
+      "family_evidence": "owner_confirmed_and_full_source_comparison",
+      "owner_source_decisions": {
+        "A184": "earlier_draft_same_family_no_separate_publication"
+      },
+      "preferred_basis": [
+        "A098"
+      ],
+      "source_comparison": "work/blog-quality-audit-20260926/new/lent-compare/comparison-20261004.md",
+      "merge_status": "existing_canon_preserved_earlier_draft_linked"
     },
     {
       "family_id": "blog:vesy-instrukciya-po-primeneniyu",
@@ -5636,32 +5655,6 @@
       ],
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {}
-    },
-    {
-      "family_id": "deferred:A184",
-      "title": "Пост 2026",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A184",
-          "source": "telegraph",
-          "external_id": "Post-02-22-12",
-          "title": "Пост 2026",
-          "url": "https://telegra.ph/Post-02-22-12",
-          "published_at": "2026-02-22T18:29:28+0000",
-          "characters": 13193,
-          "role": "unmerged_source",
-          "provenance": "content://item/7ececae6-a9cb-4295-bb2e-e8460a18b510",
-          "text_sha256": "34ea3cbc286845227e9a23400531c060a9cc05434dee162ee26c044f21f3277a"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A184": "publish_next"
-      }
     },
     {
       "family_id": "deferred:A152",

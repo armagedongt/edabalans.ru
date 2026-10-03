@@ -11,9 +11,9 @@
 
 - В блоге: **60** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **89** внешних проявления (по машиночитаемому реестру).
+- Уже привязано к канонам блога: **90** внешних проявления (по машиночитаемому реестру).
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **211** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **210** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -39,7 +39,7 @@
 | А мне тренер посоветовал… | [blog:a-mne-trener-posovetoval](https://blog.похудение-это-есть.рф/articles/a-mne-trener-posovetoval) | 1 | 1 |
 | Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ? | [blog:belyy-ris-kury-i-vitamin-b1](https://blog.похудение-это-есть.рф/articles/belyy-ris-kury-i-vitamin-b1) | 1 | 0 |
 | Борьба с лишним весом: почему одних шагов недостаточно | [blog:borba-s-lishnim-vesom-pochemu-shagov-nedostatochno](https://blog.похудение-это-есть.рф/articles/borba-s-lishnim-vesom-pochemu-shagov-nedostatochno) | 1 | 0 |
-| Великий пост, похудение и здоровье | [blog:velikiy-post-pohudenie-i-zdorove](https://blog.похудение-это-есть.рф/articles/velikiy-post-pohudenie-i-zdorove) | 1 | 0 |
+| Великий пост, похудение и здоровье | [blog:velikiy-post-pohudenie-i-zdorove](https://blog.похудение-это-есть.рф/articles/velikiy-post-pohudenie-i-zdorove) | 2 | 0 |
 | Весы — инструкция по применению | [blog:vesy-instrukciya-po-primeneniyu](https://blog.похудение-это-есть.рф/articles/vesy-instrukciya-po-primeneniyu) | 1 | 0 |
 | Вот вам и ОЛИВЬЕ! | [blog:vot-vam-i-olive](https://blog.похудение-это-есть.рф/articles/vot-vam-i-olive) | 1 | 0 |
 | Все знают, никто не делает | [blog:vse-znayut-nikto-ne-delaet](https://blog.похудение-это-есть.рф/articles/vse-znayut-nikto-ne-delaet) | 1 | 0 |
@@ -227,7 +227,6 @@
 | A185 | telegraph | [Повелитель цифр](https://telegra.ph/Povelitel-cifr-01-30) | `editorial_review` | 0 |
 | A146 | telegraph | [Политика конфиденциальности и согласие на обработку персональных данных](https://telegra.ph/Fitness-Talks-bot-privacy-09-10) | `technical_or_service` | 1 |
 | A254 | telegraph | [Политика конфиденциальности и согласие на обработку персональных данных](https://telegra.ph/svorontsov-privacy-policy-06-19) | `technical_or_service` | 1 |
-| A184 | telegraph | [Пост 2026](https://telegra.ph/Post-02-22-12) | `editorial_review` | 0 |
 | A152 | telegraph | [Пост про блиц запасной текст](https://telegra.ph/Jghj-05-20) | `incomplete_draft` | 1 |
 | A106 | telegraph | [Пост чужой с пикабу](https://telegra.ph/-02-04-28320) | `technical_or_service` | 0 |
 | A132 | telegraph | [Похудение начинается не с голода!](https://telegra.ph/CHernovik-10-14-3) | `editorial_review` | 1 |
