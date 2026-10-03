@@ -588,6 +588,8 @@ try {
   await page.getByRole('button', { name: 'ПК', exact: true }).click()
   assert.equal((await page.locator('#recipes-app').boundingBox()).width, 720)
   await page.setViewportSize({ width: 360, height: 900 }); await capture('original-personal-copy')
+  await page.getByRole('button', { name: 'Телефон', exact: true }).click()
+  assert.equal(await page.locator('#recipes-app').evaluate(n => n.classList.contains('recipe-phone')), true)
   await page.goto(url + '/recipes'); await page.locator('.recipe-heading-title').waitFor()
   await page.locator('.recipe-tutorial').waitFor({ state: 'hidden' })
   assert.equal(await page.locator('.recipe-device-switch').isVisible(), false, 'test mode is not retained when the explicit parameter is absent')
