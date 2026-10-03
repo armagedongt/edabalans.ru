@@ -73,6 +73,27 @@ snapshot сохранены в private attempt-20260926; они не испол�
 
 Writer `develop_existing / targeted_edit / full_source` pass, draft SHA
 `06f321f036af1110cebb74ccc68838bc84dbdd39a1319ff1914d176cd2a27d3a`.
-Local content tests 12 passed. Независимый review, server release и публичная
-проверка пока не завершены. Полный научный pass false; готовность доставки
-будет добавлена после фактического подтверждения.
+Local content tests 12 passed, release content tests 13 passed. Независимый review
+CLEAN: пять unique replacement groups воспроизводят draft; после исключения
+изображений/нормализации разметки авторский текст совпадает с baseline.
+
+Production revision `5236c58ecf049840c188afba52b13317f8a38ae1`, CI
+`37082645127` success; серверный журнал подтвердил successful deploy и health.
+Сначала собственная новая картинка размещена на сервере и проверена, затем API
+обновил текст и сохранённую карточку с optimistic lock. Editor 3/public 2,
+SHA LF `88605a99b8bee1713b6bcc24fbc6f5af4671991b1489a05662e02a51091d3f4a`.
+
+Все десять declared media HTTP 200/hash match через backend loopback с public
+Host. Максимум 172680 байт; новый коллаж 62954. Публичная страница: шесть
+изображений загружены, без hero-дубля; один H1, четыре авторских H2, три H3,
+один авторский список из шести пунктов. Desktop 1280×900/mobile 390×844 без
+горизонтального переполнения. Мобильный скриншот просмотрен; это не полное
+визуальное ревью общей оболочки.
+
+Description, OG description и Article description равны двум первым авторским
+предложениям; self-canonical, автор Сергей Воронцов, OG image 02.webp.
+Использование source URI записано как `blog-full-review-13785403-20261003`.
+Identity и канон прежние, новая дублирующая статья не создавалась. Проверки
+описаны в соседних safe-review/media-provenance JSON и private final-receipt.
+Полный научный pass false; замечания выше не применены. Следующий материал —
+`habits-formation-and-one-percent`.

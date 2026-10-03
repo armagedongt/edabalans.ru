@@ -1,0 +1,137 @@
+{
+  "source_id": "13785403",
+  "source_uri": "content://item/e245115f-948f-4407-af58-c4d0d21d759b",
+  "source_url": "https://pikabu.ru/story/tri_oshibki_v_nachale_pokhudeniya_13785403",
+  "original_unique_images": 6,
+  "source_mapping": [
+    {
+      "source": "https://cs18.pikabu.ru/s/2026/03/15/09/xkebdmiw_lg.png",
+      "own": [
+        "13785403/01.webp",
+        "13785403/02.webp"
+      ],
+      "kind": "plan_meme"
+    },
+    {
+      "source": "https://cs19.pikabu.ru/s/2026/03/15/09/xoeewbjc_lg.png",
+      "own": [
+        "13785403/03.webp",
+        "13785403/04.webp"
+      ],
+      "kind": "cat"
+    },
+    {
+      "source": "https://cs19.pikabu.ru/s/2026/03/15/09/xseew7tw.jpg",
+      "own": [
+        "13785403/05.webp"
+      ],
+      "kind": "boromir"
+    },
+    {
+      "source": "https://cs19.pikabu.ru/s/2026/03/15/09/xweexpdm_lg.png",
+      "own": [
+        "13785403/06.webp",
+        "13785403/07.webp"
+      ],
+      "kind": "food_diary",
+      "note": "06/07 byte identical"
+    },
+    {
+      "source": "https://cs19.pikabu.ru/s/2026/03/15/12/auaewgp7.jpg",
+      "own": [
+        "13785403/08.webp",
+        "13785403/card.webp"
+      ],
+      "kind": "trainer_meme",
+      "note": "Old cropped card kept, but no longer selected; its incorrect old provenance corrected in selected manifest card"
+    },
+    {
+      "source": "https://cs20.pikabu.ru/s/2026/03/19/16/iqp2wgot_lg.jpg",
+      "own": [
+        "13785403/09-source-calories.webp"
+      ],
+      "kind": "screenshots_not_video",
+      "original_bytes": 1120573,
+      "original_width": 1600,
+      "original_height": 1789
+    }
+  ],
+  "old_urls_overwritten": false,
+  "new_webp_quality": 82,
+  "hero_show": false,
+  "selected_card": "13785403/02.webp",
+  "card_fit": "contain",
+  "local_media": [
+    {
+      "file": "13785403/01.webp",
+      "width": 700,
+      "height": 615,
+      "bytes": 53386,
+      "sha256": "e6663d3e7bf4a74b8896068273f6900534ec2f069bfe0117865d0da01289fb4b"
+    },
+    {
+      "file": "13785403/02.webp",
+      "width": 1432,
+      "height": 1258,
+      "bytes": 122604,
+      "sha256": "ed31e53a7102e6d848a0dedf3a840227a26f7405c9c65cb38e19c4b79557d2fc"
+    },
+    {
+      "file": "13785403/03.webp",
+      "width": 700,
+      "height": 521,
+      "bytes": 30230,
+      "sha256": "0a185f64354b2f2011df6ac2879da0096e18a76e04e3245799aba1c0c0ef9e03"
+    },
+    {
+      "file": "13785403/04.webp",
+      "width": 1332,
+      "height": 992,
+      "bytes": 70544,
+      "sha256": "c0383e670f5d88ab8d86a31f8d4107adec1a994e01075e735d71b070aa94859e"
+    },
+    {
+      "file": "13785403/05.webp",
+      "width": 700,
+      "height": 431,
+      "bytes": 27334,
+      "sha256": "9129cdc7f3bc8e71632c5f77ddfe19045736e54d0d43f963cd01e6a08e693771"
+    },
+    {
+      "file": "13785403/06.webp",
+      "width": 1281,
+      "height": 664,
+      "bytes": 172680,
+      "sha256": "529491b1302675a3266ea01cf59e6c5b3ff2f5d475679480330f43539b2d7a07"
+    },
+    {
+      "file": "13785403/07.webp",
+      "width": 1281,
+      "height": 664,
+      "bytes": 172680,
+      "sha256": "529491b1302675a3266ea01cf59e6c5b3ff2f5d475679480330f43539b2d7a07"
+    },
+    {
+      "file": "13785403/08.webp",
+      "width": 600,
+      "height": 432,
+      "bytes": 38432,
+      "sha256": "14435367d65bb4c995733cf7bc6eb3a028dd5d9b8ffb46eb705d9754a827aade"
+    },
+    {
+      "file": "13785403/09-source-calories.webp",
+      "width": 1200,
+      "height": 1342,
+      "bytes": 62954,
+      "sha256": "236e44c79df84516c79ff986d97581bfe5e2b89270b9137ed144d13ccde8fcd9"
+    },
+    {
+      "file": "13785403/card.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 58648,
+      "sha256": "cdfc493cf07f0451e35f977fe315e6228a05008bb76076f2ef1e1c94d3f166ad"
+    }
+  ],
+  "server_verification": "All 10 declared media HTTP 200 and SHA match via backend loopback/public Host; external browser loaded all six body images after production release 5236c58ecf049840c188afba52b13317f8a38ae1"
+}
