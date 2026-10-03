@@ -3,7 +3,12 @@
   "findings": [],
   "reviewer": "/root/batch03_publisher_review",
   "draft_sha256": "38fcf18805002b9c500fe438f68721fe0dc9a5d44603a94753f29fe4d295e239",
-  "checks": ["16 exact targeted replacements preserve author wording", "8 original images and positions verified; bytes unchanged", "5 strong, 6 blockquotes, 1 H3 and four-item list verified", "writer task, pack, review and validation hashes agree"],
+  "checks": [
+    "16 exact targeted replacements preserve author wording",
+    "8 original images and positions verified; bytes unchanged",
+    "5 strong, 6 blockquotes, 1 H3 and four-item list verified",
+    "writer task, pack, review and validation hashes agree"
+  ],
   "full_scientific_pass": false,
-  "production_delivery_verified": false
+  "production_delivery_verified": true
 }
