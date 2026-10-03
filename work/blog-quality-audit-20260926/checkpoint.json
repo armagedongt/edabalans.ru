@@ -2,7 +2,7 @@
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
   "updated_at": "2026-10-03",
   "batch_size": 5,
-  "article_count": 45,
+  "article_count": 46,
   "old_article_count": 44,
   "full_current_text_read_count": 45,
   "archive_source_text_compared_count": 6,
@@ -13,24 +13,26 @@
   "individual_corrections_applied": 600,
   "headings_restored_first_three_batches": 24,
   "new_articles_prepared_locally": [
-    "10123213"
+    "10123213",
+    "10877887"
   ],
   "new_articles_published": [
-    "10123213"
+    "10123213",
+    "10877887"
   ],
-  "new_full_safe_review_pass_count": 1,
-  "total_old_and_new_full_safe_review_delivered_count": 44,
+  "new_full_safe_review_pass_count": 2,
+  "total_old_and_new_full_safe_review_delivered_count": 45,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "10877887",
+  "next_source_id": "11188875",
   "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "10877887",
-  "current_sequential_stage": "new_milk_ci_pass_waiting_healthy_production",
+  "current_sequential_stage": "new_milk_fully_closed_next_approved_source_11188875",
   "milk_10877887_prepared": {
     "selected_source": "A236",
     "previous_version": "A034",
@@ -44,7 +46,16 @@
     "source_images": 7,
     "maximum_media_bytes": 79352,
     "hero_show": false,
-    "published_verified": false,
+    "published_verified": true,
+    "related_fix_production_revision": "a1be989f21921abbaff0e8641978d7e37bf71dc8",
+    "related_fix_ci_run": 37126344610,
+    "related_source_ids": ["11875492", "11665295", "11833079"],
+    "api_version": 1,
+    "public_version": 0,
+    "media_http_hash_pass": 7,
+    "desktop_mobile_dom_geometry_pass": true,
+    "library_usage": "recorded",
+    "library_navigation_version": 11,
     "full_scientific_pass": false
   },
   "dogs_10369434_hold": {
