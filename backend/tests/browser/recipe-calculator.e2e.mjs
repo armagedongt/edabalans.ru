@@ -479,7 +479,7 @@ try {
   await page.locator('.recipe-library').waitFor({ state: 'hidden' })
   assert.equal(await page.locator('.recipe-title').inputValue(), original.title)
   assert.equal(await page.getByRole('textbox', { name: 'Вес готового блюда, г', exact: true }).inputValue(), '75.5')
-  assert.equal(await page.locator('.recipe-notes-view a').getAttribute('href'), 'https://edabalans.ru/lk?open=masterclass-21:day-15-recipe-synthetic')
+  assert.equal(await page.locator('.recipe-notes-view a').getAttribute('href'), 'https://edabalans.ru/lk?open=recipes:day-15-recipe-synthetic')
   await row(0).locator('.recipe-weight-cell button').click()
   const weightBox = row(0).getByRole('textbox', { name: 'Вес ингредиента в граммах', exact: true })
   await weightBox.fill(''); await weightBox.pressSequentially('6aб')

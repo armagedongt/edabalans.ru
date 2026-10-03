@@ -92,7 +92,7 @@ def original_get(key: str, request: Request, db: Session = Depends(get_db)) -> d
         card = original_record(db, key)
         if card is None:
             raise HTTPException(404, "Оригинальный рецепт недоступен")
-        return {"ok": True, "recipe": {"original": True, "title": card["title"], "yield": card["yield"], "portion": card["portion"], "notes": "Подробный рецепт: https://edabalans.ru/lk?open=masterclass-21:" + card["step_id"], "ingredients": [{"id": original_source(card, index)["id"], "source": original_source(card, index), "weight": int(row[1])} for index, row in enumerate(card["rows"])]}}
+        return {"ok": True, "recipe": {"original": True, "title": card["title"], "yield": card["yield"], "portion": card["portion"], "notes": "Подробный рецепт: https://edabalans.ru/lk?open=recipes:" + card["step_id"], "ingredients": [{"id": original_source(card, index)["id"], "source": original_source(card, index), "weight": int(row[1])} for index, row in enumerate(card["rows"])]}}
     except AppAccessError as exc:
         return {"ok": False, "error": str(exc)}
 
