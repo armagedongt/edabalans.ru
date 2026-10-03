@@ -19,18 +19,38 @@
     "10123213"
   ],
   "new_full_safe_review_pass_count": 1,
-  "total_old_and_new_full_safe_review_delivered_count": 40,
+  "total_old_and_new_full_safe_review_delivered_count": 41,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "0d583f6ad1cea0eef750",
+  "next_source_id": "13327360",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "0d583f6ad1cea0eef750",
-  "current_sequential_stage": "walk_published_verified_next_exact_source_pending",
+  "current_sequential_source_id": "13327360",
+  "current_sequential_stage": "jump_published_verified_next_exact_source_pending",
+  "jump_confirmed_delivery": {
+    "source_id": "0d583f6ad1cea0eef750",
+    "writer_validation": "pass",
+    "independent_review": "clean",
+    "api_version": 3,
+    "public_version": 2,
+    "published_verified": true,
+    "production_revision": "1978d9961bcaefb77d1523d4cc31aad27dd34a4d",
+    "ci_run": 37118562568,
+    "markdown_sha256_lf": "644f090dd0d7b88daea9b3d88e0274a88483e91b820fd630ab4362045e95d176",
+    "media_http_hash_pass": 5,
+    "hero_show": false,
+    "desktop_mobile_dom_geometry_pass": true,
+    "mobile_screenshot_inspected": true,
+    "library_usage": "recorded",
+    "library_navigation_version": 9,
+    "family_members": ["A253", "A005"],
+    "semantic_changes_applied": false,
+    "full_scientific_pass": false
+  },
   "walk_prepared": {
     "source_id": "2e269fdc52d600a64753",
     "owner_confirmed_family": ["A062", "A064", "A108"],
@@ -297,7 +317,9 @@
     "11857250",
     "13355824",
     "d1baceb9e2b6b72013b6",
-    "30e4d208f2cbd8e57201"
+    "30e4d208f2cbd8e57201",
+    "2e269fdc52d600a64753",
+    "0d583f6ad1cea0eef750"
   ],
   "training_confirmed_delivery": {
     "editor_version": 3,
@@ -416,7 +438,7 @@
   "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
   "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
   "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей",
-  "format_targeted_validation_pass_count": 39,
+  "format_targeted_validation_pass_count": 40,
   "publication_hold_source_ids": [
     "693339"
   ],
@@ -459,7 +481,8 @@
     "full-review/nutritionist-20261003.md",
     "full-review/vitamins-20261003.md",
     "full-review/harmful-products-20261003.md",
-    "full-review/walk-20261003.md"
+    "full-review/walk-20261003.md",
+    "full-review/jump-20261003.md"
   ],
   "habits_confirmed_delivery": {
     "source_id": "habits-formation-and-one-percent",
