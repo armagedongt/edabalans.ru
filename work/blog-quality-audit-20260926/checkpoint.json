@@ -30,7 +30,7 @@
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "11210930",
-  "current_sequential_stage": "minus12_completed_nutritionist_exact_source_and_fresh_runtime_pending",
+  "current_sequential_stage": "nutritionist_api_and_browser_verified_git_rollout_pending",
   "three_errors_confirmed_delivery": {
     "source_id": "13785403",
     "editor_version": 3,
@@ -504,5 +504,25 @@
     "ci_attempt": 2,
     "media_http_hash_pass": 1,
     "library_usage": "recorded"
+  },
+  "nutritionist_prepared": {
+    "source_id": "11210930",
+    "baseline_editor_version": 2,
+    "source_uri": "content://item/d221d629-21a3-4e91-a31b-358d1b173873",
+    "writer_validation": "pass",
+    "independent_review": "clean",
+    "draft_sha256": "450ec5958d556feecfda6be3b74f6a70e4e321da3921068a9b94091060b87e91",
+    "main_revision": "c0260f25f31344ea475de9715e797431cf4e84f1",
+    "published_verified": true,
+    "api_version": 3,
+    "public_version": 2,
+    "media_http_hash_pass": 1,
+    "original_videos_own_server": false,
+    "video_source_links_http_pass": 3,
+    "source_strikethrough_restored": false,
+    "desktop_mobile_dom_geometry_pass": true,
+    "library_usage": "recorded",
+    "git_production_revision_verified": false,
+    "full_scientific_pass": false
   }
 }
