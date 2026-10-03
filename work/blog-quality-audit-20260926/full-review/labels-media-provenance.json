@@ -1,0 +1,19 @@
+{
+  "media": [
+    {
+      "file": "13355824/01.webp",
+      "bytes": 23500,
+      "width": 700,
+      "height": 508,
+      "sha256": "1fec2f6104dad698df73fdab56ed7c9e3458a258b8448977a8ae763ecbb9e775",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "1fec2f6104dad698df73fdab56ed7c9e3458a258b8448977a8ae763ecbb9e775",
+      "original_source_url": "https://cs19.pikabu.ru/s/2025/11/02/14/mrwuw7mu.jpg",
+      "historical_manifest_source_url": "https://cs19.pikabu.ru/s/2025/11/02/14/mrwuw7mu.webp",
+      "visually_inspected": true,
+      "source_position_restored": true
+    }
+  ],
+  "source_id": "13355824"
+}
