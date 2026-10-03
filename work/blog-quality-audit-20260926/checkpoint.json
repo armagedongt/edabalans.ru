@@ -19,18 +19,18 @@
     "10123213"
   ],
   "new_full_safe_review_pass_count": 1,
-  "total_old_and_new_full_safe_review_delivered_count": 38,
+  "total_old_and_new_full_safe_review_delivered_count": 39,
   "production_receipts": "applied-receipts.json",
-  "production_changes_applied": 37,
+  "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "30e4d208f2cbd8e57201",
+  "next_source_id": "2e269fdc52d600a64753",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "30e4d208f2cbd8e57201",
-  "current_sequential_stage": "regain_review_pass_api_published_git_release_pending",
+  "current_sequential_source_id": "2e269fdc52d600a64753",
+  "current_sequential_stage": "regain_completed_next_full_source_pending",
   "regain_prepared": {
     "source_id": "30e4d208f2cbd8e57201",
     "writer_validation": "pass",
@@ -41,7 +41,11 @@
     "markdown_sha256_lf": "6f265072101f298d9bc149df6781cc2f1fa7da7462051f23ac287caa8fc18dd6",
     "library_usage": "recorded",
     "media_http_hash_pass": 1,
-    "git_production_revision_verified": false,
+    "git_production_revision_verified": true,
+    "main_revision": "07b3d18e6c82135c1a1bc452b1224ab87e844a90",
+    "ci_run": 37103900112,
+    "desktop_mobile_dom_geometry_pass": true,
+    "mobile_screenshot_inspected": true,
     "full_scientific_pass": false
   },
   "errors_prepared": {
@@ -264,7 +268,8 @@
     "11833079",
     "11857250",
     "13355824",
-    "d1baceb9e2b6b72013b6"
+    "d1baceb9e2b6b72013b6",
+    "30e4d208f2cbd8e57201"
   ],
   "training_confirmed_delivery": {
     "editor_version": 3,
@@ -383,7 +388,7 @@
   "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
   "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
   "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей",
-  "format_targeted_validation_pass_count": 37,
+  "format_targeted_validation_pass_count": 38,
   "publication_hold_source_ids": [
     "693339"
   ],
