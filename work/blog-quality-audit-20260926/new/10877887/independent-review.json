@@ -1,0 +1,17 @@
+{
+  "source_id": "10877887",
+  "source_members": ["A034", "A236"],
+  "selected_full_source": "A236",
+  "reviewer": "/root/batch03_publisher_review",
+  "waves": 2,
+  "first_wave": "findings_present",
+  "first_wave_findings": ["BR lists merged into paragraphs by actual renderer", "unnecessary Markdown escapes visible in shruggie and bot label"],
+  "final_status": "clean",
+  "draft_sha256": "3835c4c3667f334224d7422efa3322df4e7e8d5add8915cd300f830aaeb4fac4",
+  "source_media_preserved": 7,
+  "source_scientific_links_preserved": 10,
+  "author_numbers_changed": false,
+  "new_author_claims_added": false,
+  "full_scientific_pass": false,
+  "production_verified": false
+}

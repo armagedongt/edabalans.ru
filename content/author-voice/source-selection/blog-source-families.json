@@ -19,6 +19,19 @@
   },
   "families": [
     {
+      "family_id": "milk-processing-and-nutrients",
+      "title": "Сколько реально пользы в молоке",
+      "owner_decision": "publish_next",
+      "blog_canon": {"source_id": "10877887", "slug": "skolko-polzy-ostaetsya-v-moloke"},
+      "preferred_basis": "A236",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "03.10.2026 полностью прочитаны обе серверные версии и live HTML. Telegraph 21.03.2024 существенно расширяет Pikabu 30.11.2023: цельное и безлактозное молоко, личный пример восстановления, подмена продуктовых категорий, нативный переход. Общие разделы об обработке и библиография показывают развитие одной работы; побайтный дубль не заявлен. В блог переносится полная A236 без сборного смыслового монтажа. Публикация владельцем разрешена; production receipt фиксируется отдельно после выпуска.",
+      "members": [
+        {"catalog_id": "A236", "source": "telegraph", "external_id": "molokkko-03-21", "title": "Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?", "url": "https://telegra.ph/molokkko-03-21", "published_at": "2024-03-21T18:18:54+0000", "role": "preferred_basis", "content_item": "content://item/3cafd762-99d8-4cf7-91e4-f58ad250677b", "text_sha256": "c9d9bc32989a4e4d2a3bf351f965d5cefaef88e0ee7f11deff604ce0a1e1a10d"},
+        {"catalog_id": "A034", "source": "pikabu", "external_id": "10877887", "title": "Сколько пользы РЕАЛЬНО остается в молоке, которое мы пьем?!?", "url": "https://pikabu.ru/story/skolko_polzyi_realno_ostaetsya_v_moloke_kotoroe_myi_pem_10877887", "published_at": "2023-11-30T18:03:06+03:00", "role": "previous_version", "content_item": "content://item/e2272cb4-6e39-46ed-939d-515a3ff0bf46", "text_sha256": "5649cb40b1bc2c7d656f9b0b5e43305b4efe69bfc808ff0887509df769b1166f"}
+      ]
+    },
+    {
       "family_id": "prepare-before-weight-loss",
       "title": "Похудение начинается не с похудения",
       "owner_decision": "published_blog_canon",
