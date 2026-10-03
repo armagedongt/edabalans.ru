@@ -2,18 +2,18 @@
 
 Статус: `current`  
 Модуль: `platform.content`  
-Обновлено: 25.09.2026
+Обновлено: 03.10.2026
 
 Машиночитаемый канон решений — [`article-source-registry.json`](article-source-registry.json). Полные тексты остаются в собственных источниках и серверном Knowledge Library; этот реестр хранит только маршрутизацию, provenance и семейные связи.
 Актуальный поимённый разбор владельца: [единый файл семей](ARTICLE_FAMILIES.md). Категории deferred_kind ниже — исторический результат классификатора, а не последняя команда о публикации; приоритет у article-owner-decisions.json и owner_source_decisions.
 
 ## Сводка
 
-- В блоге: **46** канонические семьи.
+- В блоге: **47** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **57** внешних проявлений.
+- Уже привязано к канонам блога: **58** внешних проявлений.
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **237**.
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **236**.
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -25,6 +25,7 @@
 | 15 советов тем, кто худеет — по одному на килограмм лишнего веса | [blog:15-sovetov-tem-kto-hudeet](https://blog.похудение-это-есть.рф/articles/15-sovetov-tem-kto-hudeet) | 1 | 0 |
 | «Сладкоежка — увеличьте дозу витаминов!» | [blog:sladkoezhka-uvelichte-dozu-vitaminov](https://blog.похудение-это-есть.рф/articles/sladkoezhka-uvelichte-dozu-vitaminov) | 1 | 0 |
 | А мне тренер посоветовал… | [blog:a-mne-trener-posovetoval](https://blog.похудение-это-есть.рф/articles/a-mne-trener-posovetoval) | 1 | 1 |
+| Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ? | [blog:belyy-ris-kury-i-vitamin-b1](https://blog.похудение-это-есть.рф/articles/belyy-ris-kury-i-vitamin-b1) | 1 | 0 |
 | Борьба с лишним весом: почему одних шагов недостаточно | [blog:borba-s-lishnim-vesom-pochemu-shagov-nedostatochno](https://blog.похудение-это-есть.рф/articles/borba-s-lishnim-vesom-pochemu-shagov-nedostatochno) | 1 | 0 |
 | Великий пост, похудение и здоровье | [blog:velikiy-post-pohudenie-i-zdorove](https://blog.похудение-это-есть.рф/articles/velikiy-post-pohudenie-i-zdorove) | 1 | 0 |
 | Весы — инструкция по применению | [blog:vesy-instrukciya-po-primeneniyu](https://blog.похудение-это-есть.рф/articles/vesy-instrukciya-po-primeneniyu) | 1 | 0 |
@@ -78,7 +79,7 @@
 | `obsolete_product_archive` | 4 | Неактуальный архив старого МК: сохранить для истории, не предлагать к публикации и не использовать как актуальную авторскую основу. |
 | `owner_review_later` | 3 | Нужен отдельный просмотр владельцем. |
 | `private_product_material` | 43 | Курс или Мастер-класс: не публиковать автоматически. |
-| `short_reserve` | 43 | Материал 3000–3999 знаков: сначала решить, является ли самостоятельной статьёй. |
+| `short_reserve` | 42 | Материал 3000–3999 знаков: сначала решить, является ли самостоятельной статьёй. |
 | `technical_or_service` | 25 | Техническая страница, сценарий, услуга, продажная или посторонняя сущность. |
 
 ## Все отложенные материалы
@@ -102,7 +103,6 @@
 | A076 | pikabu | [«У взрослой женщины не должно быть перекусов»](https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015) | `editorial_review` | 0 |
 | A126 | telegraph | [А мне тренер посоветовал...](https://telegra.ph/A-mne-trener-posovetoval-07-04) | `editorial_review` | 1 |
 | A127 | telegraph | [Алексей золотов про запуски статья](https://telegra.ph/Aleksej-zolotov-pro-zapuski-statya-12-07) | `technical_or_service` | 0 |
-| A043 | pikabu | [Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ?](https://pikabu.ru/story/belyiy_ris_vorovstvo_kuryi_i_vitamin_b1_a_prichem_tut_zdorovoe_pitanie__11188875) | `short_reserve` | 0 |
 | A228 | telegraph | [Блоки в питании и каталог приемов пищи](https://telegra.ph/feedback-04-04) | `editorial_review` | 0 |
 | A049 | pikabu | [В своем уме, что ли? Фрукты... ограничивать... просто так, без мед. показаний?!](https://pikabu.ru/story/v_svoem_ume_chto_li_fruktyi_ogranichivat_prosto_tak_bez_med_pokazaniy_11294636) | `short_reserve` | 0 |
 | A238 | telegraph | [Вам не надо худеть, вам надо кое-что другое...](https://telegra.ph/ne-hudet-07-12) | `editorial_review` | 0 |
