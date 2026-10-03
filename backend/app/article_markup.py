@@ -299,6 +299,8 @@ def sanitize_article_html(
 
 def inline_markdown(value: str) -> str:
     rendered = escape(value)
+    # A literal Markdown asterisk must not become an emphasis delimiter.
+    rendered = rendered.replace(r"\*", "&#42;")
 
     def render_link(match: re.Match[str]) -> str:
         label = match.group(1).replace(r"\[", "[").replace(r"\]", "]")

@@ -20,6 +20,21 @@ from app.article_markup import markdown_to_article_html, safe_href, safe_image_s
 
 
 class ArticleMarkupTests(unittest.TestCase):
+    def test_escaped_multiplication_preserves_formula_and_bold(self) -> None:
+        source = r"**(Ваш вес \* X ) - (Ваш вес \* текущий % жира) = кг**"
+        rendered = markdown_to_article_html(source)
+        self.assertEqual(
+            sanitize_article_html(rendered),
+            '<p><strong>(Ваш вес * X ) - (Ваш вес * текущий % жира) = кг</strong></p>',
+        )
+
+    def test_escaped_asterisks_stay_literal_without_disabling_other_emphasis(self) -> None:
+        rendered = markdown_to_article_html(r"\*Не курсив\* и *курсив*, **жирное** <script>")
+        self.assertEqual(
+            sanitize_article_html(rendered),
+            '<p>*Не курсив* и <em>курсив</em>, <strong>жирное</strong> &lt;script&gt;</p>',
+        )
+
     def test_note_preserves_paragraphs_inline_formatting_and_safe_links(self) -> None:
         rendered = markdown_to_article_html("> [!NOTE]\n> **Акцент** и [ссылка](https://example.test/a).\n>\n> Второй абзац.")
         self.assertEqual(rendered, '<div class="article-note-accent"><p><strong>Акцент</strong> и <a href="https://example.test/a" target="_blank" rel="noopener">ссылка</a>.</p><p>Второй абзац.</p></div>')
