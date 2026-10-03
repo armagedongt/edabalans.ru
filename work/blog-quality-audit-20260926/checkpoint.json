@@ -30,7 +30,7 @@
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "11494317",
-  "current_sequential_stage": "constipation_published_verified_next_exact_source_pending",
+  "current_sequential_stage": "math_reviewed_main_ci_running",
   "ozempik_prepared": {
     "source_id": "13327360",
     "writer_validation": "pass",
@@ -747,5 +747,17 @@
     "desktop_mobile_dom_geometry_pass": true,
     "library_usage": "recorded",
     "hero_show": false
+  },
+  "math_prepared": {
+    "source_id": "11494317",
+    "baseline_editor_version": 2,
+    "writer_validation": "pass",
+    "draft_sha256": "8e451b6246f1ca5766ff920f668653f742b92b6ccae43bd05223da4554694a8e",
+    "independent_review": "clean",
+    "main_revision": "fe294810b16deaa10b68b0e04a1c58fa66767080",
+    "ci_run": 37122848674,
+    "ci_conclusion": null,
+    "published_verified": false,
+    "full_scientific_pass": false
   }
 }
