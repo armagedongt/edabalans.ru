@@ -49,8 +49,9 @@
     "preferred_basis": "A195",
     "writer_validation": "pass",
     "independent_review": "technical_pass_level2_notes",
-    "main_revision": "853ea9885cf432b9dc09d43d440579e5886b61b2",
-    "ci_run": 37142332063,
+    "main_revision": "6b35abb0d1906cd9bfc1e5d4020f122b1612f1d6",
+    "ci_run": 37142972071,
+    "first_release_ci": "37142332063 success; browser found repeated 1 in intro list, fixed only blank lines",
     "local_tests": "33 passed; initial missing PYTHONPATH/database_url setup corrected",
     "published_verified": false,
     "next_action": "Wait CI, production53, API/media/browser, Library sync; then close before next family"
