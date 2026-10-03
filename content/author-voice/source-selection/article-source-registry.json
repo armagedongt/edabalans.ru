@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-26",
+  "updated_at": "2026-10-03",
   "owner_review": {
     "schema_version": 1,
     "module_id": "platform.content",
@@ -41,7 +41,7 @@
         "ids": "A062 A064 A108",
         "blog_slug": "kak-ya-reshil-proyti-100000-shagov",
         "evidence": "owner_confirmed",
-        "note": "Объединить подготовку к походу и рассказ после похода в одну личную статью блога. Сначала проверить, какие части уже присутствуют в Telegraph-основе; не дублировать их."
+        "note": "Подготовка A062 и отчёт A064/A108 подтверждены владельцем как одна открытая личная семья. 03.10.2026 полные версии прочитаны: в блог добавлены авторские блоки мотивации A062 и дополнительное заключение A064; принятый рассказ A108 сохранён. Датированные приглашения и старая площадочная навигация не переносятся. Подготовлено локально; publication gate пока не закрыт."
       },
       {
         "ids": "A005 A253",
@@ -156,11 +156,11 @@
       "vc.ru": 14
     },
     "canonical_blog_families": 45,
-    "canonical_linked_external_records": 55,
-    "deferred_families": 239,
+    "canonical_linked_external_records": 57,
+    "deferred_families": 237,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 90,
+      "editorial_review": 88,
       "incomplete_draft": 13,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
@@ -713,19 +713,44 @@
           "title": "Как я 100 000 шагов решил пройти",
           "url": "https://telegra.ph/100-000-06-28",
           "published_at": "2024-06-28T14:18:20+0000",
-          "characters": 14136,
+          "characters": 14124,
           "role": "direct_source",
           "provenance": "content://item/7ffd60e8-caea-4f5e-8385-6b99b665fe5d",
-          "text_sha256": "ac74d25c8928bbc2f34222bbb35b48d542ec7ec422a902a2276dba253b4d8a7f"
+          "text_sha256": "0df360f45e4a42bcff438dc8126193dfe23bb7cacb977a87b97af1bf63c44106"
+        },
+        {
+          "catalog_id": "A062",
+          "source": "pikabu",
+          "external_id": "11528528",
+          "title": "100 000 шагов за ОДИН день",
+          "url": "https://pikabu.ru/story/100_000_shagov_za_odin_den_11528528",
+          "published_at": "2024-06-20T15:54:48+03:00",
+          "characters": 4456,
+          "role": "preparation_source",
+          "provenance": "content://item/8f6e7a44-d123-4d2b-b5a5-5ca46e16cbb2",
+          "text_sha256": "e1707e1647c43067a569bb24ab90a2d23e3a8f72fc3b97554c0c124aae98e466"
+        },
+        {
+          "catalog_id": "A064",
+          "source": "pikabu",
+          "external_id": "11553382",
+          "title": "Как я 100 000 шагов решил пройти2",
+          "url": "https://pikabu.ru/story/kak_ya_100_000_shagov_reshil_proyti_11553382",
+          "published_at": "2024-06-28T18:53:57+03:00",
+          "characters": 15300,
+          "role": "expanded_report_source",
+          "provenance": "content://item/47f5fdca-91bb-48d7-9794-a12f19eb5c18",
+          "text_sha256": "470788d5345bc88fb209e9a50af8a59ccef949d3410e46b0cd6f313ea2480136"
         }
       ],
-      "possible_duplicate_catalog_ids": [
-        "A064"
-      ],
-      "family_evidence": "direct_provenance",
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "owner_confirmed_preparation_and_report",
       "owner_source_decisions": {
+        "A062": "approved_update",
+        "A064": "approved_update",
         "A108": "approved_update"
-      }
+      },
+      "merge_status": "prepared_pending_validation_and_publication"
     },
     {
       "family_id": "blog:kakaya-samaya-vrednaya-dieta",
@@ -1831,32 +1856,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A004": "manual_review"
-      }
-    },
-    {
-      "family_id": "deferred:A062",
-      "title": "100 000 шагов за ОДИН день",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A062",
-          "source": "pikabu",
-          "external_id": "11528528",
-          "title": "100 000 шагов за ОДИН день",
-          "url": "https://pikabu.ru/story/100_000_shagov_za_odin_den_11528528",
-          "published_at": "2024-06-20T15:54:48+03:00",
-          "characters": 4456,
-          "role": "unmerged_source",
-          "provenance": "content://item/8f6e7a44-d123-4d2b-b5a5-5ca46e16cbb2",
-          "text_sha256": "e1707e1647c43067a569bb24ab90a2d23e3a8f72fc3b97554c0c124aae98e466"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A062": "approved_update"
       }
     },
     {
@@ -3720,34 +3719,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A011": "manual_review"
-      }
-    },
-    {
-      "family_id": "deferred:A064",
-      "title": "Как я 100 000 шагов решил пройти2",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A064",
-          "source": "pikabu",
-          "external_id": "11553382",
-          "title": "Как я 100 000 шагов решил пройти2",
-          "url": "https://pikabu.ru/story/kak_ya_100_000_shagov_reshil_proyti_11553382",
-          "published_at": "2024-06-28T18:53:57+03:00",
-          "characters": 15300,
-          "role": "unmerged_source",
-          "provenance": "content://item/47f5fdca-91bb-48d7-9794-a12f19eb5c18",
-          "text_sha256": "470788d5345bc88fb209e9a50af8a59ccef949d3410e46b0cd6f313ea2480136"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A108"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A064": "approved_update"
       }
     },
     {

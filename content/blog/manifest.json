@@ -761,14 +761,14 @@
         "category": "Личное",
         "body_file": "2e269fdc52d600a64753.md",
         "hero": {
-          "file": "2e269fdc52d600a64753/01.webp",
-          "alt": "Иллюстрация к статье «Как я решил пройти 100 000 шагов за один день»",
+          "file": "2e269fdc52d600a64753/01-body.webp",
+          "alt": "Коллаж из фотографий похода на 100 тысяч шагов",
           "provenance": "https://telegra.ph/file/d2e03401d96ba2f577e1c.jpg",
-          "show": true
+          "show": false
         },
         "card": {
-          "file": "2e269fdc52d600a64753/01.webp",
-          "alt": "Иллюстрация к статье «Как я решил пройти 100 000 шагов за один день»",
+          "file": "2e269fdc52d600a64753/01-body.webp",
+          "alt": "Коллаж из фотографий похода на 100 тысяч шагов",
           "provenance": "https://telegra.ph/file/d2e03401d96ba2f577e1c.jpg",
           "fit": "contain"
         },
@@ -781,6 +781,7 @@
         "status": "published",
         "media": [
           "2e269fdc52d600a64753/01.webp",
+          "2e269fdc52d600a64753/01-body.webp",
           "2e269fdc52d600a64753/02.webp",
           "2e269fdc52d600a64753/03.webp",
           "2e269fdc52d600a64753/04.webp",
@@ -800,17 +801,27 @@
           "2e269fdc52d600a64753/20.webp",
           "2e269fdc52d600a64753/21.webp",
           "2e269fdc52d600a64753/22.webp",
-          "2e269fdc52d600a64753/24.webp"
+          "2e269fdc52d600a64753/24.webp",
+          "2e269fdc52d600a64753/road-source.webp",
+          "2e269fdc52d600a64753/night-source.webp",
+          "2e269fdc52d600a64753/planning-01.webp",
+          "2e269fdc52d600a64753/planning-02.webp"
         ],
         "source_provenance": {
           "urls": [
-            "https://telegra.ph/100-000-06-28"
+            "https://telegra.ph/100-000-06-28",
+            "https://pikabu.ru/story/100_000_shagov_za_odin_den_11528528",
+            "https://pikabu.ru/story/kak_ya_100_000_shagov_reshil_proyti_11553382"
           ],
           "external_ids": [
-            "2e269fdc52d600a64753"
+            "100-000-06-28",
+            "11528528",
+            "11553382"
           ],
           "sha256": [
-            "0df360f45e4a42bcff438dc8126193dfe23bb7cacb977a87b97af1bf63c44106"
+            "0df360f45e4a42bcff438dc8126193dfe23bb7cacb977a87b97af1bf63c44106",
+            "e1707e1647c43067a569bb24ab90a2d23e3a8f72fc3b97554c0c124aae98e466",
+            "470788d5345bc88fb209e9a50af8a59ccef949d3410e46b0cd6f313ea2480136"
           ],
           "source_basis": "full_source",
           "validation_status": "pass",
