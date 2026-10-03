@@ -2,6 +2,53 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "amkbo7kgg1",
+      "slug": "zachem-nuzhny-trenirovki-krome-pohudeniya",
+      "title": "Зачем нужны тренировки (кроме похудения)",
+      "excerpt": "Золотое правило любой тренировки — вы должны четко понимать, что и зачем вы делаете, иначе вы можете потратить время и силы, но лишь просто посотрясать воздух без осязаемой пользы для себя. Каждый вид тренировочной активности (бег, силовые, плавание, пилатес и пр.) имеет свою понятную конкретную…",
+      "category": "ЗОЖ",
+      "body_file": "amkbo7kgg1.md",
+      "hero": {
+        "file": "amkbo7kgg1/01.webp",
+        "alt": "Разные задачи тренировок",
+        "provenance": "https://static.tildacdn.com/tild6634-6635-4563-a239-643463376534/imagepng.webp",
+        "show": false
+      },
+      "card": {
+        "file": "amkbo7kgg1/01.webp",
+        "alt": "Разные задачи тренировок",
+        "provenance": "https://static.tildacdn.com/tild6634-6635-4563-a239-643463376534/imagepng.webp",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11801517",
+        "10425659",
+        "10573917"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "amkbo7kgg1/01.webp",
+        "amkbo7kgg1/02.webp",
+        "amkbo7kgg1/03.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni"
+        ],
+        "external_ids": [
+          "amkbo7kgg1"
+        ],
+        "source_uri": "knowledge://resource/tilda-intensive-amkbo7kgg1",
+        "source_revision": 1,
+        "sha256": "78f741f863fc124bac125c2cc685e702664438ecdce58552eb8d197ee45f6932",
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "adaptation": "minimal_proofread_intensive_navigation_cleanup_original_3_images"
+      }
+    },
+    {
       "source_id": "12193581",
       "slug": "tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom",
       "title": "Техника безопасности питания за новогодним столом",

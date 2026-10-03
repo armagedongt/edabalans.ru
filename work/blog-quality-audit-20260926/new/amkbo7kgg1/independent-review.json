@@ -1,0 +1,22 @@
+{
+  "status": "technical_pass",
+  "full_scientific_pass": false,
+  "reviewer": "insurance_article_review",
+  "waves": 2,
+  "reviewed_draft_sha256": "b6b0bbbda73f57055fe2ad35429b531e0e52f5f4dea1334e2541a9f51bf6cab3",
+  "draft_sha256": "ec3e67788b841de36d7843686caa1f3176692f5c5a8976f8f7945ed7ca426758",
+  "mechanical_post_review_fixes": [
+    "Вернуть исходное больше чем500 без лишней запятой",
+    "Запятая перед деепричастием ориентируясь"
+  ],
+  "preservation": "Полные source-converted/targeted/full-source и3изображения сверены; без нового нейрослопа, фактура и стиль сохранены",
+  "render": {
+    "h1": 0,
+    "h2": 3,
+    "unordered_lists": 2,
+    "ordered_lists": 1,
+    "list_items": 12
+  },
+  "level2_notes": "owner-review/training-amkbo7kgg1-20261004.md",
+  "central_level3": false
+}
