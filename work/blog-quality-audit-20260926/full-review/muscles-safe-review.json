@@ -1,0 +1,18 @@
+{
+  "source_id": "13436070",
+  "family_id": "A096",
+  "reviewed_at": "2026-10-03",
+  "status": "clean",
+  "reviewer": "batch03_publisher_review",
+  "writer_validation": "pass",
+  "draft_sha256": "ea44398e6029663e0c4f69a54179de6e19e7a576bb5cdf1087c67fd9537674e5",
+  "scope": "Three original bold spans; unchanged visible text; own original media; card selection; hero duplicate removal; existing CTA and related",
+  "source_html_http": 200,
+  "source_bold_verified": ["Правильная формулировка", "Для справочки", "Будете делать минимальные упражнения"],
+  "visible_text_unchanged": true,
+  "original_unique_images_visually_checked": 3,
+  "media_source_entries": 4,
+  "semantic_changes_applied": false,
+  "full_scientific_pass": false,
+  "production_delivery": "See final muscles-20261003.md receipt; review alone is not delivery"
+}

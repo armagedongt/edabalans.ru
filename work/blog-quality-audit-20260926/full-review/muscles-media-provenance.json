@@ -1,0 +1,110 @@
+{
+  "source_id": "13436070",
+  "source_url": "https://pikabu.ru/story/poterya_myishts_pri_pokhudenii_13436070",
+  "verified_at": "2026-10-03",
+  "scope": "Original images visually checked; own server media bytes verified over backend loopback with public Host; external image rendering checked separately",
+  "unique_original_images": 3,
+  "source_image_entries": 4,
+  "source_mapping": [
+    {
+      "source": "https://cs18.pikabu.ru/s/2025/10/01/17/aiabd74m_lg.jpg",
+      "own": [
+        "13436070/01.webp",
+        "13436070/02.webp"
+      ]
+    },
+    {
+      "source": "https://cs19.pikabu.ru/s/2025/10/01/16/fgqexls3_lg.jpg",
+      "own": [
+        "13436070/03.webp",
+        "13436070/04.webp"
+      ]
+    },
+    {
+      "source": "https://cs17.pikabu.ru/s/2025/10/01/16/wq3flcuv_lg.png",
+      "same_image_additional_source": "https://cs12.pikabu.ru/post_img/big/2022/09/27/7/1664277409167491570.jpg",
+      "own": [
+        "13436070/05.webp",
+        "13436070/06.webp"
+      ],
+      "note": "Two source URLs show same Harold meme; own 05/06 byte-identical"
+    }
+  ],
+  "selected_card": "13436070/04.webp",
+  "card_fit": "contain",
+  "hero_show": false,
+  "old_urls_overwritten": false,
+  "video_present": false,
+  "media": [
+    {
+      "file": "13436070/01.webp",
+      "bytes": 82518,
+      "width": 700,
+      "height": 779,
+      "sha256": "40a1df43076f78c3e46f3531c28ac08cdf2408eaa04a4b1c830902012371dee7",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "40a1df43076f78c3e46f3531c28ac08cdf2408eaa04a4b1c830902012371dee7"
+    },
+    {
+      "file": "13436070/02.webp",
+      "bytes": 117550,
+      "width": 948,
+      "height": 1055,
+      "sha256": "80a2c45d143f84e8bf247927e771cb463e1ae25fd022430e89ec6c19342accd5",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "80a2c45d143f84e8bf247927e771cb463e1ae25fd022430e89ec6c19342accd5"
+    },
+    {
+      "file": "13436070/03.webp",
+      "bytes": 46548,
+      "width": 700,
+      "height": 1204,
+      "sha256": "2fbbda93be0a5d77556b0a7e899302934e492a4d66f0b156c054e721961fc6f7",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "2fbbda93be0a5d77556b0a7e899302934e492a4d66f0b156c054e721961fc6f7"
+    },
+    {
+      "file": "13436070/04.webp",
+      "bytes": 53612,
+      "width": 785,
+      "height": 1350,
+      "sha256": "8d12557af4f9b57c4fec339e049587c8e435df6fe336fb2820658f7ba3dbfb7b",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "8d12557af4f9b57c4fec339e049587c8e435df6fe336fb2820658f7ba3dbfb7b"
+    },
+    {
+      "file": "13436070/05.webp",
+      "bytes": 42590,
+      "width": 760,
+      "height": 507,
+      "sha256": "f4a9b3196e53b77b00d8070f0c0661f26296ae9b422cf67523b7cc06334547c6",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "f4a9b3196e53b77b00d8070f0c0661f26296ae9b422cf67523b7cc06334547c6"
+    },
+    {
+      "file": "13436070/06.webp",
+      "bytes": 42590,
+      "width": 760,
+      "height": 507,
+      "sha256": "f4a9b3196e53b77b00d8070f0c0661f26296ae9b422cf67523b7cc06334547c6",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "f4a9b3196e53b77b00d8070f0c0661f26296ae9b422cf67523b7cc06334547c6"
+    },
+    {
+      "file": "13436070/card.webp",
+      "bytes": 61844,
+      "width": 1280,
+      "height": 720,
+      "sha256": "f08f31aa9bed9af55fd8f399a160d6a02c831a405820aeb1b949da2572bceccf",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "f08f31aa9bed9af55fd8f399a160d6a02c831a405820aeb1b949da2572bceccf"
+    }
+  ]
+}
