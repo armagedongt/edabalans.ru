@@ -1,0 +1,33 @@
+{
+  "source_id": "13762311",
+  "checked_at": "2026-10-03",
+  "immutable_existing_files_preserved": true,
+  "media": [
+    {
+      "file": "13762311/01.webp",
+      "bytes": 31840,
+      "width": 1280,
+      "height": 720,
+      "sha256": "e468fb83f8e59bdbc0403aa854f284ce0853c4c20e7e5a055009a48c6502803c",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "e468fb83f8e59bdbc0403aa854f284ce0853c4c20e7e5a055009a48c6502803c",
+      "visually_checked": true,
+      "in_article_body": true,
+      "original_source_url": "https://cs20.pikabu.ru/s/2026/03/07/19/cgskx3tn_lg.png"
+    },
+    {
+      "file": "13762311/02.webp",
+      "bytes": 16028,
+      "width": 1023,
+      "height": 417,
+      "sha256": "9ed847b1b3428165878921f4001acad5694fb5e34f91936e2e3068cd551c932b",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "9ed847b1b3428165878921f4001acad5694fb5e34f91936e2e3068cd551c932b",
+      "visually_checked": true,
+      "in_article_body": true,
+      "original_source_url": "https://cs17.pikabu.ru/s/2026/03/07/19/zezfldbg_lg.png"
+    }
+  ]
+}
