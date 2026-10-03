@@ -19,18 +19,18 @@
     "10123213"
   ],
   "new_full_safe_review_pass_count": 1,
-  "total_old_and_new_full_safe_review_delivered_count": 35,
+  "total_old_and_new_full_safe_review_delivered_count": 36,
   "production_receipts": "applied-receipts.json",
-  "production_changes_applied": 34,
+  "production_changes_applied": 35,
   "next_independent_batch": null,
-  "next_source_id": "11857250",
+  "next_source_id": "13355824",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "11857250",
-  "current_sequential_stage": "weight_struggle_api_published_writer_review_pass_final_rollout_pending",
+  "current_sequential_source_id": "13355824",
+  "current_sequential_stage": "weight_struggle_completed_next_full_source_pending",
   "three_errors_confirmed_delivery": {
     "source_id": "13785403",
     "editor_version": 3,
@@ -226,7 +226,8 @@
     "Minus-12-kilogramm-za-2-mesyaca-07-13",
     "11210930",
     "11534645",
-    "11833079"
+    "11833079",
+    "11857250"
   ],
   "training_confirmed_delivery": {
     "editor_version": 3,
@@ -345,7 +346,7 @@
   "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
   "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
   "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей",
-  "format_targeted_validation_pass_count": 34,
+  "format_targeted_validation_pass_count": 35,
   "publication_hold_source_ids": [
     "693339"
   ],
@@ -568,7 +569,7 @@
     "library_usage": "recorded"
   },
   "weight_struggle_prepared": {
-    "git_production_revision_verified": false,
+    "git_production_revision_verified": true,
     "writer_validation": "pass",
     "ci_run": 37100816053,
     "media_http_hash_pass": 1,
@@ -579,6 +580,7 @@
     "published_verified": true,
     "independent_review": "clean",
     "public_version": 2,
-    "api_version": 3
+    "api_version": 3,
+    "desktop_mobile_dom_geometry_pass": true
   }
 }
