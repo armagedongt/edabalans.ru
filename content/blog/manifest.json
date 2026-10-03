@@ -529,13 +529,13 @@
           "file": "11833079/01.webp",
           "alt": "Иллюстрация к статье «10 дебильных фактов о вредных продуктах для похудения»",
           "provenance": "https://cs15.pikabu.ru/post_img/2024/09/21/10/172693476913174839.webp",
-          "show": true
+          "show": false
         },
         "card": {
           "file": "11833079/01.webp",
           "alt": "Иллюстрация к статье «10 дебильных фактов о вредных продуктах для похудения»",
           "provenance": "https://cs15.pikabu.ru/post_img/2024/09/21/10/172693476913174839.webp",
-          "fit": "cover"
+          "fit": "contain"
         },
         "related_source_ids": [
           "11339712",
