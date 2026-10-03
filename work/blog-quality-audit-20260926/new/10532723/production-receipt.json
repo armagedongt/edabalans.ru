@@ -1,0 +1,11 @@
+{
+  "production_revision": "411117566bcc1f150c74bcc231b19777158c0d69",
+  "ci_run": 37140963719,
+  "ci_conclusion": "success",
+  "article_count": 52,
+  "desktop": {"client_width":1265,"scroll_width":1265,"h1_count":1},
+  "mobile": {"viewport_width":390,"viewport_height":844,"client_width":375,"scroll_width":375,"h1_count":1},
+  "own_images_loaded":3,
+  "media_http_hash_pass":3,
+  "browser_check":"pass"
+}

@@ -16,7 +16,7 @@
 
 ## Сводка
 
-- Канонов блога: 51 (03.10.2026; выпуск 11906015 подтверждён, Library navigation v16).
+- Канонов блога: 52 (03.10.2026; выпуск 10532723 подтверждён, Library navigation v17).
 - Записей источников в этом файле: 300.
 - Рабочих семей/групп сравнения: 217 (не все связи подтверждены).
 
@@ -38,9 +38,7 @@
 
 Это согласованные направления, не готовые Markdown. После команды на последовательное выполнение каждую семью сначала сверять с последним поимённым решением владельца, затем полный источник → сравнение семьи и выбор основы → минимальная площадочная адаптация → медиа → Writer/review → выпуск и проверка. Уже закрытые ниже источники повторно не выпускать; Библиотека хранит их связь с каноном.
 
-- A002: [Все знают, никто не делает](https://pikabu.ru/story/vse_znayut_nikto_ne_delaet_10123213).
 - A012: [Как на меня напали собаки в лесу](https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434).
-- A019: [Последний жир в области живота. План действий](https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723).
 - A021: [Резинки для тренировок!](https://pikabu.ru/story/rezinki_dlya_trenirovok_10573917).
 - A031: [Жиросжигающая зона не работает!](https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468).
 - A056: [Мама, с днем рождения!!!](https://pikabu.ru/story/mama_s_dnem_rozhdeniya_11448583).
@@ -52,11 +50,9 @@
 - A102: [Средиземноморская диета — это вообще что?!?!](https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380).
 - A156: [Как на меня напали собаки в лесу](https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17).
 - A161: [Кое-что об эффективном жиросжигании](https://telegra.ph/Koe-chto-o-zhiroszhiganii-11-04).
-- A183: [Последний жир на животе. План действий⁠⁠](https://telegra.ph/Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07).
 - A184: [Пост 2026](https://telegra.ph/Post-02-22-12).
 - A191: [Сделай сегодня — скажи себе спасибо завтра](https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11).
 - A195: [Резинки для тренировок!⁠⁠](https://telegra.ph/Rezinki-09-01).
-- A210: [Видео. Последний жир в области живота. План действий⁠⁠](https://telegra.ph/Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13).
 - A281: [Жиросжигающая зона не работает!⁠⁠ И вот почему ](https://vc.ru/flood/912323-zhiroszhigayushaya-zona-ne-rabotaet-i-vot-pochemu).
 - tilda-post:amkbo7kgg1: [💪 Зачем нужны тренировки (кроме похудения)](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni).
 - tilda-post:e4441ism91: [⛔️ Почему эффекта плато не существует](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet).
@@ -160,12 +156,12 @@
 
 ### F007. 13 правил для организации домашних тренировок1
 
-Канона в блоге пока нет; выбор наиболее полной актуальной основы не завершён.
+Канон блога: [13-pravil-domashnih-trenirovok](https://blog.похудение-это-есть.рф/articles/13-pravil-domashnih-trenirovok).
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A016 · pikabu | [13 правил для организации домашних тренировок](https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659) | Исходная внешняя версия; не канон. Канон — [блог](https://blog.похудение-это-есть.рф/articles/13-pravil-domashnih-trenirovok) |
-| A117 · telegraph | [13 правил для организации домашних тренировок](https://telegra.ph/13-pravil-09-18) | Сравненная внешняя версия; не канон. Та же семья блога |
+| A016 · pikabu | [13 правил для организации домашних тренировок](https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659) | Уже в блоге; внешняя версия не канон |
+| A117 · telegraph | [13 правил для организации домашних тренировок](https://telegra.ph/13-pravil-09-18) | Уже в блоге; внешняя версия не канон |
 
 - Обе полные версии сравнены: основной текст одной статьи, не две новые публикации. Выпуск и обе связи подтверждены 03.10.2026, Library navigation v15.
 
@@ -266,7 +262,7 @@
 
 ### F017. «У взрослой женщины не должно быть ###»
 
-Канона в блоге пока нет; выбор наиболее полной актуальной основы не завершён.
+Канон блога: [u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov](https://blog.похудение-это-есть.рф/articles/u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov).
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
@@ -301,7 +297,7 @@
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A043 · pikabu | [Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ?](https://pikabu.ru/story/belyiy_ris_vorovstvo_kuryi_i_vitamin_b1_a_prichem_tut_zdorovoe_pitanie__11188875) | Полная основа опубликованного канона; внешняя копия не канон |
+| A043 · pikabu | [Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ?](https://pikabu.ru/story/belyiy_ris_vorovstvo_kuryi_i_vitamin_b1_a_prichem_tut_zdorovoe_pitanie__11188875) | Уже в блоге; внешняя версия не канон |
 
 
 ### F021. Блоки в питании и каталог приемов пищи
@@ -389,15 +385,15 @@
 
 ### F030. Видео. Последний жир в области живота. План действий⁠⁠
 
-Канона в блоге пока нет; выбор наиболее полной актуальной основы не завершён.
+Канон блога: [posledniy-zhir-na-zhivote-plan-deystviy](https://blog.похудение-это-есть.рф/articles/posledniy-zhir-na-zhivote-plan-deystviy).
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A019 · pikabu | [Последний жир в области живота. План действий](https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
-| A183 · telegraph | [Последний жир на животе. План действий⁠⁠](https://telegra.ph/Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
-| A210 · telegraph | [Видео. Последний жир в области живота. План действий⁠⁠](https://telegra.ph/Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
+| A019 · pikabu | [Последний жир в области живота. План действий](https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723) | Уже в блоге; внешняя версия не канон |
+| A183 · telegraph | [Последний жир на животе. План действий⁠⁠](https://telegra.ph/Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07) | Уже в блоге; внешняя версия не канон |
+| A210 · telegraph | [Видео. Последний жир в области живота. План действий⁠⁠](https://telegra.ph/Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13) | Уже в блоге; внешняя версия не канон |
 
-- Машинные кандидаты на сравнение (не доказанные дубли): A019 ↔ A183, A019 ↔ A210, A183 ↔ A210.
+- Все три полные версии сравнены: одна семья, расширенная A183 выбрана основой. A019/A210 — предыдущие версии, не отдельные будущие публикации. Фактчек-замечания отдельно, авторская фактура не менялась.
 
 ### F031. Витамин N
 
@@ -423,7 +419,7 @@
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A037 · pikabu | [Вот вам и ОЛИВЬЕ!1](https://pikabu.ru/story/vot_vam_i_olive_10978866) | Полная основа канона блога; внешняя версия не канон |
+| A037 · pikabu | [Вот вам и ОЛИВЬЕ!1](https://pikabu.ru/story/vot_vam_i_olive_10978866) | Уже в блоге; внешняя версия не канон |
 
 
 ### F034. Что вы не понимаете о формировании привычек?
@@ -446,7 +442,7 @@
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A002 · pikabu | [Все знают, никто не делает](https://pikabu.ru/story/vse_znayut_nikto_ne_delaet_10123213) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
+| A002 · pikabu | [Все знают, никто не делает](https://pikabu.ru/story/vse_znayut_nikto_ne_delaet_10123213) | Уже в блоге; внешняя версия не канон |
 
 
 ### F036. Гайд по добавленному сахару
@@ -1494,11 +1490,11 @@
 
 ### F143. Почему питание всегда важнее тренировок!!
 
-Канона в блоге пока нет; выбор наиболее полной актуальной основы не завершён.
+Канон блога: [pochemu-pitanie-vazhnee-trenirovok](https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok).
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A071 · pikabu | [Почему питание всегда важнее тренировок!!](https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517) | Опубликовано; канон — [блог](https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok), эта внешняя версия не канон |
+| A071 · pikabu | [Почему питание всегда важнее тренировок!!](https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517) | Уже в блоге; внешняя версия не канон |
 
 
 ### F144. Почему японцы худые, а ты нет?
@@ -1763,8 +1759,8 @@
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A034 · pikabu | [Сколько пользы РЕАЛЬНО остается в молоке, которое мы пьем?!?](https://pikabu.ru/story/skolko_polzyi_realno_ostaetsya_v_moloke_kotoroe_myi_pem_10877887) | Предыдущая авторская версия, не канон |
-| A236 · telegraph | [Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?](https://telegra.ph/molokkko-03-21) | Проверенная полная основа опубликованного канона, внешний источник не канон |
+| A034 · pikabu | [Сколько пользы РЕАЛЬНО остается в молоке, которое мы пьем?!?](https://pikabu.ru/story/skolko_polzyi_realno_ostaetsya_v_moloke_kotoroe_myi_pem_10877887) | Уже в блоге; внешняя версия не канон |
+| A236 · telegraph | [Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?](https://telegra.ph/molokkko-03-21) | Уже в блоге; внешняя версия не канон |
 
 - Связь A034 ↔ A236 подтверждена сравнением полных исходников. Заголовки, разделы, ссылки и дополнительные фрагменты проверены; научные риски отдельно в `work/blog-quality-audit-20260926/owner-review/milk-20261003.md`, без изменения фактуры.
 

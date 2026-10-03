@@ -1,0 +1,18 @@
+{
+  "status": "published_usage_and_family_recorded",
+  "usage": {
+    "status": "recorded",
+    "source_uri": "content://item/61458c9a-8db0-44d6-b144-0ab618a4855f",
+    "task_key": "blog-new-10532723-20261003"
+  },
+  "navigation_version": 17,
+  "family_id": "blog:posledniy-zhir-na-zhivote-plan-deystviy",
+  "members": [
+    "A019",
+    "A183",
+    "A210"
+  ],
+  "navigation_sha256": "4fbafc45687795b4f11ea21ff6abfb5d2fe0928655ee9a8f37912248c22d419e",
+  "other_families_preserved": true,
+  "channel_edits": 0
+}

@@ -155,13 +155,13 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 51,
-    "canonical_linked_external_records": 74,
-    "deferred_families": 226,
+    "canonical_blog_families": 52,
+    "canonical_linked_external_records": 77,
+    "deferred_families": 223,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 80,
-      "incomplete_draft": 13,
+      "editorial_review": 78,
+      "incomplete_draft": 12,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
       "private_product_material": 43,
@@ -1168,6 +1168,66 @@
       "owner_source_decisions": {},
       "merge_status": "published_verified",
       "version_comparison": "A253 позднее A005: вводная 9 вместо 8 лет, не полностью изменила жизнь; после забега 5 вместо 10 дней. Внутри обеих версий 8 лет сохранено. Это версия, не побайтный duplicate_of. Тело блога основано на A253; новых личных фактов из A005 не добавлено."
+    },
+    {
+      "family_id": "blog:posledniy-zhir-na-zhivote-plan-deystviy",
+      "title": "Последний жир на животе. План действий",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "10532723",
+        "slug": "posledniy-zhir-na-zhivote-plan-deystviy",
+        "url": "https://blog.похудение-это-есть.рф/articles/posledniy-zhir-na-zhivote-plan-deystviy",
+        "body_file": "content/blog/articles/10532723.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A019",
+          "source": "pikabu",
+          "external_id": "10532723",
+          "title": "Последний жир в области живота. План действий",
+          "url": "https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723",
+          "published_at": "2023-08-05T14:44:13+03:00",
+          "characters": 6958,
+          "role": "direct_source",
+          "provenance": "content://item/b04e9df7-ddc7-49bf-9fa3-6a1541e2361f",
+          "text_sha256": "778f44e6d3d12a00de5c93481aa0d871e10c0dcb251837351a620b7422fcf1c7"
+        },
+        {
+          "catalog_id": "A183",
+          "source": "telegraph",
+          "external_id": "Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07",
+          "title": "Последний жир на животе. План действий⁠⁠",
+          "url": "https://telegra.ph/Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07",
+          "published_at": "2024-03-07T13:10:43+0000",
+          "characters": 8974,
+          "role": "direct_source",
+          "provenance": "content://item/61458c9a-8db0-44d6-b144-0ab618a4855f",
+          "text_sha256": "481d659c295cee8f720f97cfb4b674c276a1844e98d291f74648d5ec7d77c38e"
+        },
+        {
+          "catalog_id": "A210",
+          "source": "telegraph",
+          "external_id": "Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13",
+          "title": "Видео. Последний жир в области живота. План действий⁠⁠",
+          "url": "https://telegra.ph/Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13",
+          "published_at": "2023-08-13T09:23:51+0000",
+          "characters": 6661,
+          "role": "direct_source",
+          "provenance": "content://item/1cefd4e9-e098-4908-b4d5-6c3ab3ae57c1",
+          "text_sha256": "dd3bbeedeb9625bb3861026ae8c7dac7c78cf60fe056e793061e3d53a1f178fa"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "three_full_versions_compared_one_extended_article",
+      "owner_source_decisions": {
+        "A019": "publish_next",
+        "A183": "publish_next",
+        "A210": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": "A183",
+      "source_comparison": "work/blog-quality-audit-20260926/new/10532723/preparation-20261003.md"
     },
     {
       "family_id": "blog:poterya-myshc-pri-pohudenii",
@@ -2532,35 +2592,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A211": "manual_review"
-      }
-    },
-    {
-      "family_id": "deferred:A210",
-      "title": "Видео. Последний жир в области живота. План действий⁠⁠",
-      "disposition": "deferred",
-      "deferred_kind": "incomplete_draft",
-      "reason": "Черновик или заметка; нужна проверка законченности.",
-      "members": [
-        {
-          "catalog_id": "A210",
-          "source": "telegraph",
-          "external_id": "Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13",
-          "title": "Видео. Последний жир в области живота. План действий⁠⁠",
-          "url": "https://telegra.ph/Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13",
-          "published_at": "2023-08-13T09:23:51+0000",
-          "characters": 6673,
-          "role": "unmerged_source",
-          "provenance": "content://item/1cefd4e9-e098-4908-b4d5-6c3ab3ae57c1",
-          "text_sha256": "43da2b64a0753df4b589c7005560e6fe6786f55c20a03793082dd833a6feff04"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A019",
-        "A183"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A210": "publish_next"
       }
     },
     {
@@ -5444,64 +5475,6 @@
       ],
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {}
-    },
-    {
-      "family_id": "deferred:A019",
-      "title": "Последний жир в области живота. План действий",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A019",
-          "source": "pikabu",
-          "external_id": "10532723",
-          "title": "Последний жир в области живота. План действий",
-          "url": "https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723",
-          "published_at": "2023-08-05T14:44:13+03:00",
-          "characters": 6958,
-          "role": "unmerged_source",
-          "provenance": "content://item/b04e9df7-ddc7-49bf-9fa3-6a1541e2361f",
-          "text_sha256": "778f44e6d3d12a00de5c93481aa0d871e10c0dcb251837351a620b7422fcf1c7"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A183",
-        "A210"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A019": "publish_next"
-      }
-    },
-    {
-      "family_id": "deferred:A183",
-      "title": "Последний жир на животе. План действий⁠⁠",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A183",
-          "source": "telegraph",
-          "external_id": "Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07",
-          "title": "Последний жир на животе. План действий⁠⁠",
-          "url": "https://telegra.ph/Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07",
-          "published_at": "2024-03-07T13:10:43+0000",
-          "characters": 8989,
-          "role": "unmerged_source",
-          "provenance": "content://item/61458c9a-8db0-44d6-b144-0ab618a4855f",
-          "text_sha256": "c3f559a681e16bd149bc4cf16994f25ff81c500a582dd77576854185fda0f684"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A019",
-        "A210"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A183": "publish_next"
-      }
     },
     {
       "family_id": "deferred:A184",

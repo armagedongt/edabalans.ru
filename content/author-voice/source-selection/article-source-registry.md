@@ -9,11 +9,11 @@
 
 ## Сводка
 
-- В блоге: **51** канонические семьи.
+- В блоге: **52** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **74** внешних проявления (по машиночитаемому реестру).
+- Уже привязано к канонам блога: **77** внешних проявления (по машиночитаемому реестру).
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **226** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **223** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -23,6 +23,7 @@
 |---|---|---:|---:|
 | 13 правил для организации домашних тренировок | [blog:13-pravil-domashnih-trenirovok](https://blog.похудение-это-есть.рф/articles/13-pravil-domashnih-trenirovok) | 2 | 0 |
 | У взрослой женщины не должно быть перекусов | [blog:u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov](https://blog.похудение-это-есть.рф/articles/u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov) | 2 | 0 |
+| Последний жир на животе. План действий | [blog:posledniy-zhir-na-zhivote-plan-deystviy](https://blog.похудение-это-есть.рф/articles/posledniy-zhir-na-zhivote-plan-deystviy) | 3 | 0 |
 | Почему питание всегда важнее тренировок!! | [blog:pochemu-pitanie-vazhnee-trenirovok](https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok) | 1 | 0 |
 | 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://blog.похудение-это-есть.рф/articles/10-debilnyh-faktov-o-vrednyh-produktah) | 1 | 0 |
 | 15 советов тем, кто худеет — по одному на килограмм лишнего веса | [blog:15-sovetov-tem-kto-hudeet](https://blog.похудение-это-есть.рф/articles/15-sovetov-tem-kto-hudeet) | 1 | 0 |
@@ -111,7 +112,6 @@
 | A263 | telegraph | [ввв](https://telegra.ph/vvv-04-24-44) | `technical_or_service` | 0 |
 | A216 | telegraph | [Взгляд в будущее](https://telegra.ph/Vzglyad-v-budushchee-03-02) | `private_product_material` | 0 |
 | A211 | telegraph | [Видео про фрукты](https://telegra.ph/Video-pro-frukty-07-24) | `incomplete_draft` | 0 |
-| A210 | telegraph | [Видео. Последний жир в области живота. План действий⁠⁠](https://telegra.ph/Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13) | `incomplete_draft` | 2 |
 | A212 | telegraph | [Витамин N](https://telegra.ph/Vitamin-N-11-16) | `incomplete_draft` | 0 |
 | A214 | telegraph | [Вода](https://telegra.ph/Voda-01-07-2) | `private_product_material` | 0 |
 | A250 | telegraph | [Гайд по добавленному сахару](https://telegra.ph/slipnetsa-01-25) | `private_product_material` | 1 |
@@ -226,8 +226,6 @@
 | A185 | telegraph | [Повелитель цифр](https://telegra.ph/Povelitel-cifr-01-30) | `editorial_review` | 0 |
 | A146 | telegraph | [Политика конфиденциальности и согласие на обработку персональных данных](https://telegra.ph/Fitness-Talks-bot-privacy-09-10) | `technical_or_service` | 1 |
 | A254 | telegraph | [Политика конфиденциальности и согласие на обработку персональных данных](https://telegra.ph/svorontsov-privacy-policy-06-19) | `technical_or_service` | 1 |
-| A019 | pikabu | [Последний жир в области живота. План действий](https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723) | `editorial_review` | 2 |
-| A183 | telegraph | [Последний жир на животе. План действий⁠⁠](https://telegra.ph/Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07) | `editorial_review` | 2 |
 | A184 | telegraph | [Пост 2026](https://telegra.ph/Post-02-22-12) | `editorial_review` | 0 |
 | A152 | telegraph | [Пост про блиц запасной текст](https://telegra.ph/Jghj-05-20) | `incomplete_draft` | 1 |
 | A106 | telegraph | [Пост чужой с пикабу](https://telegra.ph/-02-04-28320) | `technical_or_service` | 0 |
