@@ -135,11 +135,15 @@ async function geometry(width) {
       rowHeights: [...document.querySelectorAll('.recipe-columns,.recipe-row,.recipe-total')].filter(visible).map(n => n.getBoundingClientRect().height),
       tableBounds: [table.getBoundingClientRect().width, table.getBoundingClientRect().height],
       nameFont: getComputedStyle(document.querySelector('.recipe-name-cell')).font,
+      weightAlignment: [...document.querySelectorAll('.recipe-weight-cell .recipe-edit,.weight-input,.recipe-total-weight')].filter(visible).map(n => getComputedStyle(n).textAlign),
+      calorieAlignment: [...document.querySelectorAll('.recipe-row:not(.expanded) > .recipe-cell[data-nutrient=calories]')].filter(visible).map(n => getComputedStyle(n).textAlign),
     }
   })
   for (const key of ['document', 'table', 'drawer']) if (result[key]) assert.ok(result[key][0] <= result[key][1] + 1, key + ' overflow ' + width + ': ' + JSON.stringify(result))
   assert.deepEqual(result.clipped, [], 'all values visible at ' + width)
   assert.deepEqual(result.namesClipped, [], 'names wrap at ' + width)
+  assert.ok(result.weightAlignment.every(value => value === 'center'), 'weight values and inputs centred at ' + width)
+  assert.ok(result.calorieAlignment.every(value => value === 'right'), 'calories keep right alignment at ' + width)
   checks.push({ width, geometry: result })
 }
 async function newRecipe(accept = true) {
@@ -158,6 +162,8 @@ async function openSaved(name) {
 try {
   await request('/api/account-auth/login', { email: 'recipe-browser@example.test', password: 'Test-Password-9' })
   await page.goto(url + '/recipes'); await page.locator('.recipe-heading-title').waitFor()
+  assert.equal(await page.locator('.recipe-device-switch').isVisible(), false, 'test controls are hidden in the ordinary app')
+  assert.equal(await page.locator('[data-help]').count(), 0, 'the three question-mark buttons are removed')
   const tutorial = page.locator('.recipe-tutorial')
   await tutorial.locator('.recipe-tutorial-progress').filter({ hasText: '1 из 6' }).waitFor()
   assert.equal(await tutorial.getByRole('button', { name: 'Закрыть', exact: true }).isVisible(), false)
@@ -480,6 +486,23 @@ try {
   assert.equal(await page.locator('.recipe-title').inputValue(), original.title)
   assert.equal(await page.getByRole('textbox', { name: 'Вес готового блюда, г', exact: true }).inputValue(), '75.5')
   assert.equal(await page.locator('.recipe-notes-view a').getAttribute('href'), 'https://edabalans.ru/lk?open=recipes:day-15-recipe-synthetic')
+  const originalLink = 'https://edabalans.ru/lk?open=recipes:day-15-recipe-synthetic'
+  await context.route(originalLink, route => route.fulfill({ contentType: 'text/html', body: '<p>Detailed recipe</p>' }))
+  const popupPromise = page.waitForEvent('popup')
+  await page.locator('.recipe-notes-view a').click()
+  const popup = await popupPromise; await popup.waitForLoadState()
+  assert.equal(popup.url(), originalLink)
+  assert.equal(await page.locator('.recipe-notes').isVisible(), false, 'a link click opens the recipe without entering note editing')
+  await popup.close(); await context.unroute(originalLink)
+  await page.locator('.recipe-notes-view').click({ position: { x: 8, y: 8 } })
+  assert.equal(await page.locator('.recipe-notes').isVisible(), true)
+  assert.equal(await page.locator('.recipe-notes').evaluate(n => n === document.activeElement), true)
+  assert.equal(await page.locator('.recipe-notes').inputValue(), original.notes)
+  await page.locator('.recipe-heading-title').click()
+  await page.locator('.recipe-notes-view').focus(); await page.keyboard.press('Enter')
+  assert.equal(await page.locator('.recipe-notes').isVisible(), true, 'keyboard entry edits notes too')
+  await page.locator('.recipe-heading-title').click()
+  await capture('notes-click-edit-ready')
   await row(0).locator('.recipe-weight-cell button').click()
   const weightBox = row(0).getByRole('textbox', { name: 'Вес ингредиента в граммах', exact: true })
   await weightBox.fill(''); await weightBox.pressSequentially('6aб')
@@ -544,6 +567,10 @@ try {
   assert.equal(twiceSaved.ingredients[0].total.protein, '3.0')
   assert.equal(twiceSaved.version, 4)
   await page.setViewportSize({ width: 1280, height: 900 })
+  await page.goto(url + '/recipes?appTest=1'); await page.locator('.recipe-heading-title').waitFor()
+  await page.locator('.recipe-tutorial').waitFor({ state: 'hidden' })
+  assert.equal(await page.locator('.recipe-device-switch').isVisible(), true, 'explicit test URL exposes device controls')
+  await openSaved(twiceSaved.title)
   await page.getByRole('button', { name: 'Телефон', exact: true }).click()
   assert.equal((await page.locator('#recipes-app').boundingBox()).width, 360)
   await capture('desktop-phone-switch'); await geometry(1280)
@@ -561,6 +588,10 @@ try {
   await page.getByRole('button', { name: 'ПК', exact: true }).click()
   assert.equal((await page.locator('#recipes-app').boundingBox()).width, 720)
   await page.setViewportSize({ width: 360, height: 900 }); await capture('original-personal-copy')
+  await page.goto(url + '/recipes'); await page.locator('.recipe-heading-title').waitFor()
+  await page.locator('.recipe-tutorial').waitFor({ state: 'hidden' })
+  assert.equal(await page.locator('.recipe-device-switch').isVisible(), false, 'test mode is not retained when the explicit parameter is absent')
+  assert.equal(await page.locator('#recipes-app').evaluate(n => n.classList.contains('recipe-phone')), false)
   assert.deepEqual(errors, [], 'no browser script failures')
   await writeFile(join(out, 'geometry.json'), JSON.stringify(checks, null, 2))
   console.log('Recipe unit/parity, real API journey, races/errors, geometry passed. Evidence: ' + out)
