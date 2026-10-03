@@ -73,6 +73,48 @@ class AuthorWorkflowTests(unittest.TestCase):
         self.assertEqual(result["status"], "prepared")
         return output, json.loads(output.read_text(encoding="utf-8"))
 
+    def test_resolved_link_label_is_not_an_unresolved_placeholder(self) -> None:
+        for text in (
+            "Вот [ссылка](https://example.org/article).",
+            "Вот [Ссылка на публикацию](/articles/original).",
+        ):
+            with self.subTest(text=text):
+                pack_path, _ = self.pack({
+                    "note": "Проверить готовую ссылку без изменения текста",
+                    "work_profile": "structure", "edit_mode": "structure_only",
+                    "source_text": text, "structural_labels": [],
+                })
+                draft = self.root / "resolved-link.md"
+                draft.write_text(text, encoding="utf-8")
+                result = validate_author_draft.validate(pack_path, draft)
+                self.assertEqual(result["status"], "pass")
+                self.assertEqual(result["unresolved_placeholders"], [])
+
+    def test_incomplete_links_and_other_placeholders_still_block(self) -> None:
+        for text, expected in (
+            ("Вот [ссылка].", "[ссылка]"),
+            ("Вот [ссылка]().", "[ссылка]"),
+            ("Вот [ссылка](https://).", "[ссылка]"),
+            ("Вот [ссылка](https://#section).", "[ссылка]"),
+            ("Вот [ссылка](https:///article).", "[ссылка]"),
+            ("Вот [ссылка](https://example.org", "[ссылка]"),
+            ("[УТОЧНИТЬ](https://example.org)", "[УТОЧНИТЬ]"),
+            ("[ФАКТ](https://example.org)", "[ФАКТ]"),
+            ("[CTA](https://example.org)", "[CTA]"),
+            ("[ссылка](https://example.org) и [ссылка позже]", "[ссылка позже]"),
+        ):
+            with self.subTest(text=text):
+                pack_path, _ = self.pack({
+                    "note": "Не пропустить незаполненный шаблон",
+                    "work_profile": "structure", "edit_mode": "structure_only",
+                    "source_text": text, "structural_labels": [],
+                })
+                draft = self.root / "unresolved-link.md"
+                draft.write_text(text, encoding="utf-8")
+                result = validate_author_draft.validate(pack_path, draft)
+                self.assertEqual(result["status"], "needs_fix")
+                self.assertEqual(result["unresolved_placeholders"], [expected])
+
     def test_four_profiles_prepare_and_validate(self) -> None:
         source = " ".join(["Исходная авторская мысль с примером и подробным объяснением."] * 12)
         cases = [

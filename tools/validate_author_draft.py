@@ -555,7 +555,14 @@ def validate(
     required_cta = cta.get("required_phrase") if isinstance(cta, dict) else None
     if required_cta and normalized(required_cta) not in normalized(draft):
         missing_verbatim.append(required_cta)
-    unresolved_placeholders = re.findall(r"\[(?:УТОЧНИТЬ|ФАКТ|ССЫЛКА|CTA)[^\]]*\]", draft, flags=re.I)
+    unresolved_placeholders = [
+        match.group(0)
+        for match in re.finditer(r"\[(?:УТОЧНИТЬ|ФАКТ|ССЫЛКА|CTA)[^\]]*\]", draft, flags=re.I)
+        if not (
+            match.group(0).casefold().startswith("[ссылка")
+            and re.match(r"\((?:https?://[^/\s()?#]+[^\s()]*|/(?!/)[^\s()]*)\)", draft[match.end():])
+        )
+    ]
     protected_layer_errors = []
     edit_mode = contract.get("edit_mode")
     source_text = contract.get("source_text")
