@@ -1,0 +1,12 @@
+{
+  "source_id": "2e269fdc52d600a64753",
+  "date": "2026-10-03",
+  "scope": "backend/tests/test_blog.py owner-approved merged provenance guard",
+  "code_review": {"reviewer": "/root/audit_code_review_v2", "status": "clean", "findings": []},
+  "test_review": {"reviewer": "/root/audit_test_review_v2", "mode": "full", "status": "clean", "findings": []},
+  "targeted_test": "1 passed",
+  "failed_ci": 37105871446,
+  "failure": "stale prohibition of merged provenance 11528528/11553382",
+  "standalone_publications_still_forbidden": true,
+  "closed_recipes_still_forbidden": true
+}
