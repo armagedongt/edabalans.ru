@@ -35,13 +35,15 @@ class RecipeBook(TimestampMixin, Base):
     __tablename__ = "recipe_books"
     __table_args__ = (
         Index("ix_recipe_books_owner_active", "owner_user_id", "deleted_at", "updated_at"),
-        CheckConstraint("shrinkage_g >= 0", name="ck_recipe_book_shrinkage_nonnegative"),
+        CheckConstraint("yield_g BETWEEN 1 AND 99999", name="ck_recipe_book_yield_bounds"),
+        CheckConstraint("portion_g BETWEEN 1 AND 99999 AND portion_g <= yield_g", name="ck_recipe_book_portion_bounds"),
     )
 
     id: Mapped[uuid.UUID] = uuid_pk()
     owner_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
-    shrinkage_g: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"), nullable=False)
+    yield_g: Mapped[int] = mapped_column(Integer, nullable=False)
+    portion_g: Mapped[int] = mapped_column(Integer, nullable=False)
     version: Mapped[int] = mapped_column(Integer, default=1, server_default=text("1"), nullable=False)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
@@ -51,7 +53,7 @@ class RecipeIngredient(Base):
     __table_args__ = (
         Index("ix_recipe_ingredients_recipe_order", "recipe_id", "sort_order"),
         Index("ix_recipe_ingredients_nested_recipe", "nested_recipe_id"),
-        CheckConstraint("weight_g > 0", name="ck_recipe_ingredient_weight_positive"),
+        CheckConstraint("weight_g BETWEEN 1 AND 99999", name="ck_recipe_ingredient_weight_bounds"),
         CheckConstraint("(nutrition_product_id IS NOT NULL) <> (nested_recipe_id IS NOT NULL)", name="ck_recipe_ingredient_single_source"),
     )
 

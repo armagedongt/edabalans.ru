@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import uuid
-from decimal import Decimal
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -10,11 +9,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.account_auth_routes import require_native_user
-from app.access_service import course_start_is_open
 from app.app_service import AppAccessError, require_user_resource
 from app.database import get_db
 from app.recipe_models import NutritionProduct, RecipeBook, RecipeIngredient
-from app.recipe_service import assert_recipe_owner, catalog_search, integer, normalize_name, normalized_key, product_payload, recipe_payload, validate_ingredients
+from app.recipe_service import MAX_WEIGHT, assert_recipe_owner, catalog_search, integer, normalize_name, normalized_key, product_payload, product_values, recipe_payload, validate_ingredients
 
 router = APIRouter()
 
@@ -24,10 +22,14 @@ def _error(exc: Exception, status: int = 400) -> JSONResponse:
 
 
 def _user(request: Request, db: Session):
-    user = require_user_resource(db, require_native_user(request, db), "recipes")
-    if not course_start_is_open(db, user.id, "ACCESS_RECIPES"):
-        raise AppAccessError("Система рецептов пока закрыта по условиям доступа")
-    return user
+    return require_user_resource(db, require_native_user(request, db), "recipes")
+
+
+async def _body(request: Request) -> dict[str, Any]:
+    body = await request.json()
+    if not isinstance(body, dict):
+        raise ValueError("Ожидается объект с данными")
+    return body
 
 
 @router.get("/api/apps/recipes")
@@ -77,11 +79,11 @@ def recipe_get(recipe_id: uuid.UUID, request: Request, db: Session = Depends(get
 @router.post("/api/apps/recipes/products")
 async def product_create(request: Request, db: Session = Depends(get_db)) -> JSONResponse:
     try:
-        body = await request.json(); user = _user(request, db)
+        body = await _body(request); user = _user(request, db)
         name = normalize_name(body.get("name")); key = normalized_key(name)
         exists = db.scalar(select(NutritionProduct.id).where(NutritionProduct.owner_user_id == user.id, NutritionProduct.name_normalized == key, NutritionProduct.is_active.is_(True)))
         if exists: raise ValueError("Такой личный продукт уже есть")
-        product = NutritionProduct(owner_user_id=user.id, name=name, name_normalized=key, protein_g=Decimal(integer(body.get("protein"), "Белки")), fat_g=Decimal(integer(body.get("fat"), "Жиры")), carbohydrate_g=Decimal(integer(body.get("carbohydrate"), "Углеводы")), calories_kcal=Decimal(integer(body.get("calories"), "Калории")))
+        product = NutritionProduct(owner_user_id=user.id, name=name, name_normalized=key, **product_values(body))
         db.add(product); db.commit(); db.refresh(product)
         return JSONResponse({"ok": True, "product": product_payload(product)})
     except (AppAccessError, ValueError) as exc:
@@ -102,47 +104,56 @@ def product_hide(product_id: uuid.UUID, request: Request, db: Session = Depends(
 @router.put("/api/apps/recipes/products/{product_id}")
 async def product_update(product_id: uuid.UUID, request: Request, db: Session = Depends(get_db)) -> JSONResponse:
     try:
-        body = await request.json(); user = _user(request, db)
+        body = await _body(request); user = _user(request, db)
         product = db.scalar(select(NutritionProduct).where(NutritionProduct.id == product_id, NutritionProduct.owner_user_id == user.id, NutritionProduct.is_active.is_(True)))
         if product is None: raise HTTPException(status_code=404, detail="Продукт не найден")
-        product.name = normalize_name(body.get("name")); product.name_normalized = normalized_key(product.name)
-        product.protein_g = Decimal(integer(body.get("protein"), "Белки")); product.fat_g = Decimal(integer(body.get("fat"), "Жиры")); product.carbohydrate_g = Decimal(integer(body.get("carbohydrate"), "Углеводы")); product.calories_kcal = Decimal(integer(body.get("calories"), "Калории"))
+        name = normalize_name(body.get("name")); values = product_values(body)
+        product.name = name; product.name_normalized = normalized_key(name)
+        for key, value in values.items():
+            setattr(product, key, value)
         db.commit(); return JSONResponse({"ok": True, "product": product_payload(product)})
     except (AppAccessError, ValueError) as exc:
         db.rollback(); return _error(exc)
 
 
 def _save_recipe(db: Session, user_id: uuid.UUID, body: dict[str, Any], recipe: RecipeBook | None = None) -> RecipeBook:
-    title = normalize_name(body.get("title")); shrinkage = integer(body.get("shrinkage", 0), "Усушка")
+    if "shrinkage" in body:
+        raise ValueError("Старый формат с усушкой больше не поддерживается. Обновите приложение и укажите выход и порцию.")
+    title = normalize_name(body.get("title"))
+    yield_g = integer(body.get("yield"), "Вес готового блюда", positive=True, maximum=MAX_WEIGHT)
+    portion_g = integer(body.get("portion"), "Вес порции", positive=True, maximum=MAX_WEIGHT)
+    if portion_g > yield_g:
+        raise ValueError("Вес порции не должен превышать готовый выход")
     if recipe is not None:
+        recipe = assert_recipe_owner(db, recipe.id, user_id, lock=True)
         if integer(body.get("version"), "Версия", positive=True) != recipe.version:
             raise HTTPException(status_code=409, detail="Рецепт изменён в другой вкладке. Обновите страницу.")
     prepared = validate_ingredients(db, user_id, recipe.id if recipe else None, body.get("ingredients"))
-    initial_weight = sum(item["weight_g"] for item in prepared)
-    if shrinkage >= initial_weight: raise ValueError("Усушка должна быть меньше общего веса")
     if recipe is None:
-        recipe = RecipeBook(owner_user_id=user_id, title=title, shrinkage_g=shrinkage); db.add(recipe); db.flush()
+        recipe = RecipeBook(owner_user_id=user_id, title=title, yield_g=yield_g, portion_g=portion_g); db.add(recipe); db.flush()
     else:
-        recipe.title = title; recipe.shrinkage_g = shrinkage; recipe.version += 1
+        recipe.title = title; recipe.yield_g = yield_g; recipe.portion_g = portion_g; recipe.version += 1
         db.query(RecipeIngredient).filter(RecipeIngredient.recipe_id == recipe.id).delete(synchronize_session=False)
     for data in prepared: db.add(RecipeIngredient(recipe_id=recipe.id, **data))
-    db.flush(); recipe_payload(db, recipe)
+    db.flush()
     return recipe
 
 
 @router.post("/api/apps/recipes")
 async def recipe_create(request: Request, db: Session = Depends(get_db)) -> JSONResponse:
     try:
-        body = await request.json(); recipe = _save_recipe(db, _user(request, db).id, body)
-        db.commit(); return JSONResponse({"ok": True, "recipe": recipe_payload(db, recipe)})
+        body = await _body(request); recipe = _save_recipe(db, _user(request, db).id, body)
+        payload = recipe_payload(db, recipe)
+        db.commit(); return JSONResponse({"ok": True, "recipe": payload})
     except (AppAccessError, ValueError) as exc: db.rollback(); return _error(exc)
 
 
 @router.put("/api/apps/recipes/{recipe_id}")
 async def recipe_update(recipe_id: uuid.UUID, request: Request, db: Session = Depends(get_db)) -> JSONResponse:
     try:
-        body = await request.json(); user = _user(request, db); recipe = _save_recipe(db, user.id, body, assert_recipe_owner(db, recipe_id, user.id))
-        db.commit(); return JSONResponse({"ok": True, "recipe": recipe_payload(db, recipe)})
+        body = await _body(request); user = _user(request, db); recipe = _save_recipe(db, user.id, body, assert_recipe_owner(db, recipe_id, user.id))
+        payload = recipe_payload(db, recipe)
+        db.commit(); return JSONResponse({"ok": True, "recipe": payload})
     except (AppAccessError, ValueError) as exc: db.rollback(); return _error(exc)
 
 
