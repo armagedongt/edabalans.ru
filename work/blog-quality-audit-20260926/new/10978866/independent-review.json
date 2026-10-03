@@ -1,0 +1,15 @@
+{
+  "status": "clean",
+  "reviewer": "olivier_article_review",
+  "wave": 2,
+  "draft_sha256": "e312a8e8d3e25cd90e539399c7c1458081a0b50a2252705f66e75c0c3251ccb3",
+  "source_text_full_read": true,
+  "live_html_blocks_read": 20,
+  "source_images_checked": 3,
+  "platform_cleanup_only": true,
+  "semantic_changes_applied": false,
+  "level3_central_conflict_found": false,
+  "full_scientific_pass": false,
+  "resolved_finding": "Первый alt уточнён по фактически видимому фрагменту публикации",
+  "production_verified": false
+}
