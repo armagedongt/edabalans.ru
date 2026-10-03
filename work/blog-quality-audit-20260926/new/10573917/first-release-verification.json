@@ -1,0 +1,84 @@
+{
+  "status": 200,
+  "editor_version": 1,
+  "public_version": 0,
+  "markdown_sha256_lf": "30403dc275ddb2c36c7efd65f735003253e1ab71571583bb604a837e0815cd82",
+  "media": [
+    {
+      "file": "10573917/01.webp",
+      "source": "https://cs14.pikabu.ru/post_img/2023/08/19/5/1692426199270199778.jpg",
+      "bytes": 28792,
+      "width": 700,
+      "height": 289,
+      "sha256": "6adce727ac8babe05b5630ba1fce897b34d87f441ffb253b07f2c83556566502",
+      "kind": "image",
+      "http": 200,
+      "server_sha256": "6adce727ac8babe05b5630ba1fce897b34d87f441ffb253b07f2c83556566502"
+    },
+    {
+      "file": "10573917/02.webp",
+      "source": "https://cs14.pikabu.ru/post_img/2023/08/19/5/1692426199213477333.jpg",
+      "bytes": 42294,
+      "width": 700,
+      "height": 431,
+      "sha256": "743f4fbfa0054fc293cb7b57618a739bee3c1efc195b071abf991917ad232a51",
+      "kind": "image",
+      "http": 200,
+      "server_sha256": "743f4fbfa0054fc293cb7b57618a739bee3c1efc195b071abf991917ad232a51"
+    },
+    {
+      "file": "10573917/bands-original.mp4",
+      "source": "https://telegra.ph/file/10f946c7767c125569439.mp4",
+      "bytes": 2936512,
+      "sha256": "bde9df36731cc95734f7c22b5c7bb1879ab9146a2646b5fe4be1b545359e1831",
+      "kind": "video_original",
+      "http": 200,
+      "server_sha256": "bde9df36731cc95734f7c22b5c7bb1879ab9146a2646b5fe4be1b545359e1831"
+    },
+    {
+      "file": "10573917/03.webp",
+      "source": "https://cs13.pikabu.ru/post_img/2023/08/19/5/1692428073175986559.jpg",
+      "bytes": 12840,
+      "width": 700,
+      "height": 197,
+      "sha256": "5215783a32af637d99e70c0e1e9a4d26672ae3a975e64cea12d95cbfe822a49c",
+      "kind": "image",
+      "http": 200,
+      "server_sha256": "5215783a32af637d99e70c0e1e9a4d26672ae3a975e64cea12d95cbfe822a49c"
+    },
+    {
+      "file": "10573917/04.webp",
+      "source": "https://cs14.pikabu.ru/post_img/2023/08/19/5/1692426199241040388.jpg",
+      "bytes": 35396,
+      "width": 700,
+      "height": 467,
+      "sha256": "a417b60cd65ffbd60db545aa0bfd448608a02fce39673de92ecca5ea3349c332",
+      "kind": "image",
+      "http": 200,
+      "server_sha256": "a417b60cd65ffbd60db545aa0bfd448608a02fce39673de92ecca5ea3349c332"
+    },
+    {
+      "file": "10573917/05.webp",
+      "source": "https://cs14.pikabu.ru/post_img/2023/08/19/5/1692426199270476158.jpg",
+      "bytes": 28336,
+      "width": 700,
+      "height": 267,
+      "sha256": "f887a9036fdfb75e49a7c30b9295009b1cc4d69ed194eec0dde7e63dae497c24",
+      "kind": "image",
+      "http": 200,
+      "server_sha256": "f887a9036fdfb75e49a7c30b9295009b1cc4d69ed194eec0dde7e63dae497c24"
+    }
+  ],
+  "hero_show": false,
+  "related_source_ids": [
+    "10425659",
+    "13436070",
+    "training-combined-2023"
+  ],
+  "description": [
+    "<meta name=\"description\" content=\"Привет, давно обещал сделать пост про резинки. Сделал!\">"
+  ],
+  "canonical": [
+    "<link rel=\"canonical\" href=\"https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/rezinki-dlya-trenirovok\">"
+  ]
+}

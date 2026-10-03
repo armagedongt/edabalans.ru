@@ -1,0 +1,17 @@
+{
+  "status": "published_usage_and_family_recorded",
+  "usage": {
+    "status": "recorded",
+    "source_uri": "content://item/b3b632f9-1f6f-46ab-8193-f7d0d3b649b0",
+    "task_key": "blog-new-10573917-20261003"
+  },
+  "navigation_version": 18,
+  "family_id": "blog:rezinki-dlya-trenirovok",
+  "members": [
+    "A021",
+    "A195"
+  ],
+  "navigation_sha256": "0fb9ee6bd8ab026f0b9e9ee3f0887e7236675453cf1ee23995840756ce28534a",
+  "other_families_preserved": true,
+  "channel_edits": 0
+}

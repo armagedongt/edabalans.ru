@@ -2,7 +2,7 @@
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
   "updated_at": "2026-10-03",
   "batch_size": 5,
-  "article_count": 52,
+  "article_count": 53,
   "old_article_count": 44,
   "full_current_text_read_count": 45,
   "archive_source_text_compared_count": 6,
@@ -20,7 +20,8 @@
     "11801517",
     "10425659",
     "11906015",
-    "10532723"
+    "10532723",
+    "10573917"
   ],
   "new_articles_published": [
     "10123213",
@@ -30,32 +31,22 @@
     "11801517",
     "10425659",
     "11906015",
-    "10532723"
+    "10532723",
+    "10573917"
   ],
-  "new_full_safe_review_pass_count": 8,
-  "total_old_and_new_full_safe_review_delivered_count": 51,
+  "new_full_safe_review_pass_count": 9,
+  "total_old_and_new_full_safe_review_delivered_count": 52,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "A021/A195",
+  "next_source_id": "A031/A161/A281",
   "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "10573917",
-  "current_sequential_stage": "bands_main_ci_pending",
-  "bands_10573917_pending": {
-    "preferred_basis": "A195",
-    "writer_validation": "pass",
-    "independent_review": "technical_pass_level2_notes",
-    "main_revision": "6b35abb0d1906cd9bfc1e5d4020f122b1612f1d6",
-    "ci_run": 37142972071,
-    "first_release_ci": "37142332063 success; browser found repeated 1 in intro list, fixed only blank lines",
-    "local_tests": "33 passed; initial missing PYTHONPATH/database_url setup corrected",
-    "published_verified": false,
-    "next_action": "Wait CI, production53, API/media/browser, Library sync; then close before next family"
-  },
+  "current_sequential_stage": "bands_fully_closed_next_training_zones",
   "belly_10532723_prepared": {
     "full_sources": [
       "A019",
@@ -973,5 +964,22 @@
     "desktop_mobile_dom_geometry_pass": true,
     "library_usage": "recorded",
     "hero_show": false
+  },
+  "bands_10573917_prepared": {
+    "published_verified": true,
+    "preferred_basis": "A195",
+    "writer_validation": "pass",
+    "independent_review": "technical_pass_level2_notes",
+    "full_scientific_pass": false,
+    "production_revision": "6b35abb0d1906cd9bfc1e5d4020f122b1612f1d6",
+    "ci_run": 37142972071,
+    "ci_conclusion": "success",
+    "api_version": 1,
+    "public_version": 0,
+    "markdown_sha256_lf": "d5e61859764f5f64f41128c82d1bd875ee6483df592bb77018beb4157fdd2869",
+    "media_http_hash_pass": 6,
+    "desktop_mobile_dom_geometry_pass": true,
+    "library_usage": "recorded",
+    "library_navigation_version": 18
   }
 }
