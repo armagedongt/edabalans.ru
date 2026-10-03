@@ -41,14 +41,23 @@
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "A082",
+  "next_source_id": "A078",
   "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "10797468",
-  "current_sequential_stage": "fat_zones_fully_closed_next_sweating",
+  "current_sequential_source_id": "12189205",
+  "current_sequential_stage": "sweating_owner_decision_pending_next_poverty",
+  "sweating_12189205_hold": {
+    "source_members": ["A082"],
+    "stage": "full_source_read_level3_owner_decision_pending",
+    "author_text_changed": false,
+    "published": false,
+    "writer_pass": false,
+    "approval_publish_next_preserved": true,
+    "report": "owner-review/sweating-20261003.md"
+  },
   "belly_10532723_prepared": {
     "full_sources": [
       "A019",
