@@ -12,7 +12,9 @@
       "sha256": "bbecfb3f4699913833d400c125bd47a55e9a32c16efc065fc423e0b525171b18",
       "visually_checked": true,
       "in_article_body": true,
-      "platform_tail_media": false
+      "platform_tail_media": false,
+      "public_http": 200,
+      "server_sha256": "bbecfb3f4699913833d400c125bd47a55e9a32c16efc065fc423e0b525171b18"
     },
     {
       "file": "12109482/02.webp",
@@ -23,7 +25,9 @@
       "sha256": "35a0a04a67d3e97575ff0e118df77bb63bf2ca37e6331d753bb9da2db2932496",
       "visually_checked": true,
       "in_article_body": true,
-      "platform_tail_media": false
+      "platform_tail_media": false,
+      "public_http": 200,
+      "server_sha256": "35a0a04a67d3e97575ff0e118df77bb63bf2ca37e6331d753bb9da2db2932496"
     },
     {
       "file": "12109482/03.webp",
@@ -34,7 +38,9 @@
       "sha256": "464c3e66dda54bfa3fd4d8d783df847cbe6d320f7c2141fbc6a58973705df429",
       "visually_checked": true,
       "in_article_body": true,
-      "platform_tail_media": false
+      "platform_tail_media": false,
+      "public_http": 200,
+      "server_sha256": "464c3e66dda54bfa3fd4d8d783df847cbe6d320f7c2141fbc6a58973705df429"
     },
     {
       "file": "12109482/04.webp",
@@ -45,7 +51,9 @@
       "sha256": "450f5d381fde5c2dfcb1f9951c5e4e20062f185ccf7e3bf9d6b04eb476c4ba23",
       "visually_checked": true,
       "in_article_body": true,
-      "platform_tail_media": false
+      "platform_tail_media": false,
+      "public_http": 200,
+      "server_sha256": "450f5d381fde5c2dfcb1f9951c5e4e20062f185ccf7e3bf9d6b04eb476c4ba23"
     },
     {
       "file": "12109482/05.webp",
@@ -56,7 +64,9 @@
       "sha256": "e4aab5239cab38e44a4580dc987b9ff9997c023871a3f5390871e60b3b6b596a",
       "visually_checked": true,
       "in_article_body": true,
-      "platform_tail_media": false
+      "platform_tail_media": false,
+      "public_http": 200,
+      "server_sha256": "e4aab5239cab38e44a4580dc987b9ff9997c023871a3f5390871e60b3b6b596a"
     },
     {
       "file": "12109482/06.webp",
@@ -67,7 +77,9 @@
       "sha256": "40eba60d3753246c9904606e485a85bdd2acca8b1a82629c756400ae1df32964",
       "visually_checked": true,
       "in_article_body": true,
-      "platform_tail_media": false
+      "platform_tail_media": false,
+      "public_http": 200,
+      "server_sha256": "40eba60d3753246c9904606e485a85bdd2acca8b1a82629c756400ae1df32964"
     },
     {
       "file": "12109482/07.webp",
@@ -78,7 +90,9 @@
       "sha256": "57ba8ee487ade1aae9c42cec6f2bb4c0a3e579a66c3b85179d9e0e05d15dd548",
       "visually_checked": true,
       "in_article_body": false,
-      "platform_tail_media": true
+      "platform_tail_media": true,
+      "public_http": 200,
+      "server_sha256": "57ba8ee487ade1aae9c42cec6f2bb4c0a3e579a66c3b85179d9e0e05d15dd548"
     }
   ]
 }
