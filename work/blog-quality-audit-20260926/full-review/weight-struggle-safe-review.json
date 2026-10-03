@@ -1,0 +1,10 @@
+{
+  "source_id": "11857250",
+  "reviewer": "/root/batch03_publisher_review",
+  "status": "clean",
+  "findings": [],
+  "draft_sha256": "83f663b22347060b1e70d2072d90791474aa24fe3c00304f7b436ebfbf094b99",
+  "checks": ["Свежая API-база совпадает с source_text pack", "Авторские цифры и утверждения не менялись", "Две цитаты и nested strong/em корректны", "Единый UL из трёх расчётов", "Две исходные ссылки без tracking", "Скриншот в точном месте DOM, hero off/card contain"],
+  "production_delivery_reviewed": false,
+  "full_scientific_pass": false
+}
