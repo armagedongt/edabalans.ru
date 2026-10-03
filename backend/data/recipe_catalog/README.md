@@ -45,7 +45,7 @@ SQLite-файла. Он предназначен для поиска ингре�
 набора в production:
 
 ```bash
-docker compose exec -T backend python scripts/import_recipe_catalog.py \
+docker compose exec -T backend python -m scripts.import_recipe_catalog \
   --catalog data/recipe_catalog/curated-products.jsonl \
   --curation-log data/recipe_catalog/curation-log.jsonl \
   --deactivate-missing
@@ -64,7 +64,7 @@ docker compose exec -T backend python scripts/import_recipe_catalog.py \
 Точечное восстановление одной исходной карточки:
 
 ```bash
-docker compose exec -T backend python scripts/import_recipe_catalog.py \
+docker compose exec -T backend python -m scripts.import_recipe_catalog \
   --catalog data/recipe_catalog/original-products.jsonl \
   --only-source-url "https://calorizator.ru/product/example"
 ```
@@ -72,7 +72,7 @@ docker compose exec -T backend python scripts/import_recipe_catalog.py \
 Полное возвращение исходного набора без отката кода и без потери новых рецептов:
 
 ```bash
-docker compose exec -T backend python scripts/import_recipe_catalog.py \
+docker compose exec -T backend python -m scripts.import_recipe_catalog \
   --catalog data/recipe_catalog/original-products.jsonl \
   --curation-log data/recipe_catalog/curation-log.jsonl \
   --deactivate-missing
