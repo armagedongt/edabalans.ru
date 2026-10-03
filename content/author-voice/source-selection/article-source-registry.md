@@ -9,11 +9,11 @@
 
 ## Сводка
 
-- В блоге: **48** канонические семьи.
+- В блоге: **49** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **59** внешних проявлений.
+- Уже привязано к канонам блога: **70** внешних проявлений (по машиночитаемому реестру; исправлен устаревший ручной счётчик).
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **235**.
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **230** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -21,6 +21,7 @@
 
 | Статья | Канон | Привязанные внешние проявления | Возможные версии на проверку |
 |---|---|---:|---:|
+| Почему питание всегда важнее тренировок!! | [blog:pochemu-pitanie-vazhnee-trenirovok](https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok) | 1 | 0 |
 | 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://blog.похудение-это-есть.рф/articles/10-debilnyh-faktov-o-vrednyh-produktah) | 1 | 0 |
 | 15 советов тем, кто худеет — по одному на килограмм лишнего веса | [blog:15-sovetov-tem-kto-hudeet](https://blog.похудение-это-есть.рф/articles/15-sovetov-tem-kto-hudeet) | 1 | 0 |
 | «Сладкоежка — увеличьте дозу витаминов!» | [blog:sladkoezhka-uvelichte-dozu-vitaminov](https://blog.похудение-это-есть.рф/articles/sladkoezhka-uvelichte-dozu-vitaminov) | 1 | 0 |
@@ -237,7 +238,6 @@
 | A040 | pikabu | [Похудеть не получается... какая самая частая причина?](https://pikabu.ru/story/pokhudet_ne_poluchaetsya_kakaya_samaya_chastaya_prichina_11118483) | `owner_review_later` | 1 |
 | A230 | telegraph | [Похудеть не получается... какая самая частая причина?⁠⁠](https://telegra.ph/hochu-hudet-03-21) | `owner_review_later` | 1 |
 | A181 | telegraph | [Почему дефицит калорий не работает?](https://telegra.ph/Pochemu-deficit-kalorij-ne-rabotaet-06-16) | `editorial_review` | 1 |
-| A071 | pikabu | [Почему питание всегда важнее тренировок!!](https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517) | `short_reserve` | 0 |
 | A174 | telegraph | [ПП рецепты — это плохо И вот почему!](https://telegra.ph/PP-recepty--hren-i-vot-pochemu-01-03) | `editorial_review` | 2 |
 | A053 | pikabu | [ПП-кулич — вам не нужен!](https://pikabu.ru/story/ppkulich__vam_ne_nuzhen_11385251) | `short_reserve` | 1 |
 | A196 | telegraph | [Правила безопасности за шведским столом](https://telegra.ph/SHS-06-18-2) | `editorial_review` | 1 |

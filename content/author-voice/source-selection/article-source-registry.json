@@ -155,9 +155,9 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 48,
-    "canonical_linked_external_records": 69,
-    "deferred_families": 231,
+    "canonical_blog_families": 49,
+    "canonical_linked_external_records": 70,
+    "deferred_families": 230,
     "deferred_by_kind": {
       "deferred_not_now": 18,
       "editorial_review": 84,
@@ -165,7 +165,7 @@
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
       "private_product_material": 43,
-      "short_reserve": 41,
+      "short_reserve": 40,
       "technical_or_service": 25
     },
     "candidate_duplicate_pairs": 75
@@ -1250,6 +1250,40 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:pochemu-pitanie-vazhnee-trenirovok",
+      "title": "Почему питание всегда важнее тренировок!!",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "11801517",
+        "slug": "pochemu-pitanie-vazhnee-trenirovok",
+        "url": "https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok",
+        "body_file": "content/blog/articles/11801517.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A071",
+          "source": "pikabu",
+          "external_id": "11801517",
+          "title": "Почему питание всегда важнее тренировок!!",
+          "url": "https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517",
+          "published_at": "2024-09-12T16:57:20+03:00",
+          "characters": 3762,
+          "role": "direct_source",
+          "provenance": "content://item/7b8f734c-46f1-4288-bf9c-d8e63cf9cf00",
+          "text_sha256": "c07e1700a35577c6e6fbc35d77b5e9afc3afade223671eb90e517243507cb004"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_exact_source_verified",
+      "owner_source_decisions": {
+        "A071": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": "A071",
+      "source_comparison": "work/blog-quality-audit-20260926/new/11801517/preparation-20261003.md"
     },
     {
       "family_id": "blog:pochemu-yapontsy-hudye-a-ty-net",
@@ -5693,32 +5727,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A181": "manual_review"
-      }
-    },
-    {
-      "family_id": "deferred:A071",
-      "title": "Почему питание всегда важнее тренировок!!",
-      "disposition": "deferred",
-      "deferred_kind": "short_reserve",
-      "reason": "Материал 3000–3999 знаков; сначала оценить самостоятельную пользу.",
-      "members": [
-        {
-          "catalog_id": "A071",
-          "source": "pikabu",
-          "external_id": "11801517",
-          "title": "Почему питание всегда важнее тренировок!!",
-          "url": "https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517",
-          "published_at": "2024-09-12T16:57:20+03:00",
-          "characters": 3762,
-          "role": "unmerged_source",
-          "provenance": "content://item/7b8f734c-46f1-4288-bf9c-d8e63cf9cf00",
-          "text_sha256": "c07e1700a35577c6e6fbc35d77b5e9afc3afade223671eb90e517243507cb004"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A071": "publish_next"
       }
     },
     {

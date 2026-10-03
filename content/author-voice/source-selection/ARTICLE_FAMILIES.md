@@ -16,7 +16,7 @@
 
 ## Сводка
 
-- Канонов блога: 48 (03.10.2026; публикация молока, риса и оливье подтверждена).
+- Канонов блога: 49 (03.10.2026; очередной выпуск 11801517 подтверждён, Library navigation v14).
 - Записей источников в этом файле: 300.
 - Рабочих семей/групп сравнения: 217 (не все связи подтверждены).
 
@@ -45,7 +45,6 @@
 - A021: [Резинки для тренировок!](https://pikabu.ru/story/rezinki_dlya_trenirovok_10573917).
 - A031: [Жиросжигающая зона не работает!](https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468).
 - A056: [Мама, с днем рождения!!!](https://pikabu.ru/story/mama_s_dnem_rozhdeniya_11448583).
-- A071: [Почему питание всегда важнее тренировок!!](https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517).
 - A076: [«У взрослой женщины не должно быть перекусов»](https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015).
 - A078: [Долбанная бедность1](https://pikabu.ru/story/dolbannaya_bednost_11989790).
 - A082: [Ответ на пост «Совет от потливости»2](https://pikabu.ru/story/otvet_na_post_sovet_ot_potlivosti_12189205).
@@ -1503,7 +1502,7 @@
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A071 · pikabu | [Почему питание всегда важнее тренировок!!](https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
+| A071 · pikabu | [Почему питание всегда важнее тренировок!!](https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517) | Опубликовано; канон — [блог](https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok), эта внешняя версия не канон |
 
 
 ### F144. Почему японцы худые, а ты нет?
