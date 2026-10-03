@@ -1,0 +1,17 @@
+{
+  "reviewer": "insurance_article_review",
+  "waves": 1,
+  "status": "technical_pass",
+  "draft_sha256": "2d820dd0fd19a308cebdf46b9394847eadcf28a9a5019e639a0c7ba201d971e3",
+  "pack_sha256": "617bf204372b515d3e1370f8b623ea8d27c5a65e57904bef9bf8bcc437ba8928",
+  "source_members": ["A083"],
+  "original_images": 9,
+  "h2_count": 12,
+  "ordered_list_items": [2,5],
+  "unordered_list_items": [3],
+  "original_bold_count": 3,
+  "level_3_found": false,
+  "full_scientific_pass": false,
+  "author_numbers_changed": false,
+  "level_2_notes_not_applied": ["generalizations_about_juice_and_drink_calories","fixed_satiety_and_enjoyment_timers","illustration06_total_mixture_mass_denominator"]
+}

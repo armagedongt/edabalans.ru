@@ -2,6 +2,60 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "12193581",
+      "slug": "tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom",
+      "title": "Техника безопасности питания за новогодним столом",
+      "excerpt": "Часто ТБ написана кровью, но те правила, о которых я расскажу сегодня, — выстраданы килограммами лишнего жира на боках и литрами пота в попытках от них потом избавиться. Время чтения = 4 минуты.",
+      "category": "Качество питания",
+      "body_file": "12193581.md",
+      "hero": {
+        "file": "12193581/01.webp",
+        "alt": "Стол-книжка: «Атлант совсем скоро расправит плечи»",
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2024/12/29/8/173547521414365771.png",
+        "show": false
+      },
+      "card": {
+        "file": "12193581/01.webp",
+        "alt": "Стол-книжка: «Атлант совсем скоро расправит плечи»",
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2024/12/29/8/173547521414365771.png",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "10978866",
+        "10573917",
+        "11401696"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "12193581/01.webp",
+        "12193581/02.webp",
+        "12193581/03.webp",
+        "12193581/04.webp",
+        "12193581/05.webp",
+        "12193581/06.webp",
+        "12193581/07.webp",
+        "12193581/08.webp",
+        "12193581/09.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581"
+        ],
+        "external_ids": [
+          "12193581"
+        ],
+        "source_uri": "content://item/533a8da7-496b-453c-a65f-57251d7bb8d4",
+        "source_revision": 1,
+        "source_date": "2024-12-29",
+        "sha256": "0a1da07bbbbb7becd8f7a2775a517f70760cb2e234e0c4dafa17855e045d020c",
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "adaptation": "minimal_proofread_platform_cta_cleanup_seasonal_author_text_9_original_images"
+      }
+    },
+    {
       "source_id": "14062380",
       "slug": "sredizemnomorskaya-dieta-eto-voobshche-chto",
       "title": "Средиземноморская диета — это вообще что?!?!",
