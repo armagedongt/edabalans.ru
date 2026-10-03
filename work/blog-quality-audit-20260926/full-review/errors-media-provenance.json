@@ -1,0 +1,110 @@
+{
+  "source_id": "d1baceb9e2b6b72013b6",
+  "source_uri": "content://item/1bb03a19-08e0-4d1b-bb65-df1815e7bc17",
+  "source_version": 1,
+  "source_text_sha256": "9d609f77af5d81b27abb5467f3aae64d507f3e8c808c2801d8b1fd70e3d4c6d2",
+  "source_media_count": 11,
+  "hero_show": false,
+  "card_fit": "cover",
+  "media": [
+    {
+      "file": "d1baceb9e2b6b72013b6/01.webp",
+      "bytes": 65178,
+      "sha256": "1b5874c1f8ef26b8648e47a42ee8b443fb41095a538632f77f41727b41f2e827",
+      "source_url": "https://optim.tildacdn.com/tild3536-3763-4064-b739-333335313931/-/format/webp/image.png.webp",
+      "width": 1332,
+      "height": 992,
+      "original_source": true
+    },
+    {
+      "file": "d1baceb9e2b6b72013b6/02.webp",
+      "bytes": 108654,
+      "sha256": "e4c2d77f279da91fae8abfb2637af8a840c7f798135fc7fe7268c11488a1bc76",
+      "source_url": "https://optim.tildacdn.com/tild6332-3131-4632-a661-343462626563/-/format/webp/Frame_492445044.jpg.webp",
+      "width": 1139,
+      "height": 1458,
+      "original_source": true
+    },
+    {
+      "file": "d1baceb9e2b6b72013b6/03.webp",
+      "bytes": 90084,
+      "sha256": "74a14b49faf40745e5171cc9b0df43ccde02f7cff1dd0d51917cbe4dfac36d9f",
+      "source_url": "https://optim.tildacdn.com/tild3134-3337-4038-a430-623463663235/-/format/webp/Frame_492445134.jpg.webp",
+      "width": 1483,
+      "height": 964,
+      "original_source": true
+    },
+    {
+      "file": "d1baceb9e2b6b72013b6/04.webp",
+      "bytes": 97728,
+      "sha256": "7a0c95e45fc1be8acb9b9a3b0bbc02a033744b98874a92a2a4230b1e8ee8e88a",
+      "source_url": "https://principled-cuticle-21b.notion.site/image/attachment%3A571dfeb8-6722-406d-a9af-ccde8de696e4%3Aimage.png?table=block&id=21e58521-3bab-80b8-8823-f508bd9b81d3&spaceId=5eb568ce-19be-43b8-90eb-3a00ab9af308&width=1420&userId=&cache=v2",
+      "width": 1536,
+      "height": 1024,
+      "original_source": true
+    },
+    {
+      "file": "d1baceb9e2b6b72013b6/05.webp",
+      "bytes": 14560,
+      "sha256": "9aa6dc5847dda85c1d84115107fc34b1ce70d48e33e3591022d4ee2660c2b66d",
+      "source_url": "https://telegra.ph/file/1787088e423487dff845c.png",
+      "width": 641,
+      "height": 183,
+      "original_source": true
+    },
+    {
+      "file": "d1baceb9e2b6b72013b6/06.webp",
+      "bytes": 51818,
+      "sha256": "b338fe01b1e08378fb94111ffe578c99aeb31ae64fd5c92667c846a0be645b2a",
+      "source_url": "https://optim.tildacdn.com/tild6539-3335-4435-b062-313237396631/-/format/webp/Frame_4989.jpg.webp",
+      "width": 665,
+      "height": 509,
+      "original_source": true
+    },
+    {
+      "file": "d1baceb9e2b6b72013b6/07.webp",
+      "bytes": 128080,
+      "sha256": "b6af76e0fef8c4ad19e2ae4c255bf984132e310853d8a4d4b2a1a3c4a05e6079",
+      "source_url": "https://optim.tildacdn.com/tild3431-3630-4138-b062-346434663963/-/format/webp/Frame_492445250_1.jpg.webp",
+      "width": 1600,
+      "height": 1045,
+      "original_source": true
+    },
+    {
+      "file": "d1baceb9e2b6b72013b6/08.webp",
+      "bytes": 148134,
+      "sha256": "53235a2abb9ed9ecfc476e5e62622fe60f6805f77556b548eb0800a38da81a11",
+      "source_url": "https://optim.tildacdn.com/tild6232-3764-4133-b461-646239663461/-/format/webp/photo_2025-06-24_14-.jpg.webp",
+      "width": 1280,
+      "height": 907,
+      "original_source": true
+    },
+    {
+      "file": "d1baceb9e2b6b72013b6/09-source.webp",
+      "bytes": 23042,
+      "sha256": "9d290bda3db735b75636fe02a9131d59d16c3a3e8962c27dab50bfb9ecc8cde3",
+      "source_url": "https://optim.tildacdn.com/tild3332-6166-4130-a636-303532643366/-/format/webp/image.png.webp",
+      "width": 462,
+      "height": 377,
+      "original_source": true
+    },
+    {
+      "file": "11401696/tilda-09-v3-body.webp",
+      "bytes": 86370,
+      "sha256": "e9ace438f6f989af56fd5ae4b9e16aefb39e3f1c473c6dbf8741c8a4b4f87190",
+      "width": 1519,
+      "height": 935,
+      "source_url": "https://static.tildacdn.com/tild6131-6162-4739-b265-623138646634/image.png",
+      "original_source": true
+    },
+    {
+      "file": "d1baceb9e2b6b72013b6/10-source.webp",
+      "bytes": 17666,
+      "sha256": "fdd111f65a2d5fe0187f0ef703c76bfb3f161f8c08c88582d78f0f465eb51570",
+      "source_url": "https://optim.tildacdn.com/tild6266-3036-4666-a663-613766383165/-/format/webp/image.png.webp",
+      "width": 400,
+      "height": 267,
+      "original_source": true
+    }
+  ]
+}
