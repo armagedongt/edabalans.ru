@@ -1,0 +1,29 @@
+[
+  {
+    "file": "10797468/01.webp",
+    "source": "https://leonardo.osnova.io/15d9587b-2fa2-5dc6-b662-bc2b530e9fd7/-/scale_crop/1184x/",
+    "bytes": 34756,
+    "width": 700,
+    "height": 474,
+    "sha256": "7a4adc99054c1b4d83506544cfffbb5bcd85eab8145555955e3670a5b038e385",
+    "kind": "image"
+  },
+  {
+    "file": "10797468/02.webp",
+    "source": "https://leonardo.osnova.io/bd2432c0-1173-50e0-a52b-16fcd99db5ef/-/scale_crop/1184x/",
+    "bytes": 5364,
+    "width": 700,
+    "height": 266,
+    "sha256": "252b90c0ac8cc9aa9134855a79c69ba6aa57add7a5d0cf597053afd8ff754a54",
+    "kind": "image"
+  },
+  {
+    "file": "10797468/03.webp",
+    "source": "https://leonardo.osnova.io/b3f895ee-61b8-5deb-b7f3-b8fe05e096e8/-/scale_crop/1184x/",
+    "bytes": 31610,
+    "width": 700,
+    "height": 466,
+    "sha256": "54cd3bcb4ec5c52f1d9893dfac758060b53b89737f82a1db746144d0d4aa3a11",
+    "kind": "image"
+  }
+]

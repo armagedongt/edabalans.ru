@@ -2,6 +2,61 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "10797468",
+      "slug": "zhiroszhigayushchaya-zona-ne-rabotaet",
+      "title": "Жиросжигающая зона не работает! И вот почему",
+      "excerpt": "Привет. По крайней мере, в том виде, как вы это представляете.",
+      "category": "Тренировки",
+      "body_file": "10797468.md",
+      "hero": {
+        "file": "10797468/01.webp",
+        "alt": "Диаграмма пульсовых зон, которую разбирает автор",
+        "provenance": "https://leonardo.osnova.io/15d9587b-2fa2-5dc6-b662-bc2b530e9fd7/-/scale_crop/1184x/",
+        "show": false
+      },
+      "card": {
+        "file": "10797468/01.webp",
+        "alt": "Диаграмма пульсовых зон, которую разбирает автор",
+        "provenance": "https://leonardo.osnova.io/15d9587b-2fa2-5dc6-b662-bc2b530e9fd7/-/scale_crop/1184x/",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11522121",
+        "14102926",
+        "10532723"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "10797468/01.webp",
+        "10797468/02.webp",
+        "10797468/03.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://vc.ru/flood/912323-zhiroszhigayushaya-zona-ne-rabotaet-i-vot-pochemu",
+          "https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468",
+          "https://telegra.ph/Koe-chto-o-zhiroszhiganii-11-04"
+        ],
+        "external_ids": [
+          "912323",
+          "10797468",
+          "Koe-chto-o-zhiroszhiganii-11-04"
+        ],
+        "source_uri": "knowledge://resource/vc-912323-full-source",
+        "source_revision": 1,
+        "source_date": "2023-11-12",
+        "sha256": [
+          "9ad4156d1acffd403a034d99237cc63a449083e16b81876f9307ca66d49c3ad8",
+          "f56a300352aa0113bf59191489555e6d2ecaeec413561f6996fff09cf462ffa2",
+          "48451a310a1fa9f4d836765f57ffad294590f11bb626d9664c4a9e0365a39d57"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
       "source_id": "10573917",
       "slug": "rezinki-dlya-trenirovok",
       "title": "Резинки для тренировок!",
