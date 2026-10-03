@@ -156,11 +156,11 @@
       "vc.ru": 14
     },
     "canonical_blog_families": 45,
-    "canonical_linked_external_records": 64,
-    "deferred_families": 236,
+    "canonical_linked_external_records": 65,
+    "deferred_families": 235,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 87,
+      "editorial_review": 86,
       "incomplete_draft": 13,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
@@ -1594,13 +1594,25 @@
           "role": "direct_source",
           "provenance": "content://item/15a53f35-df78-46ad-9c63-c08fb94b4cbb",
           "text_sha256": "d3bf1404dbfe3c864428c3e6f8189203228c29ddddf1c81500059db2ec96d639"
+        },
+        {
+          "catalog_id": "A173",
+          "source": "telegraph",
+          "external_id": "Ozempik-Semavik-nabolelo-10-24",
+          "title": "Оземпик, Семавик, наболело",
+          "url": "https://telegra.ph/Ozempik-Semavik-nabolelo-10-24",
+          "published_at": "2025-10-24T13:05:40+0000",
+          "characters": 5529,
+          "role": "previous_author_version",
+          "provenance": "content://item/7578aed5-2969-41a0-8e5c-c323891fdb02",
+          "text_sha256": "edf2e9b1d0c631b483f8ca1e7a29dec96084c09675767f5a9eeb6f85b8ac0d82"
         }
       ],
-      "possible_duplicate_catalog_ids": [
-        "A173"
-      ],
-      "family_evidence": "direct_provenance",
-      "owner_source_decisions": {}
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "full_sources_compared_author_versions",
+      "owner_source_decisions": {},
+      "merge_status": "source_family_compared_publication_pending",
+      "version_comparison": "A173 Telegraph 24.10.2025 — ранняя авторская версия тех же пяти вопросов; A094 Pikabu 25.10.2025 — поздняя расширенная основа. Различаются дисклеймер, 90%/80% как риторический пример, формулировки о поведении и заключительный продуктовый мост. Новые факты и слова из A173 в тело канона не переносились; это предыдущая версия, не побайтный дубль."
     },
     {
       "family_id": "blog:hodit-chtoby-hudet",
@@ -4572,32 +4584,6 @@
       "owner_source_decisions": {
         "A171": "old_educational"
       }
-    },
-    {
-      "family_id": "deferred:A173",
-      "title": "Оземпик, Семавик, наболело",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A173",
-          "source": "telegraph",
-          "external_id": "Ozempik-Semavik-nabolelo-10-24",
-          "title": "Оземпик, Семавик, наболело",
-          "url": "https://telegra.ph/Ozempik-Semavik-nabolelo-10-24",
-          "published_at": "2025-10-24T13:05:40+0000",
-          "characters": 5535,
-          "role": "unmerged_source",
-          "provenance": "content://item/7578aed5-2969-41a0-8e5c-c323891fdb02",
-          "text_sha256": "3773107114a58aa9375e552dc53eccbaff0c51efceb4f6d168a3d75428d4a06f"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A094"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {}
     },
     {
       "family_id": "deferred:A266",
