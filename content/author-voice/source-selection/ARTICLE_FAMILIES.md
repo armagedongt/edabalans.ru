@@ -2094,7 +2094,7 @@
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| tilda-post:e4441ism91 · tilda | [⛔️ Почему эффекта плато не существует](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
+| tilda-post:e4441ism91 · tilda | [⛔️ Почему эффекта плато не существует](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet) | На подумать — 04.10.2026 владелец отложил, не в текущей очереди публикации |
 
 
 ### F208. ✍️ Ваш новый план похудения

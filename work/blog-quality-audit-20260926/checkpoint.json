@@ -245,7 +245,7 @@
     "full_scientific_pass": false
   },
   "dogs_10369434_hold": {
-    "stage": "full_sources_read_owner_safety_decision_pending",
+    "stage": "owner_confirmed_keep_author_text_unchanged",
     "source_members": [
       "A012",
       "A156"
@@ -253,7 +253,15 @@
     "author_text_changed": false,
     "new_publication_created": false,
     "question": "Удалить абзац с советом броситься на собаку и гарантией отсутствия дальнейшего нападения либо оставить на ручной разбор",
-    "evidence": "new/10369434/source-review-20261003.md"
+    "evidence": "new/10369434/source-review-20261003.md",
+    "owner_followup": {
+      "decision": "keep_author_text_unchanged",
+      "basis": "04.10.2026: «Нападение собаки, я тебе еще раз сказал, оставляй». Удаление спорного абзаца не разрешено; прежнее согласование публикации сохраняется.",
+      "author_text_changed": false,
+      "published": false,
+      "next_stage": "minimal_adaptation_with_original_meaning_then_validation_review_delivery"
+    },
+    "question_resolved": true
   },
   "ozempik_prepared": {
     "source_id": "13327360",
@@ -1162,7 +1170,13 @@
     "owner_review": "owner-review/plateau-20261004.md",
     "partial_overlap_source_id": "13277231",
     "writer_pass": false,
-    "decision": "pending_owner"
+    "decision": "owner_deferred",
+    "owner_followup": {
+      "decision": "owner_deferred_not_current_queue",
+      "basis": "04.10.2026: «И про плато пока отложи». Не публиковать и не менять смысл; не трактовать как окончательное исключение в банк.",
+      "author_text_changed": false,
+      "published": false
+    }
   },
   "training_amkbo7kgg1_prepared": {
     "published_verified": true,
@@ -1206,5 +1220,20 @@
     "previous_documentation_ci_run": 37159080237,
     "previous_documentation_ci_conclusion": "success",
     "previous_documentation_production_revision": "69a04f96606f4a89c961e3c63962fa5789ec4a8a"
+  },
+  "latest_owner_followup": {
+    "date": "2026-10-04",
+    "dogs": "keep_original_meaning; not yet published",
+    "plateau": "deferred; not in current publication queue",
+    "sweating": "show prepared proposal; not approved or applied",
+    "public_articles": 61,
+    "safe_full_pass": 60,
+    "new_ready_to_publish_immediately": 0,
+    "approved_families_needing_preparation": [
+      "dogs"
+    ],
+    "owner_preview_pending": [
+      "sweating"
+    ]
   }
 }

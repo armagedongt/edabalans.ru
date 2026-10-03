@@ -3977,6 +3977,13 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A012": "publish_next"
+      },
+      "owner_followup": {
+        "decision": "keep_author_text_unchanged",
+        "basis": "04.10.2026: «Нападение собаки, я тебе еще раз сказал, оставляй». Удаление спорного абзаца не разрешено; прежнее согласование публикации сохраняется.",
+        "author_text_changed": false,
+        "published": false,
+        "next_stage": "minimal_adaptation_with_original_meaning_then_validation_review_delivery"
       }
     },
     {
@@ -4005,6 +4012,13 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A156": "publish_next"
+      },
+      "owner_followup": {
+        "decision": "keep_author_text_unchanged",
+        "basis": "04.10.2026: «Нападение собаки, я тебе еще раз сказал, оставляй». Удаление спорного абзаца не разрешено; прежнее согласование публикации сохраняется.",
+        "author_text_changed": false,
+        "published": false,
+        "next_stage": "minimal_adaptation_with_original_meaning_then_validation_review_delivery"
       }
     },
     {
@@ -7614,13 +7628,19 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
-        "tilda-post:e4441ism91": "publish_next"
+        "tilda-post:e4441ism91": "manual_review"
       },
-      "publication_hold": "owner_semantic_decision_pending",
+      "publication_hold": "owner_deferred",
       "source_comparison": "work/blog-quality-audit-20260926/owner-review/plateau-20261004.md",
       "semantic_overlap_with": [
         "blog:skolko-vremeni-nuzhno-na-pohudenie"
-      ]
+      ],
+      "owner_followup": {
+        "decision": "owner_deferred_not_current_queue",
+        "basis": "04.10.2026: «И про плато пока отложи». Не публиковать и не менять смысл; не трактовать как окончательное исключение в банк.",
+        "author_text_changed": false,
+        "published": false
+      }
     },
     {
       "family_id": "deferred:tilda-post:knian4e971",
