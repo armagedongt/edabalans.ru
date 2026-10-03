@@ -1,0 +1,10 @@
+{
+  "status": "clean",
+  "reviewer": "archive_decision_review",
+  "findings": [],
+  "scope": "Plants family catalogue and actual registry tables; no author-text editing",
+  "checks": ["Other families unchanged", "Source ID multiset preserved", "Owner-confirmed family and full-source comparison", "A123 partial_source / A130 and Tilda previous_version justified", "Unique blocks preserved without import", "61 canonical / 94 manifestations / 206 deferred", "All human table rows match JSON", "Source hashes and snapshot provenance verified"],
+  "server_sync_in_reviewer_scope": false,
+  "server_sync_separately_verified": "plants-library-receipt-20261004.json",
+  "complete_routing_separately_verified": "queue-completion-receipt-20261004.json"
+}

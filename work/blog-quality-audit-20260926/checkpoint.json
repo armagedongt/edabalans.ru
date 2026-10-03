@@ -56,7 +56,7 @@
   "production_changes_applied": 38,
   "next_independent_batch": null,
   "next_source_id": null,
-  "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
+  "active_stage": "approved_independent_queue_closed_remaining_owner_holds",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
@@ -1188,5 +1188,23 @@
     "A156",
     "tilda-post:e4441ism91"
   ],
-  "remaining_approved_unique_held_families": 3
+  "remaining_approved_unique_held_families": 3,
+  "queue_completion_audit": {
+    "checked_at": "2026-10-04",
+    "approved_source_cards_total": 37,
+    "closed_in_canon": 33,
+    "remaining_source_cards": 4,
+    "remaining_held_topic_families": 3,
+    "safe_independent_articles_remaining": 0,
+    "unaccounted_approved_source_cards": [],
+    "library_navigation_version": 29,
+    "canonical_family_and_member_routing_matches_server": true,
+    "production_manifest_matches_61_canons": true,
+    "plants_family_sync_confirmed": true,
+    "report": "full-review/plants-family-library-20261004.md",
+    "receipt": "full-review/queue-completion-receipt-20261004.json",
+    "previous_documentation_ci_run": 37159080237,
+    "previous_documentation_ci_conclusion": "success",
+    "previous_documentation_production_revision": "69a04f96606f4a89c961e3c63962fa5789ec4a8a"
+  }
 }
