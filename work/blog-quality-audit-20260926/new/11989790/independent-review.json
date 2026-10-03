@@ -1,0 +1,13 @@
+{
+  "reviewer": "poverty_article_review",
+  "waves": 2,
+  "status": "technical_pass",
+  "reviewed_draft_sha256": "38c2c49f645510e5e63333e4425f99e7431f7d82dd3940de7f8ce88c56cb5e11",
+  "final_mechanical_draft_sha256": "e558b14809689cd6a3fe2865d951e1556fec95d858da938c690ac5f1fc17743c",
+  "final_pack_sha256": "3d0e51fa245dbf2716fc7cc8b2b33514829882a5d4bb2d9055390f250ece2377",
+  "approved_final_mechanical_changes": ["КБЖУ: Markdown-списки с сохранением стрелок", "удаление последней площадочной подписи; ссылка в нативном CTA на действующий intensive URL"],
+  "source_parts": ["A078", "A091"],
+  "level_3_found": false,
+  "full_scientific_pass": false,
+  "owner_notes": "../../owner-review/poverty-20261003.md"
+}

@@ -2,6 +2,63 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "11989790",
+      "slug": "dolbanaya-bednost",
+      "title": "Долбаная бедность",
+      "excerpt": "Экономить — это как умение ездить на велосипеде. Стоит один раз научиться и его уже не пропить.",
+      "category": "Похудение",
+      "body_file": "11989790.md",
+      "hero": {
+        "file": "11989790/04.webp",
+        "alt": "Сравнение калорийности и соли в двух упаковках чипсов",
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2024/11/05/9/1730822170172052486.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "11989790/04.webp",
+        "alt": "Сравнение калорийности и соли в двух упаковках чипсов",
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2024/11/05/9/1730822170172052486.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11401696",
+        "11927800",
+        "11665295"
+      ],
+      "cta": "intensive",
+      "status": "published",
+      "media": [
+        "11989790/01.webp",
+        "11989790/02.webp",
+        "11989790/03.webp",
+        "11989790/04.webp",
+        "11989790/05.webp",
+        "11989790/06.webp",
+        "11989790/08.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/dolbannaya_bednost_11989790",
+          "https://pikabu.ru/story/dolbannaya_bednost_chast_2_13202834"
+        ],
+        "external_ids": [
+          "11989790",
+          "13202834"
+        ],
+        "source_uri": "content://item/39101d12-999d-4bb9-ac68-baa3a225e684",
+        "source_revision": 1,
+        "source_date": "2024-11-05",
+        "sha256": [
+          "aa135fc4801dae056a0b57676f76bdc43e04cbf4ff64ab2b578d2329483be85e",
+          "96b28c4712fa6fc837143f16183c7056c4a71de45190cd0b1e280822da27b2ed"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "adaptation": "two_author_approved_parts_combined_in_order_not_versions"
+      }
+    },
+    {
       "source_id": "10797468",
       "slug": "zhiroszhigayushchaya-zona-ne-rabotaet",
       "title": "Жиросжигающая зона не работает! И вот почему",
