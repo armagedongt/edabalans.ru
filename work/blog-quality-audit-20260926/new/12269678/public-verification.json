@@ -1,0 +1,32 @@
+{
+  "status": 200,
+  "editor_version": 1,
+  "public_version": 0,
+  "markdown_sha256_lf": "96289d54fde045f6a2ae547318b7df041dece93c7d6d0623eb03188bacb5d5f8",
+  "media": [
+    {
+      "file": "12269678/01.webp",
+      "source": "https://cs15.pikabu.ru/post_img/2025/01/18/10/1737220073191727084.jpg",
+      "kind": "image",
+      "width": 480,
+      "height": 360,
+      "bytes": 21840,
+      "sha256": "e3a0b3f5c4bfe3ee51eb343a76616101304b21796a4621cb373f2f8fc3dfad20",
+      "alt": "Короче, я застраховал маму от онкологии",
+      "http": 200,
+      "server_sha256": "e3a0b3f5c4bfe3ee51eb343a76616101304b21796a4621cb373f2f8fc3dfad20"
+    }
+  ],
+  "hero_show": false,
+  "related_source_ids": [
+    "11989790",
+    "12237133",
+    "11401696"
+  ],
+  "description": [
+    "<meta name=\"description\" content=\"Сейчас расскажу, нафига я это сделал. Рекламы не будет, расслабьтесь.\">"
+  ],
+  "canonical": [
+    "<link rel=\"canonical\" href=\"https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/zastrahoval-mamu-ot-onkologii\">"
+  ]
+}

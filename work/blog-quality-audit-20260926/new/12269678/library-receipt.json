@@ -1,0 +1,17 @@
+{
+  "status": "published_usage_and_family_recorded",
+  "usage": [
+    {
+      "status": "recorded",
+      "source_uri": "content://item/d470a504-9663-4351-a3da-30e52cad6e3d",
+      "task_key": "blog-new-12269678-A085-20261003"
+    }
+  ],
+  "navigation_version": 21,
+  "family_id": "blog:zastrahoval-mamu-ot-onkologii",
+  "members": [
+    "A085"
+  ],
+  "other_families_preserved": true,
+  "channel_edits": 0
+}

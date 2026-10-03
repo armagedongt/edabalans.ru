@@ -2,7 +2,7 @@
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
   "updated_at": "2026-10-03",
   "batch_size": 5,
-  "article_count": 55,
+  "article_count": 56,
   "old_article_count": 44,
   "full_current_text_read_count": 45,
   "archive_source_text_compared_count": 6,
@@ -23,7 +23,8 @@
     "10532723",
     "10573917",
     "10797468",
-    "11989790"
+    "11989790",
+    "12269678"
   ],
   "new_articles_published": [
     "10123213",
@@ -36,21 +37,22 @@
     "10532723",
     "10573917",
     "10797468",
-    "11989790"
+    "11989790",
+    "12269678"
   ],
-  "new_full_safe_review_pass_count": 11,
-  "total_old_and_new_full_safe_review_delivered_count": 54,
+  "new_full_safe_review_pass_count": 12,
+  "total_old_and_new_full_safe_review_delivered_count": 55,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "A085",
+  "next_source_id": "A056",
   "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "11989790",
-  "current_sequential_stage": "poverty_fully_closed_next_insured_mom",
+  "current_sequential_source_id": "12269678",
+  "current_sequential_stage": "insurance_fully_closed_next_mom_birthday",
   "sweating_12189205_hold": {
     "source_members": [
       "A082"
@@ -1034,5 +1036,25 @@
     "desktop_mobile_dom_geometry_pass": true,
     "library_usage": "recorded",
     "library_navigation_version": 20
+  },
+  "insurance_12269678_prepared": {
+    "published_verified": true,
+    "source_members": [
+      "A085"
+    ],
+    "writer_validation": "pass",
+    "independent_review": "technical_pass_level2_notes",
+    "full_scientific_pass": false,
+    "production_revision": "f86922be61f4bea3ad244bca15f1ca613471e645",
+    "ci_run": 37148938734,
+    "ci_conclusion": "success",
+    "api_version": 1,
+    "public_version": 0,
+    "markdown_sha256_lf": "96289d54fde045f6a2ae547318b7df041dece93c7d6d0623eb03188bacb5d5f8",
+    "media_http_hash_pass": 1,
+    "desktop_mobile_dom_geometry_pass": true,
+    "library_usage": "recorded",
+    "library_navigation_version": 21,
+    "pending_native_link_after_A056": "mother_story11448583"
   }
 }

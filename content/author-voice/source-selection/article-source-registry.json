@@ -155,9 +155,9 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 55,
-    "canonical_linked_external_records": 84,
-    "deferred_families": 216,
+    "canonical_blog_families": 56,
+    "canonical_linked_external_records": 85,
+    "deferred_families": 215,
     "deferred_by_kind": {
       "deferred_not_now": 18,
       "editorial_review": 74,
@@ -165,7 +165,7 @@
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
       "private_product_material": 43,
-      "short_reserve": 37,
+      "short_reserve": 36,
       "technical_or_service": 25
     },
     "candidate_duplicate_pairs": 75
@@ -1017,6 +1017,42 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "owner_confirmed",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:zastrahoval-mamu-ot-onkologii",
+      "title": "Короче, я застраховал маму от онкологии",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "12269678",
+        "slug": "zastrahoval-mamu-ot-onkologii",
+        "url": "https://blog.похудение-это-есть.рф/articles/zastrahoval-mamu-ot-onkologii",
+        "body_file": "content/blog/articles/12269678.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A085",
+          "source": "pikabu",
+          "external_id": "12269678",
+          "title": "Короче, я застраховал маму от онкологии",
+          "url": "https://pikabu.ru/story/koroche_ya_zastrakhoval_mamu_ot_onkologii_12269678",
+          "published_at": "2025-01-18T20:31:15+03:00",
+          "characters": 3718,
+          "role": "direct_source",
+          "provenance": "content://item/d470a504-9663-4351-a3da-30e52cad6e3d",
+          "text_sha256": "565119365b918ad839e5672564b85f5aa87f0b3d514056177231b319eeb20954"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "exact_single_full_source_live_dom_minimal_adaptation",
+      "owner_source_decisions": {
+        "A085": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": [
+        "A085"
+      ],
+      "source_comparison": "work/blog-quality-audit-20260926/new/12269678/preparation-20261003.md"
     },
     {
       "family_id": "blog:minus-12-kilogrammov-za-2-mesyaca",
@@ -4164,32 +4200,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A248": "old_educational"
-      }
-    },
-    {
-      "family_id": "deferred:A085",
-      "title": "Короче, я застраховал маму от онкологии",
-      "disposition": "deferred",
-      "deferred_kind": "short_reserve",
-      "reason": "Материал 3000–3999 знаков; сначала оценить самостоятельную пользу.",
-      "members": [
-        {
-          "catalog_id": "A085",
-          "source": "pikabu",
-          "external_id": "12269678",
-          "title": "Короче, я застраховал маму от онкологии",
-          "url": "https://pikabu.ru/story/koroche_ya_zastrakhoval_mamu_ot_onkologii_12269678",
-          "published_at": "2025-01-18T20:31:15+03:00",
-          "characters": 3718,
-          "role": "unmerged_source",
-          "provenance": "content://item/d470a504-9663-4351-a3da-30e52cad6e3d",
-          "text_sha256": "565119365b918ad839e5672564b85f5aa87f0b3d514056177231b319eeb20954"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A085": "publish_next"
       }
     },
     {
