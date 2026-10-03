@@ -1,0 +1,16 @@
+{
+  "status": "clean",
+  "source_id": "0d583f6ad1cea0eef750",
+  "reviewer": "batch03_publisher_review",
+  "draft_sha256": "c57d60ea98df40ab2a4543c60252a77359cfea2858479c6bbdbd10918c853dfd",
+  "findings": [],
+  "checks": [
+    "API baseline, Writer source/draft/pack/review and validation hashes agree",
+    "Author words, numbers, dates and medical evaluations unchanged; five dialogue markers restored",
+    "Source DOM supports two strong paragraphs, two retained blockquotes and five original media positions",
+    "A005 and A253 compared as author versions, not exact duplicates; later A253 remains primary",
+    "Registry counts 64/236/87 agree with actual records; hero off, original card contain, one intensive CTA"
+  ],
+  "full_scientific_pass": false,
+  "production_delivery_checked": false
+}

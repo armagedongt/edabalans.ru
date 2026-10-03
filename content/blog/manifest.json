@@ -837,15 +837,15 @@
         "body_file": "0d583f6ad1cea0eef750.md",
         "hero": {
           "file": "0d583f6ad1cea0eef750/01.webp",
-          "alt": "Иллюстрация к статье «Один небольшой прыжок — большие перемены в жизни»",
+          "alt": "На велосипедах перед прогулкой",
           "provenance": "https://cs14.pikabu.ru/post_img/2023/05/01/10/1682963002189961844.jpg",
-          "show": true
+          "show": false
         },
         "card": {
           "file": "0d583f6ad1cea0eef750/01.webp",
-          "alt": "Иллюстрация к статье «Один небольшой прыжок — большие перемены в жизни»",
+          "alt": "На велосипедах перед прогулкой",
           "provenance": "https://cs14.pikabu.ru/post_img/2023/05/01/10/1682963002189961844.jpg",
-          "fit": "cover"
+          "fit": "contain"
         },
         "related_source_ids": [
           "2e269fdc52d600a64753",
