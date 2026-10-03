@@ -218,7 +218,8 @@
     "13785403",
     "habits-formation-and-one-percent",
     "11339712",
-    "intuitivnoe-pitanie-04-27-2"
+    "intuitivnoe-pitanie-04-27-2",
+    "11665295"
   ],
   "training_confirmed_delivery": {
     "editor_version": 3,
@@ -337,7 +338,7 @@
   "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
   "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
   "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей",
-  "format_targeted_validation_pass_count": 26,
+  "format_targeted_validation_pass_count": 27,
   "publication_hold_source_ids": [
     "693339"
   ],
@@ -422,7 +423,6 @@
     "original_video_link": 1,
     "full_scientific_pass": false
   },
-  "format_targeted_count": 27,
   "fish_confirmed_delivery": {
     "source_id": "11665295",
     "production_revision": "9bac3ea805f86b39c43c8ee5944d6638bbbb7390",
