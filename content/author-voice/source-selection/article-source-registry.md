@@ -9,11 +9,11 @@
 
 ## Сводка
 
-- В блоге: **54** канонические семьи.
+- В блоге: **55** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **82** внешних проявления (по машиночитаемому реестру).
+- Уже привязано к канонам блога: **84** внешних проявления (по машиночитаемому реестру).
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **218** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **216** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -26,6 +26,7 @@
 | Последний жир на животе. План действий | [blog:posledniy-zhir-na-zhivote-plan-deystviy](https://blog.похудение-это-есть.рф/articles/posledniy-zhir-na-zhivote-plan-deystviy) | 3 | 0 |
 | Резинки для тренировок! | [blog:rezinki-dlya-trenirovok](https://blog.похудение-это-есть.рф/articles/rezinki-dlya-trenirovok) | 2 | 0 |
 | Жиросжигающая зона не работает! И вот почему | [blog:zhiroszhigayushchaya-zona-ne-rabotaet](https://blog.похудение-это-есть.рф/articles/zhiroszhigayushchaya-zona-ne-rabotaet) | 3 | 0 |
+| Долбаная бедность | [blog:dolbanaya-bednost](https://blog.похудение-это-есть.рф/articles/dolbanaya-bednost) | 2 | 0 |
 | Почему питание всегда важнее тренировок!! | [blog:pochemu-pitanie-vazhnee-trenirovok](https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok) | 1 | 0 |
 | 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://blog.похудение-это-есть.рф/articles/10-debilnyh-faktov-o-vrednyh-produktah) | 1 | 0 |
 | 15 советов тем, кто худеет — по одному на килограмм лишнего веса | [blog:15-sovetov-tem-kto-hudeet](https://blog.похудение-это-есть.рф/articles/15-sovetov-tem-kto-hudeet) | 1 | 0 |
@@ -133,8 +134,6 @@
 | A213 | telegraph | [Детоксы, витамины, минералы, анализы](https://telegra.ph/Vitamins-01-20) | `private_product_material` | 0 |
 | A142 | telegraph | [Диеты — знакомимся и прощаемся](https://telegra.ph/Diety-11-27) | `editorial_review` | 0 |
 | A224 | telegraph | [Договор-оферта на оказание услуг](https://telegra.ph/dogovor-oferta-09-10) | `technical_or_service` | 1 |
-| A091 | pikabu | [Долбанная бедность. Часть 21](https://pikabu.ru/story/dolbannaya_bednost_chast_2_13202834) | `editorial_review` | 0 |
-| A078 | pikabu | [Долбанная бедность1](https://pikabu.ru/story/dolbannaya_bednost_11989790) | `short_reserve` | 0 |
 | A169 | telegraph | [Дополнительные материалы к видео о метаболизме](https://telegra.ph/Nedelya-1--Dopolnitelnye-materialy-k-video-07-18) | `private_product_material` | 1 |
 | A129 | telegraph | [Дополнительные материалы по тренировкам](https://telegra.ph/Bonus-urok-4-02-07) | `private_product_material` | 1 |
 | A116 | telegraph | [Если ты большой, это не значит что ты говоришь правду](https://telegra.ph/11111-07-31-5) | `editorial_review` | 0 |

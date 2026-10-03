@@ -155,17 +155,17 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 54,
-    "canonical_linked_external_records": 82,
-    "deferred_families": 218,
+    "canonical_blog_families": 55,
+    "canonical_linked_external_records": 84,
+    "deferred_families": 216,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 75,
+      "editorial_review": 74,
       "incomplete_draft": 12,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
       "private_product_material": 43,
-      "short_reserve": 38,
+      "short_reserve": 37,
       "technical_or_service": 25
     },
     "candidate_duplicate_pairs": 75
@@ -616,6 +616,56 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:dolbanaya-bednost",
+      "title": "Долбаная бедность",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "11989790",
+        "slug": "dolbanaya-bednost",
+        "url": "https://blog.похудение-это-есть.рф/articles/dolbanaya-bednost",
+        "body_file": "content/blog/articles/11989790.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A078",
+          "source": "pikabu",
+          "external_id": "11989790",
+          "title": "Долбанная бедность1",
+          "url": "https://pikabu.ru/story/dolbannaya_bednost_11989790",
+          "published_at": "2024-11-05T19:04:15+03:00",
+          "characters": 3691,
+          "role": "direct_source",
+          "provenance": "content://item/39101d12-999d-4bb9-ac68-baa3a225e684",
+          "text_sha256": "aa135fc4801dae056a0b57676f76bdc43e04cbf4ff64ab2b578d2329483be85e"
+        },
+        {
+          "catalog_id": "A091",
+          "source": "pikabu",
+          "external_id": "13202834",
+          "title": "Долбанная бедность. Часть 21",
+          "url": "https://pikabu.ru/story/dolbannaya_bednost_chast_2_13202834",
+          "published_at": "2025-09-20T19:51:21+03:00",
+          "characters": 6956,
+          "role": "direct_source",
+          "provenance": "content://item/072cb5bd-1abb-44c0-af95-d8aa6e21bc1f",
+          "text_sha256": "96b28c4712fa6fc837143f16183c7056c4a71de45190cd0b1e280822da27b2ed"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "owner_approved_two_distinct_parts_combined_in_source_order",
+      "owner_source_decisions": {
+        "A078": "publish_next",
+        "A091": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": [
+        "A078",
+        "A091"
+      ],
+      "source_comparison": "work/blog-quality-audit-20260926/new/11989790/preparation-20261003.md"
     },
     {
       "family_id": "blog:zhiroszhigayushchaya-zona-ne-rabotaet",
@@ -3187,58 +3237,6 @@
       ],
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {}
-    },
-    {
-      "family_id": "deferred:A091",
-      "title": "Долбанная бедность. Часть 21",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A091",
-          "source": "pikabu",
-          "external_id": "13202834",
-          "title": "Долбанная бедность. Часть 21",
-          "url": "https://pikabu.ru/story/dolbannaya_bednost_chast_2_13202834",
-          "published_at": "2025-09-20T19:51:21+03:00",
-          "characters": 6956,
-          "role": "unmerged_source",
-          "provenance": "content://item/072cb5bd-1abb-44c0-af95-d8aa6e21bc1f",
-          "text_sha256": "96b28c4712fa6fc837143f16183c7056c4a71de45190cd0b1e280822da27b2ed"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A091": "publish_next"
-      }
-    },
-    {
-      "family_id": "deferred:A078",
-      "title": "Долбанная бедность1",
-      "disposition": "deferred",
-      "deferred_kind": "short_reserve",
-      "reason": "Материал 3000–3999 знаков; сначала оценить самостоятельную пользу.",
-      "members": [
-        {
-          "catalog_id": "A078",
-          "source": "pikabu",
-          "external_id": "11989790",
-          "title": "Долбанная бедность1",
-          "url": "https://pikabu.ru/story/dolbannaya_bednost_11989790",
-          "published_at": "2024-11-05T19:04:15+03:00",
-          "characters": 3691,
-          "role": "unmerged_source",
-          "provenance": "content://item/39101d12-999d-4bb9-ac68-baa3a225e684",
-          "text_sha256": "aa135fc4801dae056a0b57676f76bdc43e04cbf4ff64ab2b578d2329483be85e"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A078": "publish_next"
-      }
     },
     {
       "family_id": "deferred:A169",

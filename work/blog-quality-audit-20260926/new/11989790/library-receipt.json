@@ -1,0 +1,23 @@
+{
+  "status": "published_usage_and_family_recorded",
+  "usage": [
+    {
+      "status": "recorded",
+      "source_uri": "content://item/39101d12-999d-4bb9-ac68-baa3a225e684",
+      "task_key": "blog-new-11989790-A078-20261003"
+    },
+    {
+      "status": "recorded",
+      "source_uri": "content://item/072cb5bd-1abb-44c0-af95-d8aa6e21bc1f",
+      "task_key": "blog-new-11989790-A091-20261003"
+    }
+  ],
+  "navigation_version": 20,
+  "family_id": "blog:dolbanaya-bednost",
+  "members": [
+    "A078",
+    "A091"
+  ],
+  "other_families_preserved": true,
+  "channel_edits": 0
+}

@@ -2,7 +2,7 @@
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
   "updated_at": "2026-10-03",
   "batch_size": 5,
-  "article_count": 54,
+  "article_count": 55,
   "old_article_count": 44,
   "full_current_text_read_count": 45,
   "archive_source_text_compared_count": 6,
@@ -22,7 +22,8 @@
     "11906015",
     "10532723",
     "10573917",
-    "10797468"
+    "10797468",
+    "11989790"
   ],
   "new_articles_published": [
     "10123213",
@@ -34,29 +35,33 @@
     "11906015",
     "10532723",
     "10573917",
-    "10797468"
+    "10797468",
+    "11989790"
   ],
-  "new_full_safe_review_pass_count": 10,
-  "total_old_and_new_full_safe_review_delivered_count": 53,
+  "new_full_safe_review_pass_count": 11,
+  "total_old_and_new_full_safe_review_delivered_count": 54,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "A078",
+  "next_source_id": "A085",
   "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "12189205",
-  "current_sequential_stage": "sweating_owner_decision_pending_next_poverty",
+  "current_sequential_source_id": "11989790",
+  "current_sequential_stage": "poverty_fully_closed_next_insured_mom",
   "sweating_12189205_hold": {
-    "source_members": ["A082"],
-    "stage": "full_source_read_level3_owner_decision_pending",
+    "source_members": [
+      "A082"
+    ],
+    "stage": "owner_preview_prepared_not_applied",
     "author_text_changed": false,
     "published": false,
     "writer_pass": false,
     "approval_publish_next_preserved": true,
-    "report": "owner-review/sweating-20261003.md"
+    "report": "owner-review/sweating-20261003.md",
+    "proposal": "owner-review/sweating-proposal-20261003.md"
   },
   "belly_10532723_prepared": {
     "full_sources": [
@@ -1009,5 +1014,25 @@
     "desktop_mobile_dom_geometry_pass": true,
     "library_usage": "recorded",
     "library_navigation_version": 19
+  },
+  "poverty_11989790_prepared": {
+    "published_verified": true,
+    "source_parts": [
+      "A078",
+      "A091"
+    ],
+    "writer_validation": "pass",
+    "independent_review": "technical_pass_level2_notes",
+    "full_scientific_pass": false,
+    "production_revision": "bbf4c5c731fe66e23bcb9b9f38410627c30c1f4d",
+    "ci_run": 37146793166,
+    "ci_conclusion": "success",
+    "api_version": 1,
+    "public_version": 0,
+    "markdown_sha256_lf": "360a97d794459138544e31f6513e5a193716db83fadb7efc488bf17e94e43927",
+    "media_http_hash_pass": 7,
+    "desktop_mobile_dom_geometry_pass": true,
+    "library_usage": "recorded",
+    "library_navigation_version": 20
   }
 }
