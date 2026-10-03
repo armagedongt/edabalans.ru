@@ -155,12 +155,12 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 59,
-    "canonical_linked_external_records": 88,
-    "deferred_families": 212,
+    "canonical_blog_families": 60,
+    "canonical_linked_external_records": 89,
+    "deferred_families": 211,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 73,
+      "editorial_review": 72,
       "incomplete_draft": 12,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
@@ -2113,6 +2113,42 @@
       ],
       "family_evidence": "direct_provenance",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom",
+      "title": "Техника безопасности питания за новогодним столом",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "12193581",
+        "slug": "tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom",
+        "url": "https://blog.похудение-это-есть.рф/articles/tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom",
+        "body_file": "content/blog/articles/12193581.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A083",
+          "source": "pikabu",
+          "external_id": "12193581",
+          "title": "Техника безопасности (питания) за новогодним столом!1",
+          "url": "https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581",
+          "published_at": "2024-12-29T18:12:24+03:00",
+          "characters": 8882,
+          "role": "direct_source",
+          "provenance": "content://item/533a8da7-496b-453c-a65f-57251d7bb8d4",
+          "text_sha256": "0a1da07bbbbb7becd8f7a2775a517f70760cb2e234e0c4dafa17855e045d020c"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "exact_single_full_source_live_dom_minimal_adaptation",
+      "owner_source_decisions": {
+        "A083": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": [
+        "A083"
+      ],
+      "source_comparison": "work/blog-quality-audit-20260926/new/12193581/preparation-20261004.md"
     },
     {
       "family_id": "blog:tri-oshibki-v-nachale-pohudeniya",
@@ -6759,32 +6795,6 @@
       ],
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {}
-    },
-    {
-      "family_id": "deferred:A083",
-      "title": "Техника безопасности (питания) за новогодним столом!1",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A083",
-          "source": "pikabu",
-          "external_id": "12193581",
-          "title": "Техника безопасности (питания) за новогодним столом!1",
-          "url": "https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581",
-          "published_at": "2024-12-29T18:12:24+03:00",
-          "characters": 8882,
-          "role": "unmerged_source",
-          "provenance": "content://item/533a8da7-496b-453c-a65f-57251d7bb8d4",
-          "text_sha256": "0a1da07bbbbb7becd8f7a2775a517f70760cb2e234e0c4dafa17855e045d020c"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A083": "publish_next"
-      }
     },
     {
       "family_id": "deferred:A220",

@@ -16,7 +16,7 @@
 
 ## Сводка
 
-- Канонов блога:59 (03.10.2026; выпуск14062380подтверждён, Library navigation v24).
+- Канонов блога:60 (04.10.2026; выпуск12193581подтверждён, Library navigation v25).
 - Записей источников в этом файле: 300.
 - Рабочих семей/групп сравнения: 217 (не все связи подтверждены).
 
@@ -40,7 +40,6 @@
 
 - A012: [Как на меня напали собаки в лесу](https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434).
 - A082: [Ответ на пост «Совет от потливости»2](https://pikabu.ru/story/otvet_na_post_sovet_ot_potlivosti_12189205).
-- A083: [Техника безопасности (питания) за новогодним столом!1](https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581).
 - A156: [Как на меня напали собаки в лесу](https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17).
 - A184: [Пост 2026](https://telegra.ph/Post-02-22-12).
 - tilda-post:amkbo7kgg1: [💪 Зачем нужны тренировки (кроме похудения)](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni).
@@ -1886,11 +1885,11 @@
 
 ### F185. Техника безопасности (питания) за новогодним столом!1
 
-Канона в блоге пока нет; выбор наиболее полной актуальной основы не завершён.
+Канон блога: [Техника безопасности питания за новогодним столом](https://blog.похудение-это-есть.рф/articles/tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom). Полная A083/liveDOM,9оригинальных иллюстраций, минимальная корректура/навигация. Не дубль«Оливье»A037; связанные самостоятельные материалы. Численные/арифметические замечания отдельно, не применены.
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A083 · pikabu | [Техника безопасности (питания) за новогодним столом!1](https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
+| A083 · pikabu | [Техника безопасности (питания) за новогодним столом!1](https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581) | Уже в блоге; внешняя публикация не канон |
 
 
 ### F186. Только калории

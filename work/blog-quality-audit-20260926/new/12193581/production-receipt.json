@@ -1,0 +1,32 @@
+{
+  "production_revision": "e89bc62636ede90ecc331a4b1921336dc0af5fe6",
+  "content_revision": "5d322dbad10edd6a3f2091afdea9087cf1c17622",
+  "ci_run": 37155369803,
+  "content_ci_run": 37154788718,
+  "ci_conclusion": "success",
+  "article_count": 60,
+  "local_tests_passed": 33,
+  "desktop": {
+    "client_width": 1265,
+    "scroll_width": 1265,
+    "h1_count": 1
+  },
+  "mobile": {
+    "viewport_width": 390,
+    "viewport_height": 844,
+    "client_width": 375,
+    "scroll_width": 375,
+    "h1_count": 1,
+    "original_images_loaded": 9
+  },
+  "media_http_sha_pass": 9,
+  "hero_show": false,
+  "related_source_ids": [
+    "10978866",
+    "12857458",
+    "11401696"
+  ],
+  "author_facts_changed": false,
+  "browser_body_verified_on_content_revision": true,
+  "only_related_metadata_changed_after_browser_verification": true
+}

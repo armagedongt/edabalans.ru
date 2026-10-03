@@ -9,11 +9,11 @@
 
 ## Сводка
 
-- В блоге: **59** канонические семьи.
+- В блоге: **60** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **88** внешних проявления (по машиночитаемому реестру).
+- Уже привязано к канонам блога: **89** внешних проявления (по машиночитаемому реестру).
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **212** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **211** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -31,6 +31,7 @@
 | Мама, с днём рождения!!! | [blog:mama-s-dnyom-rozhdeniya](https://blog.похудение-это-есть.рф/articles/mama-s-dnyom-rozhdeniya) |1|0|
 |12 простых изменений в питании и образе жизни| [blog:12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni](https://blog.похудение-это-есть.рф/articles/12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni) |1|0|
 | Средиземноморская диета — это вообще что?!?! | [blog:sredizemnomorskaya-dieta-eto-voobshche-chto](https://blog.похудение-это-есть.рф/articles/sredizemnomorskaya-dieta-eto-voobshche-chto) |1|0|
+| Техника безопасности питания за новогодним столом | [blog:tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom](https://blog.похудение-это-есть.рф/articles/tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom) |1|0|
 | Почему питание всегда важнее тренировок!! | [blog:pochemu-pitanie-vazhnee-trenirovok](https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok) | 1 | 0 |
 | 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://blog.похудение-это-есть.рф/articles/10-debilnyh-faktov-o-vrednyh-produktah) | 1 | 0 |
 | 15 советов тем, кто худеет — по одному на килограмм лишнего веса | [blog:15-sovetov-tem-kto-hudeet](https://blog.похудение-это-есть.рф/articles/15-sovetov-tem-kto-hudeet) | 1 | 0 |
@@ -271,7 +272,6 @@
 | A204 | telegraph | [Так можно пить во время еды или нет?](https://telegra.ph/Tak-mozhno-pit-vo-vremya-edy-ili-net-06-16) | `editorial_review` | 2 |
 | A114 | telegraph | [Тексты шортсы](https://telegra.ph/111-11-20-48) | `technical_or_service` | 0 |
 | A269 | vc.ru | [Температура воды (для приема внутрь)⁠⁠ ](https://vc.ru/flood/1112254-temperatura-vody-dlya-priema-vnutr) | `short_reserve` | 1 |
-| A083 | pikabu | [Техника безопасности (питания) за новогодним столом!1](https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581) | `editorial_review` | 0 |
 | A220 | telegraph | [Только калории](https://telegra.ph/calories-only-09-11) | `technical_or_service` | 0 |
 | A206 | telegraph | [Только калории - Считаем съеденное](https://telegra.ph/Tolko-kalorii---Schitaem-sedennoe-07-18) | `editorial_review` | 1 |
 | A258 | telegraph | [Только калории - Упрощаем подсчеты](https://telegra.ph/uproshaem-07-19) | `editorial_review` | 1 |
