@@ -14,7 +14,8 @@
   "headings_restored_first_three_batches": 24,
   "new_articles_prepared_locally": [
     "10123213",
-    "10877887"
+    "10877887",
+    "11188875"
   ],
   "new_articles_published": [
     "10123213",
@@ -31,8 +32,22 @@
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "10877887",
-  "current_sequential_stage": "new_milk_fully_closed_next_approved_source_11188875",
+  "current_sequential_source_id": "11188875",
+  "current_sequential_stage": "rice_writer_review_pass_main_waiting_ci_and_production",
+  "rice_11188875_prepared": {
+    "source": "A043",
+    "writer_validation": "pass",
+    "independent_review": "clean",
+    "draft_sha256": "29e4501af0016d5048dcf4b588e63dd7f6a07fa7b232389543bb23c0a74db619",
+    "local_revision": "a30aeacb8c2069bfc36c8c59454c7c3b53d8ce92",
+    "main_revision": "0851b5287c949bb3316bc0a258aee8c6181883ad",
+    "ci_run": 37128271282,
+    "source_images": 2,
+    "maximum_media_bytes": 127838,
+    "hero_show": false,
+    "published_verified": false,
+    "full_scientific_pass": false
+  },
   "milk_10877887_prepared": {
     "selected_source": "A236",
     "previous_version": "A034",
