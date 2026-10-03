@@ -1,0 +1,83 @@
+{
+  "source_id": "11833079",
+  "media": [
+    {
+      "file": "11833079/01.webp",
+      "bytes": 28810,
+      "width": 700,
+      "height": 394,
+      "sha256": "d95666290aba5d147abf4fa025e9f9a9fce9857a19df4d166be23d373ae6d457",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "d95666290aba5d147abf4fa025e9f9a9fce9857a19df4d166be23d373ae6d457",
+      "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/09/21/10/172693476913174839.png",
+      "visually_inspected": true,
+      "source_position_restored": true
+    },
+    {
+      "file": "11833079/02.webp",
+      "bytes": 6376,
+      "width": 606,
+      "height": 156,
+      "sha256": "35480b05608e03ec17e7bb5b7f1f030ed559fc42a92e96833401a969caae82e0",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "35480b05608e03ec17e7bb5b7f1f030ed559fc42a92e96833401a969caae82e0",
+      "original_source_url": "https://cs15.pikabu.ru/post_img/2024/09/21/11/1726945091187460917.jpg",
+      "visually_inspected": true,
+      "source_position_restored": true
+    },
+    {
+      "file": "11833079/03.webp",
+      "bytes": 16274,
+      "width": 520,
+      "height": 390,
+      "sha256": "653d0d3000540dad3d7e7e1273cef0e1fa1f04a00196d82220e300d294348bba",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "653d0d3000540dad3d7e7e1273cef0e1fa1f04a00196d82220e300d294348bba",
+      "original_source_url": "https://cs15.pikabu.ru/post_img/2024/09/21/11/1726943877196156145.jpg",
+      "visually_inspected": true,
+      "source_position_restored": true
+    },
+    {
+      "file": "11833079/04.webp",
+      "bytes": 100436,
+      "width": 1600,
+      "height": 923,
+      "sha256": "f36ca5bf76d6a629d99a88eb09d6d56a7b3dad3358427a225204aa6922e30d46",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "f36ca5bf76d6a629d99a88eb09d6d56a7b3dad3358427a225204aa6922e30d46",
+      "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/09/21/11/1726944272139832694.png",
+      "visually_inspected": true,
+      "source_position_restored": true
+    },
+    {
+      "file": "11833079/05.webp",
+      "bytes": 22526,
+      "width": 600,
+      "height": 600,
+      "sha256": "fd26ddffd8d95da831e703acd5a03cf3bdb6b7728905dbc6220a6327b9743daf",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "fd26ddffd8d95da831e703acd5a03cf3bdb6b7728905dbc6220a6327b9743daf",
+      "original_source_url": "https://cs15.pikabu.ru/post_img/2024/09/21/11/172694261418971631.jpg",
+      "visually_inspected": true,
+      "source_position_restored": true
+    },
+    {
+      "file": "11833079/06.webp",
+      "bytes": 111448,
+      "width": 1478,
+      "height": 1113,
+      "sha256": "7e3417707fe3d64cdc7ee247c4d175e607b3ae68c318533e5ecb6969512de499",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "7e3417707fe3d64cdc7ee247c4d175e607b3ae68c318533e5ecb6969512de499",
+      "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/09/22/6/1726994404181123195.jpg",
+      "visually_inspected": true,
+      "source_position_restored": true
+    }
+  ]
+}
