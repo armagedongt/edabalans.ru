@@ -2,6 +2,61 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "10573917",
+      "slug": "rezinki-dlya-trenirovok",
+      "title": "Резинки для тренировок!",
+      "excerpt": "Привет, давно обещал сделать пост про резинки. Сделал!",
+      "category": "Тренировки",
+      "body_file": "10573917.md",
+      "hero": {
+        "file": "10573917/03.webp",
+        "alt": "Эластичные петли, закреплённые на перекладине",
+        "provenance": "https://cs13.pikabu.ru/post_img/2023/08/19/5/1692428073175986559.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "10573917/03.webp",
+        "alt": "Эластичные петли, закреплённые на перекладине",
+        "provenance": "https://cs13.pikabu.ru/post_img/2023/08/19/5/1692428073175986559.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "10425659",
+        "13436070",
+        "training-combined-2023"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "10573917/01.webp",
+        "10573917/02.webp",
+        "10573917/bands-original.mp4",
+        "10573917/03.webp",
+        "10573917/04.webp",
+        "10573917/05.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://telegra.ph/Rezinki-09-01",
+          "https://pikabu.ru/story/rezinki_dlya_trenirovok_10573917"
+        ],
+        "external_ids": [
+          "Rezinki-09-01",
+          "10573917"
+        ],
+        "source_uri": "content://item/b3b632f9-1f6f-46ab-8193-f7d0d3b649b0",
+        "source_revision": 1,
+        "source_date": "2023-09-01T15:41:57+0000",
+        "sha256": [
+          "022afd2cf1fffcdac43ef061f7bbcaf9863f56ff0edb09d0264b3fcdf439a110",
+          "413211e581508f1865b10210374a8fbcb1494cbdddcc512c0d8f6e9bdce58cf8"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
       "source_id": "10532723",
       "slug": "posledniy-zhir-na-zhivote-plan-deystviy",
       "title": "Последний жир на животе. План действий",
