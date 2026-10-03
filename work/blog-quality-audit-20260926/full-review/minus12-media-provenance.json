@@ -1,0 +1,21 @@
+{
+  "source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
+  "checked_at": "2026-10-03",
+  "immutable_existing_files_preserved": true,
+  "media": [
+    {
+      "file": "Minus-12-kilogramm-za-2-mesyaca-07-13/card.webp",
+      "bytes": 107168,
+      "width": 1200,
+      "height": 800,
+      "sha256": "cf5997e2b3d338bdc0a129f328241cb7f36576b456974496f1362fcbc31ae30a",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "cf5997e2b3d338bdc0a129f328241cb7f36576b456974496f1362fcbc31ae30a",
+      "visually_checked": true,
+      "in_article_body": false,
+      "original_source_url": null,
+      "provenance": "OpenAI ImageGen, редакционная обложка без текста, 2026-09-21; исходник Telegraph не имеет медиа"
+    }
+  ]
+}
