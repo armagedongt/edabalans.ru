@@ -11,7 +11,7 @@ from fastapi import HTTPException
 
 ALLOWED_TAGS = {
     "h1", "h2", "h3", "p", "div", "ul", "ol", "li", "strong", "em",
-    "a", "blockquote", "aside", "img", "br", "hr",
+    "a", "blockquote", "aside", "img", "br", "hr", "del",
 }
 COURSE_TAGS = ALLOWED_TAGS | {
     "figure", "figcaption", "section", "table", "thead", "tbody", "tr", "th",
@@ -301,6 +301,7 @@ def inline_markdown(value: str) -> str:
     rendered = escape(value)
     # A literal Markdown asterisk must not become an emphasis delimiter.
     rendered = rendered.replace(r"\*", "&#42;")
+    rendered = rendered.replace(r"\~", "&#126;")
 
     def render_link(match: re.Match[str]) -> str:
         label = match.group(1).replace(r"\[", "[").replace(r"\]", "]")
@@ -315,6 +316,7 @@ def inline_markdown(value: str) -> str:
     )
     rendered = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", rendered)
     rendered = re.sub(r"(?<!\*)\*([^*]+)\*(?!\*)", r"<em>\1</em>", rendered)
+    rendered = re.sub(r"(?<!~)~~([^~]+)~~(?!~)", r"<del>\1</del>", rendered)
     return rendered
 
 

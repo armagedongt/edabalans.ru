@@ -20,6 +20,19 @@ from app.article_markup import markdown_to_article_html, safe_href, safe_image_s
 
 
 class ArticleMarkupTests(unittest.TestCase):
+    def test_source_strikethrough_preserves_author_words_and_emphasis(self) -> None:
+        rendered = markdown_to_article_html('В госпитале ~~были **белые люди**~~ поставляли рис.')
+        self.assertEqual(rendered, '<p>В госпитале <del>были <strong>белые люди</strong></del> поставляли рис.</p>')
+
+    def test_strikethrough_does_not_activate_raw_html_or_unsafe_attributes(self) -> None:
+        rendered = markdown_to_article_html('~~<img src=x onerror=alert(1)>~~')
+        self.assertEqual(rendered, '<p><del>&lt;img src=x onerror=alert(1)&gt;</del></p>')
+        self.assertEqual(sanitize_article_html('<del onclick="alert(1)">слова</del>'), '<del>слова</del>')
+
+    def test_unclosed_and_escaped_strikethrough_stay_literal(self) -> None:
+        self.assertEqual(markdown_to_article_html('~~Не закрыто'), '<p>~~Не закрыто</p>')
+        self.assertEqual(markdown_to_article_html(r'\~\~буквально\~\~ и ~~зачёркнуто~~'), '<p>~~буквально~~ и <del>зачёркнуто</del></p>')
+
     def test_escaped_multiplication_preserves_formula_and_bold(self) -> None:
         source = r"**(Ваш вес \* X ) - (Ваш вес \* текущий % жира) = кг**"
         rendered = markdown_to_article_html(source)
