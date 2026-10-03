@@ -19,18 +19,18 @@
     "10123213"
   ],
   "new_full_safe_review_pass_count": 1,
-  "total_old_and_new_full_safe_review_delivered_count": 28,
+  "total_old_and_new_full_safe_review_delivered_count": 29,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 34,
   "next_independent_batch": null,
-  "next_source_id": "12109482",
+  "next_source_id": "13178972",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "12109482",
-  "current_sequential_stage": "winter_API_media_Library_delivered; inline_description_spacing_fix_review_in_progress",
+  "current_sequential_source_id": "13178972",
+  "current_sequential_stage": "winter_completed; next_exact_source_and_fresh_runtime_pending",
   "three_errors_confirmed_delivery": {
     "source_id": "13785403",
     "editor_version": 3,
@@ -219,7 +219,8 @@
     "habits-formation-and-one-percent",
     "11339712",
     "intuitivnoe-pitanie-04-27-2",
-    "11665295"
+    "11665295",
+    "12109482"
   ],
   "training_confirmed_delivery": {
     "editor_version": 3,
@@ -338,7 +339,7 @@
   "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
   "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
   "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей",
-  "format_targeted_validation_pass_count": 27,
+  "format_targeted_validation_pass_count": 28,
   "publication_hold_source_ids": [
     "693339"
   ],
@@ -372,7 +373,9 @@
     "full-review/three-errors-20261003.md",
     "full-review/habits-20261003.md",
     "full-review/diet-20261003.md",
-    "work/blog-quality-audit-20260926/full-review/intuitive-20261003.md"
+    "work/blog-quality-audit-20260926/full-review/intuitive-20261003.md",
+    "full-review/fish-20261003.md",
+    "full-review/winter-20261003.md"
   ],
   "habits_confirmed_delivery": {
     "source_id": "habits-formation-and-one-percent",
@@ -439,6 +442,9 @@
     "production_revision": "812e2e64fd9a8e56377d774b2653401a43b2551d",
     "ci_run": 37090797342,
     "published_verified": true,
-    "description_spacing_fix_pending": true
+    "description_spacing_fix_pending": false,
+    "description_fix_production_revision": "ed6391e551211d4957d542f4d75b1d21c6f827f6",
+    "description_fix_ci_run": 37092048965,
+    "description_fix_verified": true
   }
 }
