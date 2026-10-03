@@ -1,6 +1,6 @@
 # Нутрициолог или диетолог — безопасный проход
 
-Статус документа: `draft`. Дата: 03.10.2026. Source ID `11210930`.
+Статус документа: `current`. Дата: 03.10.2026. Source ID `11210930`.
 
 ## Основа и границы
 
@@ -40,5 +40,20 @@ hero off; в body изображение не введено.
 
 Writer targeted_edit/full_source: четыре точные группы, validation pass,
 draft SHA `450ec5958d556feecfda6be3b74f6a70e4e321da3921068a9b94091060b87e91`.
-Независимый review и публикация ещё выполняются. Семантические и форматные
-ограничения в `owner-review/nutritionist-20261003.md`; полный научный pass false.
+Независимый review clean: 15 strong, два em, три H2, восемь blockquote;
+авторские слова и FAQ-абзац совпали с baseline после снятия новой разметки.
+API editor 3/public 2, LF SHA
+`749bec8ccebe0af31fc3298e58cd4078d146eaee661ce3429e96ec7e66125771`.
+Публичный HTTP 200, card HTTP/SHA pass (90892 байта); description — два первых
+авторских предложения, canonical/OG/Article/Person получены в ответе.
+Browser 1280×900/390×844: один H1, три авторских H2, восемь цитат,
+нет картинок и hero в теле, нет горизонтального переполнения; все три
+MP4-ссылки присутствуют. Мобильный screenshot цитаты и выделений просмотрен.
+Library use `blog-full-review-11210930-20261003` recorded после API-публикации.
+
+Main/production `c0260f25f31344ea475de9715e797431cf4e84f1`,
+CI 37097288427 success; backend healthy, deploy success 03.10.2026
+04:48:54 UTC. Повторный API GET после rollout сохранил версии и точный SHA;
+новой редакторской версии не создано. Прежние API-исправления не возвращены
+к старым Git-опечаткам. Семантические и форматные ограничения в
+`owner-review/nutritionist-20261003.md`; полный научный pass false.
