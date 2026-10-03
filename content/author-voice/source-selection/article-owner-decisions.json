@@ -18,8 +18,8 @@
   },
   "assignments": {
     "approved_update": "A123 A130 tilda-post:hbfozma3y1 A062 A064 A108",
-    "publish_next": "A191 A002 A043 A049 A037 A019 A183 A210 A076 A217 A071 A034 A236 A102 A083 A184 A016 A117 A031 A161 A281 A021 A195 A082 A078 A091 A012 A156 A085 A056 tilda-post:e4441ism91 tilda-post:amkbo7kgg1",
-    "bank": "A041 A020 A166 A278 A018 A238 A100 A069 A010 A014 A279 A133 A235 A003 A053 A271 A067 A159 tilda-post:jajp12c7j1 tilda-post:m0epglvrp1 tilda-post:5kegfp3o71",
+    "publish_next": "A191 A002 A043 A037 A019 A183 A210 A076 A217 A071 A034 A236 A102 A083 A184 A016 A117 A031 A161 A281 A021 A195 A082 A078 A091 A012 A156 A085 A056 tilda-post:e4441ism91 tilda-post:amkbo7kgg1",
+    "bank": "A049 A041 A020 A166 A278 A018 A238 A100 A069 A010 A014 A279 A133 A235 A003 A053 A271 A067 A159 tilda-post:jajp12c7j1 tilda-post:m0epglvrp1 tilda-post:5kegfp3o71",
     "manual_review": "A006 A035 A017 A008 A181 A024 A029 A023 A058 A025 A262 A065 A047 A177 A050 A270 A039 A198 A202 A116 A155 A057 A079 A060 A073 A273 A104 A088 tilda-post:knian4e971 tilda-post:a75rtx6go1 tilda-post:sgpfzdvvy1 tilda-post:pxukhjlca1 tilda-post:7siam7t8k1 A004 A107 A011 A158 A212 A110 A145 A167 A172 A176 A211",
     "family_review": "A221 A152 A252 A256 A272 A092 A132 A193",
     "educational": "A237 A113 A115 A157 A136 A185 A232 A144 A135 A222",
@@ -43,6 +43,7 @@
     {"ids": "A047 A177", "evidence": "comparison_pending", "note": "Пикадильо — на ручную редактуру Сергея, не путать с разрешением публиковать рецепт."}
   ],
   "special_notes": {
+    "A049": "Последняя поимённая поправка владельца: «Фрукты — неправильно. Не берём вообще это ... в банк». Предыдущее «в блог» отменено; не публиковать автоматически.",
     "A162": "Конструктор целей — актуальный кандидат в МК. Не внедрять сейчас, сохранить назначение.",
     "A227": "Из «Гигиены питания» возможно взять фрагменты для МК; не разрешение публиковать целиком.",
     "A149": "Вариант семьи гигиены питания; сохранить для выбора фрагментов.",

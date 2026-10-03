@@ -9,11 +9,11 @@
 
 ## Сводка
 
-- В блоге: **47** канонические семьи.
+- В блоге: **48** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **58** внешних проявлений.
+- Уже привязано к канонам блога: **59** внешних проявлений.
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **236**.
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **235**.
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -29,6 +29,7 @@
 | Борьба с лишним весом: почему одних шагов недостаточно | [blog:borba-s-lishnim-vesom-pochemu-shagov-nedostatochno](https://blog.похудение-это-есть.рф/articles/borba-s-lishnim-vesom-pochemu-shagov-nedostatochno) | 1 | 0 |
 | Великий пост, похудение и здоровье | [blog:velikiy-post-pohudenie-i-zdorove](https://blog.похудение-это-есть.рф/articles/velikiy-post-pohudenie-i-zdorove) | 1 | 0 |
 | Весы — инструкция по применению | [blog:vesy-instrukciya-po-primeneniyu](https://blog.похудение-это-есть.рф/articles/vesy-instrukciya-po-primeneniyu) | 1 | 0 |
+| Вот вам и ОЛИВЬЕ! | [blog:vot-vam-i-olive](https://blog.похудение-это-есть.рф/articles/vot-vam-i-olive) | 1 | 0 |
 | Все знают, никто не делает | [blog:vse-znayut-nikto-ne-delaet](https://blog.похудение-это-есть.рф/articles/vse-znayut-nikto-ne-delaet) | 1 | 0 |
 | Главные ошибки в похудении: что нужно знать до того, как испытывать голод | [blog:glavnye-oshibki-v-pohudenii-do-goloda](https://blog.похудение-это-есть.рф/articles/glavnye-oshibki-v-pohudenii-do-goloda) | 1 | 0 |
 | Гликемический индекс — это лишнее! | [blog:glikemicheskiy-indeks-eto-lishnee](https://blog.похудение-это-есть.рф/articles/glikemicheskiy-indeks-eto-lishnee) | 1 | 1 |
@@ -79,7 +80,7 @@
 | `obsolete_product_archive` | 4 | Неактуальный архив старого МК: сохранить для истории, не предлагать к публикации и не использовать как актуальную авторскую основу. |
 | `owner_review_later` | 3 | Нужен отдельный просмотр владельцем. |
 | `private_product_material` | 43 | Курс или Мастер-класс: не публиковать автоматически. |
-| `short_reserve` | 42 | Материал 3000–3999 знаков: сначала решить, является ли самостоятельной статьёй. |
+| `short_reserve` | 41 | Материал 3000–3999 знаков: сначала решить, является ли самостоятельной статьёй. |
 | `technical_or_service` | 25 | Техническая страница, сценарий, услуга, продажная или посторонняя сущность. |
 
 ## Все отложенные материалы
@@ -104,7 +105,7 @@
 | A126 | telegraph | [А мне тренер посоветовал...](https://telegra.ph/A-mne-trener-posovetoval-07-04) | `editorial_review` | 1 |
 | A127 | telegraph | [Алексей золотов про запуски статья](https://telegra.ph/Aleksej-zolotov-pro-zapuski-statya-12-07) | `technical_or_service` | 0 |
 | A228 | telegraph | [Блоки в питании и каталог приемов пищи](https://telegra.ph/feedback-04-04) | `editorial_review` | 0 |
-| A049 | pikabu | [В своем уме, что ли? Фрукты... ограничивать... просто так, без мед. показаний?!](https://pikabu.ru/story/v_svoem_ume_chto_li_fruktyi_ogranichivat_prosto_tak_bez_med_pokazaniy_11294636) | `short_reserve` | 0 |
+| A049 | pikabu | [В своем уме, что ли? Фрукты... ограничивать... просто так, без мед. показаний?!](https://pikabu.ru/story/v_svoem_ume_chto_li_fruktyi_ogranichivat_prosto_tak_bez_med_pokazaniy_11294636) | `short_reserve` · **банк по последнему решению владельца** | 0 |
 | A238 | telegraph | [Вам не надо худеть, вам надо кое-что другое...](https://telegra.ph/ne-hudet-07-12) | `editorial_review` | 0 |
 | A271 | vc.ru | [Вам не нужен ПП-кулич!! ](https://vc.ru/flood/1159178-vam-ne-nuzhen-pp-kulich) | `short_reserve` | 1 |
 | A263 | telegraph | [ввв](https://telegra.ph/vvv-04-24-44) | `technical_or_service` | 0 |
@@ -113,7 +114,6 @@
 | A210 | telegraph | [Видео. Последний жир в области живота. План действий⁠⁠](https://telegra.ph/Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13) | `incomplete_draft` | 2 |
 | A212 | telegraph | [Витамин N](https://telegra.ph/Vitamin-N-11-16) | `incomplete_draft` | 0 |
 | A214 | telegraph | [Вода](https://telegra.ph/Voda-01-07-2) | `private_product_material` | 0 |
-| A037 | pikabu | [Вот вам и ОЛИВЬЕ!1](https://pikabu.ru/story/vot_vam_i_olive_10978866) | `short_reserve` | 0 |
 | A250 | telegraph | [Гайд по добавленному сахару](https://telegra.ph/slipnetsa-01-25) | `private_product_material` | 1 |
 | A018 | pikabu | [Гарвардская тарелка курильщика и алкоритмы Пикабу!](https://pikabu.ru/story/garvardskaya_tarelka_kurilshchika_i_alkoritmyi_pikabu_10510751) | `short_reserve` | 0 |
 | A110 | telegraph | [Где справедливость?](https://telegra.ph/111-07-23-18) | `incomplete_draft` | 0 |
