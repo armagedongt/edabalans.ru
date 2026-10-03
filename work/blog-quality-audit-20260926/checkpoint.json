@@ -30,7 +30,20 @@
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "2e269fdc52d600a64753",
-  "current_sequential_stage": "regain_completed_next_full_source_pending",
+  "current_sequential_stage": "walk_sources_merge_media_prepared_publication_pending",
+  "walk_prepared": {
+    "source_id": "2e269fdc52d600a64753",
+    "owner_confirmed_family": ["A062", "A064", "A108"],
+    "baseline_editor_version": 2,
+    "writer_validation": "pass",
+    "writer_draft_sha256": "26196c16a93c8415e7cbb2dd531141291644e53f93759498c0f2c48034df73d9",
+    "body_images": 25,
+    "original_videos": 2,
+    "video_storage": "existing_public_server_storage_outside_git",
+    "hero_show": false,
+    "published_verified": false,
+    "full_scientific_pass": false
+  },
   "regain_prepared": {
     "source_id": "30e4d208f2cbd8e57201",
     "writer_validation": "pass",

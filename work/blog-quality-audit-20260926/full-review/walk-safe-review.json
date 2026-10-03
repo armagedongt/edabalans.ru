@@ -1,0 +1,24 @@
+{
+  "source_id": "2e269fdc52d600a64753",
+  "date": "2026-10-03",
+  "reviewer": "/root/batch03_publisher_review",
+  "status": "clean",
+  "findings": [],
+  "writer_draft_sha256": "26196c16a93c8415e7cbb2dd531141291644e53f93759498c0f2c48034df73d9",
+  "evidence": {
+    "owner_confirmed_merge": ["A062", "A064", "A108"],
+    "accepted_report_preserved": true,
+    "added_author_blocks_compared_to_exact_sources": true,
+    "body_images": 25,
+    "ordinary_video_links": 2,
+    "html_script_iframe_video_markup": 0,
+    "cta": "intensive",
+    "hero_show": false,
+    "card_fit": "contain",
+    "task_pack_review_validation_hashes_match": true,
+    "large_videos_outside_git": true,
+    "final_delta_review": "only_two_video_href_changes"
+  },
+  "full_scientific_pass": false,
+  "production_delivery_confirmed_by_this_review": false
+}
