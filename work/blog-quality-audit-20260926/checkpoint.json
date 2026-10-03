@@ -30,7 +30,7 @@
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "30e4d208f2cbd8e57201",
-  "current_sequential_stage": "errors_completed_next_full_source_pending",
+  "current_sequential_stage": "regain_full_source_prepared_writer_pass_pending_independent_review_and_delivery",
   "errors_prepared": {
     "source_id": "d1baceb9e2b6b72013b6",
     "source_uri": "content://item/1bb03a19-08e0-4d1b-bb65-df1815e7bc17",
