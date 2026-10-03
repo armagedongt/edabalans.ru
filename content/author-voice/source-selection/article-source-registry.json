@@ -7495,7 +7495,7 @@
       "title": "⛔️ Почему эффекта плато не существует",
       "disposition": "deferred",
       "deferred_kind": "editorial_review",
-      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+      "reason": "Проверен полный исходник: центральные утверждения о метаболизме требуют решения владельца; большая часть о сроках похудения частично повторяет канон 13277231. Авторский текст не менялся, публикация не выполнялась.",
       "members": [
         {
           "catalog_id": "tilda-post:e4441ism91",
@@ -7504,22 +7504,30 @@
           "title": "⛔️ Почему эффекта плато не существует",
           "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet",
           "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet",
-          "characters": 7145,
+          "characters": 6740,
           "html_sha256": "f51a946347be2710c2dab650da36a6f58897ab2309272831f3dd190f73128be6",
-          "text_sha256": "a0a74e7b1a2b8f7a60db34101e45896ac39fdf4054fd9f768cc6a4ff1cebcbde",
-          "retrieved_at": "2026-09-25",
+          "text_sha256": "3294bf2939c79ee345c7453acc555a321c1473ba1880310bed70102ec5a1b23c",
+          "retrieved_at": "2026-10-04",
           "source_basis": "full_source",
           "disposition": "deferred",
           "deferred_kind": "editorial_review",
           "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
-          "role": "unmerged_source"
+          "role": "unmerged_source",
+          "provenance": "knowledge://resource/tilda-intensive-e4441ism91",
+          "source_version": 1,
+          "extraction": "articleBody_DOM_script_style_excluded"
         }
       ],
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "tilda-post:e4441ism91": "publish_next"
-      }
+      },
+      "publication_hold": "owner_semantic_decision_pending",
+      "source_comparison": "work/blog-quality-audit-20260926/owner-review/plateau-20261004.md",
+      "semantic_overlap_with": [
+        "blog:skolko-vremeni-nuzhno-na-pohudenie"
+      ]
     },
     {
       "family_id": "deferred:tilda-post:knian4e971",

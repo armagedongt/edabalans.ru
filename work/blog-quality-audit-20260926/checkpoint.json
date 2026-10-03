@@ -53,13 +53,13 @@
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "tilda-post:e4441ism91",
+  "next_source_id": "tilda-post:amkbo7kgg1",
   "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "A184",
+  "current_sequential_source_id": "tilda-post:e4441ism91",
   "current_sequential_stage": "lent_fully_closed_existing_canon_preserved_next_tilda_plateau",
   "sweating_12189205_hold": {
     "source_members": [
@@ -1150,5 +1150,16 @@
     "independent_review": "pass",
     "comparison": "new/lent-compare/comparison-20261004.md",
     "library_navigation_version": 26
+  },
+  "stage": "plateau_source_registered_semantic_hold_next_training",
+  "plateau_hold": {
+    "source_uri": "knowledge://resource/tilda-intensive-e4441ism91",
+    "source_version": 1,
+    "author_text_changed": false,
+    "published": false,
+    "owner_review": "owner-review/plateau-20261004.md",
+    "partial_overlap_source_id": "13277231",
+    "writer_pass": false,
+    "decision": "pending_owner"
   }
 }
