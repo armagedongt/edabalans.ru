@@ -2,6 +2,41 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "10877887",
+      "slug": "skolko-polzy-ostaetsya-v-moloke",
+      "title": "Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?",
+      "excerpt": "Сотню раз слышал, что в магазинном молоке НЕ осталось никакой пользы, «не то что прямо из-под коровки». Но одно дело читать это на заборе, а другое — услышать от преподавателя в школе нутрициологии за 180 тысяч рублей!",
+      "category": "Качество питания",
+      "body_file": "10877887.md",
+      "hero": {
+        "file": "10877887/01.webp",
+        "alt": "Молоко и вопрос об ультрапастеризации",
+        "provenance": "https://telegra.ph/file/408c00b232f61fc1383bf.png",
+        "show": false
+      },
+      "card": {
+        "file": "10877887/01.webp",
+        "alt": "Молоко и вопрос об ультрапастеризации",
+        "provenance": "https://telegra.ph/file/408c00b232f61fc1383bf.png",
+        "fit": "contain"
+      },
+      "related_source_ids": ["11875492", "11665295", "13355824"],
+      "cta": "masterclass",
+      "status": "published",
+      "media": ["10877887/01.webp", "10877887/02.webp", "10877887/03.webp", "10877887/04.webp", "10877887/05.webp", "10877887/06.webp", "10877887/07.webp"],
+      "source_provenance": {
+        "urls": ["https://telegra.ph/molokkko-03-21", "https://pikabu.ru/story/skolko_polzyi_realno_ostaetsya_v_moloke_kotoroe_myi_pem_10877887"],
+        "external_ids": ["molokkko-03-21", "10877887"],
+        "source_uri": "content://item/3cafd762-99d8-4cf7-91e4-f58ad250677b",
+        "source_revision": 1,
+        "source_date": "2024-03-21T18:18:54+0000",
+        "sha256": ["c9d9bc32989a4e4d2a3bf351f965d5cefaef88e0ee7f11deff604ce0a1e1a10d", "5649cb40b1bc2c7d656f9b0b5e43305b4efe69bfc808ff0887509df769b1166f"],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
       "source_id": "10123213",
       "slug": "vse-znayut-nikto-ne-delaet",
       "title": "Все знают, никто не делает",
