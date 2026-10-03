@@ -1,0 +1,20 @@
+{
+  "source_id": "11277666",
+  "status": "clean",
+  "reviewer": "/root/batch03_publisher_review",
+  "findings": [],
+  "draft_sha256": "29b07008a52e4bd87f825eef1eb546c4f49901b07956078534fe52ff02d171de",
+  "checks": {
+    "author_words_and_numbers_preserved_outside_navigation_cleanup": true,
+    "source_dom_emphasis_and_two_quotes": true,
+    "render_ul_items": [4],
+    "body_images": 2,
+    "both_original_images_visually_inspected": true,
+    "source_image_positions": true,
+    "hero_off_card_01_contain": true,
+    "writer_hashes_and_pass": true,
+    "api_baseline_version": 3,
+    "medical_validity_reviewed": false,
+    "production_delivery_reviewed": false
+  }
+}

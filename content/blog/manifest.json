@@ -932,12 +932,14 @@
       "hero": {
         "file": "11277666/01.webp",
         "alt": "Обложка материала «Скрытые запоры и банальный сюжет»",
-        "provenance": "https://cs14.pikabu.ru/post_img/big/2024/03/27/11/1711569015154859201.jpg"
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2024/03/27/11/1711569015154859201.jpg",
+        "show": false
       },
       "card": {
-        "file": "11277666/card.webp",
+        "file": "11277666/01.webp",
         "alt": "Обложка карточки «Скрытые запоры и банальный сюжет»",
-        "provenance": "https://cs14.pikabu.ru/post_img/big/2024/03/28/1/1711578277161170.jpg"
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2024/03/27/11/1711569015154859201.jpg",
+        "fit": "contain"
       },
       "related_source_ids": [
         "693339",
