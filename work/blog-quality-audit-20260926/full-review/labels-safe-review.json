@@ -1,0 +1,10 @@
+{
+  "source_id": "13355824",
+  "reviewer": "/root/batch03_publisher_review",
+  "status": "clean",
+  "findings": [],
+  "draft_sha256": "2582d6b650ee7a2ea38432a2627691e6ce9b9e2f68bc0af8ca8b2fc59d7927e4",
+  "checks": ["Слова и числа API-базы сохранены", "Четыре strong подтверждены DOM", "Схема восстановлена в точном исходном месте", "Шесть H2 и CTA intensive сохранены", "Writer pack/draft/review/validation соответствуют"],
+  "full_scientific_pass": false,
+  "production_delivery_reviewed": false
+}
