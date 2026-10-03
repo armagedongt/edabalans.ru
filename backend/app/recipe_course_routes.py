@@ -40,8 +40,9 @@ def course_payload(db: Session, user: User, manifest: dict) -> dict:
     groups = []
     for group in manifest["days"]:
         number = group["number"]
-        readable = [i for i, step in enumerate(group["steps"]) if not step["locked"]]
-        done = [i for i in readable if (number, i) in completed]
+        readable = [i for i, step in enumerate(group["steps"])
+                    if not step["locked"] and not step.get("nested")]
+        done = [i for i in readable if (group["progressNumber"], i) in completed]
         groups.append({
             "number": number, "opened": True, "can_open": True, "locked_reason": None,
             "unlock_at": None, "first_opened_at": None, "next_day_unlock_at": None,
@@ -95,13 +96,16 @@ def complete_step(group: int, index: int, body: CourseAction, request: Request,
     steps = manifest["days"][group - 1]["steps"] if 1 <= group <= len(manifest["days"]) else []
     if not 0 <= index < len(steps) or steps[index]["locked"]:
         raise HTTPException(404, "Материал курса пока недоступен")
+    if steps[index].get("nested"):
+        return course_payload(db, user, manifest)
+    progress_number = manifest["days"][group - 1]["progressNumber"]
     existing = db.scalar(select(CourseStepProgress).where(
         CourseStepProgress.user_id == user.id, CourseStepProgress.course_code == COURSE_CODE,
-        CourseStepProgress.stage_number == group, CourseStepProgress.step_index == index,
+        CourseStepProgress.stage_number == progress_number, CourseStepProgress.step_index == index,
     ))
     if existing is None:
         db.add(CourseStepProgress(user_id=user.id, course_code=COURSE_CODE,
-                                 stage_number=group, step_index=index, step_kind="article"))
+                                 stage_number=progress_number, step_index=index, step_kind="article"))
     db.commit()
     # Эти отметки не завершают дни МК и не запускают его события и рассылки.
     return course_payload(db, user, manifest)
