@@ -2,6 +2,55 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "10978866",
+      "slug": "vot-vam-i-olive",
+      "title": "Вот вам и ОЛИВЬЕ!",
+      "excerpt": "Ниже 5 нормальных советов, а не такие как на скриншоте, которые вы ещё можете успеть сделать перед новогодним застольем! Нет, это не прикол, вот ссылка на публикацию.",
+      "category": "Качество питания",
+      "body_file": "10978866.md",
+      "hero": {
+        "file": "10978866/03.webp",
+        "alt": "Авторская иллюстрация о количестве майонеза в оливье",
+        "provenance": "https://cs13.pikabu.ru/post_img/big/2023/12/31/6/1704011185128778672.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "10978866/03.webp",
+        "alt": "Авторская иллюстрация о количестве майонеза в оливье",
+        "provenance": "https://cs13.pikabu.ru/post_img/big/2023/12/31/6/1704011185128778672.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "12857458",
+        "12109482",
+        "11833079"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "10978866/01.webp",
+        "10978866/02.webp",
+        "10978866/03.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/vot_vam_i_olive_10978866"
+        ],
+        "external_ids": [
+          "10978866"
+        ],
+        "source_uri": "content://item/d2e91831-5123-4747-8ad5-2696f72f04a5",
+        "source_revision": 1,
+        "source_date": "2023-12-31T12:14:56+03:00",
+        "sha256": [
+          "fe7b4c6f70539d0e8d00e72133e6bc2ab5af9e8fed8b2fdbcf70133ffd553639"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
       "source_id": "11188875",
       "slug": "belyy-ris-kury-i-vitamin-b1",
       "title": "Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ?",
