@@ -39,8 +39,20 @@
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "10425659",
-  "current_sequential_stage": "home_training_fully_closed_next_adult_women_snacking",
+  "current_sequential_source_id": "11906015",
+  "current_sequential_stage": "adult_women_snacking_main_ci_pending",
+  "snacking_11906015_prepared": {
+    "full_sources": ["A076", "A217"],
+    "preferred_basis": "A217",
+    "writer_validation": "pass",
+    "independent_review": "clean",
+    "main_revision": "6fab97984d73396a1b8384b6b6a23a81a830e724",
+    "published_verified": false,
+    "draft_sha256": "f7e6fd85c7fa2567dde068849ef8c5b8bbc82d717ef55b9920108cd113bb4d9c",
+    "source_images": 6,
+    "source_videos": 1,
+    "full_scientific_pass": false
+  },
   "home_training_10425659_prepared": {
     "full_sources": ["A016", "A117"],
     "writer_validation": "pass",
