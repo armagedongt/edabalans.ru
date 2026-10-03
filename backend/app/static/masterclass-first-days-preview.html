@@ -90,19 +90,21 @@ function buildFromManifest(manifest){courseManifest=manifest;document.querySelec
     }
     function openLinearMaterial(target){state.day=target.day.number;save();resetRouteOverlays();openCourseStep(target.day,target.index)}
     function bindSourceCourseLinks(article){
-      if(!courseManifest.sourceCourse)return;
+      var sourceCode=courseManifest.sourceCourse||courseManifest.courseCode||'masterclass-21';
+      var localCode=courseManifest.sourceCourse?'recipes':sourceCode;
       article.querySelectorAll('a[href]').forEach(function(link){
         var url;try{url=new URL(link.getAttribute('href'),location.href)}catch(e){return}
         if(url.origin!==location.origin&&['edabalans.ru','app.edabalans.ru',new URL('https://похудение-это-есть.рф').hostname].indexOf(url.hostname)<0)return;
         if(url.pathname.replace(/\/$/,'')!=='/lk')return;
-        var key=url.searchParams.get('open')||'',prefix=courseManifest.sourceCourse+':';
-        var id=key.indexOf(prefix)===0?key.slice(prefix.length):url.searchParams.get('course'+'_material');
+        var key=url.searchParams.get('open')||'',prefix=sourceCode+':';
+        if(key&&key.indexOf(prefix)!==0)return;
+        var id=key?key.slice(prefix.length):url.searchParams.get('course'+'_material');
         if(!id)return;
         var target=null;days.some(function(group){var index=stepIndexById(group,id);if(index<0)return false;target={day:group,index:index};return true});
         if(!target)return;
-        link.href='/lk?open=recipes:'+encodeURIComponent(id);link.removeAttribute('target');
-        if(!stepNavigable(target.day,target.index))return;
-        link.onclick=function(event){if(event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;event.preventDefault();openLinearMaterial(target)};
+        link.href='/lk?open='+localCode+':'+encodeURIComponent(id);link.removeAttribute('target');
+        if(!stepNavigable(target.day,target.index)||(!courseManifest.sourceCourse&&(!unlocked(target.day.number)||!stepUnlocked(target.day,target.index))))return;
+        link.onclick=function(event){if(event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;event.preventDefault();if(courseManifest.sourceCourse)openLinearMaterial(target);else openMenuMaterial({disabled:false,dataset:{day:String(target.day.number),materialIndex:String(target.index)}})};
       });
     }
     function renderMaterialMenu(){

@@ -67,6 +67,45 @@ function barrier() {
 }
 
 try {
+  // Canonical recipe links stay inside the open course, preserving its cache.
+  const recipeLinks = await browser.newPage()
+  await recipeLinks.route(origin+'/**', route=>route.fulfill({contentType:'text/html',body:'<article id="article"></article>'}))
+  await recipeLinks.goto(origin)
+  const bindingSource = courseHtml.slice(courseHtml.indexOf('function bindSourceCourseLinks('), courseHtml.indexOf('function renderMaterialMenu('))
+  for (const sourceCourse of [null,'masterclass-21']) {
+    await recipeLinks.evaluate(({source,sourceCourse})=>{
+      const article=document.querySelector('#article')
+      article.innerHTML='<a id="catalog" href="/lk?open=masterclass-21:day-15-recipes-part-2">Каталог</a><a id="recipe" href="/lk?open=masterclass-21:day-15-recipe-caesar">Цезарь</a><a id="next" href="/lk?open=masterclass-21:day-15-recipe-white-sauce">Следующий</a><a id="closed" href="/lk?open=masterclass-21:day-16-closed">Закрытый</a><a id="unopened" href="/lk?open=masterclass-21:day-16-unopened">Ещё не открыт</a><a id="prerequisite" href="/lk?open=masterclass-21:day-15-prerequisite">Предыдущий шаг</a><a id="foreign" href="https://example.org/lk?open=masterclass-21:day-15-recipe-caesar">Внешний</a><a id="other" href="/lk?open=calories:day-15-recipe-caesar">Другой курс</a>'
+      const courseManifest={courseCode:sourceCourse?'recipes':'masterclass-21',sourceCourse}
+      const days=[{number:15,steps:[{id:'day-15-recipes-part-2'},{id:'day-15-recipe-caesar',nested:true},{id:'day-15-recipe-white-sauce',nested:true},{id:'day-15-prerequisite'}]},{number:16,steps:[{id:'day-16-closed',locked:true},{id:'day-16-unopened'}]}]
+      window.recipeTransitions=[];window.recipeEntryModes=[]
+      const bind=new Function('courseManifest','days','stepIndexById','stepNavigable','unlocked','stepUnlocked','openLinearMaterial','openMenuMaterial',source+';return bindSourceCourseLinks')(
+        courseManifest,days,(d,id)=>d.steps.findIndex(s=>s.id===id),(d,i)=>!d.steps[i].locked,
+        n=>n===15,(d,i)=>d.steps[i].id!=='day-15-prerequisite',target=>{window.recipeEntryModes.push('linear');window.recipeTransitions.push(target.day.steps[target.index].id)},button=>{window.recipeEntryModes.push('menu');const d=days.find(d=>d.number===Number(button.dataset.day));window.recipeTransitions.push(d.steps[Number(button.dataset.materialIndex)].id)} )
+      bind(article)
+    }, {source:bindingSource,sourceCourse})
+    const expectedCode=sourceCourse?'recipes':'masterclass-21'
+    assert.equal(await recipeLinks.locator('#recipe').getAttribute('href'),'/lk?open='+expectedCode+':day-15-recipe-caesar')
+    for(const id of ['catalog','recipe','next'])await recipeLinks.locator('#'+id).click()
+    assert.deepEqual(await recipeLinks.evaluate(()=>window.recipeTransitions),['day-15-recipes-part-2','day-15-recipe-caesar','day-15-recipe-white-sauce'])
+    assert.deepEqual(await recipeLinks.evaluate(()=>window.recipeEntryModes),Array(3).fill(sourceCourse?'linear':'menu'))
+    assert.equal(new URL(recipeLinks.url()).pathname,'/')
+    assert.deepEqual(await recipeLinks.evaluate(()=>['closed','foreign','other'].map(id=>document.getElementById(id).onclick)),[null,null,null])
+    if(!sourceCourse)assert.deepEqual(await recipeLinks.evaluate(()=>['unopened','prerequisite'].map(id=>document.getElementById(id).onclick)),[null,null])
+    assert.equal(await recipeLinks.evaluate(()=>document.getElementById('recipe').dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,ctrlKey:true}))),true)
+    assert.equal(await recipeLinks.evaluate(()=>window.recipeTransitions.length),3)
+  }
+  const menuSource=courseHtml.slice(courseHtml.indexOf('function openMenuMaterial('),courseHtml.indexOf('function mountMaterialAssignment('))
+  for(const alreadyOpened of [false,true]){
+    const events=[],localState={},day={number:15,steps:[{id:'day-15-recipe-caesar'}]},localDays=Array(15).fill(null);localDays[14]=day
+    const openMenu=new Function('unlocked','serverDay','SERVER_MODE','api','courseActionBody','applyCourse','state','save','closeMenu','resetRouteOverlays','openCourseStep','days','showActionError',menuSource+';return openMenuMaterial')(
+      ()=>true,()=>({opened:alreadyOpened}),true,(url,options)=>{events.push([url,options.method]);return Promise.resolve({opened:true})},()=> '{}',()=>events.push('applied'),localState,()=>{},()=>{},()=>{},(d,i)=>events.push(d.steps[i].id),localDays,error=>{throw error})
+    openMenu({disabled:false,dataset:{day:'15',materialIndex:'0'}})
+    await new Promise(resolve=>setTimeout(resolve,0))
+    assert.deepEqual(events,alreadyOpened?['day-15-recipe-caesar']:[['/api/masterclass/course/days/15/open','POST'],'applied','day-15-recipe-caesar'])
+    assert.equal(localState.day,15)
+  }
+  await recipeLinks.close()
   // The boundary is the real embed + browser DOM/CSS lifecycle, not a mocked loader.
   const page = await browser.newPage()
   const css = barrier(), data = barrier(), dataStarted = barrier()
