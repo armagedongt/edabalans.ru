@@ -2,7 +2,7 @@
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
   "updated_at": "2026-10-04",
   "batch_size": 5,
-  "article_count": 60,
+  "article_count": 61,
   "old_article_count": 44,
   "full_current_text_read_count": 45,
   "archive_source_text_compared_count": 6,
@@ -28,7 +28,8 @@
     "11448583",
     "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
     "14062380",
-    "12193581"
+    "12193581",
+    "amkbo7kgg1"
   ],
   "new_articles_published": [
     "10123213",
@@ -46,21 +47,22 @@
     "11448583",
     "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
     "14062380",
-    "12193581"
+    "12193581",
+    "amkbo7kgg1"
   ],
-  "new_full_safe_review_pass_count": 16,
-  "total_old_and_new_full_safe_review_delivered_count": 59,
+  "new_full_safe_review_pass_count": 17,
+  "total_old_and_new_full_safe_review_delivered_count": 60,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "tilda-post:amkbo7kgg1",
+  "next_source_id": null,
   "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "tilda-post:e4441ism91",
-  "current_sequential_stage": "lent_fully_closed_existing_canon_preserved_next_tilda_plateau",
+  "current_sequential_source_id": "amkbo7kgg1",
+  "current_sequential_stage": "approved_independent_queue_closed_remaining_owner_holds",
   "sweating_12189205_hold": {
     "source_members": [
       "A082"
@@ -1151,7 +1153,7 @@
     "comparison": "new/lent-compare/comparison-20261004.md",
     "library_navigation_version": 26
   },
-  "stage": "plateau_source_registered_semantic_hold_next_training",
+  "stage": "approved_independent_queue_closed_remaining_owner_holds",
   "plateau_hold": {
     "source_uri": "knowledge://resource/tilda-intensive-e4441ism91",
     "source_version": 1,
@@ -1161,5 +1163,30 @@
     "partial_overlap_source_id": "13277231",
     "writer_pass": false,
     "decision": "pending_owner"
-  }
+  },
+  "training_amkbo7kgg1_prepared": {
+    "published_verified": true,
+    "source_members": [
+      "tilda-post:amkbo7kgg1"
+    ],
+    "writer_validation": "pass",
+    "independent_review": "technical_pass",
+    "full_scientific_pass": false,
+    "production_revision": "6c1656fed25505791a5d3e3f7782be2f0ac08062",
+    "ci_run": 37158243063,
+    "api_version": 1,
+    "public_version": 0,
+    "markdown_sha256_lf": "817ca936de739eb45b480eb1277b41620109cec223d125aac7fde1e1a7abe856",
+    "media_http_hash_pass": 3,
+    "desktop_mobile_dom_geometry_pass": true,
+    "library_navigation_version": 28,
+    "owner_review": "owner-review/training-amkbo7kgg1-20261004.md"
+  },
+  "remaining_approved_source_cards": [
+    "A082",
+    "A012",
+    "A156",
+    "tilda-post:e4441ism91"
+  ],
+  "remaining_approved_unique_held_families": 3
 }

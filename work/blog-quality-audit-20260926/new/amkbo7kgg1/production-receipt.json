@@ -1,0 +1,11 @@
+{
+  "production_revision": "6c1656fed25505791a5d3e3f7782be2f0ac08062",
+  "ci_run": 37158243063,
+  "ci_conclusion": "success",
+  "backend_healthy": true,
+  "public_article_count": 61,
+  "initial_failed_ci_run": 37157152313,
+  "initial_failure_fixed": "Mobile pagination overflow at 360px after fifth page appeared; flex-wrap and synchronized CSS cache version.",
+  "local_tests_passed": 33,
+  "checked_at": "2026-10-04"
+}

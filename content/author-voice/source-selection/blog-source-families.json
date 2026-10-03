@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-10-01",
+  "updated_at": "2026-10-04",
   "module_id": "platform.content",
   "purpose": "Канонический редакционный выбор исходной основы и правило перехода семьи под опубликованную статью собственного блога без удаления истории проявлений.",
   "rules": {
@@ -227,6 +227,36 @@
       "rationale": "Один полноценный найденный источник; семейных дублей не обнаружено.",
       "members": [
         {"catalog_id": "A165", "source": "telegraph", "external_id": "Minus-12-kilogramm-za-2-mesyaca-07-13", "title": "Минус 12 килограмм за 2 месяца", "url": "https://telegra.ph/Minus-12-kilogramm-za-2-mesyaca-07-13", "published_at": "2025-07-13T21:37:34+03:00", "role": "preferred_basis", "content_item": "content://item/25b8b9de-9d65-4ab6-8023-a5d1f7214864", "text_sha256": "0bdec25cf130d46f1d20e1d40b212eb59ce2fba01392aa4c2510b88e6b86a0fd"}
+      ]
+    },
+    {
+      "family_id": "training-purposes-beyond-weight-loss",
+      "title": "Зачем нужны тренировки (кроме похудения)",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {
+        "source_id": "amkbo7kgg1",
+        "slug": "zachem-nuzhny-trenirovki-krome-pohudeniya"
+      },
+      "preferred_basis": "tilda-post:amkbo7kgg1",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Одобренный публичный старый интенсив; полный exact-source зарегистрирован в Library. Минимальная корректура и навигация, Writer и независимое ревью пройдены, production проверен. Смысловые заметки не применены.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:amkbo7kgg1",
+          "source": "tilda",
+          "external_id": "amkbo7kgg1",
+          "title": "💪 Зачем нужны тренировки (кроме похудения)",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
+          "characters": 5948,
+          "html_sha256": "8248cfb39cf247e53382cdb9ff66b07492dfe5c9aa7b55a02443ee719f5344b3",
+          "text_sha256": "78f741f863fc124bac125c2cc685e702664438ecdce58552eb8d197ee45f6932",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "role": "direct_source",
+          "provenance": "knowledge://resource/tilda-intensive-amkbo7kgg1",
+          "source_version": 1
+        }
       ]
     }
   ],

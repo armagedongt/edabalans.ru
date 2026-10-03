@@ -1,0 +1,47 @@
+{
+  "desktop_mobile_pass": true,
+  "checked_at": "2026-10-04",
+  "production_revision": "6c1656fed25505791a5d3e3f7782be2f0ac08062",
+  "article_url": "https://blog.похудение-это-есть.рф/articles/zachem-nuzhny-trenirovki-krome-pohudeniya",
+  "desktop_document_client_scroll": [
+    1265,
+    1265
+  ],
+  "mobile_viewport_requested": [
+    390,
+    844
+  ],
+  "mobile_document_client_scroll": [
+    375,
+    375
+  ],
+  "body_images_loaded": 3,
+  "body_image_natural_widths": [
+    1280,
+    744,
+    700
+  ],
+  "mobile_body_image_display_width": 342.67,
+  "h1_count": 1,
+  "body_h2_count": 3,
+  "native_screenshots_inspected": true,
+  "css_version": "20261004-pagination",
+  "catalog_mobile_viewport_requested": [
+    360,
+    900
+  ],
+  "catalog_document_client_scroll": [
+    345,
+    345
+  ],
+  "catalog_pagination_client_scroll": [
+    313,
+    313
+  ],
+  "catalog_pages_checked": [
+    1,
+    5
+  ],
+  "page1_next_button_wraps_to_second_row": true,
+  "page5_single_remaining_article_verified": true
+}

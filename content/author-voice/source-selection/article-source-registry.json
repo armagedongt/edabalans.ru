@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-03",
+  "updated_at": "2026-10-04",
   "owner_review": {
     "schema_version": 1,
     "module_id": "platform.content",
@@ -155,12 +155,12 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 60,
-    "canonical_linked_external_records": 90,
-    "deferred_families": 210,
+    "canonical_blog_families": 61,
+    "canonical_linked_external_records": 91,
+    "deferred_families": 209,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 71,
+      "editorial_review": 70,
       "incomplete_draft": 12,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
@@ -849,6 +849,46 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "owner_confirmed",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:zachem-nuzhny-trenirovki-krome-pohudeniya",
+      "title": "Зачем нужны тренировки (кроме похудения)",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "amkbo7kgg1",
+        "slug": "zachem-nuzhny-trenirovki-krome-pohudeniya",
+        "url": "https://blog.похудение-это-есть.рф/articles/zachem-nuzhny-trenirovki-krome-pohudeniya",
+        "body_file": "content/blog/articles/amkbo7kgg1.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "tilda-post:amkbo7kgg1",
+          "source": "tilda",
+          "external_id": "amkbo7kgg1",
+          "title": "💪 Зачем нужны тренировки (кроме похудения)",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
+          "characters": 5948,
+          "html_sha256": "8248cfb39cf247e53382cdb9ff66b07492dfe5c9aa7b55a02443ee719f5344b3",
+          "text_sha256": "78f741f863fc124bac125c2cc685e702664438ecdce58552eb8d197ee45f6932",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "role": "direct_source",
+          "provenance": "knowledge://resource/tilda-intensive-amkbo7kgg1",
+          "source_version": 1
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "exact_public_tilda_full_source_minimal_adaptation",
+      "owner_source_decisions": {
+        "tilda-post:amkbo7kgg1": "publish_next"
+      },
+      "preferred_basis": [
+        "tilda-post:amkbo7kgg1"
+      ],
+      "merge_status": "published_verified",
+      "source_comparison": "work/blog-quality-audit-20260926/new/amkbo7kgg1/preparation-20261004.md"
     },
     {
       "family_id": "blog:izmeryaem-vashu-zhirnost",
@@ -7620,37 +7660,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "tilda-post:sgpfzdvvy1": "manual_review"
-      }
-    },
-    {
-      "family_id": "deferred:tilda-post:amkbo7kgg1",
-      "title": "💪 Зачем нужны тренировки (кроме похудения)",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
-      "members": [
-        {
-          "catalog_id": "tilda-post:amkbo7kgg1",
-          "source": "tilda",
-          "external_id": "amkbo7kgg1",
-          "title": "💪 Зачем нужны тренировки (кроме похудения)",
-          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
-          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
-          "characters": 6355,
-          "html_sha256": "8248cfb39cf247e53382cdb9ff66b07492dfe5c9aa7b55a02443ee719f5344b3",
-          "text_sha256": "c9527dd9485bae761603d478520e81fa11102b58b07a3d00eb7011a72d404fac",
-          "retrieved_at": "2026-09-25",
-          "source_basis": "full_source",
-          "disposition": "deferred",
-          "deferred_kind": "editorial_review",
-          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
-          "role": "unmerged_source"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "tilda-post:amkbo7kgg1": "publish_next"
       }
     },
     {

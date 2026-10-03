@@ -16,7 +16,7 @@
 
 ## Сводка
 
-- Канонов блога:60 (04.10.2026; выпуск12193581подтверждён, Library navigation v25).
+- Канонов блога:61 (04.10.2026; выпускamkbo7kgg1подтверждён, Library navigation v28).
 - Записей источников в этом файле: 300.
 - Рабочих семей/групп сравнения: 217 (не все связи подтверждены).
 
@@ -41,7 +41,6 @@
 - A012: [Как на меня напали собаки в лесу](https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434).
 - A082: [Ответ на пост «Совет от потливости»2](https://pikabu.ru/story/otvet_na_post_sovet_ot_potlivosti_12189205).
 - A156: [Как на меня напали собаки в лесу](https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17).
-- tilda-post:amkbo7kgg1: [💪 Зачем нужны тренировки (кроме похудения)](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni).
 - tilda-post:e4441ism91: [⛔️ Почему эффекта плато не существует](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet).
 
 ## Отдельные назначения и уточнения
@@ -2127,11 +2126,11 @@
 
 ### F211. 💪 Зачем нужны тренировки (кроме похудения)
 
-Канона в блоге пока нет; выбор наиболее полной актуальной основы не завершён.
+Канон блога: [Зачем нужны тренировки (кроме похудения)](https://blog.похудение-это-есть.рф/articles/zachem-nuzhny-trenirovki-krome-pohudeniya). Полный публичный старый интенсив, три исходные картинки, минимальная корректура и навигация. Научные/продуктовые заметки отдельно, не вшиты в текст.
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| tilda-post:amkbo7kgg1 · tilda | [💪 Зачем нужны тренировки (кроме похудения)](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
+| tilda-post:amkbo7kgg1 · tilda | [💪 Зачем нужны тренировки (кроме похудения)](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni) | Уже в блоге; внешняя версия не канон |
 
 
 ### F212. 📸 Как вести дневник питания БЕЗ калорий
