@@ -2,6 +2,54 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "14062380",
+      "slug": "sredizemnomorskaya-dieta-eto-voobshche-chto",
+      "title": "Средиземноморская диета — это вообще что?!?!",
+      "excerpt": "\"Диеты\" — это утрированное коверкание некоторых адекватных принципов питания в красивой обёртке. Например, средиземноморская диета — ешьте дофига овощей и фруктов и побольше цельнозерновых, да бобовых вместо булок и конфет.",
+      "category": "Качество питания",
+      "body_file": "14062380.md",
+      "hero": {
+        "file": "14062380/03.webp",
+        "alt": "Пирамида средиземноморской диеты",
+        "provenance": "https://cs19.pikabu.ru/s/2026/06/14/20/xgedxme2.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "14062380/03.webp",
+        "alt": "Пирамида средиземноморской диеты",
+        "provenance": "https://cs19.pikabu.ru/s/2026/06/14/20/xgedxme2.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11401696",
+        "14021584",
+        "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "14062380/01.webp",
+        "14062380/02.webp",
+        "14062380/03.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380"
+        ],
+        "external_ids": [
+          "14062380"
+        ],
+        "source_uri": "content://item/17d14cc0-906c-4e5d-b458-952441361368",
+        "source_revision": 3,
+        "source_date": "2026-06-14",
+        "sha256": "d955395c8d84892021a09bc7a6288542bb84e77c874c8778cb5278ea2c23c1f9",
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "adaptation": "minimal_proofread_author_critique_3_original_images_preserved_not_archived_A203"
+      }
+    },
+    {
       "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
       "slug": "12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
       "title": "12 простых изменений в питании и образе жизни",

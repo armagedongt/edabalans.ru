@@ -1,0 +1,15 @@
+{
+  "reviewer": "insurance_article_review",
+  "waves": 2,
+  "status": "technical_pass",
+  "draft_sha256": "dbab7e185e8f2d13db7012cb771da254991f3b86d1657f3b97bb726a9564647c",
+  "pack_sha256": "a3c32c42c8b9be598b9987e43e7c9c5487a48e62026d332d553228bb25eccdbd",
+  "source_members": [
+    "A102"
+  ],
+  "level_3_found": false,
+  "full_scientific_pass": false,
+  "original_images": 3,
+  "author_numbers_changed": false,
+  "archived_A203_used": false
+}
