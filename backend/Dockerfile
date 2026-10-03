@@ -15,6 +15,7 @@ COPY backend/alembic.ini ./
 COPY backend/migrations ./migrations
 COPY backend/app ./app
 COPY backend/scripts ./scripts
+COPY backend/data/recipe_catalog ./data/recipe_catalog
 COPY docs /app/docs
 COPY PROJECT_CONTEXT.md ARCHITECTURE.md /app/
 COPY content/masterclass/imported-draft/extracted-2026-08-23.json /app/content/masterclass/imported-draft/extracted-2026-08-23.json

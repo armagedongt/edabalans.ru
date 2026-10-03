@@ -13,6 +13,7 @@ from app.recipe_models import NutritionProduct, RecipeBook, RecipeIngredient
 
 INTEGER_RE = re.compile(r"^\d+$")
 ZERO = Decimal("0")
+CURATED_CATALOG_PREFIX = "curated://recipe-catalog/"
 
 
 def normalize_name(value: Any) -> str:
@@ -128,7 +129,28 @@ def assert_recipe_owner(db: Session, recipe_id: uuid.UUID, owner_id: uuid.UUID) 
 
 def catalog_search(db: Session, owner_id: uuid.UUID, query: str) -> list[dict[str, Any]]:
     needle = normalized_key(query)
-    products = db.scalars(select(NutritionProduct).where(NutritionProduct.is_active.is_(True), (NutritionProduct.owner_user_id.is_(None)) | (NutritionProduct.owner_user_id == owner_id), NutritionProduct.name_normalized.contains(needle)).order_by(case((NutritionProduct.name_normalized.startswith(needle), 0), else_=1), NutritionProduct.owner_user_id.desc(), NutritionProduct.name).limit(12)).all()
+    products = db.scalars(
+        select(NutritionProduct)
+        .where(
+            NutritionProduct.is_active.is_(True),
+            (NutritionProduct.owner_user_id.is_(None))
+            | (NutritionProduct.owner_user_id == owner_id),
+            NutritionProduct.name_normalized.contains(needle),
+        )
+        .order_by(
+            case((NutritionProduct.name_normalized.startswith(needle), 0), else_=1),
+            case((NutritionProduct.owner_user_id.is_not(None), 0), else_=1),
+            case(
+                (
+                    NutritionProduct.source_url.startswith(CURATED_CATALOG_PREFIX),
+                    0,
+                ),
+                else_=1,
+            ),
+            NutritionProduct.name,
+        )
+        .limit(12)
+    ).all()
     recipes = db.scalars(select(RecipeBook).where(RecipeBook.owner_user_id == owner_id, RecipeBook.deleted_at.is_(None), RecipeBook.title.ilike(f"%{normalize_name(query)}%")).order_by(case((RecipeBook.title.ilike(f"{normalize_name(query)}%"), 0), else_=1), RecipeBook.updated_at.desc()).limit(8)).all()
     result = [product_payload(product) for product in products]
     for recipe in recipes:

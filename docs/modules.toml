@@ -470,7 +470,9 @@ owns_files = [
   "backend/app/recipe_course_service.py", "backend/app/recipe_course_routes.py",
   "backend/tests/test_recipe_course.py",
   "backend/app/static/apps/recipes.html", "backend/scripts/import_recipe_catalog.py",
-  "backend/tests/test_recipe_calculator.py", "backend/migrations/versions/20260827_0027_recipe_calculator.py",
+  "backend/scripts/curate_recipe_catalog.py", "backend/data/recipe_catalog/**",
+  "backend/tests/test_recipe_calculator.py", "backend/tests/test_recipe_catalog_curation.py",
+  "backend/migrations/versions/20260827_0027_recipe_calculator.py",
 ]
 owns_tables = ["nutrition_products", "recipe_books", "recipe_ingredients"]
 owns_routes = ["*/apps/recipes*", "*/api/apps/recipes*", "*/api/recipes/course*", "*/recipes", "*/recipe-calculator"]
