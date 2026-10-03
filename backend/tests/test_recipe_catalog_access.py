@@ -79,3 +79,39 @@ def test_day15_recipe_catalog_keeps_paid_access_and_direct_nested_links(parent_f
                          expected_version=current.version_no, admin="test")
     assert client.get("/api/masterclass/course/materials", params={**params,"step_id":CHILD}).json()["materials"] == {}
     assert client.get("/api/account/resource-link", params={"target":"masterclass-21:"+CHILD}).json()["action"] == "unavailable"
+
+
+def test_linked_recipe_opens_before_day15_without_opening_catalog_or_day():
+    client, factory = setup()
+    with factory() as db:
+        user_id = db.scalar(select(UserEmail.user_id).where(UserEmail.email_normalized == "member@example.test"))
+        resource = db.scalar(select(Resource).where(Resource.code == "ACCESS_RECIPES"))
+        db.add(UserAccess(user_id=user_id, resource_id=resource.id, source="test", granted_at=datetime.now(timezone.utc)))
+        current = active_course_version(db)
+        payload = copy.deepcopy(current.payload)
+        day = payload["days"][14]
+        parent = next(s for s in day["steps"] if s["id"] == PARENT)
+        parent.update(kind="article", code="recipes-part-2", contentKind="text", hidden=False,
+                      locked=False, placeholder=False, accessResource="ACCESS_RECIPES", required=False)
+        day["steps"].append(dict(id=CHILD, kind="article", contentKind="text", title="Цезарь",
+                                 nested=True, parentStepId=PARENT, required=False))
+        publish_document(db, document_type=DOCUMENT_TYPE, document_key=DOCUMENT_KEY,
+                         schema_version=MANAGED_SCHEMA_VERSION, payload=payload,
+                         expected_version=current.version_no, admin="test")
+        for sid in (PARENT, CHILD):
+            publish_material(db, step_id=sid, content="Опубликовано " + sid,
+                             content_format="markdown", expected_version=0, admin="test")
+    params = {"email": "member@example.test"}
+    before = client.get("/api/masterclass/course", params=params).json()
+    assert not before["days"][14]["opened"] and not before["days"][14]["can_open"]
+    linked = client.get("/api/account/resource-link", params={"target": "masterclass-21:" + CHILD}).json()
+    assert linked["action"] == "open", linked
+    assert linked["params"] == {"course_day": 15, "course_material": CHILD}
+    body = client.get("/api/masterclass/course/materials", params={**params, "step_id": CHILD}).json()["materials"]
+    assert body[CHILD]["html"] == "<p>Опубликовано " + CHILD + "</p>"
+    assert client.get("/api/account/resource-link", params={"target": "masterclass-21:" + PARENT}).json()["action"] == "locked"
+    assert client.get("/api/masterclass/course/materials", params={**params, "step_id": PARENT}).json()["materials"] == {}
+    after = client.get("/api/masterclass/course", params=params).json()
+    assert after["days"][14] == before["days"][14]
+    client.close()
+    factory.kw["bind"].dispose()

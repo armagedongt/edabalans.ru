@@ -354,6 +354,14 @@ def recipe_article_parent(day_payload: dict, step: dict) -> dict | None:
     return parent
 
 
+def recipe_link_is_open(day_payload: dict, step: dict) -> bool:
+    """Отдельный рецепт читается по ссылке независимо от расписания каталога."""
+    parent = recipe_article_parent(day_payload, step)
+    return bool(step.get("nested") and parent
+                and not any(step.get(flag) or parent.get(flag)
+                            for flag in ("hidden", "locked", "placeholder")))
+
+
 def manifest_for_resources(manifest: dict, owned_resources: set[str]) -> dict:
     result = deepcopy(manifest)
     for day in result.get("days", []):
@@ -364,7 +372,7 @@ def manifest_for_resources(manifest: dict, owned_resources: set[str]) -> dict:
             for step, parent in protected:
                 if parent is None:
                     continue
-                if parent.get("hidden") or parent.get("locked"):
+                if parent.get("hidden") or parent.get("locked") or parent.get("placeholder"):
                     if step.get("nested"):
                         step.update(hidden=True, locked=True)
                     continue
@@ -899,12 +907,15 @@ def course_materials(
     allowed_step_ids = {
         step["id"]
         for day_number, day in context.days.items()
-        if day_number in allowed_days
         for step in day.get("steps", [])
+        if day_number in allowed_days or recipe_link_is_open(day, step)
         if not step.get("hidden", False)
         and not step.get("locked", False)
+        and not step.get("placeholder", False)
         and step.get("kind") == "article"
     }
+    allowed_days.update(number for number, day in context.days.items()
+                        if any(recipe_link_is_open(day, step) for step in day.get("steps", [])))
     return published_materials(
         db,
         allowed_days=allowed_days,

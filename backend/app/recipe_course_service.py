@@ -22,7 +22,7 @@ GROUPS = (
     )),
     ("Рецепты", ("day-15-recipes-part-2",)),
 )
-PLACEHOLDERS = {"day-07-store-food", "day-15-recipes-part-2"}
+PLACEHOLDERS = {"day-07-store-food"}
 
 
 def course_manifest(db: Session) -> dict:
@@ -39,7 +39,14 @@ def course_manifest(db: Session) -> dict:
             ContentItem.latest_version_id.is_not(None),
         )))
     groups = []
-    for number, (title, ids) in enumerate(GROUPS, 1):
+    # Порядок экрана меняется без переноса сохранённых отметок чтения.
+    for number, group_index in enumerate((2, 0, 1), 1):
+        title, ids = GROUPS[group_index]
+        if group_index == 2:
+            title = "Все рецепты"
+            ids = (*ids, *(step["id"] for step in source_steps.values()
+                          if step.get("nested")
+                          and step.get("parentStepId") == "day-15-recipes-part-2"))
         steps = []
         for step_id in ids:
             original = source_steps.get(step_id, {})
@@ -48,17 +55,26 @@ def course_manifest(db: Session) -> dict:
                 or not original or original.get("hidden") or original.get("locked")
                 or original.get("placeholder") or original.get("kind") != "article"
             )
+            if original.get("nested"):
+                parent = source_steps.get(original.get("parentStepId"), {})
+                locked = locked or bool(not parent or parent.get("hidden")
+                                        or parent.get("locked") or parent.get("placeholder")
+                                        or parent.get("id") not in published)
             step = {key: original[key] for key in (
                 "title", "summary", "durationMinutes", "image", "videoId", "imagePresentation",
+                "nested", "parentStepId",
             ) if key in original}
-            step.update(id=step_id, kind="article", required=not locked,
+            step.update(id=step_id, kind="article", required=not locked and not step.get("nested"),
                         locked=bool(locked), badge="Скоро" if locked else "")
             if not step.get("title"):
                 step["title"] = original.get("label") or "Материал готовится"
+            if step_id == "day-15-recipes-part-2":
+                step["title"] = "Все рецепты"
             steps.append(step)
-        groups.append({"number": number, "title": title, "steps": steps, "checks": []})
+        groups.append({"number": number, "progressNumber": group_index + 1,
+                       "title": title, "steps": steps, "checks": []})
     return {
-        "courseVersion": f"recipes-1-mc-{context.revision.version_no}",
+        "courseVersion": f"recipes-2-mc-{context.revision.version_no}",
         "title": "Система рецептов", "navigation": "materials", "linearNavigation": True,
         "sourceCourse": "masterclass-21", "days": groups,
     }
