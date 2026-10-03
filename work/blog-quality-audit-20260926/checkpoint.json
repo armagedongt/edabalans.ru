@@ -19,18 +19,18 @@
     "10123213"
   ],
   "new_full_safe_review_pass_count": 1,
-  "total_old_and_new_full_safe_review_delivered_count": 39,
+  "total_old_and_new_full_safe_review_delivered_count": 40,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "2e269fdc52d600a64753",
+  "next_source_id": "0d583f6ad1cea0eef750",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "2e269fdc52d600a64753",
-  "current_sequential_stage": "walk_sources_merge_media_prepared_publication_pending",
+  "current_sequential_source_id": "0d583f6ad1cea0eef750",
+  "current_sequential_stage": "walk_published_verified_next_exact_source_pending",
   "walk_prepared": {
     "source_id": "2e269fdc52d600a64753",
     "owner_confirmed_family": ["A062", "A064", "A108"],
@@ -41,7 +41,22 @@
     "original_videos": 2,
     "video_storage": "existing_public_server_storage_outside_git",
     "hero_show": false,
-    "published_verified": false,
+    "published_verified": true,
+    "api_version": 3,
+    "public_version": 2,
+    "main_revision": "26d946badd5407866b53b568647b33e22a5028c6",
+    "ci_run": 37116919892,
+    "git_production_revision_verified": true,
+    "markdown_sha256_lf": "3026566df4d5bf016393a671ff7a2e83de9db037a259fc760401b682ef9b287f",
+    "media_http_hash_pass": 26,
+    "active_body_images_loaded": 25,
+    "own_videos_server_sha_http_pass": 2,
+    "video_playback_tested": false,
+    "desktop_mobile_dom_geometry_pass": true,
+    "mobile_screenshot_inspected": true,
+    "library_usage": "recorded",
+    "library_navigation_version": 8,
+    "library_family_members": ["A108", "A062", "A064"],
     "full_scientific_pass": false
   },
   "regain_prepared": {
@@ -401,7 +416,7 @@
   "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
   "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
   "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей",
-  "format_targeted_validation_pass_count": 38,
+  "format_targeted_validation_pass_count": 39,
   "publication_hold_source_ids": [
     "693339"
   ],
@@ -443,7 +458,8 @@
     "full-review/minus12-20261003.md",
     "full-review/nutritionist-20261003.md",
     "full-review/vitamins-20261003.md",
-    "full-review/harmful-products-20261003.md"
+    "full-review/harmful-products-20261003.md",
+    "full-review/walk-20261003.md"
   ],
   "habits_confirmed_delivery": {
     "source_id": "habits-formation-and-one-percent",
