@@ -1,5 +1,5 @@
 {
-  "package_version": "2.9.2-20261003",
+  "package_version": "2.9.3-20261004",
   "files": [
     {
       "path": "content/author-voice/skill/edabalans-neuroslop-auditor/SKILL.md",
@@ -15,7 +15,7 @@
     },
     {
       "path": "content/author-voice/skill/edabalans-writer/SKILL.md",
-      "sha256": "7f68e55ce56844913d1ab045ba66eb7737174ffee0404f61998686b150bb81e4"
+      "sha256": "eaa363218cd42e489907924154c310ecd08d6eed888768fd5a09527807897df7"
     },
     {
       "path": "content/author-voice/authoring-work-profiles-v1.md",
@@ -27,11 +27,11 @@
     },
     {
       "path": "content/author-voice/writer-contract-v1.md",
-      "sha256": "3a8188c2c7f4db58b8b4603b78e6fc1d5f176100f0af582357a3c7d1ac5fa844"
+      "sha256": "92753b2656cd81d8db1ae5809333bbf2f5314f6f5607ec133434bff81c508988"
     },
     {
       "path": "docs/knowledge-base/ARTICLE_STANDARD.md",
-      "sha256": "9a87083b69150994903c6da3c8515fa780439c306bfc79958c14fcd4955ab987"
+      "sha256": "8f3a83722bf8b9c1dcb6a6f4ccc7f35db1d8c18331b5bb2009f79017906ce4bc"
     },
     {
       "path": "content/author-voice/product-fact-router.md",
