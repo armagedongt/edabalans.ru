@@ -155,17 +155,17 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 53,
-    "canonical_linked_external_records": 79,
-    "deferred_families": 221,
+    "canonical_blog_families": 54,
+    "canonical_linked_external_records": 82,
+    "deferred_families": 218,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 76,
+      "editorial_review": 75,
       "incomplete_draft": 12,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
       "private_product_material": 43,
-      "short_reserve": 40,
+      "short_reserve": 38,
       "technical_or_service": 25
     },
     "candidate_duplicate_pairs": 75
@@ -616,6 +616,66 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:zhiroszhigayushchaya-zona-ne-rabotaet",
+      "title": "Жиросжигающая зона не работает! И вот почему",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "10797468",
+        "slug": "zhiroszhigayushchaya-zona-ne-rabotaet",
+        "url": "https://blog.похудение-это-есть.рф/articles/zhiroszhigayushchaya-zona-ne-rabotaet",
+        "body_file": "content/blog/articles/10797468.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A031",
+          "source": "pikabu",
+          "external_id": "10797468",
+          "title": "Жиросжигающая зона не работает!",
+          "url": "https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468",
+          "published_at": "2023-11-04T12:47:03+03:00",
+          "characters": 3575,
+          "role": "direct_source",
+          "provenance": "content://item/9c5f34ea-1f69-400f-84e8-a076d7fbd2ce",
+          "text_sha256": "f56a300352aa0113bf59191489555e6d2ecaeec413561f6996fff09cf462ffa2"
+        },
+        {
+          "catalog_id": "A161",
+          "source": "telegraph",
+          "external_id": "Koe-chto-o-zhiroszhiganii-11-04",
+          "title": "Кое-что об эффективном жиросжигании",
+          "url": "https://telegra.ph/Koe-chto-o-zhiroszhiganii-11-04",
+          "published_at": "2023-11-04T06:55:47+0000",
+          "characters": 3188,
+          "role": "direct_source",
+          "provenance": "content://item/7f4fa487-3343-47cb-9ab8-13ec8b72dd5e",
+          "text_sha256": "48451a310a1fa9f4d836765f57ffad294590f11bb626d9664c4a9e0365a39d57"
+        },
+        {
+          "catalog_id": "A281",
+          "source": "vc.ru",
+          "external_id": "912323",
+          "title": "Жиросжигающая зона не работает!⁠⁠ И вот почему ",
+          "url": "https://vc.ru/flood/912323-zhiroszhigayushaya-zona-ne-rabotaet-i-vot-pochemu",
+          "published_at": "2023-11-12",
+          "characters": 4153,
+          "role": "direct_source",
+          "provenance": "knowledge://resource/vc-912323-full-source",
+          "text_sha256": "9ad4156d1acffd403a034d99237cc63a449083e16b81876f9307ca66d49c3ad8"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "three_full_versions_compared_later_VC_extended_article",
+      "owner_source_decisions": {
+        "A031": "publish_next",
+        "A281": "publish_next",
+        "A161": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": "A281",
+      "source_comparison": "work/blog-quality-audit-20260926/new/10797468/preparation-20261003.md"
     },
     {
       "family_id": "blog:zadacha-pohudet-uroven-slozhnosti-zima",
@@ -3285,64 +3345,6 @@
       }
     },
     {
-      "family_id": "deferred:A031",
-      "title": "Жиросжигающая зона не работает!",
-      "disposition": "deferred",
-      "deferred_kind": "short_reserve",
-      "reason": "Материал 3000–3999 знаков; сначала оценить самостоятельную пользу.",
-      "members": [
-        {
-          "catalog_id": "A031",
-          "source": "pikabu",
-          "external_id": "10797468",
-          "title": "Жиросжигающая зона не работает!",
-          "url": "https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468",
-          "published_at": "2023-11-04T12:47:03+03:00",
-          "characters": 3575,
-          "role": "unmerged_source",
-          "provenance": "content://item/9c5f34ea-1f69-400f-84e8-a076d7fbd2ce",
-          "text_sha256": "f56a300352aa0113bf59191489555e6d2ecaeec413561f6996fff09cf462ffa2"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A161",
-        "A281"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A031": "publish_next"
-      }
-    },
-    {
-      "family_id": "deferred:A281",
-      "title": "Жиросжигающая зона не работает!⁠⁠ И вот почему ",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A281",
-          "source": "vc.ru",
-          "external_id": "912323",
-          "title": "Жиросжигающая зона не работает!⁠⁠ И вот почему ",
-          "url": "https://vc.ru/flood/912323-zhiroszhigayushaya-zona-ne-rabotaet-i-vot-pochemu",
-          "published_at": "2023-11-12",
-          "characters": 4157,
-          "role": "unmerged_source",
-          "provenance": "public SSR article.content__blocks; owner verified profile id1426580",
-          "text_sha256": "154b5fb67a9fdfaa0879a2e86082cc2ce14fb95a97031ece297131d6e722001d"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A031",
-        "A161"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A281": "publish_next"
-      }
-    },
-    {
       "family_id": "deferred:A057",
       "title": "Защищайте детей правильно! Начните с себя!",
       "disposition": "deferred",
@@ -4111,35 +4113,6 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {}
-    },
-    {
-      "family_id": "deferred:A161",
-      "title": "Кое-что об эффективном жиросжигании",
-      "disposition": "deferred",
-      "deferred_kind": "short_reserve",
-      "reason": "Материал 3000–3999 знаков; сначала оценить самостоятельную пользу.",
-      "members": [
-        {
-          "catalog_id": "A161",
-          "source": "telegraph",
-          "external_id": "Koe-chto-o-zhiroszhiganii-11-04",
-          "title": "Кое-что об эффективном жиросжигании",
-          "url": "https://telegra.ph/Koe-chto-o-zhiroszhiganii-11-04",
-          "published_at": "2023-11-04T06:55:47+0000",
-          "characters": 3196,
-          "role": "unmerged_source",
-          "provenance": "content://item/7f4fa487-3343-47cb-9ab8-13ec8b72dd5e",
-          "text_sha256": "0ce5e9f5d7259064ef4a5698b67005a4ab51a3b44b83a2d8cf815bd20913d198"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A031",
-        "A281"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A161": "publish_next"
-      }
     },
     {
       "family_id": "deferred:A162",

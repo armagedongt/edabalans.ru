@@ -1,0 +1,18 @@
+{
+  "status": "published_usage_and_family_recorded",
+  "usage": {
+    "status": "recorded",
+    "source_uri": "knowledge://resource/vc-912323-full-source",
+    "task_key": "blog-new-10797468-20261003"
+  },
+  "navigation_version": 19,
+  "family_id": "blog:zhiroszhigayushchaya-zona-ne-rabotaet",
+  "members": [
+    "A031",
+    "A281",
+    "A161"
+  ],
+  "navigation_sha256": "8a4666d88603eeeea47dbb0063f959459da82d3c0de66fcf419ccbf84d6667c0",
+  "other_families_preserved": true,
+  "channel_edits": 0
+}

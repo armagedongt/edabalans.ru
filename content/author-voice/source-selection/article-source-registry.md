@@ -9,11 +9,11 @@
 
 ## Сводка
 
-- В блоге: **53** канонические семьи.
+- В блоге: **54** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **79** внешних проявления (по машиночитаемому реестру).
+- Уже привязано к канонам блога: **82** внешних проявления (по машиночитаемому реестру).
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **221** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **218** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -25,6 +25,7 @@
 | У взрослой женщины не должно быть перекусов | [blog:u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov](https://blog.похудение-это-есть.рф/articles/u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov) | 2 | 0 |
 | Последний жир на животе. План действий | [blog:posledniy-zhir-na-zhivote-plan-deystviy](https://blog.похудение-это-есть.рф/articles/posledniy-zhir-na-zhivote-plan-deystviy) | 3 | 0 |
 | Резинки для тренировок! | [blog:rezinki-dlya-trenirovok](https://blog.похудение-это-есть.рф/articles/rezinki-dlya-trenirovok) | 2 | 0 |
+| Жиросжигающая зона не работает! И вот почему | [blog:zhiroszhigayushchaya-zona-ne-rabotaet](https://blog.похудение-это-есть.рф/articles/zhiroszhigayushchaya-zona-ne-rabotaet) | 3 | 0 |
 | Почему питание всегда важнее тренировок!! | [blog:pochemu-pitanie-vazhnee-trenirovok](https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok) | 1 | 0 |
 | 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://blog.похудение-это-есть.рф/articles/10-debilnyh-faktov-o-vrednyh-produktah) | 1 | 0 |
 | 15 советов тем, кто худеет — по одному на килограмм лишнего веса | [blog:15-sovetov-tem-kto-hudeet](https://blog.похудение-это-есть.рф/articles/15-sovetov-tem-kto-hudeet) | 1 | 0 |
@@ -138,8 +139,6 @@
 | A129 | telegraph | [Дополнительные материалы по тренировкам](https://telegra.ph/Bonus-urok-4-02-07) | `private_product_material` | 1 |
 | A116 | telegraph | [Если ты большой, это не значит что ты говоришь правду](https://telegra.ph/11111-07-31-5) | `editorial_review` | 0 |
 | A104 | pikabu | [Ждать идеального момента чтобы что-то начать — это нормально](https://pikabu.ru/story/zhdat_idealnogo_momenta_chtobyi_chtoto_nachat__yeto_normalno_14165768) | `short_reserve` | 0 |
-| A031 | pikabu | [Жиросжигающая зона не работает!](https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468) | `short_reserve` | 2 |
-| A281 | vc.ru | [Жиросжигающая зона не работает!⁠⁠ И вот почему ](https://vc.ru/flood/912323-zhiroszhigayushaya-zona-ne-rabotaet-i-vot-pochemu) | `editorial_review` | 2 |
 | A057 | pikabu | [Защищайте детей правильно! Начните с себя!](https://pikabu.ru/story/zashchishchayte_detey_pravilno_nachnite_s_sebya_11469990) | `editorial_review` | 0 |
 | A219 | telegraph | [Звонок 03.02.2026](https://telegra.ph/Zvonok-03022026-02-03) | `technical_or_service` | 0 |
 | A068 | pikabu | [Идеальный завтрак за 96 рублей и три минуты времени](https://pikabu.ru/story/idealnyiy_zavtrak_za_96_rubley_i_tri_minutyi_vremeni_11693580) | `deferred_not_now` | 1 |
@@ -171,7 +170,6 @@
 | A042 | pikabu | [Каши, каши, каши, каши и Похудение. Ъуъ!](https://pikabu.ru/story/kashi_kashi_kashi_kashi_i_pokhudenie_u_11163377) | `deferred_not_now` | 0 |
 | A153 | telegraph | [КБЖУУ + клетчатка](https://telegra.ph/KBZHUU-12-16) | `private_product_material` | 0 |
 | A160 | telegraph | [Кейс Марии. Как сбросить 52 кг за 4 года! Но есть нюанс.](https://telegra.ph/Kejs-Kak-hudet-dolgo-no-na-dolgo-10-03) | `technical_or_service` | 0 |
-| A161 | telegraph | [Кое-что об эффективном жиросжигании](https://telegra.ph/Koe-chto-o-zhiroszhiganii-11-04) | `short_reserve` | 2 |
 | A162 | telegraph | [Конструктор целей. План. Система.](https://telegra.ph/Konstruktor-celej-Plan-Sistema-01-02) | `editorial_review` | 0 |
 | A248 | telegraph | [Контролируем сладкое](https://telegra.ph/sladkoe-12-23) | `private_product_material` | 1 |
 | A085 | pikabu | [Короче, я застраховал маму от онкологии](https://pikabu.ru/story/koroche_ya_zastrakhoval_mamu_ot_onkologii_12269678) | `short_reserve` | 0 |

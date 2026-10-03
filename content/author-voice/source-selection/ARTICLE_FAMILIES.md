@@ -16,7 +16,7 @@
 
 ## Сводка
 
-- Канонов блога: 53 (03.10.2026; выпуск 10573917 подтверждён, Library navigation v18).
+- Канонов блога: 54 (03.10.2026; выпуск 10797468 подтверждён, Library navigation v19).
 - Записей источников в этом файле: 300.
 - Рабочих семей/групп сравнения: 217 (не все связи подтверждены).
 
@@ -39,7 +39,6 @@
 Это согласованные направления, не готовые Markdown. После команды на последовательное выполнение каждую семью сначала сверять с последним поимённым решением владельца, затем полный источник → сравнение семьи и выбор основы → минимальная площадочная адаптация → медиа → Writer/review → выпуск и проверка. Уже закрытые ниже источники повторно не выпускать; Библиотека хранит их связь с каноном.
 
 - A012: [Как на меня напали собаки в лесу](https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434).
-- A031: [Жиросжигающая зона не работает!](https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468).
 - A056: [Мама, с днем рождения!!!](https://pikabu.ru/story/mama_s_dnem_rozhdeniya_11448583).
 - A078: [Долбанная бедность1](https://pikabu.ru/story/dolbannaya_bednost_11989790).
 - A082: [Ответ на пост «Совет от потливости»2](https://pikabu.ru/story/otvet_na_post_sovet_ot_potlivosti_12189205).
@@ -48,10 +47,8 @@
 - A091: [Долбанная бедность. Часть 21](https://pikabu.ru/story/dolbannaya_bednost_chast_2_13202834).
 - A102: [Средиземноморская диета — это вообще что?!?!](https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380).
 - A156: [Как на меня напали собаки в лесу](https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17).
-- A161: [Кое-что об эффективном жиросжигании](https://telegra.ph/Koe-chto-o-zhiroszhiganii-11-04).
 - A184: [Пост 2026](https://telegra.ph/Post-02-22-12).
 - A191: [Сделай сегодня — скажи себе спасибо завтра](https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11).
-- A281: [Жиросжигающая зона не работает!⁠⁠ И вот почему ](https://vc.ru/flood/912323-zhiroszhigayushaya-zona-ne-rabotaet-i-vot-pochemu).
 - tilda-post:amkbo7kgg1: [💪 Зачем нужны тренировки (кроме похудения)](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni).
 - tilda-post:e4441ism91: [⛔️ Почему эффекта плато не существует](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet).
 
@@ -673,15 +670,15 @@
 
 ### F058. Жиросжигающая зона не работает!
 
-Канона в блоге пока нет; выбор наиболее полной актуальной основы не завершён.
+Канон блога: [Жиросжигающая зона не работает! И вот почему](https://blog.похудение-это-есть.рф/articles/zhiroszhigayushchaya-zona-ne-rabotaet). Полные A031/A161/A281 сравнены: одна семья; поздняя расширенная A281 — основа, внешние версии не канон.
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A031 · pikabu | [Жиросжигающая зона не работает!](https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
-| A161 · telegraph | [Кое-что об эффективном жиросжигании](https://telegra.ph/Koe-chto-o-zhiroszhiganii-11-04) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
-| A281 · vc.ru | [Жиросжигающая зона не работает!⁠⁠ И вот почему ](https://vc.ru/flood/912323-zhiroszhigayushaya-zona-ne-rabotaet-i-vot-pochemu) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
+| A031 · pikabu | [Жиросжигающая зона не работает!](https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468) | Уже в блоге; внешняя версия не канон |
+| A161 · telegraph | [Кое-что об эффективном жиросжигании](https://telegra.ph/Koe-chto-o-zhiroszhiganii-11-04) | Уже в блоге; внешняя версия не канон |
+| A281 · vc.ru | [Жиросжигающая зона не работает!⁠⁠ И вот почему ](https://vc.ru/flood/912323-zhiroszhigayushaya-zona-ne-rabotaet-i-vot-pochemu) | Уже в блоге; внешняя версия не канон |
 
-- Машинные кандидаты на сравнение (не доказанные дубли): A031 ↔ A161, A031 ↔ A281, A161 ↔ A281.
+- Полные три версии сопоставлены: одна статья; авторские дополнения поздней A281 сохранены без объединения аргументов из предков.
 
 ### F059. Задача — похудеть. Уровень сложности — ЗИМА
 

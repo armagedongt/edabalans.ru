@@ -2,7 +2,7 @@
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
   "updated_at": "2026-10-03",
   "batch_size": 5,
-  "article_count": 53,
+  "article_count": 54,
   "old_article_count": 44,
   "full_current_text_read_count": 45,
   "archive_source_text_compared_count": 6,
@@ -21,7 +21,8 @@
     "10425659",
     "11906015",
     "10532723",
-    "10573917"
+    "10573917",
+    "10797468"
   ],
   "new_articles_published": [
     "10123213",
@@ -32,32 +33,22 @@
     "10425659",
     "11906015",
     "10532723",
-    "10573917"
+    "10573917",
+    "10797468"
   ],
-  "new_full_safe_review_pass_count": 9,
-  "total_old_and_new_full_safe_review_delivered_count": 52,
+  "new_full_safe_review_pass_count": 10,
+  "total_old_and_new_full_safe_review_delivered_count": 53,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "A031/A161/A281",
+  "next_source_id": "A082",
   "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "10797468",
-  "current_sequential_stage": "fat_zones_main_ci_pending",
-  "fat_zones_10797468_pending": {
-    "preferred_basis": "A281",
-    "source_uri": "knowledge://resource/vc-912323-full-source",
-    "writer_validation": "pass",
-    "independent_review": "technical_pass_level2_notes",
-    "main_revision": "07458ce8091e4c0a1311f2c1f504162e88958e14",
-    "ci_run": 37144367817,
-    "local_tests": "33 passed",
-    "published_verified": false,
-    "next_action": "Wait CI, production54, API/media/browser, Library sync; then close before next family"
-  },
+  "current_sequential_stage": "fat_zones_fully_closed_next_sweating",
   "belly_10532723_prepared": {
     "full_sources": [
       "A019",
@@ -992,5 +983,22 @@
     "desktop_mobile_dom_geometry_pass": true,
     "library_usage": "recorded",
     "library_navigation_version": 18
+  },
+  "fat_zones_10797468_prepared": {
+    "published_verified": true,
+    "preferred_basis": "A281",
+    "writer_validation": "pass",
+    "independent_review": "technical_pass_level2_notes",
+    "full_scientific_pass": false,
+    "production_revision": "07458ce8091e4c0a1311f2c1f504162e88958e14",
+    "ci_run": 37144367817,
+    "ci_conclusion": "success",
+    "api_version": 1,
+    "public_version": 0,
+    "markdown_sha256_lf": "93bc2aeccd3d244e191d26eb305d6ffda1b225b257d3d6d020a0a6c22847780e",
+    "media_http_hash_pass": 3,
+    "desktop_mobile_dom_geometry_pass": true,
+    "library_usage": "recorded",
+    "library_navigation_version": 19
   }
 }
