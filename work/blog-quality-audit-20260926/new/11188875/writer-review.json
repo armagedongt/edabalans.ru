@@ -1,0 +1,9 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "root-full-source-preservation",
+  "reviewed_at": "2026-10-03T13:57:22.067627+00:00",
+  "pack_sha256": "bbf7315bb02f704799f58053db98f91f0aba45b056cc0375de1d63ec6a146715",
+  "draft_sha256": "29e4501af0016d5048dcf4b588e63dd7f6a07fa7b232389543bb23c0a74db619",
+  "fact_sources": [],
+  "checks": []
+}

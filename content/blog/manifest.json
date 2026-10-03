@@ -2,6 +2,54 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "11188875",
+      "slug": "belyy-ris-kury-i-vitamin-b1",
+      "title": "Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ?",
+      "excerpt": "Немного научпопа. Итак, Индонезия, остров Ява, 1886 год.",
+      "category": "Качество питания",
+      "body_file": "11188875.md",
+      "hero": {
+        "file": "11188875/01.webp",
+        "alt": "Кристиан Эйкман и историческая фотография больного бери-бери",
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2024/03/03/6/1709456860182426527.png",
+        "show": false
+      },
+      "card": {
+        "file": "11188875/01.webp",
+        "alt": "Кристиан Эйкман и историческая фотография больного бери-бери",
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2024/03/03/6/1709456860182426527.png",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11534645",
+        "10877887",
+        "11833079"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "11188875/01.webp",
+        "11188875/02.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/belyiy_ris_vorovstvo_kuryi_i_vitamin_b1_a_prichem_tut_zdorovoe_pitanie__11188875"
+        ],
+        "external_ids": [
+          "11188875"
+        ],
+        "source_uri": "content://item/d14aa7e5-2795-420c-a0b0-3906469f979c",
+        "source_revision": 1,
+        "source_date": "2024-03-03T13:42:41+03:00",
+        "sha256": [
+          "0595d8594362a088752f6b78479ace3f4debbd47eaf337db1eb0c3615b4dc617"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
       "source_id": "10877887",
       "slug": "skolko-polzy-ostaetsya-v-moloke",
       "title": "Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?",
