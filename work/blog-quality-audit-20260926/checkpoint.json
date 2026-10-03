@@ -19,18 +19,18 @@
     "10123213"
   ],
   "new_full_safe_review_pass_count": 1,
-  "total_old_and_new_full_safe_review_delivered_count": 25,
+  "total_old_and_new_full_safe_review_delivered_count": 26,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 34,
   "next_independent_batch": null,
-  "next_source_id": "11339712",
+  "next_source_id": "intuitivnoe-pitanie-04-27-2",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "11339712",
-  "current_sequential_stage": "habits_safe_format_API_Library_delivered; next_11339712_fresh_runtime; 12296286_owner_strike_decision_pending",
+  "current_sequential_source_id": "intuitivnoe-pitanie-04-27-2",
+  "current_sequential_stage": "11339712_safe_format_source_media_API_Library_delivered; next_intuitive_fresh_runtime; 12296286_owner_strike_decision_pending",
   "three_errors_confirmed_delivery": {
     "source_id": "13785403",
     "editor_version": 3,
@@ -216,7 +216,8 @@
     "12296286",
     "13436070",
     "13785403",
-    "habits-formation-and-one-percent"
+    "habits-formation-and-one-percent",
+    "11339712"
   ],
   "training_confirmed_delivery": {
     "editor_version": 3,
@@ -335,7 +336,7 @@
   "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
   "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
   "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей",
-  "format_targeted_validation_pass_count": 24,
+  "format_targeted_validation_pass_count": 25,
   "publication_hold_source_ids": [
     "693339"
   ],
@@ -367,7 +368,8 @@
     "full-review/no-time-20261003.md",
     "full-review/muscles-20261003.md",
     "full-review/three-errors-20261003.md",
-    "full-review/habits-20261003.md"
+    "full-review/habits-20261003.md",
+    "full-review/diet-20261003.md"
   ],
   "habits_confirmed_delivery": {
     "source_id": "habits-formation-and-one-percent",
@@ -386,5 +388,24 @@
     "library_navigation_version": 6,
     "semantic_changes_applied": false,
     "full_scientific_pass": false
+  },
+  "diet_confirmed_delivery": {
+    "source_id": "11339712",
+    "editor_version": 3,
+    "public_version": 2,
+    "writer_validation": "pass",
+    "fresh_safe_review": "clean",
+    "production_revision": "570040d5e2ea2ce17ddfd6f6021e3b202e465128",
+    "ci_run": 37085796647,
+    "media_http_hash_pass_count": 7,
+    "original_unique_images_loaded": 7,
+    "desktop_mobile_dom_geometry_pass": true,
+    "mobile_screenshot_inspected": true,
+    "library_use_recorded": true,
+    "semantic_changes_applied": false,
+    "full_scientific_pass": false,
+    "expired_pdf_links_not_reintroduced": 2,
+    "hero_show": false,
+    "card_fit": "contain"
   }
 }
