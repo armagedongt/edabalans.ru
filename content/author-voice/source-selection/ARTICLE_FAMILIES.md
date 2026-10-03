@@ -16,7 +16,7 @@
 
 ## Сводка
 
-- Канонов блога: 49 (03.10.2026; очередной выпуск 11801517 подтверждён, Library navigation v14).
+- Канонов блога: 50 (03.10.2026; выпуск 10425659 подтверждён, Library navigation v15).
 - Записей источников в этом файле: 300.
 - Рабочих семей/групп сравнения: 217 (не все связи подтверждены).
 
@@ -40,7 +40,6 @@
 
 - A002: [Все знают, никто не делает](https://pikabu.ru/story/vse_znayut_nikto_ne_delaet_10123213).
 - A012: [Как на меня напали собаки в лесу](https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434).
-- A016: [13 правил для организации домашних тренировок1](https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659).
 - A019: [Последний жир в области живота. План действий](https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723).
 - A021: [Резинки для тренировок!](https://pikabu.ru/story/rezinki_dlya_trenirovok_10573917).
 - A031: [Жиросжигающая зона не работает!](https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468).
@@ -52,7 +51,6 @@
 - A085: [Короче, я застраховал маму от онкологии](https://pikabu.ru/story/koroche_ya_zastrakhoval_mamu_ot_onkologii_12269678).
 - A091: [Долбанная бедность. Часть 21](https://pikabu.ru/story/dolbannaya_bednost_chast_2_13202834).
 - A102: [Средиземноморская диета — это вообще что?!?!](https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380).
-- A117: [💎 13 правил  для организации домашних тренировок⁠⁠](https://telegra.ph/13-pravil-09-18).
 - A156: [Как на меня напали собаки в лесу](https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17).
 - A161: [Кое-что об эффективном жиросжигании](https://telegra.ph/Koe-chto-o-zhiroszhiganii-11-04).
 - A183: [Последний жир на животе. План действий⁠⁠](https://telegra.ph/Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07).
@@ -168,10 +166,10 @@
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A016 · pikabu | [13 правил для организации домашних тренировок1](https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
-| A117 · telegraph | [💎 13 правил  для организации домашних тренировок⁠⁠](https://telegra.ph/13-pravil-09-18) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
+| A016 · pikabu | [13 правил для организации домашних тренировок](https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659) | Исходная внешняя версия; не канон. Канон — [блог](https://blog.похудение-это-есть.рф/articles/13-pravil-domashnih-trenirovok) |
+| A117 · telegraph | [13 правил для организации домашних тренировок](https://telegra.ph/13-pravil-09-18) | Сравненная внешняя версия; не канон. Та же семья блога |
 
-- Машинные кандидаты на сравнение (не доказанные дубли): A016 ↔ A117.
+- Обе полные версии сравнены: основной текст одной статьи, не две новые публикации. Выпуск и обе связи подтверждены 03.10.2026, Library navigation v15.
 
 ### F008. 15 советов тем, кто худеет — по одному на килограмм лишнего веса
 

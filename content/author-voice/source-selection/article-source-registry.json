@@ -155,12 +155,12 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 49,
-    "canonical_linked_external_records": 70,
-    "deferred_families": 230,
+    "canonical_blog_families": 50,
+    "canonical_linked_external_records": 72,
+    "deferred_families": 228,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 84,
+      "editorial_review": 82,
       "incomplete_draft": 13,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
@@ -199,6 +199,53 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:13-pravil-domashnih-trenirovok",
+      "title": "13 правил для организации домашних тренировок",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "10425659",
+        "slug": "13-pravil-domashnih-trenirovok",
+        "url": "https://blog.похудение-это-есть.рф/articles/13-pravil-domashnih-trenirovok",
+        "body_file": "content/blog/articles/10425659.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A016",
+          "source": "pikabu",
+          "external_id": "10425659",
+          "title": "13 правил для организации домашних тренировок1",
+          "url": "https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659",
+          "published_at": "2023-07-01T10:39:06+03:00",
+          "characters": 4491,
+          "role": "direct_source",
+          "provenance": "content://item/9cd3cd1a-4c80-4657-a212-935a9fae2fd3",
+          "text_sha256": "514025ade84f5acf74a3dd1845d1f74d26d32d2b689c2f31c1c03e906709c2d4"
+        },
+        {
+          "catalog_id": "A117",
+          "source": "telegraph",
+          "external_id": "13-pravil-09-18",
+          "title": "💎 13 правил  для организации домашних тренировок⁠⁠",
+          "url": "https://telegra.ph/13-pravil-09-18",
+          "published_at": "2023-09-18T18:07:55+0000",
+          "characters": 4160,
+          "role": "direct_source",
+          "provenance": "content://item/00f822e8-6858-4981-bd65-072f310f240f",
+          "text_sha256": "f3af3651caec3c3407612bd2198ee25945e84e650d8406bb7e8928daa8a5cb13"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "two_full_versions_compared_same_article",
+      "owner_source_decisions": {
+        "A016": "publish_next",
+        "A117": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": "A016",
+      "source_comparison": "work/blog-quality-audit-20260926/new/10425659/preparation-20261003.md"
     },
     {
       "family_id": "blog:15-sovetov-tem-kto-hudeet",
@@ -2054,34 +2101,6 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {}
-    },
-    {
-      "family_id": "deferred:A016",
-      "title": "13 правил для организации домашних тренировок1",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A016",
-          "source": "pikabu",
-          "external_id": "10425659",
-          "title": "13 правил для организации домашних тренировок1",
-          "url": "https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659",
-          "published_at": "2023-07-01T10:39:06+03:00",
-          "characters": 4491,
-          "role": "unmerged_source",
-          "provenance": "content://item/9cd3cd1a-4c80-4657-a212-935a9fae2fd3",
-          "text_sha256": "514025ade84f5acf74a3dd1845d1f74d26d32d2b689c2f31c1c03e906709c2d4"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A117"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A016": "publish_next"
-      }
     },
     {
       "family_id": "deferred:A050",
@@ -7609,34 +7628,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "tilda-post:sgpfzdvvy1": "manual_review"
-      }
-    },
-    {
-      "family_id": "deferred:A117",
-      "title": "💎 13 правил  для организации домашних тренировок⁠⁠",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A117",
-          "source": "telegraph",
-          "external_id": "13-pravil-09-18",
-          "title": "💎 13 правил  для организации домашних тренировок⁠⁠",
-          "url": "https://telegra.ph/13-pravil-09-18",
-          "published_at": "2023-09-18T18:07:55+0000",
-          "characters": 4166,
-          "role": "unmerged_source",
-          "provenance": "content://item/00f822e8-6858-4981-bd65-072f310f240f",
-          "text_sha256": "2a6f227a69c1daca5a1db062df8558ccf402303c7e82f64f50ee0606796eb1c0"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A016"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A117": "publish_next"
       }
     },
     {

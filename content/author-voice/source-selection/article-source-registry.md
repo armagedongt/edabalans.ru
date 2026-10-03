@@ -9,11 +9,11 @@
 
 ## Сводка
 
-- В блоге: **49** канонические семьи.
+- В блоге: **50** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **70** внешних проявлений (по машиночитаемому реестру; исправлен устаревший ручной счётчик).
+- Уже привязано к канонам блога: **72** внешних проявления (по машиночитаемому реестру).
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **230** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **228** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -21,6 +21,7 @@
 
 | Статья | Канон | Привязанные внешние проявления | Возможные версии на проверку |
 |---|---|---:|---:|
+| 13 правил для организации домашних тренировок | [blog:13-pravil-domashnih-trenirovok](https://blog.похудение-это-есть.рф/articles/13-pravil-domashnih-trenirovok) | 2 | 0 |
 | Почему питание всегда важнее тренировок!! | [blog:pochemu-pitanie-vazhnee-trenirovok](https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok) | 1 | 0 |
 | 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://blog.похудение-это-есть.рф/articles/10-debilnyh-faktov-o-vrednyh-produktah) | 1 | 0 |
 | 15 советов тем, кто худеет — по одному на килограмм лишнего веса | [blog:15-sovetov-tem-kto-hudeet](https://blog.похудение-это-есть.рф/articles/15-sovetov-tem-kto-hudeet) | 1 | 0 |
@@ -94,7 +95,6 @@
 | A004 | pikabu | [10 000 и 1 шаг. Так должна называться сказка про здоровый образ жизни. Или нет?](https://pikabu.ru/story/10_000_i_1_shag_tak_dolzhna_nazyivatsya_skazka_pro_zdorovyiy_obraz_zhizni_ili_net_10190123) | `deferred_not_now` | 1 |
 | A062 | pikabu | [100 000 шагов за ОДИН день](https://pikabu.ru/story/100_000_shagov_za_odin_den_11528528) | `editorial_review` | 0 |
 | A119 | telegraph | [100 способов сжечь жир](https://telegra.ph/22-05-29-5) | `incomplete_draft` | 0 |
-| A016 | pikabu | [13 правил для организации домашних тренировок1](https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659) | `editorial_review` | 1 |
 | A050 | pikabu | [55 дней до лета. Похудеть на 10 кг уже вряд ли выйдет, но вот 4-5-6 вполне реально!!](https://pikabu.ru/story/55_dney_do_leta_pokhudet_na_10_kg_uzhe_vryad_li_vyiydet_no_vot_456_vpolne_realno_11296380) | `short_reserve` | 1 |
 | A026 | pikabu | [7 способов как восстанавливаться между тренировками на 100%](https://pikabu.ru/story/7_sposobov_kak_vosstanavlivatsya_mezhdu_trenirovkami_na_100_10715268) | `deferred_not_now` | 0 |
 | A125 | telegraph | [8 советов тем, кто начинает бегать](https://telegra.ph/8-sovetov-tem-kto-nachinaet-begat-06-16) | `editorial_review` | 2 |
@@ -310,7 +310,6 @@
 | tilda-post:knian4e971 | tilda | [✍️ Ваш новый план похудения](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/knian4e971-vash-novii-plan-pohudeniya) | `editorial_review` | 0 |
 | tilda-post:a75rtx6go1 | tilda | [🍔 Что надо поменять в питании, чтобы лучше насыщаться?](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/a75rtx6go1-chto-nado-pomenyat-v-pitanii-chtobi-luc) | `editorial_review` | 0 |
 | tilda-post:sgpfzdvvy1 | tilda | [🍭 Вы едите 31кг сахара в год!](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/sgpfzdvvy1-vi-edite-31kg-sahara-v-god) | `editorial_review` | 0 |
-| A117 | telegraph | [💎 13 правил  для организации домашних тренировок⁠⁠](https://telegra.ph/13-pravil-09-18) | `editorial_review` | 1 |
 | tilda-post:amkbo7kgg1 | tilda | [💪 Зачем нужны тренировки (кроме похудения)](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni) | `editorial_review` | 0 |
 | tilda-post:pxukhjlca1 | tilda | [📸 Как вести дневник питания БЕЗ калорий](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/pxukhjlca1-kak-vesti-dnevnik-pitaniya-bez-kalorii) | `editorial_review` | 0 |
 | tilda-post:7siam7t8k1 | tilda | [😎 Как сократить тягу к сладкому и как есть сладкое с меньшим вредом для здоровья!](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/7siam7t8k1-kak-sokratit-tyagu-k-sladkomu-i-kak-est) | `editorial_review` | 0 |
