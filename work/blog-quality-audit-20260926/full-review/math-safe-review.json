@@ -1,0 +1,23 @@
+{
+  "source_id":"11494317",
+  "status":"clean",
+  "reviewer":"/root/batch03_publisher_review",
+  "findings":[],
+  "draft_sha256":"8e451b6246f1ca5766ff920f668653f742b92b6ccae43bd05223da4554694a8e",
+  "checks":{
+    "words_numbers_and_existing_proofread_unchanged":true,
+    "source_dom_strong_em_and_quote":true,
+    "render_source_quotes":1,
+    "render_h2":4,
+    "render_h3":2,
+    "no_raw_stars":true,
+    "source_images":0,
+    "hero_off_existing_card_preserved":true,
+    "cta_masterclass_one":true,
+    "source_provenance_hash":true,
+    "writer_hashes_and_pass":true,
+    "api_baseline_version":2,
+    "medical_validity_reviewed":false,
+    "production_delivery_reviewed":false
+  }
+}
