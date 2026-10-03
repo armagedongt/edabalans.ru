@@ -2,6 +2,61 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "10532723",
+      "slug": "posledniy-zhir-na-zhivote-plan-deystviy",
+      "title": "Последний жир на животе. План действий",
+      "excerpt": "Каждый день вижу посты про упрямый жир и выпирающий живот, но советы там, мягко скажем, однобокие, а иногда и совсем дебильные, написанные дешевыми копирайтерами. Неважно, ваш живот сейчас — это сдача с прошлого похудения, начало нового набора веса или вы живете с такой композицией тела, сколько себя помните, план действий от этого не зависит.",
+      "category": "Похудение",
+      "body_file": "10532723.md",
+      "hero": {
+        "file": "10532723/01.webp",
+        "alt": "Сравнение комплекции и распределения жира",
+        "provenance": "https://telegra.ph/file/c53e9442ea76e90cfd1c2.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "10532723/01.webp",
+        "alt": "Сравнение комплекции и распределения жира",
+        "provenance": "https://telegra.ph/file/c53e9442ea76e90cfd1c2.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "13436070",
+        "13178972",
+        "10425659"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "10532723/01.webp",
+        "10532723/02.webp",
+        "10532723/03.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://telegra.ph/Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07",
+          "https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723",
+          "https://telegra.ph/Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13"
+        ],
+        "external_ids": [
+          "Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07",
+          "10532723",
+          "Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13"
+        ],
+        "source_uri": "content://item/61458c9a-8db0-44d6-b144-0ab618a4855f",
+        "source_revision": 1,
+        "source_date": "2024-03-07T16:10:43+03:00",
+        "sha256": [
+          "481d659c295cee8f720f97cfb4b674c276a1844e98d291f74648d5ec7d77c38e",
+          "778f44e6d3d12a00de5c93481aa0d871e10c0dcb251837351a620b7422fcf1c7",
+          "dd3bbeedeb9625bb3861026ae8c7dac7c78cf60fe056e793061e3d53a1f178fa"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
       "source_id": "11906015",
       "slug": "u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov",
       "title": "У взрослой женщины не должно быть перекусов",
