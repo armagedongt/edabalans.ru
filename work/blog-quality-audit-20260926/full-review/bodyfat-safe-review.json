@@ -5,5 +5,5 @@
   "draft_sha256": "6e99fa34ea5f4a8515a93c1471fa7f8487df4f9e36569dc5d5eb015dc660d0ed",
   "checks": ["exact source and fresh API baseline compared", "5 replacement groups reproduce final draft", "12 original images preserved and correctly positioned", "release renderer verifies one ordered list, literal multiplication and bold formula", "writer hashes and validation pass agree"],
   "full_scientific_pass": false,
-  "production_delivery_verified": false
+  "production_delivery_verified": true
 }
