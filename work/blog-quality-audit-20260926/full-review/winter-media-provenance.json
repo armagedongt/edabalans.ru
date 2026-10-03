@@ -1,0 +1,84 @@
+{
+  "source_id": "12109482",
+  "checked_at": "2026-10-03",
+  "immutable_existing_files_preserved": true,
+  "media": [
+    {
+      "file": "12109482/01.webp",
+      "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/12/07/9/1733583500193130408.jpg",
+      "bytes": 34706,
+      "width": 754,
+      "height": 439,
+      "sha256": "bbecfb3f4699913833d400c125bd47a55e9a32c16efc065fc423e0b525171b18",
+      "visually_checked": true,
+      "in_article_body": true,
+      "platform_tail_media": false
+    },
+    {
+      "file": "12109482/02.webp",
+      "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/12/07/8/1733576927181583272.jpg",
+      "bytes": 97480,
+      "width": 962,
+      "height": 683,
+      "sha256": "35a0a04a67d3e97575ff0e118df77bb63bf2ca37e6331d753bb9da2db2932496",
+      "visually_checked": true,
+      "in_article_body": true,
+      "platform_tail_media": false
+    },
+    {
+      "file": "12109482/03.webp",
+      "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/12/07/9/1733581833172516978.png",
+      "bytes": 39364,
+      "width": 748,
+      "height": 377,
+      "sha256": "464c3e66dda54bfa3fd4d8d783df847cbe6d320f7c2141fbc6a58973705df429",
+      "visually_checked": true,
+      "in_article_body": true,
+      "platform_tail_media": false
+    },
+    {
+      "file": "12109482/04.webp",
+      "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/12/07/8/1733577177113392097.jpg",
+      "bytes": 34594,
+      "width": 960,
+      "height": 960,
+      "sha256": "450f5d381fde5c2dfcb1f9951c5e4e20062f185ccf7e3bf9d6b04eb476c4ba23",
+      "visually_checked": true,
+      "in_article_body": true,
+      "platform_tail_media": false
+    },
+    {
+      "file": "12109482/05.webp",
+      "original_source_url": "https://cs15.pikabu.ru/post_img/2024/12/07/8/173357884017695120.jpg",
+      "bytes": 30482,
+      "width": 550,
+      "height": 400,
+      "sha256": "e4aab5239cab38e44a4580dc987b9ff9997c023871a3f5390871e60b3b6b596a",
+      "visually_checked": true,
+      "in_article_body": true,
+      "platform_tail_media": false
+    },
+    {
+      "file": "12109482/06.webp",
+      "original_source_url": "https://cs15.pikabu.ru/post_img/2024/12/07/10/1733588109164646938.jpg",
+      "bytes": 136022,
+      "width": 700,
+      "height": 718,
+      "sha256": "40eba60d3753246c9904606e485a85bdd2acca8b1a82629c756400ae1df32964",
+      "visually_checked": true,
+      "in_article_body": true,
+      "platform_tail_media": false
+    },
+    {
+      "file": "12109482/07.webp",
+      "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/12/07/10/1733587994145941933.png",
+      "bytes": 10768,
+      "width": 749,
+      "height": 155,
+      "sha256": "57ba8ee487ade1aae9c42cec6f2bb4c0a3e579a66c3b85179d9e0e05d15dd548",
+      "visually_checked": true,
+      "in_article_body": false,
+      "platform_tail_media": true
+    }
+  ]
+}

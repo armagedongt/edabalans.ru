@@ -242,13 +242,13 @@
           "file": "12109482/01.webp",
           "alt": "Иллюстрация к статье «Задача — похудеть. Уровень сложности — ЗИМА»",
           "provenance": "https://cs15.pikabu.ru/post_img/big/2024/12/07/9/1733583500193130408.jpg",
-          "show": true
+          "show": false
         },
         "card": {
           "file": "12109482/01.webp",
           "alt": "Иллюстрация к статье «Задача — похудеть. Уровень сложности — ЗИМА»",
           "provenance": "https://cs15.pikabu.ru/post_img/big/2024/12/07/9/1733583500193130408.jpg",
-          "fit": "cover"
+          "fit": "contain"
         },
         "related_source_ids": [
           "13277231",
