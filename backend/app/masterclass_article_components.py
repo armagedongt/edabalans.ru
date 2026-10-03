@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 
 from fastapi import HTTPException
 
-from app.article_markup import inline_markdown, safe_image_src, safe_video_source, safe_audio_arguments
+from app.article_markup import inline_markdown, safe_image_src, safe_video_source, safe_audio_arguments, safe_recipe_card_asset
 
 
 DQS_SCORE_CATEGORIES = {
@@ -107,6 +107,18 @@ def render_video(arguments: list[str]) -> str:
 
 
 def render_masterclass_component(name: str, arguments: list[str]) -> str:
+    if name == "recipe_card":
+        if (len(arguments) != 2 or not safe_recipe_card_asset(arguments[0])
+                or not 1 <= len(arguments[1].strip()) <= 200):
+            raise HTTPException(422, "Карточка принимает локальное изображение и название рецепта")
+        source, title = (escape(value, quote=True) for value in arguments)
+        return (
+            '<section class="recipe-card"><div class="recipe-card-image">'
+            f'<img src="{source}" alt="{title}">'
+            f'<a class="recipe-card-download" href="{source}" download aria-label="Скачать карточку рецепта">↓</a>'
+            '</div>'
+            f'<a class="recipe-card-save" href="{source}" download>Скачать карточку</a></section>'
+        )
     if name == "audio":
         if len(arguments) != 4 or not safe_audio_arguments(*arguments):
             raise HTTPException(422, "Аудио принимает HTTPS-аудиофайл, аватарку, автора и длительность М:СС")

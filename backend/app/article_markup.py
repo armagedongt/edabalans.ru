@@ -20,6 +20,7 @@ COURSE_TAGS = ALLOWED_TAGS | {
 VOID_TAGS = {"img", "br", "hr"}
 BLOCKED_TAGS = {"script", "style", "iframe", "object", "svg", "math"}
 COURSE_CLASS_TOKENS = {
+    "recipe-card", "recipe-card-image", "recipe-card-download", "recipe-card-save",
     "article-gallery", "gallery-window", "gallery-track", "gallery-slide",
     "gallery-arrow", "gallery-prev", "gallery-next", "gallery-footer",
     "gallery-counter", "gallery-dots", "gallery-dot", "active",
@@ -38,6 +39,13 @@ def safe_href(value: str) -> bool:
     if decoded.startswith("//") or "\\" in decoded or any(ord(character) < 32 for character in decoded):
         return False
     return urlparse(cleaned).scheme in {"", "http", "https", "mailto"}
+
+
+def safe_recipe_card_asset(value: str) -> bool:
+    """Download links are restricted to canonical same-origin recipe images."""
+    return re.fullmatch(
+        r"/course-assets/masterclass/media/[a-zA-Z0-9_/-]+\.(?:webp|png|jpg|jpeg)", value
+    ) is not None and "//" not in value
 
 
 def opens_in_new_tab(value: str) -> bool:
@@ -182,6 +190,13 @@ class ArticleSanitizer(HTMLParser):
             href = next((value for name, value in attrs if name.lower() == "href"), None)
             if href and safe_href(href):
                 rendered_attrs = f' href="{escape(course_material_href(href) or href.strip(), quote=True)}"'
+                attributes = dict(attrs)
+                recipe_class = attributes.get("class")
+                if (self.course_semantics and self.allow_product_components
+                        and safe_recipe_card_asset(href)
+                        and recipe_class in {"recipe-card-download", "recipe-card-save"}):
+                    rendered_attrs += f' class="{recipe_class}" download'
+                    rendered_attrs += ' aria-label="Скачать карточку рецепта"'
                 if self.course_semantics and opens_in_new_tab(href):
                     rendered_attrs += ' target="_blank" rel="noopener"'
                 tracking_key = next(

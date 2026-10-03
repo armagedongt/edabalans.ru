@@ -90,6 +90,7 @@ def masterclass_article_component_styles() -> Response:
         component_asset("dqs-image-slider", "slider.css"),
         component_asset("dqs-score-tables", "score-tables.css"),
         component_asset("article-spoiler", "spoiler.css"),
+        component_asset("recipe-card", "recipe-card.css"),
         '.article-audio{width:100%;margin:26px 0 30px}.article-audio iframe{display:block;width:100%;height:148px;border:0;background:transparent}',
     ))
     return Response(
