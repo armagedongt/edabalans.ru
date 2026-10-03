@@ -71,7 +71,8 @@ try {
   const recipeLinks = await browser.newPage()
   await recipeLinks.route(origin+'/**', route=>route.fulfill({contentType:'text/html',body:'<article id="article"></article>'}))
   await recipeLinks.goto(origin)
-  const bindingSource = courseHtml.slice(courseHtml.indexOf('function bindSourceCourseLinks('), courseHtml.indexOf('function renderMaterialMenu('))
+  const linkedRecipeSource = courseHtml.slice(courseHtml.indexOf('function linkedRecipeStep('), courseHtml.indexOf('function bindSourceCourseLinks('))
+  const bindingSource = linkedRecipeSource + courseHtml.slice(courseHtml.indexOf('function bindSourceCourseLinks('), courseHtml.indexOf('function renderMaterialMenu('))
   for (const sourceCourse of [null,'masterclass-21']) {
     await recipeLinks.evaluate(({source,sourceCourse})=>{
       const article=document.querySelector('#article')
@@ -95,11 +96,11 @@ try {
     assert.equal(await recipeLinks.evaluate(()=>document.getElementById('recipe').dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,ctrlKey:true}))),true)
     assert.equal(await recipeLinks.evaluate(()=>window.recipeTransitions.length),3)
   }
-  const menuSource=courseHtml.slice(courseHtml.indexOf('function openMenuMaterial('),courseHtml.indexOf('function mountMaterialAssignment('))
+  const menuSource=linkedRecipeSource+courseHtml.slice(courseHtml.indexOf('function openMenuMaterial('),courseHtml.indexOf('function mountMaterialAssignment('))
   for(const alreadyOpened of [false,true]){
     const events=[],localState={},day={number:15,steps:[{id:'day-15-recipe-caesar'}]},localDays=Array(15).fill(null);localDays[14]=day
     const openMenu=new Function('unlocked','serverDay','SERVER_MODE','api','courseActionBody','applyCourse','state','save','closeMenu','resetRouteOverlays','openCourseStep','days','showActionError',menuSource+';return openMenuMaterial')(
-      ()=>true,()=>({opened:alreadyOpened}),true,(url,options)=>{events.push([url,options.method]);return Promise.resolve({opened:true})},()=> '{}',()=>events.push('applied'),localState,()=>{},()=>{},()=>{},(d,i)=>events.push(d.steps[i].id),localDays,error=>{throw error})
+      ()=>true,()=>({opened:alreadyOpened,can_open:true}),true,(url,options)=>{events.push([url,options.method]);return Promise.resolve({opened:true})},()=> '{}',()=>events.push('applied'),localState,()=>{},()=>{},()=>{},(d,i)=>events.push(d.steps[i].id),localDays,error=>{throw error})
     openMenu({disabled:false,dataset:{day:'15',materialIndex:'0'}})
     await new Promise(resolve=>setTimeout(resolve,0))
     assert.deepEqual(events,alreadyOpened?['day-15-recipe-caesar']:[['/api/masterclass/course/days/15/open','POST'],'applied','day-15-recipe-caesar'])
@@ -118,7 +119,7 @@ try {
     d.topics=d.steps.map(step=>({stepId:step.id,title:step.id,contentLoaded:true}));const days=Array(15).fill(null);days[14]=d
     const courseManifest={courseCode:'masterclass-21'},state={day:15},calls=[]
     const run=new Function('courseManifest','stepIndexById','stepNavigable','stepUnlocked','days','state','openCourseStep','previousVisibleStep','linearNeighbor','openLinearMaterial','advanceCourseStep','returnToDay','openMenu','writeCourseRoute','materialMenu','materialMetaHtml','materialButtonText','renderMenu','renderArticleTopic',
-      'var currentStep,current;'+source+openSource+handlers.join('\n')+';return function(i){openArticle(i)}')(
+      'var currentStep,current;function openedDay(){return true};'+source+openSource+handlers.join('\n')+';return function(i){openArticle(i)}')(
         courseManifest,(day,id)=>day.steps.findIndex(s=>s.id===id),(day,i)=>!day.steps[i].hidden&&!day.steps[i].locked,()=>true,days,state,
         (day,i)=>calls.push(day.steps[i].id),()=>0,()=>null,()=>{},()=>calls.push('advance'),()=>calls.push('day'),()=>calls.push('menu'),()=>{},()=>false,()=>'',()=> 'Далее',()=>{},()=>{})
     const result=[]
