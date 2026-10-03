@@ -10,7 +10,9 @@
       "height": 1154,
       "sha256": "41aa1363a01f0cb6b90806cf1d8792acd085df7ac92f831dd157108f94567161",
       "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/17223368731707616.png",
-      "visually_checked": true
+      "visually_checked": true,
+      "public_http": 200,
+      "server_sha256": "41aa1363a01f0cb6b90806cf1d8792acd085df7ac92f831dd157108f94567161"
     },
     {
       "file": "11665295/02.webp",
@@ -19,7 +21,9 @@
       "height": 1069,
       "sha256": "7c021e80c930a3e9de865bac1bb0757eee822ccb300c56412c1619776e174fe9",
       "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/1722336936198348081.png",
-      "visually_checked": true
+      "visually_checked": true,
+      "public_http": 200,
+      "server_sha256": "7c021e80c930a3e9de865bac1bb0757eee822ccb300c56412c1619776e174fe9"
     },
     {
       "file": "11665295/03.webp",
@@ -28,7 +32,9 @@
       "height": 1060,
       "sha256": "d7625cf76fee3cfcfeba4230afa263992288bff4ab789c20c85f5a714cb1f848",
       "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/1722336959132474331.png",
-      "visually_checked": true
+      "visually_checked": true,
+      "public_http": 200,
+      "server_sha256": "d7625cf76fee3cfcfeba4230afa263992288bff4ab789c20c85f5a714cb1f848"
     },
     {
       "file": "11665295/04.webp",
@@ -37,7 +43,9 @@
       "height": 1200,
       "sha256": "d1ade783884048f217f95a8f50a4843db219c6a4b046f4dabcb7574a2314e5eb",
       "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/1722336986135489986.png",
-      "visually_checked": true
+      "visually_checked": true,
+      "public_http": 200,
+      "server_sha256": "d1ade783884048f217f95a8f50a4843db219c6a4b046f4dabcb7574a2314e5eb"
     },
     {
       "file": "11665295/05.webp",
@@ -46,7 +54,9 @@
       "height": 1078,
       "sha256": "53006f4c2b98df751e8af674d28a9503bcce35453b0884a4b87feaef0ff355ed",
       "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/1722337014135656316.png",
-      "visually_checked": true
+      "visually_checked": true,
+      "public_http": 200,
+      "server_sha256": "53006f4c2b98df751e8af674d28a9503bcce35453b0884a4b87feaef0ff355ed"
     },
     {
       "file": "11665295/06.webp",
@@ -55,7 +65,9 @@
       "height": 1328,
       "sha256": "d17ddba8d149b33dc4ffb4249d90b11f4d778dc870f9960c7348bc4be3c44b96",
       "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/172233706213491868.png",
-      "visually_checked": true
+      "visually_checked": true,
+      "public_http": 200,
+      "server_sha256": "d17ddba8d149b33dc4ffb4249d90b11f4d778dc870f9960c7348bc4be3c44b96"
     },
     {
       "file": "11665295/07.webp",
@@ -64,7 +76,9 @@
       "height": 802,
       "sha256": "257c0ac6d37e8a8c707b997197332725b258d8bedd0ee9d2e54eadb58326d59e",
       "original_source_url": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/1722337600132978419.jpg",
-      "visually_checked": true
+      "visually_checked": true,
+      "public_http": 200,
+      "server_sha256": "257c0ac6d37e8a8c707b997197332725b258d8bedd0ee9d2e54eadb58326d59e"
     },
     {
       "file": "11665295/08.webp",
@@ -73,7 +87,9 @@
       "height": 1061,
       "sha256": "a287606807247acc6201c7dc602f11c48d1af7ab3c4263dc54e811d4aeec8c46",
       "original_source_url": "https://cs13.pikabu.ru/post_img/big/2024/07/30/7/1722337265279320808.png",
-      "visually_checked": true
+      "visually_checked": true,
+      "public_http": 200,
+      "server_sha256": "a287606807247acc6201c7dc602f11c48d1af7ab3c4263dc54e811d4aeec8c46"
     }
   ],
   "unavailable_original_link": "https://roscontrol.com/journal/tests/tilapiya-vo-ldu-i-s-ilistim-privkusom/"

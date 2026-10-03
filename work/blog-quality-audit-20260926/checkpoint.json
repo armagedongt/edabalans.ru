@@ -19,18 +19,18 @@
     "10123213"
   ],
   "new_full_safe_review_pass_count": 1,
-  "total_old_and_new_full_safe_review_delivered_count": 27,
+  "total_old_and_new_full_safe_review_delivered_count": 28,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 34,
   "next_independent_batch": null,
-  "next_source_id": "11665295",
+  "next_source_id": "12109482",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "11665295",
-  "current_sequential_stage": "intuitive_safe_format_source_media_API_Library_delivered; next_11665295_fresh_runtime; 12296286_owner_strike_decision_pending",
+  "current_sequential_source_id": "12109482",
+  "current_sequential_stage": "fish_safe_source_media_API_Library_delivered; next_12109482_fresh_runtime",
   "three_errors_confirmed_delivery": {
     "source_id": "13785403",
     "editor_version": 3,
@@ -420,6 +420,16 @@
     "media_http_hash_pass": 7,
     "original_images": 6,
     "original_video_link": 1,
+    "full_scientific_pass": false
+  },
+  "format_targeted_count": 27,
+  "fish_confirmed_delivery": {
+    "source_id": "11665295",
+    "production_revision": "9bac3ea805f86b39c43c8ee5944d6638bbbb7390",
+    "api_version": 3,
+    "public_version": 2,
+    "media_http_hash_pass": 8,
+    "library_use": "recorded",
     "full_scientific_pass": false
   }
 }
