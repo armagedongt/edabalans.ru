@@ -155,9 +155,9 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 56,
-    "canonical_linked_external_records": 85,
-    "deferred_families": 215,
+    "canonical_blog_families": 57,
+    "canonical_linked_external_records": 86,
+    "deferred_families": 214,
     "deferred_by_kind": {
       "deferred_not_now": 18,
       "editorial_review": 74,
@@ -165,7 +165,7 @@
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
       "private_product_material": 43,
-      "short_reserve": 36,
+      "short_reserve": 35,
       "technical_or_service": 25
     },
     "candidate_duplicate_pairs": 75
@@ -1053,6 +1053,42 @@
         "A085"
       ],
       "source_comparison": "work/blog-quality-audit-20260926/new/12269678/preparation-20261003.md"
+    },
+    {
+      "family_id": "blog:mama-s-dnyom-rozhdeniya",
+      "title": "Мама, с днём рождения!!!",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "11448583",
+        "slug": "mama-s-dnyom-rozhdeniya",
+        "url": "https://blog.похудение-это-есть.рф/articles/mama-s-dnyom-rozhdeniya",
+        "body_file": "content/blog/articles/11448583.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A056",
+          "source": "pikabu",
+          "external_id": "11448583",
+          "title": "Мама, с днем рождения!!!",
+          "url": "https://pikabu.ru/story/mama_s_dnem_rozhdeniya_11448583",
+          "published_at": "2024-05-25T21:18:19+03:00",
+          "characters": 3235,
+          "role": "direct_source",
+          "provenance": "content://item/86618e32-00dc-4991-bb00-f1d73cdae2e8",
+          "text_sha256": "fffae0fea1859609d6d685e47bb6c232ed353384858d75372ad080ef3cde967a"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "exact_single_full_source_live_dom_minimal_adaptation",
+      "owner_source_decisions": {
+        "A056": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": [
+        "A056"
+      ],
+      "source_comparison": "work/blog-quality-audit-20260926/new/11448583/preparation-20261003.md"
     },
     {
       "family_id": "blog:minus-12-kilogrammov-za-2-mesyaca",
@@ -4462,32 +4498,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A235": "bank"
-      }
-    },
-    {
-      "family_id": "deferred:A056",
-      "title": "Мама, с днем рождения!!!",
-      "disposition": "deferred",
-      "deferred_kind": "short_reserve",
-      "reason": "Материал 3000–3999 знаков; сначала оценить самостоятельную пользу.",
-      "members": [
-        {
-          "catalog_id": "A056",
-          "source": "pikabu",
-          "external_id": "11448583",
-          "title": "Мама, с днем рождения!!!",
-          "url": "https://pikabu.ru/story/mama_s_dnem_rozhdeniya_11448583",
-          "published_at": "2024-05-25T21:18:19+03:00",
-          "characters": 3235,
-          "role": "unmerged_source",
-          "provenance": "content://item/86618e32-00dc-4991-bb00-f1d73cdae2e8",
-          "text_sha256": "fffae0fea1859609d6d685e47bb6c232ed353384858d75372ad080ef3cde967a"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A056": "publish_next"
       }
     },
     {

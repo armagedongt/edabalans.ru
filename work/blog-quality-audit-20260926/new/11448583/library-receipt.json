@@ -1,0 +1,17 @@
+{
+  "status": "published_usage_and_family_recorded",
+  "usage": [
+    {
+      "status": "recorded",
+      "source_uri": "content://item/86618e32-00dc-4991-bb00-f1d73cdae2e8",
+      "task_key": "blog-new-11448583-A056-20261003"
+    }
+  ],
+  "navigation_version": 22,
+  "family_id": "blog:mama-s-dnyom-rozhdeniya",
+  "members": [
+    "A056"
+  ],
+  "other_families_preserved": true,
+  "channel_edits": 0
+}

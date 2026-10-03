@@ -9,11 +9,11 @@
 
 ## Сводка
 
-- В блоге: **56** канонические семьи.
+- В блоге: **57** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **85** внешних проявления (по машиночитаемому реестру).
+- Уже привязано к канонам блога: **86** внешних проявления (по машиночитаемому реестру).
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **215** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **214** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -28,6 +28,7 @@
 | Жиросжигающая зона не работает! И вот почему | [blog:zhiroszhigayushchaya-zona-ne-rabotaet](https://blog.похудение-это-есть.рф/articles/zhiroszhigayushchaya-zona-ne-rabotaet) | 3 | 0 |
 | Долбаная бедность | [blog:dolbanaya-bednost](https://blog.похудение-это-есть.рф/articles/dolbanaya-bednost) | 2 | 0 |
 | Короче, я застраховал маму от онкологии | [blog:zastrahoval-mamu-ot-onkologii](https://blog.похудение-это-есть.рф/articles/zastrahoval-mamu-ot-onkologii) | 1 | 0 |
+| Мама, с днём рождения!!! | [blog:mama-s-dnyom-rozhdeniya](https://blog.похудение-это-есть.рф/articles/mama-s-dnyom-rozhdeniya) |1|0|
 | Почему питание всегда важнее тренировок!! | [blog:pochemu-pitanie-vazhnee-trenirovok](https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok) | 1 | 0 |
 | 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://blog.похудение-это-есть.рф/articles/10-debilnyh-faktov-o-vrednyh-produktah) | 1 | 0 |
 | 15 советов тем, кто худеет — по одному на килограмм лишнего веса | [blog:15-sovetov-tem-kto-hudeet](https://blog.похудение-это-есть.рф/articles/15-sovetov-tem-kto-hudeet) | 1 | 0 |
@@ -182,7 +183,6 @@
 | A221 | telegraph | [Лучшее время для похудения — ВЧЕРА!](https://telegra.ph/chasiki-tikaut-04-07) | `editorial_review` | 1 |
 | A058 | pikabu | [Лучшие продукты для завтрака](https://pikabu.ru/story/luchshie_produktyi_dlya_zavtraka_11476051) | `short_reserve` | 0 |
 | A235 | telegraph | [макароны](https://telegra.ph/makarony-08-06) | `short_reserve` | 0 |
-| A056 | pikabu | [Мама, с днем рождения!!!](https://pikabu.ru/story/mama_s_dnem_rozhdeniya_11448583) | `short_reserve` | 0 |
 | A023 | pikabu | [Мой личный ТОП 3 недооцененных и переоцененных продуктов для похудения!](https://pikabu.ru/story/moy_lichnyiy_top_3_nedootsenennyikh_i_pereotsenennyikh_produktov_dlya_pokhudeniya_10668718) | `short_reserve` | 0 |
 | A128 | telegraph | [Моя опорная точка прямо сейчас](https://telegra.ph/Base-Point-again-03-10) | `private_product_material` | 0 |
 | A020 | pikabu | [Мы все едим фрукты (не) правильно!](https://pikabu.ru/story/myi_vse_edim_fruktyi_ne_pravilno_10554025) | `editorial_review` | 2 |

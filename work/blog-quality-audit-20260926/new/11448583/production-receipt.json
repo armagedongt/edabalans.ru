@@ -1,0 +1,31 @@
+{
+  "production_revision": "b316289a1e94bc08a701d62bb2288ebc57fa6c33",
+  "ci_run": 37150778205,
+  "ci_conclusion": "success",
+  "local_tests_passed": 33,
+  "production_git_revision_verified": true,
+  "backend_healthy": true,
+  "article_count_after_release": 57,
+  "api_body_exact_after_canonical_trailing_newline_normalization": true,
+  "markdown_sha256_lf": "83f69da5d0af83c4ce3e1315a5b651e30d45848c6795174554ac4aaa787fb76f",
+  "media_http_sha_pass": 11,
+  "browser_source_images_loaded": 11,
+  "desktop_geometry": [
+    1265,
+    1265
+  ],
+  "mobile_viewport": [
+    390,
+    844
+  ],
+  "mobile_geometry": [
+    375,
+    375
+  ],
+  "h1_count": 1,
+  "hero_show": false,
+  "source_video_delivery": "external_original_MP4_link",
+  "video_self_hosted": false,
+  "source_video_transcribed_or_modified": false,
+  "literal_asterisk_and_emoticon_renderer_pass": true
+}

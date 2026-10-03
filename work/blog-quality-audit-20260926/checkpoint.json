@@ -2,7 +2,7 @@
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
   "updated_at": "2026-10-03",
   "batch_size": 5,
-  "article_count": 56,
+  "article_count": 57,
   "old_article_count": 44,
   "full_current_text_read_count": 45,
   "archive_source_text_compared_count": 6,
@@ -24,7 +24,8 @@
     "10573917",
     "10797468",
     "11989790",
-    "12269678"
+    "12269678",
+    "11448583"
   ],
   "new_articles_published": [
     "10123213",
@@ -38,21 +39,22 @@
     "10573917",
     "10797468",
     "11989790",
-    "12269678"
+    "12269678",
+    "11448583"
   ],
-  "new_full_safe_review_pass_count": 12,
-  "total_old_and_new_full_safe_review_delivered_count": 55,
+  "new_full_safe_review_pass_count": 13,
+  "total_old_and_new_full_safe_review_delivered_count": 56,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "A056",
+  "next_source_id": "A191",
   "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "12269678",
-  "current_sequential_stage": "insurance_fully_closed_next_mom_birthday",
+  "current_sequential_source_id": "11448583",
+  "current_sequential_stage": "mom_birthday_fully_closed_next_12_changes",
   "sweating_12189205_hold": {
     "source_members": [
       "A082"
@@ -1055,6 +1057,27 @@
     "desktop_mobile_dom_geometry_pass": true,
     "library_usage": "recorded",
     "library_navigation_version": 21,
-    "pending_native_link_after_A056": "mother_story11448583"
+    "mother_link_blog_canon_verified": true
+  },
+  "mom_11448583_prepared": {
+    "published_verified": true,
+    "source_members": [
+      "A056"
+    ],
+    "writer_validation": "pass",
+    "independent_review": "technical_pass",
+    "full_scientific_pass": false,
+    "production_revision": "b316289a1e94bc08a701d62bb2288ebc57fa6c33",
+    "ci_run": 37150778205,
+    "ci_conclusion": "success",
+    "api_version": 1,
+    "public_version": 0,
+    "markdown_sha256_lf": "83f69da5d0af83c4ce3e1315a5b651e30d45848c6795174554ac4aaa787fb76f",
+    "media_http_hash_pass": 11,
+    "desktop_mobile_dom_geometry_pass": true,
+    "library_usage": "recorded",
+    "library_navigation_version": 22,
+    "original_video_delivery": "external_link_source_preserved_private",
+    "video_self_hosted": false
   }
 }
