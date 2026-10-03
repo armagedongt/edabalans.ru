@@ -1,0 +1,9 @@
+{
+  "reviewer": "home_training_article_review",
+  "status": "clean",
+  "waves": 2,
+  "draft_sha256": "103eb3e77d47d67577a1633dad15f3c9c1e841bb7fdca89d6ed3b236c93f7f5d",
+  "scope": "Оба полных источника и HTML, 13 пунктов, три оригинальные картинки, узкая корректура, платформенные хвосты",
+  "note": "Предположение о потере плюса опровергнуто фактическим renderer; текст не менялся. Маршрут CTA через бот подтверждён решением владельца.",
+  "full_scientific_pass": false
+}

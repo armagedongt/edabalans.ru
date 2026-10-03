@@ -2,6 +2,58 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "10425659",
+      "slug": "13-pravil-domashnih-trenirovok",
+      "title": "13 правил для организации домашних тренировок",
+      "excerpt": "От банального к неочевидному. Организовывал тренировки дома и себе, и другим.",
+      "category": "Тренировки",
+      "body_file": "10425659.md",
+      "hero": {
+        "file": "10425659/01.webp",
+        "alt": "Сергей Воронцов: коврик, вода, полотенце и кроссовки для домашней тренировки",
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2023/07/01/5/1688196961113872084.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "10425659/01.webp",
+        "alt": "Сергей Воронцов: коврик, вода, полотенце и кроссовки для домашней тренировки",
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2023/07/01/5/1688196961113872084.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "training-combined-2023",
+        "11801517",
+        "12922345"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "10425659/01.webp",
+        "10425659/02.webp",
+        "10425659/03.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659",
+          "https://telegra.ph/13-pravil-09-18"
+        ],
+        "external_ids": [
+          "10425659",
+          "13-pravil-09-18"
+        ],
+        "source_uri": "content://item/9cd3cd1a-4c80-4657-a212-935a9fae2fd3",
+        "source_revision": 1,
+        "source_date": "2023-07-01T10:39:06+03:00",
+        "sha256": [
+          "514025ade84f5acf74a3dd1845d1f74d26d32d2b689c2f31c1c03e906709c2d4",
+          "f3af3651caec3c3407612bd2198ee25945e84e650d8406bb7e8928daa8a5cb13"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
       "source_id": "11801517",
       "slug": "pochemu-pitanie-vazhnee-trenirovok",
       "title": "Почему питание всегда важнее тренировок!!",
