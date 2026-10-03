@@ -1,0 +1,127 @@
+{
+  "source_id": "13178972",
+  "checked_at": "2026-10-03",
+  "immutable_existing_files_preserved": true,
+  "media": [
+    {
+      "file": "13178972/01.webp",
+      "original_source_url": "https://cs18.pikabu.ru/s/2025/09/13/12/an6rdg3z_lg.jpg",
+      "bytes": 54028,
+      "width": 842,
+      "height": 1112,
+      "sha256": "b02f8db82c406beed5907b487adab26eeb3104c5a19de4772047e1ac3eff74fc",
+      "visually_checked": true,
+      "in_article_body": true
+    },
+    {
+      "file": "13178972/02.webp",
+      "original_source_url": "https://cs17.pikabu.ru/s/2025/09/13/13/vnqvlywh_lg.png",
+      "bytes": 21394,
+      "width": 762,
+      "height": 261,
+      "sha256": "3ed0b291873c67f00570fba7660370888f4a5c6534c05df629e03e181f34c27b",
+      "visually_checked": true,
+      "in_article_body": true
+    },
+    {
+      "file": "13178972/03.webp",
+      "original_source_url": "https://cs19.pikabu.ru/s/2025/09/13/13/4ovuxgxa_lg.png",
+      "bytes": 33942,
+      "width": 900,
+      "height": 540,
+      "sha256": "e9a7b80744f1d18e7e5f997fa4b8bc16893bfe3e96726933af77b70b6c082cdf",
+      "visually_checked": true,
+      "in_article_body": true
+    },
+    {
+      "file": "13178972/04.webp",
+      "original_source_url": "https://cs18.pikabu.ru/s/2025/09/13/13/46vrclil_lg.png",
+      "bytes": 40172,
+      "width": 900,
+      "height": 540,
+      "sha256": "bbc759c34fabf6421c20b09f5743aabc927f779323d02b924ecfcd8069bfc599",
+      "visually_checked": true,
+      "in_article_body": true
+    },
+    {
+      "file": "13178972/05.webp",
+      "original_source_url": "https://cs19.pikabu.ru/s/2025/09/13/13/wszuxg4j_lg.jpg",
+      "bytes": 22446,
+      "width": 737,
+      "height": 876,
+      "sha256": "da1c4c11247b30a9a3fb7b1cb3f98b9bbbb2c752d8839c3ae9a91db1c9d5047d",
+      "visually_checked": true,
+      "in_article_body": true
+    },
+    {
+      "file": "13178972/06.webp",
+      "original_source_url": "https://cs19.pikabu.ru/s/2025/09/13/14/te5ewcr5_lg.png",
+      "bytes": 53086,
+      "width": 1500,
+      "height": 424,
+      "sha256": "cc4db317b1ef7fa3b7ac5b0542dd6731757b258628fb78f480db9f3d4f1ef91e",
+      "visually_checked": true,
+      "in_article_body": true
+    },
+    {
+      "file": "13178972/07.webp",
+      "original_source_url": "https://cs20.pikabu.ru/s/2025/09/13/14/hffkxm5g_lg.jpg",
+      "bytes": 97816,
+      "width": 1600,
+      "height": 1063,
+      "sha256": "0cae3e3aad540193a4598dbbc7b460b2c87a776434fcb9420a5e212c3a239510",
+      "visually_checked": true,
+      "in_article_body": true
+    },
+    {
+      "file": "13178972/08.webp",
+      "original_source_url": "https://cs19.pikabu.ru/s/2025/09/13/13/ng7ux2oa.jpg",
+      "bytes": 7950,
+      "width": 225,
+      "height": 225,
+      "sha256": "fc08c43cc829ae4120ee1208e4943aa8d4e1ddc6e45caa0141f21ae9e2ebd836",
+      "visually_checked": true,
+      "in_article_body": true
+    },
+    {
+      "file": "13178972/09.webp",
+      "original_source_url": "https://cs14.pikabu.ru/post_img/2022/03/17/4/164749310517523076.jpg",
+      "bytes": 13644,
+      "width": 604,
+      "height": 372,
+      "sha256": "ba8fdb8cafc37ca2604b497292778d9e08d61cd70ffe30f4dcfcbd8f1644910a",
+      "visually_checked": true,
+      "in_article_body": true
+    },
+    {
+      "file": "13178972/10.webp",
+      "original_source_url": "https://cs17.pikabu.ru/s/2025/09/13/14/dn4vlmgi_lg.jpg",
+      "bytes": 334208,
+      "width": 1406,
+      "height": 2532,
+      "sha256": "58583df48ecd007936f836b887711fd8dab7e4da230cb76ae5c7766f80a27885",
+      "visually_checked": true,
+      "in_article_body": true
+    },
+    {
+      "file": "13178972/11.webp",
+      "original_source_url": "https://cs20.pikabu.ru/s/2025/09/13/14/aiakwkqi_lg.png",
+      "bytes": 36412,
+      "width": 800,
+      "height": 450,
+      "sha256": "ea1fa94c9a991f0452518d9292a626236738d79c53221ec786c4442c14ff625c",
+      "visually_checked": true,
+      "in_article_body": true
+    },
+    {
+      "file": "13178972/12.webp",
+      "original_source_url": "https://cs18.pikabu.ru/s/2025/09/13/14/rkibcpwr_lg.png",
+      "bytes": 21064,
+      "width": 762,
+      "height": 261,
+      "sha256": "e67cefe1c65126aa6e87e71ae291a22fb3dd4ad7e1fee098d041f737c14c4ef9",
+      "visually_checked": true,
+      "in_article_body": true
+    }
+  ]
+}
