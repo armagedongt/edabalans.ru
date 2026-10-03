@@ -2,7 +2,7 @@
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
   "updated_at": "2026-10-03",
   "batch_size": 5,
-  "article_count": 50,
+  "article_count": 51,
   "old_article_count": 44,
   "full_current_text_read_count": 45,
   "archive_source_text_compared_count": 6,
@@ -18,7 +18,8 @@
     "11188875",
     "10978866",
     "11801517",
-    "10425659"
+    "10425659",
+    "11906015"
   ],
   "new_articles_published": [
     "10123213",
@@ -26,35 +27,52 @@
     "11188875",
     "10978866",
     "11801517",
-    "10425659"
+    "10425659",
+    "11906015"
   ],
-  "new_full_safe_review_pass_count": 6,
-  "total_old_and_new_full_safe_review_delivered_count": 49,
+  "new_full_safe_review_pass_count": 7,
+  "total_old_and_new_full_safe_review_delivered_count": 50,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "A076/A217",
+  "next_source_id": "A019/A183/A210",
   "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "11906015",
-  "current_sequential_stage": "adult_women_snacking_main_ci_pending",
+  "current_sequential_stage": "snacking_fully_closed_next_belly_family",
   "snacking_11906015_prepared": {
-    "full_sources": ["A076", "A217"],
+    "full_sources": [
+      "A076",
+      "A217"
+    ],
     "preferred_basis": "A217",
     "writer_validation": "pass",
     "independent_review": "clean",
     "main_revision": "6fab97984d73396a1b8384b6b6a23a81a830e724",
-    "published_verified": false,
+    "published_verified": true,
     "draft_sha256": "f7e6fd85c7fa2567dde068849ef8c5b8bbc82d717ef55b9920108cd113bb4d9c",
     "source_images": 6,
     "source_videos": 1,
-    "full_scientific_pass": false
+    "full_scientific_pass": false,
+    "production_revision": "6fab97984d73396a1b8384b6b6a23a81a830e724",
+    "ci_run": 37139606431,
+    "ci_conclusion": "success",
+    "api_version": 1,
+    "public_version": 0,
+    "markdown_sha256_lf": "73ca6ab2af97a12e382dcbe96dd1a0fa06397a5243d0a77cbdb790a24066cb02",
+    "media_http_hash_pass": 7,
+    "desktop_mobile_dom_geometry_pass": true,
+    "library_usage": "recorded",
+    "library_navigation_version": 16
   },
   "home_training_10425659_prepared": {
-    "full_sources": ["A016", "A117"],
+    "full_sources": [
+      "A016",
+      "A117"
+    ],
     "writer_validation": "pass",
     "independent_review": "clean",
     "main_revision": "222f4e1f3187c45400dd6a622215bdcd0da35472",
@@ -156,7 +174,11 @@
     "published_verified": true,
     "related_fix_production_revision": "a1be989f21921abbaff0e8641978d7e37bf71dc8",
     "related_fix_ci_run": 37126344610,
-    "related_source_ids": ["11875492", "11665295", "11833079"],
+    "related_source_ids": [
+      "11875492",
+      "11665295",
+      "11833079"
+    ],
     "api_version": 1,
     "public_version": 0,
     "media_http_hash_pass": 7,
@@ -167,7 +189,10 @@
   },
   "dogs_10369434_hold": {
     "stage": "full_sources_read_owner_safety_decision_pending",
-    "source_members": ["A012", "A156"],
+    "source_members": [
+      "A012",
+      "A156"
+    ],
     "author_text_changed": false,
     "new_publication_created": false,
     "question": "Удалить абзац с советом броситься на собаку и гарантией отсутствия дальнейшего нападения либо оставить на ручной разбор",

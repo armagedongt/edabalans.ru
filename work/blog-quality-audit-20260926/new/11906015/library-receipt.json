@@ -1,0 +1,17 @@
+{
+  "status": "published_usage_and_family_recorded",
+  "usage": {
+    "status": "recorded",
+    "source_uri": "content://item/cdec03fe-8a06-407c-8acd-5c816c4efbcb",
+    "task_key": "blog-new-11906015-20261003"
+  },
+  "navigation_version": 16,
+  "family_id": "blog:u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov",
+  "members": [
+    "A076",
+    "A217"
+  ],
+  "navigation_sha256": "0be836f361acc2ca4a64cc7136a5aec3e89b1817557385bd8ce5b1244f503829",
+  "other_families_preserved": true,
+  "channel_edits": 0
+}

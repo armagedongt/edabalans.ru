@@ -1,0 +1,13 @@
+{
+  "production_revision": "6fab97984d73396a1b8384b6b6a23a81a830e724",
+  "ci_run": 37139606431,
+  "ci_conclusion": "success",
+  "article_count": 51,
+  "desktop_geometry": [1265,1265],
+  "mobile_geometry": [375,375],
+  "mobile_viewport": [390,844],
+  "h1_count": 1,
+  "own_images_loaded": 6,
+  "video_delivery": "original file HTTP/hash pass; playback not separately tested",
+  "scientific_pass": false
+}

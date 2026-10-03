@@ -16,7 +16,7 @@
 
 ## Сводка
 
-- Канонов блога: 50 (03.10.2026; выпуск 10425659 подтверждён, Library navigation v15).
+- Канонов блога: 51 (03.10.2026; выпуск 11906015 подтверждён, Library navigation v16).
 - Записей источников в этом файле: 300.
 - Рабочих семей/групп сравнения: 217 (не все связи подтверждены).
 
@@ -44,7 +44,6 @@
 - A021: [Резинки для тренировок!](https://pikabu.ru/story/rezinki_dlya_trenirovok_10573917).
 - A031: [Жиросжигающая зона не работает!](https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468).
 - A056: [Мама, с днем рождения!!!](https://pikabu.ru/story/mama_s_dnem_rozhdeniya_11448583).
-- A076: [«У взрослой женщины не должно быть перекусов»](https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015).
 - A078: [Долбанная бедность1](https://pikabu.ru/story/dolbannaya_bednost_11989790).
 - A082: [Ответ на пост «Совет от потливости»2](https://pikabu.ru/story/otvet_na_post_sovet_ot_potlivosti_12189205).
 - A083: [Техника безопасности (питания) за новогодним столом!1](https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581).
@@ -58,7 +57,6 @@
 - A191: [Сделай сегодня — скажи себе спасибо завтра](https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11).
 - A195: [Резинки для тренировок!⁠⁠](https://telegra.ph/Rezinki-09-01).
 - A210: [Видео. Последний жир в области живота. План действий⁠⁠](https://telegra.ph/Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13).
-- A217: [«У взрослой женщины не должно быть ###»](https://telegra.ph/ZHenshchina-dolzhna-06-21).
 - A281: [Жиросжигающая зона не работает!⁠⁠ И вот почему ](https://vc.ru/flood/912323-zhiroszhigayushaya-zona-ne-rabotaet-i-vot-pochemu).
 - tilda-post:amkbo7kgg1: [💪 Зачем нужны тренировки (кроме похудения)](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni).
 - tilda-post:e4441ism91: [⛔️ Почему эффекта плато не существует](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet).
@@ -87,7 +85,7 @@
 - **A077 A182**: Обязательно сравнить Pikabu, Telegraph, сайт /jpn и блог. Полнота и актуальность важнее даты. Текущий блог уже содержит provenance Tilda /jpn.
 - **A088 tilda-post:7siam7t8k1**: Последняя семейная поправка владельца: обе версии объединить для сравнения и на подумать. Ранее сказанное про публикацию Pikabu не запускает выпуск этой семьи. Не считать доказанными дублями до сравнения.
 - **A078 A091**: Две части «Долбанной бедности». Обе одобрены; перед подготовкой выбрать форму, не потерять продолжение.
-- **A076 A217**: Именно эту семью про взрослую женщину теперь брать. Общая статья «Перекусы мешают или помогают» остаётся в банке.
+- **A076 A217**: Полные версии сопоставлены; выбрана расширенная A217. Канон — [статья блога](https://blog.похудение-это-есть.рф/articles/u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov), обе внешние версии — не канон. Общая статья «Перекусы мешают или помогают» остаётся в банке.
 - **A047 A177**: Пикадильо — на ручную редактуру Сергея, не путать с разрешением публиковать рецепт.
 
 ## Проверка прежних изменений
@@ -272,8 +270,8 @@
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A076 · pikabu | [«У взрослой женщины не должно быть перекусов»](https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
-| A217 · telegraph | [«У взрослой женщины не должно быть ###»](https://telegra.ph/ZHenshchina-dolzhna-06-21) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
+| A076 · pikabu | [«У взрослой женщины не должно быть перекусов»](https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015) | Уже в блоге; внешняя версия не канон |
+| A217 · telegraph | [«У взрослой женщины не должно быть ###»](https://telegra.ph/ZHenshchina-dolzhna-06-21) | Уже в блоге; внешняя версия не канон |
 
 - Решение / задача (owner_confirmed): Именно эту семью про взрослую женщину теперь брать. Общая статья «Перекусы мешают или помогают» остаётся в банке.
 

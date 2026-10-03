@@ -155,12 +155,12 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 50,
-    "canonical_linked_external_records": 72,
-    "deferred_families": 228,
+    "canonical_blog_families": 51,
+    "canonical_linked_external_records": 74,
+    "deferred_families": 226,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 82,
+      "editorial_review": 80,
       "incomplete_draft": 13,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
@@ -1768,6 +1768,53 @@
       "owner_source_decisions": {}
     },
     {
+      "family_id": "blog:u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov",
+      "title": "У взрослой женщины не должно быть перекусов",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "11906015",
+        "slug": "u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov",
+        "url": "https://blog.похудение-это-есть.рф/articles/u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov",
+        "body_file": "content/blog/articles/11906015.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A076",
+          "source": "pikabu",
+          "external_id": "11906015",
+          "title": "«У взрослой женщины не должно быть перекусов»",
+          "url": "https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015",
+          "published_at": "2024-10-13T12:40:18+03:00",
+          "characters": 4840,
+          "role": "direct_source",
+          "provenance": "content://item/f07806df-d24a-4bd4-9953-fcfeedb7138e",
+          "text_sha256": "3773a5485163314eecae6fb9e19aee81ac9aadf03ae92b48408299b02ba0e64e"
+        },
+        {
+          "catalog_id": "A217",
+          "source": "telegraph",
+          "external_id": "ZHenshchina-dolzhna-06-21",
+          "title": "«У взрослой женщины не должно быть ###»",
+          "url": "https://telegra.ph/ZHenshchina-dolzhna-06-21",
+          "published_at": "2025-06-21T09:40:58+0000",
+          "characters": 6759,
+          "role": "direct_source",
+          "provenance": "content://item/cdec03fe-8a06-407c-8acd-5c816c4efbcb",
+          "text_sha256": "f51e160637a8a0e66f617201ef087bf4bf54c514a97381811efc47fba16b5389"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "two_full_versions_compared_same_article",
+      "owner_source_decisions": {
+        "A076": "publish_next",
+        "A217": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": "A217",
+      "source_comparison": "work/blog-quality-audit-20260926/new/11906015/preparation-20261003.md"
+    },
+    {
       "family_id": "blog:ukolol-i-pohudel-ozempik-semavik-nyuansy",
       "title": "Уколол и похудел: Оземпик, Семавик и нюансы",
       "disposition": "canonical_blog",
@@ -2255,58 +2302,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A273": "manual_review"
-      }
-    },
-    {
-      "family_id": "deferred:A217",
-      "title": "«У взрослой женщины не должно быть ###»",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A217",
-          "source": "telegraph",
-          "external_id": "ZHenshchina-dolzhna-06-21",
-          "title": "«У взрослой женщины не должно быть ###»",
-          "url": "https://telegra.ph/ZHenshchina-dolzhna-06-21",
-          "published_at": "2025-06-21T09:40:58+0000",
-          "characters": 6768,
-          "role": "unmerged_source",
-          "provenance": "content://item/cdec03fe-8a06-407c-8acd-5c816c4efbcb",
-          "text_sha256": "c927471e1c46f7abe7a0a5aa8cddbae53da9771658f93b39248d3afd22596905"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A217": "publish_next"
-      }
-    },
-    {
-      "family_id": "deferred:A076",
-      "title": "«У взрослой женщины не должно быть перекусов»",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A076",
-          "source": "pikabu",
-          "external_id": "11906015",
-          "title": "«У взрослой женщины не должно быть перекусов»",
-          "url": "https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015",
-          "published_at": "2024-10-13T12:40:18+03:00",
-          "characters": 4840,
-          "role": "unmerged_source",
-          "provenance": "content://item/f07806df-d24a-4bd4-9953-fcfeedb7138e",
-          "text_sha256": "3773a5485163314eecae6fb9e19aee81ac9aadf03ae92b48408299b02ba0e64e"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A076": "publish_next"
       }
     },
     {
