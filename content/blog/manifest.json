@@ -191,13 +191,13 @@
           "file": "11665295/01.webp",
           "alt": "Иллюстрация к статье «Мусорная рыба или мусорные нутрициологи?»",
           "provenance": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/17223368731707616.png",
-          "show": true
+          "show": false
         },
         "card": {
           "file": "11665295/01.webp",
           "alt": "Иллюстрация к статье «Мусорная рыба или мусорные нутрициологи?»",
           "provenance": "https://cs15.pikabu.ru/post_img/big/2024/07/30/7/17223368731707616.png",
-          "fit": "cover"
+          "fit": "contain"
         },
         "related_source_ids": [
           "11875492",
