@@ -155,12 +155,12 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 57,
-    "canonical_linked_external_records": 86,
-    "deferred_families": 214,
+    "canonical_blog_families": 58,
+    "canonical_linked_external_records": 87,
+    "deferred_families": 213,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 74,
+      "editorial_review": 73,
       "incomplete_draft": 12,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
@@ -199,6 +199,57 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
+      "title": "12 простых изменений в питании и образе жизни",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+        "slug": "12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
+        "url": "https://blog.похудение-это-есть.рф/articles/12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
+        "body_file": "content/blog/articles/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A191",
+          "source": "telegraph",
+          "external_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+          "title": "Сделай сегодня — скажи себе спасибо завтра",
+          "url": "https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+          "published_at": "2024-08-11T17:23:41+0000",
+          "characters": 17997,
+          "role": "direct_source",
+          "provenance": "content://item/a7252010-8672-491b-83a5-23c7b725000c",
+          "text_sha256": "ed520ced3e280a3f29e5471353261fa86f51d9684e9404f66bf056564da0d4af"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "exact_single_full_source_live_dom_minimal_adaptation",
+      "title_aliases": [
+        "12 простых изменений в вашем питании и образе жизни"
+      ],
+      "owner_source_decisions": {
+        "A191": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": [
+        "A191"
+      ],
+      "source_comparison": "work/blog-quality-audit-20260926/new/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11/preparation-20261003.md",
+      "auxiliary_sources": [
+        {
+          "uri": "content://item/95f58e69-1904-44a0-be63-97b45ec08e0e",
+          "source": "leadteh",
+          "title": "12 действий, которые вас изменят!",
+          "role": "short_announcement_related_by_exact_topic",
+          "full_article": false,
+          "canonical": false,
+          "outbound_urls": [],
+          "relation_status": "thematic_announcement_no_url_in_source"
+        }
+      ]
     },
     {
       "family_id": "blog:13-pravil-domashnih-trenirovok",
@@ -6211,36 +6262,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A198": "manual_review"
-      }
-    },
-    {
-      "family_id": "deferred:A191",
-      "title": "Сделай сегодня — скажи себе спасибо завтра",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный Telegraph-источник и старый шаблон рассылки «12 действий, которые вас изменят!» найдены 25.09.2026; прежний exact-source-not-found закрыт.",
-      "members": [
-        {
-          "catalog_id": "A191",
-          "source": "telegraph",
-          "external_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
-          "title": "Сделай сегодня — скажи себе спасибо завтра",
-          "url": "https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
-          "published_at": "2024-08-11T17:23:41+0000",
-          "characters": 18029,
-          "role": "unmerged_source",
-          "provenance": "content://item/a7252010-8672-491b-83a5-23c7b725000c",
-          "text_sha256": "1396f7b96e29b35d179100db05ee45e3ba09bc001c43e6f96c5c0cc4a6efb44a"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "title_aliases": [
-        "12 простых изменений в вашем питании и образе жизни"
-      ],
-      "owner_decision": "prepare_for_blog",
-      "owner_source_decisions": {
-        "A191": "publish_next"
       }
     },
     {

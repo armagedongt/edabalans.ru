@@ -1,0 +1,17 @@
+{
+  "status": "published_usage_and_family_recorded",
+  "usage": [
+    {
+      "status": "recorded",
+      "source_uri": "content://item/a7252010-8672-491b-83a5-23c7b725000c",
+      "task_key": "blog-new-Prostejshie-12-izmenenij-v-vashej-zhizni-08-11-A191-20261003"
+    }
+  ],
+  "navigation_version": 23,
+  "family_id": "blog:12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
+  "members": [
+    "A191"
+  ],
+  "other_families_preserved": true,
+  "channel_edits": 0
+}

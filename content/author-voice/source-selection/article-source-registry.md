@@ -9,11 +9,11 @@
 
 ## Сводка
 
-- В блоге: **57** канонические семьи.
+- В блоге: **58** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **86** внешних проявления (по машиночитаемому реестру).
+- Уже привязано к канонам блога: **87** внешних проявления (по машиночитаемому реестру).
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **214** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **213** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -29,6 +29,7 @@
 | Долбаная бедность | [blog:dolbanaya-bednost](https://blog.похудение-это-есть.рф/articles/dolbanaya-bednost) | 2 | 0 |
 | Короче, я застраховал маму от онкологии | [blog:zastrahoval-mamu-ot-onkologii](https://blog.похудение-это-есть.рф/articles/zastrahoval-mamu-ot-onkologii) | 1 | 0 |
 | Мама, с днём рождения!!! | [blog:mama-s-dnyom-rozhdeniya](https://blog.похудение-это-есть.рф/articles/mama-s-dnyom-rozhdeniya) |1|0|
+|12 простых изменений в питании и образе жизни| [blog:12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni](https://blog.похудение-это-есть.рф/articles/12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni) |1|0|
 | Почему питание всегда важнее тренировок!! | [blog:pochemu-pitanie-vazhnee-trenirovok](https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok) | 1 | 0 |
 | 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://blog.похудение-это-есть.рф/articles/10-debilnyh-faktov-o-vrednyh-produktah) | 1 | 0 |
 | 15 советов тем, кто худеет — по одному на килограмм лишнего веса | [blog:15-sovetov-tem-kto-hudeet](https://blog.похудение-это-есть.рф/articles/15-sovetov-tem-kto-hudeet) | 1 | 0 |
@@ -251,7 +252,6 @@
 | A118 | telegraph | [Сахар. Начало 🍫](https://telegra.ph/1ertyu-07-04) | `private_product_material` | 0 |
 | A015 | pikabu | [Сахарозаменитель в "диетических напитках" вызывает рак (нет!)](https://pikabu.ru/story/sakharozamenitel_v_dieticheskikh_napitkakh_vyizyivaet_rak_net_10424398) | `editorial_review` | 1 |
 | A198 | telegraph | [Сделай приятно своей спине](https://telegra.ph/Sdelaj-priyatno-svoej-spine-07-27) | `short_reserve` | 0 |
-| A191 | telegraph | [Сделай сегодня — скажи себе спасибо завтра](https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11) | `editorial_review` | 0 |
 | A199 | telegraph | [Синдром отложенной жизни. СОЖ против ЗОЖ!](https://telegra.ph/Sindrom-otlozhennoj-zhizni-SOZH-protiv-ZOZH-06-27) | `deferred_not_now` | 0 |
 | A137 | telegraph | [Система оценки качества диеты—DQS](https://telegra.ph/DQS-04-08) | `editorial_review` | 0 |
 | A139 | telegraph | [Система оценки качества питания](https://telegra.ph/DQS-new-01-21) | `editorial_review` | 1 |

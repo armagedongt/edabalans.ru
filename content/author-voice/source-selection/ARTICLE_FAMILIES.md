@@ -16,7 +16,7 @@
 
 ## Сводка
 
-- Канонов блога: 57 (03.10.2026; выпуск 11448583 подтверждён, Library navigation v22).
+- Канонов блога:58 (03.10.2026; выпуск12изменений подтверждён, Library navigation v23).
 - Записей источников в этом файле: 300.
 - Рабочих семей/групп сравнения: 217 (не все связи подтверждены).
 
@@ -44,7 +44,6 @@
 - A102: [Средиземноморская диета — это вообще что?!?!](https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380).
 - A156: [Как на меня напали собаки в лесу](https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17).
 - A184: [Пост 2026](https://telegra.ph/Post-02-22-12).
-- A191: [Сделай сегодня — скажи себе спасибо завтра](https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11).
 - tilda-post:amkbo7kgg1: [💪 Зачем нужны тренировки (кроме похудения)](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni).
 - tilda-post:e4441ism91: [⛔️ Почему эффекта плато не существует](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet).
 
@@ -1697,11 +1696,11 @@
 
 ### F165. Сделай сегодня — скажи себе спасибо завтра
 
-Канона в блоге пока нет; выбор наиболее полной актуальной основы не завершён.
+Канон блога: [12 простых изменений](https://blog.похудение-это-есть.рф/articles/12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni). ПолнаяTelegraphA191сохранена с22изображениями и минимальной корректурой. Короткое LeadTeh-сообщение95f58e69 — тематический анонс, не полная версия статьи; URLв источнике нет.
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A191 · telegraph | [Сделай сегодня — скажи себе спасибо завтра](https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
+| A191 · telegraph | [Сделай сегодня — скажи себе спасибо завтра](https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11) | Уже в блоге; внешняя публикация не канон |
 
 
 ### F166. Сделать похудение проще

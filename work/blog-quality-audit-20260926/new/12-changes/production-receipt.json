@@ -1,0 +1,28 @@
+{
+  "production_revision": "ebbf40ae413509c5fa05cb06452da1bad1a862f9",
+  "ci_run": 37152565914,
+  "ci_conclusion": "success",
+  "local_tests_passed": 33,
+  "production_git_revision_verified": true,
+  "backend_healthy": true,
+  "article_count_after_release": 58,
+  "api_body_exact_after_canonical_trailing_newline_normalization": true,
+  "markdown_sha256_lf": "feb124ec6ff1968616bea01777c6ade16cf9da50bf1a49630d69de8b3d6fac1f",
+  "media_http_sha_pass": 22,
+  "browser_source_images_loaded": 22,
+  "desktop_geometry": [
+    1265,
+    1265
+  ],
+  "mobile_viewport": [
+    390,
+    844
+  ],
+  "mobile_geometry": [
+    375,
+    375
+  ],
+  "h1_count": 1,
+  "hero_show": false,
+  "library_live_source_equal_without_whitespace": true
+}

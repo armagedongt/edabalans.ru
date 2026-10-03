@@ -2,7 +2,7 @@
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
   "updated_at": "2026-10-03",
   "batch_size": 5,
-  "article_count": 57,
+  "article_count": 58,
   "old_article_count": 44,
   "full_current_text_read_count": 45,
   "archive_source_text_compared_count": 6,
@@ -25,7 +25,8 @@
     "10797468",
     "11989790",
     "12269678",
-    "11448583"
+    "11448583",
+    "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11"
   ],
   "new_articles_published": [
     "10123213",
@@ -40,21 +41,22 @@
     "10797468",
     "11989790",
     "12269678",
-    "11448583"
+    "11448583",
+    "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11"
   ],
-  "new_full_safe_review_pass_count": 13,
-  "total_old_and_new_full_safe_review_delivered_count": 56,
+  "new_full_safe_review_pass_count": 14,
+  "total_old_and_new_full_safe_review_delivered_count": 57,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "A191",
+  "next_source_id": "A102",
   "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "11448583",
-  "current_sequential_stage": "mom_birthday_fully_closed_next_12_changes",
+  "current_sequential_source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+  "current_sequential_stage": "twelve_changes_fully_closed_next_mediterranean",
   "sweating_12189205_hold": {
     "source_members": [
       "A082"
@@ -1079,5 +1081,23 @@
     "library_navigation_version": 22,
     "original_video_delivery": "external_link_source_preserved_private",
     "video_self_hosted": false
+  },
+  "twelve_changes_prepared": {
+    "published_verified": true,
+    "source_members": [
+      "A191"
+    ],
+    "writer_validation": "pass",
+    "independent_review": "technical_pass",
+    "full_scientific_pass": false,
+    "production_revision": "ebbf40ae413509c5fa05cb06452da1bad1a862f9",
+    "ci_run": 37152565914,
+    "api_version": 1,
+    "public_version": 0,
+    "markdown_sha256_lf": "feb124ec6ff1968616bea01777c6ade16cf9da50bf1a49630d69de8b3d6fac1f",
+    "media_http_hash_pass": 22,
+    "desktop_mobile_dom_geometry_pass": true,
+    "library_navigation_version": 23,
+    "owner_review": "owner-review/12-changes-20261003.md"
   }
 }
