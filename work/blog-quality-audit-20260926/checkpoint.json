@@ -30,7 +30,7 @@
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
-  "current_sequential_stage": "lent_completed_minus12_exact_source_and_fresh_runtime_pending",
+  "current_sequential_stage": "minus12_validation_review_and_api_delivery_verified_git_release_ci_pending",
   "three_errors_confirmed_delivery": {
     "source_id": "13785403",
     "editor_version": 3,
@@ -483,5 +483,20 @@
     "media_http_hash_pass": 2,
     "library_usage": "recorded",
     "desktop_mobile_dom_geometry_pass": true
+  },
+  "minus12_prepared": {
+    "source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
+    "baseline_editor_version": 2,
+    "source_uri": "content://item/25b8b9de-9d65-4ab6-8023-a5d1f7214864",
+    "writer_validation": "pass",
+    "independent_review": "clean",
+    "draft_sha256": "a039d88b9a0c613a353471d4efadd7933ea343176befe9404858a906878ea9e3",
+    "main_revision": "7c34e7d2a34254a6db425ba176ed8dbaaf7ddcf9",
+    "published_verified": true,
+    "api_version": 3,
+    "public_version": 2,
+    "desktop_mobile_dom_geometry_pass": true,
+    "git_production_revision_verified": false,
+    "full_scientific_pass": false
   }
 }
