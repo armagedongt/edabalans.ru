@@ -18,7 +18,7 @@
 Модуль products.recipes. Точный расчёт одобренных MD: 19 статей, 22 карточки,
 16 активных, 6 неактивных, 131 строка; structured comments, а не rounded previews.
 Private release bundle и таблица статусов остаются вне Git. Published версии
-проверены readonly: 19 материалов, версия 1. ContentItem metadata namespace
+проверены readonly; перед применением повторно сверены с актуальным авторским выпуском. ContentItem metadata namespace
 recipe_calculator сохраняет чужую metadata и связывает карточку с версией и MD hash.
 Статья не копируется. После принятого общего курса e4200ef ссылка использует
 его канонический target recipes:day-15-recipe-* и существующие ACCESS_RECIPES.
@@ -57,7 +57,7 @@ commit/expire/reopen; Browser run-uwV0kM — pass (полный прежний �
 D:/CodexWork/recipe-calculator-final-20261003; предыдущий C-checkout заморожен для
 первой волны. Далее свежий origin/main, полный выбранный набор второй и последней
 волны, CI точного целевого SHA, ручной совместимый выпуск и production smoke.
-Main/production ещё без этого набора. Backup 20261003T122901Z создан; настоящее
+Перед выпуском main/production ещё не содержали набор. Backup 20261003T122901Z создан; настоящее
 test restore обеих баз завершено успешно (99/132 таблицы), временные базы удалены
 штатным trap. Реальные данные остаются на сервере/S3, в Git их нет.
 
@@ -90,3 +90,24 @@ module_inventory generate/check и writer validation — pass.
 ошибки подключения к остановившейся локальной PG; после восстановления локальной
 PG повторный затронутый профиль (migrations/catalog/course/curation) — 25 pass,
 включая оба ранее недоступных сценария. Production база этим прогоном не затронута.
+
+## Выпуск завершён 03.10.2026
+
+Основной набор принят в main и вручную выпущен в production:
+e2a7e1fb801e558ddbebd08040add48eb09d55dd. CI run37128787176/job111219499188:
+все tools, сборка, backend tests и browser checks success; единственная failure —
+ожидаемый Block automatic database migrations. Разрешённый владельцем выпуск
+прошёл штатным ALLOW_DATABASE_MIGRATIONS=1, Alembic20261003_0051, health/ready/
+recipes HTTP200. Свежий backup20261003T141222Z восстановлен в обеих тестовых базах;
+сам deploy создал дополнительный backup20261003T142022Z. Авто-downgrade не использован.
+
+После завершения актуальной авторской публикации сверены все19 HTML fingerprints,
+версии и MD. Dry-run19/16/6, затем одна metadata transaction; повторное чтение
+подтвердило 16активных/6неактивных/131строку. Составы/выходы/порции неизменны.
+Нативные API без сессии отвечают401. Файлы интерфейса и обучения в контейнере
+совпадают по SHA256 с Git blobs целевого commit (Windows CRLF не участвует в сравнении).
+Локальный runtime/evidence и приватная таблица неактивных остаются внеGit.
+
+Рабочая ссылка: https://edabalans.ru/recipes. Запрошенные ПК/Телефон, примечания,
+обучение, оригиналы/личные копии и компактный mobile layout выпущены. Дополнительные
+возможности предложить владельцу только текстом. Обязательной работы не осталось.
