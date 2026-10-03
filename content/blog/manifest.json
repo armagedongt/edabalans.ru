@@ -347,13 +347,13 @@
           "file": "13762311/01.webp",
           "alt": "Иллюстрация к статье «Великий пост, похудение и здоровье»",
           "provenance": "https://cs20.pikabu.ru/s/2026/03/07/19/cgskx3tn_lg.png",
-          "show": true
+          "show": false
         },
         "card": {
           "file": "13762311/01.webp",
           "alt": "Иллюстрация к статье «Великий пост, похудение и здоровье»",
           "provenance": "https://cs20.pikabu.ru/s/2026/03/07/19/cgskx3tn_lg.png",
-          "fit": "cover"
+          "fit": "contain"
         },
         "related_source_ids": [
           "11665295",
