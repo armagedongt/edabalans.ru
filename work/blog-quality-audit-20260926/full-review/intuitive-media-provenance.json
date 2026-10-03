@@ -1,0 +1,70 @@
+{
+  "source_id": "intuitivnoe-pitanie-04-27-2",
+  "checked_at": "2026-10-03",
+  "original_images": 6,
+  "original_video": 1,
+  "immutable_existing_files_preserved": true,
+  "media": [
+    {
+      "file": "intuitivnoe-pitanie-04-27-2/01.webp",
+      "bytes": 45786,
+      "sha256": "a860dfc4a2d7cb76f7d79b42c0b1f0ffd583f0abb2a62b5b058859b1c436dd08",
+      "original_source_url": "https://cs14.pikabu.ru/post_img/2024/04/27/10/171423750412834217.jpg",
+      "visual_checked": true,
+      "width": 533,
+      "height": 494
+    },
+    {
+      "file": "intuitivnoe-pitanie-04-27-2/02.webp",
+      "bytes": 9844,
+      "sha256": "477b4e6c63f7365695ba1479a30fa99c5d35aca5bb6a01682a48b4937fb961a7",
+      "original_source_url": "https://cs13.pikabu.ru/post_img/2024/04/26/8/1714138292132961752.jpg",
+      "visual_checked": true,
+      "width": 779,
+      "height": 194
+    },
+    {
+      "file": "intuitivnoe-pitanie-04-27-2/03.webp",
+      "bytes": 62856,
+      "sha256": "9f43cab068c6d83cc1e3da59f95e9d70d604b6e88361d5fc73b0cd9a125f03d5",
+      "original_source_url": "https://cs13.pikabu.ru/post_img/2024/04/26/10/1714152265144029823.jpg",
+      "visual_checked": true,
+      "width": 873,
+      "height": 750
+    },
+    {
+      "file": "intuitivnoe-pitanie-04-27-2/04.webp",
+      "bytes": 56146,
+      "sha256": "c567d8f91727d5ffe90c7b36d85b22579c22fa4de0572e1e9a38dd02a35f850d",
+      "original_source_url": "https://cs13.pikabu.ru/post_img/2024/04/26/11/1714161158119296127.jpg",
+      "visual_checked": true,
+      "width": 1207,
+      "height": 531
+    },
+    {
+      "file": "intuitivnoe-pitanie-04-27-2/05.webp",
+      "bytes": 23884,
+      "sha256": "d3283981c4334b8c7f20d57d2c82a97666894d571992f5554574f2b436a4104d",
+      "original_source_url": "https://cs13.pikabu.ru/post_img/2024/04/27/10/1714239520118519670.jpg",
+      "visual_checked": true,
+      "width": 650,
+      "height": 569
+    },
+    {
+      "file": "intuitivnoe-pitanie-04-27-2/06.webp",
+      "bytes": 31582,
+      "sha256": "75b8b9f61d4c5f5d7e265e18b35d5482b4832207d34e4912ab1513e2d2e72caf",
+      "original_source_url": "https://cs14.pikabu.ru/post_img/2024/04/27/10/1714239281142781006.jpg",
+      "visual_checked": true,
+      "width": 570,
+      "height": 314
+    },
+    {
+      "file": "intuitivnoe-pitanie-04-27-2/07-original-joke.mp4",
+      "bytes": 1175503,
+      "sha256": "95688be541686cff91b34f6834df67c9b5e3489adbf7235f51ebb63183a1ec67",
+      "original_source_url": "https://telegra.ph/file/742bfc0f32d168fc0a824.mp4",
+      "visual_checked": false
+    }
+  ]
+}
