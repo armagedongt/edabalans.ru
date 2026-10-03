@@ -1147,14 +1147,16 @@
       "category": "Похудение",
       "body_file": "13436070.md",
       "hero": {
-        "file": "13436070/01.webp",
-        "alt": "Обложка материала «Потеря мышц при похудении»",
-        "provenance": "https://cs18.pikabu.ru/s/2025/10/01/17/aiabd74m.webp"
+          "file": "13436070/01.webp",
+          "alt": "Обложка материала «Потеря мышц при похудении»",
+          "provenance": "https://cs18.pikabu.ru/s/2025/10/01/17/aiabd74m.webp",
+          "show": false
       },
       "card": {
-        "file": "13436070/card.webp",
-        "alt": "Обложка карточки «Потеря мышц при похудении»",
-        "provenance": "https://cs12.pikabu.ru/post_img/big/2022/09/27/7/1664277409167491570.jpg"
+          "file": "13436070/04.webp",
+          "alt": "Сравнение МРТ мышц бёдер у триатлетов и малоподвижного человека",
+          "provenance": "https://cs19.pikabu.ru/s/2025/10/01/16/fgqexls3_lg.jpg",
+          "fit": "contain"
       },
       "related_source_ids": [
         "training-combined-2023",
