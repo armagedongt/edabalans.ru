@@ -1,0 +1,63 @@
+[
+  {
+    "file": "11906015/doctor-original.mp4",
+    "source": "https://cs13.pikabu.ru/video/2024/10/13/1728807644222629322_a829339f_720x1280.mp4",
+    "bytes": 11318029,
+    "sha256": "b9cd1007d3387f59903632a5a9d5a106278cf299a06edda2a4d04fd83e7de430",
+    "kind": "video_original"
+  },
+  {
+    "file": "11906015/01.webp",
+    "source": "https://cs10.pikabu.ru/post_img/2019/04/15/9/1555338493157395451.png",
+    "bytes": 29390,
+    "width": 650,
+    "height": 616,
+    "sha256": "37f2b77f9ffcc593657e31aea2665d8f0ef57440e69a25b8259057f4c5e11cc1",
+    "kind": "image"
+  },
+  {
+    "file": "11906015/02.webp",
+    "source": "https://principled-cuticle-21b.notion.site/image/attachment%3A09480fef-67f8-4bf3-ab08-f9baf074249b%3Aimage.png?table=block&id=21958521-3bab-80ee-bd6a-c241fed0c8d4&spaceId=5eb568ce-19be-43b8-90eb-3a00ab9af308&width=1420&userId=&cache=v2",
+    "bytes": 48960,
+    "width": 906,
+    "height": 475,
+    "sha256": "f7729dc64c44eaec5d56a3c73ceea9c666ff7cd0ae0fc5d9de5e8e95f73a4b71",
+    "kind": "image"
+  },
+  {
+    "file": "11906015/03.webp",
+    "source": "https://cs15.pikabu.ru/post_img/2024/10/13/6/1728807484197098077.webp",
+    "bytes": 10782,
+    "width": 404,
+    "height": 150,
+    "sha256": "8dc9344e20ad290ecbe827ead8f23a2479aa2bf47a9cd701d8a696723a4a767d",
+    "kind": "image"
+  },
+  {
+    "file": "11906015/04.webp",
+    "source": "https://cs15.pikabu.ru/post_img/2024/10/13/6/1728811020157950360.webp",
+    "bytes": 56802,
+    "width": 700,
+    "height": 941,
+    "sha256": "00d3029514075bfc66cbd484c8b1fa7ff95cabd870307d07c015dfeef170face",
+    "kind": "image"
+  },
+  {
+    "file": "11906015/05.webp",
+    "source": "https://cs15.pikabu.ru/post_img/2024/10/13/6/1728812073124111927.jpg",
+    "bytes": 4062,
+    "width": 269,
+    "height": 106,
+    "sha256": "c91b064b2a8dc9541eb0bc04e9f0114a098f5e15efdcc47a446fc4edf7a58783",
+    "kind": "image"
+  },
+  {
+    "file": "11906015/06.webp",
+    "source": "https://telegra.ph/file/b5442e71c9c72248f95fd.jpg",
+    "bytes": 57750,
+    "width": 1600,
+    "height": 640,
+    "sha256": "d6291346e2923121dd29cfc89e1164eef9122e0845caa42ed27642238de8dd0a",
+    "kind": "image"
+  }
+]

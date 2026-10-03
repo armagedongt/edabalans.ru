@@ -1,0 +1,13 @@
+{
+  "status": "clean",
+  "reviewer": "snacking_article_review",
+  "waves": 2,
+  "scope": "exact full source preservation, minimal adaptation, media, links, markup, obvious proofreading, level-3 gate",
+  "draft_sha256": "f7e6fd85c7fa2567dde068849ef8c5b8bbc82d717ef55b9920108cd113bb4d9c",
+  "pack_sha256": "ce4125398318b368ff281456304ac29662c12cacbb88b0268160908090f4870c",
+  "resolved": ["comma before otherwise", "introductory most likely comma", "closing relative clause comma"],
+  "semantic_edits": false,
+  "level_3_blocker": false,
+  "level_2_notes": "owner-review/snacking-20261003.md",
+  "full_scientific_pass": false
+}

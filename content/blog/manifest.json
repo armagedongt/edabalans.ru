@@ -2,6 +2,62 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "11906015",
+      "slug": "u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov",
+      "title": "У взрослой женщины не должно быть перекусов",
+      "excerpt": "Скажите, вам когда-нибудь советовали отказаться от перекусов, полностью убрать сладкое, не есть после 18-00 или кушать кашку по утрам, а может, наоборот, ни в коем случае не кушать кашку? А вы задавались вопросом \"зачем?\"",
+      "category": "Качество питания",
+      "body_file": "11906015.md",
+      "hero": {
+        "file": "11906015/04.webp",
+        "alt": "Половинки грецкого ореха на ладони",
+        "provenance": "https://cs15.pikabu.ru/post_img/2024/10/13/6/1728811020157950360.webp",
+        "show": false
+      },
+      "card": {
+        "file": "11906015/04.webp",
+        "alt": "Половинки грецкого ореха на ладони",
+        "provenance": "https://cs15.pikabu.ru/post_img/2024/10/13/6/1728811020157950360.webp",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11801517",
+        "11401696",
+        "11857250"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "11906015/doctor-original.mp4",
+        "11906015/01.webp",
+        "11906015/02.webp",
+        "11906015/03.webp",
+        "11906015/04.webp",
+        "11906015/05.webp",
+        "11906015/06.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://telegra.ph/ZHenshchina-dolzhna-06-21",
+          "https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015"
+        ],
+        "external_ids": [
+          "11906015",
+          "ZHenshchina-dolzhna-06-21"
+        ],
+        "source_uri": "content://item/cdec03fe-8a06-407c-8acd-5c816c4efbcb",
+        "source_revision": 1,
+        "source_date": "2025-06-21T12:40:58+03:00",
+        "sha256": [
+          "f51e160637a8a0e66f617201ef087bf4bf54c514a97381811efc47fba16b5389",
+          "3773a5485163314eecae6fb9e19aee81ac9aadf03ae92b48408299b02ba0e64e"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
       "source_id": "10425659",
       "slug": "13-pravil-domashnih-trenirovok",
       "title": "13 правил для организации домашних тренировок",
