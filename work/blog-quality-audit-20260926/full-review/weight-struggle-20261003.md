@@ -22,7 +22,7 @@ SHA `cb0fd6d6b604b71c7e82454c15ea8735c597484232855717bf8997e3fe5ba825`.
 
 Writer targeted_edit/full_source validation `pass`, draft SHA
 `83f663b22347060b1e70d2072d90791474aa24fe3c00304f7b436ebfbf094b99`.
-Content/description tests: 33 passed. Независимый review и выпуск ещё не завершены.
-Первичная проверка сервера: own media HTTP/SHA pass; description — первые два предложения, canonical/OG/JSON-LD получены. Это не подтверждение финального выпуска.
+Content/description tests: 33 passed. Независимый read-only review `/root/batch03_publisher_review`: clean. API editor 3/public 2, LF SHA `a00f9a0663c3bcc9996945eb3861c6a5cd6965c32d075a5204e070ffca1d2f8e`. Library use `blog-full-review-11857250-20261003` recorded; API-текст повторно сверён. На момент публикации renderer production `9ea30ba7389427a924b9f60cb2f3c3ad7f6ad73b`.
+Сервер после API-публикации: own media HTTP/SHA pass; description — первые два предложения, canonical/OG/JSON-LD получены. Mobile 390×844: ширина 375/375, две цитаты, шесть H2, UL3; nested em/strong без артефактов. Скриншот в контексте абзаца просмотрен. Это ещё не подтверждение финального rollout: main `9f2ad863facb2cd2b07f9fefa5d14e94381abe32`, CI 37100816053 в работе; выключение повторного hero проверяется после deploy.
 
 Полный научный pass `false`; смысловая редактура не применялась.
