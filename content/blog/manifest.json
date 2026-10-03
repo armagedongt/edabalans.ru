@@ -1199,12 +1199,14 @@
       "hero": {
         "file": "13785403/01.webp",
         "alt": "Обложка материала «Три ошибки в начале похудения»",
-        "provenance": "https://cs18.pikabu.ru/s/2026/03/15/09/xkebdmiw.webp"
+        "provenance": "https://cs18.pikabu.ru/s/2026/03/15/09/xkebdmiw_lg.png",
+        "show": false
       },
       "card": {
-        "file": "13785403/card.webp",
-        "alt": "Обложка карточки «Три ошибки в начале похудения»",
-        "provenance": "https://cs20.pikabu.ru/s/2026/03/19/16/iqp2wgot_lg.jpg"
+        "file": "13785403/02.webp",
+        "alt": "Мем: офигенный план, надёжный как швейцарские часы",
+        "provenance": "https://cs18.pikabu.ru/s/2026/03/15/09/xkebdmiw_lg.png",
+        "fit": "contain"
       },
       "related_source_ids": [
         "12296286",
@@ -1222,6 +1224,7 @@
         "13785403/06.webp",
         "13785403/07.webp",
         "13785403/08.webp",
+        "13785403/09-source-calories.webp",
         "13785403/card.webp"
       ],
       "source_provenance": {
