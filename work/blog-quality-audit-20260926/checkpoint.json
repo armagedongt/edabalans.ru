@@ -19,18 +19,18 @@
     "10123213"
   ],
   "new_full_safe_review_pass_count": 1,
-  "total_old_and_new_full_safe_review_delivered_count": 36,
+  "total_old_and_new_full_safe_review_delivered_count": 37,
   "production_receipts": "applied-receipts.json",
-  "production_changes_applied": 35,
+  "production_changes_applied": 36,
   "next_independent_batch": null,
-  "next_source_id": "13355824",
+  "next_source_id": "d1baceb9e2b6b72013b6",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "13355824",
-  "current_sequential_stage": "labels_api_published_writer_review_pass_final_rollout_pending",
+  "current_sequential_source_id": "d1baceb9e2b6b72013b6",
+  "current_sequential_stage": "labels_completed_next_full_source_pending",
   "three_errors_confirmed_delivery": {
     "source_id": "13785403",
     "editor_version": 3,
@@ -227,7 +227,8 @@
     "11210930",
     "11534645",
     "11833079",
-    "11857250"
+    "11857250",
+    "13355824"
   ],
   "training_confirmed_delivery": {
     "editor_version": 3,
@@ -346,7 +347,7 @@
   "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
   "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
   "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей",
-  "format_targeted_validation_pass_count": 35,
+  "format_targeted_validation_pass_count": 36,
   "publication_hold_source_ids": [
     "693339"
   ],
@@ -585,7 +586,7 @@
   },
   "labels_prepared": {
     "source_id": "13355824",
-    "git_production_revision_verified": false,
+    "git_production_revision_verified": true,
     "source_strikethrough_restored": false,
     "api_version": 3,
     "library_usage": "recorded",
@@ -596,6 +597,7 @@
     "public_version": 2,
     "published_verified": true,
     "media_http_hash_pass": 1,
-    "writer_validation": "pass"
+    "writer_validation": "pass",
+    "desktop_mobile_dom_geometry_pass": true
   }
 }
