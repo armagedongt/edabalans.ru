@@ -420,6 +420,23 @@ owns_tables = ["strength_states", "strength_exercises"]
 owns_routes = ["*/apps/strength*", "*/api/apps/strength*", "*/training", "*/strength"]
 
 [[modules]]
+id = "products.training"
+parent = "products"
+card = "docs/knowledge-base/modules/catalog/products.training.md"
+depends_on = ["products.catalog", "platform.content", "platform.knowledge"]
+reads_from = [
+  "platform", "products.calories", "products.masterclass.course",
+  "products.strength", "platform.blog", "operations.project-work",
+]
+owns_files = ["docs/knowledge-base/modules/training/**"]
+sources = [
+  { path = "docs/knowledge-base/modules/training/README.md", role = "rule" },
+  { path = "docs/knowledge-base/modules/training/COURSE_PROGRAM.md", role = "rule" },
+  { path = "docs/knowledge-base/modules/training/MATERIALS_AND_SOURCES.md", role = "rule" },
+  { path = "docs/knowledge-base/modules/training/DECISIONS_AND_OPEN_QUESTIONS.md", role = "rule" },
+]
+
+[[modules]]
 id = "products.metabolism"
 admin_catalog = [{ category = "applications", order = 30, url = "/admin/metabolism", label = "Метаболизм", icon = "🔥", description = "Расчёты калорий и метаболизма клиентов." }]
 parent = "products"

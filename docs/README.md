@@ -56,6 +56,8 @@
 | Платежи и доступы | `TILDA_PAYMENTS.md`, `ROBOKASSA_PAYMENTS.md`, `knowledge-base/ACCESS_RULES.md` |
 | Цены | `knowledge-base/PRICING_CATALOG.md` |
 | Мастер-класс | `knowledge-base/modules/masterclass/README.md` |
+| Калорийный курс | `knowledge-base/modules/catalog/products.calories.md` → `knowledge-base/modules/calories/COURSE_RUNTIME.md` |
+| Курс по тренировкам: назначение, программа, материалы, источники и вопросы | [Постоянная документация](knowledge-base/modules/training/README.md), модуль `products.training` |
 | Telegram — фактическая логика | `TELEGRAM_BOT_CURRENT_LOGIC.md` |
 | Telegram — дополнительные правила модулей | `knowledge-base/modules/telegram/MODULE_DEVELOPMENT_STANDARD.md` |
 | Каталог материалов | `CONTENT_CATALOG.md` |

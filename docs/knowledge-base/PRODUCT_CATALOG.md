@@ -64,7 +64,7 @@ DNS и настройки мессенджеров: общий вход напр
 | МК, мастер-класс | `masterclass` | `products.masterclass` → `modules/masterclass/README.md` |
 | рецепты, система рецептов | `recipes` | `products.recipes` → `modules/catalog/products.recipes.md` |
 | калорийный, калорийный курс | `calories` | `products.calories` → `modules/catalog/products.calories.md` |
-| курс по тренировкам, с дивана | `training` | `PRODUCTS.md`, программа `content/public-site/homepage/training.md`; приложение — отдельный `products.strength` |
+| курс по тренировкам, с дивана | `training` | `products.training` → `modules/training/README.md`: программа и материалы; коммерческая граница — `PRODUCTS.md`, приложение — отдельный `products.strength` |
 | два разбора, записи консультаций | `recordings` | `PRODUCTS.md`; не расширять состав сверх утверждённого |
 | консультация, индивидуальный разбор | `consultation` | `PRODUCTS.md`, программа `content/public-site/homepage/consultation.md` |
 | сопровождение, коучинг | `coaching` | `platform.commerce` → `PRODUCTS.md`, `../ROBOKASSA_PAYMENTS.md` |

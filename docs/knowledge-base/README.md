@@ -54,6 +54,8 @@ commit только ради производной карты.
 |---|---|
 | Названия сайта, адреса, каналы, боты и поиск продуктовых фактов | `PROJECT_IDENTITY.md` → владелец конкретного факта |
 | Мастер-класс | `modules/masterclass/README.md` |
+| Калорийный курс | `modules/catalog/products.calories.md` → `modules/calories/COURSE_RUNTIME.md` |
+| Курс по тренировкам: программа, состояние материалов, первоисточники и решения | [modules/training/README.md](modules/training/README.md) |
 | Telegram | `modules/telegram/README.md` |
 | Продукты и тарифы | `PRODUCTS.md`, `PRICING_CATALOG.md` |
 | Канонические названия продуктов и тарифов | `PRODUCT_CATALOG.md` |
