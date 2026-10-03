@@ -622,13 +622,13 @@
           "file": "13355824/01.webp",
           "alt": "Иллюстрация к статье «О ярлыках»",
           "provenance": "https://cs19.pikabu.ru/s/2025/11/02/14/mrwuw7mu.webp",
-          "show": true
+          "show": false
         },
         "card": {
           "file": "13355824/01.webp",
           "alt": "Иллюстрация к статье «О ярлыках»",
           "provenance": "https://cs19.pikabu.ru/s/2025/11/02/14/mrwuw7mu.webp",
-          "fit": "cover"
+          "fit": "contain"
         },
         "related_source_ids": [
           "14021584",
