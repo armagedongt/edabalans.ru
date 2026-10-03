@@ -13,7 +13,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.blog_content import load_blog_catalog
+from app.blog_content import load_blog_catalog, render_article_body
 from app.blog_routes import router
 from app.database import Base, get_db
 
@@ -443,7 +443,7 @@ def test_confirmed_static_batch_is_published_and_excluded_stories_are_not_public
     assert "exact source" in diet.hero.provenance
 
 
-def test_semaglutide_article_is_published_unchanged() -> None:
+def test_semaglutide_article_preserves_reviewed_text_and_source_structure() -> None:
     catalog = load_blog_catalog()
     slug = "ukolol-i-pohudel-ozempik-semavik-nyuansy"
     article = catalog.by_slug(slug)
@@ -479,8 +479,17 @@ def test_semaglutide_article_is_published_unchanged() -> None:
     semaglutide_path = Path(__file__).resolve().parents[2] / "content" / "blog" / "articles" / "13327360.md"
     semaglutide_body = semaglutide_path.read_text(encoding="utf-8").split("\nblog_cta(", 1)[0].rstrip()
     assert hashlib.sha256(semaglutide_body.encode("utf-8")).hexdigest() == (
-        "ef8ef0dd424f8aea82ac22794f65a0e3aa431edb78e97a8c2d6a5f6b8b71eb98"
+        "907c5f1054a09f51600f86e4925287a01de753542e187105f39f1b75aa298e07"
     )
+
+    # This reviewed baseline includes only accepted proofread and source-format restoration.
+    body_html, _ = render_article_body(catalog, article)
+    assert [items.count("<li>") for items in re.findall(r"<ul>(.*?)</ul>", body_html, re.DOTALL)] == [5]
+    assert [items.count("<li>") for items in re.findall(r"<ol>(.*?)</ol>", body_html, re.DOTALL)] == [2, 2]
+    assert body_html.count("<blockquote>") == 4
+    assert "***" not in body_html
+    assert body_html.index("13327360/02.webp") < body_html.index("Что это такое?")
+    assert body_html.index("Или вы собираетесь колоть его всю жизнь?") < body_html.index("13327360/01.webp") < body_html.index("Что нам нужно для здоровья?")
 
 
 def test_manifest_card_fit_is_rendered_without_destructive_crop() -> None:
