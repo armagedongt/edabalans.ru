@@ -60,6 +60,7 @@ commit только ради производной карты.
 | Доступы | `ACCESS_RULES.md`, `ACCOUNT_LEGAL_GATE.md` |
 | Юридические документы | `LEGAL_DOCUMENTS.md` |
 | Платформа приложений | `../APPLICATION_PLATFORM.md` |
+| Единый контур рецептов: приложение, продукты/КБЖУ, материалы и карточки | `RECIPE_CONTOUR.md` |
 | CRM и таблицы | `../CRM_CORE_DESIGN.md`, `../CRM_DATA_MODEL.md` |
 | Контент | `../CONTENT_CATALOG.md` |
 | Редакционно-продуктовый процесс | `EDITORIAL_PRODUCT_SYSTEM.md` |

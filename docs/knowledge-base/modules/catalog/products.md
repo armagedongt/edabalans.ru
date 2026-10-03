@@ -52,6 +52,10 @@ application-access resolver-а. DQS уже подключён к отдельн�
 
 Дочерние карточки, `docs/APPLICATION_PLATFORM.md`, `docs/knowledge-base/PRODUCTS.md`.
 
+Для рецептов общий вход — [контур рецептов](../../RECIPE_CONTOUR.md): он связывает
+дочерний `products.recipes` с материалами МК, редакцией и изображениями, сохраняя
+владельцев фактов и общий вход/доступ приложений.
+
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.
 

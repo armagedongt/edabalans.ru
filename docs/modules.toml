@@ -468,6 +468,7 @@ id = "products.recipes"
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.recipes.md"
 owns_files = [
+  "docs/knowledge-base/RECIPE_CONTOUR.md",
   "backend/app/recipe_models.py", "backend/app/recipe_service.py", "backend/app/recipe_routes.py",
   "backend/app/recipe_originals.py", "backend/scripts/publish_recipe_originals.py",
   "backend/app/recipe_course_service.py", "backend/app/recipe_course_routes.py",

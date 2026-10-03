@@ -88,6 +88,7 @@
 | Задача | Что обязательно открыть/применить |
 |---|---|
 | Упоминание или проверка названия сайта, продукта, услуги, тарифа, домена, канала или бота | `docs/knowledge-base/PROJECT_IDENTITY.md` → владелец конкретного факта; `products.catalog`, даже если ничего не переименовываем |
+| Рецепт, каталог продуктов/КБЖУ, приложение рецептов, его материал, карточка или доступ | `docs/knowledge-base/RECIPE_CONTOUR.md` → нужная ветка и владелец; `products.recipes`, без второго каталога/стандарта в чате |
 | Любой читательский, учебный, маркетинговый или редакционный текст | выполнять только через skill `edabalans-writer`; канон `content/author-voice/skill/edabalans-writer/SKILL.md`, маршрут `docs/knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md`, общение `docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md` |
 | Источники, накопленный контекст, дубли и provenance | skill `edabalans-librarian`, серверная карта `platform.knowledge`; при недоступности MCP не заводить параллельную библиотеку |
 | Генерация/правка изображения, SVG, иконки | Задача «Художник», `content/design-workflow/image-generation-protocol.md`; не заводить второго постоянного генератора |

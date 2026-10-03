@@ -51,6 +51,7 @@
 | Названия, продукты, домены, каналы, боты и контакты | `knowledge-base/PROJECT_IDENTITY.md`, `knowledge-base/PRODUCT_CATALOG.md` |
 | CRM, единый клиент и импорт | `CRM_CORE_DESIGN.md`, `CRM_DATA_MODEL.md` |
 | Клиентские приложения DQS/силовые/метаболизм | `APPLICATION_PLATFORM.md` |
+| Рецепты: продукты и КБЖУ, приложение, материалы, карточки, история и доступ | `knowledge-base/RECIPE_CONTOUR.md` → владельцы частей |
 | Создание и загрузка приложений курсов | `knowledge-base/COURSE_APPLICATION_STANDARD.md` |
 | Платежи и доступы | `TILDA_PAYMENTS.md`, `ROBOKASSA_PAYMENTS.md`, `knowledge-base/ACCESS_RULES.md` |
 | Цены | `knowledge-base/PRICING_CATALOG.md` |
