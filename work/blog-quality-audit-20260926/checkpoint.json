@@ -41,8 +41,19 @@
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "11906015",
-  "current_sequential_stage": "snacking_fully_closed_next_belly_family",
+  "current_sequential_source_id": "10532723",
+  "current_sequential_stage": "belly_article_main_ci_pending",
+  "belly_10532723_prepared": {
+    "full_sources": ["A019", "A183", "A210"],
+    "preferred_basis": "A183",
+    "writer_validation": "pass",
+    "independent_review": "technical_clean_with_level_2_owner_notes",
+    "main_revision": "411117566bcc1f150c74bcc231b19777158c0d69",
+    "published_verified": false,
+    "draft_sha256": "e36b2d321efe20535e5699b91bb0a3689f4f79f1326bd0d485ab4267bf83d36d",
+    "source_images": 3,
+    "full_scientific_pass": false
+  },
   "snacking_11906015_prepared": {
     "full_sources": [
       "A076",
