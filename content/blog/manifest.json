@@ -2,6 +2,52 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "12269678",
+      "slug": "zastrahoval-mamu-ot-onkologii",
+      "title": "Короче, я застраховал маму от онкологии",
+      "excerpt": "Сейчас расскажу, нафига я это сделал. Рекламы не будет, расслабьтесь.",
+      "category": "Личное",
+      "body_file": "12269678.md",
+      "hero": {
+        "file": "12269678/01.webp",
+        "alt": "Короче, я застраховал маму от онкологии",
+        "provenance": "https://cs15.pikabu.ru/post_img/2025/01/18/10/1737220073191727084.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "12269678/01.webp",
+        "alt": "Короче, я застраховал маму от онкологии",
+        "provenance": "https://cs15.pikabu.ru/post_img/2025/01/18/10/1737220073191727084.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11989790",
+        "12237133",
+        "11401696"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "12269678/01.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/koroche_ya_zastrakhoval_mamu_ot_onkologii_12269678"
+        ],
+        "external_ids": [
+          "12269678"
+        ],
+        "source_uri": "content://item/d470a504-9663-4351-a3da-30e52cad6e3d",
+        "source_revision": 1,
+        "source_date": "2025-01-18",
+        "sha256": "565119365b918ad839e5672564b85f5aa87f0b3d514056177231b319eeb20954",
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "adaptation": "minimal_platform_tail_proofread_original_numbers_preserved"
+      }
+    },
+    {
       "source_id": "11989790",
       "slug": "dolbanaya-bednost",
       "title": "Долбаная бедность",
