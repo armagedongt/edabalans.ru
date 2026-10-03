@@ -155,9 +155,9 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 46,
-    "canonical_linked_external_records": 67,
-    "deferred_families": 233,
+    "canonical_blog_families": 47,
+    "canonical_linked_external_records": 68,
+    "deferred_families": 232,
     "deferred_by_kind": {
       "deferred_not_now": 18,
       "editorial_review": 84,
@@ -165,7 +165,7 @@
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
       "private_product_material": 43,
-      "short_reserve": 43,
+      "short_reserve": 42,
       "technical_or_service": 25
     },
     "candidate_duplicate_pairs": 75
@@ -291,6 +291,40 @@
       ],
       "family_evidence": "direct_provenance",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:belyy-ris-kury-i-vitamin-b1",
+      "title": "Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ?",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "11188875",
+        "slug": "belyy-ris-kury-i-vitamin-b1",
+        "url": "https://blog.похудение-это-есть.рф/articles/belyy-ris-kury-i-vitamin-b1",
+        "body_file": "content/blog/articles/11188875.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A043",
+          "source": "pikabu",
+          "external_id": "11188875",
+          "title": "Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ?",
+          "url": "https://pikabu.ru/story/belyiy_ris_vorovstvo_kuryi_i_vitamin_b1_a_prichem_tut_zdorovoe_pitanie__11188875",
+          "published_at": "2024-03-03T13:42:41+03:00",
+          "characters": 3278,
+          "role": "direct_source",
+          "provenance": "content://item/d14aa7e5-2795-420c-a0b0-3906469f979c",
+          "text_sha256": "0595d8594362a088752f6b78479ace3f4debbd47eaf337db1eb0c3615b4dc617"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "single_exact_source_verified",
+      "owner_source_decisions": {
+        "A043": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": "A043",
+      "source_comparison": "work/blog-quality-audit-20260926/new/11188875/preparation-20261003.md"
     },
     {
       "family_id": "blog:borba-s-lishnim-vesom-pochemu-shagov-nedostatochno",
@@ -2237,32 +2271,6 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {}
-    },
-    {
-      "family_id": "deferred:A043",
-      "title": "Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ?",
-      "disposition": "deferred",
-      "deferred_kind": "short_reserve",
-      "reason": "Материал 3000–3999 знаков; сначала оценить самостоятельную пользу.",
-      "members": [
-        {
-          "catalog_id": "A043",
-          "source": "pikabu",
-          "external_id": "11188875",
-          "title": "Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ?",
-          "url": "https://pikabu.ru/story/belyiy_ris_vorovstvo_kuryi_i_vitamin_b1_a_prichem_tut_zdorovoe_pitanie__11188875",
-          "published_at": "2024-03-03T13:42:41+03:00",
-          "characters": 3278,
-          "role": "unmerged_source",
-          "provenance": "content://item/d14aa7e5-2795-420c-a0b0-3906469f979c",
-          "text_sha256": "0595d8594362a088752f6b78479ace3f4debbd47eaf337db1eb0c3615b4dc617"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A043": "publish_next"
-      }
     },
     {
       "family_id": "deferred:A228",
