@@ -43,8 +43,18 @@
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "10532723",
-  "current_sequential_stage": "belly_fully_closed_next_resistance_bands",
+  "current_sequential_source_id": "10573917",
+  "current_sequential_stage": "bands_main_ci_pending",
+  "bands_10573917_pending": {
+    "preferred_basis": "A195",
+    "writer_validation": "pass",
+    "independent_review": "technical_pass_level2_notes",
+    "main_revision": "853ea9885cf432b9dc09d43d440579e5886b61b2",
+    "ci_run": 37142332063,
+    "local_tests": "33 passed; initial missing PYTHONPATH/database_url setup corrected",
+    "published_verified": false,
+    "next_action": "Wait CI, production53, API/media/browser, Library sync; then close before next family"
+  },
   "belly_10532723_prepared": {
     "full_sources": [
       "A019",
