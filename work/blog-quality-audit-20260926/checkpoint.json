@@ -30,7 +30,20 @@
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
   "current_sequential_source_id": "30e4d208f2cbd8e57201",
-  "current_sequential_stage": "regain_full_source_prepared_writer_pass_pending_independent_review_and_delivery",
+  "current_sequential_stage": "regain_review_pass_api_published_git_release_pending",
+  "regain_prepared": {
+    "source_id": "30e4d208f2cbd8e57201",
+    "writer_validation": "pass",
+    "independent_review": "clean",
+    "api_version": 3,
+    "public_version": 2,
+    "published_verified": true,
+    "markdown_sha256_lf": "6f265072101f298d9bc149df6781cc2f1fa7da7462051f23ac287caa8fc18dd6",
+    "library_usage": "recorded",
+    "media_http_hash_pass": 1,
+    "git_production_revision_verified": false,
+    "full_scientific_pass": false
+  },
   "errors_prepared": {
     "source_id": "d1baceb9e2b6b72013b6",
     "source_uri": "content://item/1bb03a19-08e0-4d1b-bb65-df1815e7bc17",

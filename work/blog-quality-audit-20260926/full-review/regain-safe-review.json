@@ -1,0 +1,23 @@
+{
+  "source_id": "30e4d208f2cbd8e57201",
+  "date": "2026-10-03",
+  "reviewer": "/root/batch03_publisher_review",
+  "status": "clean",
+  "findings": [],
+  "writer_draft_sha256": "95ca9cc599a875df1bc0f3de57bc2dc7094f199ecc54ed7b8e4964269d5d40d2",
+  "evidence": {
+    "only_word_changes": ["пропущенный вес", "видео → материале", "уберет → убирают", "лишит → лишают", "будет → будут", "оцените → оценить"],
+    "lists": [3, 4, 2, 3, 5],
+    "quotes": 2,
+    "first_quote_paragraphs": 3,
+    "h2": 5,
+    "situations_h3": 3,
+    "source_actual_images": 0,
+    "source_actual_videos": 0,
+    "hero_show": false,
+    "cta": "masterclass",
+    "task_pack_review_validation_hashes_match": true
+  },
+  "full_scientific_pass": false,
+  "production_delivery_confirmed_by_this_review": false
+}
