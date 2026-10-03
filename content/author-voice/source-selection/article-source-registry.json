@@ -155,9 +155,9 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 58,
-    "canonical_linked_external_records": 87,
-    "deferred_families": 213,
+    "canonical_blog_families": 59,
+    "canonical_linked_external_records": 88,
+    "deferred_families": 212,
     "deferred_by_kind": {
       "deferred_not_now": 18,
       "editorial_review": 73,
@@ -165,7 +165,7 @@
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
       "private_product_material": 43,
-      "short_reserve": 35,
+      "short_reserve": 34,
       "technical_or_service": 25
     },
     "candidate_duplicate_pairs": 75
@@ -2046,6 +2046,42 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:sredizemnomorskaya-dieta-eto-voobshche-chto",
+      "title": "Средиземноморская диета — это вообще что?!?!",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "14062380",
+        "slug": "sredizemnomorskaya-dieta-eto-voobshche-chto",
+        "url": "https://blog.похудение-это-есть.рф/articles/sredizemnomorskaya-dieta-eto-voobshche-chto",
+        "body_file": "content/blog/articles/14062380.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A102",
+          "source": "pikabu",
+          "external_id": "14062380",
+          "title": "Средиземноморская диета — это вообще что?!?!",
+          "url": "https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380",
+          "published_at": "2026-06-14T20:48:09+03:00",
+          "characters": 3142,
+          "role": "direct_source",
+          "provenance": "content://item/17d14cc0-906c-4e5d-b458-952441361368",
+          "text_sha256": "d955395c8d84892021a09bc7a6288542bb84e77c874c8778cb5278ea2c23c1f9"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "exact_single_full_source_live_dom_minimal_adaptation",
+      "owner_source_decisions": {
+        "A102": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": [
+        "A102"
+      ],
+      "source_comparison": "work/blog-quality-audit-20260926/new/14062380/preparation-20261003.md"
     },
     {
       "family_id": "blog:temperatura-vody-dlya-priema-vnutr",
@@ -6498,32 +6534,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A203": "old_educational"
-      }
-    },
-    {
-      "family_id": "deferred:A102",
-      "title": "Средиземноморская диета — это вообще что?!?!",
-      "disposition": "deferred",
-      "deferred_kind": "short_reserve",
-      "reason": "Материал 3000–3999 знаков; сначала оценить самостоятельную пользу.",
-      "members": [
-        {
-          "catalog_id": "A102",
-          "source": "pikabu",
-          "external_id": "14062380",
-          "title": "Средиземноморская диета — это вообще что?!?!",
-          "url": "https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380",
-          "published_at": "2026-06-14T20:48:09+03:00",
-          "characters": 3142,
-          "role": "unmerged_source",
-          "provenance": "content://item/17d14cc0-906c-4e5d-b458-952441361368",
-          "text_sha256": "d955395c8d84892021a09bc7a6288542bb84e77c874c8778cb5278ea2c23c1f9"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A102": "publish_next"
       }
     },
     {

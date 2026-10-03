@@ -16,7 +16,7 @@
 
 ## Сводка
 
-- Канонов блога:58 (03.10.2026; выпуск12изменений подтверждён, Library navigation v23).
+- Канонов блога:59 (03.10.2026; выпуск14062380подтверждён, Library navigation v24).
 - Записей источников в этом файле: 300.
 - Рабочих семей/групп сравнения: 217 (не все связи подтверждены).
 
@@ -41,7 +41,6 @@
 - A012: [Как на меня напали собаки в лесу](https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434).
 - A082: [Ответ на пост «Совет от потливости»2](https://pikabu.ru/story/otvet_na_post_sovet_ot_potlivosti_12189205).
 - A083: [Техника безопасности (питания) за новогодним столом!1](https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581).
-- A102: [Средиземноморская диета — это вообще что?!?!](https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380).
 - A156: [Как на меня напали собаки в лесу](https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17).
 - A184: [Пост 2026](https://telegra.ph/Post-02-22-12).
 - tilda-post:amkbo7kgg1: [💪 Зачем нужны тренировки (кроме похудения)](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni).
@@ -1801,11 +1800,11 @@
 
 ### F176. Средиземноморская диета — это вообще что?!?!
 
-Канона в блоге пока нет; выбор наиболее полной актуальной основы не завершён.
+Канон блога: [Средиземноморская диета](https://blog.похудение-это-есть.рф/articles/sredizemnomorskaya-dieta-eto-voobshche-chto). Только публичный PikabuA102 с3оригинальными изображениями. A203остаётся отдельным старым учебным архивом, не канонической основой и не автоматически подтверждённым дублем.
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A102 · pikabu | [Средиземноморская диета — это вообще что?!?!](https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
+| A102 · pikabu | [Средиземноморская диета — это вообще что?!?!](https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380) | Уже в блоге; внешняя публикация не канон |
 
 
 ### F177. Срывы и зажоры. В чем разница, что с ними делать и причем тут чит-милы.

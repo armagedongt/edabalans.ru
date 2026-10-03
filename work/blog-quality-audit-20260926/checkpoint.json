@@ -2,7 +2,7 @@
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
   "updated_at": "2026-10-03",
   "batch_size": 5,
-  "article_count": 58,
+  "article_count": 59,
   "old_article_count": 44,
   "full_current_text_read_count": 45,
   "archive_source_text_compared_count": 6,
@@ -26,7 +26,8 @@
     "11989790",
     "12269678",
     "11448583",
-    "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11"
+    "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+    "14062380"
   ],
   "new_articles_published": [
     "10123213",
@@ -42,21 +43,22 @@
     "11989790",
     "12269678",
     "11448583",
-    "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11"
+    "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+    "14062380"
   ],
-  "new_full_safe_review_pass_count": 14,
-  "total_old_and_new_full_safe_review_delivered_count": 57,
+  "new_full_safe_review_pass_count": 15,
+  "total_old_and_new_full_safe_review_delivered_count": 58,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "A102",
+  "next_source_id": "A083",
   "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
-  "current_sequential_stage": "twelve_changes_fully_closed_next_mediterranean",
+  "current_sequential_source_id": "14062380",
+  "current_sequential_stage": "mediterranean_fully_closed_next_olivier",
   "sweating_12189205_hold": {
     "source_members": [
       "A082"
@@ -1099,5 +1101,24 @@
     "desktop_mobile_dom_geometry_pass": true,
     "library_navigation_version": 23,
     "owner_review": "owner-review/12-changes-20261003.md"
+  },
+  "mediterranean_14062380_prepared": {
+    "published_verified": true,
+    "source_members": [
+      "A102"
+    ],
+    "archived_A203_used": false,
+    "writer_validation": "pass",
+    "independent_review": "technical_pass",
+    "full_scientific_pass": false,
+    "production_revision": "a4d68f7c6c89fc6ffb5b8660741e1872080cce50",
+    "ci_run": 37153681108,
+    "api_version": 1,
+    "public_version": 0,
+    "markdown_sha256_lf": "4d35136562c79880506a98487817f826f634f1c87764cde2b2058dd7db90d169",
+    "media_http_hash_pass": 3,
+    "desktop_mobile_dom_geometry_pass": true,
+    "library_navigation_version": 24,
+    "owner_review": "owner-review/14062380-20261003.md"
   }
 }

@@ -1,0 +1,56 @@
+{
+  "status": 200,
+  "editor_version": 1,
+  "public_version": 0,
+  "markdown_sha256_lf": "4d35136562c79880506a98487817f826f634f1c87764cde2b2058dd7db90d169",
+  "media": [
+    {
+      "file": "14062380/01.webp",
+      "source": "https://cs19.pikabu.ru/s/2026/06/14/20/af6txeij_lg.png",
+      "kind": "image",
+      "width": 803,
+      "height": 228,
+      "bytes": 14948,
+      "sha256": "dfaf796f4abe38e51de66891b1fb55ff4192fa5395f722e66f73e45d3d4c8dfe",
+      "alt": "Комментарий с возражением о морепродуктах",
+      "http": 200,
+      "server_sha256": "dfaf796f4abe38e51de66891b1fb55ff4192fa5395f722e66f73e45d3d4c8dfe"
+    },
+    {
+      "file": "14062380/02.webp",
+      "source": "https://cs17.pikabu.ru/s/2026/06/14/20/aj6uwvx7.jpg",
+      "kind": "image",
+      "width": 570,
+      "height": 204,
+      "bytes": 17372,
+      "sha256": "7c0dd42dbbeed74f7eebc91ed30488e90cffde050f50e4c44009c3b21c41d92f",
+      "alt": "Второй комментарий о средиземноморской диете",
+      "http": 200,
+      "server_sha256": "7c0dd42dbbeed74f7eebc91ed30488e90cffde050f50e4c44009c3b21c41d92f"
+    },
+    {
+      "file": "14062380/03.webp",
+      "source": "https://cs19.pikabu.ru/s/2026/06/14/20/xgedxme2.jpg",
+      "kind": "image",
+      "width": 400,
+      "height": 221,
+      "bytes": 17592,
+      "sha256": "7eec88411d78b9f5313eb3d2a6ac1e55116f108627ff165c6ba2a31c5103e3e4",
+      "alt": "Пирамида средиземноморской диеты",
+      "http": 200,
+      "server_sha256": "7eec88411d78b9f5313eb3d2a6ac1e55116f108627ff165c6ba2a31c5103e3e4"
+    }
+  ],
+  "hero_show": false,
+  "related_source_ids": [
+    "11401696",
+    "14021584",
+    "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11"
+  ],
+  "description": [
+    "<meta name=\"description\" content=\"&quot;Диеты&quot; — это утрированное коверкание некоторых адекватных принципов питания в красивой обёртке. Например, средиземноморская диета — ешьте дофига овощей и фруктов и побольше цельнозерновых, да бобовых вместо булок и конфет.\">"
+  ],
+  "canonical": [
+    "<link rel=\"canonical\" href=\"https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/sredizemnomorskaya-dieta-eto-voobshche-chto\">"
+  ]
+}

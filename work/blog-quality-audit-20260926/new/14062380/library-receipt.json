@@ -1,0 +1,17 @@
+{
+  "status": "published_usage_and_family_recorded",
+  "usage": [
+    {
+      "status": "recorded",
+      "source_uri": "content://item/17d14cc0-906c-4e5d-b458-952441361368",
+      "task_key": "blog-new-14062380-A102-20261003"
+    }
+  ],
+  "navigation_version": 24,
+  "family_id": "blog:sredizemnomorskaya-dieta-eto-voobshche-chto",
+  "members": [
+    "A102"
+  ],
+  "other_families_preserved": true,
+  "channel_edits": 0
+}

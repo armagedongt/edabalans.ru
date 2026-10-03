@@ -9,11 +9,11 @@
 
 ## Сводка
 
-- В блоге: **58** канонические семьи.
+- В блоге: **59** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **87** внешних проявления (по машиночитаемому реестру).
+- Уже привязано к канонам блога: **88** внешних проявления (по машиночитаемому реестру).
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **213** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **212** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -30,6 +30,7 @@
 | Короче, я застраховал маму от онкологии | [blog:zastrahoval-mamu-ot-onkologii](https://blog.похудение-это-есть.рф/articles/zastrahoval-mamu-ot-onkologii) | 1 | 0 |
 | Мама, с днём рождения!!! | [blog:mama-s-dnyom-rozhdeniya](https://blog.похудение-это-есть.рф/articles/mama-s-dnyom-rozhdeniya) |1|0|
 |12 простых изменений в питании и образе жизни| [blog:12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni](https://blog.похудение-это-есть.рф/articles/12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni) |1|0|
+| Средиземноморская диета — это вообще что?!?! | [blog:sredizemnomorskaya-dieta-eto-voobshche-chto](https://blog.похудение-это-есть.рф/articles/sredizemnomorskaya-dieta-eto-voobshche-chto) |1|0|
 | Почему питание всегда важнее тренировок!! | [blog:pochemu-pitanie-vazhnee-trenirovok](https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok) | 1 | 0 |
 | 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://blog.похудение-это-есть.рф/articles/10-debilnyh-faktov-o-vrednyh-produktah) | 1 | 0 |
 | 15 советов тем, кто худеет — по одному на килограмм лишнего веса | [blog:15-sovetov-tem-kto-hudeet](https://blog.похудение-это-есть.рф/articles/15-sovetov-tem-kto-hudeet) | 1 | 0 |
@@ -261,7 +262,6 @@
 | A249 | telegraph | [Способы сокращения ВРЕДА от сладкого.](https://telegra.ph/sladkoe-ne-pomeha-04-12) | `private_product_material` | 0 |
 | A231 | telegraph | [Способы сокращения КОЛИЧЕСТВА сладкого](https://telegra.ph/hvatit-sladkogo-04-11) | `editorial_review` | 1 |
 | A203 | telegraph | [Средиземноморская диета](https://telegra.ph/Sredizemnomorskaya-dieta-12-07) | `obsolete_product_archive` | 0 |
-| A102 | pikabu | [Средиземноморская диета — это вообще что?!?!](https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380) | `short_reserve` | 0 |
 | A251 | telegraph | [Срывы и зажоры. В чем разница, что с ними делать и причем тут чит-милы.](https://telegra.ph/sriv-sriv-sriv-04-11) | `private_product_material` | 0 |
 | A112 | telegraph | [Сценарий видео калории Урок 4. Учет тренировочной активности](https://telegra.ph/111-07-27-11) | `technical_or_service` | 0 |
 | A168 | telegraph | [Сценарий только калории Видео #1. Введение.](https://telegra.ph/Nachalo-07-20-4) | `technical_or_service` | 0 |
