@@ -2,6 +2,69 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "11448583",
+      "slug": "mama-s-dnyom-rozhdeniya",
+      "title": "Мама, с днём рождения!!!",
+      "excerpt": "я знаю, ты читаешь)) Моя мама — это живой пример того, что начинать — никогда не поздно! Поздно, если над вами деревянная крышка и земелькой присыпано, любое другое время — в самый раз, чтобы пытаться, ошибаться и пробовать что-то новое!",
+      "category": "Личное",
+      "body_file": "11448583.md",
+      "hero": {
+        "file": "11448583/01.webp",
+        "alt": "Сергей с мамой в горах",
+        "provenance": "https://cs13.pikabu.ru/post_img/big/2024/05/24/11/1716578908198150591.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "11448583/01.webp",
+        "alt": "Сергей с мамой в горах",
+        "provenance": "https://cs13.pikabu.ru/post_img/big/2024/05/24/11/1716578908198150591.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "12269678",
+        "2e269fdc52d600a64753",
+        "0d583f6ad1cea0eef750"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "11448583/01.webp",
+        "11448583/02.webp",
+        "11448583/03.webp",
+        "11448583/04.webp",
+        "11448583/05.webp",
+        "11448583/06.webp",
+        "11448583/07.webp",
+        "11448583/08.webp",
+        "11448583/09.webp",
+        "11448583/10.webp",
+        "11448583/11.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/mama_s_dnem_rozhdeniya_11448583"
+        ],
+        "external_ids": [
+          "11448583"
+        ],
+        "source_uri": "content://item/86618e32-00dc-4991-bb00-f1d73cdae2e8",
+        "source_revision": 1,
+        "source_date": "2024-05-25",
+        "sha256": "fffae0fea1859609d6d685e47bb6c232ed353384858d75372ad080ef3cde967a",
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "adaptation": "minimal_proofread_original_story_numbers_and_photos_preserved",
+        "video": {
+          "url": "https://cs14.pikabu.ru/video/2024/05/25/1716585458245585147_0acdc621_720x1280.mp4",
+          "duration_seconds": 158.243991,
+          "sha256": "98710f741f474ebed95ed3fecb3f13341d5f949ad82f34ef3972873a6d1b7172",
+          "delivery": "external_original_link",
+          "self_hosted": false
+        }
+      }
+    },
+    {
       "source_id": "12269678",
       "slug": "zastrahoval-mamu-ot-onkologii",
       "title": "Короче, я застраховал маму от онкологии",
