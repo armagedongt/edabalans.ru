@@ -1,0 +1,43 @@
+{
+  "source_id": "habits-formation-and-one-percent",
+  "checked_at": "2026-10-03",
+  "original_unique_body_images": 2,
+  "visually_checked_body_images": [
+    "01.webp",
+    "03.webp"
+  ],
+  "favicon_not_body_image": "02.webp",
+  "immutable_existing_files_preserved": true,
+  "media": [
+    {
+      "file": "habits-formation-and-one-percent/01.webp",
+      "bytes": 65288,
+      "width": 1280,
+      "height": 720,
+      "sha256": "46fb0a1831d19324f879dddd133d34506b0402eb134266e08d76fc8fc46ed634",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "46fb0a1831d19324f879dddd133d34506b0402eb134266e08d76fc8fc46ed634"
+    },
+    {
+      "file": "habits-formation-and-one-percent/02.webp",
+      "bytes": 13674,
+      "width": 768,
+      "height": 768,
+      "sha256": "2f2c83365d9b62e98fe2e0f3d11247c98ce5743006519de46dc344077ee3be68",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "2f2c83365d9b62e98fe2e0f3d11247c98ce5743006519de46dc344077ee3be68"
+    },
+    {
+      "file": "habits-formation-and-one-percent/03.webp",
+      "bytes": 37512,
+      "width": 856,
+      "height": 499,
+      "sha256": "f80eb8fc94795d4a640f24e647ab7caeba44617f6d4a35d2e3dde0077a8f0ea6",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "f80eb8fc94795d4a640f24e647ab7caeba44617f6d4a35d2e3dde0077a8f0ea6"
+    }
+  ]
+}

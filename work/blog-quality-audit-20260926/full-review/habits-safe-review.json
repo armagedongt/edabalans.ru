@@ -1,0 +1,22 @@
+{
+  "source_id": "habits-formation-and-one-percent",
+  "reviewed_at": "2026-10-03",
+  "status": "clean",
+  "reviewer": "batch03_publisher_review",
+  "writer_validation": "pass",
+  "draft_sha256": "726ec245b3c96b774ff672859f3137cc3cce8624dab08f9d84db5a89936128d0",
+  "scope": "Original emphasis, two contiguous ordered lists and removal of three artificial list prefixes only",
+  "source_uri": "knowledge://resource/tilda-intensive-fpvaefo9e1",
+  "source_version": 1,
+  "source_html_http": 200,
+  "exact_replacement_groups": 9,
+  "author_words_numbers_jokes_unchanged": true,
+  "author_h2": 4,
+  "author_strong": 8,
+  "author_ordered_list_items": [3, 3],
+  "actual_source_images_visually_checked": 2,
+  "favicon_not_inserted": true,
+  "semantic_changes_applied": false,
+  "full_scientific_pass": false,
+  "delivery": "Separate publish and final receipts; source review alone is not production proof"
+}
