@@ -17,8 +17,13 @@ Exact `content://item/d41d0e4d-2ea5-4a9c-b073-be74ab0de374` v1 полность�
 
 ## Доказательства
 
-Writer targeted_edit/full_source validation `pass`, draft SHA
+Первый Writer targeted_edit/full_source validation `pass`, draft SHA
 `8d3248c93ba8144d6a4fd7e7c09518d1f0836d84aec8fbbc8ac908de5edd18b6`.
+На мобильной проверке выявлено прежнее разделение списка напитков на четыре ul:
+три пустые строки удалены, все четыре пункта теперь в одном ul. Первый pack/draft/review/validation и API-снимок сохранены приватно в phase1, не перезаписаны.
+Второй узкий Writer targeted_edit/full_source против свежей API-базы 3:
+validation `pass`, SHA `3a50d69561fba762be4bb4c66df048dace3972e81c86a9e91555632e25ed6d77`.
+Это только форматная правка, без изменения авторских символов, ссылок и медиа.
 Шесть серверных изображений HTTP 200 и SHA совпадают с локальными, максимум 111448 байт. Повторно пережимать читаемые таблицы без необходимости не стали.
 
 Публикация и итоговая проверка ещё не закрыты. Полный научный pass `false`.
