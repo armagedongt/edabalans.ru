@@ -19,18 +19,18 @@
     "10123213"
   ],
   "new_full_safe_review_pass_count": 1,
-  "total_old_and_new_full_safe_review_delivered_count": 30,
+  "total_old_and_new_full_safe_review_delivered_count": 31,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 34,
   "next_independent_batch": null,
-  "next_source_id": "13762311",
+  "next_source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "13762311",
-  "current_sequential_stage": "lent_validation_and_independent_review_pass_release_ci_pending",
+  "current_sequential_source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
+  "current_sequential_stage": "lent_completed_minus12_exact_source_and_fresh_runtime_pending",
   "three_errors_confirmed_delivery": {
     "source_id": "13785403",
     "editor_version": 3,
@@ -221,7 +221,8 @@
     "intuitivnoe-pitanie-04-27-2",
     "11665295",
     "12109482",
-    "13178972"
+    "13178972",
+    "13762311"
   ],
   "training_confirmed_delivery": {
     "editor_version": 3,
@@ -340,7 +341,7 @@
   "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
   "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
   "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей",
-  "format_targeted_validation_pass_count": 29,
+  "format_targeted_validation_pass_count": 30,
   "publication_hold_source_ids": [
     "693339"
   ],
@@ -377,7 +378,8 @@
     "work/blog-quality-audit-20260926/full-review/intuitive-20261003.md",
     "full-review/fish-20261003.md",
     "full-review/winter-20261003.md",
-    "full-review/bodyfat-20261003.md"
+    "full-review/bodyfat-20261003.md",
+    "full-review/lent-20261003.md"
   ],
   "habits_confirmed_delivery": {
     "source_id": "habits-formation-and-one-percent",
@@ -474,7 +476,12 @@
     "draft_sha256": "57f3900990970a115ca911bda8d50207d42c402094908d7c54a2291af2b23966",
     "main_revision": "d14cc34964c55ce1e2299067182df278a5c06556",
     "ci_run": 37095192995,
-    "published_verified": false,
-    "full_scientific_pass": false
+    "published_verified": true,
+    "full_scientific_pass": false,
+    "api_version": 3,
+    "public_version": 2,
+    "media_http_hash_pass": 2,
+    "library_usage": "recorded",
+    "desktop_mobile_dom_geometry_pass": true
   }
 }
