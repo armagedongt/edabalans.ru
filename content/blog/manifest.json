@@ -91,13 +91,13 @@
           "file": "11339712/01.webp",
           "alt": "Иллюстрация к статье «Какая самая вредная диета?»",
           "provenance": "https://cs14.pikabu.ru/post_img/big/2024/03/28/6/1711617357162397936.jpg",
-          "show": true
+          "show": false
         },
         "card": {
           "file": "11339712/01.webp",
           "alt": "Иллюстрация к статье «Какая самая вредная диета?»",
           "provenance": "https://cs14.pikabu.ru/post_img/big/2024/03/28/6/1711617357162397936.jpg",
-          "fit": "cover"
+          "fit": "contain"
         },
         "related_source_ids": [
           "10999474",
