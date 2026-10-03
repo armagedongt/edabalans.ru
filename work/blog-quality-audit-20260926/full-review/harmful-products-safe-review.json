@@ -13,7 +13,7 @@
     "phase2 only deletes 3 empty lines; final UL lengths 4 and 2, other bytes unchanged"
   ],
   "full_scientific_pass": false,
-  "production_delivery_verified": false,
+  "production_delivery_verified": true,
   "phase1_draft_sha256": "8d3248c93ba8144d6a4fd7e7c09518d1f0836d84aec8fbbc8ac908de5edd18b6",
   "phase2_status": "clean"
 }
