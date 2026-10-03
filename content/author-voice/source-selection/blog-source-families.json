@@ -21,7 +21,9 @@
     {
       "family_id": "milk-processing-and-nutrients",
       "title": "Сколько реально пользы в молоке",
-      "owner_decision": "publish_next",
+      "owner_decision": "published_blog_canon",
+      "published_verified_at": "2026-10-03",
+      "delivery_receipt": "work/blog-quality-audit-20260926/new/10877887/delivery-20261003.md",
       "blog_canon": {"source_id": "10877887", "slug": "skolko-polzy-ostaetsya-v-moloke"},
       "preferred_basis": "A236",
       "preparation_mode": "full_source_light_cleanup",

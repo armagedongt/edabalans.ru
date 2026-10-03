@@ -155,12 +155,12 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 45,
-    "canonical_linked_external_records": 65,
-    "deferred_families": 235,
+    "canonical_blog_families": 46,
+    "canonical_linked_external_records": 67,
+    "deferred_families": 233,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 86,
+      "editorial_review": 84,
       "incomplete_draft": 13,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
@@ -1481,6 +1481,53 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:skolko-polzy-ostaetsya-v-moloke",
+      "title": "Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "10877887",
+        "slug": "skolko-polzy-ostaetsya-v-moloke",
+        "url": "https://blog.похудение-это-есть.рф/articles/skolko-polzy-ostaetsya-v-moloke",
+        "body_file": "content/blog/articles/10877887.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A034",
+          "source": "pikabu",
+          "external_id": "10877887",
+          "title": "Сколько пользы РЕАЛЬНО остается в молоке, которое мы пьем?!?",
+          "url": "https://pikabu.ru/story/skolko_polzyi_realno_ostaetsya_v_moloke_kotoroe_myi_pem_10877887",
+          "published_at": "2023-11-30T18:03:06+03:00",
+          "characters": 7042,
+          "role": "previous_version",
+          "provenance": "content://item/e2272cb4-6e39-46ed-939d-515a3ff0bf46",
+          "text_sha256": "5649cb40b1bc2c7d656f9b0b5e43305b4efe69bfc808ff0887509df769b1166f"
+        },
+        {
+          "catalog_id": "A236",
+          "source": "telegraph",
+          "external_id": "molokkko-03-21",
+          "title": "Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?",
+          "url": "https://telegra.ph/molokkko-03-21",
+          "published_at": "2024-03-21T18:18:54+0000",
+          "characters": 11003,
+          "role": "preferred_basis",
+          "provenance": "content://item/3cafd762-99d8-4cf7-91e4-f58ad250677b",
+          "text_sha256": "c9d9bc32989a4e4d2a3bf351f965d5cefaef88e0ee7f11deff604ce0a1e1a10d"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "full_source_author_version_comparison",
+      "owner_source_decisions": {
+        "A034": "publish_next",
+        "A236": "publish_next"
+      },
+      "merge_status": "published_verified",
+      "preferred_basis": "A236",
+      "source_comparison": "work/blog-quality-audit-20260926/new/10877887/preparation-20261003.md"
     },
     {
       "family_id": "blog:skrytye-zapory-i-banalnyy-syuzhet",
@@ -6307,62 +6354,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A140": "old_educational"
-      }
-    },
-    {
-      "family_id": "deferred:A034",
-      "title": "Сколько пользы РЕАЛЬНО остается в молоке, которое мы пьем?!?",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A034",
-          "source": "pikabu",
-          "external_id": "10877887",
-          "title": "Сколько пользы РЕАЛЬНО остается в молоке, которое мы пьем?!?",
-          "url": "https://pikabu.ru/story/skolko_polzyi_realno_ostaetsya_v_moloke_kotoroe_myi_pem_10877887",
-          "published_at": "2023-11-30T18:03:06+03:00",
-          "characters": 7042,
-          "role": "unmerged_source",
-          "provenance": "content://item/e2272cb4-6e39-46ed-939d-515a3ff0bf46",
-          "text_sha256": "5649cb40b1bc2c7d656f9b0b5e43305b4efe69bfc808ff0887509df769b1166f"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A236"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A034": "publish_next"
-      }
-    },
-    {
-      "family_id": "deferred:A236",
-      "title": "Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A236",
-          "source": "telegraph",
-          "external_id": "molokkko-03-21",
-          "title": "Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?",
-          "url": "https://telegra.ph/molokkko-03-21",
-          "published_at": "2024-03-21T18:18:54+0000",
-          "characters": 11028,
-          "role": "unmerged_source",
-          "provenance": "content://item/3cafd762-99d8-4cf7-91e4-f58ad250677b",
-          "text_sha256": "1c53cb5caa866a6d510ee1546362f66188677ed34c037af5ad99ddb7e1016c56"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A034"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A236": "publish_next"
       }
     },
     {

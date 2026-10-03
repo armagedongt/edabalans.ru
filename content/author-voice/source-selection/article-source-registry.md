@@ -9,11 +9,11 @@
 
 ## Сводка
 
-- В блоге: **45** канонические семьи.
+- В блоге: **46** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **55** внешних проявлений.
+- Уже привязано к канонам блога: **57** внешних проявлений.
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **239**.
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **237**.
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -59,6 +59,7 @@
 | Сделать похудение проще | [blog:sdelat-pohudenie-proshche](https://blog.похудение-это-есть.рф/articles/sdelat-pohudenie-proshche) | 1 | 0 |
 | Сколько времени нужно на похудение? | [blog:skolko-vremeni-nuzhno-na-pohudenie](https://blog.похудение-это-есть.рф/articles/skolko-vremeni-nuzhno-na-pohudenie) | 1 | 0 |
 | Скрытые запоры и банальный сюжет | [blog:skrytye-zapory-i-banalnyy-syuzhet](https://blog.похудение-это-есть.рф/articles/skrytye-zapory-i-banalnyy-syuzhet) | 1 | 0 |
+| Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!? | [blog:skolko-polzy-ostaetsya-v-moloke](https://blog.похудение-это-есть.рф/articles/skolko-polzy-ostaetsya-v-moloke) | 2 | 0 |
 | Температура воды для приёма внутрь | [blog:temperatura-vody-dlya-priema-vnutr](https://blog.похудение-это-есть.рф/articles/temperatura-vody-dlya-priema-vnutr) | 1 | 1 |
 | Три ошибки в начале похудения | [blog:tri-oshibki-v-nachale-pohudeniya](https://blog.похудение-это-есть.рф/articles/tri-oshibki-v-nachale-pohudeniya) | 1 | 0 |
 | Уколол и похудел: Оземпик, Семавик и нюансы | [blog:ukolol-i-pohudel-ozempik-semavik-nyuansy](https://blog.похудение-это-есть.рф/articles/ukolol-i-pohudel-ozempik-semavik-nyuansy) | 1 | 1 |
@@ -72,7 +73,7 @@
 | Тип | Количество | Что означает |
 |---|---:|---|
 | `deferred_not_now` | 18 | Владелец прямо решил пока не брать. |
-| `editorial_review` | 90 | Полная статья-кандидат: проверить семейство, пользу, актуальность и выбрать основу. |
+| `editorial_review` | 88 | Полная статья-кандидат: проверить семейство, пользу, актуальность и выбрать основу. |
 | `incomplete_draft` | 13 | Черновик/заметка: не считать готовой статьёй. |
 | `obsolete_product_archive` | 4 | Неактуальный архив старого МК: сохранить для истории, не предлагать к публикации и не использовать как актуальную авторскую основу. |
 | `owner_review_later` | 3 | Нужен отдельный просмотр владельцем. |
@@ -262,8 +263,6 @@
 | A137 | telegraph | [Система оценки качества диеты—DQS](https://telegra.ph/DQS-04-08) | `editorial_review` | 0 |
 | A139 | telegraph | [Система оценки качества питания](https://telegra.ph/DQS-new-01-21) | `editorial_review` | 1 |
 | A140 | telegraph | [Система оценки качества питания. Размер порций и разбор категорий.](https://telegra.ph/DQS-size-08-27) | `editorial_review` | 1 |
-| A034 | pikabu | [Сколько пользы РЕАЛЬНО остается в молоке, которое мы пьем?!?](https://pikabu.ru/story/skolko_polzyi_realno_ostaetsya_v_moloke_kotoroe_myi_pem_10877887) | `editorial_review` | 1 |
-| A236 | telegraph | [Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?](https://telegra.ph/molokkko-03-21) | `editorial_review` | 1 |
 | A029 | pikabu | [Список плохих идей для похудения1](https://pikabu.ru/story/spisok_plokhikh_idey_dlya_pokhudeniya_10778290) | `short_reserve` | 0 |
 | A202 | telegraph | [Способы восстановление поле тренировки Часть 2.](https://telegra.ph/Sposoby-vosstanovlenie-pole-trenirovki-CHast-2-08-11) | `editorial_review` | 0 |
 | A249 | telegraph | [Способы сокращения ВРЕДА от сладкого.](https://telegra.ph/sladkoe-ne-pomeha-04-12) | `private_product_material` | 0 |

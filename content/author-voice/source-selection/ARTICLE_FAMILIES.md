@@ -44,7 +44,6 @@
 - A019: [Последний жир в области живота. План действий](https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723).
 - A021: [Резинки для тренировок!](https://pikabu.ru/story/rezinki_dlya_trenirovok_10573917).
 - A031: [Жиросжигающая зона не работает!](https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468).
-- A034: [Сколько пользы РЕАЛЬНО остается в молоке, которое мы пьем?!?](https://pikabu.ru/story/skolko_polzyi_realno_ostaetsya_v_moloke_kotoroe_myi_pem_10877887).
 - A037: [Вот вам и ОЛИВЬЕ!1](https://pikabu.ru/story/vot_vam_i_olive_10978866).
 - A043: [Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ?](https://pikabu.ru/story/belyiy_ris_vorovstvo_kuryi_i_vitamin_b1_a_prichem_tut_zdorovoe_pitanie__11188875).
 - A049: [В своем уме, что ли? Фрукты... ограничивать... просто так, без мед. показаний?!](https://pikabu.ru/story/v_svoem_ume_chto_li_fruktyi_ogranichivat_prosto_tak_bez_med_pokazaniy_11294636).
@@ -66,7 +65,6 @@
 - A195: [Резинки для тренировок!⁠⁠](https://telegra.ph/Rezinki-09-01).
 - A210: [Видео. Последний жир в области живота. План действий⁠⁠](https://telegra.ph/Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13).
 - A217: [«У взрослой женщины не должно быть ###»](https://telegra.ph/ZHenshchina-dolzhna-06-21).
-- A236: [Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?](https://telegra.ph/molokkko-03-21).
 - A281: [Жиросжигающая зона не работает!⁠⁠ И вот почему ](https://vc.ru/flood/912323-zhiroszhigayushaya-zona-ne-rabotaet-i-vot-pochemu).
 - tilda-post:amkbo7kgg1: [💪 Зачем нужны тренировки (кроме похудения)](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni).
 - tilda-post:e4441ism91: [⛔️ Почему эффекта плато не существует](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet).
@@ -1769,14 +1767,14 @@
 
 ### F170. Сколько пользы РЕАЛЬНО остается в молоке, которое мы пьем?!?
 
-Канона в блоге пока нет; выбор наиболее полной актуальной основы не завершён.
+Канон блога: [Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?](https://blog.похудение-это-есть.рф/articles/skolko-polzy-ostaetsya-v-moloke). Публикация и собственные медиа проверены 03.10.2026. Основой целиком выбрана более поздняя и полная версия A236; не смесь двух текстов. Серверная навигация Библиотекаря: версия 11.
 
 | Источник | Название / ссылка | Решение |
 |---|---|---|
-| A034 · pikabu | [Сколько пользы РЕАЛЬНО остается в молоке, которое мы пьем?!?](https://pikabu.ru/story/skolko_polzyi_realno_ostaetsya_v_moloke_kotoroe_myi_pem_10877887) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
-| A236 · telegraph | [Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?](https://telegra.ph/molokkko-03-21) | В блог — одобрено направление, подготовка и публикация ждут отдельной команды |
+| A034 · pikabu | [Сколько пользы РЕАЛЬНО остается в молоке, которое мы пьем?!?](https://pikabu.ru/story/skolko_polzyi_realno_ostaetsya_v_moloke_kotoroe_myi_pem_10877887) | Предыдущая авторская версия, не канон |
+| A236 · telegraph | [Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?](https://telegra.ph/molokkko-03-21) | Проверенная полная основа опубликованного канона, внешний источник не канон |
 
-- Машинные кандидаты на сравнение (не доказанные дубли): A034 ↔ A236.
+- Связь A034 ↔ A236 подтверждена сравнением полных исходников. Заголовки, разделы, ссылки и дополнительные фрагменты проверены; научные риски отдельно в `work/blog-quality-audit-20260926/owner-review/milk-20261003.md`, без изменения фактуры.
 
 ### F171. Скрытые запоры и банальный сюжет
 
