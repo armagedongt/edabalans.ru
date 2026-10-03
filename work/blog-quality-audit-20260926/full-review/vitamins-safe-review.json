@@ -1,0 +1,17 @@
+{
+  "status": "clean",
+  "findings": [],
+  "reviewer": "/root/batch03_publisher_review",
+  "draft_sha256": "f3e5df5a0ee9cae88c78bcf6d9beed1e3ce892204f1e45494b791c492ee5c298",
+  "checks": [
+    "exact source DOM and fresh API baseline",
+    "all author words and numbers preserved",
+    "8 H2, 3 ol 6/3/3, 2 blockquote, 6 strong, 1 em",
+    "7 source URLs restored without redirect",
+    "6 source still images in original places",
+    "Writer validation pass"
+  ],
+  "full_scientific_pass": false,
+  "source_strikethrough_restored": false,
+  "production_delivery_verified": false
+}
