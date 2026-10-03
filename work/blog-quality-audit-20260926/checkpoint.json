@@ -19,18 +19,18 @@
     "10123213"
   ],
   "new_full_safe_review_pass_count": 1,
-  "total_old_and_new_full_safe_review_delivered_count": 31,
+  "total_old_and_new_full_safe_review_delivered_count": 32,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 34,
   "next_independent_batch": null,
-  "next_source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
+  "next_source_id": "11210930",
   "active_stage": "remaining_structure_media_source_checks_and_new_queue",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
-  "current_sequential_stage": "minus12_validation_review_and_api_delivery_verified_git_release_ci_pending",
+  "current_sequential_source_id": "11210930",
+  "current_sequential_stage": "minus12_completed_nutritionist_exact_source_and_fresh_runtime_pending",
   "three_errors_confirmed_delivery": {
     "source_id": "13785403",
     "editor_version": 3,
@@ -222,7 +222,8 @@
     "11665295",
     "12109482",
     "13178972",
-    "13762311"
+    "13762311",
+    "Minus-12-kilogramm-za-2-mesyaca-07-13"
   ],
   "training_confirmed_delivery": {
     "editor_version": 3,
@@ -341,7 +342,7 @@
   "network_resume": "batches.py --batch N повторяет только ошибочные/изменившиеся локальные снимки; при реальном изменении статьи получить свежую runtime-версию отдельно",
   "evidence": "Хеши и время снимков в batches/<source_id>.snapshot.json; редакционные статусы не выводятся из HTTP автоматически",
   "review": "Независимая проверка скриптов корректуры и API-выпуска 26.09.2026: clean. Writer proofread pass у первых десяти и нового прототипа 10123213; не является научной, визуальной и SEO-приёмкой всех статей",
-  "format_targeted_validation_pass_count": 30,
+  "format_targeted_validation_pass_count": 31,
   "publication_hold_source_ids": [
     "693339"
   ],
@@ -379,7 +380,8 @@
     "full-review/fish-20261003.md",
     "full-review/winter-20261003.md",
     "full-review/bodyfat-20261003.md",
-    "full-review/lent-20261003.md"
+    "full-review/lent-20261003.md",
+    "full-review/minus12-20261003.md"
   ],
   "habits_confirmed_delivery": {
     "source_id": "habits-formation-and-one-percent",
@@ -496,7 +498,11 @@
     "api_version": 3,
     "public_version": 2,
     "desktop_mobile_dom_geometry_pass": true,
-    "git_production_revision_verified": false,
-    "full_scientific_pass": false
+    "git_production_revision_verified": true,
+    "full_scientific_pass": false,
+    "ci_run": 37096100921,
+    "ci_attempt": 2,
+    "media_http_hash_pass": 1,
+    "library_usage": "recorded"
   }
 }
