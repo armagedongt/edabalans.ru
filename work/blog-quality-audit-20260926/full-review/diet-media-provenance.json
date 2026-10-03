@@ -1,0 +1,96 @@
+{
+  "source_id": "11339712",
+  "checked_at": "2026-10-03",
+  "original_unique_images": 7,
+  "original_source_html_http": 200,
+  "original_order_and_semantic_placement_restored": true,
+  "immutable_existing_files_preserved": true,
+  "media": [
+    {
+      "file": "11339712/01.webp",
+      "bytes": 47460,
+      "width": 1051,
+      "height": 790,
+      "sha256": "8536fef27bd3e923ff3640391e28d324ff385f9988565ac5e0dbc81ceda60ba6",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "8536fef27bd3e923ff3640391e28d324ff385f9988565ac5e0dbc81ceda60ba6",
+      "original_source_url": "https://cs14.pikabu.ru/post_img/big/2024/03/28/6/1711617357162397936.jpg"
+    },
+    {
+      "file": "11339712/02.webp",
+      "bytes": 83732,
+      "width": 1153,
+      "height": 750,
+      "sha256": "6962d4b76506393729afb4c9f5ed60551ef9e9e6e8dcfff8a20a127e63ef9c1f",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "6962d4b76506393729afb4c9f5ed60551ef9e9e6e8dcfff8a20a127e63ef9c1f",
+      "original_source_url": "https://cs14.pikabu.ru/post_img/big/2024/03/28/6/1711618116162380938.jpg"
+    },
+    {
+      "file": "11339712/03.webp",
+      "bytes": 199296,
+      "width": 1287,
+      "height": 1024,
+      "sha256": "1317675c5ac37b2c98e3e828dcfc5313f658daf0cc4157ca7faeeedf2f0d9bbb",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "1317675c5ac37b2c98e3e828dcfc5313f658daf0cc4157ca7faeeedf2f0d9bbb",
+      "original_source_url": "https://cs14.pikabu.ru/post_img/big/2024/03/28/6/1711619088118441458.jpg"
+    },
+    {
+      "file": "11339712/04.webp",
+      "bytes": 26790,
+      "width": 720,
+      "height": 405,
+      "sha256": "2991f0f502e6005a792ec066d9d73ced599b13e9d1442a084645f32e86c3889a",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "2991f0f502e6005a792ec066d9d73ced599b13e9d1442a084645f32e86c3889a",
+      "original_source_url": "https://cs13.pikabu.ru/post_img/big/2024/03/28/7/1711625507185237847.png"
+    },
+    {
+      "file": "11339712/05.webp",
+      "bytes": 62806,
+      "width": 918,
+      "height": 909,
+      "sha256": "d678f0a1c37f538475f3e8de6037738c0252a5c1885d0532b9523739d41feca6",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "d678f0a1c37f538475f3e8de6037738c0252a5c1885d0532b9523739d41feca6",
+      "original_source_url": "https://cs14.pikabu.ru/post_img/big/2024/03/28/7/1711626516174917720.jpg"
+    },
+    {
+      "file": "11339712/06.webp",
+      "bytes": 14178,
+      "width": 506,
+      "height": 633,
+      "sha256": "4eb3abb166d093020086d92f847bdb3d7f836f8245ef21ab1778e9720ba15330",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "4eb3abb166d093020086d92f847bdb3d7f836f8245ef21ab1778e9720ba15330",
+      "original_source_url": "https://cs14.pikabu.ru/post_img/2024/03/28/7/1711626959186348806.jpg"
+    },
+    {
+      "file": "11339712/07.webp",
+      "bytes": 25002,
+      "width": 908,
+      "height": 273,
+      "sha256": "0c24be62b83328726930f1bdc17e8fdcd15dbad7e7173337323cb09e1f8a13d4",
+      "http": 200,
+      "content_type": "image/webp",
+      "server_sha256": "0c24be62b83328726930f1bdc17e8fdcd15dbad7e7173337323cb09e1f8a13d4",
+      "original_source_url": "https://cs13.pikabu.ru/post_img/big/2024/03/28/8/1711627421166553185.jpg"
+    }
+  ],
+  "external_source_article": "https://www.thevoicemag.ru/health/diets/razdelnoe-pitanie-dlya-pohudeniya-menyu-tablica-produktov-hudeem-po-nauke/",
+  "expired_original_pdf_urls": [
+    "https://images.thevoicemag.ru/upload/files/bb7/bb790ef5dc2497fef94ef27eb40aa758.pdf",
+    "https://images.thevoicemag.ru/upload/files/708/708ae8ea1ab4a81d8ee74c6803f92a60.pdf"
+  ],
+  "expired_pdf_http": [
+    404,
+    404
+  ]
+}
