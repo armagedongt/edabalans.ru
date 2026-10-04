@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-05",
+  "module_id": "platform.blog",
+  "scope": "local_only",
+  "status": "pass",
+  "assignments": [
+    {"source_id": "11534645", "target": "11906015", "before_heading": "много-сахара-это-сколько"},
+    {"source_id": "11833079", "target": "Sahar-09-18", "before_heading": "алкоголь"},
+    {"source_id": "14183275", "target": "11207593", "before_heading": "как-и-сколько-есть-картошки-в-неделю"},
+    {"source_id": "Sahar-09-18", "target": "11269472", "before_heading": "а-какие-ещё-вещества-в-этом-списке"}
+  ],
+  "no_slot": ["11875492", "11207593"],
+  "checks": {
+    "full_sources_read": "PASS",
+    "public_pair_urls_200": 7,
+    "public_pair_text_matches_local": 7,
+    "additional_zero_public_match": "11875492",
+    "single_slot_exact_anchor": "PASS",
+    "restores_original_html": "PASS",
+    "catalog_validation": "PASS",
+    "review": {"waves": 1, "status": "clean", "reviewer": "nav_code_review_v2"}
+  },
+  "main_changed": false,
+  "production_changed": false
+}
