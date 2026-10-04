@@ -25,6 +25,7 @@ from app.blog_draft_routes import (
     require_blog_mutation,
 )
 from app.blog_content import load_blog_catalog
+from app.blog_routes import BLOG_PAGE_SIZE
 from app.blog_draft_service import (
     DOCUMENT_TYPE,
     PUBLISHED_DOCUMENT_TYPE,
@@ -163,6 +164,15 @@ def _put(client: TestClient, package: dict | None = None):
         f"/admin/api/blog/articles/{SLUG}",
         json=package or _real_package(),
     )
+
+
+def _catalog_page(client: TestClient, slug: str):
+    published = load_blog_catalog().published
+    index = next(index for index, article in enumerate(published) if article.slug == slug)
+    response = client.get("/blog", params={"page": index // BLOG_PAGE_SIZE + 1})
+    assert response.status_code == 200
+    assert f'href="/articles/{slug}"' in response.text
+    return response
 
 
 def test_real_markdown_package_round_trip_and_owner_preview(authoring) -> None:
@@ -314,14 +324,14 @@ def test_cover_selection_is_versioned_and_published_to_catalog(authoring) -> Non
     assert article["card"] == selected
     assert article["card_fit"] == "contain"
     assert article["editorial_status"] == "moderation"
-    assert f'src="/blog/media/{selected}"' not in client.get("/blog").text
+    assert f'src="/blog/media/{selected}"' not in _catalog_page(client, SLUG).text
 
     published = client.post(
         f"/admin/api/blog/articles/{SLUG}/publish",
         json={"expected_version": article["version"], "confirm": True},
     )
     assert published.status_code == 200, published.text
-    home = client.get("/blog")
+    home = _catalog_page(client, SLUG)
     assert f'class="card-image card-image--contain" src="/blog/media/{selected}"' in home.text
 
 
@@ -361,7 +371,7 @@ def test_legacy_published_snapshot_inherits_manifest_card_when_old_media_was_rem
     assert legacy_editor["card_fit"] == "contain"
     assert (
         f'class="card-image card-image--contain" src="/blog/media/{manifest_article.card.file}"'
-        in client.get("/blog").text
+        in _catalog_page(client, slug).text
     )
 
 
@@ -426,7 +436,7 @@ def test_existing_article_seed_publish_and_later_draft_do_not_leak(authoring) ->
     legacy_editor = client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]
     assert legacy_editor["editorial_status"] == "published"
     assert legacy_editor["card"] == article["card"]
-    assert f'src="/blog/media/{article["card"]}"' in client.get("/blog").text
+    assert f'src="/blog/media/{article["card"]}"' in _catalog_page(client, SLUG).text
 
     # The stored snapshot owns the body and selected card only. Other
     # manifest-controlled CTA/media/SEO must stay fresh with stale metadata.
@@ -835,7 +845,7 @@ def test_owner_catalog_is_private_and_public_catalog_stays_git_backed(authoring)
     assert SLUG in sitemap.text
 
     app.dependency_overrides[optional_blog_admin] = lambda: None
-    public_page = client.get("/blog")
+    public_page = _catalog_page(client, SLUG)
     assert "Редакция блога" not in public_page.text
     assert internal["title"] not in public_page.text
     assert load_blog_catalog().by_slug(SLUG).title in public_page.text

@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-05",
+  "integration_commit": "3c8d681",
+  "base_main": "81a7d2a",
+  "release_status": "verified_ready_for_ci",
+  "production_changed": false,
+  "checks": {
+    "all_blog_initial": "195 passed, 4 failed; failures assumed the target article was on page 1 before SSR pagination",
+    "pagination_test_correction": "Select the actual manifest page; retain cover, draft isolation and anonymous catalogue assertions",
+    "corrected_authoring_rerun": "40 passed; combined with 159 unchanged passing checks, all 199 blog/personal-route scenarios are covered",
+    "javascript": "16 subscription assertions passed",
+    "caddy_adapt": "exit 0; formatting warning only",
+    "infrastructure_review": "clean; backend+Caddy only, no migrations/startup-data/Telegram/Compose",
+    "test_correction_review": "clean"
+  },
+  "boundaries": {
+    "author_markdown_changed": false,
+    "proposed_seo_values_applied": false,
+    "new_login_or_cabinet": false,
+    "metrics_and_search_consoles": "deferred",
+    "max_pin": "deferred"
+  },
+  "remaining_editorial": [
+    "Subscription inline anchors beyond the approved Japan example",
+    "Full-source confirmation before assigning Telegram-origin metadata; announcements are not full posts"
+  ],
+  "library_read_only": {
+    "resource": "knowledge://resource/article-family-routing",
+    "version": 32,
+    "canonical_families": 62,
+    "deferred_families": 204,
+    "navigation_is_not_full_source_evidence": true
+  }
+}
