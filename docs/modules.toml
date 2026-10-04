@@ -245,6 +245,7 @@ owns_files = [
   "backend/app/public_cta_catalog.py", "backend/app/static/blog/**",
   "backend/scripts/publish_blog_draft.py",
     "backend/tests/test_blog.py", "backend/tests/test_blog_content.py", "backend/tests/test_blog_description.py",
+  "backend/tests/test_blog_seo_title.py",
   "backend/tests/test_blog_draft_authoring.py", "backend/tests/fixtures/blog-draft-real/**",
   "backend/tests/blog-pagination.test.cjs", "backend/tests/browser/blog-draft-authoring.e2e.mjs",
   "work/blog-audit-20260917/**",

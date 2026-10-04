@@ -13,6 +13,7 @@ from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Res
 from app.blog_content import (
     BLOG_CATEGORIES,
     BLOG_PUBLIC_ORIGIN,
+    blog_seo_title,
     card_html,
     load_blog_catalog,
     related_cards_html,
@@ -129,6 +130,10 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
     if article is None:
         raise HTTPException(status_code=404, detail="article not found")
     published = public_payload(db, slug)
+    markdown = (
+        published["markdown"] if published is not None
+        else (catalog.content_dir / "articles" / article.body_file).read_text(encoding="utf-8")
+    )
     body, toc = (
         render_article(slug, published, public=True)
         if published is not None
@@ -157,6 +162,7 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
     ).replace("</", r"<\/")
     replacements = {
         "{{TITLE}}": escape(article.title),
+        "{{SEO_TITLE}}": escape(blog_seo_title(markdown, article.title)),
         "{{DESCRIPTION}}": escape(article.excerpt, quote=True),
         "{{CATEGORY}}": escape(article.category),
         "{{CANONICAL}}": escape(canonical, quote=True),

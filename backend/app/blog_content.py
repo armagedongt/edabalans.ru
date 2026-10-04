@@ -93,25 +93,42 @@ def _required_text(raw: dict, key: str) -> str:
     return value.strip()
 
 
-def split_blog_metadata(markdown: str) -> tuple[str | None, str]:
-    """A small editable description header, not arbitrary YAML execution."""
+def parse_blog_metadata(markdown: str) -> tuple[dict[str, str], str]:
+    """Two plain editable SEO fields, not arbitrary YAML execution."""
     if not markdown.startswith("---\n") and not markdown.startswith("---\r\n"):
-        return None, markdown
+        return {}, markdown
     match = re.match(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|$)", markdown, re.DOTALL)
     if match is None:
-        raise HTTPException(422, "Не закрыт блок description в начале Markdown")
+        raise HTTPException(422, "Не закрыт блок metadata в начале Markdown")
     fields = [line for line in match[1].splitlines() if line.strip()]
-    if len(fields) != 1 or not fields[0].startswith("description:"):
-        raise HTTPException(422, "В начале Markdown поддерживается только description")
-    value = fields[0].split(":", 1)[1].strip()
-    if value.startswith('"'):
-        try:
-            value = json.loads(value)
-        except json.JSONDecodeError as exc:
-            raise HTTPException(422, "description: проверьте кавычки JSON") from exc
-    if not isinstance(value, str) or not value.strip() or len(value) > 500 or "\n" in value or "\r" in value:
-        raise HTTPException(422, "description должен быть одной непустой строкой до 500 символов")
-    return value.strip(), markdown[match.end():]
+    metadata: dict[str, str] = {}
+    limits = {"description": 500, "seo_title": 200}
+    if not fields:
+        raise HTTPException(422, "Блок metadata не может быть пустым")
+    for line in fields:
+        key, separator, value = line.partition(":")
+        if not separator or key not in limits or key in metadata:
+            raise HTTPException(422, "Поддерживаются только уникальные description и seo_title")
+        value = value.strip()
+        if value.startswith('"'):
+            try:
+                value = json.loads(value)
+            except json.JSONDecodeError as exc:
+                raise HTTPException(422, f"{key}: проверьте кавычки JSON") from exc
+        if not isinstance(value, str) or not value.strip() or len(value) > limits[key] or any(ord(char) < 32 for char in value):
+            raise HTTPException(422, f"{key} должен быть одной непустой строкой до {limits[key]} символов")
+        metadata[key] = value.strip()
+    return metadata, markdown[match.end():]
+
+
+def split_blog_metadata(markdown: str) -> tuple[str | None, str]:
+    metadata, body = parse_blog_metadata(markdown)
+    return metadata.get("description"), body
+
+
+def blog_seo_title(markdown: str, title: str) -> str:
+    metadata, _ = parse_blog_metadata(markdown)
+    return metadata.get("seo_title", title)
 
 
 @lru_cache(maxsize=128)
