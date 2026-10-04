@@ -25,6 +25,7 @@ from app.blog_content import (
 from app.blog_draft_routes import optional_blog_admin, owner_cards_html, PRIVATE_HEADERS
 from app.blog_draft_service import public_payload, published_card_overrides, published_description_overrides, render_article
 from app.database import get_db
+from app.blog_responsive_media import apply_responsive_images, derivative_files
 from sqlalchemy.orm import Session
 
 
@@ -188,7 +189,7 @@ def blog_home(
         )
         .replace("<!-- BLOG_OWNER_PANEL -->", owner_cards_html(db) if identity else "")
     )
-    response = _html_response(rendered)
+    response = _html_response(apply_responsive_images(rendered, catalog.content_dir, catalog.allowed_media))
     if identity:
         response.headers.update(PRIVATE_HEADERS)
     return response
@@ -292,7 +293,7 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         lambda match: replacements.get(match.group(0), match.group(0)),
         _template("article.html"),
     )
-    return _html_response(rendered)
+    return _html_response(apply_responsive_images(rendered, catalog.content_dir, catalog.allowed_media))
 
 
 @router.get("/blog/sitemap.xml", include_in_schema=False)
@@ -341,7 +342,7 @@ def blog_asset(asset_name: str) -> FileResponse:
 @router.get("/blog/media/{media_name:path}", include_in_schema=False)
 def blog_media(media_name: str) -> FileResponse:
     catalog = load_blog_catalog()
-    if media_name not in catalog.allowed_media:
+    if media_name not in catalog.allowed_media and media_name not in derivative_files(catalog.content_dir, catalog.allowed_media):
         raise HTTPException(status_code=404, detail="media not found")
     media_path = catalog.content_dir / "media" / media_name
     media_type = "image/webp" if media_path.suffix.lower() == ".webp" else mimetypes.guess_type(media_name)[0]

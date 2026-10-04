@@ -245,6 +245,7 @@ depends_on = [
 reads_from = ["platform", "products.intensive", "products.masterclass", "messaging.telegram.attribution", "marketing.analytics", "operations.proxy"]
 owns_files = [
   "backend/app/blog_routes.py", "backend/app/blog_content.py",
+  "backend/app/blog_responsive_media.py", "tools/build_blog_responsive_media.py",
   "backend/app/blog_draft_routes.py", "backend/app/blog_draft_service.py",
   "backend/app/public_cta_catalog.py", "backend/app/static/blog/**",
   "backend/scripts/publish_blog_draft.py",
@@ -252,6 +253,7 @@ owns_files = [
   "backend/tests/test_blog_seo_title.py",
   "backend/tests/test_blog_server_pagination.py",
   "backend/tests/test_blog_author_dates.py",
+  "backend/tests/test_blog_responsive_media.py",
   "backend/tests/test_blog_draft_authoring.py", "backend/tests/fixtures/blog-draft-real/**",
   "backend/tests/blog-pagination.test.cjs", "backend/tests/browser/blog-draft-authoring.e2e.mjs",
   "work/blog-audit-20260917/**",

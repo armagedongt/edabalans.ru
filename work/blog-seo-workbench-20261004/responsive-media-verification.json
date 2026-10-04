@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-04",
+  "branch": "codex/blog-seo-workbench-20261004",
+  "scope": "adaptive static media only; local",
+  "status": "verified_local_not_released",
+  "originals_unchanged": true,
+  "article_markdown_unchanged": true,
+  "static_originals": 476,
+  "variant_references": 776,
+  "unique_derivatives": 757,
+  "derivative_bytes": 38841110,
+  "animation_skipped": 5,
+  "video_skipped": 4,
+  "recipe": "WebP quality90; widths480/960/1600; no crop/upscale; only smaller encodings",
+  "browser": {
+    "evidence": "D:/Codex/evidence/blog-responsive-20261004-b/checks.json",
+    "widths": [360, 1440],
+    "dpr": [1, 2],
+    "status": "pass",
+    "mobile_dpr1_card_bytes": [67334, 23902],
+    "mobile_dpr1_article_bytes": [189370, 65286],
+    "dpr2": "original fallback where smaller rendition lacks required resolution",
+    "overflow": false
+  },
+  "tests": {
+    "result": "6 passed, 2 dependency deprecation warnings",
+    "seconds": 11.80,
+    "file": "backend/tests/test_blog_responsive_media.py",
+    "environment": "PYTHONPATH=backend; DATABASE_URL=sqlite://; unique basetemp under D:/Codex/temp",
+    "earlier_setup_failures": "Missing PYTHONPATH and inaccessible default C pytest temp; not implementation failures"
+  },
+  "review": {
+    "waves": 2,
+    "code": "clean",
+    "documentation": "clean",
+    "security": "clean",
+    "tests": "wave2 missing builder negative-encoding coverage corrected with real image fixture; final direct6PASS; no third wave",
+    "open_findings": []
+  },
+  "temporary_cleanup": {
+    "unused_generated_files_moved": 337,
+    "recoverable_at": "D:/Codex/temp/blog-responsive-unused-20261004",
+    "originals_removed": 0
+  },
+  "main_changed": false,
+  "production_changed": false,
+  "analytics_connected": false
+}
