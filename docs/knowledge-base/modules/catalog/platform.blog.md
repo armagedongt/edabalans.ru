@@ -123,4 +123,5 @@ implementation_status: implemented
 - `backend/app/blog_draft_routes.py` — owner-only API, редактор и предпросмотр;
 - `docs/knowledge-base/BLOG_API_AUTHORING.md` — контракт Markdown → API;
 - `docs/knowledge-base/BLOG_EDITORIAL_WORKFLOW.md` — устойчивый маршрут новой статьи;
+- `docs/knowledge-base/modules/blog/SEO_EDITORIAL.md` — согласование поисковых metadata, архив, даты и редакционные границы;
 - `docs/knowledge-base/ARTICLE_STANDARD.md` — общая типографика статей.

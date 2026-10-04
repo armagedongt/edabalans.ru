@@ -1,0 +1,125 @@
+interview_metadata:
+  started: '2026-10-04'
+  last_updated: '2026-10-04'
+  status: in_progress
+  can_resume: true
+conversation_history: []
+general_understanding:
+  feature_name:
+    score: 2
+    value: "blog-seo-workbench-20261004"
+    gaps: []
+    required: true
+  feature_description:
+    score: 2
+    value: "Полный SEO-конвейер существующего блога с ручной единой MD-картой и этапами."
+    gaps: []
+    required: true
+  work_type:
+    score: 2
+    value: "feature"
+    gaps: []
+    required: true
+  user_problem:
+    score: 2
+    value: "Нет сопоставимой карты текущих и предложенных metadata/истории вариантов."
+    gaps: []
+    required: true
+  target_users:
+    score: 2
+    value: "Сергей: редактор и автор; читатели и поисковики."
+    gaps: []
+    required: true
+  success_criteria:
+    score: 2
+    value: "Полный public-снимок, карта всех identity, две пары на подготовленную статью, пустые поля владельца, сохранность текста, проверенные технические этапы."
+    gaps: []
+    required: true
+  constraints:
+    score: 2
+    value: "Нет автоматической смены title/description/body; нет поисковых кабинетов или рекламных изменений."
+    gaps: []
+    required: true
+  testing_strategy:
+    score: 2
+    value: "Прямые проверки текущего снимка/карты, unit parser/pagination, integration draft/public и адресный browser."
+    gaps: []
+    required: true
+user_experience:
+  user_stories:
+    score: 2
+    value: "Открыть одну MD-карту, сравнить текущие значения/запросы/варианты, вписать свои два поля, отдельно разрешить применение."
+    gaps: []
+    required: true
+  acceptance_criteria:
+    score: 2
+    value: "В self-contained user-spec.md; этапы не объявлять готовыми при пустых предложениях или отсутствии проверки."
+    gaps: []
+    required: true
+  edge_cases:
+    score: 2
+    value: "Без смыслового места inline-related отсутствует; не найденная дата не выдумывается; нет источника частоты — нет цифры; пустые поля сохраняют current."
+    gaps: []
+    required: true
+  error_scenarios:
+    score: 2
+    value: "Ошибка публичного GET явно в снимке, пропуски не считаются полнотой; API-конфликт сохраняет чужую версию; платный fallback запрещён."
+    gaps: []
+    required: true
+  verification_strategy:
+    score: 2
+    value: "Exact public metadata, уникальные identity, wordstat параметры; writer gate предложений; review docs/code; дальнейшие API/version checks."
+    gaps: []
+    required: true
+  ui_ux_requirements:
+    score: 2
+    value: "Без новой админки. Имя автора возле H1; постоянная страница профиля, optional dialog с тем же текстом; 15 карточек/серверная страница."
+    gaps: []
+    required: true
+  risks:
+    score: 2
+    value: "Ручная карта не перезаписывается; нет выдуманного калькулятора/регалий/нового medical тезиса."
+    gaps: []
+    required: true
+  technical_decisions:
+    score: 2
+    value: "Расширять текущий strict parser/API; не использовать arbitrary metadata как public source; current source public_payload."
+    gaps: []
+    required: true
+  deploy_approach:
+    score: 2
+    value: "Карта/предложения сейчас локально на согласование. Технические законченные этапы проверяются и выпускаются отдельно; предложенные metadata не публикуются без выбора."
+    gaps: []
+    required: true
+  manual_user_actions:
+    score: 2
+    value: "Выбрать title/description; согласовать дополнительный текст профиля. Доступ к поисковым кабинетам вне текущего этапа."
+    gaps: []
+    required: true
+integration:
+  integration_points:
+    score: 2
+    value: "platform.blog с platform.content, platform.knowledge, products.catalog и marketing.analytics по их владельцам."
+    gaps: []
+    required: true
+  dependencies:
+    score: 2
+    value: "Существующий blog renderer/manifest/versioned API, exact publication source, Direct v4 Wordstat, текущий авторский канон."
+    gaps: []
+    required: true
+  technical_constraints:
+    score: 2
+    value: "Совместимость description-only Markdown, строгие поля/escaping, optimistic locking, неизменность slug/домена/медиа."
+    gaps: []
+    required: true
+  data_requirements:
+    score: 2
+    value: "Source IDs/URLs/H1/title/description/canonical/time/hash, Wordstat exact response, две альтернативы и два поля выбора."
+    gaps: []
+    required: true
+  migration_needs:
+    score: 2
+    value: "Не планировать новую БД/редактор/логин; использовать существующие версионные документы. Если техническое исследование докажет неизбежную миграцию — отдельная развилка до реализации."
+    gaps: []
+    required: true
+notes: 'Требования заданы прямым запросом владельца. Новые вопросы не задавались, кроме отдельного разрешения расхода Cloud; бесплатный Direct-маршрут уже работает и не зависит от этого ответа. Spec draft, окончательная приёмка не выдумана. Карта с 5 предложениями из 62 — промежуточный этап, не завершение задачи.'

@@ -17,6 +17,7 @@ module_id: platform.blog
 |---|---|
 | Публичные статьи, рубрики, адреса, медиа, related | [Карточка блога](../catalog/platform.blog.md), `content/blog/` |
 | Подготовка и выпуск Markdown | [Редакционный workflow](../../BLOG_EDITORIAL_WORKFLOW.md) |
+| Согласование SEO title/description, архив и история вариантов | [SEO_EDITORIAL](SEO_EDITORIAL.md) |
 | Голос, разрешения правки, writer pass | [Писарь](../../../../content/author-voice/README.md), `platform.content` |
 | Размеры и оформление материалов | [ARTICLE_STANDARD](../../ARTICLE_STANDARD.md) |
 | Публичные metadata, robots, sitemap | `backend/app/blog_routes.py` |
