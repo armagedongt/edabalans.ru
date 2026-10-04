@@ -19,6 +19,7 @@ from app.blog_routes import router
 from app.database import Base, get_db
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+# CI binds this generator read-only for tests; it is not shipped in the runtime image.
 from tools.build_blog_responsive_media import build
 
 
