@@ -149,6 +149,9 @@ owns_files = [
   "docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md",
   "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md",
   "content/author-voice/**",
+  "content/author-voice/recipe-authoring-v1.md",
+  "content/author-voice/recipe-material-template.md",
+  "content/author-voice/skill/edabalans-recipes/SKILL.md",
   "content/author-voice/CALIBRATION_V1.md",
   "content/author-voice/correction-nutritionists-law-v1.json",
   "tools/author_workflow.py",
@@ -227,6 +230,7 @@ owns_tables = [
 owns_routes = ["*/admin/api/content*"]
 sources = [
   { path = "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md", role = "rule", shared = true, consumers = ["platform.knowledge", "operations.imports"] },
+  { path = "content/author-voice/recipe-authoring-v1.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.recipes"] },
 ]
 
 [[modules]]
@@ -561,7 +565,7 @@ id = "products.masterclass.course"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.course.md"
 depends_on = ["platform.content"]
-reads_from = ["platform"]
+reads_from = ["platform", "platform.content"]
 owns_files = [
   "backend/app/course_structure_routes.py", "backend/app/course_structure_service.py",
   "backend/app/course_material_routes.py", "backend/app/course_material_service.py",

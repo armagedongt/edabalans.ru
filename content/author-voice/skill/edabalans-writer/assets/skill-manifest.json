@@ -1,5 +1,5 @@
 {
-  "package_version": "2.9.2-20261003",
+  "package_version": "2.10.10-20261004",
   "files": [
     {
       "path": "content/author-voice/skill/edabalans-neuroslop-auditor/SKILL.md",
@@ -15,7 +15,7 @@
     },
     {
       "path": "content/author-voice/skill/edabalans-writer/SKILL.md",
-      "sha256": "7f68e55ce56844913d1ab045ba66eb7737174ffee0404f61998686b150bb81e4"
+      "sha256": "ac9cf9ed0690ef95c2dd33aec74ba73cec0f098181f18a12fb43f48e73d63a20"
     },
     {
       "path": "content/author-voice/authoring-work-profiles-v1.md",
@@ -27,11 +27,11 @@
     },
     {
       "path": "content/author-voice/writer-contract-v1.md",
-      "sha256": "3a8188c2c7f4db58b8b4603b78e6fc1d5f176100f0af582357a3c7d1ac5fa844"
+      "sha256": "92753b2656cd81d8db1ae5809333bbf2f5314f6f5607ec133434bff81c508988"
     },
     {
       "path": "docs/knowledge-base/ARTICLE_STANDARD.md",
-      "sha256": "9a87083b69150994903c6da3c8515fa780439c306bfc79958c14fcd4955ab987"
+      "sha256": "8f3a83722bf8b9c1dcb6a6f4ccc7f35db1d8c18331b5bb2009f79017906ce4bc"
     },
     {
       "path": "content/author-voice/product-fact-router.md",
@@ -59,7 +59,7 @@
     },
     {
       "path": "content/author-voice/README.md",
-      "sha256": "f0a02a6059b315942a6e0fedf71fb4b7c293f365c8d0f462f2699d2e98690971"
+      "sha256": "82b7cc1d5e06c64e15937d6325f4365189bad0c43241b421d713faec7a8c4dd5"
     },
     {
       "path": "docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md",
@@ -72,6 +72,18 @@
     {
       "path": "content/author-voice/pikabu-structure-adapter-v1.md",
       "sha256": "9cbca252846d4fb974801cd73e2b6fa2ea0df2847ae52ab811a8b6350f5a63f0"
+    },
+    {
+      "path": "content/author-voice/recipe-authoring-v1.md",
+      "sha256": "76350ed1c2fd50ddeb7bfaa4e710b38782a2db1359b1b6289509c234d2cc2e62"
+    },
+    {
+      "path": "content/author-voice/recipe-material-template.md",
+      "sha256": "d273f700ba4648ef48822e29200334e591778a61e761ccb7378d261f39929c5f"
+    },
+    {
+      "path": "content/author-voice/skill/edabalans-recipes/SKILL.md",
+      "sha256": "206528c6f10572c2a70b2ea2a1ee86a7b625c1addddb334abe228e15f3b18721"
     }
   ]
 }

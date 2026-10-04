@@ -20,6 +20,68 @@ from app.article_markup import markdown_to_article_html, safe_href, safe_image_s
 
 
 class ArticleMarkupTests(unittest.TestCase):
+    def test_recipe_roles_render_readonly_marks_with_accessible_states_in_source_order(self) -> None:
+        source = """**Роль в конструкторе:**
+
+- [x] Белок
+- [ ] Гарнир
+- [ ] Объём
+- [X] Вкус
+- [x] Сочность
+- [ ] Топпинги
+"""
+        rendered = markdown_to_article_html(source)
+        self.assertIn('<ul class="article-recipe-roles">', rendered)
+        self.assertEqual(rendered.count('class="article-role-check article-role-checked"'), 3)
+        self.assertEqual(rendered.count('class="article-role-check"'), 3)
+        for label, status in (("Белок", "Есть"), ("Гарнир", "Нет"), ("Объём", "Нет"),
+                              ("Вкус", "Есть"), ("Сочность", "Есть"), ("Топпинги", "Нет")):
+            visual_class = "article-role-check article-role-checked" if status == "Есть" else "article-role-check"
+            self.assertIn(
+                f'<li><span class="{visual_class}"></span>'
+                f'<span class="article-role-status">{status}: </span>{label}</li>', rendered
+            )
+        self.assertLess(rendered.index("Белок</li>"), rendered.index("Гарнир</li>"))
+        self.assertLess(rendered.index("Гарнир</li>"), rendered.index("Объём</li>"))
+        self.assertLess(rendered.index("Объём</li>"), rendered.index("Вкус</li>"))
+        self.assertLess(rendered.index("Вкус</li>"), rendered.index("Сочность</li>"))
+        self.assertLess(rendered.index("Сочность</li>"), rendered.index("Топпинги</li>"))
+        self.assertNotIn("<input", rendered)
+        self.assertEqual(sanitize_article_html(rendered, course_semantics=True), rendered)
+
+    def test_unrelated_lists_do_not_become_recipe_role_grids(self) -> None:
+        role_items = "- [x] Белок\n- [ ] Гарнир\n- [ ] Объём\n- [x] Вкус\n- [x] Сочность\n- [ ] Топпинги"
+        for source in (
+            role_items,
+            "**Роль в конструкторе:**\n\nДругой абзац.\n\n" + role_items,
+            "**Роль в конструкторе:**\n\n" + role_items.replace("Белок", "Протеин"),
+            "**Роль в конструкторе:**\n\n" + role_items + "\n- [x] Дополнение",
+            "**Роль в конструкторе:**\n\n" + role_items.replace("- [x] Белок\n- [ ] Гарнир", "- [ ] Гарнир\n- [x] Белок"),
+            "- Купить рис\n- Отварить рис",
+            "1. [x] Сделать задание\n2. [ ] Проверить задание",
+        ):
+            with self.subTest(source=source):
+                rendered = markdown_to_article_html(source)
+                self.assertNotIn("article-recipe-roles", rendered)
+                self.assertNotIn("article-role-status", rendered)
+        self.assertEqual(markdown_to_article_html("- [x] Сделать задание"), '<ul><li>[x] Сделать задание</li></ul>')
+
+    def test_role_sanitizer_keeps_only_closed_classes_and_never_enables_forms(self) -> None:
+        rendered = sanitize_article_html(
+            '<ul class="article-recipe-roles" onclick="bad()"><li>'
+            '<span class="article-role-check article-role-checked" onclick="bad()" '
+            'tabindex="0" role="checkbox" aria-checked="true"></span>'
+            '<span class="article-role-status">Есть: </span>Белок'
+            '<input checked type="checkbox" onchange="bad()">'
+            '<form action="https://example.test"><button type="submit">Отправить</button></form>'
+            '</li></ul>', course_semantics=True,
+        )
+        self.assertIn('class="article-recipe-roles"', rendered)
+        self.assertIn('class="article-role-check article-role-checked"', rendered)
+        for unsafe in ("onclick", "onchange", "tabindex", "aria-checked", 'role="', "<input", "<form", 'type="submit"'):
+            self.assertNotIn(unsafe, rendered)
+        self.assertNotIn('class=', sanitize_article_html('<span class="article-role-check arbitrary">Есть</span>', course_semantics=True))
+
     def test_source_strikethrough_preserves_author_words_and_emphasis(self) -> None:
         rendered = markdown_to_article_html('В госпитале ~~были **белые люди**~~ поставляли рис.')
         self.assertEqual(rendered, '<p>В госпитале <del>были <strong>белые люди</strong></del> поставляли рис.</p>')

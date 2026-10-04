@@ -30,7 +30,7 @@ handoff и изображение не заменяют канон или дей
 | Приложение, вычисление, сохранение, оригиналы, обучение | [Контракт приложения и курса](modules/catalog/products.recipes.md) | `products.recipes` |
 | Источник продуктов, звёздочка, бренды, объединение, среднее, исключение, импорт/возврат | [README базы](../../backend/data/recipe_catalog/README.md) и журнал решений соответствующей Git-ревизии | `products.recipes` |
 | Состав и точный расчёт авторского блюда, рабочий MD, вид карточки | [Материалы и карточки](../../content/masterclass/recipes/README.md) | `products.masterclass.course` |
-| Авторский текст, разрешения редактуры, согласование | [Редакционная система](EDITORIAL_PRODUCT_SYSTEM.md), [протокол работы](CONTENT_COLLABORATION_STANDARD.md), skill `edabalans-writer` | `platform.content` |
+| Авторский текст, разрешения редактуры, согласование | [Редакционная система](EDITORIAL_PRODUCT_SYSTEM.md), [протокол работы](CONTENT_COLLABORATION_STANDARD.md), общий `edabalans-writer` и [специализация рецептов](../../content/author-voice/skill/edabalans-recipes/SKILL.md) | `platform.content` |
 | Фото, графика, новый визуальный вариант | [Единый центр «Художник»](../../content/design-workflow/image-generation-protocol.md), затем стандарт карточки | `platform.web_design`; данные блюда остаются у владельца материала |
 | Структура МК, опубликованная статья и её версии | [Материалы курса](modules/catalog/products.masterclass.course.md) | `products.masterclass.course`; общий каталог/версии — `platform.content` |
 | Кабинет, вход, ресурс приложения, право курса | [Платформа приложений](../APPLICATION_PLATFORM.md), [правила доступа](ACCESS_RULES.md), затем контракт recipes | `products`, `platform.auth`, `platform.commerce` |
