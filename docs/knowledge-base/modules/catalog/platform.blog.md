@@ -141,4 +141,5 @@ implementation_status: implemented
 - `docs/knowledge-base/BLOG_API_AUTHORING.md` — контракт Markdown → API;
 - `docs/knowledge-base/BLOG_EDITORIAL_WORKFLOW.md` — устойчивый маршрут новой статьи;
 - `docs/knowledge-base/modules/blog/SEO_EDITORIAL.md` — согласование поисковых metadata, архив, даты и редакционные границы;
+- `docs/knowledge-base/modules/blog/READER_INSERTIONS.md` — согласованные вставки, подписка, происхождение и новое содержание; границы локального образца и интеграции;
 - `docs/knowledge-base/ARTICLE_STANDARD.md` — общая типографика статей.

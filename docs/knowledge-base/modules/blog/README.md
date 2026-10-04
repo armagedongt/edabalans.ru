@@ -18,6 +18,7 @@ module_id: platform.blog
 | Публичные статьи, рубрики, адреса, медиа, related | [Карточка блога](../catalog/platform.blog.md), `content/blog/` |
 | Подготовка и выпуск Markdown | [Редакционный workflow](../../BLOG_EDITORIAL_WORKFLOW.md) |
 | Согласование SEO title/description, архив и история вариантов | [SEO_EDITORIAL](SEO_EDITORIAL.md) |
+| Читательские вставки, popup, происхождение и новое содержание | [READER_INSERTIONS](READER_INSERTIONS.md) |
 | Голос, разрешения правки, writer pass | [Писарь](../../../../content/author-voice/README.md), `platform.content` |
 | Размеры и оформление материалов | [ARTICLE_STANDARD](../../ARTICLE_STANDARD.md) |
 | Публичные metadata, robots, sitemap | `backend/app/blog_routes.py` |
@@ -46,8 +47,9 @@ module_id: platform.blog
 - На русском основном домене и blog-субдомене уже действует одна cookie-плашка:
   закрытие разделяется доменным cookie. Это уведомление, не CMP и не
   удостоверение личности. Между независимыми доменами cookie не разделяется.
-- Единственный согласуемый popup — бесплатный интенсив для не связанного с
-  пользователем посетителя; неизвестный посетитель не означает «его нет в боте».
+- Последнее решение — один подписной popup, не второй popup интенсива.
+  Гость допускается; скрытие требует подтверждённой подписки либо полного
+  Telegram-origin материала. Детали и границы — в READER_INSERTIONS.
   Конечные плашки продуктов сохраняют отдельную редакционную роль.
 
 ## Что существует и что ещё не запущено
