@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-05",
+  "module_id": "platform.blog",
+  "scope": "local_only",
+  "status": "pass",
+  "subtask": "semantic_optional_inline_related_selection",
+  "canonical_assignments": "content/blog/manifest.json",
+  "catalog_articles": 62,
+  "processed": 62,
+  "with_one_slot": 33,
+  "with_zero_slots": 29,
+  "pending": 0,
+  "evidence": {
+    "initial_japan": "inline-related-verification.json",
+    "batches": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"],
+    "batch01_zero_evidence": "inline-batch01.md:12193581,14062380",
+    "review": "all_batches_clean",
+    "summary_documentation_review": {"waves": 1, "status": "clean", "reviewer": "nav_docs_review"},
+    "all_33_local_exact_slot_checks": "PASS",
+    "catalog_validation": "PASS",
+    "all_62_markdown_unchanged": "PASS",
+    "non_inline_manifest_fields_unchanged": "PASS",
+    "preservation_baseline": "3babc542cfdfd2d33f72f54e9365bd234358dda8",
+    "public_full_text_checks": "per_batch; reviewed plants punctuation exception bound to public SHA",
+    "runtime_changed_in_batches": false,
+    "regression_implementation_tests_reused": 7
+  },
+  "main_changed": false,
+  "production_changed": false,
+  "full_seo_task_complete": false,
+  "deferred": ["owner_metadata_selection", "seven_source_dates", "shared_identity_membership_integration", "authorized_release", "stage8_analytics_and_search_consoles"]
+}

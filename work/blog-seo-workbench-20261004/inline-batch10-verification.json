@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-05", "module_id": "platform.blog", "scope": "local_only", "status": "pass",
+  "assignments": [
+    {"source_id": "training-combined-2023", "target": "10797468", "before_heading": "восемь-советов-начинающим"},
+    {"source_id": "11401696", "target": "11522121", "before_heading": "мотивация"}
+  ],
+  "no_slot": ["d1baceb9e2b6b72013b6", "2e269fdc52d600a64753", "0d583f6ad1cea0eef750"],
+  "checks": {
+    "full_sources_read": "PASS", "public_pair_urls_200": 4, "public_pair_text_matches_local": 4,
+    "additional_zero_public_matches": ["d1baceb9e2b6b72013b6", "2e269fdc52d600a64753", "0d583f6ad1cea0eef750"],
+    "single_slot_exact_anchor": "PASS", "restores_original_html": "PASS", "catalog_validation": "PASS",
+    "review": {"waves": 1, "status": "clean", "reviewer": "nav_code_review_v2"}
+  },
+  "main_changed": false, "production_changed": false
+}
