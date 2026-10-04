@@ -1,0 +1,13 @@
+<aside class="reader-sidebar" aria-label="Новое содержание">{{READER_TOC}}</aside>
+<div class="reader-bottom" hidden>
+  <button type="button" id="reader-menu" aria-label="Содержание и меню" aria-haspopup="dialog" aria-controls="reader-sheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5H3M16 12H3M16 19H3M21 5h.01M21 12h.01M21 19h.01"/></svg></button>
+  <button type="button" id="reader-top" aria-label="Наверх"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 7-7 7 7M12 19V5"/></svg></button>
+</div>
+<dialog id="reader-sheet" aria-label="Содержание и меню">
+  <button class="reader-close" type="button" aria-label="Закрыть содержание">×</button>
+  <nav class="reader-site-menu" aria-label="Основная навигация">
+    <details class="reader-account"><summary>Личный кабинет</summary><div><a href="https://похудение-это-есть.рф/lk">Войти</a><a href="https://похудение-это-есть.рф/lk?mode=register">Зарегистрироваться</a></div></details>
+    <details class="reader-account" id="reader-contacts"><summary>Контакты</summary><div></div></details>
+  </nav>
+  <nav aria-label="Новое содержание">{{READER_TOC}}</nav>
+</dialog>

@@ -1,0 +1,12 @@
+{
+  "articles": 62,
+  "proposals": 62,
+  "title2": 62,
+  "description1": 62,
+  "description2": 62,
+  "count_rule": "Поля первой пачки имеют скобки с длиной перед двоеточием; считать по метке поля, а не только SEO title 1:.",
+  "blankOwnerFields": 124,
+  "pending": 0,
+  "archiveErrors": [],
+  "productionChanged": false
+}

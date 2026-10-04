@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from html import escape
 from pathlib import Path
+import re
 from typing import Literal
 from urllib.parse import urlsplit
 
@@ -12,7 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.orm import Session
 
 from app.auth import admin_identity, security
-from app.blog_content import BLOG_PUBLIC_ORIGIN, toc_html
+from app.blog_content import BLOG_PUBLIC_ORIGIN, blog_seo_title, toc_html
 from app.blog_draft_service import (
     active_article,
     active_articles,
@@ -353,6 +354,7 @@ def draft_page(
         )
     replacements = {
         "{{TITLE}}": escape(payload["title"]),
+        "{{SEO_TITLE}}": escape(blog_seo_title(payload["markdown"], payload["title"])),
         "{{CATEGORY}}": escape(payload["category"]),
         "{{VERSION}}": str(article.version_no),
         "{{VISIBILITY}}": "Служебная" if payload["visibility"] == "internal" else "Публичная",
@@ -364,8 +366,11 @@ def draft_page(
         "{{SLUG}}": escape(slug, quote=True),
     }
     rendered = (BLOG_DIR / "draft.html").read_text(encoding="utf-8")
-    for marker, value in replacements.items():
-        rendered = rendered.replace(marker, value)
+    rendered = re.sub(
+        r"\{\{[A-Z_]+\}\}",
+        lambda match: replacements.get(match.group(0), match.group(0)),
+        rendered,
+    )
     return HTMLResponse(rendered, headers=PRIVATE_HEADERS)
 
 

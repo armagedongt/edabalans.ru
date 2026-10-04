@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-05",
+  "base_commit": "919b6f1",
+  "scope": "Existing personal redirects issue encrypted reader cookie; no login",
+  "pytest": "32 passed: personal redirects and reader context",
+  "code_review": "No demonstrated code defect; stale blog card corrected locally after review",
+  "security_review": "clean",
+  "test_review": "clean",
+  "preserved": ["Redirect destinations", "Checkout source_context", "Telegram-only /p/", "Existing attribution events"],
+  "main_changed": false,
+  "production_changed": false,
+  "popup_connected": false,
+  "next": "Connect approved subscription component to real reader context and shared24hour interval"
+}

@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-04",
+  "scope": "one optional contextual related slot; local implementation",
+  "status": "verified_local_not_released",
+  "example_source_id": "11927800",
+  "target_source_id": "habits-formation-and-one-percent",
+  "placement": "after completed environment section; before H2 принцип-no5-достаточно-времени",
+  "reason": "Continues how to acquire sustainable eating skills without repeated force of will; does not duplicate the native link in principle3",
+  "markdown_unchanged": true,
+  "descriptions": "current public target Markdown override or first two sentences; no draft text",
+  "missing_anchor": "omit rather than relocate",
+  "tests": {
+    "selected_bundle": "28PASS39.48s: initial6inline+6responsive+7dates+9SSR",
+    "final_inline": "7PASS10.48s after existing-draft-target negative case",
+    "warnings": "2 unchanged dependency deprecations"
+  },
+  "review": {
+    "waves": 2,
+    "code": "clean",
+    "test": "clean",
+    "documentation": "clean",
+    "security": "clean",
+    "layout": "clean",
+    "open_findings": []
+  },
+  "visual": {
+    "source": "approved local prototype blog-reader-preview-20261001; selected related rules only",
+    "widths": [360, 430, 768, 1440],
+    "themes": ["light", "dark"],
+    "source_actual": "D:/Codex/evidence/blog-inline-20261004-a",
+    "nearest_context": "D:/Codex/evidence/blog-inline-20261004-b",
+    "overlays": "D:/Codex/evidence/blog-inline-overlay-WIDTH-THEME-20261004",
+    "dimensions_and_wrapping": "matching",
+    "overflow": false,
+    "hover": "150ms; arrow2px up/right",
+    "reduced_motion": "motion disabled"
+  },
+  "main_changed": false,
+  "production_changed": false,
+  "analytics_connected": false
+}

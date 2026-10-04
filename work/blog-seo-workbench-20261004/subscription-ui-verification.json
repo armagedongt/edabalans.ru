@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-05",
+  "base_commit": "bce6896",
+  "scope": "Approved subscription component connected to real cookie-only reader context",
+  "article_markdown_changed": false,
+  "seo_metadata_changed": false,
+  "main_changed": false,
+  "production_changed": false,
+  "checks": {
+    "pytest": "109 passed: reader context, personal redirects, origin, SEO title, description, navigation, inline-related",
+    "javascript": "16 assertions passed",
+    "browser": "14 cases; 360/430/768/899/900/901/1440px, light/dark; no overflow or page errors",
+    "behavior": ["No popup before50% author material", "Open contents takes precedence", "24hour revisit suppressed", "Known subscriber hidden", "Confirmed bot-start selects Telegram260", "Context503 leaves guest inline/popup", "Modal background scroll locked", "Escape and focus return", "Telegram-origin suppresses subscription assets in public SSR"],
+    "registry": "No ownership error; two stale generated artifacts intentionally left to CI"
+  },
+  "reviews": {
+    "code_wave1": "Supported trailing-slash URL omitted inline; corrected with japanPath and direct assertions",
+    "code_wave2": "clean",
+    "security_wave1": "clean",
+    "security_wave2": "clean",
+    "test_wave1": "Threshold, contents-priority and API-error coverage gaps; closed with actual browser cases",
+    "test_wave2": "clean",
+    "layout_wave1": "Source capture lost dark theme after reload; corrected in capture only",
+    "layout_wave2": "clean after supplying settled wide-screen source-inline evidence"
+  },
+  "evidence": [
+    "D:/Codex/evidence/blog-subscription-20261005/browser-wave2-complete",
+    "D:/Codex/evidence/blog-subscription-20261005/desktop-settled"
+  ],
+  "remaining": [
+    "Inline editorial anchors beyond the already approved Japan example are not guessed",
+    "MAX pin integration remains explicitly deferred by owner",
+    "Release/rebase against current main is separate from this local verification",
+    "Metrics and search dashboards remain last deferred stage"
+  ]
+}

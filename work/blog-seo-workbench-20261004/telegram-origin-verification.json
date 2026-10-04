@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-05",
+  "base_commit": "c5ba8e9",
+  "scope": "Local Telegram-origin Markdown metadata and approved reader plaque",
+  "article_markdown_changed": false,
+  "origin_assigned_to_existing_articles": false,
+  "main_changed": false,
+  "production_changed": false,
+  "checks": {
+    "pytest": "76 passed: origin, SEO title, description, navigation and inline-related",
+    "database": "Isolated in-memory SQLite; no production database",
+    "versions": "Save and preview leave public unchanged; publish exposes saved origin; next draft remains private",
+    "urls": "Canonical Fitness_Talks HTTPS numeric post; optional same-post numeric comment; exact rendered href assertions",
+    "git_fallback": "One plaque after author text and before existing CTA",
+    "seo": "Origin metadata excluded from body, TOC and automatic description",
+    "registry": "No ownership errors; two expected stale generated artifacts, rebuilt in CI"
+  },
+  "visual_check": {
+    "status": "completed_with_direct_evidence_correction_after_final_review",
+    "playwright": "Isolated development-only tool restored; system Edge; no application dependency changes",
+    "browser_tool": "Earlier cua failure retained as historical limitation; current checks use Playwright",
+    "ssr_fixture": "D:/Codex/evidence/blog-telegram-origin-20261005-restored/article.html",
+    "reproduction": "verify-telegram-origin.py and telegram-origin-ui-check.cjs",
+    "result": "20 width/theme combinations, source/normal/hover/context/no-discussion; no overflow or JavaScript errors",
+    "limitation": "Final review identified unsettled no-discussion screenshots; capture now settles layout and scroll before screenshot; direct 430px check confirms complete title/icon"
+  },
+  "fresh_reviews": {
+    "code": "clean; new test ownership added after initial diagnosis",
+    "test_wave_1": "Rendered href coverage missing; corrected with exact post/discussion/channel assertions",
+    "test_wave_2": "clean",
+    "docs_wave_1": "Related navigator still described origin as unintegrated; corrected",
+    "docs_wave_2": "clean",
+    "security": "clean; admin Markdown to escaped public HTML and draft/public boundaries checked",
+    "layout": "Final wave: no proven fidelity defect; minor no-discussion evidence issue corrected in capture and rerun directly, no third review wave"
+  },
+  "remaining": [
+    "Real cross-domain visitor recognition and confirmed bot-start/subscription contract owned by auth/messenger modules",
+    "Inline subscription and popup remain unintegrated; must suppress both for confirmed Telegram-origin",
+    "Analytics/Search Console/Webmaster deferred"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Сергей Воронцов",
+  "role": "Тренер по питанию",
+  "description": "Пишу о питании и похудении так, чтобы вы менялись.",
+  "path": "/author/sergey-vorontsov",
+  "image": "/blog/assets/sergey-author-channel.webp",
+  "same_as": ["https://t.me/Fitness_Talks", "https://max.ru/id230409966750_biz"],
+  "copy_validation": "writer proofread/full_source pass 2026-10-04; approved wording copied verbatim",
+  "image_provenance": "owner supplied channel avatar; approved blog-reader-preview-20261001/avatar.webp"
+}

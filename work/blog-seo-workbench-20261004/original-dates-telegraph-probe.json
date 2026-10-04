@@ -1,0 +1,106 @@
+{
+  "checked_at": "2026-10-04T22:03:21.655450+03:00",
+  "mode": "read_only_primary_dates",
+  "exact": 7,
+  "unresolved": 0,
+  "rows": [
+    {
+      "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+      "slug": "12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
+      "source_url": "https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+      "status": "exact",
+      "resolved_url": "https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+      "canonical": "https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+      "header_dates": [
+        "2024-08-11T17:23:41+0000"
+      ],
+      "original_published_at": "2024-08-11T17:23:41+00:00",
+      "html_sha256": "2d8f3a18adfa5994c462334ceb4661c4039c8c31bbff119c007271ea65391756",
+      "field": "header.time[datetime]"
+    },
+    {
+      "source_id": "intuitivnoe-pitanie-04-27-2",
+      "slug": "intuitivnoe-pitanie-vy-vse-nepravilno-ponyali",
+      "source_url": "https://telegra.ph/intuitivnoe-pitanie-04-27-2",
+      "status": "exact",
+      "resolved_url": "https://telegra.ph/intuitivnoe-pitanie-04-27-2",
+      "canonical": "https://telegra.ph/intuitivnoe-pitanie-04-27-2",
+      "header_dates": [
+        "2024-04-27T18:23:05+0000"
+      ],
+      "original_published_at": "2024-04-27T18:23:05+00:00",
+      "html_sha256": "df7e713e4f31b2a3ebe929733d6d2c4215a08928414aeaae779634995e5fb2f6",
+      "field": "header.time[datetime]"
+    },
+    {
+      "source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
+      "slug": "minus-12-kilogrammov-za-2-mesyaca",
+      "source_url": "https://telegra.ph/Minus-12-kilogramm-za-2-mesyaca-07-13",
+      "status": "exact",
+      "resolved_url": "https://telegra.ph/Minus-12-kilogramm-za-2-mesyaca-07-13",
+      "canonical": "https://telegra.ph/Minus-12-kilogramm-za-2-mesyaca-07-13",
+      "header_dates": [
+        "2025-07-13T18:37:34+0000"
+      ],
+      "original_published_at": "2025-07-13T18:37:34+00:00",
+      "html_sha256": "f979135357c958f3cdbcf216d32de574161240243f22bf6ba731511a786f5b50",
+      "field": "header.time[datetime]"
+    },
+    {
+      "source_id": "d1baceb9e2b6b72013b6",
+      "slug": "glavnye-oshibki-v-pohudenii-do-goloda",
+      "source_url": "https://telegra.ph/Plan-06-26-5",
+      "status": "exact",
+      "resolved_url": "https://telegra.ph/Plan-06-26-5",
+      "canonical": "https://telegra.ph/Plan-06-26-5",
+      "header_dates": [
+        "2025-06-26T14:38:05+0000"
+      ],
+      "original_published_at": "2025-06-26T14:38:05+00:00",
+      "html_sha256": "e7b8a139252fca741ff3011211ee0e61e50501399c7f5de2bb973cd747b3261e",
+      "field": "header.time[datetime]"
+    },
+    {
+      "source_id": "30e4d208f2cbd8e57201",
+      "slug": "pochemu-lyudi-hudeyut-i-snova-nabirayut-ves",
+      "source_url": "https://telegra.ph/Prezentaciya-02-02-3",
+      "status": "exact",
+      "resolved_url": "https://telegra.ph/Prezentaciya-02-02-3",
+      "canonical": "https://telegra.ph/Prezentaciya-02-02-3",
+      "header_dates": [
+        "2026-02-02T18:32:56+0000"
+      ],
+      "original_published_at": "2026-02-02T18:32:56+00:00",
+      "html_sha256": "17e9c9afe27de2f42b70e9abf1c73aab65c94848660c11f79876e07870ee18f8",
+      "field": "header.time[datetime]"
+    },
+    {
+      "source_id": "0d583f6ad1cea0eef750",
+      "slug": "odin-nebolshoy-pryzhok-bolshie-peremeny",
+      "source_url": "https://telegra.ph/story-09-01-3",
+      "status": "exact",
+      "resolved_url": "https://telegra.ph/story-09-01-3",
+      "canonical": "https://telegra.ph/story-09-01-3",
+      "header_dates": [
+        "2023-09-01T15:30:17+0000"
+      ],
+      "original_published_at": "2023-09-01T15:30:17+00:00",
+      "html_sha256": "0a024c013931aa2ef41e7655deabe17a040bc5357c0ed2ee04ec70fcbffe9c65",
+      "field": "header.time[datetime]"
+    },
+    {
+      "source_id": "Sahar-09-18",
+      "slug": "saharozamenitel-vyzyvaet-rak-net",
+      "source_url": "https://telegra.ph/Sahar-09-18",
+      "status": "exact",
+      "resolved_url": "https://telegra.ph/Sahar-09-18",
+      "canonical": "https://telegra.ph/Sahar-09-18",
+      "header_dates": [
+        "2023-09-18T17:39:48+0000"
+      ],
+      "original_published_at": "2023-09-18T17:39:48+00:00",
+      "html_sha256": "27f1cf2c3210396d02a0789d5d3b496b676362ab8654d159b3108112cc0b105c",
+      "field": "header.time[datetime]"
+    }
+  ]
+}

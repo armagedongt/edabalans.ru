@@ -116,6 +116,7 @@ def test_description_stays_draft_until_publish_and_drives_catalog_and_page(descr
     from sqlalchemy.orm import Session
     from sqlalchemy.pool import StaticPool
     from app.database import Base, get_db
+    from app.blog_content import load_blog_catalog
     from app.blog_draft_service import ensure_existing_article, update_text, publish_article
     from app.blog_routes import router
 
@@ -131,6 +132,8 @@ def test_description_stays_draft_until_publish_and_drives_catalog_and_page(descr
     app.dependency_overrides[get_db] = get_test_db
     client = TestClient(app)
     slug = 'pochemu-yapontsy-hudye-a-ty-net'
+    catalog = load_blog_catalog()
+    catalog_page = catalog.published.index(catalog.by_slug(slug)) // 15 + 1
     with Session(engine) as db:
         seed = ensure_existing_article(db, slug)
         draft = update_text(db, slug=slug, markdown='---\ndescription: ' + json.dumps(description, ensure_ascii=False) + '\n---\n\nПервое предложение. Второе предложение.', expected_version=seed.version_no, admin='test')
@@ -146,8 +149,8 @@ def test_description_stays_draft_until_publish_and_drives_catalog_and_page(descr
 
         ImageParser().feed(page)
         assert 'description:' not in page
-        assert escape(description, quote=True) in client.get('/blog').text
+        assert escape(description, quote=True) in client.get('/blog', params={'page': catalog_page}).text
         assert escape(description, quote=True) in client.get('/blog/articles/skolko-vremeni-nuzhno-na-pohudenie').text
         update_text(db, slug=slug, markdown='Новое начало. Вторая фраза. Третья.', expected_version=draft.version_no, admin='test')
-        assert escape(description, quote=True) in client.get('/blog').text
+        assert escape(description, quote=True) in client.get('/blog', params={'page': catalog_page}).text
     engine.dispose()

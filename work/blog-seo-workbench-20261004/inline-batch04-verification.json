@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-05",
+  "module_id": "platform.blog",
+  "scope": "local_only",
+  "status": "pass",
+  "assignments": [
+    {"source_id": "10123213", "target": "amkbo7kgg1", "before_heading": "просто-постарайтесь-подвигать-всеми-частями-тела-которые-двигаются"},
+    {"source_id": "14021584", "target": "10797468", "before_heading": "3-не-спорьте-о-диетах"},
+    {"source_id": "tilda-49745867", "target": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11", "before_heading": "польза-этого-правила-о-растениях-в-другом"}
+  ],
+  "no_slot": ["11339712", "10573917", "693339", "11522121", "tilda-67280331"],
+  "checks": {
+    "full_sources_read": "PASS",
+    "public_pair_urls_200": 6,
+    "public_pair_text_matches_local": 5,
+    "public_pair_text_separately_reviewed": ["tilda-49745867"],
+    "new_zero_public_text_match": "11339712",
+    "prior_zero_evidence": "inline-batch01.md / inline-batch02.md",
+    "single_slot_exact_anchor": "PASS",
+    "restores_original_html": "PASS",
+    "catalog_validation": "PASS",
+    "review": {"waves": 2, "status": "clean"}
+  },
+  "main_changed": false,
+  "production_changed": false
+}

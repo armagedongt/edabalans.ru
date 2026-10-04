@@ -242,19 +242,30 @@ depends_on = [
   "platform.content", "platform.crm", "products.calories",
   "products.masterclass.offers", "products.masterclass.messenger-links",
 ]
-reads_from = ["platform", "products.intensive", "products.masterclass", "messaging.telegram.attribution", "marketing.analytics", "operations.proxy"]
+reads_from = ["platform", "platform.auth", "platform.knowledge", "products.intensive", "products.masterclass", "messaging.telegram.attribution", "messaging.max", "marketing.analytics", "operations.proxy"]
 owns_files = [
   "backend/app/blog_routes.py", "backend/app/blog_content.py",
+  "backend/app/blog_responsive_media.py", "tools/build_blog_responsive_media.py",
   "backend/app/blog_draft_routes.py", "backend/app/blog_draft_service.py",
+  "backend/app/blog_reader_context.py", "backend/tests/test_blog_reader_context.py",
+  "backend/tests/reader-subscription.test.cjs",
   "backend/app/public_cta_catalog.py", "backend/app/static/blog/**",
   "backend/scripts/publish_blog_draft.py",
     "backend/tests/test_blog.py", "backend/tests/test_blog_content.py", "backend/tests/test_blog_description.py",
+  "backend/tests/test_blog_seo_title.py",
+  "backend/tests/test_blog_telegram_origin.py",
+  "backend/tests/test_blog_server_pagination.py",
+  "backend/tests/test_blog_author_dates.py",
+  "backend/tests/test_blog_responsive_media.py",
+  "backend/tests/test_blog_inline_related.py",
+  "backend/tests/test_blog_reader_navigation.py",
   "backend/tests/test_blog_draft_authoring.py", "backend/tests/fixtures/blog-draft-real/**",
   "backend/tests/blog-pagination.test.cjs", "backend/tests/browser/blog-draft-authoring.e2e.mjs",
   "work/blog-audit-20260917/**",
   "content/blog/**", "docs/knowledge-base/BLOG_EDITORIAL_WORKFLOW.md",
   "docs/knowledge-base/BLOG_API_AUTHORING.md",
   "docs/knowledge-base/modules/blog/**", "work/blog-seo-analytics/**",
+  "work/blog-seo-workbench-20261004/**",
   "work/blog-canonical-library/**",
 ]
 owns_routes = ["*/blog", "*/blog/*", "*/admin/api/blog/articles*"]
@@ -738,6 +749,7 @@ id = "messaging.telegram.attribution"
 parent = "messaging.telegram"
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.attribution.md"
 depends_on = ["platform.crm", "messaging.telegram.engine", "products.intensive"]
+reads_from = ["platform.blog"]
 telegram_code = "start_attribution"
 telegram_name = "Старт и атрибуция"
 telegram_status = "Исполняемый модуль · временно включён режим ремонта"

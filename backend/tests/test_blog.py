@@ -69,24 +69,23 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
         "Пишу о питании, похудении и пищевых привычках, "
         "чтобы сделать ваше похудение проще."
     ) in response.text
-    published_count = len(load_blog_catalog().published)
+    published_count = min(15, len(load_blog_catalog().published))
     assert response.text.count('class="article-card"') == published_count
     assert response.text.count('class="card-tag"') == published_count
     first_card = response.text.split('class="article-card"', 1)[1].split('</article>', 1)[0]
     assert first_card.index('class="card-visual"') < first_card.index('class="card-tag"')
     assert first_card.index('class="card-tag"') < first_card.index('class="card-title"')
-    assert "Ответ на вопрос о сроках либо поставит жирный крест" in response.text
     from html import escape
-    assert escape(load_blog_catalog().by_source_id("12237133").excerpt) in response.text
+    assert escape(load_blog_catalog().published[0].excerpt) in response.text
     assert 'data-category-filter="Личное"' in response.text
     assert 'data-category-filter="Ну, типа... ЗОЖ"' in response.text
     assert 'data-category-filter="ЗОЖ"' not in response.text
     expected_health_count = sum(
-        article.category == "Ну, типа... ЗОЖ" for article in load_blog_catalog().published
+        article.category == "Ну, типа... ЗОЖ" for article in load_blog_catalog().published[:15]
     )
     assert response.text.count('data-category="Ну, типа... ЗОЖ"') == expected_health_count
     assert 'id="articles-title"' not in response.text
-    assert "/articles/skolko-vremeni-nuzhno-na-pohudenie" in response.text
+    assert f'/articles/{load_blog_catalog().published[0].slug}' in response.text
     assert f'/blog/media/{load_blog_catalog().published[0].card.file}' in response.text
     assert 'loading="eager" decoding="async" fetchpriority="high"' in hero
     assert response.text.count('loading="lazy" decoding="async"') >= 6
@@ -191,10 +190,10 @@ def test_blog_assets_and_fonts_are_whitelisted() -> None:
     assert re.search(r"\.hero h1 \{[^}]*font-weight: 800;[^}]*\}", stylesheet.text)
     assert re.search(r"\.hero-photo img \{[^}]*object-position: center;[^}]*transform: none;[^}]*\}", stylesheet.text)
     assert re.search(
-        r"\.categories button \{[^}]*border-radius: 7px;[^}]*background: color-mix[^}]*\}",
+        r"\.categories :is\(button, a\) \{[^}]*border-radius: 7px;[^}]*background: color-mix[^}]*\}",
         stylesheet.text,
     )
-    assert re.search(r"\.categories button:hover, \.categories button\.active \{[^}]*background: var\(--blue\);[^}]*\}", stylesheet.text)
+    assert re.search(r"\.categories :is\(button, a\):hover, \.categories :is\(button, a\)\.active \{[^}]*background: var\(--blue\);[^}]*\}", stylesheet.text)
     assert re.search(r"\.card-tag \{[^}]*border-radius: 7px;[^}]*background: var\(--cloud\);[^}]*\}", stylesheet.text)
     assert re.search(r"\.card-copy \{[^}]*overflow: hidden;[^}]*-webkit-line-clamp: 4;[^}]*\}", stylesheet.text)
     assert re.search(r"\.theme-toggle:hover \{[^}]*border-color: var\(--blue\);[^}]*color: var\(--blue\);[^}]*\}", stylesheet.text)
@@ -281,7 +280,7 @@ def test_blog_is_indexable_and_sitemap_lists_all_articles() -> None:
     assert "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/sitemap.xml" in robots.text
     assert sitemap.status_code == 200
     assert sitemap.headers["content-type"].startswith("application/xml")
-    assert sitemap.text.count("<url>") == len(load_blog_catalog().published) + 1
+    assert sitemap.text.count("<url>") == len(load_blog_catalog().published) + 2
     assert "/articles/nepriyatnaya-pravda-pro-med" in sitemap.text
 
 
@@ -462,7 +461,7 @@ def test_semaglutide_article_preserves_reviewed_text_and_source_structure() -> N
     assert '<img src="/blog/media/13327360/01.webp"' in page.text
     assert 'property="og:image" content="https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blog/media/13327360/01.webp"' in page.text
 
-    catalog_page = client.get("/blog")
+    catalog_page = client.get("/blog", params={"page": catalog.published.index(article) // 15 + 1})
     assert (
         'class="card-image card-image--contain" src="/blog/media/13327360/01.webp"'
         in catalog_page.text
@@ -497,7 +496,7 @@ def test_manifest_card_fit_is_rendered_without_destructive_crop() -> None:
     article = catalog.by_slug("temperatura-vody-dlya-priema-vnutr")
     assert article is not None
     assert article.card.fit == "contain"
-    page = client.get("/blog")
+    page = client.get("/blog", params={"page": catalog.published.index(article) // 15 + 1})
     assert (
         f'class="card-image card-image--contain" src="/blog/media/{article.card.file}"'
         in page.text

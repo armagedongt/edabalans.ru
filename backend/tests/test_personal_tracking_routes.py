@@ -1,4 +1,5 @@
 import os
+import pytest
 from datetime import datetime, timezone
 from urllib.parse import parse_qs, urlsplit
 
@@ -17,6 +18,8 @@ from app.intensive_web_access import (  # noqa: E402
 )
 from app.main import app  # noqa: E402
 from app.models import AttributionEvent, User  # noqa: E402
+from app.blog_reader_context import COOKIE  # noqa: E402
+from app.blog_routes import router as blog_router  # noqa: E402
 
 
 def make_client() -> tuple[TestClient, sessionmaker[Session]]:
@@ -100,3 +103,45 @@ def test_personal_channel_post_link_is_telegram_only() -> None:
     assert client.get(f"/p/260/{max_token}", follow_redirects=False).status_code == 404
     assert client.get("/p/260/not-a-token", follow_redirects=False).status_code == 404
     app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize('route', ['/m/{token}', '/p/260/{token}'])
+def test_personal_redirect_recognizes_reader_on_shared_blog_domain(route, monkeypatch):
+    from fastapi import FastAPI
+    from app.personal_tracking_routes import router as tracking_router
+
+    client, factory = make_client()
+    token = issue(factory, 'telegram')
+    settings = app.dependency_overrides[get_settings]()
+    fixture = FastAPI()
+    fixture.include_router(tracking_router)
+    fixture.include_router(blog_router)
+    fixture.dependency_overrides = app.dependency_overrides.copy()
+    monkeypatch.setattr('app.blog_routes.get_settings', lambda: settings)
+    root = 'xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai'
+    try:
+        with TestClient(fixture, base_url=f'https://go.{root}') as browser:
+            response = browser.get(route.format(token=token), follow_redirects=False)
+            assert response.status_code == 307
+            cookie = response.headers['set-cookie']
+            assert f'Domain={root}' in cookie
+            assert all(flag in cookie for flag in ('HttpOnly', 'Secure', 'SameSite=lax'))
+            assert [c.name for c in browser.cookies.jar] == [COOKIE]
+            context = browser.get(f'https://blog.{root}/blog/reader/context').json()
+            assert context['recognized'] is True
+            assert context['show_subscription'] is True
+            assert browser.get('https://edabalans.ru/blog/reader/context').json()['recognized'] is False
+            with factory() as db:
+                assert len(db.scalars(select(AttributionEvent)).all()) == 1
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_unknown_personal_link_does_not_issue_reader_cookie():
+    client, _ = make_client()
+    try:
+        response = client.get('/m/not-a-personal-link', follow_redirects=False)
+        assert response.status_code == 404
+        assert 'set-cookie' not in response.headers
+    finally:
+        app.dependency_overrides.clear()

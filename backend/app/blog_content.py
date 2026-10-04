@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from functools import lru_cache
 from html import escape, unescape
 import json
@@ -42,6 +43,12 @@ class BlogHero:
 
 
 @dataclass(frozen=True)
+class BlogInlineRelated:
+    source_id: str
+    before_heading: str
+
+
+@dataclass(frozen=True)
 class BlogArticle:
     source_id: str
     slug: str
@@ -55,12 +62,15 @@ class BlogArticle:
     cta: str
     status: str
     media: tuple[str, ...]
+    original_published_at: str | None = None
+    inline_related: BlogInlineRelated | None = None
 
 
 @dataclass(frozen=True)
 class BlogCatalog:
     articles: tuple[BlogArticle, ...]
     content_dir: Path
+    inline_related_pool_source_ids: tuple[str, ...] | None = None
 
     @property
     def published(self) -> tuple[BlogArticle, ...]:
@@ -93,25 +103,76 @@ def _required_text(raw: dict, key: str) -> str:
     return value.strip()
 
 
-def split_blog_metadata(markdown: str) -> tuple[str | None, str]:
-    """A small editable description header, not arbitrary YAML execution."""
+def parse_blog_metadata(markdown: str) -> tuple[dict[str, str], str]:
+    """Allowlisted plain editorial fields, not arbitrary YAML execution."""
     if not markdown.startswith("---\n") and not markdown.startswith("---\r\n"):
-        return None, markdown
+        return {}, markdown
     match = re.match(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|$)", markdown, re.DOTALL)
     if match is None:
-        raise HTTPException(422, "Не закрыт блок description в начале Markdown")
+        raise HTTPException(422, "Не закрыт блок metadata в начале Markdown")
     fields = [line for line in match[1].splitlines() if line.strip()]
-    if len(fields) != 1 or not fields[0].startswith("description:"):
-        raise HTTPException(422, "В начале Markdown поддерживается только description")
-    value = fields[0].split(":", 1)[1].strip()
-    if value.startswith('"'):
+    metadata: dict[str, str] = {}
+    limits = {"description": 500, "seo_title": 200, "telegram_post_url": 200, "telegram_discussion_url": 200}
+    if not fields:
+        raise HTTPException(422, "Блок metadata не может быть пустым")
+    for line in fields:
+        key, separator, value = line.partition(":")
+        if not separator or key not in limits or key in metadata:
+            raise HTTPException(422, "Поддерживаются только уникальные description, seo_title, telegram_post_url и telegram_discussion_url")
+        value = value.strip()
+        if value.startswith('"'):
+            try:
+                value = json.loads(value)
+            except json.JSONDecodeError as exc:
+                raise HTTPException(422, f"{key}: проверьте кавычки JSON") from exc
+        if not isinstance(value, str) or not value.strip() or len(value) > limits[key] or any(ord(char) < 32 for char in value):
+            raise HTTPException(422, f"{key} должен быть одной непустой строкой до {limits[key]} символов")
         try:
-            value = json.loads(value)
-        except json.JSONDecodeError as exc:
-            raise HTTPException(422, "description: проверьте кавычки JSON") from exc
-    if not isinstance(value, str) or not value.strip() or len(value) > 500 or "\n" in value or "\r" in value:
-        raise HTTPException(422, "description должен быть одной непустой строкой до 500 символов")
-    return value.strip(), markdown[match.end():]
+            value.encode("utf-8")
+        except UnicodeEncodeError as exc:
+            raise HTTPException(422, f"{key}: некорректные символы Unicode") from exc
+        metadata[key] = value.strip()
+    post = metadata.get("telegram_post_url")
+    discussion = metadata.get("telegram_discussion_url")
+    if post is not None and re.fullmatch(r"https://t\.me/Fitness_Talks/[1-9][0-9]*", post) is None:
+        raise HTTPException(422, "telegram_post_url: нужна точная ссылка на пост канала Fitness_Talks")
+    if discussion is not None and (post is None or re.fullmatch(re.escape(post) + r"\?comment=[1-9][0-9]*", discussion) is None):
+        raise HTTPException(422, "telegram_discussion_url: нужна ссылка на обсуждение того же поста")
+    return metadata, markdown[match.end():]
+
+
+def insert_telegram_origin(rendered: str, metadata: dict[str, str]) -> str:
+    """A confirmed full channel source replaces subscription invitations, not the CTA."""
+    post = metadata.get("telegram_post_url")
+    if post is None:
+        return rendered
+    discussion = metadata.get("telegram_discussion_url")
+    discussion_link = (
+        f'<a href="{escape(discussion, quote=True)}" target="_blank" rel="noopener">Обсудить</a>'
+        if discussion else ""
+    )
+    plaque = (
+        '<aside class="reader-telegram-source" data-channel-origin="telegram">'
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/>'
+        '<path d="m22 2-11 11"/></svg><div>'
+        f'<a class="reader-source-title" href="{escape(post, quote=True)}" target="_blank" rel="noopener">'
+        '<strong>Это пост из моего Telegram-канала</strong></a>'
+        f'<div class="reader-source-actions">{discussion_link}'
+        '<a href="https://t.me/Fitness_Talks" target="_blank" rel="noopener">'
+        'Читать более короткие посты →</a></div></div></aside>'
+    )
+    cta = rendered.find('<section class="blog-cta ')
+    return rendered[:cta] + plaque + rendered[cta:] if cta >= 0 else rendered + plaque
+
+
+def split_blog_metadata(markdown: str) -> tuple[str | None, str]:
+    metadata, body = parse_blog_metadata(markdown)
+    return metadata.get("description"), body
+
+
+def blog_seo_title(markdown: str, title: str) -> str:
+    metadata, _ = parse_blog_metadata(markdown)
+    return metadata.get("seo_title", title)
 
 
 @lru_cache(maxsize=128)
@@ -180,6 +241,12 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
             raise ValueError(f"blog article {source_id} related_source_ids must be a string list")
         if not isinstance(media_raw, list) or not all(isinstance(item, str) for item in media_raw):
             raise ValueError(f"blog article {source_id} media must be a string list")
+        inline_raw = raw.get("inline_related")
+        inline_related = None
+        if inline_raw is not None:
+            if not isinstance(inline_raw, dict) or set(inline_raw) != {"source_id", "before_heading"}:
+                raise ValueError(f"blog article {source_id} inline_related must be one source_id/before_heading object")
+            inline_related = BlogInlineRelated(_required_text(inline_raw, "source_id"), _required_text(inline_raw, "before_heading"))
         article = BlogArticle(
             source_id=source_id,
             slug=slug,
@@ -193,10 +260,18 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
             cta=cta,
             status=status,
             media=tuple(media_raw),
+            original_published_at=(raw.get("source_provenance") or {}).get("original_published_at"),
+            inline_related=inline_related,
         )
         articles.append(article)
 
-    catalog = BlogCatalog(tuple(articles), root)
+    pool = payload.get("inline_related_pool_source_ids")
+    if "inline_related_pool_source_ids" in payload and (
+        not isinstance(pool, list)
+        or not all(isinstance(item, str) and item.strip() == item and item for item in pool)
+    ):
+        raise ValueError("blog inline related pool must be a source_id string list")
+    catalog = BlogCatalog(tuple(articles), root, tuple(pool) if pool is not None else None)
     validate_blog_catalog(catalog)
     return catalog
 
@@ -237,8 +312,16 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
     if len(slugs) != len(set(slugs)):
         raise ValueError("blog slugs must be unique")
     published_ids = {article.source_id for article in catalog.published}
+    pool = catalog.inline_related_pool_source_ids
+    if pool is not None:
+        if len(pool) != len(set(pool)) or set(pool) - published_ids:
+            raise ValueError("blog inline related pool must contain unique published targets")
 
     for article in catalog.articles:
+        if article.original_published_at is not None:
+            date = datetime.fromisoformat(article.original_published_at)
+            if date.tzinfo is None:
+                raise ValueError(f"blog original publication timestamp requires timezone: {article.source_id}")
         if not SLUG_RE.fullmatch(article.slug):
             raise ValueError(f"invalid blog slug: {article.slug}")
         if article.category not in BLOG_CATEGORIES:
@@ -281,6 +364,12 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
             unknown = set(article.related_source_ids) - published_ids
             if unknown:
                 raise ValueError(f"blog article {article.source_id} links unpublished or unknown related items: {sorted(unknown)}")
+            if article.inline_related is not None:
+                target = article.inline_related.source_id
+                if target == article.source_id or target not in published_ids:
+                    raise ValueError(f"blog article {article.source_id} has an invalid inline related target")
+                if pool is not None and target not in pool:
+                    raise ValueError(f"blog article {article.source_id} inline related target is outside curated pool")
 
 
 def render_blog_component(name: str, arguments: list[str]) -> str:
@@ -324,8 +413,9 @@ def add_heading_anchors(rendered: str) -> tuple[str, tuple[tuple[str, str], ...]
 
 def render_article_body(catalog: BlogCatalog, article: BlogArticle) -> tuple[str, tuple[tuple[str, str], ...]]:
     source = (catalog.content_dir / "articles" / article.body_file).read_text(encoding="utf-8")
-    _, source = split_blog_metadata(source)
+    metadata, source = parse_blog_metadata(source)
     rendered = markdown_to_article_html(source, component_renderer=render_blog_component)
+    rendered = insert_telegram_origin(rendered, metadata)
     return add_heading_anchors(rendered)
 
 
@@ -382,6 +472,22 @@ def related_cards_html(
         for item in related
         if item is not None
     )
+
+
+def insert_inline_related(catalog: BlogCatalog, article: BlogArticle, body: str) -> str:
+    slot = article.inline_related
+    if slot is None:
+        return body
+    target = catalog.by_source_id(slot.source_id)
+    heading = '<h2 id="' + escape(slot.before_heading, quote=True) + '">'
+    if target is None or target.source_id == article.source_id or heading not in body:
+        return body
+    # A changed API heading invalidates placement; never relocate by scroll percentage.
+    offset = body.index(heading)
+    card = (f'<aside class="reader-related"><a href="/articles/{escape(target.slug, quote=True)}">'
+            '<small><span class="reader-related-arrow" aria-hidden="true">↗</span> Читайте также</small>'
+            f'<strong>{escape(target.title)}</strong><span>{escape(target.excerpt)}</span></a></aside>')
+    return body[:offset] + card + body[offset:]
 
 
 def toc_html(toc: tuple[tuple[str, str], ...], *, mobile: bool) -> str:

@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-05", "module_id": "platform.blog", "scope": "local_only", "status": "pass",
+  "assignments": [
+    {"source_id": "10877887", "target": "11207593", "before_heading": "это-что-касается-фактов-а-теперь-давайте-обратимся-к-логике"},
+    {"source_id": "12109482", "target": "14183275", "before_heading": "праздники-и-привычки"},
+    {"source_id": "13762311", "target": "13436070", "before_heading": "как-провести-пост-правильно"}
+  ],
+  "no_slot": ["11665295", "intuitivnoe-pitanie-04-27-2"],
+  "checks": {
+    "full_sources_read": "PASS", "public_pair_urls_200": 6, "public_pair_text_matches_local": 6,
+    "additional_zero_public_matches": ["11665295", "intuitivnoe-pitanie-04-27-2"],
+    "single_slot_exact_anchor": "PASS", "restores_original_html": "PASS", "catalog_validation": "PASS",
+    "review": {"waves": 1, "status": "clean", "reviewer": "nav_code_review_v2"}
+  },
+  "main_changed": false, "production_changed": false
+}

@@ -73,6 +73,7 @@
     });
   }
 
+  if (!document.querySelector('[data-blog-server-catalog]')) {
   var cards = Array.prototype.slice.call(document.querySelectorAll('.articles-section > .article-grid .article-card'));
   var categoryButtons = Array.prototype.slice.call(document.querySelectorAll('[data-category-filter]'));
   var pagination = document.querySelector('.pagination');
@@ -152,6 +153,8 @@
       });
     }
     showSelection(false);
+  }
+
   }
 
   var ownerCards = Array.prototype.slice.call(document.querySelectorAll('.owner-card'));

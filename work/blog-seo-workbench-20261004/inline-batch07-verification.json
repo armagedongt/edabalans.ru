@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-05", "module_id": "platform.blog", "scope": "local_only", "status": "pass",
+  "assignments": [
+    {"source_id": "12296286", "target": "11801517", "before_heading": "2-пищевое-поведение-ノ-o-oノ"},
+    {"source_id": "13785403", "target": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11", "before_heading": "ошибка-2-закрепление-не-здоровых-пищевых-привычек"},
+    {"source_id": "30e4d208f2cbd8e57201", "target": "13277231", "before_heading": "вот-вы-задумывались-откуда-берутся-зож-ники"},
+    {"source_id": "12237133", "target": "10123213", "before_heading": "еда-в-течение-дня"}
+  ],
+  "no_slot": ["11277666", "Minus-12-kilogramm-za-2-mesyaca-07-13"],
+  "checks": {
+    "full_sources_read": "PASS", "public_pair_urls_200": 8, "public_pair_text_matches_local": 8,
+    "additional_zero_public_matches": ["11277666", "Minus-12-kilogramm-za-2-mesyaca-07-13"],
+    "single_slot_exact_anchor": "PASS", "restores_original_html": "PASS", "catalog_validation": "PASS",
+    "review": {"waves": 1, "status": "clean", "reviewer": "nav_code_review_v2"}
+  },
+  "main_changed": false, "production_changed": false
+}

@@ -15,9 +15,11 @@
   <link rel="canonical" href="{{CANONICAL}}">
   <link rel="stylesheet" href="/blog/assets/article-typography.css?v=20260917a">
   <link rel="stylesheet" href="/blog/assets/article-note.css?v=20260917a">
-  <link rel="stylesheet" href="/blog/assets/blog.css?v=20261004-pagination">
-  <title>{{TITLE}} · Похудение — это есть</title>
+  <link rel="stylesheet" href="/blog/assets/blog.css?v=20261004-related">
+  <link rel="stylesheet" href="/blog/assets/reader-navigation.css?v=20261004a">
+  <title>{{SEO_TITLE}} · Похудение — это есть</title>
   <script type="application/ld+json">{{STRUCTURED_DATA}}</script>
+  <script type="application/ld+json">{{BREADCRUMB_DATA}}</script>
 </head>
 <body data-page="article">
   <header class="site-header site-header--public">
@@ -55,12 +57,15 @@
   <main>
     <article class="article-shell">
       <header class="article-hero">
+        {{BREADCRUMBS}}
         <div class="article-tools">
           <a class="back-link" href="https://похудение-это-есть.рф/blog">← Все статьи</a>
           {{TOC_MOBILE}}
         </div>
         <span class="article-category">{{CATEGORY}}</span>
         <h1>{{TITLE}}</h1>
+        {{AUTHOR_BYLINE}}
+        {{ARTICLE_DATES}}
         {{HERO}}
       </header>
       <div class="article-layout">
@@ -75,9 +80,11 @@
     </section>
   </main>
 
+  {{READER_NAVIGATION}}
   <div id="contacts" data-edabalans-site-footer></div>
   <script src="https://edabalans.ru/site-footer.js" defer></script>
   <script src="https://edabalans.ru/cookie-notice.js" defer></script>
   <script src="/blog/assets/blog.js?v=20260921b" defer></script>
+  <script src="/blog/assets/reader-navigation.js?v=20261004a" defer></script>
 </body>
 </html>
