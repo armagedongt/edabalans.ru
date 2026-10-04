@@ -434,6 +434,7 @@ sources = [
   { path = "docs/knowledge-base/modules/training/COURSE_PROGRAM.md", role = "rule" },
   { path = "docs/knowledge-base/modules/training/COURSE_CONTENT_MAP.md", role = "rule" },
   { path = "docs/knowledge-base/modules/training/MATERIALS_AND_SOURCES.md", role = "rule" },
+  { path = "docs/knowledge-base/modules/training/SOURCE_BLOCKS.md", role = "rule" },
   { path = "docs/knowledge-base/modules/training/DECISIONS_AND_OPEN_QUESTIONS.md", role = "rule" },
 ]
 
