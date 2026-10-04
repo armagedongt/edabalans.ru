@@ -202,7 +202,14 @@
         "source_basis": "full_source",
         "validation_status": "pass",
         "review_status": "pass",
-        "adaptation": "minimal_proofread_author_critique_3_original_images_preserved_not_archived_A203"
+        "adaptation": "minimal_proofread_author_critique_3_original_images_preserved_not_archived_A203",
+        "original_published_at": "2026-06-14T20:48:09+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380",
+          "page_sha256": "d86ea75dd9d480d17c843ae0d47a7ea17a9ebfdcdcdb87605d5ed4ab8616bf15",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
@@ -269,7 +276,14 @@
         "source_basis": "full_source",
         "validation_status": "pass",
         "review_status": "pass",
-        "adaptation": "minimal_proofread_original_claims_and_22_images_preserved"
+        "adaptation": "minimal_proofread_original_claims_and_22_images_preserved",
+        "original_published_at": "2024-08-11T17:23:41+00:00",
+        "original_date_evidence": {
+          "source": "https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+          "page_sha256": "2d8f3a18adfa5994c462334ceb4661c4039c8c31bbff119c007271ea65391756",
+          "field": "header.time[datetime]",
+          "checked_at": "2026-10-04T22:03:21.655450+03:00"
+        }
       }
     },
     {
@@ -332,6 +346,13 @@
           "sha256": "98710f741f474ebed95ed3fecb3f13341d5f949ad82f34ef3972873a6d1b7172",
           "delivery": "external_original_link",
           "self_hosted": false
+        },
+        "original_published_at": "2024-05-25T21:18:19+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/mama_s_dnem_rozhdeniya_11448583",
+          "page_sha256": "ab8b2e0e8433a13c69e3af35d8151d6c948dfe4e90cbbbad88249a7ac80d30c7",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
       }
     },
@@ -378,7 +399,14 @@
         "source_basis": "full_source",
         "validation_status": "pass",
         "review_status": "pass",
-        "adaptation": "minimal_platform_tail_proofread_original_numbers_preserved"
+        "adaptation": "minimal_platform_tail_proofread_original_numbers_preserved",
+        "original_published_at": "2025-01-18T20:31:15+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/koroche_ya_zastrakhoval_mamu_ot_onkologii_12269678",
+          "page_sha256": "0f0f83a427eb4cda565cfacc2d13a270b920e7b1b0fb658aa9cf881399645443",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
@@ -785,7 +813,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2024-09-12T16:57:20+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517",
+          "page_sha256": "6c53298645fb743741083950a35d1542603e3f21c59211df18b43a01e38301e8",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
@@ -834,7 +869,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2023-12-31T12:14:56+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/vot_vam_i_olive_10978866",
+          "page_sha256": "8116410b1ed87c9e847abc8dd5840c25f21783ec1626d72124fb7f7f6f0829b3",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
@@ -995,7 +1037,14 @@
         "sha256": [
           "b47661efb2f9d8b895f2097b4f8e3663b50df229366ff4415d41283172000ea9"
         ],
-        "source_basis": "full_source"
+        "source_basis": "full_source",
+        "original_published_at": "2023-04-08T21:18:52+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/vse_znayut_nikto_ne_delaet_10123213",
+          "page_sha256": "ce56904a69a0d917c51f84ee84ed81b09d004db1a373a2178d074d5d43e8e7a8",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
@@ -1146,7 +1195,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2024-04-27T18:23:05+00:00",
+        "original_date_evidence": {
+          "source": "https://telegra.ph/intuitivnoe-pitanie-04-27-2",
+          "page_sha256": "df7e713e4f31b2a3ebe929733d6d2c4215a08928414aeaae779634995e5fb2f6",
+          "field": "header.time[datetime]",
+          "checked_at": "2026-10-04T22:03:21.655450+03:00"
+        }
       }
     },
     {
@@ -1362,7 +1418,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2026-03-07T21:17:52+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/velikiy_post_pokhudenie_i_zdorove_13762311",
+          "page_sha256": "89012ee1b9672d0dd3cee328feb00b3fbf9a08d8bc5bfe216658455ded696c91",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
@@ -1406,7 +1469,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2025-07-13T18:37:34+00:00",
+        "original_date_evidence": {
+          "source": "https://telegra.ph/Minus-12-kilogramm-za-2-mesyaca-07-13",
+          "page_sha256": "f979135357c958f3cdbcf216d32de574161240243f22bf6ba731511a786f5b50",
+          "field": "header.time[datetime]",
+          "checked_at": "2026-10-04T22:03:21.655450+03:00"
+        }
       }
     },
     {
@@ -1450,7 +1520,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2024-03-10T16:28:13+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/otvet_na_post_nutritsiolog_vs_dietolog_11210930",
+          "page_sha256": "93948ef9883f0e904d0cac56bbfc971be44269c83e693c5c90a04cc3e4ddc353",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
@@ -1499,7 +1576,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2024-06-22T16:29:06+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/sladkoezhka__uvelichte_dozu_vitaminov_11534645",
+          "page_sha256": "b984ecb18e52586d9d9d9b3eed1850e09358b9e2f257f68e97b88c964976dd61",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
@@ -1597,7 +1681,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2024-09-29T14:01:39+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/otvet_na_post_borba_s_lishnim_vesom_11857250",
+          "page_sha256": "0d222f9bd09484ec8e93a9274d10397ca348bc91cbf16d17349a79acdadd3f79",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
@@ -1700,7 +1791,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2025-06-26T14:38:05+00:00",
+        "original_date_evidence": {
+          "source": "https://telegra.ph/Plan-06-26-5",
+          "page_sha256": "e7b8a139252fca741ff3011211ee0e61e50501399c7f5de2bb973cd747b3261e",
+          "field": "header.time[datetime]",
+          "checked_at": "2026-10-04T22:03:21.655450+03:00"
+        }
       }
     },
     {
@@ -1744,7 +1842,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2026-02-02T18:32:56+00:00",
+        "original_date_evidence": {
+          "source": "https://telegra.ph/Prezentaciya-02-02-3",
+          "page_sha256": "17e9c9afe27de2f42b70e9abf1c73aab65c94848660c11f79876e07870ee18f8",
+          "field": "header.time[datetime]",
+          "checked_at": "2026-10-04T22:03:21.655450+03:00"
+        }
       }
     },
     {
@@ -1867,7 +1972,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2023-09-01T15:30:17+00:00",
+        "original_date_evidence": {
+          "source": "https://telegra.ph/story-09-01-3",
+          "page_sha256": "0a024c013931aa2ef41e7655deabe17a040bc5357c0ed2ee04ec70fcbffe9c65",
+          "field": "header.time[datetime]",
+          "checked_at": "2026-10-04T22:03:21.655450+03:00"
+        }
       }
     },
     {
@@ -2115,7 +2227,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2024-08-31T15:47:32+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/professionalnyiy_edok_11762932",
+          "page_sha256": "edf6a670decbf0956825ecaa8dd69ac217c677aea4d0ed8a0e36f79b1d85c7e8",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
@@ -2280,7 +2399,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2026-03-15T12:38:36+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/tri_oshibki_v_nachale_pokhudeniya_13785403",
+          "page_sha256": "c65788f89830935f1dcde678561c1f79ed0fa212a4e5aa1546d6b1802706e5f4",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
@@ -2327,7 +2453,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2026-05-31T16:20:21+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/sdelat_pokhudenie_proshche_14021584",
+          "page_sha256": "27a43302222489f9956ce3147ca4b2e56278ae0de978024e1cbe729096a72291",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
@@ -2577,7 +2710,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2023-09-18T17:39:48+00:00",
+        "original_date_evidence": {
+          "source": "https://telegra.ph/Sahar-09-18",
+          "page_sha256": "27f1cf2c3210396d02a0789d5d3b496b676362ab8654d159b3108112cc0b105c",
+          "field": "header.time[datetime]",
+          "checked_at": "2026-10-04T22:03:21.655450+03:00"
+        }
       }
     },
     {
@@ -2855,7 +2995,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2025-10-11T15:24:13+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/skolko_vremeni_nuzhno_na_pokhudenie_13277231",
+          "page_sha256": "08f26806a216dc89eaeb6473564265fd9c83479e84e48753ebbf000ac006e08b",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
@@ -3018,7 +3165,14 @@
         "retrieved_at": "2026-09-17",
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2024-10-19T14:27:13+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/pochemu_yapontsyi_khudyie_a_tyi_net_11927800",
+          "page_sha256": "84b3a41cc79e6a6f9bef41836d8fe33717b9d9317c07b9037e4954d97eb054e7",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
       }
     },
     {
