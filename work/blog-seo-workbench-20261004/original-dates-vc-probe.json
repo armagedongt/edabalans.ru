@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-10-04T22:27:55.790243+03:00",
+  "mode": "read_only_primary_dates",
+  "exact": 1,
+  "unresolved": 0,
+  "rows": [
+    {
+      "source_id": "693339",
+      "slug": "mozhno-li-pit-vo-vremya-edy",
+      "source_url": "https://vc.ru/flood/693339-tak-mozhno-pit-vo-vremya-edy-ili-net-a-vsuhomyatku-tochno-vredno",
+      "status": "exact",
+      "resolved_url": "https://vc.ru/flood/693339-tak-mozhno-pit-vo-vremya-edy-ili-net-a-vsuhomyatku-tochno-vredno",
+      "canonical": "https://vc.ru/flood/693339-tak-mozhno-pit-vo-vremya-edy-ili-net-a-vsuhomyatku-tochno-vredno",
+      "author": {
+        "@type": "Person",
+        "name": "Sergey Vorontsov",
+        "image": "https://leonardo.osnova.io/ba215302-3ec0-5540-8206-d3e9430f9de7/-/scale_crop/144x/",
+        "url": "https://vc.ru/id1426580"
+      },
+      "original_published_at": "2023-05-13T09:35:08+00:00",
+      "html_sha256": "391167c778d2f1d02a4cccdd25d0450f405d85b407d94d02bfe3abb90cd2288b",
+      "field": "@graph.Article.datePublished"
+    }
+  ]
+}

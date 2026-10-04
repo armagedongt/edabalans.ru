@@ -102,20 +102,52 @@ def probe_telegraph(article):
         result['reason'] = str(error)
     return result
 
+
+def probe_vc(article):
+    url = article['source_provenance']['urls'][0]
+    result = {'source_id': article['source_id'], 'slug': article['slug'], 'source_url': url, 'status': 'unresolved'}
+    try:
+        with urlopen(Request(url, headers={'User-Agent': 'Mozilla/5.0'}), timeout=25) as response:
+            raw = response.read()
+            result['resolved_url'] = response.url
+            charset = response.headers.get_content_charset() or 'utf-8'
+        parser = StructuredData()
+        parser.feed(raw.decode(charset))
+        candidates = [entry for item in parser.items for entry in item.get('@graph', [item]) if entry.get('@type') == 'Article' and entry.get('url') == url]
+        result['canonical'] = parser.canonical
+        if result['resolved_url'] != url or parser.canonical != url or len(candidates) != 1:
+            result['reason'] = 'primary URL/canonical or unique Article missing'
+            return result
+        selected = candidates[0]
+        result['author'] = selected.get('author')
+        if selected.get('author', {}).get('url') != 'https://vc.ru/id1426580':
+            result['reason'] = 'author provenance mismatch'
+            return result
+        date = datetime.fromisoformat(selected['datePublished'])
+        if date.tzinfo is None:
+            result['reason'] = 'publication timestamp has no timezone'
+            return result
+        result.update(status='exact', original_published_at=date.isoformat(), html_sha256=hashlib.sha256(raw).hexdigest(), field='@graph.Article.datePublished')
+    except Exception as error:
+        result['reason'] = str(error)
+    return result
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--id')
     parser.add_argument('--output', type=Path)
-    parser.add_argument('--platform', choices=['pikabu', 'telegraph'], default='pikabu')
+    parser.add_argument('--platform', choices=['pikabu', 'telegraph', 'vc'], default='pikabu')
     args = parser.parse_args()
     articles = json.loads((ROOT / 'content/blog/manifest.json').read_text(encoding='utf-8'))['articles']
     selected = [a for a in articles if not a.get('source_provenance', {}).get('original_published_at') and (not args.id or a['source_id'] == args.id)]
     if args.platform == 'pikabu':
         selected = [a for a in selected if a['source_id'].isdigit() and any(url.startswith('https://pikabu.ru/story/') and url.endswith('_' + a['source_id']) for url in a.get('source_provenance', {}).get('urls', []))]
-    else:
+    elif args.platform == 'telegraph':
         selected = [a for a in selected if len(a.get('source_provenance', {}).get('urls', [])) == 1 and a['source_provenance']['urls'][0].startswith('https://telegra.ph/')]
+    else:
+        selected = [a for a in selected if len(a.get('source_provenance', {}).get('urls', [])) == 1 and a['source_provenance']['urls'][0].startswith('https://vc.ru/')]
     with ThreadPoolExecutor(max_workers=4) as pool:
-        rows = list(pool.map(probe if args.platform == 'pikabu' else probe_telegraph, selected))
+        rows = list(pool.map({'pikabu': probe, 'telegraph': probe_telegraph, 'vc': probe_vc}[args.platform], selected))
     receipt = {'checked_at': datetime.now().astimezone().isoformat(), 'mode': 'read_only_primary_dates', 'exact': sum(row['status'] == 'exact' for row in rows), 'unresolved': sum(row['status'] != 'exact' for row in rows), 'rows': rows}
     if args.output:
         args.output.write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

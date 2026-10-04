@@ -2665,7 +2665,14 @@
         ],
         "source_basis": "full_source",
         "validation_status": "pass",
-        "review_status": "pass"
+        "review_status": "pass",
+        "original_published_at": "2023-05-13T09:35:08+00:00",
+        "original_date_evidence": {
+          "source": "https://vc.ru/flood/693339-tak-mozhno-pit-vo-vremya-edy-ili-net-a-vsuhomyatku-tochno-vredno",
+          "page_sha256": "391167c778d2f1d02a4cccdd25d0450f405d85b407d94d02bfe3abb90cd2288b",
+          "field": "@graph.Article.datePublished",
+          "checked_at": "2026-10-04T22:27:55.790243+03:00"
+        }
       }
     },
     {
