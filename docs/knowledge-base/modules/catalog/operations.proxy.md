@@ -41,6 +41,11 @@ implementation_status: implemented
 пути `/favicon-tests/{black|blue|face}` к одноимённым `noindex`-страницам модуля
 `platform.blog`; общий wildcard для этой папки не открыт.
 
+Профиль автора блога публикуется только точным читательским путём
+`/author/sergey-vorontsov`, переписываемым в backend-маршрут
+`/blog/author/sergey-vorontsov`. Wildcard `/author/*` и закрытые редакторские
+маршруты через публичный blog-домен не открываются.
+
 Для временной проверки Robokassa go-домен пропускает только страницы и старты
 `/robokassa-test` и `/robokassa-live-probe`, ResultUrl2, точные страницы возврата
 и `GET` статуса с числовым `InvId`. Первый маршрут проверяет тестовую операцию,

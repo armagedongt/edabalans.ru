@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from functools import lru_cache
 from html import escape, unescape
 import json
@@ -55,6 +56,7 @@ class BlogArticle:
     cta: str
     status: str
     media: tuple[str, ...]
+    original_published_at: str | None = None
 
 
 @dataclass(frozen=True)
@@ -214,6 +216,7 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
             cta=cta,
             status=status,
             media=tuple(media_raw),
+            original_published_at=(raw.get("source_provenance") or {}).get("original_published_at"),
         )
         articles.append(article)
 
@@ -260,6 +263,10 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
     published_ids = {article.source_id for article in catalog.published}
 
     for article in catalog.articles:
+        if article.original_published_at is not None:
+            date = datetime.fromisoformat(article.original_published_at)
+            if date.tzinfo is None:
+                raise ValueError(f"blog original publication timestamp requires timezone: {article.source_id}")
         if not SLUG_RE.fullmatch(article.slug):
             raise ValueError(f"invalid blog slug: {article.slug}")
         if article.category not in BLOG_CATEGORIES:

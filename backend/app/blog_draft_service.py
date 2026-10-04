@@ -4,6 +4,7 @@ from __future__ import annotations
 import base64
 import binascii
 from copy import deepcopy
+from datetime import timezone
 from io import BytesIO
 import hashlib
 import json
@@ -681,6 +682,11 @@ def public_payload(db: Session, slug: str) -> dict | None:
         selected_fit,
         payload["media"],
     )
+    # This is the public version event, never the newer moderation draft.
+    timestamp = published.created_at
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.replace(tzinfo=timezone.utc)
+    payload["published_updated_at"] = timestamp.isoformat()
     return payload
 
 

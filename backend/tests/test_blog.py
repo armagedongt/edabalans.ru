@@ -280,7 +280,7 @@ def test_blog_is_indexable_and_sitemap_lists_all_articles() -> None:
     assert "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/sitemap.xml" in robots.text
     assert sitemap.status_code == 200
     assert sitemap.headers["content-type"].startswith("application/xml")
-    assert sitemap.text.count("<url>") == len(load_blog_catalog().published) + 1
+    assert sitemap.text.count("<url>") == len(load_blog_catalog().published) + 2
     assert "/articles/nepriyatnaya-pravda-pro-med" in sitemap.text
 
 

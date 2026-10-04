@@ -15,9 +15,10 @@
   <link rel="canonical" href="{{CANONICAL}}">
   <link rel="stylesheet" href="/blog/assets/article-typography.css?v=20260917a">
   <link rel="stylesheet" href="/blog/assets/article-note.css?v=20260917a">
-  <link rel="stylesheet" href="/blog/assets/blog.css?v=20261004-pagination">
+  <link rel="stylesheet" href="/blog/assets/blog.css?v=20261004-author">
   <title>{{SEO_TITLE}} · Похудение — это есть</title>
   <script type="application/ld+json">{{STRUCTURED_DATA}}</script>
+  <script type="application/ld+json">{{BREADCRUMB_DATA}}</script>
 </head>
 <body data-page="article">
   <header class="site-header site-header--public">
@@ -55,12 +56,15 @@
   <main>
     <article class="article-shell">
       <header class="article-hero">
+        {{BREADCRUMBS}}
         <div class="article-tools">
           <a class="back-link" href="https://похудение-это-есть.рф/blog">← Все статьи</a>
           {{TOC_MOBILE}}
         </div>
         <span class="article-category">{{CATEGORY}}</span>
         <h1>{{TITLE}}</h1>
+        {{AUTHOR_BYLINE}}
+        {{ARTICLE_DATES}}
         {{HERO}}
       </header>
       <div class="article-layout">

@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-04",
+  "scope": "author profile, source dates, breadcrumbs",
+  "state": "local; not main or production",
+  "tests": {"passed": 52, "failed": 0, "duration_seconds": 29.68},
+  "source_dates": {"total": 62, "confirmed": 32, "new_exact_snapshot_dates": 31, "unresolved": 30, "invented": 0},
+  "manifest_semantic_check": "only 31 original_published_at and original_date_evidence additions; article bodies unchanged",
+  "writer": "approved profile copy proofread/full_source; review and validation pass; private artifacts D:/Codex/private/blog-seo-author-profile-20261004",
+  "reviews": {"code_tests": "clean", "documentation": "clean", "security": "clean", "layout": "clean; final top-region and profile evidence reviewed"},
+  "ui": {"profile": "160px circular real owner avatar; stable captures 360/430/768/1440", "byline_breadcrumbs": "eight viewport captures without JavaScript; loaded 32px avatar, visible breadcrumbs, no document overflow", "evidence": "D:/Codex/evidence/blog-author-top-20261004-a; D:/Codex/evidence/blog-author-profile-20261004-c"},
+  "proxy": {"scope": "exact /author/sergey-vorontsov allowlist only", "static_contract_test": "pass", "live_caddy_validation": "not run; Caddy and Docker unavailable locally; no deployment"},
+  "analytics": "unchanged; Metrika events and search consoles reserved for stage 8",
+  "next": "resolve remaining original dates by exact source evidence; then measured responsive media and functional blocks; no live metadata selection applied"
+}

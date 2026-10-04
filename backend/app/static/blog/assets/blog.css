@@ -211,6 +211,14 @@ html[data-theme="dark"] .card-tag { background: var(--cloud); color: #fff; }
 .article-tools { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 30px; }
 .back-link { display: inline-block; color: var(--muted); font-size: 14px; font-weight: 600; text-decoration: none; }
 .article-category { display: block; }
+.breadcrumbs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; color: var(--muted); font-size: 13px; }
+.breadcrumbs a { text-decoration: none; }
+.author-byline { display: inline-flex; align-items: center; gap: 9px; max-width: 100%; margin-top: 18px; color: var(--muted); font-size: 14px; text-decoration: none; }
+.author-byline img { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.article-dates { margin-top: 10px; color: var(--muted); font-size: 13px; }
+.author-profile { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
+#article .author-profile-avatar { width: 160px; height: 160px; margin: 0; border-radius: 50%; object-fit: cover; }
+.author-profile > div { flex: 1 1 250px; }
 .article-hero h1 { margin: 15px 0 0; font-size: clamp(32px, 3.6vw, 44px); font-weight: 800; letter-spacing: -.035em; line-height: 1.12; }
 .article-hero figure { margin: 28px 0 0; overflow: hidden; border-radius: 14px; background: var(--surface-soft); }
 .article-hero figure img { width: 100%; height: auto; display: block; object-fit: contain; }

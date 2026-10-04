@@ -1,0 +1,417 @@
+{
+  "date": "2026-10-04",
+  "source_snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843",
+  "applied": true,
+  "changed": 31,
+  "would_change": 31,
+  "exact": 31,
+  "existing_provenance": 1,
+  "unresolved": 30,
+  "source_bodies_copied": false,
+  "library_written": false,
+  "rows": [
+    {
+      "source_id": "10369434",
+      "slug": "kak-na-menya-napali-sobaki-v-lesu",
+      "status": "existing_provenance",
+      "original_published_at": "2023-06-17T13:18:08+03:00"
+    },
+    {
+      "source_id": "amkbo7kgg1",
+      "slug": "zachem-nuzhny-trenirovki-krome-pohudeniya",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "12193581",
+      "slug": "tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom",
+      "status": "exact",
+      "original_published_at": "2024-12-29T18:12:24+03:00",
+      "source_url": "https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581"
+    },
+    {
+      "source_id": "14062380",
+      "slug": "sredizemnomorskaya-dieta-eto-voobshche-chto",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+      "slug": "12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "11448583",
+      "slug": "mama-s-dnyom-rozhdeniya",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "12269678",
+      "slug": "zastrahoval-mamu-ot-onkologii",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "11989790",
+      "slug": "dolbanaya-bednost",
+      "status": "exact",
+      "original_published_at": "2024-11-05T19:04:15+03:00",
+      "source_url": "https://pikabu.ru/story/dolbannaya_bednost_11989790"
+    },
+    {
+      "source_id": "10797468",
+      "slug": "zhiroszhigayushchaya-zona-ne-rabotaet",
+      "status": "exact",
+      "original_published_at": "2023-11-04T12:47:03+03:00",
+      "source_url": "https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468"
+    },
+    {
+      "source_id": "10573917",
+      "slug": "rezinki-dlya-trenirovok",
+      "status": "exact",
+      "original_published_at": "2023-08-19T10:00:27+03:00",
+      "source_url": "https://pikabu.ru/story/rezinki_dlya_trenirovok_10573917"
+    },
+    {
+      "source_id": "10532723",
+      "slug": "posledniy-zhir-na-zhivote-plan-deystviy",
+      "status": "exact",
+      "original_published_at": "2023-08-05T14:44:13+03:00",
+      "source_url": "https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723"
+    },
+    {
+      "source_id": "11906015",
+      "slug": "u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov",
+      "status": "exact",
+      "original_published_at": "2024-10-13T12:40:18+03:00",
+      "source_url": "https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015"
+    },
+    {
+      "source_id": "10425659",
+      "slug": "13-pravil-domashnih-trenirovok",
+      "status": "exact",
+      "original_published_at": "2023-07-01T10:39:06+03:00",
+      "source_url": "https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659"
+    },
+    {
+      "source_id": "11801517",
+      "slug": "pochemu-pitanie-vazhnee-trenirovok",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "10978866",
+      "slug": "vot-vam-i-olive",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "11188875",
+      "slug": "belyy-ris-kury-i-vitamin-b1",
+      "status": "exact",
+      "original_published_at": "2024-03-03T13:42:41+03:00",
+      "source_url": "https://pikabu.ru/story/belyiy_ris_vorovstvo_kuryi_i_vitamin_b1_a_prichem_tut_zdorovoe_pitanie__11188875"
+    },
+    {
+      "source_id": "10877887",
+      "slug": "skolko-polzy-ostaetsya-v-moloke",
+      "status": "exact",
+      "original_published_at": "2023-11-30T18:03:06+03:00",
+      "source_url": "https://pikabu.ru/story/skolko_polzyi_realno_ostaetsya_v_moloke_kotoroe_myi_pem_10877887"
+    },
+    {
+      "source_id": "10123213",
+      "slug": "vse-znayut-nikto-ne-delaet",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "habits-formation-and-one-percent",
+      "slug": "chto-vy-ne-ponimaete-o-formirovanii-privychek",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "11339712",
+      "slug": "kakaya-samaya-vrednaya-dieta",
+      "status": "exact",
+      "original_published_at": "2024-04-20T12:04:26+03:00",
+      "source_url": "https://pikabu.ru/story/kakaya_samaya_vrednaya_dieta_11339712"
+    },
+    {
+      "source_id": "intuitivnoe-pitanie-04-27-2",
+      "slug": "intuitivnoe-pitanie-vy-vse-nepravilno-ponyali",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "11665295",
+      "slug": "musornaya-ryba-ili-musornye-nutriciologi",
+      "status": "exact",
+      "original_published_at": "2024-08-02T18:00:24+03:00",
+      "source_url": "https://pikabu.ru/story/musornaya_ryiba_ili_musornyie_nutritsiologi_11665295"
+    },
+    {
+      "source_id": "12109482",
+      "slug": "zadacha-pohudet-uroven-slozhnosti-zima",
+      "status": "exact",
+      "original_published_at": "2024-12-07T18:37:00+03:00",
+      "source_url": "https://pikabu.ru/story/zadacha__pokhudet_uroven_slozhnosti__zima_12109482"
+    },
+    {
+      "source_id": "13178972",
+      "slug": "izmeryaem-vashu-zhirnost",
+      "status": "exact",
+      "original_published_at": "2025-09-13T15:43:04+03:00",
+      "source_url": "https://pikabu.ru/story/izmeryaem_vashu_zhirnost_13178972"
+    },
+    {
+      "source_id": "13762311",
+      "slug": "velikiy-post-pohudenie-i-zdorove",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
+      "slug": "minus-12-kilogrammov-za-2-mesyaca",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "11210930",
+      "slug": "nutriciolog-ili-dietolog-komu-verit",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "11534645",
+      "slug": "sladkoezhka-uvelichte-dozu-vitaminov",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "11833079",
+      "slug": "10-debilnyh-faktov-o-vrednyh-produktah",
+      "status": "exact",
+      "original_published_at": "2024-09-22T11:44:18+03:00",
+      "source_url": "https://pikabu.ru/story/10_debilnyikh_faktov_o_vrednyikh_produktakh_dlya_pokhudeniya_11833079"
+    },
+    {
+      "source_id": "11857250",
+      "slug": "borba-s-lishnim-vesom-pochemu-shagov-nedostatochno",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "13355824",
+      "slug": "o-yarlykah",
+      "status": "exact",
+      "original_published_at": "2025-11-02T15:57:11+03:00",
+      "source_url": "https://pikabu.ru/story/o_yarlyikakh_13355824"
+    },
+    {
+      "source_id": "d1baceb9e2b6b72013b6",
+      "slug": "glavnye-oshibki-v-pohudenii-do-goloda",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "30e4d208f2cbd8e57201",
+      "slug": "pochemu-lyudi-hudeyut-i-snova-nabirayut-ves",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "2e269fdc52d600a64753",
+      "slug": "kak-ya-reshil-proyti-100000-shagov",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "0d583f6ad1cea0eef750",
+      "slug": "odin-nebolshoy-pryzhok-bolshie-peremeny",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "13327360",
+      "slug": "ukolol-i-pohudel-ozempik-semavik-nyuansy",
+      "status": "exact",
+      "original_published_at": "2025-10-25T17:51:23+03:00",
+      "source_url": "https://pikabu.ru/story/ukolol_i_pokhudel_ozempik_semavik_nyuansyi_13327360"
+    },
+    {
+      "source_id": "11277666",
+      "slug": "skrytye-zapory-i-banalnyy-syuzhet",
+      "status": "exact",
+      "original_published_at": "2024-03-31T12:23:25+03:00",
+      "source_url": "https://pikabu.ru/story/skryityie_zaporyi_i_banalnyiy_syuzhet_vozmozhno_u_vas_tozhe_11277666"
+    },
+    {
+      "source_id": "11494317",
+      "slug": "dieta-sryv-i-matematika",
+      "status": "exact",
+      "original_published_at": "2024-06-09T18:41:43+03:00",
+      "source_url": "https://pikabu.ru/story/dieta_sryiv_i_matematika_11494317"
+    },
+    {
+      "source_id": "11522121",
+      "slug": "eti-dolbannye-10000-shagov",
+      "status": "exact",
+      "original_published_at": "2024-06-18T17:08:36+03:00",
+      "source_url": "https://pikabu.ru/story/yeti_dolbannyie_10_000_shagov_11522121"
+    },
+    {
+      "source_id": "11762932",
+      "slug": "professionalnyy-edok",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "12296286",
+      "slug": "net-vremeni-obyasnyat-prosto-hudey",
+      "status": "exact",
+      "original_published_at": "2025-01-25T15:02:45+03:00",
+      "source_url": "https://pikabu.ru/story/net_vremeni_obyasnyat_prosto_khudey_12296286"
+    },
+    {
+      "source_id": "13436070",
+      "slug": "poterya-myshc-pri-pohudenii",
+      "status": "exact",
+      "original_published_at": "2025-11-26T11:17:07+03:00",
+      "source_url": "https://pikabu.ru/story/poterya_myishts_pri_pokhudenii_13436070"
+    },
+    {
+      "source_id": "13785403",
+      "slug": "tri-oshibki-v-nachale-pohudeniya",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "14021584",
+      "slug": "sdelat-pohudenie-proshche",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "14102926",
+      "slug": "hodit-chtoby-hudet",
+      "status": "exact",
+      "original_published_at": "2026-06-28T16:09:24+03:00",
+      "source_url": "https://pikabu.ru/story/khodit_chtobyi_khudet_14102926"
+    },
+    {
+      "source_id": "14183275",
+      "slug": "hochesh-hudet-esh-kartoshku",
+      "status": "exact",
+      "original_published_at": "2026-07-25T14:53:40+03:00",
+      "source_url": "https://pikabu.ru/story/khochesh_khudet_zatknis_i_esh_kartoshku_14183275"
+    },
+    {
+      "source_id": "12857458",
+      "slug": "pravila-bezopasnosti-za-shvedskim-stolom",
+      "status": "exact",
+      "original_published_at": "2025-06-18T20:21:40+03:00",
+      "source_url": "https://pikabu.ru/story/pravila_bezopasnosti_za_shvedskim_stolom_12857458"
+    },
+    {
+      "source_id": "693339",
+      "slug": "mozhno-li-pit-vo-vremya-edy",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "Sahar-09-18",
+      "slug": "saharozamenitel-vyzyvaet-rak-net",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "11207593",
+      "slug": "glikemicheskiy-indeks-eto-lishnee",
+      "status": "exact",
+      "original_published_at": "2024-03-09T14:27:30+03:00",
+      "source_url": "https://pikabu.ru/story/glikemicheskiy_indeks__yeto_lishnee_11207593"
+    },
+    {
+      "source_id": "10999474",
+      "slug": "pp-recepty-eto-ploho",
+      "status": "exact",
+      "original_published_at": "2024-01-07T11:32:05+03:00",
+      "source_url": "https://pikabu.ru/story/pp_retseptyi__yeto_plokho_i_vot_pochemu_10999474"
+    },
+    {
+      "source_id": "training-combined-2023",
+      "slug": "kak-nachat-trenirovki-i-ne-brosit",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "12922345",
+      "slug": "a-mne-trener-posovetoval",
+      "status": "exact",
+      "original_published_at": "2025-07-05T11:32:06+03:00",
+      "source_url": "https://pikabu.ru/story/a_mne_trener_posovetoval_12922345"
+    },
+    {
+      "source_id": "13277231",
+      "slug": "skolko-vremeni-nuzhno-na-pohudenie",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "11401696",
+      "slug": "pohudenie-nachinaetsya-ne-s-pohudeniya",
+      "status": "exact",
+      "original_published_at": "2024-05-10T13:59:36+03:00",
+      "source_url": "https://pikabu.ru/story/pokhudenie_nachinaetsya_ne_s_pokhudeniya_11401696"
+    },
+    {
+      "source_id": "11927800",
+      "slug": "pochemu-yapontsy-hudye-a-ty-net",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "11269472",
+      "slug": "temperatura-vody-dlya-priema-vnutr",
+      "status": "exact",
+      "original_published_at": "2024-03-28T16:44:46+03:00",
+      "source_url": "https://pikabu.ru/story/temperatura_vodyi_dlya_priema_vnutr_11269472"
+    },
+    {
+      "source_id": "12237133",
+      "slug": "samyy-zdorovyy-chelovek-na-planete",
+      "status": "exact",
+      "original_published_at": "2025-01-10T20:03:28+03:00",
+      "source_url": "https://pikabu.ru/story/samyiy_zdorovyiy_chelovek_na_planete_12237133"
+    },
+    {
+      "source_id": "11875492",
+      "slug": "nepriyatnaya-pravda-pro-med",
+      "status": "exact",
+      "original_published_at": "2024-10-04T18:11:17+03:00",
+      "source_url": "https://pikabu.ru/story/nepriyatnaya_pravda_pro_myod_11875492"
+    },
+    {
+      "source_id": "tilda-49734795",
+      "slug": "15-sovetov-tem-kto-hudeet",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "tilda-49745867",
+      "slug": "pravilo-30-rasteniy",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    },
+    {
+      "source_id": "tilda-67280331",
+      "slug": "vesy-instrukciya-po-primeneniyu",
+      "status": "unresolved",
+      "reason": "no exact primary source ID and URL timestamp in this snapshot; not inferred from other family members"
+    }
+  ]
+}

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from html import escape
 from dataclasses import replace
+from datetime import datetime
 import json
 import mimetypes
 import re
@@ -42,6 +43,7 @@ BLOG_ASSET_FILES = {
     "favicon-test-face.png",
     "sergey-author.png",
     "sergey-author-v2.webp",
+    "sergey-author-channel.webp",
 }
 FAVICON_TEST_PAGES = {
     "black": ("Блог — чёрная П.", "favicon-test-black.svg"),
@@ -66,6 +68,57 @@ def _public_catalog(db: Session):
         replace(article, excerpt=descriptions.get(article.slug, article.excerpt))
         for article in catalog.articles
     ))
+
+
+def _author() -> dict:
+    return json.loads((BLOG_DIR.parents[3] / "content" / "blog" / "author.json").read_text(encoding="utf-8"))
+
+
+def _person(author: dict) -> dict:
+    url = BLOG_PUBLIC_ORIGIN + author["path"]
+    return {"@type": "Person", "@id": url + "#person", "url": url,
+            "name": author["name"], "jobTitle": author["role"], "description": author["description"],
+            "image": BLOG_PUBLIC_ORIGIN + author["image"], "sameAs": author["same_as"]}
+
+
+def _breadcrumbs(article=None) -> tuple[str, dict]:
+    items = [("Блог", BLOG_PUBLIC_ORIGIN + "/")]
+    if article is not None:
+        items += [(article.category, BLOG_PUBLIC_ORIGIN + "/?" + urlencode({"category": article.category})),
+                  (article.title, BLOG_PUBLIC_ORIGIN + "/articles/" + article.slug)]
+    else:
+        items.append(("Сергей Воронцов", BLOG_PUBLIC_ORIGIN + _author()["path"]))
+    links = ' <span aria-hidden="true">/</span> '.join(
+        f'<a href="{escape(url, quote=True)}">{escape(label)}</a>' if index < len(items) - 1
+        else f'<span aria-current="page">{escape(label)}</span>'
+        for index, (label, url) in enumerate(items)
+    )
+    data = {"@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": index + 1, "name": label, "item": url}
+        for index, (label, url) in enumerate(items)]}
+    return f'<nav class="breadcrumbs" aria-label="Хлебные крошки">{links}</nav>', data
+
+
+@router.get("/blog/author/sergey-vorontsov", include_in_schema=False)
+def blog_author() -> HTMLResponse:
+    author = _author()
+    person = _person(author)
+    breadcrumbs, breadcrumb_data = _breadcrumbs()
+    body = (f'<div class="author-profile"><img class="author-profile-avatar" src="{escape(author["image"], quote=True)}" '
+            f'alt="{escape(author["name"], quote=True)}" width="160" height="160"><div>'
+            f'<p>{escape(author["role"])}</p><p>{escape(author["description"])}</p>'
+            + ' · '.join(f'<a href="{escape(url, quote=True)}" rel="me">{label}</a>' for url, label in zip(author["same_as"], ("Telegram", "MAX")))
+            + '</div></div>')
+    template = re.sub(r'<section class="shell related-section".*?</section>', '', _template("article.html"), flags=re.S)
+    replacements = {"{{TITLE}}": escape(author["name"]), "{{SEO_TITLE}}": escape(author["name"] + " — " + author["role"]),
+                    "{{DESCRIPTION}}": escape(author["description"], quote=True), "{{CANONICAL}}": escape(person["url"], quote=True),
+                    "{{HERO_ABSOLUTE}}": escape(person["image"], quote=True), "{{CATEGORY}}": "", "{{HERO}}": "",
+                    "{{TOC_DESKTOP}}": "", "{{TOC_MOBILE}}": "", "{{ARTICLE_BODY}}": body,
+                    "{{BREADCRUMBS}}": breadcrumbs, "{{AUTHOR_BYLINE}}": "", "{{ARTICLE_DATES}}": "",
+                    "{{BREADCRUMB_DATA}}": json.dumps({"@context": "https://schema.org", **breadcrumb_data}, ensure_ascii=False).replace("</", r"<\/"),
+                    "{{STRUCTURED_DATA}}": json.dumps({"@context": "https://schema.org", "@type": "ProfilePage", "url": person["url"], "mainEntity": person}, ensure_ascii=False).replace("</", r"<\/")}
+    rendered = re.sub(r"\{\{[A-Z_]+\}\}", lambda match: replacements.get(match.group(0), match.group(0)), template)
+    return _html_response(rendered.replace('property="og:type" content="article"', 'property="og:type" content="profile"'))
 
 
 @router.get("/blog", include_in_schema=False)
@@ -182,6 +235,16 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
     )
     canonical = f"{BLOG_PUBLIC_ORIGIN}/articles/{article.slug}"
     social_image = article.card.file
+    author = _author()
+    breadcrumbs, breadcrumb_data = _breadcrumbs(article)
+    dates = []
+    article_dates = {}
+    for label, key, value in (("Исходная публикация", "datePublished", article.original_published_at),
+                               ("Обновлено в блоге", "dateModified", published.get("published_updated_at") if published else None)):
+        if value:
+            date = datetime.fromisoformat(value)
+            dates.append(f'{label}: <time datetime="{escape(value, quote=True)}">{date:%d.%m.%Y}</time>')
+            article_dates[key] = value
     hero_html = (
         f'<figure><img src="/blog/media/{escape(article.hero.file, quote=True)}" '
         f'alt="{escape(article.hero.alt, quote=True)}" loading="eager" '
@@ -195,7 +258,8 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
             "@type": "Article",
             "headline": article.title,
             "description": article.excerpt,
-            "author": {"@type": "Person", "name": "Сергей Воронцов"},
+            "author": _person(author),
+            **article_dates,
             "mainEntityOfPage": canonical,
             "image": f"{BLOG_PUBLIC_ORIGIN}/blog/media/{social_image}",
         },
@@ -211,6 +275,9 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
             f"{BLOG_PUBLIC_ORIGIN}/blog/media/{social_image}", quote=True
         ),
         "{{HERO}}": hero_html,
+        "{{BREADCRUMBS}}": breadcrumbs,
+        "{{AUTHOR_BYLINE}}": f'<a class="author-byline" href="{escape(BLOG_PUBLIC_ORIGIN + author["path"], quote=True)}"><img src="{escape(author["image"], quote=True)}" alt="" width="32" height="32">{escape(author["name"])}, {escape(author["role"].lower())}</a>',
+        "{{ARTICLE_DATES}}": '<div class="article-dates">' + ' · '.join(dates) + '</div>' if dates else '',
         "{{ARTICLE_BODY}}": body,
         "{{TOC_DESKTOP}}": toc_html(toc, mobile=False),
         "{{TOC_MOBILE}}": toc_html(toc, mobile=True),
@@ -218,6 +285,7 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
             catalog, article, card_overrides=card_overrides
         ),
         "{{STRUCTURED_DATA}}": structured_data,
+        "{{BREADCRUMB_DATA}}": json.dumps({"@context": "https://schema.org", **breadcrumb_data}, ensure_ascii=False).replace("</", r"<\/"),
     }
     rendered = re.sub(
         r"\{\{[A-Z_]+\}\}",
@@ -230,7 +298,7 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
 @router.get("/blog/sitemap.xml", include_in_schema=False)
 def blog_sitemap() -> Response:
     catalog = load_blog_catalog()
-    locations = [BLOG_PUBLIC_ORIGIN, *(f"{BLOG_PUBLIC_ORIGIN}/articles/{article.slug}" for article in catalog.published)]
+    locations = [BLOG_PUBLIC_ORIGIN, BLOG_PUBLIC_ORIGIN + _author()["path"], *(f"{BLOG_PUBLIC_ORIGIN}/articles/{article.slug}" for article in catalog.published)]
     items = "".join(f"<url><loc>{escape(location)}</loc></url>" for location in locations)
     xml = f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{items}</urlset>'
     response = Response(xml, media_type="application/xml")
