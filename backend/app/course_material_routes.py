@@ -47,6 +47,9 @@ DIRECT_RECIPE_PAGES = {
     "mackerel-pasta-salad": "Паста-салат со скумбрией и лимоном",
     "chickpea-spinach-shakshuka": "Шакшука с нутом и шпинатом",
     "yogurt-cake": "Йогуртовый пирог",
+    "green-herb-sauce": "Зелёный соус",
+    "meat-quesadillas": "Кесадильи с курицей и говядиной",
+    "cheburek-substitute": "Заменитель чебурека",
 }
 MASTERCLASS_MEDIA_ROOTS = (
     (COURSE_CONTENT_ROOT / "editorial" / "assets").resolve(),
