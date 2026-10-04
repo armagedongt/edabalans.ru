@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-05",
+  "module_id": "platform.blog",
+  "scope": "local_only",
+  "status": "pass",
+  "assignments": [
+    {"source_id": "10532723", "target": "13178972", "before_heading": "короче-выход-только-один-худеть-дальше"},
+    {"source_id": "11906015", "target": "11210930", "before_heading": "5-иногда-перекусы-даже-помогают"},
+    {"source_id": "13178972", "target": "tilda-67280331", "before_heading": "4-измерить-складки-кожи-и-посмотреть-в-табличку"}
+  ],
+  "no_slot": ["11210930"],
+  "checks": {
+    "full_sources_read": "PASS",
+    "public_pair_urls_200": 5,
+    "public_pair_text_matches_local": 5,
+    "single_slot_exact_anchor": "PASS",
+    "restores_original_html": "PASS",
+    "catalog_validation": "PASS",
+    "review": {"waves": 1, "status": "clean", "reviewer": "nav_code_review_v2"}
+  },
+  "main_changed": false,
+  "production_changed": false
+}
