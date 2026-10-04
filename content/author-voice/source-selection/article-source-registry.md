@@ -9,11 +9,11 @@
 
 ## Сводка
 
-- В блоге: **61** канонические семьи.
+- В блоге: **62** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **94** внешних проявления (по машиночитаемому реестру).
+- Уже привязано к канонам блога: **96** внешних проявления (по машиночитаемому реестру).
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
-- Отложено как отдельные безопасные семьи до подтверждения дублей: **206** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
+- Отложено как отдельные безопасные семьи до подтверждения дублей: **204** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
 - Короткие посты имеют отдельное представление; ссылки из канала и длинные Telegram-версии связаны с семьями через приватную карту `article-channel-links.json` (см. ARTICLE_SOURCE_LINKING.md).
 
@@ -21,6 +21,7 @@
 
 | Статья | Канон | Привязанные внешние проявления | Возможные версии на проверку |
 |---|---|---:|---:|
+| Как на меня напали собаки в лесу | [blog:kak-na-menya-napali-sobaki-v-lesu](https://blog.похудение-это-есть.рф/articles/kak-na-menya-napali-sobaki-v-lesu) | 2 | 0 |
 | 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://blog.похудение-это-есть.рф/articles/10-debilnyh-faktov-o-vrednyh-produktah) | 1 | 0 |
 | 12 простых изменений в питании и образе жизни | [blog:12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni](https://blog.похудение-это-есть.рф/articles/12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni) | 1 | 0 |
 | 13 правил для организации домашних тренировок | [blog:13-pravil-domashnih-trenirovok](https://blog.похудение-это-есть.рф/articles/13-pravil-domashnih-trenirovok) | 2 | 0 |
@@ -155,8 +156,6 @@
 | A033 | pikabu | [Как выбрать подходящие тренировки/упражнения для обычного человека?](https://pikabu.ru/story/kak_vyibrat_podkhodyashchie_trenirovkiuprazhneniya_dlya_obyichnogo_cheloveka_10840474) | `deferred_not_now` | 0 |
 | A032 | pikabu | [Как замотивировать себя на тренировки?](https://pikabu.ru/story/kak_zamotivirovat_sebya_na_trenirovki_10797523) | `deferred_not_now` | 0 |
 | A155 | telegraph | [Как можно на самом деле повлиять на долголетие, а не вот эти все БАДы](https://telegra.ph/Kak-mozhno-na-samom-dele-povliyat-na-dolgoletie-a-ne-vot-ehti-vse-BADy-08-18) | `short_reserve` / `manual_review` | 0 |
-| A012 | pikabu | [Как на меня напали собаки в лесу](https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434) | `editorial_review` / `publish_next` | 1 |
-| A156 | telegraph | [Как на меня напали собаки в лесу](https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17) | `editorial_review` / `publish_next` | 1 |
 | A115 | telegraph | [Как назначить себе дефицит калорий](https://telegra.ph/111-12-07-34) | `editorial_review` / `educational` | 0 |
 | A027 | pikabu | [Как начать тренироваться и... продолжить!!](https://pikabu.ru/story/kak_nachat_trenirovatsya_i_prodolzhit_10756513) | `short_reserve` | 0 |
 | A100 | pikabu | [Как перестать жаловаться и начать считать калории?](https://pikabu.ru/story/kak_perestat_zhalovatsya_i_nachat_schitat_kalorii_13894066) | `editorial_review` / `bank` | 0 |

@@ -1,0 +1,21 @@
+{
+  "status": "pass",
+  "production_revision": "3ebabf5a265c1c87b76363dd413c07c7b3534b5b",
+  "ci_run": 37166076839,
+  "ci_conclusion": "success",
+  "url": "https://blog.похудение-это-есть.рф/articles/kak-na-menya-napali-sobaki-v-lesu",
+  "body_matches_renderer": true,
+  "description_matches_first_sentences": true,
+  "image_count_in_article": 1,
+  "media_http": 200,
+  "media_sha256": "e334aead81e947c637ee30d4efd70770a150ca3c8db79acee56bee0ddd15f49b",
+  "media_bytes": 67334,
+  "headings": 4,
+  "catalog_has_article": true,
+  "desktop_width": 1280,
+  "mobile_width": 390,
+  "horizontal_overflow": false,
+  "original_image_loaded": true,
+  "full_scientific_pass": false,
+  "tests": 50
+}

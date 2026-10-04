@@ -155,12 +155,12 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 61,
-    "canonical_linked_external_records": 94,
-    "deferred_families": 206,
+    "canonical_blog_families": 62,
+    "canonical_linked_external_records": 96,
+    "deferred_families": 204,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 68,
+      "editorial_review": 66,
       "incomplete_draft": 11,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
@@ -2538,6 +2538,67 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:kak-na-menya-napali-sobaki-v-lesu",
+      "title": "Как на меня напали собаки в лесу",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "10369434",
+        "slug": "kak-na-menya-napali-sobaki-v-lesu",
+        "url": "https://blog.похудение-это-есть.рф/articles/kak-na-menya-napali-sobaki-v-lesu",
+        "body_file": "content/blog/articles/10369434.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A012",
+          "source": "pikabu",
+          "external_id": "10369434",
+          "title": "Как на меня напали собаки в лесу",
+          "url": "https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434",
+          "published_at": "2023-06-17T13:18:08+03:00",
+          "characters": 5651,
+          "role": "direct_source",
+          "provenance": "content://item/7ee045e3-43dc-4f56-8539-6a5b87b7db6f",
+          "text_sha256": "fbcf1b0c990d8670f315dbffc1381e7ed24c7bad0a7bdc2dac0763bef23fe000",
+          "source_version": 1
+        },
+        {
+          "catalog_id": "A156",
+          "source": "telegraph",
+          "external_id": "Kak-na-menya-napali-sobaki-v-lesu-06-17",
+          "title": "Как на меня напали собаки в лесу",
+          "url": "https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17",
+          "published_at": "2023-06-17T10:03:22+0000",
+          "characters": 4822,
+          "role": "earlier_shorter_version",
+          "provenance": "content://item/e98760d4-60d0-418d-b2ad-7450fc418ac6",
+          "text_sha256": "b775216dc641e0f7588b10bf1925b4bcd1ac9a79a6b8d48bbae2370fd3103e6e",
+          "source_version": 1
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "full_sources_compared_owner_approved_same_personal_story_pikabu_has_extra_intro",
+      "owner_source_decisions": {
+        "A012": "published_canonical_basis",
+        "A156": "earlier_shorter_same_family"
+      },
+      "channel_references": [
+        {
+          "url": "https://t.me/Fitness_Talks/110",
+          "provenance": "content://item/7e23644d-742a-4a15-8192-7af150d3bb07",
+          "source_version": 2,
+          "role": "announcement_not_full_article",
+          "channel_edited": false
+        }
+      ],
+      "owner_followup": {
+        "decision": "keep_author_meaning_unchanged",
+        "published": true,
+        "full_scientific_pass": false,
+        "production_revision": "3ebabf5a265c1c87b76363dd413c07c7b3534b5b"
+      }
     }
   ],
   "deferred": [
@@ -3949,76 +4010,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A155": "manual_review"
-      }
-    },
-    {
-      "family_id": "deferred:A012",
-      "title": "Как на меня напали собаки в лесу",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A012",
-          "source": "pikabu",
-          "external_id": "10369434",
-          "title": "Как на меня напали собаки в лесу",
-          "url": "https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434",
-          "published_at": "2023-06-17T13:18:08+03:00",
-          "characters": 5651,
-          "role": "unmerged_source",
-          "provenance": "content://item/7ee045e3-43dc-4f56-8539-6a5b87b7db6f",
-          "text_sha256": "fbcf1b0c990d8670f315dbffc1381e7ed24c7bad0a7bdc2dac0763bef23fe000"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A156"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A012": "publish_next"
-      },
-      "owner_followup": {
-        "decision": "keep_author_text_unchanged",
-        "basis": "04.10.2026: «Нападение собаки, я тебе еще раз сказал, оставляй». Удаление спорного абзаца не разрешено; прежнее согласование публикации сохраняется.",
-        "author_text_changed": false,
-        "published": false,
-        "next_stage": "minimal_adaptation_with_original_meaning_then_validation_review_delivery"
-      }
-    },
-    {
-      "family_id": "deferred:A156",
-      "title": "Как на меня напали собаки в лесу",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A156",
-          "source": "telegraph",
-          "external_id": "Kak-na-menya-napali-sobaki-v-lesu-06-17",
-          "title": "Как на меня напали собаки в лесу",
-          "url": "https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17",
-          "published_at": "2023-06-17T10:03:22+0000",
-          "characters": 4829,
-          "role": "unmerged_source",
-          "provenance": "content://item/e98760d4-60d0-418d-b2ad-7450fc418ac6",
-          "text_sha256": "69129e26bc0092016b15b31b54243146a83a1958dedcb717ef16ff4e61c8526e"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A012"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A156": "publish_next"
-      },
-      "owner_followup": {
-        "decision": "keep_author_text_unchanged",
-        "basis": "04.10.2026: «Нападение собаки, я тебе еще раз сказал, оставляй». Удаление спорного абзаца не разрешено; прежнее согласование публикации сохраняется.",
-        "author_text_changed": false,
-        "published": false,
-        "next_stage": "minimal_adaptation_with_original_meaning_then_validation_review_delivery"
       }
     },
     {

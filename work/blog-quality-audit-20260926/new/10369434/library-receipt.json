@@ -1,0 +1,18 @@
+{
+  "status": "pass",
+  "navigation_version": 32,
+  "canonical_families": 62,
+  "linked_external_records": 96,
+  "deferred_families": 204,
+  "approved_preparation_queue": [],
+  "channel_edits": 0,
+  "mapped_channel_links": [
+    "https://t.me/Fitness_Talks/110",
+    "https://t.me/Fitness_Talks/136"
+  ],
+  "other_families_preserved": true,
+  "usage_recorded_for": [
+    "A012",
+    "A156"
+  ]
+}

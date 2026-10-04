@@ -2,7 +2,7 @@
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
   "updated_at": "2026-10-04",
   "batch_size": 5,
-  "article_count": 61,
+  "article_count": 62,
   "old_article_count": 44,
   "full_current_text_read_count": 45,
   "archive_source_text_compared_count": 6,
@@ -50,8 +50,8 @@
     "12193581",
     "amkbo7kgg1"
   ],
-  "new_full_safe_review_pass_count": 17,
-  "total_old_and_new_full_safe_review_delivered_count": 60,
+  "new_full_safe_review_pass_count": 18,
+  "total_old_and_new_full_safe_review_delivered_count": 61,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
@@ -245,23 +245,24 @@
     "full_scientific_pass": false
   },
   "dogs_10369434_hold": {
-    "stage": "owner_confirmed_keep_author_text_unchanged",
+    "stage": "published_owner_keep_original_meaning",
     "source_members": [
       "A012",
       "A156"
     ],
     "author_text_changed": false,
-    "new_publication_created": false,
+    "new_publication_created": true,
     "question": "Удалить абзац с советом броситься на собаку и гарантией отсутствия дальнейшего нападения либо оставить на ручной разбор",
     "evidence": "new/10369434/source-review-20261003.md",
     "owner_followup": {
       "decision": "keep_author_text_unchanged",
       "basis": "04.10.2026: «Нападение собаки, я тебе еще раз сказал, оставляй». Удаление спорного абзаца не разрешено; прежнее согласование публикации сохраняется.",
       "author_text_changed": false,
-      "published": false,
-      "next_stage": "minimal_adaptation_with_original_meaning_then_validation_review_delivery"
+      "published": true,
+      "next_stage": "closed"
     },
-    "question_resolved": true
+    "question_resolved": true,
+    "production_receipt": "new/10369434/production-receipt.json"
   },
   "ozempik_prepared": {
     "source_id": "13327360",
@@ -1197,12 +1198,9 @@
     "owner_review": "owner-review/training-amkbo7kgg1-20261004.md"
   },
   "remaining_approved_source_cards": [
-    "A082",
-    "A012",
-    "A156",
-    "tilda-post:e4441ism91"
+    "A082"
   ],
-  "remaining_approved_unique_held_families": 3,
+  "remaining_approved_unique_held_families": 1,
   "queue_completion_audit": {
     "checked_at": "2026-10-04",
     "approved_source_cards_total": 37,
@@ -1223,15 +1221,13 @@
   },
   "latest_owner_followup": {
     "date": "2026-10-04",
-    "dogs": "keep_original_meaning; not yet published",
+    "dogs": "published; original meaning retained",
     "plateau": "deferred; not in current publication queue",
     "sweating": "show prepared proposal; not approved or applied",
-    "public_articles": 61,
-    "safe_full_pass": 60,
+    "public_articles": 62,
+    "safe_full_pass": 61,
     "new_ready_to_publish_immediately": 0,
-    "approved_families_needing_preparation": [
-      "dogs"
-    ],
+    "approved_families_needing_preparation": [],
     "owner_preview_pending": [
       "sweating"
     ]
