@@ -39,6 +39,7 @@
 | Как выбирать глубину разработки и tests | `AI_DEVELOPMENT_WORKFLOW.md` | рабочий процесс |
 | Как создавать, менять и удалять модули | `knowledge-base/MODULE_DEVELOPMENT_STANDARD.md` | общий стандарт модулей |
 | Как разводить параллельные чаты | `CHAT_WORKSTREAMS.md` | правила потоков |
+| Где локальные файлы Codex, что сжато/удалено и как восстановить старые переписки | `LOCAL_CODEX_STORAGE.md` → карта `D:\Codex` | `operations.project-work`; подробные личные инвентари вне Git |
 | Полный технический состав | `generated/module-inventory.json` | автоматически извлечённый artifact |
 
 ## Тематические канонические документы

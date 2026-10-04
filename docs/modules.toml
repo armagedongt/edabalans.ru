@@ -1047,7 +1047,7 @@ owns_files = ["legacy/**"]
 id = "operations.project-work"
 parent = "operations"
 card = "docs/knowledge-base/modules/catalog/operations.project-work.md"
-owns_files = ["docs/plans/**", "docs/prototypes/**", "work/**"]
+owns_files = ["docs/plans/**", "docs/prototypes/**", "work/**", "docs/LOCAL_CODEX_STORAGE.md"]
 
 [[modules]]
 id = "planned"
