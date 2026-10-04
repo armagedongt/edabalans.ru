@@ -214,6 +214,10 @@
     },
     {
       "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+      "inline_related": {
+        "source_id": "tilda-49745867",
+        "before_heading": "2-единственное-ограничение-в-питании"
+      },
       "slug": "12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
       "title": "12 простых изменений в питании и образе жизни",
       "excerpt": "Двигаться к своей цели маленькими шагами — не стыдно! Стыдно вообще никуда не двигаться.",
@@ -714,6 +718,10 @@
     },
     {
       "source_id": "10425659",
+      "inline_related": {
+        "source_id": "10573917",
+        "before_heading": "программа"
+      },
       "slug": "13-pravil-domashnih-trenirovok",
       "title": "13 правил для организации домашних тренировок",
       "excerpt": "От банального к неочевидному. Организовывал тренировки дома и себе, и другим.",
@@ -2566,6 +2574,10 @@
     },
     {
       "source_id": "12857458",
+      "inline_related": {
+        "source_id": "693339",
+        "before_heading": "на-шведском-столе"
+      },
       "slug": "pravila-bezopasnosti-za-shvedskim-stolom",
       "title": "Правила безопасности за шведским столом",
       "excerpt": "Как отдохнуть в отеле со шведским столом, не превращая каждый приём пищи в соревнование и не привозя домой лишние килограммы.",

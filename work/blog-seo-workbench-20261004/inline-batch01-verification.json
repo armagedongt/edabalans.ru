@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-04",
+  "module_id": "platform.blog",
+  "scope": "local_only",
+  "status": "pass",
+  "assignments": [
+    {"source_id": "10425659", "target": "10573917", "before_heading": "программа"},
+    {"source_id": "12857458", "target": "693339", "before_heading": "на-шведском-столе"},
+    {"source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11", "target": "tilda-49745867", "before_heading": "2-единственное-ограничение-в-питании"}
+  ],
+  "checks": {
+    "full_source_and_target_read": "PASS",
+    "public_url_200": 6,
+    "public_text_identical_to_local_render": 5,
+    "public_text_separately_reviewed": ["tilda-49745867"],
+    "single_slot_exact_anchor": "PASS",
+    "removing_slot_restores_html": "PASS",
+    "no_existing_native_link_to_target": "PASS",
+    "catalog_validation": "PASS",
+    "manifest_other_fields_unchanged": "PASS",
+    "all_62_markdown_bodies_unchanged": "PASS",
+    "regression_tests": {"passed": 7, "failed": 0},
+    "diff_check": "PASS"
+  },
+  "review": {"waves": 2, "wave1_findings": 2, "corrected_without_body_rewrite": true, "wave2": "clean"},
+  "main_changed": false,
+  "production_changed": false,
+  "analytics_changed": false,
+  "authentication_changed": false
+}
