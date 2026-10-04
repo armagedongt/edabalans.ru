@@ -17,6 +17,19 @@ from app.intensive_web_access import issue_access_token
 from app.models import User, MessengerAccount, MessengerLinkToken
 
 
+def test_public_article_prepares_single_shared_subscription_component(reader_client):
+    client, _, _, _ = reader_client
+    response = client.get('/blog/articles/pochemu-yapontsy-hudye-a-ty-net')
+    assert response.status_code == 200
+    assert response.text.count('id="reader-popup"') == 1
+    assert response.text.split('<dialog id="reader-popup"')[1].count('Пишу о питании и похудении так, чтобы вы менялись.') == 1
+    assert '/blog/assets/reader-subscription.js' in response.text
+    assert 'reader-visitor' not in response.text
+    assert client.get('/blog/assets/reader-subscription.js').status_code == 200
+    assert client.get('/blog/assets/reader-subscription.css').status_code == 200
+    assert client.get('/blog/assets/reader-max-logo.png').headers['content-type'] == 'image/png'
+
+
 @pytest.fixture
 def reader_client(monkeypatch):
     engine = create_engine('sqlite+pysqlite://', connect_args={'check_same_thread': False}, poolclass=StaticPool)

@@ -78,6 +78,8 @@ BLOG_ASSET_FILES = {
     "blog.js",
     "reader-navigation.css",
     "reader-navigation.js",
+    "reader-subscription.css",
+    "reader-subscription.js",
     "draft-editor.css",
     "draft-editor.js",
     "favicon-test-black.svg",
@@ -342,6 +344,9 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         lambda match: replacements.get(match.group(0), match.group(0)),
         _template("article.html"),
     )
+    if 'data-channel-origin="telegram"' not in body:
+        rendered = rendered.replace('</head>', '<link rel="stylesheet" href="/blog/assets/reader-subscription.css?v=20261005a"></head>')
+        rendered = rendered.replace('</body>', _template('reader-subscription.html') + '<script src="/blog/assets/reader-subscription.js?v=20261005a" defer></script></body>')
     return _html_response(apply_responsive_images(rendered, catalog.content_dir, catalog.allowed_media))
 
 
@@ -375,6 +380,8 @@ def blog_font(font_name: str) -> FileResponse:
 
 @router.get("/blog/assets/{asset_name}", include_in_schema=False)
 def blog_asset(asset_name: str) -> FileResponse:
+    if asset_name == 'reader-max-logo.png':
+        return FileResponse(BLOG_DIR.parent / 'max-logo.png', media_type='image/png', headers={'Cache-Control':'public, max-age=86400'})
     if asset_name in BLOG_ARTICLE_STYLES:
         path = Path(__file__).resolve().parents[2] / "content" / "article-components" / BLOG_ARTICLE_STYLES[asset_name]
         response = FileResponse(path, media_type="text/css")

@@ -248,6 +248,7 @@ owns_files = [
   "backend/app/blog_responsive_media.py", "tools/build_blog_responsive_media.py",
   "backend/app/blog_draft_routes.py", "backend/app/blog_draft_service.py",
   "backend/app/blog_reader_context.py", "backend/tests/test_blog_reader_context.py",
+  "backend/tests/reader-subscription.test.cjs",
   "backend/app/public_cta_catalog.py", "backend/app/static/blog/**",
   "backend/scripts/publish_blog_draft.py",
     "backend/tests/test_blog.py", "backend/tests/test_blog_content.py", "backend/tests/test_blog_description.py",

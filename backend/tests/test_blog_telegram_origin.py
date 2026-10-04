@@ -85,6 +85,8 @@ def test_api_origin_publication_and_draft_boundary():
             assert client.post(api + '/publish', json={'expected_version': version, 'confirm': True}).status_code == 200
             page = client.get(public).text
             assert page.count('data-channel-origin="telegram"') == 1
+            assert 'id="reader-popup"' not in page
+            assert 'reader-subscription.js' not in page
             assert client.patch(api + '/text', json={'expected_version': version, 'markdown': 'New draft.'}).status_code == 200
             assert client.get(public).text == page
     finally:

@@ -24,7 +24,7 @@ original = Path.read_text
 
 def read(path, *args, **kwargs):
     text = original(path, *args, **kwargs)
-    if path == source_path:
+    if path == source_path and '--subscription' not in sys.argv:
         return '---\ntelegram_post_url: https://t.me/Fitness_Talks/123\ntelegram_discussion_url: https://t.me/Fitness_Talks/123?comment=2\n---\n' + text
     return text
 
@@ -40,10 +40,10 @@ try:
     with patch.object(Path, 'read_text', read), TestClient(app) as client:
         response = client.get('/blog/articles/' + article.slug)
         assert response.status_code == 200, response.text
-        assert response.text.count('data-channel-origin="telegram"') == 1
+        assert response.text.count('data-channel-origin="telegram"') == (0 if '--subscription' in sys.argv else 1)
         (out / 'article.html').write_text(response.text, encoding='utf-8')
         if '--serve' in sys.argv:
             import uvicorn
-            uvicorn.run(app, host='127.0.0.1', port=8787)
+            uvicorn.run(app, host='127.0.0.1', port=8788 if '--subscription' in sys.argv else 8787)
 finally:
     engine.dispose()
