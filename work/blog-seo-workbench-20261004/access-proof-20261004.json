@@ -1,0 +1,41 @@
+{
+  "verified_at": "2026-10-04",
+  "credential_name": "YANDEX_DIRECT_TOKEN",
+  "credential_value_disclosed": false,
+  "route": "Yandex Direct Live v4",
+  "report_id": 1629884475,
+  "geo_id": [
+    225
+  ],
+  "create": "success",
+  "get": "success",
+  "period": "API does not include exact start/end dates in this response",
+  "queries": [
+    {
+      "query": "сколько белка нужно при похудении",
+      "match": {
+        "Shows": 1268,
+        "Phrase": "сколько белка нужно при похудении"
+      }
+    },
+    {
+      "query": "\"сколько белка нужно при похудении\"",
+      "match": {
+        "Shows": 53,
+        "Phrase": "\"сколько белка нужно при похудении\""
+      }
+    }
+  ],
+  "mcp": {
+    "prepare_editorial_context": "success",
+    "surface": "open",
+    "matches_count": 0,
+    "empty_matches_do_not_prove_absence": true
+  },
+  "mutations": {
+    "new_key": false,
+    "advertising": false,
+    "published_metadata": false,
+    "paid_cloud": false
+  }
+}
