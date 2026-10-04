@@ -36,7 +36,11 @@ class ArticleMarkupTests(unittest.TestCase):
         self.assertEqual(rendered.count('class="article-role-check"'), 3)
         for label, status in (("Белок", "Есть"), ("Гарнир", "Нет"), ("Объём", "Нет"),
                               ("Вкус", "Есть"), ("Сочность", "Есть"), ("Топпинги", "Нет")):
-            self.assertIn(f'<span class="article-role-status">{status}: </span>{label}</li>', rendered)
+            visual_class = "article-role-check article-role-checked" if status == "Есть" else "article-role-check"
+            self.assertIn(
+                f'<li><span class="{visual_class}"></span>'
+                f'<span class="article-role-status">{status}: </span>{label}</li>', rendered
+            )
         self.assertLess(rendered.index("Белок</li>"), rendered.index("Гарнир</li>"))
         self.assertLess(rendered.index("Гарнир</li>"), rendered.index("Объём</li>"))
         self.assertLess(rendered.index("Объём</li>"), rendered.index("Вкус</li>"))
