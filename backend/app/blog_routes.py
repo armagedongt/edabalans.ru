@@ -38,6 +38,8 @@ BLOG_ARTICLE_STYLES = {"article-typography.css": "typography.css", "article-note
 BLOG_ASSET_FILES = {
     "blog.css",
     "blog.js",
+    "reader-navigation.css",
+    "reader-navigation.js",
     "draft-editor.css",
     "draft-editor.js",
     "favicon-test-black.svg",
@@ -116,6 +118,7 @@ def blog_author() -> HTMLResponse:
                     "{{DESCRIPTION}}": escape(author["description"], quote=True), "{{CANONICAL}}": escape(person["url"], quote=True),
                     "{{HERO_ABSOLUTE}}": escape(person["image"], quote=True), "{{CATEGORY}}": "", "{{HERO}}": "",
                     "{{TOC_DESKTOP}}": "", "{{TOC_MOBILE}}": "", "{{ARTICLE_BODY}}": body,
+                    "{{READER_NAVIGATION}}": "",
                     "{{BREADCRUMBS}}": breadcrumbs, "{{AUTHOR_BYLINE}}": "", "{{ARTICLE_DATES}}": "",
                     "{{BREADCRUMB_DATA}}": json.dumps({"@context": "https://schema.org", **breadcrumb_data}, ensure_ascii=False).replace("</", r"<\/"),
                     "{{STRUCTURED_DATA}}": json.dumps({"@context": "https://schema.org", "@type": "ProfilePage", "url": person["url"], "mainEntity": person}, ensure_ascii=False).replace("</", r"<\/")}
@@ -284,6 +287,12 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         "{{ARTICLE_BODY}}": body,
         "{{TOC_DESKTOP}}": toc_html(toc, mobile=False),
         "{{TOC_MOBILE}}": toc_html(toc, mobile=True),
+        "{{READER_NAVIGATION}}": _template("reader-navigation.html").replace(
+            "{{READER_TOC}}",
+            ('<strong>В этом материале</strong><ol>' + ''.join(
+                f'<li><a href="#{escape(anchor, quote=True)}">{escape(title)}</a></li>'
+                for anchor, title in toc) + '</ol>') if len(toc) >= 3 else '',
+        ),
         "{{RELATED_CARDS}}": related_cards_html(
             catalog, article, card_overrides=card_overrides
         ),
