@@ -1,0 +1,26 @@
+{
+  "checked_at": "2026-10-04",
+  "scope": "writer batch05 and map continuity, research not finished",
+  "identities": 62,
+  "proposal_count": 25,
+  "pending": 37,
+  "owner_fields_blank": 124,
+  "archive_errors": [],
+  "writer_status": [
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass"
+  ],
+  "public_mutation": false,
+  "fully_verified_new_topics": 0,
+  "remaining": [
+    "37 article alternatives",
+    "SEO intent refinements listed in batch05,batch04,first10",
+    "20 evidence-based new topics",
+    "technical stages5–7",
+    "laststage read-only search consoles"
+  ],
+  "diff_check": "pass before commit"
+}
