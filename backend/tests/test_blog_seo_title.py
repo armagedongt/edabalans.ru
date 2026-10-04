@@ -73,11 +73,38 @@ def test_public_title_uses_git_markdown_before_first_api_publication(monkeypatch
     'seo_title: "' + 'x' * 201 + '"',
     'seo_title: "Line\\nBreak"', 'seo_title: "Control\\u0000character"',
     'seo_title: "Tab\\tcharacter"', 'seo_title: |\n  multiline', '',
+    'seo_title: "\\ud800"', 'seo_title: "\\udfff"',
+    'description: "\\ud800"',
 ])
 def test_invalid_headers_are_rejected(header):
     with pytest.raises(HTTPException) as error:
         parse_blog_metadata('---\n' + header + '\n---\nBody.')
     assert error.value.status_code == 422
+
+
+def test_valid_unicode_pair_and_literal_emoji_are_preserved():
+    metadata, _ = parse_blog_metadata('---\nseo_title: "\\ud83c\\udf4c"\ndescription: Питание 🍌\n---\nBody.')
+    assert metadata == {'seo_title': '🍌', 'description': 'Питание 🍌'}
+
+
+def test_invalid_unicode_cannot_create_a_saved_version():
+    from app.database import Base
+    from app.blog_draft_service import ensure_existing_article, update_text, active_article
+
+    engine = create_engine('sqlite+pysqlite://')
+    Base.metadata.create_all(engine)
+    slug = 'pochemu-yapontsy-hudye-a-ty-net'
+    with Session(engine) as db:
+        seed = ensure_existing_article(db, slug)
+        original_markdown = seed.payload['markdown']
+        version = seed.version_no
+        with pytest.raises(HTTPException) as error:
+            update_text(db, slug=slug, markdown='---\nseo_title: "\\ud800"\n---\nBody.', expected_version=version, admin='test')
+        assert error.value.status_code == 422
+        current = active_article(db, slug)
+        assert current.version_no == version
+        assert current.payload['markdown'] == original_markdown
+    engine.dispose()
 
 
 @pytest.mark.parametrize('seo_title', ['Search title & intrigue', '{{ARTICLE_BODY}}</title><script>alert(1)</script>'])

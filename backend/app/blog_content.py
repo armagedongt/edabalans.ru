@@ -117,6 +117,10 @@ def parse_blog_metadata(markdown: str) -> tuple[dict[str, str], str]:
                 raise HTTPException(422, f"{key}: проверьте кавычки JSON") from exc
         if not isinstance(value, str) or not value.strip() or len(value) > limits[key] or any(ord(char) < 32 for char in value):
             raise HTTPException(422, f"{key} должен быть одной непустой строкой до {limits[key]} символов")
+        try:
+            value.encode("utf-8")
+        except UnicodeEncodeError as exc:
+            raise HTTPException(422, f"{key}: некорректные символы Unicode") from exc
         metadata[key] = value.strip()
     return metadata, markdown[match.end():]
 

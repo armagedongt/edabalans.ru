@@ -5,7 +5,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const source = fs.readFileSync(path.join(__dirname, '../app/static/blog/assets/blog.js'), 'utf8');
 
-function fixture(search = '') {
+function fixture(search = '', server = false) {
   function element(dataset = {}) {
     return {
       dataset, hidden: false, children: [], attributes: {}, handlers: {},
@@ -19,12 +19,13 @@ function fixture(search = '') {
   const cards = Array.from({ length: 22 }, (_, i) => element({ category: i < 18 ? 'A' : 'B' }));
   const buttons = ['all', 'A', 'B', 'empty'].map(categoryFilter => element({ categoryFilter }));
   const pagination = element();
+  if (server) pagination.children.push({ textContent: 'server link' });
   Object.defineProperty(pagination, 'innerHTML', { set() { this.children = []; } });
   const empty = element();
   const anchor = element();
   const document = {
     documentElement: { dataset: {} },
-    querySelector(selector) { return selector === '.pagination' ? pagination : selector === '.empty-state' ? empty : null; },
+    querySelector(selector) { return selector === '[data-blog-server-catalog]' && server ? {} : selector === '.pagination' ? pagination : selector === '.empty-state' ? empty : null; },
     querySelectorAll(selector) { return selector.includes('.articles-section') ? cards : selector === '[data-category-filter]' ? buttons : []; },
     createElement() { return element(); },
     getElementById() { return anchor; },
@@ -37,7 +38,7 @@ function fixture(search = '') {
     page: () => pagination.children.find(button => button.attributes['aria-current'] === 'page')?.textContent,
     next() { pagination.handlers.click({ target: { closest() { return pagination.children.find(button => button.dataset.pageNext); } } }); },
     category(name) { buttons.find(button => button.dataset.categoryFilter === name).handlers.click(); },
-    pagination, empty, history,
+    pagination, empty, history, buttons,
   };
 }
 
@@ -74,4 +75,13 @@ test('direct links select filtered page two and clamp beyond last page', () => {
   assert.deepEqual(fixture('?category=A&page=2').visible(), [15, 16, 17]);
   assert.deepEqual(fixture('?category=A&page=999').visible(), [15, 16, 17]);
   assert.equal(fixture('?page=not-a-number').visible().length, 15);
+});
+
+test('server-rendered catalogue links are not overwritten or intercepted', () => {
+  const ui = fixture('?page=2', true);
+  assert.equal(ui.pagination.children[0].textContent, 'server link');
+  assert.equal(ui.pagination.handlers.click, undefined);
+  assert.ok(ui.buttons.every(button => button.handlers.click === undefined));
+  assert.equal(ui.visible().length, 22);
+  assert.deepEqual(ui.history, []);
 });

@@ -7,9 +7,9 @@
   <meta name="color-scheme" content="light dark">
   <link rel="icon" type="image/png" href="/favicon.png?v=20260910a">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260910a">
-  <link rel="canonical" href="https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/">
+  <link rel="canonical" href="{{CATALOG_CANONICAL}}">
   <link rel="stylesheet" href="/blog/assets/blog.css?v=20261004-pagination">
-  <title>Похудение — это есть · Авторский блог Сергея Воронцова</title>
+  <title>{{CATALOG_TITLE}}</title>
 </head>
 <body data-page="home">
   <header class="site-header site-header--public">
@@ -56,21 +56,20 @@
         <img src="/blog/assets/sergey-author-v2.webp" alt="Сергей Воронцов — автор блога" loading="eager" decoding="async" fetchpriority="high">
       </figure>
       <ul class="categories" aria-label="Категории блога">
-        <li><button class="active" type="button" data-category-filter="all">Все</button></li>
         <!-- BLOG_CATEGORIES -->
       </ul>
     </section>
 
-    <section class="shell articles-section" id="articles" aria-label="Статьи блога">
+    <section class="shell articles-section" id="articles" aria-label="Статьи блога" data-blog-server-catalog>
       <div class="article-grid"><!-- BLOG_CARDS --></div>
-      <p class="empty-state" hidden>В этой рубрике пока нет опубликованных статей.</p>
-      <nav class="pagination" aria-label="Навигация по страницам блога"></nav>
+      <p class="empty-state" {{EMPTY_HIDDEN}}>В этой рубрике пока нет опубликованных статей.</p>
+      <nav class="pagination" aria-label="Навигация по страницам блога"><!-- BLOG_PAGINATION --></nav>
     </section>
   </main>
 
   <div id="contacts" data-edabalans-site-footer></div>
   <script src="https://edabalans.ru/site-footer.js" defer></script>
   <script src="https://edabalans.ru/cookie-notice.js" defer></script>
-  <script src="/blog/assets/blog.js?v=20260921b" defer></script>
+  <script src="/blog/assets/blog.js?v=20261004-ssr" defer></script>
 </body>
 </html>

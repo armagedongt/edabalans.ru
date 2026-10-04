@@ -6,6 +6,7 @@ import json
 import mimetypes
 import re
 from pathlib import Path
+from urllib.parse import urlencode
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Response
@@ -28,6 +29,7 @@ from sqlalchemy.orm import Session
 
 router = APIRouter()
 BLOG_DIR = Path(__file__).resolve().parent / "static" / "blog"
+BLOG_PAGE_SIZE = 15
 BLOG_FONT_FILES = {"inter-cyrillic.woff2", "inter-latin.woff2", "manrope-cyrillic.woff2", "manrope-latin.woff2"}
 BLOG_ARTICLE_STYLES = {"article-typography.css": "typography.css", "article-note.css": "note.css"}
 BLOG_ASSET_FILES = {
@@ -69,17 +71,56 @@ def _public_catalog(db: Session):
 @router.get("/blog", include_in_schema=False)
 @router.get("/blog/", include_in_schema=False)
 def blog_home(
+    page: str = "1",
+    category: str = "all",
     identity: str | None = Depends(optional_blog_admin),
     db: Session = Depends(get_db),
 ) -> HTMLResponse:
     catalog = _public_catalog(db)
     card_overrides = published_card_overrides(db)
+    category = category if category in BLOG_CATEGORIES else "all"
+    selected = tuple(article for article in catalog.published if category == "all" or article.category == category)
+    page_count = max(1, (len(selected) + BLOG_PAGE_SIZE - 1) // BLOG_PAGE_SIZE)
+    try:
+        active_page = min(max(int(page), 1), page_count)
+    except ValueError:
+        active_page = 1
+
+    def query(target_page: int = 1, target_category: str = category) -> str:
+        params = {}
+        if target_category != "all":
+            params["category"] = target_category
+        if target_page > 1:
+            params["page"] = str(target_page)
+        return urlencode(params)
+
     categories = "".join(
-        f'<li><button type="button" data-category-filter="{escape(category, quote=True)}">{escape(category)}</button></li>'
-        for category in BLOG_CATEGORIES
+        f'<li><a href="?{escape(query(target_category=item), quote=True)}#articles" '
+        f'data-category-filter="{escape(item, quote=True)}"'
+        + (' class="active" aria-current="true"' if item == category else '')
+        + f'>{escape("Все" if item == "all" else item)}</a></li>'
+        for item in ("all", *BLOG_CATEGORIES)
     )
+    pagination = "".join(
+        f'<a class="page-link" href="?{escape(query(number), quote=True)}#articles"'
+        + (' aria-current="page"' if number == active_page else '')
+        + f'>{number}</a>'
+        for number in range(1, page_count + 1)
+    ) if page_count > 1 else ""
+    if active_page < page_count:
+        pagination += f'<a class="page-link next" rel="next" href="?{escape(query(active_page + 1), quote=True)}#articles">Следующая</a>'
+    canonical = f"{BLOG_PUBLIC_ORIGIN}/" + (f"?{query(active_page)}" if query(active_page) else "")
+    title = "Похудение — это есть · Авторский блог Сергея Воронцова"
+    if category != "all":
+        title += f" · {category}"
+    if active_page > 1:
+        title += f" · Страница {active_page}"
     rendered = (
         _template("index.html")
+        .replace("{{CATALOG_CANONICAL}}", escape(canonical, quote=True))
+        .replace("{{CATALOG_TITLE}}", escape(title))
+        .replace("{{EMPTY_HIDDEN}}", "hidden" if selected else "")
+        .replace("<!-- BLOG_PAGINATION -->", pagination)
         .replace("<!-- BLOG_CATEGORIES -->", categories)
         .replace(
             "<!-- BLOG_CARDS -->",
@@ -89,7 +130,7 @@ def blog_home(
                     card_file=card_overrides.get(article.slug, (article.card.file, article.card.fit))[0],
                     card_fit=card_overrides.get(article.slug, (article.card.file, article.card.fit))[1],
                 )
-                for article in catalog.published
+                for article in selected[(active_page - 1) * BLOG_PAGE_SIZE:active_page * BLOG_PAGE_SIZE]
             ),
         )
         .replace("<!-- BLOG_OWNER_PANEL -->", owner_cards_html(db) if identity else "")
