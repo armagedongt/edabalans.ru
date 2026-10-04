@@ -8,6 +8,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from app.config import Settings, get_settings
+from app.blog_reader_context import recognize_reader
 from app.database import get_db
 from app.intensive_web_access import access_token_row, issue_checkout_source_context
 from app.models import AttributionEvent
@@ -99,7 +100,9 @@ def personal_masterclass_link(
         destination="masterclass_site",
     )
     db.commit()
-    return _redirect(target)
+    response = _redirect(target)
+    recognize_reader(db, request, response, settings.app_auth_secret, token)
+    return response
 
 
 @router.get("/p/{post_number}/{token}", include_in_schema=False)
@@ -125,4 +128,6 @@ def personal_channel_post_link(
         destination=f"telegram_post_{post_number}",
     )
     db.commit()
-    return _redirect(target)
+    response = _redirect(target)
+    recognize_reader(db, request, response, settings.app_auth_secret, token)
+    return response

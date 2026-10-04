@@ -746,6 +746,7 @@ id = "messaging.telegram.attribution"
 parent = "messaging.telegram"
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.attribution.md"
 depends_on = ["platform.crm", "messaging.telegram.engine", "products.intensive"]
+reads_from = ["platform.blog"]
 telegram_code = "start_attribution"
 telegram_name = "Старт и атрибуция"
 telegram_status = "Исполняемый модуль · временно включён режим ремонта"
