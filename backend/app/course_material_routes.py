@@ -43,6 +43,11 @@ def material_service(course_code: str):
 
 
 router = APIRouter(tags=["course-material-publisher"])
+DIRECT_RECIPE_PAGES = {
+    "mackerel-pasta-salad": "Паста-салат со скумбрией и лимоном",
+    "chickpea-spinach-shakshuka": "Шакшука с нутом и шпинатом",
+    "yogurt-cake": "Йогуртовый пирог",
+}
 MASTERCLASS_MEDIA_ROOTS = (
     (COURSE_CONTENT_ROOT / "editorial" / "assets").resolve(),
     (COURSE_CONTENT_ROOT / "source-current" / "assets").resolve(),
@@ -52,6 +57,21 @@ MASTERCLASS_MEDIA_SUFFIXES = {".gif", ".jpeg", ".jpg", ".png", ".webp"}
 
 def component_asset(*parts: str) -> str:
     return COURSE_CONTENT_ROOT.joinpath("components", *parts).read_text(encoding="utf-8")
+
+
+@router.get("/recipe-preview/{slug}", include_in_schema=False)
+def direct_recipe_article(slug: str) -> HTMLResponse:
+    # Only these explicitly public articles; course material IDs cannot be resolved here.
+    title = DIRECT_RECIPE_PAGES.get(slug)
+    if title is None:
+        raise HTTPException(404, "Рецепт не найден")
+    source = COURSE_CONTENT_ROOT / "editorial" / "unlisted-recipes" / f"{slug}.md"
+    if not source.is_file():
+        raise HTTPException(404, "Рецепт не найден")
+    body = render_material(editorial_body_text(source.read_text(encoding="utf-8")), "markdown")
+    template = component_asset("recipe-preview", "page.html")
+    page = template.replace("{{title}}", escape(title)).replace("{{body}}", body)
+    return HTMLResponse(page, headers={"X-Robots-Tag": "noindex, nofollow"})
 
 
 @router.get("/course-assets/masterclass/audio-player", include_in_schema=False)
