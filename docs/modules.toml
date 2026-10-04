@@ -251,6 +251,7 @@ owns_files = [
   "backend/scripts/publish_blog_draft.py",
     "backend/tests/test_blog.py", "backend/tests/test_blog_content.py", "backend/tests/test_blog_description.py",
   "backend/tests/test_blog_seo_title.py",
+  "backend/tests/test_blog_telegram_origin.py",
   "backend/tests/test_blog_server_pagination.py",
   "backend/tests/test_blog_author_dates.py",
   "backend/tests/test_blog_responsive_media.py",

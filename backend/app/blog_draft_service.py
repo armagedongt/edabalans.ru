@@ -27,6 +27,8 @@ from app.blog_content import (
     load_blog_catalog,
     render_blog_component,
     split_blog_metadata,
+    parse_blog_metadata,
+    insert_telegram_origin,
     blog_description,
 )
 from app.managed_documents import (
@@ -588,7 +590,7 @@ def render_article(
 ) -> tuple[str, tuple]:
     value = payload["markdown"] if markdown is None else markdown
     _validate_markdown(value, payload["media"])
-    _, value = split_blog_metadata(value)
+    metadata, value = parse_blog_metadata(value)
     for item in payload["media"]:
         if item.get("storage") == "git":
             continue
@@ -603,6 +605,7 @@ def render_article(
         )
     body = markdown_to_article_html(value)
     body += render_blog_component("blog_cta", [payload["cta"]])
+    body = insert_telegram_origin(body, metadata)
     return add_heading_anchors(body)
 
 

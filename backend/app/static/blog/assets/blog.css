@@ -346,3 +346,15 @@ html[data-theme="dark"] .card-tag { background: var(--cloud); color: #fff; }
   .reader-related, .reader-related-arrow { transition: none; }
   .reader-related:hover .reader-related-arrow { transform: none; }
 }
+
+/* Approved reader prototype: origin is editorial metadata, not a category. */
+.reader-telegram-source { display: flex; align-items: center; gap: 12px; margin: 40px 0 24px; padding: 20px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); font-size: 14px; transition: background-color .15s ease, border-color .15s ease; }
+.reader-telegram-source:hover { background: var(--surface-soft); border-color: rgba(42,171,238,.3); }
+.reader-telegram-source svg { width: 20px; height: 20px; flex: 0 0 20px; fill: none; stroke: #2aabee; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.reader-telegram-source strong { font-size: 14px; font-weight: 500; }
+.reader-source-actions { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 8px; line-height: 1.5; }
+#article .reader-source-title { color: inherit; text-decoration: none; }
+#article .reader-source-title:hover { text-decoration: underline; }
+#article .reader-source-actions a { color: #2aabee; font-weight: 500; text-decoration: none; }
+#article .reader-source-actions a:hover { text-decoration: underline; }
+@media (prefers-reduced-motion: reduce) { .reader-telegram-source { transition: none; } }

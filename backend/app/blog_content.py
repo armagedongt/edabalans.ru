@@ -104,7 +104,7 @@ def _required_text(raw: dict, key: str) -> str:
 
 
 def parse_blog_metadata(markdown: str) -> tuple[dict[str, str], str]:
-    """Two plain editable SEO fields, not arbitrary YAML execution."""
+    """Allowlisted plain editorial fields, not arbitrary YAML execution."""
     if not markdown.startswith("---\n") and not markdown.startswith("---\r\n"):
         return {}, markdown
     match = re.match(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|$)", markdown, re.DOTALL)
@@ -112,13 +112,13 @@ def parse_blog_metadata(markdown: str) -> tuple[dict[str, str], str]:
         raise HTTPException(422, "Не закрыт блок metadata в начале Markdown")
     fields = [line for line in match[1].splitlines() if line.strip()]
     metadata: dict[str, str] = {}
-    limits = {"description": 500, "seo_title": 200}
+    limits = {"description": 500, "seo_title": 200, "telegram_post_url": 200, "telegram_discussion_url": 200}
     if not fields:
         raise HTTPException(422, "Блок metadata не может быть пустым")
     for line in fields:
         key, separator, value = line.partition(":")
         if not separator or key not in limits or key in metadata:
-            raise HTTPException(422, "Поддерживаются только уникальные description и seo_title")
+            raise HTTPException(422, "Поддерживаются только уникальные description, seo_title, telegram_post_url и telegram_discussion_url")
         value = value.strip()
         if value.startswith('"'):
             try:
@@ -132,7 +132,37 @@ def parse_blog_metadata(markdown: str) -> tuple[dict[str, str], str]:
         except UnicodeEncodeError as exc:
             raise HTTPException(422, f"{key}: некорректные символы Unicode") from exc
         metadata[key] = value.strip()
+    post = metadata.get("telegram_post_url")
+    discussion = metadata.get("telegram_discussion_url")
+    if post is not None and re.fullmatch(r"https://t\.me/Fitness_Talks/[1-9][0-9]*", post) is None:
+        raise HTTPException(422, "telegram_post_url: нужна точная ссылка на пост канала Fitness_Talks")
+    if discussion is not None and (post is None or re.fullmatch(re.escape(post) + r"\?comment=[1-9][0-9]*", discussion) is None):
+        raise HTTPException(422, "telegram_discussion_url: нужна ссылка на обсуждение того же поста")
     return metadata, markdown[match.end():]
+
+
+def insert_telegram_origin(rendered: str, metadata: dict[str, str]) -> str:
+    """A confirmed full channel source replaces subscription invitations, not the CTA."""
+    post = metadata.get("telegram_post_url")
+    if post is None:
+        return rendered
+    discussion = metadata.get("telegram_discussion_url")
+    discussion_link = (
+        f'<a href="{escape(discussion, quote=True)}" target="_blank" rel="noopener">Обсудить</a>'
+        if discussion else ""
+    )
+    plaque = (
+        '<aside class="reader-telegram-source" data-channel-origin="telegram">'
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/>'
+        '<path d="m22 2-11 11"/></svg><div>'
+        f'<a class="reader-source-title" href="{escape(post, quote=True)}" target="_blank" rel="noopener">'
+        '<strong>Это пост из моего Telegram-канала</strong></a>'
+        f'<div class="reader-source-actions">{discussion_link}'
+        '<a href="https://t.me/Fitness_Talks" target="_blank" rel="noopener">'
+        'Читать более короткие посты →</a></div></div></aside>'
+    )
+    cta = rendered.find('<section class="blog-cta ')
+    return rendered[:cta] + plaque + rendered[cta:] if cta >= 0 else rendered + plaque
 
 
 def split_blog_metadata(markdown: str) -> tuple[str | None, str]:
@@ -383,8 +413,9 @@ def add_heading_anchors(rendered: str) -> tuple[str, tuple[tuple[str, str], ...]
 
 def render_article_body(catalog: BlogCatalog, article: BlogArticle) -> tuple[str, tuple[tuple[str, str], ...]]:
     source = (catalog.content_dir / "articles" / article.body_file).read_text(encoding="utf-8")
-    _, source = split_blog_metadata(source)
+    metadata, source = parse_blog_metadata(source)
     rendered = markdown_to_article_html(source, component_renderer=render_blog_component)
+    rendered = insert_telegram_origin(rendered, metadata)
     return add_heading_anchors(rendered)
 
 
