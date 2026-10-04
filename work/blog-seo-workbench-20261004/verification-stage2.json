@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-04",
+  "scope": "accepted execution order plus writer batches 03–04, not implementation or publication",
+  "identities": 62,
+  "unique_ids": 62,
+  "proposal_count": 20,
+  "pending": 42,
+  "owner_fields_blank": 124,
+  "archive_errors": [],
+  "writer_status": [
+    "pass",
+    "pass",
+    "pass",
+    "pass"
+  ],
+  "public_mutation": false,
+  "new_verified_topics": 0,
+  "new_topics_target": 20,
+  "documentation_review": "clean, fresh wave1 accepted_seo_execution_review",
+  "limitations": [
+    "Metadata alternatives prepared for20 of62; remaining42 pending",
+    "Search intent refinement pending for11989790 and gaps in first10",
+    "0 fully verified new topic cards; preliminary hypotheses not counted",
+    "No runtime technical SEO changes or release",
+    "Search Console/Webmaster laststage not started"
+  ]
+}
