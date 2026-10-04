@@ -225,7 +225,10 @@ JSON → PNG/WebP и контроль размеров → производна�
 `content/masterclass/editorial/assets/15-recipes/<slug>/`; URL —
 `/course-assets/masterclass/media/15-recipes/<slug>/<file>`. Маршрут выдаёт
 ассеты из `editorial/assets`, затем совместимого `source-current/assets`;
-новую редактуру в миграционном каталоге не ведут. Вид компонента на странице
+новую редактуру в миграционном каталоге не ведут. Карточка и её кнопка занимают 100% ширины читательского блока; естественные
+пропорции изображения сохраняются. Скачивание использует same-origin HTTP
+и стандартный атрибут `download`, а не открытие изображения в новой вкладке.
+Вид компонента на странице
 принадлежит `content/masterclass/components/recipe-card/recipe-card.css` и
 существующему Markdown renderer, а не рисуется повторно внутри авторского текста.
 

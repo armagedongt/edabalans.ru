@@ -10,6 +10,12 @@
 #article a:hover{color:#0c76b5}
 #article ul,#article ol{margin:20px 0;padding-left:26px}
 #article li{margin:8px 0}
+#article ul.article-recipe-roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 16px;list-style:none;padding:0;margin:16px 0 24px}
+#article .article-recipe-roles li{display:flex;align-items:center;gap:8px;margin:0;font-size:15px;line-height:1.5}
+#article .article-role-check{position:relative;display:inline-block;flex:0 0 14px;width:14px;height:14px;box-sizing:border-box;border:1px solid #a2abb4;border-radius:3px}
+#article .article-role-checked{border-color:#118ed8;background:#118ed8}
+#article .article-role-checked::after{content:"";position:absolute;left:4px;top:1px;width:3px;height:7px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+#article .article-role-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 #article blockquote{margin:24px 0;padding:0 0 0 20px;border:0;border-left:4px solid #f39a2f;border-radius:0;background:none;box-shadow:none;color:inherit}
 #article blockquote p{font-size:inherit;line-height:inherit}
 #article figure{margin:24px 0 28px;width:100%}
@@ -26,6 +32,7 @@
 #article .article-copy-button:hover{background:#eaf8ff}
 @media(max-width:620px){
  #article,#article p,#article li{font-size:17px}
+ #article ul.article-recipe-roles{grid-template-columns:repeat(2,minmax(0,1fr))}
  #article h1{font-size:32px;margin-bottom:22px}
  #article h2{font-size:25px}
  #article h3{font-size:21px}

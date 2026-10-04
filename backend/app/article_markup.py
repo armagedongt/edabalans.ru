@@ -30,7 +30,12 @@ COURSE_CLASS_TOKENS = {
     "blog-cta-eyebrow",
     "score-2", "score-1", "score-0", "score--1", "score--2",
 }
-COURSE_BASE_CLASS_TOKENS = {"article-table-wrap", "article-data-table", "article-note-accent"}
+COURSE_BASE_CLASS_TOKENS = {
+    "article-table-wrap", "article-data-table", "article-note-accent",
+    "article-recipe-roles", "article-role-check", "article-role-checked",
+    "article-role-status",
+}
+RECIPE_ROLE_LABELS = ("Белок", "Гарнир", "Объём", "Вкус", "Сочность", "Топпинги")
 
 
 def safe_href(value: str) -> bool:
@@ -494,15 +499,33 @@ def markdown_to_article_html(
         numbered = re.match(r"^\d+[.)] (.+)", line)
         if bullet or numbered:
             kind = "ul" if bullet else "ol"
-            items = []
+            item_texts = []
             while index < len(lines):
                 candidate = lines[index].strip()
                 match = re.match(r"^[-*] (.+)", candidate) if kind == "ul" else re.match(r"^\d+[.)] (.+)", candidate)
                 if not match:
                     break
-                items.append(f"<li>{inline_markdown(match.group(1))}</li>")
+                item_texts.append(match.group(1))
                 index += 1
-            output.append(f"<{kind}>{''.join(items)}</{kind}>")
+            roles = [re.fullmatch(r"\[([xX ])\] (.+)", text) for text in item_texts]
+            if (kind == "ul" and output
+                    and output[-1] == "<p><strong>Роль в конструкторе:</strong></p>"
+                    and all(roles)
+                    and tuple(role.group(2) for role in roles) == RECIPE_ROLE_LABELS):
+                items = []
+                for role in roles:
+                    checked = role.group(1).lower() == "x"
+                    classes = "article-role-check" + (" article-role-checked" if checked else "")
+                    status = "Есть" if checked else "Нет"
+                    items.append(
+                        f'<li><span class="{classes}"></span>'
+                        f'<span class="article-role-status">{status}: </span>'
+                        f'{escape(role.group(2))}</li>'
+                    )
+                output.append(f'<ul class="article-recipe-roles">{"".join(items)}</ul>')
+            else:
+                items = [f"<li>{inline_markdown(text)}</li>" for text in item_texts]
+                output.append(f"<{kind}>{''.join(items)}</{kind}>")
             continue
         paragraph_lines = [line]
         index += 1
