@@ -1,5 +1,5 @@
 {
-  "package_version": "2.10.1-20261004",
+  "package_version": "2.10.2-20261004",
   "files": [
     {
       "path": "content/author-voice/skill/edabalans-neuroslop-auditor/SKILL.md",
@@ -75,11 +75,11 @@
     },
     {
       "path": "content/author-voice/recipe-authoring-v1.md",
-      "sha256": "8a0e1db36146ce366120d3d100046249396f12ddacf3c4b2b5c0eccdeb5aee16"
+      "sha256": "8cc288aece9ade9aefddf351ea4dfbc8fb6e0305b050c74dad54dea3091a2389"
     },
     {
       "path": "content/author-voice/recipe-material-template.md",
-      "sha256": "ec5d289c1bf2d440c860b626da7a15befca139c83f34bd7754eac51f0ddf6a3c"
+      "sha256": "fef85fd42538a0c7dace3e7ebe39be1fcf5a48f7e424cbcab280169499053933"
     },
     {
       "path": "content/author-voice/skill/edabalans-recipes/SKILL.md",
