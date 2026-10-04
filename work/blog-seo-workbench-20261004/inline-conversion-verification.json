@@ -1,0 +1,420 @@
+{
+  "baseline_commit": "6afb280",
+  "pool": [
+    "11801517",
+    "11401696",
+    "30e4d208f2cbd8e57201",
+    "12296286",
+    "14021584",
+    "habits-formation-and-one-percent"
+  ],
+  "coverage": 62,
+  "assigned": 33,
+  "all_markdown_and_non_inline_metadata_unchanged": true,
+  "decisions": [
+    {
+      "source_id": "10369434",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "amkbo7kgg1",
+      "target": "11801517",
+      "anchor": "а-как-посчитать-расход-калорий-на-тренировках",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "12193581",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "14062380",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+      "target": "12296286",
+      "anchor": "2-единственное-ограничение-в-питании",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11448583",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "12269678",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11989790",
+      "target": "14021584",
+      "anchor": "и-запомните-главное-это-всё-ещё-сладости",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "10797468",
+      "target": "11801517",
+      "anchor": "но-пульсовые-зоны-все-равно-важны",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "10573917",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "10532723",
+      "target": "11401696",
+      "anchor": "короче-выход-только-один-худеть-дальше",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11906015",
+      "target": "12296286",
+      "anchor": "5-иногда-перекусы-даже-помогают",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "10425659",
+      "target": "11801517",
+      "anchor": "инвентарь",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11801517",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "10978866",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11188875",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "10877887",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "10123213",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "habits-formation-and-one-percent",
+      "target": "30e4d208f2cbd8e57201",
+      "anchor": "я-называю-это-правило-1",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11339712",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "intuitivnoe-pitanie-04-27-2",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11665295",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "12109482",
+      "target": "14021584",
+      "anchor": "праздники-и-привычки",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "13178972",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "13762311",
+      "target": "12296286",
+      "anchor": "как-провести-пост-правильно",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11210930",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11534645",
+      "target": "12296286",
+      "anchor": "много-сахара-это-сколько",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11833079",
+      "target": "12296286",
+      "anchor": "алкоголь",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11857250",
+      "target": "11401696",
+      "anchor": "а-теперь-самое-интересное-и-грустное",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "13355824",
+      "target": "12296286",
+      "anchor": "меняйте-фокус",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "d1baceb9e2b6b72013b6",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "30e4d208f2cbd8e57201",
+      "target": "11401696",
+      "anchor": "вот-вы-задумывались-откуда-берутся-зож-ники",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "2e269fdc52d600a64753",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "0d583f6ad1cea0eef750",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "13327360",
+      "target": "30e4d208f2cbd8e57201",
+      "anchor": "бонусный-вопрос",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11277666",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11494317",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11522121",
+      "target": "11801517",
+      "anchor": "на-шагах-свет-клином-не-сошелся-вот-что-говорит-воз",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11762932",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "12296286",
+      "target": "11801517",
+      "anchor": "2-пищевое-поведение-ノ-o-oノ",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "13436070",
+      "target": "12296286",
+      "anchor": "4-возраст",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "13785403",
+      "target": "11401696",
+      "anchor": "ошибка-2-закрепление-не-здоровых-пищевых-привычек",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "14021584",
+      "target": "11801517",
+      "anchor": "3-не-спорьте-о-диетах",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "14102926",
+      "target": "11401696",
+      "anchor": "уровень-3-активная-фаза-похудения",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "14183275",
+      "target": "12296286",
+      "anchor": "как-и-сколько-есть-картошки-в-неделю",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "12857458",
+      "target": "14021584",
+      "anchor": "на-шведском-столе",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "693339",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "Sahar-09-18",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11207593",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "10999474",
+      "target": "12296286",
+      "anchor": "так-что-же-такое-это-ваше-пп",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "training-combined-2023",
+      "target": "14021584",
+      "anchor": "восемь-советов-начинающим",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "12922345",
+      "target": "11801517",
+      "anchor": "3-бесполезные-упражнения",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "13277231",
+      "target": "11401696",
+      "anchor": "как-получить-адекватные-ожидания",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11401696",
+      "target": "30e4d208f2cbd8e57201",
+      "anchor": "мотивация",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11927800",
+      "target": "habits-formation-and-one-percent",
+      "anchor": "принцип-no5-достаточно-времени",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11269472",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "12237133",
+      "target": "14021584",
+      "anchor": "еда-в-течение-дня",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "11875492",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    },
+    {
+      "source_id": "tilda-49734795",
+      "target": "30e4d208f2cbd8e57201",
+      "anchor": "уровень-про",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "tilda-49745867",
+      "target": "12296286",
+      "anchor": "польза-этого-правила-о-растениях-в-другом",
+      "checks": "PASS"
+    },
+    {
+      "source_id": "tilda-67280331",
+      "target": null,
+      "anchor": null,
+      "checks": "PASS"
+    }
+  ],
+  "public_read_only_check": {
+    "source_count": 34,
+    "status_200": 34,
+    "text_matches": 33,
+    "reviewed_unchanged_exception": {
+      "source_id": "tilda-49745867",
+      "html_sha256": "f2d6e00872272498f5bebd0c0744f82b0f4c4c143e23059eb1e8eec8e8484d6a"
+    },
+    "command": "runpy inline-batch01-verify.py main(all assigned source IDs)",
+    "exit_code": 0,
+    "date": "2026-10-05"
+  },
+  "tests": {
+    "passed": 33,
+    "scope": "test_blog_inline_related.py + test_blog_content.py",
+    "final_status": "PASS",
+    "warnings": "2 existing Starlette/httpx deprecations"
+  },
+  "reviews": {
+    "code": "wave1 clean",
+    "documentation": "wave1 clean; final wave2 clean",
+    "tests": "wave1 loader boundary finding; correction implemented; wave2 clean"
+  },
+  "release": {
+    "local": true,
+    "main": false,
+    "production": false
+  },
+  "ownership_check": {
+    "command": "python tools/module_inventory.py --check --base HEAD --working-tree",
+    "result": "Only two stale generated artifact errors; no ownership errors reported. Generated outputs are rebuilt by CI and are not committed separately."
+  }
+}

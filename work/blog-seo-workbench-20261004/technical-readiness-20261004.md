@@ -14,7 +14,8 @@ Production и main этим заданием не менялись.62публи�
 | Достоверные даты исходников |55/62; snapshot31+существующая1+primary22+VC1; receipts и независимые повторные проверки |
 | Адаптивные статичные изображения Git/API |responsive-media-verification.json;476originals,757unique smaller derivatives;6PASS,браузер4режима |
 | Один optionalinline-related |inline-related-verification.json;7PASS,8пар light/dark+контекст,две reviewwavesclean |
-| Полный смысловой подбор inline по каталогу |inline-catalog-verification.json;62/62решений,33точных renderPASS,29нулей; пачки01–10 reviewclean |
+| Прежний смысловой подбор inline по каталогу |inline-catalog-verification.json;62/62решений,33точных renderPASS,29нулей; историческая baseline до новой цели05.10 |
+| Продуктовый пул и пересмотр inline |inline-conversion-pool.md и inline-conversion-verification.json; текущие назначения и границы, отдельная свежая проверка |
 | Новое содержание и мобильное меню |navigation-verification.json;8pytestPASS,16UIкомбинацийPASS;2reviewwaves, замечания закрыты |
 
 Полнотекстовая SEO-карта62статей и предложения20приоритетных новых тем уже

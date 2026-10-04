@@ -54,7 +54,7 @@
     {
       "source_id": "amkbo7kgg1",
       "inline_related": {
-        "source_id": "13436070",
+        "source_id": "11801517",
         "before_heading": "а-как-посчитать-расход-калорий-на-тренировках"
       },
       "slug": "zachem-nuzhny-trenirovki-krome-pohudeniya",
@@ -219,7 +219,7 @@
     {
       "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
       "inline_related": {
-        "source_id": "tilda-49745867",
+        "source_id": "12296286",
         "before_heading": "2-единственное-ограничение-в-питании"
       },
       "slug": "12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
@@ -425,7 +425,7 @@
       "category": "Похудение",
       "body_file": "11989790.md",
       "inline_related": {
-        "source_id": "11875492",
+        "source_id": "14021584",
         "before_heading": "и-запомните-главное-это-всё-ещё-сладости"
       },
       "hero": {
@@ -541,6 +541,10 @@
           "source": "https://pikabu.ru/story/zhiroszhigayushchaya_zona_ne_rabotaet_10797468",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
+      },
+      "inline_related": {
+        "source_id": "11801517",
+        "before_heading": "но-пульсовые-зоны-все-равно-важны"
       }
     },
     {
@@ -606,7 +610,7 @@
     {
       "source_id": "10532723",
       "inline_related": {
-        "source_id": "13178972",
+        "source_id": "11401696",
         "before_heading": "короче-выход-только-один-худеть-дальше"
       },
       "slug": "posledniy-zhir-na-zhivote-plan-deystviy",
@@ -670,7 +674,7 @@
     {
       "source_id": "11906015",
       "inline_related": {
-        "source_id": "11210930",
+        "source_id": "12296286",
         "before_heading": "5-иногда-перекусы-даже-помогают"
       },
       "slug": "u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov",
@@ -735,8 +739,8 @@
     {
       "source_id": "10425659",
       "inline_related": {
-        "source_id": "10573917",
-        "before_heading": "программа"
+        "source_id": "11801517",
+        "before_heading": "инвентарь"
       },
       "slug": "13-pravil-domashnih-trenirovok",
       "title": "13 правил для организации домашних тренировок",
@@ -963,10 +967,6 @@
       "excerpt": "Сотню раз слышал, что в магазинном молоке НЕ осталось никакой пользы, «не то что прямо из-под коровки». Но одно дело читать это на заборе, а другое — услышать от преподавателя в школе нутрициологии за 180 тысяч рублей!",
       "category": "Качество питания",
       "body_file": "10877887.md",
-      "inline_related": {
-        "source_id": "11207593",
-        "before_heading": "это-что-касается-фактов-а-теперь-давайте-обратимся-к-логике"
-      },
       "hero": {
         "file": "10877887/01.webp",
         "alt": "Молоко и вопрос об ультрапастеризации",
@@ -1023,10 +1023,6 @@
     },
     {
       "source_id": "10123213",
-      "inline_related": {
-        "source_id": "amkbo7kgg1",
-        "before_heading": "просто-постарайтесь-подвигать-всеми-частями-тела-которые-двигаются"
-      },
       "slug": "vse-znayut-nikto-ne-delaet",
       "title": "Все знают, никто не делает",
       "excerpt": "Зарядка — забавная штука. Ни разу не встречал человека, кто бы не знал, что это такое. При этом знаю лишь единицы тех, кто ее реально делает, хотя бы от раза к разу.",
@@ -1123,6 +1119,10 @@
         "source_basis": "full_source",
         "validation_status": "pass",
         "review_status": "pass"
+      },
+      "inline_related": {
+        "source_id": "30e4d208f2cbd8e57201",
+        "before_heading": "я-называю-это-правило-1"
       }
     },
     {
@@ -1301,7 +1301,7 @@
       "category": "Похудение",
       "body_file": "12109482.md",
       "inline_related": {
-        "source_id": "14183275",
+        "source_id": "14021584",
         "before_heading": "праздники-и-привычки"
       },
       "hero": {
@@ -1354,10 +1354,6 @@
     },
     {
       "source_id": "13178972",
-      "inline_related": {
-        "source_id": "tilda-67280331",
-        "before_heading": "4-измерить-складки-кожи-и-посмотреть-в-табличку"
-      },
       "slug": "izmeryaem-vashu-zhirnost",
       "title": "Измеряем вашу жирность",
       "excerpt": "Как примерно оценить процент жира дома, зачем знать диапазон нормы и почему одна цифра не должна превращаться в приговор или стандарт красоты.",
@@ -1424,7 +1420,7 @@
       "category": "Качество питания",
       "body_file": "13762311.md",
       "inline_related": {
-        "source_id": "13436070",
+        "source_id": "12296286",
         "before_heading": "как-провести-пост-правильно"
       },
       "hero": {
@@ -1582,7 +1578,7 @@
       "category": "Качество питания",
       "body_file": "11534645.md",
       "inline_related": {
-        "source_id": "11906015",
+        "source_id": "12296286",
         "before_heading": "много-сахара-это-сколько"
       },
       "hero": {
@@ -1642,7 +1638,7 @@
       "category": "Качество питания",
       "body_file": "11833079.md",
       "inline_related": {
-        "source_id": "Sahar-09-18",
+        "source_id": "12296286",
         "before_heading": "алкоголь"
       },
       "hero": {
@@ -1695,7 +1691,7 @@
     {
       "source_id": "11857250",
       "inline_related": {
-        "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+        "source_id": "11401696",
         "before_heading": "а-теперь-самое-интересное-и-грустное"
       },
       "slug": "borba-s-lishnim-vesom-pochemu-shagov-nedostatochno",
@@ -1750,7 +1746,7 @@
     {
       "source_id": "13355824",
       "inline_related": {
-        "source_id": "11494317",
+        "source_id": "12296286",
         "before_heading": "меняйте-фокус"
       },
       "slug": "o-yarlykah",
@@ -1869,7 +1865,7 @@
       "category": "Похудение",
       "body_file": "30e4d208f2cbd8e57201.md",
       "inline_related": {
-        "source_id": "13277231",
+        "source_id": "11401696",
         "before_heading": "вот-вы-задумывались-откуда-берутся-зож-ники"
       },
       "hero": {
@@ -2054,7 +2050,7 @@
       "category": "Похудение",
       "body_file": "13327360.md",
       "inline_related": {
-        "source_id": "13436070",
+        "source_id": "30e4d208f2cbd8e57201",
         "before_heading": "бонусный-вопрос"
       },
       "hero": {
@@ -2249,6 +2245,10 @@
           "source": "https://pikabu.ru/story/yeti_dolbannyie_10_000_shagov_11522121",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
+      },
+      "inline_related": {
+        "source_id": "11801517",
+        "before_heading": "на-шагах-свет-клином-не-сошелся-вот-что-говорит-воз"
       }
     },
     {
@@ -2369,7 +2369,7 @@
     {
       "source_id": "13436070",
       "inline_related": {
-        "source_id": "13277231",
+        "source_id": "12296286",
         "before_heading": "4-возраст"
       },
       "slug": "poterya-myshc-pri-pohudenii",
@@ -2433,7 +2433,7 @@
       "category": "Похудение",
       "body_file": "13785403.md",
       "inline_related": {
-        "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+        "source_id": "11401696",
         "before_heading": "ошибка-2-закрепление-не-здоровых-пищевых-привычек"
       },
       "hero": {
@@ -2492,7 +2492,7 @@
     {
       "source_id": "14021584",
       "inline_related": {
-        "source_id": "10797468",
+        "source_id": "11801517",
         "before_heading": "3-не-спорьте-о-диетах"
       },
       "slug": "sdelat-pohudenie-proshche",
@@ -2596,6 +2596,10 @@
           "source": "https://pikabu.ru/story/khodit_chtobyi_khudet_14102926",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
+      },
+      "inline_related": {
+        "source_id": "11401696",
+        "before_heading": "уровень-3-активная-фаза-похудения"
       }
     },
     {
@@ -2606,7 +2610,7 @@
       "category": "Качество питания",
       "body_file": "14183275.md",
       "inline_related": {
-        "source_id": "11207593",
+        "source_id": "12296286",
         "before_heading": "как-и-сколько-есть-картошки-в-неделю"
       },
       "hero": {
@@ -2655,7 +2659,7 @@
     {
       "source_id": "12857458",
       "inline_related": {
-        "source_id": "693339",
+        "source_id": "14021584",
         "before_heading": "на-шведском-столе"
       },
       "slug": "pravila-bezopasnosti-za-shvedskim-stolom",
@@ -2774,10 +2778,6 @@
       "excerpt": "Что на самом деле означала классификация аспартама как возможного канцерогена и почему слово «возможно» нельзя читать отдельно от дозы.",
       "category": "Качество питания",
       "body_file": "Sahar-09-18.md",
-      "inline_related": {
-        "source_id": "11269472",
-        "before_heading": "а-какие-ещё-вещества-в-этом-списке"
-      },
       "hero": {
         "file": "Sahar-09-18/01.webp",
         "alt": "Женщина с банкой Diet Coke",
@@ -2887,7 +2887,7 @@
       "category": "Качество питания",
       "body_file": "10999474.md",
       "inline_related": {
-        "source_id": "11207593",
+        "source_id": "12296286",
         "before_heading": "так-что-же-такое-это-ваше-пп"
       },
       "hero": {
@@ -2951,7 +2951,7 @@
       "category": "Тренировки",
       "body_file": "training-combined-2023.md",
       "inline_related": {
-        "source_id": "10797468",
+        "source_id": "14021584",
         "before_heading": "восемь-советов-начинающим"
       },
       "hero": {
@@ -3070,7 +3070,7 @@
     {
       "source_id": "13277231",
       "inline_related": {
-        "source_id": "tilda-67280331",
+        "source_id": "11401696",
         "before_heading": "как-получить-адекватные-ожидания"
       },
       "slug": "skolko-vremeni-nuzhno-na-pohudenie",
@@ -3132,7 +3132,7 @@
       "category": "Похудение",
       "body_file": "11401696.md",
       "inline_related": {
-        "source_id": "11522121",
+        "source_id": "30e4d208f2cbd8e57201",
         "before_heading": "мотивация"
       },
       "hero": {
@@ -3362,7 +3362,7 @@
       "category": "Ну, типа... ЗОЖ",
       "body_file": "12237133.md",
       "inline_related": {
-        "source_id": "10123213",
+        "source_id": "14021584",
         "before_heading": "еда-в-течение-дня"
       },
       "hero": {
@@ -3510,7 +3510,7 @@
       "category": "Похудение",
       "body_file": "tilda-49734795.md",
       "inline_related": {
-        "source_id": "13277231",
+        "source_id": "30e4d208f2cbd8e57201",
         "before_heading": "уровень-про"
       },
       "hero": {
@@ -3567,7 +3567,7 @@
     {
       "source_id": "tilda-49745867",
       "inline_related": {
-        "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+        "source_id": "12296286",
         "before_heading": "польза-этого-правила-о-растениях-в-другом"
       },
       "slug": "pravilo-30-rasteniy",
@@ -3658,5 +3658,13 @@
         "source_basis": "full_source"
       }
     }
+  ],
+  "inline_related_pool_source_ids": [
+    "11801517",
+    "11401696",
+    "30e4d208f2cbd8e57201",
+    "12296286",
+    "14021584",
+    "habits-formation-and-one-percent"
   ]
 }

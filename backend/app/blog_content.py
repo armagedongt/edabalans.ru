@@ -70,6 +70,7 @@ class BlogArticle:
 class BlogCatalog:
     articles: tuple[BlogArticle, ...]
     content_dir: Path
+    inline_related_pool_source_ids: tuple[str, ...] | None = None
 
     @property
     def published(self) -> tuple[BlogArticle, ...]:
@@ -234,7 +235,13 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
         )
         articles.append(article)
 
-    catalog = BlogCatalog(tuple(articles), root)
+    pool = payload.get("inline_related_pool_source_ids")
+    if "inline_related_pool_source_ids" in payload and (
+        not isinstance(pool, list)
+        or not all(isinstance(item, str) and item.strip() == item and item for item in pool)
+    ):
+        raise ValueError("blog inline related pool must be a source_id string list")
+    catalog = BlogCatalog(tuple(articles), root, tuple(pool) if pool is not None else None)
     validate_blog_catalog(catalog)
     return catalog
 
@@ -275,6 +282,10 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
     if len(slugs) != len(set(slugs)):
         raise ValueError("blog slugs must be unique")
     published_ids = {article.source_id for article in catalog.published}
+    pool = catalog.inline_related_pool_source_ids
+    if pool is not None:
+        if len(pool) != len(set(pool)) or set(pool) - published_ids:
+            raise ValueError("blog inline related pool must contain unique published targets")
 
     for article in catalog.articles:
         if article.original_published_at is not None:
@@ -327,6 +338,8 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
                 target = article.inline_related.source_id
                 if target == article.source_id or target not in published_ids:
                     raise ValueError(f"blog article {article.source_id} has an invalid inline related target")
+                if pool is not None and target not in pool:
+                    raise ValueError(f"blog article {article.source_id} inline related target is outside curated pool")
 
 
 def render_blog_component(name: str, arguments: list[str]) -> str:
