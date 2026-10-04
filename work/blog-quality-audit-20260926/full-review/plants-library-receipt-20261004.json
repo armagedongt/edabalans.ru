@@ -1,0 +1,39 @@
+{
+  "status": "pass",
+  "navigation_version": 29,
+  "canonical_family": "blog:pravilo-30-rasteniy",
+  "member_catalog_ids": [
+    "tilda-page:49745867",
+    "A123",
+    "A130",
+    "tilda-post:hbfozma3y1"
+  ],
+  "previous_family_ids_retired": [
+    "deferred:A123",
+    "deferred:A130",
+    "deferred:tilda-post:hbfozma3y1"
+  ],
+  "other_families_preserved": true,
+  "channel_edits": 0,
+  "author_text_changed": false,
+  "editor_version": 4,
+  "published_version": 3,
+  "markdown_sha256_lf": "0213794f25c341eb14111674a37d57d89147b31e39dddfe222b3897f0dc31a57",
+  "uses": [
+    {
+      "status": "recorded",
+      "source_uri": "content://item/4fb1cf28-7ab0-41eb-93d4-48b1b268e82d",
+      "task_key": "plants-family-completion-20261004"
+    },
+    {
+      "status": "recorded",
+      "source_uri": "content://item/6feee848-e94c-40fb-aed6-604c78349a8d",
+      "task_key": "plants-family-completion-20261004"
+    },
+    {
+      "status": "recorded",
+      "source_uri": "knowledge://resource/tilda-intensive-hbfozma3y1",
+      "task_key": "plants-family-completion-20261004"
+    }
+  ]
+}

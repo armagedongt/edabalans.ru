@@ -1,0 +1,56 @@
+{
+  "status": 200,
+  "editor_version": 1,
+  "public_version": 0,
+  "markdown_sha256_lf": "817ca936de739eb45b480eb1277b41620109cec223d125aac7fde1e1a7abe856",
+  "media": [
+    {
+      "file": "amkbo7kgg1/01.webp",
+      "source": "https://static.tildacdn.com/tild6634-6635-4563-a239-643463376534/imagepng.webp",
+      "kind": "image",
+      "width": 1280,
+      "height": 957,
+      "bytes": 108740,
+      "sha256": "cf3581e7ee868807a8c7e2f9130a0a2b84ea2ea895014b59ec2345b0378aeee7",
+      "alt": "Разные задачи тренировок",
+      "http": 200,
+      "server_sha256": "cf3581e7ee868807a8c7e2f9130a0a2b84ea2ea895014b59ec2345b0378aeee7"
+    },
+    {
+      "file": "amkbo7kgg1/02.webp",
+      "source": "https://static.tildacdn.com/tild6662-6265-4365-b163-316432396436/image.png",
+      "kind": "image",
+      "width": 744,
+      "height": 1280,
+      "bytes": 46510,
+      "sha256": "d87a9017248d9bead41016e9a238e7db1b0a7a9b8d026ff59f454b72571d94ae",
+      "alt": "Сравнение мышечной ткани тренирующихся и нетренирующихся людей",
+      "http": 200,
+      "server_sha256": "d87a9017248d9bead41016e9a238e7db1b0a7a9b8d026ff59f454b72571d94ae"
+    },
+    {
+      "file": "amkbo7kgg1/03.webp",
+      "source": "https://static.tildacdn.com/tild3231-6636-4532-b936-333234626331/image.png",
+      "kind": "image",
+      "width": 700,
+      "height": 783,
+      "bytes": 36662,
+      "sha256": "b84b51ccad9b09ef6a9402a7ddbd206bec55b78214e4383fc38633d57c66cdc4",
+      "alt": "Скриншоты видео с обещаниями расхода калорий, дополненные автором",
+      "http": 200,
+      "server_sha256": "b84b51ccad9b09ef6a9402a7ddbd206bec55b78214e4383fc38633d57c66cdc4"
+    }
+  ],
+  "hero_show": false,
+  "related_source_ids": [
+    "11801517",
+    "10425659",
+    "10573917"
+  ],
+  "description": [
+    "<meta name=\"description\" content=\"Золотое правило любой тренировки — вы должны четко понимать, что и зачем вы делаете, иначе вы можете потратить время и силы, но лишь просто посотрясать воздух без осязаемой пользы для себя. Каждый вид тренировочной активности (бег, силовые, плавание, пилатес и пр.) имеет свою понятную конкретную…\">"
+  ],
+  "canonical": [
+    "<link rel=\"canonical\" href=\"https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/zachem-nuzhny-trenirovki-krome-pohudeniya\">"
+  ]
+}

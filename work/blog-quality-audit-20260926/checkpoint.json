@@ -2,7 +2,7 @@
   "task": "Пакетная проверка и немедленная несмысловая правка старых статей плюс подготовка согласованных новых",
   "updated_at": "2026-10-04",
   "batch_size": 5,
-  "article_count": 60,
+  "article_count": 62,
   "old_article_count": 44,
   "full_current_text_read_count": 45,
   "archive_source_text_compared_count": 6,
@@ -28,7 +28,8 @@
     "11448583",
     "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
     "14062380",
-    "12193581"
+    "12193581",
+    "amkbo7kgg1"
   ],
   "new_articles_published": [
     "10123213",
@@ -46,21 +47,22 @@
     "11448583",
     "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
     "14062380",
-    "12193581"
+    "12193581",
+    "amkbo7kgg1"
   ],
-  "new_full_safe_review_pass_count": 16,
-  "total_old_and_new_full_safe_review_delivered_count": 59,
+  "new_full_safe_review_pass_count": 18,
+  "total_old_and_new_full_safe_review_delivered_count": 61,
   "production_receipts": "applied-receipts.json",
   "production_changes_applied": 38,
   "next_independent_batch": null,
-  "next_source_id": "A184",
-  "active_stage": "approved_new_queue_with_one_existing_semantic_hold",
+  "next_source_id": null,
+  "active_stage": "approved_independent_queue_closed_remaining_owner_holds",
   "delivery_unconfirmed_source_ids": [],
   "description_production_pass_count": 44,
   "description_scope": "opening_sentences_unless_explicit_frontmatter; not_full_article_quality_pass",
   "description_evidence": "work/blog-seo-analytics/descriptions-production-20261001.json in codex/blog-description-release-20261001",
-  "current_sequential_source_id": "12193581",
-  "current_sequential_stage": "holiday_table_fully_closed_next_lent_compare_no_duplicate",
+  "current_sequential_source_id": "amkbo7kgg1",
+  "current_sequential_stage": "approved_independent_queue_closed_remaining_owner_holds",
   "sweating_12189205_hold": {
     "source_members": [
       "A082"
@@ -243,15 +245,24 @@
     "full_scientific_pass": false
   },
   "dogs_10369434_hold": {
-    "stage": "full_sources_read_owner_safety_decision_pending",
+    "stage": "published_owner_keep_original_meaning",
     "source_members": [
       "A012",
       "A156"
     ],
     "author_text_changed": false,
-    "new_publication_created": false,
+    "new_publication_created": true,
     "question": "Удалить абзац с советом броситься на собаку и гарантией отсутствия дальнейшего нападения либо оставить на ручной разбор",
-    "evidence": "new/10369434/source-review-20261003.md"
+    "evidence": "new/10369434/source-review-20261003.md",
+    "owner_followup": {
+      "decision": "keep_author_text_unchanged",
+      "basis": "04.10.2026: «Нападение собаки, я тебе еще раз сказал, оставляй». Удаление спорного абзаца не разрешено; прежнее согласование публикации сохраняется.",
+      "author_text_changed": false,
+      "published": true,
+      "next_stage": "closed"
+    },
+    "question_resolved": true,
+    "production_receipt": "new/10369434/production-receipt.json"
   },
   "ozempik_prepared": {
     "source_id": "13327360",
@@ -1140,5 +1151,85 @@
     "desktop_mobile_dom_geometry_pass": true,
     "library_navigation_version": 25,
     "owner_review": "owner-review/12193581-20261004.md"
+  },
+  "lent_A184_comparison": {
+    "status": "existing_canon_preserved_draft_linked",
+    "preferred_basis": "A098",
+    "draft_source": "A184",
+    "new_article_created": false,
+    "published_body_changed": false,
+    "independent_review": "pass",
+    "comparison": "new/lent-compare/comparison-20261004.md",
+    "library_navigation_version": 26
+  },
+  "stage": "approved_independent_queue_closed_remaining_owner_holds",
+  "plateau_hold": {
+    "source_uri": "knowledge://resource/tilda-intensive-e4441ism91",
+    "source_version": 1,
+    "author_text_changed": false,
+    "published": false,
+    "owner_review": "owner-review/plateau-20261004.md",
+    "partial_overlap_source_id": "13277231",
+    "writer_pass": false,
+    "decision": "owner_deferred",
+    "owner_followup": {
+      "decision": "owner_deferred_not_current_queue",
+      "basis": "04.10.2026: «И про плато пока отложи». Не публиковать и не менять смысл; не трактовать как окончательное исключение в банк.",
+      "author_text_changed": false,
+      "published": false
+    }
+  },
+  "training_amkbo7kgg1_prepared": {
+    "published_verified": true,
+    "source_members": [
+      "tilda-post:amkbo7kgg1"
+    ],
+    "writer_validation": "pass",
+    "independent_review": "technical_pass",
+    "full_scientific_pass": false,
+    "production_revision": "6c1656fed25505791a5d3e3f7782be2f0ac08062",
+    "ci_run": 37158243063,
+    "api_version": 1,
+    "public_version": 0,
+    "markdown_sha256_lf": "817ca936de739eb45b480eb1277b41620109cec223d125aac7fde1e1a7abe856",
+    "media_http_hash_pass": 3,
+    "desktop_mobile_dom_geometry_pass": true,
+    "library_navigation_version": 28,
+    "owner_review": "owner-review/training-amkbo7kgg1-20261004.md"
+  },
+  "remaining_approved_source_cards": [
+    "A082"
+  ],
+  "remaining_approved_unique_held_families": 1,
+  "queue_completion_audit": {
+    "checked_at": "2026-10-04",
+    "approved_source_cards_total": 37,
+    "closed_in_canon": 33,
+    "remaining_source_cards": 4,
+    "remaining_held_topic_families": 3,
+    "safe_independent_articles_remaining": 0,
+    "unaccounted_approved_source_cards": [],
+    "library_navigation_version": 29,
+    "canonical_family_and_member_routing_matches_server": true,
+    "production_manifest_matches_61_canons": true,
+    "plants_family_sync_confirmed": true,
+    "report": "full-review/plants-family-library-20261004.md",
+    "receipt": "full-review/queue-completion-receipt-20261004.json",
+    "previous_documentation_ci_run": 37159080237,
+    "previous_documentation_ci_conclusion": "success",
+    "previous_documentation_production_revision": "69a04f96606f4a89c961e3c63962fa5789ec4a8a"
+  },
+  "latest_owner_followup": {
+    "date": "2026-10-04",
+    "dogs": "published; original meaning retained",
+    "plateau": "deferred; not in current publication queue",
+    "sweating": "show prepared proposal; not approved or applied",
+    "public_articles": 62,
+    "safe_full_pass": 61,
+    "new_ready_to_publish_immediately": 0,
+    "approved_families_needing_preparation": [],
+    "owner_preview_pending": [
+      "sweating"
+    ]
   }
 }

@@ -1,0 +1,18 @@
+{
+  "status": "existing_canon_draft_family_linked",
+  "navigation_version": 26,
+  "family_id": "blog:velikiy-post-pohudenie-i-zdorove",
+  "members": [
+    "A098",
+    "A184"
+  ],
+  "other_families_preserved": true,
+  "channel_edits": 0,
+  "published_body_changed": false,
+  "new_article_created": false,
+  "usage": {
+    "status": "recorded",
+    "source_uri": "content://item/7ececae6-a9cb-4295-bb2e-e8460a18b510",
+    "task_key": "blog-lent-A184-family-comparison-20261004"
+  }
+}

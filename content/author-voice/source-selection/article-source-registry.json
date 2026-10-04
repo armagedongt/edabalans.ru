@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-03",
+  "updated_at": "2026-10-04",
   "owner_review": {
     "schema_version": 1,
     "module_id": "platform.content",
@@ -155,13 +155,13 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 60,
-    "canonical_linked_external_records": 89,
-    "deferred_families": 211,
+    "canonical_blog_families": 62,
+    "canonical_linked_external_records": 96,
+    "deferred_families": 204,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 72,
-      "incomplete_draft": 12,
+      "editorial_review": 66,
+      "incomplete_draft": 11,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
       "private_product_material": 43,
@@ -476,11 +476,30 @@
           "role": "preferred_basis",
           "provenance": "content://item/7b56622c-c4a8-4935-bf36-366db14c291c",
           "text_sha256": "03f915f794b9c4887960c81450a31b69f58d4e90b009b6f5b772748592e065c4"
+        },
+        {
+          "catalog_id": "A184",
+          "source": "telegraph",
+          "external_id": "Post-02-22-12",
+          "title": "Пост 2026",
+          "url": "https://telegra.ph/Post-02-22-12",
+          "published_at": "2026-02-22T18:29:28+0000",
+          "characters": 13187,
+          "role": "earlier_draft_version",
+          "provenance": "content://item/7ececae6-a9cb-4295-bb2e-e8460a18b510",
+          "text_sha256": "47e500ac47b92f6e05f7c57a08732456a6f40dbe50ed59873c595fb091c216c1"
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "owner_confirmed",
-      "owner_source_decisions": {}
+      "family_evidence": "owner_confirmed_and_full_source_comparison",
+      "owner_source_decisions": {
+        "A184": "earlier_draft_same_family_no_separate_publication"
+      },
+      "preferred_basis": [
+        "A098"
+      ],
+      "source_comparison": "work/blog-quality-audit-20260926/new/lent-compare/comparison-20261004.md",
+      "merge_status": "existing_canon_preserved_earlier_draft_linked"
     },
     {
       "family_id": "blog:vesy-instrukciya-po-primeneniyu",
@@ -830,6 +849,46 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "owner_confirmed",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:zachem-nuzhny-trenirovki-krome-pohudeniya",
+      "title": "Зачем нужны тренировки (кроме похудения)",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "amkbo7kgg1",
+        "slug": "zachem-nuzhny-trenirovki-krome-pohudeniya",
+        "url": "https://blog.похудение-это-есть.рф/articles/zachem-nuzhny-trenirovki-krome-pohudeniya",
+        "body_file": "content/blog/articles/amkbo7kgg1.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "tilda-post:amkbo7kgg1",
+          "source": "tilda",
+          "external_id": "amkbo7kgg1",
+          "title": "💪 Зачем нужны тренировки (кроме похудения)",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
+          "characters": 5948,
+          "html_sha256": "8248cfb39cf247e53382cdb9ff66b07492dfe5c9aa7b55a02443ee719f5344b3",
+          "text_sha256": "78f741f863fc124bac125c2cc685e702664438ecdce58552eb8d197ee45f6932",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "role": "direct_source",
+          "provenance": "knowledge://resource/tilda-intensive-amkbo7kgg1",
+          "source_version": 1
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "exact_public_tilda_full_source_minimal_adaptation",
+      "owner_source_decisions": {
+        "tilda-post:amkbo7kgg1": "publish_next"
+      },
+      "preferred_basis": [
+        "tilda-post:amkbo7kgg1"
+      ],
+      "merge_status": "published_verified",
+      "source_comparison": "work/blog-quality-audit-20260926/new/amkbo7kgg1/preparation-20261004.md"
     },
     {
       "family_id": "blog:izmeryaem-vashu-zhirnost",
@@ -1771,11 +1830,64 @@
             "html_sha256": "e76801cbf0f7bd1767d55cf87b32617755de45261818c0fdb3420aa56bd8c93a",
             "retrieved_at": "2026-09-17"
           }
+        },
+        {
+          "catalog_id": "A123",
+          "source": "telegraph",
+          "external_id": "30rastei-01-26",
+          "title": "🥕Правило 40-ка растений",
+          "url": "https://telegra.ph/30rastei-01-26",
+          "published_at": "2026-01-26T23:50:02+0000",
+          "characters": 4239,
+          "role": "partial_source",
+          "provenance": "content://item/4fb1cf28-7ab0-41eb-93d4-48b1b268e82d",
+          "text_sha256": "c594fbf4008c5fd13f7e8473ff85f7ca7428ab66e5f5eb5ef41efb50edf588fe",
+          "source_version": 1
+        },
+        {
+          "catalog_id": "A130",
+          "source": "telegraph",
+          "external_id": "CHast-2-08-08",
+          "title": "🥕 Правило 30-ти растений",
+          "url": "https://telegra.ph/CHast-2-08-08",
+          "published_at": "2023-08-08T18:27:36+0000",
+          "characters": 7219,
+          "role": "previous_version",
+          "provenance": "content://item/6feee848-e94c-40fb-aed6-604c78349a8d",
+          "text_sha256": "9f304e11e9e7d92f697b66642d26406c580343da8d0d81d6fc9e206952fbf3cf",
+          "source_version": 1
+        },
+        {
+          "catalog_id": "tilda-post:hbfozma3y1",
+          "source": "tilda",
+          "external_id": "hbfozma3y1",
+          "title": "🥕 Правило 30-ти растений",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/hbfozma3y1-pravilo-30-ti-rastenii",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/hbfozma3y1-pravilo-30-ti-rastenii",
+          "characters": 5092,
+          "html_sha256": "a6b4576b33f797f2b1dfa768482daddd8bafe9462493b8aca0ea27fa99a08c35",
+          "text_sha256": "8185a462e812a066be565ae96aea65b84b7ebbc1f7e860e2e4ad54302e51bd43",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "role": "previous_version",
+          "provenance": "knowledge://resource/tilda-intensive-hbfozma3y1",
+          "source_version": 1
         }
       ],
       "possible_duplicate_catalog_ids": [],
-      "family_evidence": "direct_provenance",
-      "owner_source_decisions": {}
+      "family_evidence": "owner_confirmed_family_full_source_comparison",
+      "owner_source_decisions": {
+        "A123": "approved_update",
+        "A130": "approved_update",
+        "tilda-post:hbfozma3y1": "approved_update"
+      },
+      "preferred_basis": [
+        "tilda-page:49745867",
+        "A123:final_exercise_only"
+      ],
+      "merge_status": "existing_canon_verified_linked_variants",
+      "source_comparison": "work/blog-quality-audit-20260926/full-review/plants-20261001.md",
+      "preserved_unique_blocks": "A130 и старый интенсив: сезонность, региональная статистика; сохранены в источниках, не импортированы. Исторический дневник канона не пересчитан."
     },
     {
       "family_id": "blog:professionalnyy-edok",
@@ -2426,6 +2538,67 @@
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
       "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:kak-na-menya-napali-sobaki-v-lesu",
+      "title": "Как на меня напали собаки в лесу",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "10369434",
+        "slug": "kak-na-menya-napali-sobaki-v-lesu",
+        "url": "https://blog.похудение-это-есть.рф/articles/kak-na-menya-napali-sobaki-v-lesu",
+        "body_file": "content/blog/articles/10369434.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A012",
+          "source": "pikabu",
+          "external_id": "10369434",
+          "title": "Как на меня напали собаки в лесу",
+          "url": "https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434",
+          "published_at": "2023-06-17T13:18:08+03:00",
+          "characters": 5651,
+          "role": "direct_source",
+          "provenance": "content://item/7ee045e3-43dc-4f56-8539-6a5b87b7db6f",
+          "text_sha256": "fbcf1b0c990d8670f315dbffc1381e7ed24c7bad0a7bdc2dac0763bef23fe000",
+          "source_version": 1
+        },
+        {
+          "catalog_id": "A156",
+          "source": "telegraph",
+          "external_id": "Kak-na-menya-napali-sobaki-v-lesu-06-17",
+          "title": "Как на меня напали собаки в лесу",
+          "url": "https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17",
+          "published_at": "2023-06-17T10:03:22+0000",
+          "characters": 4822,
+          "role": "earlier_shorter_version",
+          "provenance": "content://item/e98760d4-60d0-418d-b2ad-7450fc418ac6",
+          "text_sha256": "b775216dc641e0f7588b10bf1925b4bcd1ac9a79a6b8d48bbae2370fd3103e6e",
+          "source_version": 1
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "full_sources_compared_owner_approved_same_personal_story_pikabu_has_extra_intro",
+      "owner_source_decisions": {
+        "A012": "published_canonical_basis",
+        "A156": "earlier_shorter_same_family"
+      },
+      "channel_references": [
+        {
+          "url": "https://t.me/Fitness_Talks/110",
+          "provenance": "content://item/7e23644d-742a-4a15-8192-7af150d3bb07",
+          "source_version": 2,
+          "role": "announcement_not_full_article",
+          "channel_edited": false
+        }
+      ],
+      "owner_followup": {
+        "decision": "keep_author_meaning_unchanged",
+        "published": true,
+        "full_scientific_pass": false,
+        "production_revision": "3ebabf5a265c1c87b76363dd413c07c7b3534b5b"
+      }
     }
   ],
   "deferred": [
@@ -3837,62 +4010,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A155": "manual_review"
-      }
-    },
-    {
-      "family_id": "deferred:A012",
-      "title": "Как на меня напали собаки в лесу",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A012",
-          "source": "pikabu",
-          "external_id": "10369434",
-          "title": "Как на меня напали собаки в лесу",
-          "url": "https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434",
-          "published_at": "2023-06-17T13:18:08+03:00",
-          "characters": 5651,
-          "role": "unmerged_source",
-          "provenance": "content://item/7ee045e3-43dc-4f56-8539-6a5b87b7db6f",
-          "text_sha256": "fbcf1b0c990d8670f315dbffc1381e7ed24c7bad0a7bdc2dac0763bef23fe000"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A156"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A012": "publish_next"
-      }
-    },
-    {
-      "family_id": "deferred:A156",
-      "title": "Как на меня напали собаки в лесу",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A156",
-          "source": "telegraph",
-          "external_id": "Kak-na-menya-napali-sobaki-v-lesu-06-17",
-          "title": "Как на меня напали собаки в лесу",
-          "url": "https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17",
-          "published_at": "2023-06-17T10:03:22+0000",
-          "characters": 4829,
-          "role": "unmerged_source",
-          "provenance": "content://item/e98760d4-60d0-418d-b2ad-7450fc418ac6",
-          "text_sha256": "69129e26bc0092016b15b31b54243146a83a1958dedcb717ef16ff4e61c8526e"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A012"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A156": "publish_next"
       }
     },
     {
@@ -5636,32 +5753,6 @@
       ],
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {}
-    },
-    {
-      "family_id": "deferred:A184",
-      "title": "Пост 2026",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A184",
-          "source": "telegraph",
-          "external_id": "Post-02-22-12",
-          "title": "Пост 2026",
-          "url": "https://telegra.ph/Post-02-22-12",
-          "published_at": "2026-02-22T18:29:28+0000",
-          "characters": 13193,
-          "role": "unmerged_source",
-          "provenance": "content://item/7ececae6-a9cb-4295-bb2e-e8460a18b510",
-          "text_sha256": "34ea3cbc286845227e9a23400531c060a9cc05434dee162ee26c044f21f3277a"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A184": "publish_next"
-      }
     },
     {
       "family_id": "deferred:A152",
@@ -7502,7 +7593,7 @@
       "title": "⛔️ Почему эффекта плато не существует",
       "disposition": "deferred",
       "deferred_kind": "editorial_review",
-      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
+      "reason": "Проверен полный исходник: центральные утверждения о метаболизме требуют решения владельца; большая часть о сроках похудения частично повторяет канон 13277231. Авторский текст не менялся, публикация не выполнялась.",
       "members": [
         {
           "catalog_id": "tilda-post:e4441ism91",
@@ -7511,21 +7602,35 @@
           "title": "⛔️ Почему эффекта плато не существует",
           "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet",
           "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/e4441ism91-pochemu-effekta-plato-ne-suschestvuet",
-          "characters": 7145,
+          "characters": 6740,
           "html_sha256": "f51a946347be2710c2dab650da36a6f58897ab2309272831f3dd190f73128be6",
-          "text_sha256": "a0a74e7b1a2b8f7a60db34101e45896ac39fdf4054fd9f768cc6a4ff1cebcbde",
-          "retrieved_at": "2026-09-25",
+          "text_sha256": "3294bf2939c79ee345c7453acc555a321c1473ba1880310bed70102ec5a1b23c",
+          "retrieved_at": "2026-10-04",
           "source_basis": "full_source",
           "disposition": "deferred",
           "deferred_kind": "editorial_review",
           "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
-          "role": "unmerged_source"
+          "role": "unmerged_source",
+          "provenance": "knowledge://resource/tilda-intensive-e4441ism91",
+          "source_version": 1,
+          "extraction": "articleBody_DOM_script_style_excluded"
         }
       ],
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
-        "tilda-post:e4441ism91": "publish_next"
+        "tilda-post:e4441ism91": "manual_review"
+      },
+      "publication_hold": "owner_deferred",
+      "source_comparison": "work/blog-quality-audit-20260926/owner-review/plateau-20261004.md",
+      "semantic_overlap_with": [
+        "blog:skolko-vremeni-nuzhno-na-pohudenie"
+      ],
+      "owner_followup": {
+        "decision": "owner_deferred_not_current_queue",
+        "basis": "04.10.2026: «И про плато пока отложи». Не публиковать и не менять смысл; не трактовать как окончательное исключение в банк.",
+        "author_text_changed": false,
+        "published": false
       }
     },
     {
@@ -7619,37 +7724,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "tilda-post:sgpfzdvvy1": "manual_review"
-      }
-    },
-    {
-      "family_id": "deferred:tilda-post:amkbo7kgg1",
-      "title": "💪 Зачем нужны тренировки (кроме похудения)",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
-      "members": [
-        {
-          "catalog_id": "tilda-post:amkbo7kgg1",
-          "source": "tilda",
-          "external_id": "amkbo7kgg1",
-          "title": "💪 Зачем нужны тренировки (кроме похудения)",
-          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
-          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
-          "characters": 6355,
-          "html_sha256": "8248cfb39cf247e53382cdb9ff66b07492dfe5c9aa7b55a02443ee719f5344b3",
-          "text_sha256": "c9527dd9485bae761603d478520e81fa11102b58b07a3d00eb7011a72d404fac",
-          "retrieved_at": "2026-09-25",
-          "source_basis": "full_source",
-          "disposition": "deferred",
-          "deferred_kind": "editorial_review",
-          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
-          "role": "unmerged_source"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "tilda-post:amkbo7kgg1": "publish_next"
       }
     },
     {
@@ -7827,93 +7901,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "tilda-post:5kegfp3o71": "bank"
-      }
-    },
-    {
-      "family_id": "deferred:A130",
-      "title": "🥕 Правило 30-ти растений",
-      "disposition": "deferred",
-      "deferred_kind": "incomplete_draft",
-      "reason": "Черновик или заметка; нужна проверка законченности.",
-      "members": [
-        {
-          "catalog_id": "A130",
-          "source": "telegraph",
-          "external_id": "CHast-2-08-08",
-          "title": "🥕 Правило 30-ти растений",
-          "url": "https://telegra.ph/CHast-2-08-08",
-          "published_at": "2023-08-08T18:27:36+0000",
-          "characters": 7228,
-          "role": "unmerged_source",
-          "provenance": "content://item/6feee848-e94c-40fb-aed6-604c78349a8d",
-          "text_sha256": "a0b57639f17f2695297b4adc15709a044cc0128a228b5adb222470a2e7aa30d3"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A123"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A130": "approved_update"
-      }
-    },
-    {
-      "family_id": "deferred:tilda-post:hbfozma3y1",
-      "title": "🥕 Правило 30-ти растений",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
-      "members": [
-        {
-          "catalog_id": "tilda-post:hbfozma3y1",
-          "source": "tilda",
-          "external_id": "hbfozma3y1",
-          "title": "🥕 Правило 30-ти растений",
-          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/hbfozma3y1-pravilo-30-ti-rastenii",
-          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/hbfozma3y1-pravilo-30-ti-rastenii",
-          "characters": 5508,
-          "html_sha256": "a6b4576b33f797f2b1dfa768482daddd8bafe9462493b8aca0ea27fa99a08c35",
-          "text_sha256": "f794486912ca13c882b1d70217ef57058df36baf9b8078b125f1e3facf2638eb",
-          "retrieved_at": "2026-09-25",
-          "source_basis": "full_source",
-          "disposition": "deferred",
-          "deferred_kind": "editorial_review",
-          "reason": "Старый интенсив: сравнить с блогом и продуктами, выбрать самостоятельный материал; публикация требует подготовки.",
-          "role": "unmerged_source"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "tilda-post:hbfozma3y1": "approved_update"
-      }
-    },
-    {
-      "family_id": "deferred:A123",
-      "title": "🥕Правило 40-ка растений",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A123",
-          "source": "telegraph",
-          "external_id": "30rastei-01-26",
-          "title": "🥕Правило 40-ка растений",
-          "url": "https://telegra.ph/30rastei-01-26",
-          "published_at": "2026-01-26T23:50:02+0000",
-          "characters": 4243,
-          "role": "unmerged_source",
-          "provenance": "content://item/4fb1cf28-7ab0-41eb-93d4-48b1b268e82d",
-          "text_sha256": "13adcd6f4b1f9db314dfd606fc45e768bc6d70425de77866c60ae8a3da6a945b"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A130"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A123": "approved_update"
       }
     },
     {

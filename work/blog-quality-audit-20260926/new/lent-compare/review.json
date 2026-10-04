@@ -1,0 +1,17 @@
+{
+  "reviewer": "archive_decision_review",
+  "status": "pass",
+  "full_sources_read": [
+    "A098",
+    "A184"
+  ],
+  "existing_blog_markdown_read": true,
+  "relationship": "earlier_draft_version",
+  "owner_decision": "canon_pikabu_telegraph_draft_no_duplicate_release",
+  "exact_duplicate": false,
+  "unique_draft_blocks_preserved_at_source": true,
+  "medical_claims_not_reviewed": true,
+  "media_identity_not_asserted": true,
+  "dates_from_existing_catalog_not_independently_verified": true,
+  "published_body_changed": false
+}

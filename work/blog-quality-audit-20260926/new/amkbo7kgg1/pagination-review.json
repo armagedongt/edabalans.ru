@@ -1,0 +1,61 @@
+{
+  "status": "clean",
+  "reviewer": "audit_layout_review",
+  "findings": [],
+  "scope": "selected_area_pagination",
+  "initial_ci_failure": {
+    "run": 37157152313,
+    "cause": "owner catalog overflow at360; public pagination text after61st article created fifth page"
+  },
+  "fix": "flex-wrap:wrap; synchronize CSS version across4templates",
+  "widths": [
+    360,
+    430,
+    768,
+    1440
+  ],
+  "document_client_scroll_pairs": [
+    [
+      345,
+      345
+    ],
+    [
+      415,
+      415
+    ],
+    [
+      753,
+      753
+    ],
+    [
+      1425,
+      1425
+    ]
+  ],
+  "pagination_width_scroll_pairs": [
+    [
+      313,
+      313
+    ],
+    [
+      383,
+      383
+    ],
+    [
+      713,
+      713
+    ],
+    [
+      1180,
+      1180
+    ]
+  ],
+  "states": [
+    "page1",
+    "page5"
+  ],
+  "root_native_screenshot_inspected": true,
+  "reviewer_independent_screenshot_available": false,
+  "local_tests": 33,
+  "colors_sizes_content_changed": false
+}

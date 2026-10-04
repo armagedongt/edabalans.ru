@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-10-01",
+  "updated_at": "2026-10-04",
   "module_id": "platform.content",
   "purpose": "Канонический редакционный выбор исходной основы и правило перехода семьи под опубликованную статью собственного блога без удаления истории проявлений.",
   "rules": {
@@ -227,6 +227,107 @@
       "rationale": "Один полноценный найденный источник; семейных дублей не обнаружено.",
       "members": [
         {"catalog_id": "A165", "source": "telegraph", "external_id": "Minus-12-kilogramm-za-2-mesyaca-07-13", "title": "Минус 12 килограмм за 2 месяца", "url": "https://telegra.ph/Minus-12-kilogramm-za-2-mesyaca-07-13", "published_at": "2025-07-13T21:37:34+03:00", "role": "preferred_basis", "content_item": "content://item/25b8b9de-9d65-4ab6-8023-a5d1f7214864", "text_sha256": "0bdec25cf130d46f1d20e1d40b212eb59ce2fba01392aa4c2510b88e6b86a0fd"}
+      ]
+    },
+    {
+      "family_id": "training-purposes-beyond-weight-loss",
+      "title": "Зачем нужны тренировки (кроме похудения)",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {
+        "source_id": "amkbo7kgg1",
+        "slug": "zachem-nuzhny-trenirovki-krome-pohudeniya"
+      },
+      "preferred_basis": "tilda-post:amkbo7kgg1",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Одобренный публичный старый интенсив; полный exact-source зарегистрирован в Library. Минимальная корректура и навигация, Writer и независимое ревью пройдены, production проверен. Смысловые заметки не применены.",
+      "members": [
+        {
+          "catalog_id": "tilda-post:amkbo7kgg1",
+          "source": "tilda",
+          "external_id": "amkbo7kgg1",
+          "title": "💪 Зачем нужны тренировки (кроме похудения)",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
+          "characters": 5948,
+          "html_sha256": "8248cfb39cf247e53382cdb9ff66b07492dfe5c9aa7b55a02443ee719f5344b3",
+          "text_sha256": "78f741f863fc124bac125c2cc685e702664438ecdce58552eb8d197ee45f6932",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "role": "direct_source",
+          "provenance": "knowledge://resource/tilda-intensive-amkbo7kgg1",
+          "source_version": 1
+        }
+      ]
+    },
+    {
+      "family_id": "plant-diversity-30-and-author-exercise-40",
+      "title": "Правило 30-ти растений",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {
+        "source_id": "tilda-49745867",
+        "slug": "pravilo-30-rasteniy"
+      },
+      "preferred_basis": "tilda-page:49745867",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Семья подтверждена владельцем и полным сравнением 01.10.2026. Основной текст канона — /30-rastenij, согласованное финальное упражнение — фрагмент A123. A130 и старый интенсив сохраняют уникальные блоки; автоматического монтажа и побайтной идентичности не заявляем. 04.10.2026 закрыт только каталог и Library, авторский текст не изменён.",
+      "members": [
+        {
+          "catalog_id": "tilda-page:49745867",
+          "source": "tilda",
+          "external_id": "49745867",
+          "title": "Правило 30-ти растений",
+          "url": "https://похудение-это-есть.рф/30-rastenij",
+          "published_at": null,
+          "characters": null,
+          "role": "direct_source",
+          "provenance": {
+            "project_id": "9532923",
+            "html_sha256": "e76801cbf0f7bd1767d55cf87b32617755de45261818c0fdb3420aa56bd8c93a",
+            "retrieved_at": "2026-09-17"
+          }
+        },
+        {
+          "catalog_id": "A123",
+          "source": "telegraph",
+          "external_id": "30rastei-01-26",
+          "title": "🥕Правило 40-ка растений",
+          "url": "https://telegra.ph/30rastei-01-26",
+          "published_at": "2026-01-26T23:50:02+0000",
+          "characters": 4239,
+          "role": "partial_source",
+          "provenance": "content://item/4fb1cf28-7ab0-41eb-93d4-48b1b268e82d",
+          "text_sha256": "c594fbf4008c5fd13f7e8473ff85f7ca7428ab66e5f5eb5ef41efb50edf588fe",
+          "source_version": 1
+        },
+        {
+          "catalog_id": "A130",
+          "source": "telegraph",
+          "external_id": "CHast-2-08-08",
+          "title": "🥕 Правило 30-ти растений",
+          "url": "https://telegra.ph/CHast-2-08-08",
+          "published_at": "2023-08-08T18:27:36+0000",
+          "characters": 7219,
+          "role": "previous_version",
+          "provenance": "content://item/6feee848-e94c-40fb-aed6-604c78349a8d",
+          "text_sha256": "9f304e11e9e7d92f697b66642d26406c580343da8d0d81d6fc9e206952fbf3cf",
+          "source_version": 1
+        },
+        {
+          "catalog_id": "tilda-post:hbfozma3y1",
+          "source": "tilda",
+          "external_id": "hbfozma3y1",
+          "title": "🥕 Правило 30-ти растений",
+          "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/hbfozma3y1-pravilo-30-ti-rastenii",
+          "original_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/hbfozma3y1-pravilo-30-ti-rastenii",
+          "characters": 5092,
+          "html_sha256": "a6b4576b33f797f2b1dfa768482daddd8bafe9462493b8aca0ea27fa99a08c35",
+          "text_sha256": "8185a462e812a066be565ae96aea65b84b7ebbc1f7e860e2e4ad54302e51bd43",
+          "retrieved_at": "2026-09-25",
+          "source_basis": "full_source",
+          "role": "previous_version",
+          "provenance": "knowledge://resource/tilda-intensive-hbfozma3y1",
+          "source_version": 1
+        }
       ]
     }
   ],

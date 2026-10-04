@@ -1,0 +1,31 @@
+{
+  "status": "pass",
+  "checked_at": "2026-10-04",
+  "approved_source_cards_total": 37,
+  "approved_source_cards_closed_in_existing_or_new_canon": 33,
+  "remaining_approved_source_cards": [
+    "A082",
+    "A012",
+    "A156",
+    "tilda-post:e4441ism91"
+  ],
+  "remaining_approved_held_topic_families": 3,
+  "unaccounted_approved_source_cards": [],
+  "safe_independent_articles_remaining": 0,
+  "bank_manual_educational_not_auto_approved": true,
+  "server": {
+    "status": "pass",
+    "navigation_version": 29,
+    "public_articles": 61,
+    "canonical_and_member_routing_matches_repository": true,
+    "summary": {
+      "canonical_blog_families": 61,
+      "canonical_linked_external_records": 94,
+      "deferred_families": 206,
+      "other_scan_counters": "historical_snapshot_not_a_current_publication_queue",
+      "remaining_approved_held_topic_families": 3,
+      "remaining_approved_source_cards": 4,
+      "updated_at": "2026-10-04"
+    }
+  }
+}
