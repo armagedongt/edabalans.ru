@@ -17,12 +17,37 @@
 - [Маршруты реальных задач](#маршруты-реальных-задач) — что подключать к Писарю.
 - [Адаптация по площадкам](platform-adaptation-v1.md) — Telegram, MAX, Pikabu,
   сайт, уроки, бот, VSL и реклама; читать нужную ветвь, не весь контур.
+- [Рецепты — специализация Писаря](skill/edabalans-recipes/SKILL.md) — перенос
+  собственного или чужого рецепта, функции блоков MD, источники, расчёт и реальные
+  фотографии; [редакционный протокол](recipe-authoring-v1.md) и
+  [шаблон MD](recipe-material-template.md). Голос остаётся общим.
 - [Источники и библиотеки](#источники-и-библиотеки) — что считается фактом,
   голосом, примером или историей.
 - [Публикация и готовность](#публикация-и-готовность) — что уже работает,
   что осталось прототипом.
 - [Предыдущие разборы и продолжение](#предыдущие-разборы-и-продолжение) — откуда
   взяты решения; это не новый свод правил.
+
+### Установка специализации рецептов в Codex
+
+Канонический пакет — `skill/edabalans-recipes/SKILL.md`; runtime хранит управляемую
+копию. Из корня выбранной рабочей копии проекта выполнить:
+
+```powershell
+$recipeSkillRoot = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $env:USERPROFILE '.codex' }
+$recipeSkillDestination = Join-Path $recipeSkillRoot 'skills/edabalans-recipes'
+New-Item -ItemType Directory -Path $recipeSkillDestination -Force | Out-Null
+Copy-Item -LiteralPath 'content/author-voice/skill/edabalans-recipes/SKILL.md' -Destination (Join-Path $recipeSkillDestination 'SKILL.md')
+Get-FileHash 'content/author-voice/skill/edabalans-recipes/SKILL.md', (Join-Path $recipeSkillDestination 'SKILL.md')
+python tools/install_edabalans_writer_skill.py --install
+python tools/install_edabalans_writer_skill.py --check
+```
+
+Два хеша специализации должны совпасть. Пакет зависит от канонов того же
+репозитория, а не от скопированных в runtime вторых правил. После изменения
+его SKILL обновить копию; редактировать только канонический исходник.
+Для локального неопубликованного навыка передать следующему чату путь к рабочей
+копии: старая общая папка не заменяет ещё не принятый канон.
 
 ## Маршруты реальных задач
 

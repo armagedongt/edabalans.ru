@@ -1,5 +1,5 @@
 {
-  "package_version": "2.9.3-20261004",
+  "package_version": "2.10.0-20261004",
   "files": [
     {
       "path": "content/author-voice/skill/edabalans-neuroslop-auditor/SKILL.md",
@@ -15,7 +15,7 @@
     },
     {
       "path": "content/author-voice/skill/edabalans-writer/SKILL.md",
-      "sha256": "eaa363218cd42e489907924154c310ecd08d6eed888768fd5a09527807897df7"
+      "sha256": "ac9cf9ed0690ef95c2dd33aec74ba73cec0f098181f18a12fb43f48e73d63a20"
     },
     {
       "path": "content/author-voice/authoring-work-profiles-v1.md",
@@ -59,7 +59,7 @@
     },
     {
       "path": "content/author-voice/README.md",
-      "sha256": "f0a02a6059b315942a6e0fedf71fb4b7c293f365c8d0f462f2699d2e98690971"
+      "sha256": "82b7cc1d5e06c64e15937d6325f4365189bad0c43241b421d713faec7a8c4dd5"
     },
     {
       "path": "docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md",
@@ -72,6 +72,18 @@
     {
       "path": "content/author-voice/pikabu-structure-adapter-v1.md",
       "sha256": "9cbca252846d4fb974801cd73e2b6fa2ea0df2847ae52ab811a8b6350f5a63f0"
+    },
+    {
+      "path": "content/author-voice/recipe-authoring-v1.md",
+      "sha256": "ce30f32bdab754e81c734fc6e56c419ef330c20ecccd52506a091b6d4adf028a"
+    },
+    {
+      "path": "content/author-voice/recipe-material-template.md",
+      "sha256": "5dc627b0e9790188a1cfcc76a36421429e4f235c987569c07909518d522921c1"
+    },
+    {
+      "path": "content/author-voice/skill/edabalans-recipes/SKILL.md",
+      "sha256": "85adb1269e0586b2bd46fb5766a37909361c5541179da48d1a935c5e8bf10db3"
     }
   ]
 }
