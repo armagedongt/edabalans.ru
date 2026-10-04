@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-05", "module_id": "platform.blog", "scope": "local_only", "status": "pass",
+  "assignments": [
+    {"source_id": "11989790", "target": "11875492", "before_heading": "и-запомните-главное-это-всё-ещё-сладости"},
+    {"source_id": "13327360", "target": "13436070", "before_heading": "бонусный-вопрос"},
+    {"source_id": "10999474", "target": "11207593", "before_heading": "так-что-же-такое-это-ваше-пп"},
+    {"source_id": "12922345", "target": "11801517", "before_heading": "3-бесполезные-упражнения"},
+    {"source_id": "tilda-49734795", "target": "13277231", "before_heading": "уровень-про"}
+  ],
+  "no_slot": [],
+  "checks": {
+    "full_sources_read": "PASS", "public_pair_urls_200": 10, "public_pair_text_matches_local": 10,
+    "single_slot_exact_anchor": "PASS", "restores_original_html": "PASS", "catalog_validation": "PASS",
+    "all_62_markdown_and_other_manifest_fields_unchanged_from": "3babc54",
+    "review": {"waves": 1, "status": "clean", "reviewer": "nav_code_review_v2"}
+  },
+  "main_changed": false, "production_changed": false
+}
