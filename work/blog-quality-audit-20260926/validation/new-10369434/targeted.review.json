@@ -1,0 +1,20 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "root-editorial",
+  "reviewed_at": "2026-10-04T00:44:02.728821+00:00",
+  "pack_sha256": "28f58a0515b2562ee368d08d12af344b3a8948d584bac674e31b306444ddda6d",
+  "draft_sha256": "f91f77810ff7fb1477baf40c4df932730d13c79c06dfb57a88f706c09dcfa7c1",
+  "fact_sources": [
+    {
+      "name": "Полный неизменный авторский A012v1; риск отмечен отдельно, владелец оставляет",
+      "fingerprint": "fbcf1b0c990d8670f315dbffc1381e7ed24c7bad0a7bdc2dac0763bef23fe000"
+    }
+  ],
+  "checks": [
+    {
+      "id": "forbidden_claims",
+      "result": "pass",
+      "notes": "Утверждение о научной проверенности универсальной инструкции не добавлено. Авторская история и совет сохранены по решению владельца. Scientific pass не заявлен; риски CDC отмечены отдельно."
+    }
+  ]
+}

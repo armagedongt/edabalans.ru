@@ -2,6 +2,56 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "10369434",
+      "slug": "kak-na-menya-napali-sobaki-v-lesu",
+      "title": "Как на меня напали собаки в лесу",
+      "excerpt": "Сегодня я должен был ехать на горный забег в 62 км, к которому долго готовился, а в итоге еду на вторую прививку от бешенства, к которой вообще не готовился. Собаки на меня напали впервые.",
+      "category": "Личное",
+      "body_file": "10369434.md",
+      "hero": {
+        "file": "10369434/01.webp",
+        "alt": "Фото до и после нападения собак, сохранились только такие",
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2023/06/17/6/1686995034118247836.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "10369434/01.webp",
+        "alt": "Фото до и после нападения собак, сохранились только такие",
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2023/06/17/6/1686995034118247836.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "2e269fdc52d600a64753",
+        "0d583f6ad1cea0eef750",
+        "12269678"
+      ],
+      "cta": "intensive",
+      "status": "published",
+      "media": [
+        "10369434/01.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434",
+          "https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17"
+        ],
+        "external_ids": [
+          "10369434",
+          "Kak-na-menya-napali-sobaki-v-lesu-06-17"
+        ],
+        "source_uri": "content://item/7ee045e3-43dc-4f56-8539-6a5b87b7db6f",
+        "source_revision": 1,
+        "sha256": "fbcf1b0c990d8670f315dbffc1381e7ed24c7bad0a7bdc2dac0763bef23fe000",
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "full_scientific_pass": false,
+        "owner_decision": "2026-10-04 keep author meaning unchanged including va-bank paragraph",
+        "adaptation": "minimal_proofread_platform_tail_cleanup_original_image",
+        "original_published_at": "2023-06-17T13:18:08+03:00"
+      }
+    },
+    {
       "source_id": "amkbo7kgg1",
       "slug": "zachem-nuzhny-trenirovki-krome-pohudeniya",
       "title": "Зачем нужны тренировки (кроме похудения)",

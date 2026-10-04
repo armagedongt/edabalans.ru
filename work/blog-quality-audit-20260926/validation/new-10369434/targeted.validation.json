@@ -1,0 +1,36 @@
+{
+  "schema_version": "author-validation-v1",
+  "status": "pass",
+  "pack_sha256": "28f58a0515b2562ee368d08d12af344b3a8948d584bac674e31b306444ddda6d",
+  "draft_sha256": "f91f77810ff7fb1477baf40c4df932730d13c79c06dfb57a88f706c09dcfa7c1",
+  "review_sha256": "00c0858d56564ff8f7f7b1b2a5a64e7fafd93b5ff9ea07fa7f185185ceab0489",
+  "validated_at": "2026-10-04T00:44:02.850856+00:00",
+  "missing_verbatim": [],
+  "unresolved_placeholders": [],
+  "protected_layer_errors": [],
+  "inline_binding_review_required_once": null,
+  "proofread_change_review_required_once": null,
+  "rewrite_continuity_review_required_once": null,
+  "semantic_fact_review_required_once": [],
+  "forbidden_claims_to_check_once": [
+    "Текст является проверенной универсальной инструкцией безопасного поведения с собаками"
+  ],
+  "preservation_metrics": {
+    "source_significant_tokens": 783,
+    "token_coverage": 0.9974457215836526,
+    "source_visible_characters": 5453,
+    "draft_visible_characters": 5467,
+    "visible_length_ratio": 1.0025673940949935
+  },
+  "pending_manual_reviews": [
+    {
+      "id": "forbidden_claims",
+      "instruction": "Confirm that none of the forbidden claims is present.",
+      "items": [
+        "Текст является проверенной универсальной инструкцией безопасного поведения с собаками"
+      ]
+    }
+  ],
+  "manual_review_errors": [],
+  "fact_review_expires_at": null
+}

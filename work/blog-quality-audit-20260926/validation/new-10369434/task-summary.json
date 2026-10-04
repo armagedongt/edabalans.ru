@@ -1,0 +1,24 @@
+{
+  "source_id": "10369434",
+  "source_basis": "full_source",
+  "edit_mode": "targeted_edit",
+  "work_profile": "develop_existing",
+  "source_uri": "content://item/7ee045e3-43dc-4f56-8539-6a5b87b7db6f",
+  "source_revision": 1,
+  "source_sha256": "fbcf1b0c990d8670f315dbffc1381e7ed24c7bad0a7bdc2dac0763bef23fe000",
+  "source_characters": 5651,
+  "draft_sha256": "f91f77810ff7fb1477baf40c4df932730d13c79c06dfb57a88f706c09dcfa7c1",
+  "full_scientific_pass": false,
+  "semantic_changes": false,
+  "owner_keep_confirmed": true,
+  "removed_platform_tail": true,
+  "original_image": {
+    "file": "10369434/01.webp",
+    "source": "https://cs14.pikabu.ru/post_img/big/2023/06/17/6/1686995034118247836.jpg",
+    "alt": "Фото до и после нападения собак, сохранились только такие",
+    "width": 970,
+    "height": 480,
+    "bytes": 67334,
+    "sha256": "e334aead81e947c637ee30d4efd70770a150ca3c8db79acee56bee0ddd15f49b"
+  }
+}
