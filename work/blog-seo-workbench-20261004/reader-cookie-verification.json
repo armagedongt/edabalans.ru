@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-05",
+  "base_commit": "d87f1ce",
+  "scope": "Cookie-only invitation context; no account login",
+  "production_changed": false,
+  "personal_transition_automatically_connected": false,
+  "popup_connected": false,
+  "pytest": "103 passed; cookie context plus origin, SEO title, description, navigation and inline-related",
+  "implementation": {
+    "cookie": "edabalans_reader; authenticated Fernet encryption, purpose-separated key using existing APP_AUTH_SECRET",
+    "age": "30 days, further limited by validity of existing personal intensive token",
+    "domain": "One current registration domain and its subdomains only",
+    "privileges": "Invitation context only; no account/session/course credential",
+    "subscription": "Existing messenger observation up to24hours; missing/stale/error unknown",
+    "telegram_destination": "Confirmed main_scenario_seen_at ->260; otherwise main bot",
+    "max_pin": "Deferred by owner"
+  },
+  "reviews": {
+    "code_wave1": "Malformed token/cookie could cause500; fixed locally as public-input validation",
+    "code_wave2": "Nested/missing token with surrogate could still cause500; normalized model input and added all reproduced fixtures after final review",
+    "security_wave1": "Plaintext UUID could reconstruct real short bot bearer; replaced with authenticated encryption",
+    "security_wave2": "clean",
+    "test_wave1": "Added valid-format tamper, independent cookie expiry and missing subscription date coverage",
+    "test_wave2": "Added cross-user subscription isolation coverage after final review",
+    "docs": "clean",
+    "infrastructure": "clean configuration review; Caddy/Docker runtime validation unavailable"
+  },
+  "limits": [
+    "Automatic personal transition binding and popup UI are next slice",
+    "Main/production unchanged",
+    "No new database schema, app dependency, external sender or tracking event"
+  ]
+}

@@ -9,7 +9,8 @@ import re
 from pathlib import Path
 from urllib.parse import urlencode
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel, Field, model_validator
 from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Response
 
 from app.blog_content import (
@@ -27,10 +28,47 @@ from app.blog_draft_routes import optional_blog_admin, owner_cards_html, PRIVATE
 from app.blog_draft_service import public_payload, published_card_overrides, published_description_overrides, render_article
 from app.database import get_db
 from app.blog_responsive_media import apply_responsive_images, derivative_files
+from app.blog_reader_context import recognize_reader, reader_context
+from app.config import get_settings
 from sqlalchemy.orm import Session
 
 
 router = APIRouter()
+
+
+class ReaderRecognition(BaseModel):
+    token: str = Field(min_length=1, max_length=128)
+
+    @model_validator(mode="before")
+    @classmethod
+    def safe_token_input(cls, value):
+        token = value.get("token") if isinstance(value, dict) else None
+        if isinstance(token, str):
+            try:
+                token.encode("utf-8")
+            except UnicodeEncodeError:
+                token = ""
+        else:
+            token = ""
+        # Keep invalid input, including nested surrogates, out of JSON errors.
+        return {"token": token}
+
+
+@router.post("/blog/reader/recognize", include_in_schema=False)
+def recognize_blog_reader(body: ReaderRecognition, request: Request, db: Session = Depends(get_db)):
+    response = Response(status_code=204, headers={"Cache-Control": "no-store", "X-Robots-Tag": "noindex"})
+    if not recognize_reader(db, request, response, get_settings().app_auth_secret, body.token):
+        raise HTTPException(400, "Персональная ссылка не подтверждена")
+    return response
+
+
+@router.get("/blog/reader/context", include_in_schema=False)
+def blog_reader_context(request: Request, response: Response, db: Session = Depends(get_db)) -> dict:
+    response.headers["Cache-Control"] = "private, no-store"
+    response.headers["X-Robots-Tag"] = "noindex"
+    return reader_context(db, request, get_settings().app_auth_secret)
+
+
 BLOG_DIR = Path(__file__).resolve().parent / "static" / "blog"
 BLOG_PAGE_SIZE = 15
 BLOG_FONT_FILES = {"inter-cyrillic.woff2", "inter-latin.woff2", "manrope-cyrillic.woff2", "manrope-latin.woff2"}
