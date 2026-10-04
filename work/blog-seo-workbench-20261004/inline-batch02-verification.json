@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-04",
+  "module_id": "platform.blog",
+  "scope": "local_only",
+  "status": "pass",
+  "assignments": [
+    {"source_id": "13436070", "target": "13277231", "before_heading": "4-возраст"},
+    {"source_id": "13277231", "target": "tilda-67280331", "before_heading": "как-получить-адекватные-ожидания"},
+    {"source_id": "11857250", "target": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11", "before_heading": "а-теперь-самое-интересное-и-грустное"}
+  ],
+  "no_slot": ["11269472", "14102926", "10797468", "11801517"],
+  "read_candidates_not_final_assignment": ["10369434", "11448583", "12269678", "10978866", "11188875"],
+  "checks": {
+    "full_source_and_target_read": "PASS",
+    "public_pair_urls_200": 5,
+    "public_pair_text_matches_local": 5,
+    "no_slot_and_read_candidate_public_text_matches_local": 9,
+    "single_slot_exact_anchor": "PASS",
+    "removing_slot_restores_html": "PASS",
+    "no_existing_native_link_to_target": "PASS",
+    "catalog_validation": "PASS",
+    "review": {"wave": 1, "status": "clean"}
+  },
+  "main_changed": false,
+  "production_changed": false
+}

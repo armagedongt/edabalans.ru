@@ -39,10 +39,11 @@ class Text(HTMLParser):
         return ' '.join(' '.join(self.parts).split())
 
 
-def main():
+def main(assigned=None):
     catalog = load_blog_catalog()
     validate_blog_catalog(catalog)
-    assigned = ['10425659', '12857458', 'Prostejshie-12-izmenenij-v-vashej-zhizni-08-11']
+    if assigned is None:
+        assigned = ['10425659', '12857458', 'Prostejshie-12-izmenenij-v-vashej-zhizni-08-11']
     relevant = sorted(set(assigned + [catalog.by_source_id(i).inline_related.source_id for i in assigned]))
     sources = []
     for source_id in relevant:
