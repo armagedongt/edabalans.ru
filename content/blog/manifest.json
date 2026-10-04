@@ -3097,6 +3097,10 @@
     },
     {
       "source_id": "11927800",
+      "inline_related": {
+        "source_id": "habits-formation-and-one-percent",
+        "before_heading": "принцип-no5-достаточно-времени"
+      },
       "slug": "pochemu-yapontsy-hudye-a-ty-net",
       "title": "Почему японцы худые, а ты нет?",
       "excerpt": "Давайте узнаем, а в чем причина-то? Они выиграли в генетическую лотерею или просто делают что-то, что мы не делаем? А вдруг мы тоже можем?",

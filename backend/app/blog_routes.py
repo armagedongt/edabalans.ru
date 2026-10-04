@@ -18,6 +18,7 @@ from app.blog_content import (
     blog_seo_title,
     card_html,
     load_blog_catalog,
+    insert_inline_related,
     related_cards_html,
     render_article_body,
     toc_html,
@@ -234,6 +235,7 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         if published is not None
         else render_article_body(catalog, article)
     )
+    body = insert_inline_related(catalog, article, body)
     canonical = f"{BLOG_PUBLIC_ORIGIN}/articles/{article.slug}"
     social_image = article.card.file
     author = _author()

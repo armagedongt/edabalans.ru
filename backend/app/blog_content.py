@@ -43,6 +43,12 @@ class BlogHero:
 
 
 @dataclass(frozen=True)
+class BlogInlineRelated:
+    source_id: str
+    before_heading: str
+
+
+@dataclass(frozen=True)
 class BlogArticle:
     source_id: str
     slug: str
@@ -57,6 +63,7 @@ class BlogArticle:
     status: str
     media: tuple[str, ...]
     original_published_at: str | None = None
+    inline_related: BlogInlineRelated | None = None
 
 
 @dataclass(frozen=True)
@@ -203,6 +210,12 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
             raise ValueError(f"blog article {source_id} related_source_ids must be a string list")
         if not isinstance(media_raw, list) or not all(isinstance(item, str) for item in media_raw):
             raise ValueError(f"blog article {source_id} media must be a string list")
+        inline_raw = raw.get("inline_related")
+        inline_related = None
+        if inline_raw is not None:
+            if not isinstance(inline_raw, dict) or set(inline_raw) != {"source_id", "before_heading"}:
+                raise ValueError(f"blog article {source_id} inline_related must be one source_id/before_heading object")
+            inline_related = BlogInlineRelated(_required_text(inline_raw, "source_id"), _required_text(inline_raw, "before_heading"))
         article = BlogArticle(
             source_id=source_id,
             slug=slug,
@@ -217,6 +230,7 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
             status=status,
             media=tuple(media_raw),
             original_published_at=(raw.get("source_provenance") or {}).get("original_published_at"),
+            inline_related=inline_related,
         )
         articles.append(article)
 
@@ -309,6 +323,10 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
             unknown = set(article.related_source_ids) - published_ids
             if unknown:
                 raise ValueError(f"blog article {article.source_id} links unpublished or unknown related items: {sorted(unknown)}")
+            if article.inline_related is not None:
+                target = article.inline_related.source_id
+                if target == article.source_id or target not in published_ids:
+                    raise ValueError(f"blog article {article.source_id} has an invalid inline related target")
 
 
 def render_blog_component(name: str, arguments: list[str]) -> str:
@@ -410,6 +428,22 @@ def related_cards_html(
         for item in related
         if item is not None
     )
+
+
+def insert_inline_related(catalog: BlogCatalog, article: BlogArticle, body: str) -> str:
+    slot = article.inline_related
+    if slot is None:
+        return body
+    target = catalog.by_source_id(slot.source_id)
+    heading = '<h2 id="' + escape(slot.before_heading, quote=True) + '">'
+    if target is None or target.source_id == article.source_id or heading not in body:
+        return body
+    # A changed API heading invalidates placement; never relocate by scroll percentage.
+    offset = body.index(heading)
+    card = (f'<aside class="reader-related"><a href="/articles/{escape(target.slug, quote=True)}">'
+            '<small><span class="reader-related-arrow" aria-hidden="true">↗</span> Читайте также</small>'
+            f'<strong>{escape(target.title)}</strong><span>{escape(target.excerpt)}</span></a></aside>')
+    return body[:offset] + card + body[offset:]
 
 
 def toc_html(toc: tuple[tuple[str, str], ...], *, mobile: bool) -> str:
