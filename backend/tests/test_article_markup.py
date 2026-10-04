@@ -66,6 +66,23 @@ class ArticleMarkupTests(unittest.TestCase):
                 self.assertNotIn("article-role-status", rendered)
         self.assertEqual(markdown_to_article_html("- [x] Сделать задание"), '<ul><li>[x] Сделать задание</li></ul>')
 
+    def test_dessert_role_uses_one_readonly_mark_and_preserves_owner_emoticon(self) -> None:
+        source = "**Роль в конструкторе:**\n\n- [x] Десерт ¯\\_(ツ)_/¯"
+        rendered = markdown_to_article_html(source)
+        self.assertIn('<ul class="article-recipe-roles">', rendered)
+        self.assertEqual(rendered.count('class="article-role-check article-role-checked"'), 1)
+        self.assertIn('Десерт ¯\\_(ツ)_/¯</li>', rendered)
+        self.assertNotIn('[x]', rendered)
+        self.assertNotIn('<input', rendered)
+        self.assertEqual(sanitize_article_html(rendered, course_semantics=True), rendered)
+        for unrelated in (
+            '- [x] Десерт ¯\\_(ツ)_/¯',
+            source + '\n- [x] Белок',
+            '**Роль в конструкторе:**\n\n- [x] Десерт <script>alert(1)</script>',
+        ):
+            with self.subTest(source=unrelated):
+                self.assertNotIn('article-recipe-roles', markdown_to_article_html(unrelated))
+
     def test_role_sanitizer_keeps_only_closed_classes_and_never_enables_forms(self) -> None:
         rendered = sanitize_article_html(
             '<ul class="article-recipe-roles" onclick="bad()"><li>'

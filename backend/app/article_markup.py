@@ -36,6 +36,7 @@ COURSE_BASE_CLASS_TOKENS = {
     "article-role-status",
 }
 RECIPE_ROLE_LABELS = ("Белок", "Гарнир", "Объём", "Вкус", "Сочность", "Топпинги")
+RECIPE_DESSERT_LABELS = ("Десерт ¯\\_(ツ)_/¯",)
 
 
 def safe_href(value: str) -> bool:
@@ -511,7 +512,7 @@ def markdown_to_article_html(
             if (kind == "ul" and output
                     and output[-1] == "<p><strong>Роль в конструкторе:</strong></p>"
                     and all(roles)
-                    and tuple(role.group(2) for role in roles) == RECIPE_ROLE_LABELS):
+                    and tuple(role.group(2) for role in roles) in (RECIPE_ROLE_LABELS, RECIPE_DESSERT_LABELS)):
                 items = []
                 for role in roles:
                     checked = role.group(1).lower() == "x"
