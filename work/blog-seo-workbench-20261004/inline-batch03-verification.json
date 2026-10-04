@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-05",
+  "module_id": "platform.blog",
+  "scope": "local_only",
+  "status": "pass",
+  "assignments": [
+    {"source_id": "amkbo7kgg1", "target": "13436070", "before_heading": "а-как-посчитать-расход-калорий-на-тренировках"},
+    {"source_id": "13355824", "target": "11494317", "before_heading": "меняйте-фокус"}
+  ],
+  "no_slot": ["10369434", "11448583", "12269678", "10978866", "11188875", "habits-formation-and-one-percent", "11494317", "11762932"],
+  "checks": {
+    "full_sources_read": "PASS",
+    "public_pair_text_matches_local": 4,
+    "additional_public_zero_text_matches_local": 2,
+    "prior_public_zero_evidence": "inline-batch02.md",
+    "single_slot_exact_anchor": "PASS",
+    "restores_original_html": "PASS",
+    "catalog_validation": "PASS",
+    "review": {"wave": 1, "status": "clean"}
+  },
+  "main_changed": false,
+  "production_changed": false
+}
