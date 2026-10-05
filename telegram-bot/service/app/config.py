@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     telegram_polling_enabled: bool = False
     telegram_polling_timeout_seconds: int = 25
     telegram_maintenance_mode: bool = False
+    temporary_intensive_entry_enabled: bool = False
     telegram_maintenance_allowed_user_ids: str = ""
     payment_owner_telegram_user_id: str = ""
     max_bot_username: str = ""

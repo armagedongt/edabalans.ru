@@ -756,12 +756,13 @@ depends_on = ["platform.crm", "messaging.telegram.engine", "products.intensive"]
 reads_from = ["platform.blog"]
 telegram_code = "start_attribution"
 telegram_name = "Старт и атрибуция"
-telegram_status = "Исполняемый модуль · временно включён режим ремонта"
+telegram_status = "Исполняемый модуль · временный вход в единую статью"
 telegram_order = 10
 owns_files = [
   "backend/app/telegram_public_cta.py",
   "backend/app/personal_tracking_routes.py", "backend/tests/test_personal_tracking_routes.py",
   "telegram-bot/service/app/start_router.py", "telegram-bot/service/app/tracking.py",
+  "telegram-bot/service/app/temporary_entry.py", "telegram-bot/service/tests/test_temporary_entry.py",
   "telegram-bot/service/tests/test_start_router.py", "telegram-bot/service/tests/test_tracking.py",
   "docs/knowledge-base/modules/telegram/LEAD_ENTRY_OWNER_REQUIREMENTS.md",
   "docs/knowledge-base/modules/telegram/LEAD_ENTRY_TECHNICAL_SPEC.md",

@@ -617,6 +617,8 @@ def seed_defaults(
     enable_subscription_checks: bool = False,
 ) -> dict[str, int]:
     resolved_username = (username or "TetrisgfgfgfBot").lstrip("@")
+    from app.temporary_entry import seed_temporary_entry
+    seed_temporary_entry(session)
     is_main_bot = resolved_username.casefold() == "fitness_talks_bot"
     bot = session.scalar(select(BotInstance).where(BotInstance.code == "test"))
     if not bot:

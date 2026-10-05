@@ -176,7 +176,33 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         {"id": "e19", "source": "welcome_ever_started", "target": "send_legacy", "label": "Да", "branch": "true"},
         {"id": "e20", "source": "send_legacy", "target": "exit_legacy", "label": "Отправлено", "branch": "default"},
     ]
-    return {"level": "module", "module_code": "start_attribution", "title": "1. Старт и атрибуция", "status": "Основной бот · временный режим ремонта", "description": "Источник и факт покупки определяются до временной заглушки. Пользовательские ответы и цепочки после неё доступны только двум аккаунтам владельца; остальные сохраняются в лист ожидания без отметки о начале Welcome.", "nodes": nodes, "edges": edges, "issues": []}
+    from app.config import get_settings
+    from app.temporary_entry import CONTENT_CODE, ENTRY_RULES, POOL_NAME
+    enabled = get_settings().temporary_intensive_entry_enabled
+    nodes.extend([
+        node("temporary_gate", "condition", "Временный вход включён?", "TEMPORARY_INTENSIVE_ENTRY_ENABLED", 25, Включён=enabled),
+        node("temporary_silent", "module_exit", "Не отправлять приглашение", "Блокировка или стоп-метка", 26),
+        node("temporary_pool", "action", "Отметить временную группу", POOL_NAME, 27, Хранение="user_tags; общий user_id"),
+        node("temporary_article", "message", "Отправить статью и кнопку", "Персональный вход; preview выключен", 28, CONTENT_CODE),
+        node("temporary_exit", "module_exit", "Не запускать старые рассылки", "Пауза Welcome, продающих цепочек и broadcast", 29),
+    ])
+    next(edge for edge in edges if edge["id"] == "e05a")["target"] = "temporary_gate"
+    edges.append({"id": "temporary_off", "source": "temporary_gate", "target": "purchase_fact", "label": "Нет", "branch": "false"})
+    labels = {"blocked": "Контакт заблокирован или остановлен?", "has_masterclass": "Мастер-класс куплен или доступен?", "stop_presale": "Есть стоп-метка до покупки?"}
+    targets = {"silent": "temporary_silent", "normal": "purchase_fact"}
+    previous = "temporary_gate"
+    for index, (fact, decision) in enumerate(ENTRY_RULES):
+        node_id = f"temporary_{fact}"
+        nodes.append(node(node_id, "condition", labels[fact], "app/temporary_entry.py: ENTRY_RULES", 30 + index))
+        edges.append({"id": f"temporary_rule_{index}", "source": previous, "target": node_id, "label": "Да" if index == 0 else "Нет", "branch": "true" if index == 0 else "false"})
+        edges.append({"id": f"temporary_yes_{index}", "source": node_id, "target": targets[decision], "label": "Да", "branch": "true"})
+        previous = node_id
+    edges.extend([
+        {"id": "temporary_eligible", "source": previous, "target": "temporary_pool", "label": "Нет", "branch": "false"},
+        {"id": "temporary_send", "source": "temporary_pool", "target": "temporary_article", "label": "Сохранено", "branch": "default"},
+        {"id": "temporary_stop", "source": "temporary_article", "target": "temporary_exit", "label": "Отправлено", "branch": "default"},
+    ])
+    return {"level": "module", "module_code": "start_attribution", "title": "1. Старт и атрибуция", "status": "Временный вход — единая статья" if enabled else "Обычный вход", "description": "Временный маршрут использует общие правила Telegram/MAX; покупатели сохраняют служебный вход, блокировки и стоп-метки исключают приглашение. Старые маркетинговые доставки при включённом режиме на паузе.", "nodes": nodes, "edges": edges, "issues": []}
 
 
 def apps_menu_graph(session: Session) -> dict[str, Any]:

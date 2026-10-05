@@ -139,3 +139,13 @@ flowchart TD
    на цель Метрики `bot_start` без двойной отправки webhook.
 7. Планировщик отправляет due-шаги MAX-контакта через MAX API; Telegram-
    рассылки и послепокупочный dispatcher такие контакты не выбирают.
+## Временный вход 05.10.2026
+
+При `TEMPORARY_INTENSIVE_ENTRY_ENABLED=true` события `bot_started`, личные
+`message_created` и `message_callback` используют общие `ENTRY_RULES` и текст
+`app/temporary_entry.py`. Покупатели сохраняют служебную ветку; остановленные,
+заблокированные и стоп-метки не получают приглашение. Служебные M-link, pairing,
+`bot_stopped`/`dialog_removed` сохраняются. Повтор webhook не повторяет доставку.
+Персональная ссылка и кнопка одинаковы, preview выключен; отметка временной
+группы назначается общему CRM user. First-touch сохраняется, Welcome не запускается.
+Полные правила и возврат режима: [Start и атрибуция](../telegram/START_WELCOME_ROUTING.md#временный-вход--05102026).

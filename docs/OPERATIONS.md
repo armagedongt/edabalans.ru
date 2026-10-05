@@ -53,6 +53,22 @@ immutable URL.
 
 ## Проверки
 
+### Временный вход ботов в единую статью
+
+`TEMPORARY_INTENSIVE_ENTRY_ENABLED` — общий флаг Telegram/MAX (Compose default:
+`true`). Его включение направляет входящих в статью и паркует старые маркетинговые
+цепочки/broadcast; покупательские доставки сохраняются. Текст и исключения:
+`START_WELCOME_ROUTING.md`, реализация `app/temporary_entry.py`.
+Переключение требует пересоздания `telegram-bot`, не миграции. Начальное добавление
+одного опубликованного шаблона и одного CRM-тега идёт через `seed_defaults()`:
+штатный deploy делает startup-data backup. Существующие тексты/теги не заменяются.
+
+Откат входа: `TEMPORARY_INTENSIVE_ENTRY_ENABLED=false` и штатное пересоздание
+`telegram-bot`. Припаркованные runs/broadcast остаются `paused`; не возвращать их
+в расписание автоматически. Это отдельное решение владельца после подготовки
+новой серии. Контроль: флаг, наличие шаблона и тега, отсутствие marketing runs
+`active/waiting/error`, общий `/health`, работа интенсивной персональной ссылки.
+
 ```bash
 cd /opt/edabalans
 docker compose ps

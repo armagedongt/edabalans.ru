@@ -483,6 +483,14 @@ def advance_run(
     delivery_contact: Contact | None = None,
 ) -> SequenceRun:
     contact = delivery_contact or session.get(Contact, run.contact_id)
+    if get_settings().temporary_intensive_entry_enabled:
+        from app.temporary_entry import MARKETING_CODES
+        code = session.scalar(select(Sequence.code).join(SequenceVersion, SequenceVersion.sequence_id == Sequence.id).where(SequenceVersion.id == run.sequence_version_id))
+        if code in MARKETING_CODES:
+            run.status = "paused"
+            run.context = {**(run.context or {}), "paused_reason": "temporary_intensive_entry"}
+            session.commit()
+            return run
     for _ in range(max_steps):
         if run.status != "active":
             break
