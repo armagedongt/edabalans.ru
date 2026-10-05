@@ -10,7 +10,7 @@ const baseURL = process.env.BLOG_QA_BASE_URL || 'http://127.0.0.1:8765';
 const output = process.env.QA_OUT;
 const slug = 'skolko-vremeni-nuzhno-na-pohudenie';
 
-const browser = await chromium.launch({ headless: true });
+const browser = await chromium.launch({ headless: true, channel: process.env.BROWSER_CHANNEL || undefined });
 const username = process.env.BLOG_QA_USER || 'qa-owner';
 const password = process.env.BLOG_QA_PASSWORD || 'qa-password';
 const context = await browser.newContext({
@@ -18,6 +18,14 @@ const context = await browser.newContext({
     Authorization: `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`,
   },
 });
+// Exercise this revision's shared scripts, not the live production revision or network.
+for (const script of ['site-footer.js', 'cookie-notice.js']) {
+  await context.route(`https://edabalans.ru/${script}`, async route => {
+    const response = await context.request.get(`${baseURL}/${script}`);
+    assert.equal(response.status(), 200);
+    await route.fulfill({ response });
+  });
+}
 const page = await context.newPage();
 
 try {
@@ -33,7 +41,7 @@ try {
   if (output) await mkdir(output, { recursive: true });
   for (const width of [360, 430, 768, 899, 901, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto(`${baseURL}/blog`, { waitUntil: 'networkidle' });
+    await page.goto(`${baseURL}/blog`, { waitUntil: 'domcontentloaded' });
     await page.locator('#owner-title').waitFor();
     assert.equal(await page.locator('.owner-card').count(), expectedCounts.all);
     for (const [filter, expected] of Object.entries(expectedCounts)) {
@@ -61,8 +69,9 @@ try {
     assert.equal(overflow, false, `owner catalog overflows at ${width}px`);
     if (output) await page.screenshot({ path: path.join(output, `owner-catalog-${width}.png`), fullPage: true });
 
-    await page.goto(`${baseURL}/blog/drafts/${slug}/edit`, { waitUntil: 'networkidle' });
+    await page.goto(`${baseURL}/blog/drafts/${slug}/edit`, { waitUntil: 'domcontentloaded' });
     await page.locator('#draft-markdown').waitFor();
+    await page.waitForFunction(() => document.querySelector('#draft-meta')?.textContent.includes('Опубликована'));
     assert.match(await page.locator('#draft-meta').innerText(), /Опубликована/);
     if (width > 900) {
       const columns = await page.evaluate(() => {
@@ -120,15 +129,29 @@ try {
   const publicResponse = await context.request.get(`${baseURL}/blog/articles/${slug}`);
   assert.equal(publicResponse.status(), 200);
   assert.match(await publicResponse.text(), new RegExp(successfulMarker));
-  const publicCatalog = await context.request.get(`${baseURL}/blog`);
-  const publicCatalogHtml = await publicCatalog.text();
-  assert.match(publicCatalogHtml, new RegExp(`card-image card-image--contain[^>]+${alternativeName}`));
-  await page.goto(`${baseURL}/blog`, { waitUntil: 'networkidle' });
-  const publishedCard = page.locator(`img.card-image--contain[src$="${alternativeName}"]`);
+  await page.goto(`${baseURL}/blog`, { waitUntil: 'domcontentloaded' });
+  const articleCard = page.locator(`.article-card:has(a[href="/articles/${slug}"])`);
+  const visitedPages = new Set();
+  while (await articleCard.count() === 0) {
+    const previousURL = page.url();
+    assert.equal(visitedPages.has(previousURL), false, 'catalogue pagination must not loop');
+    visitedPages.add(previousURL);
+    const nextPage = page.locator('.pagination a[rel="next"]');
+    assert.equal(await nextPage.count(), 1, 'published article must be reachable in the catalogue');
+    await Promise.all([
+      page.waitForURL(url => url.href !== previousURL, { waitUntil: 'domcontentloaded' }),
+      nextPage.click(),
+    ]);
+  }
+  const publicCatalog = await context.request.get(page.url());
+  assert.equal(publicCatalog.status(), 200);
+  assert.match(await publicCatalog.text(), new RegExp(`card-image card-image--contain[^>]+${alternativeName}`));
+  const publishedCard = articleCard.locator(`img.card-image--contain[src$="${alternativeName}"]`);
   await publishedCard.waitFor({ state: 'attached' });
   assert.equal(await publishedCard.evaluate(image => getComputedStyle(image).objectFit), 'contain');
-  await page.goto(`${baseURL}/blog/drafts/${slug}/edit`, { waitUntil: 'networkidle' });
+  await page.goto(`${baseURL}/blog/drafts/${slug}/edit`, { waitUntil: 'domcontentloaded' });
   await textarea.waitFor();
+  await page.waitForFunction(() => document.querySelector('#draft-meta')?.textContent.includes('Опубликована'));
 
   await page.route(`**/admin/api/blog/articles/${slug}/text`, route => route.fulfill({
     status: 409,

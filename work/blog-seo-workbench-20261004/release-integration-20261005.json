@@ -2,7 +2,7 @@
   "date": "2026-10-05",
   "integration_commit": "3c8d681",
   "base_main": "81a7d2a",
-  "release_status": "ci_corrections_verified_waiting_for_retry",
+  "release_status": "browser_corrections_verified_ready_for_ci_retry",
   "production_changed": false,
   "checks": {
     "all_blog_initial": "195 passed, 4 failed; failures assumed the target article was on page 1 before SSR pagination",
@@ -16,7 +16,12 @@
     "ci_run_37245639377": "985 passed, 10 skipped, 27 subtests passed; 2 failures: missing explicit image loading attributes and test-only Caddyfile mount",
     "final_direct_corrections": "2 regression checks and 16 JS assertions passed; read-only Caddyfile mount added; component text/layout unchanged",
     "infrastructure_wave2": "Mount accepted; identified workflow-only retry would skip backend checks. Corrective push includes the related backend test/runtime path so backend impact remains true.",
-    "additional_code_reviewer": "Agent thread limit prevented separate spawn; existing two-wave core review remains valid; final narrow corrections verified directly"
+    "additional_code_reviewer": "Agent thread limit prevented separate spawn; existing two-wave core review remains valid; final narrow corrections verified directly",
+    "ci_run_37246089518": "987 passed, 10 skipped, 27 subtests passed; final browser gate assumed published target card was on catalogue page 1",
+    "browser_pagination_smoke": "PASS: exact E2E loop follows 3 real next links and finds the target card on page 4",
+    "browser_full_local": "PASS: six viewport/editor checks, preview/save, explicit publish, selected cover on actual SSR page, conflict/offline retention and beforeunload",
+    "browser_environment": "Shared footer/cookie scripts served by this revision's isolated QA server; DOM and explicit loaded article state replace network-idle timing assumptions",
+    "docs_review_wave2": "clean; implemented contract does not claim a verified production deploy"
   },
   "boundaries": {
     "author_markdown_changed": false,
