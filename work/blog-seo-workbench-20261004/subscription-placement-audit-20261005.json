@@ -1,5 +1,5 @@
 {
-  "status": "local_verified_release_pending",
+  "status": "production_verified",
   "scope": "Curated inline subscription placement for all 62 existing published articles",
   "counts": {
     "total": 62,
@@ -805,6 +805,392 @@
       }
     ]
   },
-  "release": "All seven batches locally verified; pending main/production verification",
+  "release": {"commit": "71528fcf9cb2912dace4b86da0a67ab226cfb366", "ci_run": 37255949962, "ci_result": "success", "deployed_at": "2026-10-05T02:45:05Z", "backend": "healthy"},
+  "public_verification": {
+  "articles": 62,
+  "passed": 62,
+  "results": [
+    {
+      "source_id": "10369434",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "amkbo7kgg1",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "12193581",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "14062380",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11989790",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "10797468",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "10573917",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "10532723",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11906015",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11801517",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "10978866",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "10877887",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "10123213",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "habits-formation-and-one-percent",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11339712",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "intuitivnoe-pitanie-04-27-2",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11665295",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "12109482",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "13178972",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "13762311",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11210930",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11534645",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11833079",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11857250",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "d1baceb9e2b6b72013b6",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "30e4d208f2cbd8e57201",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "2e269fdc52d600a64753",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "0d583f6ad1cea0eef750",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "13327360",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11277666",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11494317",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11522121",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "13436070",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "13785403",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "14021584",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "14102926",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "14183275",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "12857458",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "693339",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "Sahar-09-18",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11207593",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "10999474",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "training-combined-2023",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "12922345",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11401696",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11269472",
+      "decision": "no_slot",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "12237133",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11875492",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "tilda-49734795",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "tilda-49745867",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "tilda-67280331",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11927800",
+      "decision": "assigned",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11448583",
+      "decision": "telegram_origin_excluded",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "12269678",
+      "decision": "telegram_origin_excluded",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "10425659",
+      "decision": "telegram_origin_excluded",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11188875",
+      "decision": "telegram_origin_excluded",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "13355824",
+      "decision": "telegram_origin_excluded",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "11762932",
+      "decision": "telegram_origin_excluded",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "12296286",
+      "decision": "telegram_origin_excluded",
+      "pass": true,
+      "errors": []
+    },
+    {
+      "source_id": "13277231",
+      "decision": "telegram_origin_excluded",
+      "pass": true,
+      "errors": []
+    }
+  ],
+  "checks": [
+    "All62 author HTML body SHA256 unchanged",
+    "All62 title and description unchanged",
+    "All31 exact H2 slots present",
+    "All23 no-slot decisions preserved",
+    "All8 verified Telegram origins suppress subscription markup and script"
+  ],
+  "pytest": "14 passed; local configuration restored with PYTHONPATH and isolated SQLite URL after two collection-only setup errors"
+},
   "remaining": "Owner SEO choices, missing dates, MAX pin and final analytics/search-console stage are separate; no automatic author rewrites."
 }

@@ -1,5 +1,5 @@
 {
-  "status": "local_verified_release_pending",
+  "status": "mechanism_production_verified",
   "scope": "Manifest-backed curated subscription slot; existing Japan placement preserved",
   "field": "subscription_before_heading",
   "assigned_source_ids": ["11927800"],
@@ -12,7 +12,8 @@
     "diff_check": "passed",
     "ci_initial": "37253204159 blocked at inventory: new test missing explicit platform.blog ownership; registry corrected without changing runtime",
     "ci_followup": "37253460123: 993passed/10skipped/27subtests; two responsive-media tests used old exact div opening tag. Extraction accepts new data attribute; image assertions unchanged; direct responsive-media+slot retest 14passed",
-    "author_body_seo_and_design_changes": "none"
+    "author_body_seo_and_design_changes": "none",
+    "production_mechanism": "8dc60450 verified via SSH05.10.2026; CI37254044109 success"
   },
   "reviews": {
     "waves": 2,
@@ -21,5 +22,5 @@
     "security": "clean",
     "documentation": "clean; clarified anchor ID vs heading punctuation"
   },
-  "remaining": "Editorial full-material placement review beyond Japan; no automatic bulk assignment. Analytics, search consoles and MAX pin stay deferred."
+  "remaining": "Placement review for all62 completed; rollout proof belongs to subscription-placement-audit-20261005.json. Analytics, search consoles and MAX pin stay deferred."
 }

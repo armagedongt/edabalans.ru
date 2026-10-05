@@ -1,5 +1,6 @@
 {
- "status":"local_verified_release_pending",
+ "status": "production_verified",
+ "release": {"commit": "71528fcf", "public_verification": "subscription-placement-audit-20261005.json"},
  "checks":"16 actual Edge DOM cases passed at360/1440: five assigned slots, three no-slot decisions, popup available, no page errors",
  "source_basis":"Full current public SSR article body, not snippets; no author text replacement",
  "articles":[

@@ -1,5 +1,6 @@
 {
-  "status": "local_verified_release_pending",
+  "status": "production_verified",
+  "release": {"commit": "71528fcf", "public_verification": "subscription-placement-audit-20261005.json"},
   "browser_verification": {"engine": "Edge", "widths": [360, 1440], "cases": 28, "result": "pass"},
   "source_basis": "Full current public SSR article body, not snippets; no author text replacement",
   "articles": [
