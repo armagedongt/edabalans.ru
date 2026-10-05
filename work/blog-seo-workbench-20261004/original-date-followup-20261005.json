@@ -1,0 +1,48 @@
+{
+  "checked_at": "2026-10-05",
+  "mode": "read_only_primary_metadata",
+  "manifest_count": 62,
+  "original_published_at_present": 55,
+  "original_published_at_absent": 7,
+  "applied": false,
+  "body_changes": false,
+  "rows": [
+    {
+      "source_id": "2e269fdc52d600a64753",
+      "slug": "kak-ya-reshil-proyti-100000-shagov",
+      "status": "component_dates_exact_combined_date_not_assigned",
+      "parts": [
+        {"external_id": "11528528", "url": "https://pikabu.ru/story/100_000_shagov_za_odin_den_11528528", "published_at": "2024-06-20T15:54:48+03:00", "html_sha256": "9af72e1db89eca9551e908277107bd6074ec55842c21dcf83772f82d6e0710af"},
+        {"external_id": "11553382", "url": "https://pikabu.ru/story/kak_ya_100_000_shagov_reshil_proyti_11553382", "published_at": "2024-06-28T18:53:57+03:00", "html_sha256": "f126f6509f95440f8081bc7240d2352417520489040d05f9898b87de90a776fd"}
+      ],
+      "evidence": "Live JSON-LD Article.datePublished; exact URL, resolved URL and author https://pikabu.ru/@armagedongt verified for each part. Dates of parts do not prove publication date of merged canonical article."
+    },
+    {
+      "source_id": "training-combined-2023",
+      "slug": "kak-nachat-trenirovki-i-ne-brosit",
+      "status": "component_dates_exact_combined_date_not_assigned",
+      "parts": [
+        {"external_id": "10276321", "url": "https://pikabu.ru/story/otvet_na_post_chellendzh_30_dney_bega_2_den_10276321", "published_at": "2023-05-28T10:46:18+03:00", "html_sha256": "c71715b1277890f0566c6db47dbf99168573be7d174d15ac063ab8cc852cd924"},
+        {"external_id": "10779442", "url": "https://pikabu.ru/story/kak_nachat_trenirovki_i_ne_brosit_chellendzhinstruktsiya_10779442", "published_at": "2023-10-29T10:12:40+03:00", "html_sha256": "9e70df56ea44a22b9f183247fe3438d88602686f6344ad20823e6cb2b43c4eb6"}
+      ],
+      "evidence": "Live JSON-LD Article.datePublished; exact URL, resolved URL and author verified. VC part was not date-probed in this follow-up; no claim of complete source-family date coverage."
+    },
+    {
+      "source_id": "amkbo7kgg1",
+      "status": "raw_tilda_date_candidate_not_applied",
+      "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni",
+      "raw_datePublished": "2026-04-03MSK00:00:00+03:00",
+      "reason": "Non-ISO microdata candidate; exact historical first publication not established. Library resource source_date is null. Initial 502 resolved on retry."
+    },
+    {
+      "source_id": "habits-formation-and-one-percent",
+      "status": "raw_tilda_date_candidate_not_applied",
+      "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/fpvaefo9e1-kak-formiruyutsya-privichki-i-pravilo-1",
+      "raw_datePublished": "2026-02-03MSK00:00:00+03:00",
+      "reason": "Non-ISO microdata candidate; exact first publication of full combined canon not established. Cyrillic hostname normalized to IDNA before successful GET."
+    },
+    {"source_id": "tilda-49734795", "status": "no_public_date_evidence_found", "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blits", "reason": "Successful GET: no JSON-LD publication timestamp, time element or datePublished field found; retrieval date not substituted."},
+    {"source_id": "tilda-49745867", "status": "no_public_date_evidence_found", "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/30-rastenij", "reason": "Successful GET has no publication date. Registry contains dated Telegraph partial/previous sources, not evidence of publication date of current Tilda/combined version."},
+    {"source_id": "tilda-67280331", "status": "no_public_date_evidence_found", "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/vzveshivania", "reason": "Successful GET: no JSON-LD publication timestamp, time element or datePublished field found; page ID not used as a date."}
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-05",
+  "scope": "Nine remaining working title/excerpt pairs, routing refinement and seven missing original dates",
+  "status": "verified_research_not_publication",
+  "counts": {"existing_article_proposals": 62, "selected_new_angles": 20, "standalone_candidates": 10, "conditional_standalone": 6, "existing_source_routes": 4, "new_pairs_in_this_batch": 9, "manifest_dates_present": 55, "manifest_dates_absent": 7},
+  "writer": {"validation": "pass", "manual_review": "pass", "private_artifacts": "D:/Codex/private/blog-seo-copy-20261004/new-topics-batch03", "draft_sha256": "aec4298c5f410511bd186e7f8a7025e393b9fc92203d206ba84db75858a5dfd7", "pass_scope": "working metadata pairs only, not future article bodies"},
+  "independent_review": {"reviewer": "seo_research_followup_review", "wave": 1, "status": "clean", "findings": [], "scope": "New work documents and status summary against manifest, family registry, writer receipts and current canonical documentation; no repeated full code/UI audit"},
+  "deterministic_checks": {"routing_rows_20_and_counts_10_6_4": "pass", "missing_dates_identity_set_matches_manifest": "pass", "writer_receipt_status": "pass", "git_diff_whitespace": "pass"},
+  "source_review": {"context": "prepare_editorial_context read-only, task_type editorial research, surface open, no matches; not proof of absence", "source_13892134": "Open author source exists; not present in current blog manifest or family registry; not assigned a canonical status", "composite_dates": "Four exact primary timestamps saved separately; none assigned as date of merged canon", "tilda_candidates": "Two non-ISO raw candidates retained, three primary dates not found; nothing inferred"},
+  "mutations": {"article_bodies": false, "live_seo_fields": false, "manifest": false, "server_library": false, "new_articles_published": false, "analytics_enabled": false, "search_dashboards": false, "advertising": false},
+  "remaining": ["Owner selection of live SEO title/description and additional author-profile wording", "Exact dating/display decision for seven combined or Tilda materials", "New full articles require author examples, actual labels and specific primary-source checks; not part of this working-copy pass", "Metrics, search dashboards, domain move and MAX pin remain deferred by owner"]
+}
