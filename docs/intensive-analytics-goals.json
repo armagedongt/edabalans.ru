@@ -1,0 +1,176 @@
+{
+  "counter_id": 97331502,
+  "page_key": "intensive-onepage",
+  "goals": [
+    {
+      "name": "Единый интенсив: Открытие статьи",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_open"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Текст доступен",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_ready"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Загрузка страницы",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_loaded"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: 60 секунд активной вкладки",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_active_60"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Показан раздел",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_section"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Показан конец статьи",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_end"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Итог просмотра",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_session"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Ошибка картинки",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_media_error"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Переход в Telegram",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_telegram_click"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Переход в MAX",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_max_click"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Переход по содержанию",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_navigation"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Открыто содержание",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_contents_open"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Просмотрено 10% текста",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_view_10"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Просмотрено 25% текста",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_view_25"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Просмотрено 50% текста",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_view_50"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Просмотрено 75% текста",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_view_75"
+        }
+      ]
+    },
+    {
+      "name": "Единый интенсив: Просмотрено 90% текста",
+      "type": "action",
+      "conditions": [
+        {
+          "type": "exact",
+          "url": "intensive_onepage_view_90"
+        }
+      ]
+    }
+  ]
+}

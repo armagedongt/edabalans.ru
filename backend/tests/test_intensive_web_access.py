@@ -95,7 +95,7 @@ def test_personal_link_restores_server_identity_and_ignores_forged_source() -> N
     for day in range(2, 5):
         locked = client.get(f"/intensive/day-{day}", follow_redirects=False)
         assert locked.status_code == 307
-        assert locked.headers["location"] == "/intensive"
+        assert locked.headers["location"] == "/intensive/archive"
 
     with factory() as db:
         event = db.scalar(select(AttributionEvent))
@@ -117,7 +117,7 @@ def test_personal_link_restores_server_identity_and_ignores_forged_source() -> N
     app.dependency_overrides.clear()
 
 
-def test_canonical_personal_entry_serves_menu_without_redirect_and_keeps_query() -> None:
+def test_archive_personal_entry_serves_menu_without_redirect_and_keeps_query() -> None:
     client, factory = make_client()
     user = create_user(factory)
     with factory() as db:
@@ -125,7 +125,7 @@ def test_canonical_personal_entry_serves_menu_without_redirect_and_keeps_query()
         db.commit()
 
     entry = client.get(
-        f"/intensive?i={token}&from=tg&entry=bot&utm_source=yandex",
+        f"/intensive/archive?i={token}&from=tg&entry=bot&utm_source=yandex",
         follow_redirects=False,
     )
 

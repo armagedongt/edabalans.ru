@@ -32,7 +32,7 @@ try {
 
   for (const width of [360, 430, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 })
-    await page.goto(`${baseUrl}/intensive?visual-test=available-${width}`, { waitUntil: 'domcontentloaded' })
+    await page.goto(`${baseUrl}/intensive/archive?visual-test=available-${width}`, { waitUntil: 'domcontentloaded' })
     await page.locator('.day-card.is-next-open').waitFor({ state: 'visible' })
     if (!await page.locator('.day-card[data-day="1"].is-read').count() || await page.locator('.day-card[data-day="1"] [data-day-status]').innerText() !== 'Прочитано') {
       throw new Error(`The completed day has no compact read marker at ${width}px`)
@@ -75,7 +75,7 @@ try {
     current_day: 3,
     unlock_at: { '3': timerUnlockAt },
   }
-  await page.goto(`${baseUrl}/intensive?visual-test=timer`, { waitUntil: 'domcontentloaded' })
+  await page.goto(`${baseUrl}/intensive/archive?visual-test=timer`, { waitUntil: 'domcontentloaded' })
   await page.locator('.day-card.is-next-locked').waitFor({ state: 'visible' })
   const timerText = await page.locator('.day-card[data-day="3"] .day-card__status').innerText()
   if (!/^Следующая часть откроется через\s+\d{2}:\d{2}:\d{2}$/.test(timerText)) {
@@ -108,7 +108,7 @@ try {
     unlocked_days: [1],
     unlock_at: {},
   }
-  await page.goto(`${baseUrl}/intensive?visual-test=prerequisite`, { waitUntil: 'domcontentloaded' })
+  await page.goto(`${baseUrl}/intensive/archive?visual-test=prerequisite`, { waitUntil: 'domcontentloaded' })
   await page.locator('.day-card.is-next-locked').waitFor({ state: 'visible' })
   const prerequisite = await page.locator('.day-card[data-day="2"] .day-card__status').innerText()
   if (prerequisite !== 'Сначала прочитайте предыдущую часть') {
