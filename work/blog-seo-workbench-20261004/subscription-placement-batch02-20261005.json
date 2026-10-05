@@ -1,0 +1,11 @@
+{
+ "status":"local_verified_release_pending",
+ "checks":"6 actual Edge DOM cases passed at360/1440: one assigned slot, two no-slot decisions, popup available, no page errors",
+ "source_basis":"Full current public SSR article body, not snippets; no author text replacement",
+ "articles":[
+  {"source_id":"10797468","decision":"no_slot","reason":"Короткий единый разбор объёма работы и окисления жира. Перед последним разделом уже related; дополнительная подписка перегружает объяснение."},
+  {"source_id":"10573917","decision":"no_slot","reason":"Компактная инструкция выбора и безопасного применения резинок. Не добавлять рекламную паузу между выбором, демонстрацией и правилами крепления."},
+  {"source_id":"10532723","decision":"assigned","anchor":"качество-питания","reason":"Завершён раздел о задачах упражнений; далее отдельный слой о составе питания. Related выше, конечная CTA позже, между ними несколько разделов."}
+ ],
+ "preservation":"Only one new manifest anchor; author body, SEO fields, media, source families and existing links unchanged"
+}

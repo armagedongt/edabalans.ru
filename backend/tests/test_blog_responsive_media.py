@@ -110,7 +110,7 @@ def test_public_catalog_and_git_article_serve_only_registered_derivatives(media_
     assert catalogue.status_code == 200 and 'srcset=' in catalogue.text
     article = client.get('/blog/articles/pochemu-yapontsy-hudye-a-ty-net')
     assert article.status_code == 200
-    body = article.text.split('<div class="article-body" id="article">', 1)[1].split('</article>', 1)[0]
+    body = re.split(r'<div class="article-body" id="article"[^>]*>', article.text, maxsplit=1)[1].split('</article>', 1)[0]
     assert re.search(r'<img[^>]*src="/blog/media/[^"]+"[^>]*srcset=', body)
     variants = re.findall(r'/blog/media/(responsive/[a-f0-9]+-q90-v1/\d+w.webp)', article.text)
     assert variants
@@ -135,7 +135,7 @@ def test_api_published_body_gets_responsive_images_without_rewriting_markdown(me
         published = publish_article(db, slug=article.slug, expected_version=draft.version_no, admin='test')
         assert published.payload['markdown'] == markdown
     html = client.get('/blog/articles/' + article.slug).text
-    body = html.split('<div class="article-body" id="article">', 1)[1].split('</article>', 1)[0]
+    body = re.split(r'<div class="article-body" id="article"[^>]*>', html, maxsplit=1)[1].split('</article>', 1)[0]
     assert 'Мой исходный текст.' in html and 'alt="Моя подпись"' in html
     image = re.search(r'<img[^>]*src="' + re.escape('/blog/media/' + name) + r'"[^>]*>', body)
     assert image is not None and 'srcset=' in image.group(0) and 'sizes=' in image.group(0)

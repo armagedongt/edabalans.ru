@@ -11,6 +11,7 @@
     "browser": "Edge 360 and 1440: exact inline placement; missing anchor disables inline and keeps popup; Escape closes; zero page errors",
     "diff_check": "passed",
     "ci_initial": "37253204159 blocked at inventory: new test missing explicit platform.blog ownership; registry corrected without changing runtime",
+    "ci_followup": "37253460123: 993passed/10skipped/27subtests; two responsive-media tests used old exact div opening tag. Extraction accepts new data attribute; image assertions unchanged; direct responsive-media+slot retest 14passed",
     "author_body_seo_and_design_changes": "none"
   },
   "reviews": {

@@ -1,0 +1,15 @@
+{
+  "status": "local_verified_release_pending",
+  "checks": "12 actual Edge DOM cases passed at 360/1440; three assigned slots and three explicit no-slot decisions; popup remains available; no page errors",
+  "source_basis": "Full current public SSR article body, not snippets; no author text replacement",
+  "articles": [
+    {"source_id":"10369434", "decision":"no_slot", "reason":"Личная история нападения: ошибки и защитные действия образуют непрерывный практический рассказ. Не прерывать его подпиской."},
+    {"source_id":"amkbo7kgg1", "decision":"no_slot", "reason":"Три связанных раздела: саркопения, наглядные фото, расход калорий. У перехода к расходу уже стоит related; дополнительная подписка перегружает компактный материал."},
+    {"source_id":"12193581", "decision":"assigned", "anchor":"добавляем-а-не-исключаем", "reason":"Закончено объяснение перерывов и плана застолья; далее начинается отдельный блок выбора продуктов. Конечная CTA далеко, соседней related нет."},
+    {"source_id":"14062380", "decision":"no_slot", "reason":"Короткий связный разбор пирамиды и её ограничений; дополнительная рекламная пауза не нужна."},
+    {"source_id":"Prostejshie-12-izmenenij-v-vashej-zhizni-08-11", "decision":"assigned", "anchor":"9-меньше-ешь-и-больше-двигайся", "reason":"После завершённых восьми советов о питании начинается другой крупный слой — активность. Related расположен ранее, перед советом2; конечная CTA после12."},
+    {"source_id":"11989790", "decision":"assigned", "anchor":"что-конкретно-выбрать-к-чаю", "reason":"Закончены история, объяснение доступности и результаты; начинается отдельный практический выбор сладостей. Related стоит позже, после ориентиров БЖУ."}
+  ],
+  "preservation": "Only three new manifest anchor fields; article bodies, search metadata, source families, media, existing related and final CTA unchanged",
+  "remaining": "Other unreviewed subscription placement candidates still require full current-body reading; eight proven Telegram-origin articles are suppressed by higher-priority contract"
+}

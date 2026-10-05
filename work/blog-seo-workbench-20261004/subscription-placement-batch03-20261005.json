@@ -1,0 +1,13 @@
+{
+ "status":"local_verified_release_pending",
+ "checks":"10 actual Edge DOM cases passed at360/1440: two assigned slots, three no-slot decisions, popup available, no page errors",
+ "source_basis":"Full current public SSR article body, not snippets; no author text replacement",
+ "articles":[
+  {"source_id":"11906015","decision":"assigned","anchor":"4-выбирайте-орехи-и-белок","reason":"Закончена проверка трёх утверждений о режиме питания; начинается отдельная практическая тема выбора продуктов для перекуса. Related позже, перед пунктом5."},
+  {"source_id":"11801517","decision":"no_slot","reason":"Короткий единый аргумент о приоритетах питания; не разрывать сравнение расходов на тренировки и изменений питания."},
+  {"source_id":"10978866","decision":"no_slot","reason":"Короткий праздничный блиц; несколько небольших советов не требуют дополнительной рекламной паузы."},
+  {"source_id":"10877887","decision":"assigned","anchor":"это-что-касается-фактов-а-теперь-давайте-обратимся-к-логике","reason":"Завершён большой фактологический слой о молоке и обработке; начинается самостоятельный итоговый слой о выборе продуктовых категорий. Не разрываются этапы обработки."},
+  {"source_id":"10123213","decision":"no_slot","reason":"Компактная инструкция зарядки; не разрывать переход от упражнений к длительности и регулярности дополнительной подпиской."}
+ ],
+ "preservation":"Only two new manifest anchors; author bodies, SEO fields, media, source families and existing links unchanged"
+}
