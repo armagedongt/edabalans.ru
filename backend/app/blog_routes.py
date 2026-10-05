@@ -151,6 +151,7 @@ def blog_author() -> HTMLResponse:
     body = (f'<div class="author-profile"><img class="author-profile-avatar" src="{escape(author["image"], quote=True)}" '
             f'alt="{escape(author["name"], quote=True)}" width="160" height="160"><div>'
             f'<p>{escape(author["role"])}</p><p>{escape(author["description"])}</p>'
+            + (f'<p>{escape(author["bio"])}</p>' if author.get("bio") else '')
             + ' · '.join(f'<a href="{escape(url, quote=True)}" rel="me">{label}</a>' for url, label in zip(author["same_as"], ("Telegram", "MAX")))
             + '</div></div>')
     template = re.sub(r'<section class="shell related-section".*?</section>', '', _template("article.html"), flags=re.S)
@@ -285,7 +286,8 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
     breadcrumbs, breadcrumb_data = _breadcrumbs(article)
     dates = []
     article_dates = {}
-    for label, key, value in (("Исходная публикация", "datePublished", article.original_published_at),
+    publication_label = "Исходная публикация" if article.original_published_at else "Опубликовано в блоге"
+    for label, key, value in ((publication_label, "datePublished", article.original_published_at or article.blog_published_at),
                                ("Обновлено в блоге", "dateModified", published.get("published_updated_at") if published else None)):
         if value:
             date = datetime.fromisoformat(value)

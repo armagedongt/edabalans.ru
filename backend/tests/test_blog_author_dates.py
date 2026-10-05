@@ -47,7 +47,7 @@ def test_profile_and_article_share_one_author_without_generated_copy(authoring):
     assert person['name'] == 'Сергей Воронцов'
     assert person['jobTitle'] == 'Тренер по питанию'
     assert person['description'] == 'Пишу о питании и похудении так, чтобы вы менялись.'
-    assert '600' not in profile.text
+    assert 'Разобрал более 600 дневников питания участников моего мастер-класса.' in profile.text
     assert 'related-section' not in profile.text
     assert 'blog-cta' not in profile.text
     assert '{{' not in profile.text
@@ -72,17 +72,44 @@ def test_breadcrumbs_are_clickable_and_match_structured_data(authoring):
     assert f'<span aria-current="page">{article.title}</span>' in page.text
 
 
-def test_confirmed_source_date_is_shown_and_missing_date_is_not_invented(authoring):
+def test_confirmed_source_date_is_shown_and_missing_date_is_not_invented(authoring, monkeypatch):
     client, _ = authoring
     confirmed = load_blog_catalog().by_slug('kak-na-menya-napali-sobaki-v-lesu')
     page = client.get('/blog/articles/' + confirmed.slug)
     assert structured(page.text)[0]['datePublished'] == confirmed.original_published_at
     assert 'Исходная публикация: <time datetime="2023-06-17T13:18:08+03:00">17.06.2023</time>' in page.text
-    missing = next(article for article in load_blog_catalog().published if article.original_published_at is None)
+    catalog = load_blog_catalog()
+    missing = replace(catalog.published[0], original_published_at=None, blog_published_at=None)
+    catalog = replace(catalog, articles=tuple(missing if article.slug == missing.slug else article for article in catalog.articles))
+    monkeypatch.setattr('app.blog_routes._public_catalog', lambda db: catalog)
     page = client.get('/blog/articles/' + missing.slug)
     assert 'datePublished' not in structured(page.text)[0]
     assert 'Исходная публикация:' not in page.text
     assert 'dateModified' not in structured(page.text)[0]
+
+
+@pytest.mark.parametrize('slug', ['15-sovetov-tem-kto-hudeet', 'vesy-instrukciya-po-primeneniyu'])
+def test_blog_release_fallback_is_not_claimed_as_historical_source_date(authoring, slug):
+    client, _ = authoring
+    article = load_blog_catalog().by_slug(slug)
+    assert article.original_published_at is None
+    page = client.get('/blog/articles/' + slug)
+    assert structured(page.text)[0]['datePublished'] == article.blog_published_at
+    assert 'Опубликовано в блоге:' in page.text
+    assert 'Исходная публикация:' not in page.text
+
+
+def test_source_date_takes_priority_when_blog_release_is_also_known(authoring, monkeypatch):
+    client, _ = authoring
+    catalog = load_blog_catalog()
+    first = replace(catalog.published[0], original_published_at='2023-01-02T12:00:00+03:00', blog_published_at='2026-09-17T00:00:00+03:00')
+    catalog = replace(catalog, articles=tuple(first if item.slug == first.slug else item for item in catalog.articles))
+    monkeypatch.setattr('app.blog_routes._public_catalog', lambda db: catalog)
+    page = client.get('/blog/articles/' + first.slug)
+    assert structured(page.text)[0]['datePublished'] == first.original_published_at
+    assert 'Исходная публикация:' in page.text
+    assert '02.01.2023</time>' in page.text
+    assert 'Опубликовано в блоге:' not in page.text
 
 
 def test_new_moderation_draft_cannot_change_public_revision_date(authoring):
@@ -102,10 +129,11 @@ def test_new_moderation_draft_cannot_change_public_revision_date(authoring):
     assert 'Обновлено в блоге:' in after
 
 
+@pytest.mark.parametrize('field', ['original_published_at', 'blog_published_at'])
 @pytest.mark.parametrize('value', ['2026-10-04T00:00:00', 'not-a-date'])
-def test_bad_source_timestamp_is_rejected(value):
+def test_bad_publication_timestamp_is_rejected(value, field):
     catalog = load_blog_catalog()
-    first = replace(catalog.articles[0], original_published_at=value)
+    first = replace(catalog.articles[0], **{field: value})
     with pytest.raises(ValueError):
         validate_blog_catalog(replace(catalog, articles=(first, *catalog.articles[1:])))
 

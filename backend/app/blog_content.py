@@ -63,6 +63,7 @@ class BlogArticle:
     status: str
     media: tuple[str, ...]
     original_published_at: str | None = None
+    blog_published_at: str | None = None
     inline_related: BlogInlineRelated | None = None
     subscription_before_heading: str | None = None
 
@@ -262,6 +263,7 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
             status=status,
             media=tuple(media_raw),
             original_published_at=(raw.get("source_provenance") or {}).get("original_published_at"),
+            blog_published_at=raw.get("blog_published_at"),
             inline_related=inline_related,
             subscription_before_heading=(
                 _required_text(raw, "subscription_before_heading")
@@ -323,10 +325,11 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
             raise ValueError("blog inline related pool must contain unique published targets")
 
     for article in catalog.articles:
-        if article.original_published_at is not None:
-            date = datetime.fromisoformat(article.original_published_at)
-            if date.tzinfo is None:
-                raise ValueError(f"blog original publication timestamp requires timezone: {article.source_id}")
+        for timestamp in (article.original_published_at, article.blog_published_at):
+            if timestamp is not None:
+                date = datetime.fromisoformat(timestamp)
+                if date.tzinfo is None:
+                    raise ValueError(f"blog publication timestamp requires timezone: {article.source_id}")
         if not SLUG_RE.fullmatch(article.slug):
             raise ValueError(f"invalid blog slug: {article.slug}")
         if article.category not in BLOG_CATEGORIES:

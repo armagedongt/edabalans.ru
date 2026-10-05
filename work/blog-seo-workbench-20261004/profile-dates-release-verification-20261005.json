@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-05",
+  "scope": "approved author bio and seven publication dates; no article body or search field changes",
+  "owner_approved": true,
+  "writer_validation": "pass",
+  "source_date_count": 60,
+  "blog_release_fallback_count": 2,
+  "historical_unknown_retained": ["tilda-49734795", "tilda-67280331"],
+  "blog_release_day_evidence": {
+    "introduced_commit": "9ca8baa0dbd08ee0be4d3d87b74ab8ba2e312932",
+    "confirmed_deployed_commit": "7c7f434d3708c5bd54320887985a2553652f186b",
+    "journal_time_utc": "2026-09-17T17:45:54+00:00",
+    "ancestor_and_published_manifest_verified": true,
+    "date_precision": "day",
+    "exact_first_deploy_time_claimed": false
+  },
+  "reviews": {"code_wave_1": "clean", "test_wave_1": "source/fallback priority coverage missing", "correction": "real public route fixture with both timestamps and source priority", "code_wave_2": "clean", "test_wave_2": "clean"},
+  "public_verification": "pending release"
+}
