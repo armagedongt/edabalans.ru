@@ -4,8 +4,8 @@
   "base_main": "81a7d2a",
   "release_status": "production_verified",
   "production_changed": true,
-  "verified_production_commit": "320a851e17dcd923130dc20d461aed18cbbcfc36",
-  "successful_ci_run": 37248671644,
+  "verified_production_commit": "5ea886646c7b0b72d0edb3ed8c10caef082f8523",
+  "successful_ci_run": 37250234951,
   "checks": {
     "all_blog_initial": "195 passed, 4 failed; failures assumed the target article was on page 1 before SSR pagination",
     "pagination_test_correction": "Select the actual manifest page; retain cover, draft isolation and anonymous catalogue assertions",
@@ -24,18 +24,18 @@
     "browser_full_local": "PASS: six viewport/editor checks, preview/save, explicit publish, selected cover on actual SSR page, conflict/offline retention and beforeunload",
     "browser_environment": "Shared footer/cookie scripts served by this revision's isolated QA server; DOM and explicit loaded article state replace network-idle timing assumptions",
     "docs_review_wave2": "clean; canonical contracts describe implementation; actual release verified separately",
-    "final_ci": "PASS: Test workflow for 320a851; no failed steps",
+    "final_ci": "PASS: Test workflows for 320a851 and subsequent canonical-docs commit 5ea8866; no failed steps",
     "local_authoring_retry": "38 passed; 2 setup errors caused by Windows TEMP permissions; exact two cases passed with fresh explicit basetemp",
-    "production": "Deploy journal confirms 320a851 successfully deployed; service status and public routes checked",
+    "production": "Deploy journal confirms 320a851 then 5ea8866 successfully deployed; service status and public routes checked",
     "public_catalog": "First and second SSR pages each contain 15 article cards",
     "public_seo_preservation": "62 articles, zero capture errors; H1/search title/description/canonical unchanged against original archive",
     "reader_context": "Anonymous context private,no-store; unknown visitor routes to existing bots; invalid recognition token rejected without Set-Cookie",
     "editor_boundary": "Public host /admin/api/blog/articles remains 404",
-    "telegram_origin_api": "Two confirmed full-source articles published through existing versioned API; both draft version 2, published version 1; origin plaque present, subscription popup/script absent"
+    "telegram_origin_api": "Eight confirmed full-source articles published through existing versioned API: home training, mother insurance, birthday, duration and rice draft2/public1; professional eater draft5/public4; labels and simply lose weight draft4/public3. Existing server author bodies preserved; origin plaque present, subscription popup/script absent. Labels and duration Telegram versions are later than Pikabu, not claimed as earliest source"
   },
   "boundaries": {
     "author_markdown_changed": false,
-    "metadata_only_api_updates": 2,
+    "metadata_only_api_updates": 8,
     "proposed_seo_values_applied": false,
     "new_login_or_cabinet": false,
     "metrics_and_search_consoles": "deferred",
@@ -43,17 +43,21 @@
   },
   "remaining_editorial": [
     "Subscription inline anchors beyond the approved Japan example",
-    "Full-source confirmation of remaining Telegram-origin candidates; two confirmed articles assigned, announcements are not full posts",
+    "No unreviewed canonical overlaps remain in current library snapshot:21 records/17 posts; new candidates require full-source proof",
     "Seven unconfirmed original publication dates remain unknown; no fabricated dates"
   ],
   "library_provenance": {
     "resource": "knowledge://resource/article-family-routing",
-    "version": 34,
+    "version": 38,
     "canonical_families": 62,
     "deferred_families": 204,
     "navigation_is_not_full_source_evidence": true,
-    "full_source_review_records_updated": 3,
-    "origin_applied_articles": 2,
+    "full_source_review_records_updated": 21,
+    "unique_channel_posts_reviewed": 17,
+    "unreviewed_canonical_overlap_records": 0,
+    "origin_applied_articles": 8,
+    "component_only_families": 3,
+    "actual_usage_events": "Eight source references recorded; no author-body import claimed",
     "exact_readback": "PASS"
   }
 }
