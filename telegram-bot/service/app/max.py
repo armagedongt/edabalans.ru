@@ -18,6 +18,8 @@ from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.account_credentials import encrypt_password, generate_password, password_hash
+from app.config import get_settings
+from app.temporary_entry import BLOCKED_STATUSES, entry_decision, temporary_response
 from app.app_menu import APPS_PAYLOAD, app_request, send_menu
 from app.content_formatting import content_body_for_telegram, replace_template_values
 from app.customer_lifecycle import stop_presale_runs_for_user, stop_runs_for_contact
@@ -658,7 +660,8 @@ def _ensure_contact(
     contact.username = user.get("username")
     contact.first_name = user.get("name")
     contact.last_seen_at = datetime.now(UTC)
-    contact.status = "active"
+    if not get_settings().temporary_intensive_entry_enabled or contact.status not in BLOCKED_STATUSES:
+        contact.status = "active"
     session.flush()
     return contact
 
@@ -961,11 +964,14 @@ def _assign_first_touch(
     journey_context: dict[str, str],
     receipt_id: str,
     intensive_token_id: str,
+    *,
+    mark_scenario_seen: bool = True,
 ) -> TrackingEvent:
     now = datetime.now(UTC)
-    if is_first:
+    if is_first and mark_scenario_seen:
         account.main_scenario_seen_at = now
-    if is_first and link:
+    if is_first and link and not contact.first_source_token:
+        contact.first_source_token = alias.token if alias else link.id
         tag_ids = list(session.scalars(select(TrackingLinkTag.tag_id).where(
             TrackingLinkTag.tracking_link_id == link.id
         ))) + session_tag_ids
@@ -1068,6 +1074,46 @@ def _deliver_welcome(
     return str(message_id), decision.code
 
 
+def _temporary_max_update(session: Session, update: dict, bot_username: str, sender: MaxClient, public_url: str) -> dict | None:
+    kind = str(update.get("update_type") or "")
+    if kind not in {"bot_started", "message_created", "message_callback"}:
+        return None
+    payload = str(update.get("payload") or "")
+    if kind == "bot_started" and payload.startswith("M"):
+        return None  # Account linking and credentials keep their own contract.
+    message = update.get("message") or {}
+    recipient = message.get("recipient") or {}
+    if recipient.get("chat_type") not in {None, "dialog"}:
+        return {"ok": True, "ignored": True}
+    user = update.get("user") or (update.get("callback") or {}).get("user") or message.get("sender") or {}
+    if not user.get("user_id") or user.get("is_bot"):
+        return {"ok": True, "ignored": True}
+    bot = _max_bot(session, bot_username)
+    account, _ = _ensure_identity(session, user)
+    contact = _ensure_contact(session, bot, account, user)
+    if entry_decision(session, contact) == "normal":
+        return None
+    receipt_id = _receipt_id(update)
+    if kind == "message_created":
+        mid = str((message.get("body") or {}).get("mid") or "")
+        if not mid:
+            return {"ok": True, "ignored": True}
+        receipt_id = f"max:message:{mid}"
+    if session.get(UpdateReceipt, receipt_id):
+        return {"ok": True, "duplicate": True}
+    session.add(UpdateReceipt(update_id=receipt_id, bot_instance_id=bot.id, update_type=f"max_{kind}"))
+    if kind == "bot_started":
+        link, alias, tag_ids, raw, status, journey = resolve_start_payload(session, payload)
+        _assign_first_touch(session, account, contact, account.main_scenario_seen_at is None,
+                            link, alias, tag_ids, raw, status, journey, receipt_id, "", mark_scenario_seen=False)
+    result = temporary_response(session, contact, sender, receipt_id, "max", public_url)
+    if kind == "message_callback":
+        callback_id = str((update.get("callback") or {}).get("callback_id") or "")
+        if callback_id:
+            sender.answer_callback(callback_id, notification="")
+    return result
+
+
 def process_max_update(
     session: Session,
     update: dict[str, Any],
@@ -1080,6 +1126,10 @@ def process_max_update(
 ) -> dict[str, Any]:
     """Persist a MAX bot start and send a platform-bound intensive link."""
     update_type = str(update.get("update_type") or "")
+    if get_settings().temporary_intensive_entry_enabled:
+        result = _temporary_max_update(session, update, bot_username, sender, intensive_public_url)
+        if result is not None:
+            return result
     if update_type == "message_callback":
         callback = update.get("callback") or {}
         user = callback.get("user") or {}

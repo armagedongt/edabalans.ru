@@ -744,6 +744,7 @@ def test_max_apps_start_lists_only_entitled_and_course_revealed_apps(tmp_path, m
 
 
 def test_max_account_link_issues_short_password(tmp_path, monkeypatch):
+    monkeypatch.setattr(main_module.settings, "temporary_intensive_entry_enabled", True)
     client, engine, fake = make_client(tmp_path, monkeypatch)
     raw_token = "Mmax-account-token"
     target_user_id = str(uuid.uuid4())

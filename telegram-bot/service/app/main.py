@@ -30,6 +30,7 @@ from app.engine import advance_run, due_runs, personalized_delivery, resume_call
 from app.delivery_registry import validate_body
 from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_CODE, allowed_telegram_ids, maintenance_allows, record_maintenance_contact
+from app.temporary_entry import BLOCKED_STATUSES, pause_marketing, temporary_response
 from app.metrika import MetrikaOfflineClient, sync_offline_conversions
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, MessengerLinkToken, OwnerPaymentAlertDelivery, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
@@ -230,7 +231,8 @@ def _upsert_contact(session: Session, bot: BotInstance, user: dict, chat: dict) 
     contact.last_name = user.get("last_name")
     contact.language_code = user.get("language_code")
     contact.last_seen_at = datetime.now(UTC)
-    contact.status = "active"
+    if not settings.temporary_intensive_entry_enabled or contact.status not in BLOCKED_STATUSES:
+        contact.status = "active"
     session.flush()
     ensure_crm_identity(session, contact, user)
     return contact
@@ -395,6 +397,10 @@ def _deliver_broadcast(
     *,
     snapshot: bool = False,
 ) -> tuple[int, int]:
+    if settings.temporary_intensive_entry_enabled:
+        row.status = "paused"
+        session.commit()
+        return 0, 0
     if snapshot:
         _snapshot_broadcast_recipients(session, row)
     row.status = "sending"; row.started_at = row.started_at or datetime.now(UTC)
@@ -520,6 +526,9 @@ def _is_max_contact(session: Session, contact: Contact) -> bool:
 
 def scheduler_iteration() -> None:
     with SessionLocal() as session:
+        if settings.temporary_intensive_entry_enabled:
+            pause_marketing(session)
+            session.commit()
         tg = TelegramClient(
             settings.telegram_test_bot_token,
             proxy_url=settings.telegram_proxy_url,
@@ -1099,6 +1108,13 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
     update_type = "my_chat_member" if my_member else ("chat_member" if member else ("chat_join_request" if join_request else ("callback_query" if callback else "message")))
     session.add(UpdateReceipt(update_id=receipt_id, bot_instance_id=bot.id, update_type=update_type))
 
+    if settings.temporary_intensive_entry_enabled and (message or callback):
+        source_message = message or (callback or {}).get("message") or {}
+        person = (message or callback or {}).get("from") or {}
+        if person.get("is_bot") or (source_message.get("chat") or {}).get("type", "private") != "private":
+            session.commit()
+            return {"ok": True, "ignored": True}
+
     if my_member:
         chat = my_member.get("chat") or {}
         status = str((my_member.get("new_chat_member") or {}).get("status") or "")
@@ -1163,6 +1179,10 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
             return {"ok": True, "stopped": True, "stopped_runs": stopped_runs}
         requested_app = app_request(text)
         if requested_app is not None:
+            if settings.temporary_intensive_entry_enabled:
+                result = temporary_response(session, contact, client(), receipt_id, "telegram", settings.intensive_public_url)
+                if result is not None:
+                    return result
             send_menu(session, contact, client(), requested_app)
             session.commit()
             return {"ok": True, "apps_menu": True}
@@ -1170,6 +1190,10 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
         is_start = normalized_start or text.startswith("/start")
         if not is_start:
             _record_incoming_message(session, contact, message)
+            if settings.temporary_intensive_entry_enabled and str(message["chat"].get("type", "private")) == "private" and not message["from"].get("is_bot"):
+                result = temporary_response(session, contact, client(), receipt_id, "telegram", settings.intensive_public_url)
+                if result is not None:
+                    return result
             if not _maintenance_allows_contact(contact):
                 _handle_maintenance_contact(session, contact, receipt_id, "message")
                 session.commit()
@@ -1272,11 +1296,15 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
                 raw_query,
                 payload_status,
                 journey_context,
-                mark_scenario_seen=maintenance_allowed,
+                mark_scenario_seen=maintenance_allowed and not settings.temporary_intensive_entry_enabled,
             )
             if link and link.route_kind == "published_step":
                 sequence_code = link.target_sequence_code
             facts, decision, welcome_run = inspect_start(session, contact, is_first)
+            if settings.temporary_intensive_entry_enabled:
+                result = temporary_response(session, contact, client(), receipt_id, "telegram", settings.intensive_public_url)
+                if result is not None:
+                    return result
             if not maintenance_allowed:
                 _handle_maintenance_contact(
                     session,
@@ -1332,6 +1360,11 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
     elif callback:
         msg = callback.get("message") or {}
         contact = _upsert_contact(session, bot, callback["from"], msg.get("chat") or {"id": callback["from"]["id"]})
+        if settings.temporary_intensive_entry_enabled:
+            result = temporary_response(session, contact, client(), receipt_id, "telegram", settings.intensive_public_url)
+            if result is not None:
+                client().answer_callback(str(callback["id"]), "")
+                return result
         if callback.get("data") == REFRESH_CALLBACK:
             message_id = str(msg.get("message_id") or "")
             if message_id:

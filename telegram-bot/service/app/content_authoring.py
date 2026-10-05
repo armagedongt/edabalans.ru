@@ -36,6 +36,13 @@ START_CONTEXT = {
     "tpl_intensive_entry_legacy_update": ("Найден старый участник", "Показать полностью открытый обновлённый интенсив"),
 }
 DIRECT_TRIGGER_CONTEXT = {
+    "tpl_temporary_intensive_entry": {
+        "kind": "direct_trigger",
+        "module": "start_attribution",
+        "step": "temporary_article",
+        "previous": "Временный режим: личный вход, не покупатель и без стоп-метки",
+        "next": "Статья и кнопка; старые маркетинговые цепочки не запускать",
+    },
     "tpl_apps_strength_admin": {
         "kind": "direct_trigger",
         "module": "apps_menu",

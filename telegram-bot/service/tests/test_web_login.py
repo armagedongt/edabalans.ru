@@ -59,6 +59,7 @@ def test_expired_or_tampered_payload_does_not_log_in(tmp_path):
 
 
 def test_process_update_delivers_code_only_to_maintenance_allowlist(tmp_path, monkeypatch):
+    monkeypatch.setattr(main_module.settings, "temporary_intensive_entry_enabled", True)
     engine = setup(tmp_path)
     with Session(engine) as session:
         seed_defaults(session, "Fitness_Talks_bot")
