@@ -166,7 +166,10 @@ def page(*, identified: bool = False):
     tabs = ''.join(f'<a href="#{key}" data-section="{key}">{escape(label)}</a>' for key, label, _ in GROUPS)
     return f'''<!doctype html><html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
-<title>{escape(title)} — Бесплатный интенсив</title><link rel="stylesheet" href="/intensive/onepage-components.css?v=20261005">
+<title>{escape(title)} — Бесплатный интенсив</title>
+<link rel="icon" type="image/png" href="/favicon.png?v=20260910a">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260910a">
+<link rel="stylesheet" href="/intensive/onepage-components.css?v=20261005">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="/intensive/onepage.css?v=20261005"><script defer src="/intensive/onepage.js?v=20261005"></script>
