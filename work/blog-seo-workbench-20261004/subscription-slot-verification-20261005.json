@@ -10,6 +10,7 @@
     "node": "passed",
     "browser": "Edge 360 and 1440: exact inline placement; missing anchor disables inline and keeps popup; Escape closes; zero page errors",
     "diff_check": "passed",
+    "ci_initial": "37253204159 blocked at inventory: new test missing explicit platform.blog ownership; registry corrected without changing runtime",
     "author_body_seo_and_design_changes": "none"
   },
   "reviews": {

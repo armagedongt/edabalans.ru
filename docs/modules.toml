@@ -259,6 +259,7 @@ owns_files = [
   "backend/tests/test_blog_responsive_media.py",
   "backend/tests/test_blog_inline_related.py",
   "backend/tests/test_blog_reader_navigation.py",
+  "backend/tests/test_blog_subscription_slot.py",
   "backend/tests/test_blog_draft_authoring.py", "backend/tests/fixtures/blog-draft-real/**",
   "backend/tests/blog-pagination.test.cjs", "backend/tests/browser/blog-draft-authoring.e2e.mjs",
   "work/blog-audit-20260917/**",
