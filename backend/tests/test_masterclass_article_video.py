@@ -8,6 +8,32 @@ from app.masterclass_article_components import render_masterclass_component
 SOURCE = 'https://telegra.ph/file/c614abe3c7ffdfc43b93e.mp4'
 
 
+def test_original_boomstream_recipe_video_survives_component_sanitization():
+    source = 'https://play.boomstream.com/hD0vOALQ'
+    rendered = markdown_to_article_html(
+        f'video(\n{source}\nВафли Ани\n)', component_renderer=render_masterclass_component,
+    )
+    assert f'<iframe src="{source}" title="Вафли Ани" loading="lazy"' in rendered
+    assert 'allowfullscreen' in rendered
+    assert 'autoplay' not in rendered
+    assert sanitize_article_html(rendered, course_semantics=True, allow_product_components=True) == rendered
+    assert '<iframe' not in sanitize_article_html(rendered + '<p>Текст</p>', course_semantics=True)
+
+
+@pytest.mark.parametrize('source', [
+    'http://play.boomstream.com/hD0vOALQ', 'https://play.boomstream.com.evil.test/hD0vOALQ',
+    'https://user@play.boomstream.com/hD0vOALQ', 'https://play.boomstream.com:8000/hD0vOALQ',
+    'https://play.boomstream.com/hD0vOALQ?autoplay=1', 'https://play.boomstream.com/hD0vOALQ#x',
+    'https://play.boomstream.com/%68D0vOALQ', 'https://play.boomstream.com/hD0vOALQ/other',
+    'https://play.boomstream.com/hD0vOAL', 'https://play.boomstream.com/hD0vOALQ9',
+    'https://play.boomstream.com/hD_vOALQ', 'https://play.boomstream.com/hD-vOALQ',
+])
+def test_boomstream_recipe_video_rejects_lookalikes_and_extra_parameters(source):
+    with pytest.raises(HTTPException):
+        render_masterclass_component('video', [source, 'Вафли Ани'])
+    assert '<iframe' not in sanitize_article_html(f'<iframe src="{source}"></iframe><p>Текст</p>', course_semantics=True, allow_product_components=True)
+
+
 def test_video_uses_only_standard_player_without_caption_link_or_autoplay():
     rendered = markdown_to_article_html(
         f'video(\n{SOURCE}\nПоели — подвигались!\n)',

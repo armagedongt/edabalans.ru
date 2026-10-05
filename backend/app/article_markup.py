@@ -95,7 +95,13 @@ def safe_video_source(value: str) -> bool:
         return False
 
 
+def safe_boomstream_source(value: str) -> bool:
+    return re.fullmatch(r"https://play\.boomstream\.com/[A-Za-z0-9]{8}", value) is not None
+
+
 def safe_video_frame(value: str) -> bool:
+    if safe_boomstream_source(value):
+        return True
     if not value.startswith("/apps/video-player.html?"):
         return False
     parsed = urlparse(value)
@@ -227,6 +233,10 @@ class ArticleSanitizer(HTMLParser):
                 f' alt="{escape(alt[:500], quote=True)}"'
                 ' loading="lazy" decoding="async"'
             )
+        elif tag == "ol":
+            start = next((value for name, value in attrs if name.lower() == "start"), "") or ""
+            if re.fullmatch(r"[1-9][0-9]{0,4}", start):
+                rendered_attrs = f' start="{start}"'
         elif tag == "aside" and self.course_semantics:
             rendered_attrs = ' class="editorial-note"'
         elif self.course_semantics:
@@ -500,6 +510,7 @@ def markdown_to_article_html(
         numbered = re.match(r"^\d+[.)] (.+)", line)
         if bullet or numbered:
             kind = "ul" if bullet else "ol"
+            start = re.match(r"^([1-9][0-9]{0,4})[.)] ", line) if numbered else None
             item_texts = []
             while index < len(lines):
                 candidate = lines[index].strip()
@@ -526,7 +537,8 @@ def markdown_to_article_html(
                 output.append(f'<ul class="article-recipe-roles">{"".join(items)}</ul>')
             else:
                 items = [f"<li>{inline_markdown(text)}</li>" for text in item_texts]
-                output.append(f"<{kind}>{''.join(items)}</{kind}>")
+                start_attr = f' start="{start.group(1)}"' if start and start.group(1) != "1" else ""
+                output.append(f"<{kind}{start_attr}>{''.join(items)}</{kind}>")
             continue
         paragraph_lines = [line]
         index += 1

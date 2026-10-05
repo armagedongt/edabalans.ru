@@ -20,6 +20,20 @@ from app.article_markup import markdown_to_article_html, safe_href, safe_image_s
 
 
 class ArticleMarkupTests(unittest.TestCase):
+    def test_ordered_recipe_steps_continue_after_photo_and_paragraph(self) -> None:
+        source = '1. Первый шаг\n2. Второй шаг\n\nКомментарий.\n\n![Варка](/course-assets/masterclass/media/rice.jpg)\n\n3. Третий шаг\n4. Четвёртый шаг'
+        rendered = markdown_to_article_html(source)
+        self.assertIn('<ol><li>Первый шаг</li><li>Второй шаг</li></ol>', rendered)
+        self.assertIn('<ol start="3"><li>Третий шаг</li><li>Четвёртый шаг</li></ol>', rendered)
+        self.assertEqual(sanitize_article_html(rendered, course_semantics=True), rendered)
+
+    def test_ordered_list_start_does_not_enable_other_attributes_or_unsafe_values(self) -> None:
+        self.assertEqual(sanitize_article_html('<ol start="6" onclick="bad()" reversed><li>Шаг</li></ol>'), '<ol start="6"><li>Шаг</li></ol>')
+        for value in ('0', '-1', '1.5', 'javascript:bad()', '100000'):
+            with self.subTest(value=value):
+                rendered = sanitize_article_html(f'<ol start="{value}"><li>Шаг</li></ol>')
+                self.assertEqual(rendered, '<ol><li>Шаг</li></ol>')
+
     def test_recipe_roles_render_readonly_marks_with_accessible_states_in_source_order(self) -> None:
         source = """**Роль в конструкторе:**
 

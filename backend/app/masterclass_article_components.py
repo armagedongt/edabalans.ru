@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 
 from fastapi import HTTPException
 
-from app.article_markup import inline_markdown, safe_image_src, safe_video_source, safe_audio_arguments, safe_recipe_card_asset
+from app.article_markup import inline_markdown, safe_image_src, safe_video_source, safe_boomstream_source, safe_audio_arguments, safe_recipe_card_asset
 
 
 DQS_SCORE_CATEGORIES = {
@@ -95,11 +95,11 @@ def render_spoiler(arguments: list[str]) -> str:
 
 
 def render_video(arguments: list[str]) -> str:
-    if (len(arguments) != 2 or not safe_video_source(arguments[0])
+    if (len(arguments) != 2 or not (safe_video_source(arguments[0]) or safe_boomstream_source(arguments[0]))
             or not 1 <= len(arguments[1].strip()) <= 200):
-        raise HTTPException(422, "Видео принимает HTTPS-ссылку на MP4 и короткий заголовок")
+        raise HTTPException(422, "Видео принимает HTTPS-ссылку на MP4 или Boomstream и короткий заголовок")
     source, title = arguments
-    player = "/apps/video-player.html?" + urlencode({"src": source})
+    player = source if safe_boomstream_source(source) else "/apps/video-player.html?" + urlencode({"src": source})
     return (
         f'<div class="media"><iframe src="{escape(player, quote=True)}"'
         f' title="{escape(title, quote=True)}"></iframe></div>'
