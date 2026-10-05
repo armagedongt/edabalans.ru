@@ -11,8 +11,12 @@
   function cookieDomain(host) {
     return ['edabalans.ru','xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai'].find(root => host === root || host.endsWith('.'+root));
   }
-  function japanPath(path) { return path.replace(/\/$/,'').endsWith('/pochemu-yapontsy-hudye-a-ty-net'); }
-  if (typeof module !== 'undefined') { module.exports = {due,progress,cookieDomain,japanPath}; return; }
+  function subscriptionAnchor(article) {
+    const id = article.dataset.subscriptionBeforeHeading;
+    if (!id) return undefined;
+    return Array.from(article.querySelectorAll(':scope > h2')).find(node => node.id === id);
+  }
+  if (typeof module !== 'undefined') { module.exports = {due,progress,cookieDomain,subscriptionAnchor}; return; }
   const popup = document.getElementById('reader-popup'), article = document.getElementById('article');
   if (!popup || !article || typeof popup.showModal !== 'function') return;
   // Provenance takes precedence even if a stale client context says otherwise.
@@ -71,9 +75,9 @@
       if (context.telegram && ['https://t.me/Fitness_Talks_bot','https://t.me/Fitness_Talks/260'].includes(context.telegram.url)) {
         popup.querySelector('.reader-bot-telegram').href = context.telegram.url;
       }
-      // Only the accepted Japan placement is assigned. Other editorial anchors are not guessed.
-      const anchor = Array.from(article.querySelectorAll(':scope > h2')).find(node => node.textContent.startsWith('Принцип №4.'));
-      if (japanPath(location.pathname) && anchor) {
+      // An absent or edited heading disables the curated slot; never guess a new placement.
+      const anchor = subscriptionAnchor(article);
+      if (anchor) {
         inline = popup.querySelector('.reader-channel').cloneNode(true);
         inline.id = 'reader-channel-inline';
         anchor.before(inline);

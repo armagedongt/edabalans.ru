@@ -158,7 +158,7 @@ def blog_author() -> HTMLResponse:
                     "{{DESCRIPTION}}": escape(author["description"], quote=True), "{{CANONICAL}}": escape(person["url"], quote=True),
                     "{{HERO_ABSOLUTE}}": escape(person["image"], quote=True), "{{CATEGORY}}": "", "{{HERO}}": "",
                     "{{TOC_DESKTOP}}": "", "{{TOC_MOBILE}}": "", "{{ARTICLE_BODY}}": body,
-                    "{{READER_NAVIGATION}}": "",
+                    "{{READER_NAVIGATION}}": "", "{{SUBSCRIPTION_SLOT}}": "",
                     "{{BREADCRUMBS}}": breadcrumbs, "{{AUTHOR_BYLINE}}": "", "{{ARTICLE_DATES}}": "",
                     "{{BREADCRUMB_DATA}}": json.dumps({"@context": "https://schema.org", **breadcrumb_data}, ensure_ascii=False).replace("</", r"<\/"),
                     "{{STRUCTURED_DATA}}": json.dumps({"@context": "https://schema.org", "@type": "ProfilePage", "url": person["url"], "mainEntity": person}, ensure_ascii=False).replace("</", r"<\/")}
@@ -325,6 +325,10 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         "{{AUTHOR_BYLINE}}": f'<a class="author-byline" href="{escape(BLOG_PUBLIC_ORIGIN + author["path"], quote=True)}"><img src="{escape(author["image"], quote=True)}" alt="" width="32" height="32">{escape(author["name"])}, {escape(author["role"].lower())}</a>',
         "{{ARTICLE_DATES}}": '<div class="article-dates">' + ' · '.join(dates) + '</div>' if dates else '',
         "{{ARTICLE_BODY}}": body,
+        "{{SUBSCRIPTION_SLOT}}": (
+            f' data-subscription-before-heading="{escape(article.subscription_before_heading, quote=True)}"'
+            if article.subscription_before_heading else ""
+        ),
         "{{TOC_DESKTOP}}": toc_html(toc, mobile=False),
         "{{TOC_MOBILE}}": toc_html(toc, mobile=True),
         "{{READER_NAVIGATION}}": _template("reader-navigation.html").replace(
@@ -346,7 +350,7 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
     )
     if 'data-channel-origin="telegram"' not in body:
         rendered = rendered.replace('</head>', '<link rel="stylesheet" href="/blog/assets/reader-subscription.css?v=20261005a"></head>')
-        rendered = rendered.replace('</body>', _template('reader-subscription.html') + '<script src="/blog/assets/reader-subscription.js?v=20261005a" defer></script></body>')
+        rendered = rendered.replace('</body>', _template('reader-subscription.html') + '<script src="/blog/assets/reader-subscription.js?v=20261005b" defer></script></body>')
     return _html_response(apply_responsive_images(rendered, catalog.content_dir, catalog.allowed_media))
 
 

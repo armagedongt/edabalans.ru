@@ -64,6 +64,7 @@ class BlogArticle:
     media: tuple[str, ...]
     original_published_at: str | None = None
     inline_related: BlogInlineRelated | None = None
+    subscription_before_heading: str | None = None
 
 
 @dataclass(frozen=True)
@@ -262,6 +263,10 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
             media=tuple(media_raw),
             original_published_at=(raw.get("source_provenance") or {}).get("original_published_at"),
             inline_related=inline_related,
+            subscription_before_heading=(
+                _required_text(raw, "subscription_before_heading")
+                if raw.get("subscription_before_heading") is not None else None
+            ),
         )
         articles.append(article)
 

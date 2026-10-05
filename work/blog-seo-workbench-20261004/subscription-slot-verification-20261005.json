@@ -1,0 +1,23 @@
+{
+  "status": "local_verified_release_pending",
+  "scope": "Manifest-backed curated subscription slot; existing Japan placement preserved",
+  "field": "subscription_before_heading",
+  "assigned_source_ids": ["11927800"],
+  "approved_anchor": "принцип-no4-контролировать-окружение",
+  "checks": {
+    "pytest_connected": "68 passed",
+    "pytest_final_slot": "8 passed after independent literal-anchor assertion",
+    "node": "passed",
+    "browser": "Edge 360 and 1440: exact inline placement; missing anchor disables inline and keeps popup; Escape closes; zero page errors",
+    "diff_check": "passed",
+    "author_body_seo_and_design_changes": "none"
+  },
+  "reviews": {
+    "waves": 2,
+    "code": "clean",
+    "tests": "clean; actual DOM boundary and approved anchor coverage added",
+    "security": "clean",
+    "documentation": "clean; clarified anchor ID vs heading punctuation"
+  },
+  "remaining": "Editorial full-material placement review beyond Japan; no automatic bulk assignment. Analytics, search consoles and MAX pin stay deferred."
+}
