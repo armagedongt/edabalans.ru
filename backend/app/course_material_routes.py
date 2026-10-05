@@ -50,6 +50,7 @@ DIRECT_RECIPE_PAGES = {
     "green-herb-sauce": "Зелёный соус",
     "meat-quesadillas": "Кесадильи с курицей и говядиной",
     "cheburek-substitute": "Заменитель чебурека",
+    "salad-dressings": "Заправки для салатов",
 }
 MASTERCLASS_MEDIA_ROOTS = (
     (COURSE_CONTENT_ROOT / "editorial" / "assets").resolve(),
