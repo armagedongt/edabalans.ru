@@ -1252,7 +1252,7 @@ def test_checkout_and_cookie_legal_links_use_permanent_public_domain() -> None:
 
 def test_intensive_concept_pages_are_public() -> None:
     client.cookies.clear()
-    menu = client.get("/intensive")
+    menu = client.get("/intensive/archive")
     assert menu.status_code == 200
     assert "Бесплатный интенсив" in menu.text
     assert "«Последнее похудение»" in menu.text
@@ -1314,7 +1314,7 @@ def test_intensive_concept_pages_are_public() -> None:
     assert loader.headers["cache-control"] == "no-cache"
     assert loader.headers["access-control-allow-origin"] == "*"
     assert "[data-edabalans-intensive]" in loader.text
-    assert "appHost + '/intensive'" in loader.text
+    assert "appHost + '/intensive/archive'" in loader.text
     assert "DOMParser" in loader.text
     assert "intensive_home_open" in loader.text
     assert "intensive_menu_open" in loader.text

@@ -55,6 +55,14 @@ CLIENT_EVENT_TYPES = {
     "video_complete",
     "video_exit",
 }
+ONEPAGE_SECTIONS = {"block-1", "block-2", "block-3", "actions"}
+ONEPAGE_EVENT_TYPES = {
+    "intensive_onepage_open",
+    "intensive_onepage_section",
+    "intensive_onepage_end",
+    "intensive_onepage_messenger_click",
+}
+CLIENT_EVENT_TYPES.update(ONEPAGE_EVENT_TYPES)
 ATTRIBUTION_KEYS = (
     "utm_source",
     "utm_medium",
@@ -332,7 +340,22 @@ def record_client_event(
     next_day = integer_detail("next_day")
     if day and day not in range(1, 5):
         raise ValueError("invalid intensive day")
-    if event_type == "page_progress":
+    onepage_section = None
+    onepage_messenger = None
+    if event_type in ONEPAGE_EVENT_TYPES:
+        if event_type == "intensive_onepage_section":
+            onepage_section = details.get("section")
+            if onepage_section not in ONEPAGE_SECTIONS:
+                raise ValueError("invalid intensive onepage section")
+            event_key = f"onepage:section:{onepage_section}"
+        elif event_type == "intensive_onepage_messenger_click":
+            onepage_messenger = details.get("messenger")
+            if onepage_messenger not in PLATFORMS:
+                raise ValueError("invalid intensive onepage messenger")
+            event_key = f"onepage:messenger:{onepage_messenger}:clicked"
+        else:
+            event_key = f"onepage:{event_type}"
+    elif event_type == "page_progress":
         if day not in rows:
             raise ValueError("intensive day is not open")
         progress = integer_detail("progress_percent")
@@ -374,6 +397,19 @@ def record_client_event(
         "client_event_id": event_id,
         "platform": platform,
     }
+    if event_type in ONEPAGE_EVENT_TYPES:
+        safe_details["page_key"] = "intensive-onepage"
+        if onepage_section is not None:
+            safe_details["section"] = onepage_section
+        if onepage_messenger is not None:
+            safe_details["messenger"] = onepage_messenger
+        return course_event(
+            db,
+            user_id,
+            event_key,
+            event_type,
+            details=safe_details,
+        )
     for key in (
         "day",
         "next_day",

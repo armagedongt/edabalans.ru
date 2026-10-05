@@ -41,6 +41,7 @@ from app.auth import admin_identity, require_admin, security, session_admin
 from app.database import get_db
 from app.legal_service import legal_status_payload
 from app.intensive_public_cta import INTENSIVE_PUBLIC_CTA
+from app.intensive_onepage import page as render_intensive_onepage
 from app.intensive_web_access import (
     consume_access_token,
     attributed_path,
@@ -823,6 +824,12 @@ def intensive_max_logo() -> FileResponse:
 @router.get("/intensive/assets/{day_code}/{asset_name}", include_in_schema=False)
 def intensive_content_asset(day_code: str, asset_name: str) -> FileResponse:
     allowed = {
+        "roadmap": {
+            "before-after-after-trimmed.png", "dqs-category-score.png",
+            "food-balance-spectrum.png", "fruit-and-vegetable-consumption-2024.png",
+            "training-promises-without-hourly-notes.webp", "wait-a-moment-meme-approved.png",
+            "telegram-plane.svg", "manrope-800.ttf",
+        },
         "intensive-day-2": {
             "intro-cat.png",
             "product-categories.png",
@@ -834,8 +841,42 @@ def intensive_content_asset(day_code: str, asset_name: str) -> FileResponse:
     return public_asset(STATIC_DIR / "intensive" / "assets" / day_code / asset_name)
 
 
+@router.get("/intensive/onepage{asset_name}", include_in_schema=False)
+def intensive_onepage_asset(asset_name: str) -> FileResponse:
+    if asset_name not in {".js", ".css", "-tracking.js", "-components.css"}:
+        raise HTTPException(status_code=404, detail="intensive asset not found")
+    return public_asset(STATIC_DIR / "intensive" / ("onepage" + asset_name))
+
+
 @router.get("/intensive", include_in_schema=False)
 @router.get("/intensive/", include_in_schema=False)
+def intensive_onepage(
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> Response:
+    supplied_token = request.query_params.get("i") or request.query_params.get("token")
+    if supplied_token:
+        token_row = consume_access_token(db, supplied_token)
+        if token_row is None:
+            raise HTTPException(status_code=404, detail="intensive link not found")
+        record_entry_attribution(db, token_row.user_id, token_row.platform, request)
+        db.commit()
+        # Restore the existing session, then remove the code before any third-party JS.
+        query = urlencode([(key, value) for key, value in request.query_params.multi_items()
+                           if key not in {"i", "token"}])
+        response = RedirectResponse("/intensive" + ("?" + query if query else ""), status_code=303)
+        set_session(response, request, settings.app_auth_secret, token_row.user_id, token_row.platform)
+    else:
+        identity = session_identity(request, settings.app_auth_secret)
+        identified = identity is not None and db.get(User, identity[0]) is not None
+        response = HTMLResponse(render_intensive_onepage(identified=identified))
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    return response
+
+
+@router.get("/intensive/archive", include_in_schema=False)
 @router.get("/intensive/menu", include_in_schema=False)
 def intensive_menu(
     request: Request,
@@ -1049,7 +1090,7 @@ def intensive_day_asset(
             day_number,
             allow_direct_delivery=direct_delivery,
         ) is None:
-            return RedirectResponse(attributed_path(request, "/intensive"), status_code=307)
+            return RedirectResponse(attributed_path(request, "/intensive/archive"), status_code=307)
         db.commit()
     response = public_asset(STATIC_DIR / "intensive" / f"{day_code}.html")
     response.headers["Referrer-Policy"] = "no-referrer"

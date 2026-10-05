@@ -917,7 +917,7 @@ try {
     const publicPage=await browser.newPage()
     const documentReady=barrier(),analytics=barrier(),pricing=barrier(),pageRequested=barrier()
     const loaderPath=kind==='homepage'?'/homepage.js':'/intensive/tilda-loader.js'
-    const sourcePath=kind==='homepage'?'/preview/homepage-release-candidate':'/intensive'
+    const sourcePath=kind==='homepage'?'/preview/homepage-release-candidate':'/intensive/archive'
     let authCalls=0
     await publicPage.route('**/*',async route=>{
       const url=new URL(route.request().url()),path=url.pathname

@@ -184,7 +184,7 @@
   prepareTildaShell();
   var loaderReady = loadSharedScript('edabalans-shared-loader', '/embed.js', function () { return Boolean(window.EdabalansEmbed); })
     .then(function () { if (!loadFailed) window.EdabalansEmbed.beginLoading(mount, 'Загрузка страницы'); });
-  var pageRequest = fetch(appHost + '/intensive', {credentials: 'omit', mode: 'cors', cache: 'no-store'})
+  var pageRequest = fetch(appHost + '/intensive/archive', {credentials: 'omit', mode: 'cors', cache: 'no-store'})
     .then(function (response) {
       if (!response.ok) throw new Error('intensive ' + response.status);
       return response.text().then(function (html) {

@@ -527,11 +527,14 @@ writes_to = ["platform.content", "products.masterclass.runtime"]
 
 [[modules]]
 id = "products.intensive"
-admin_catalog = [{ category = "courses", order = 30, url = "https://edabalans.ru/intensive/day-1", label = "Бесплатный интенсив", icon = "⚡", description = "Страницы и редактура четырёх дней интенсива." }]
+admin_catalog = [{ category = "courses", order = 30, url = "https://edabalans.ru/intensive", label = "Бесплатный интенсив", icon = "⚡", description = "Единая статья и архив четырёх дней интенсива." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.intensive.md"
 owns_files = [
-  "backend/app/intensive_public_cta.py",
+  "backend/app/intensive_public_cta.py", "backend/app/intensive_onepage.py",
+  "content/masterclass/editorial/weight-loss-roadmap.md",
+  "backend/tests/test_intensive_onepage.py", "backend/tests/browser/intensive-onepage-tracking.cjs",
+  "docs/INTENSIVE_ONEPAGE_ANALYTICS.md", "docs/intensive-analytics-goals.json", "docs/intensive-analytics-status.json",
   "backend/app/intensive_routes.py", "backend/app/intensive_web_access.py",
   "backend/app/static/intensive/**",
   "backend/tests/test_intensive_editor.py", "backend/tests/test_intensive_web_access.py",
