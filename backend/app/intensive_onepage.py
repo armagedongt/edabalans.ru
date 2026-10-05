@@ -172,12 +172,12 @@ def page(*, identified: bool = False):
 <link rel="stylesheet" href="/intensive/onepage-components.css?v=20261005">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="/intensive/onepage.css?v=20261005-menu"><script defer src="/intensive/onepage.js?v=20261005"></script>
+<link rel="stylesheet" href="/intensive/onepage.css?v=20261005-menu-refinement"><script defer src="/intensive/onepage.js?v=20261005"></script>
 <script defer src="/intensive/onepage-tracking.js?v=20261005"></script></head><body>
 <header class="reading-header"><nav aria-label="Разделы интенсива">{tabs}</nav>
 <div class="reading-track" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="reading-fill"></div></div></header>
 <main id="article" data-intensive-onepage data-intensive-revision="{revision}" data-intensive-identified="{str(identified).lower()}"><h1 class="intensive-title">{hero_title(title)}</h1>{body}</main>
-<button class="toc-trigger" type="button" aria-haspopup="dialog" aria-controls="contents">☰ Содержание</button>
+<button class="toc-trigger" type="button" aria-label="Открыть содержание" aria-haspopup="dialog" aria-controls="contents"><span class="toc-trigger__icon" aria-hidden="true"><span></span><span></span><span></span></span></button>
 <dialog id="contents" aria-labelledby="contents-title"><div class="toc-top"><h2 id="contents-title">В этом материале</h2>
 <button type="button" class="toc-close" aria-label="Закрыть содержание">×</button></div><nav aria-label="Все темы интенсива">{toc}</nav></dialog>
 <div data-edabalans-site-footer></div><script defer src="/site-footer.js"></script>
