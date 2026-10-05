@@ -2,8 +2,10 @@
   "date": "2026-10-05",
   "integration_commit": "3c8d681",
   "base_main": "81a7d2a",
-  "release_status": "browser_corrections_verified_ready_for_ci_retry",
-  "production_changed": false,
+  "release_status": "production_verified",
+  "production_changed": true,
+  "verified_production_commit": "320a851e17dcd923130dc20d461aed18cbbcfc36",
+  "successful_ci_run": 37248671644,
   "checks": {
     "all_blog_initial": "195 passed, 4 failed; failures assumed the target article was on page 1 before SSR pagination",
     "pagination_test_correction": "Select the actual manifest page; retain cover, draft isolation and anonymous catalogue assertions",
@@ -21,10 +23,19 @@
     "browser_pagination_smoke": "PASS: exact E2E loop follows 3 real next links and finds the target card on page 4",
     "browser_full_local": "PASS: six viewport/editor checks, preview/save, explicit publish, selected cover on actual SSR page, conflict/offline retention and beforeunload",
     "browser_environment": "Shared footer/cookie scripts served by this revision's isolated QA server; DOM and explicit loaded article state replace network-idle timing assumptions",
-    "docs_review_wave2": "clean; implemented contract does not claim a verified production deploy"
+    "docs_review_wave2": "clean; canonical contracts describe implementation; actual release verified separately",
+    "final_ci": "PASS: Test workflow for 320a851; no failed steps",
+    "local_authoring_retry": "38 passed; 2 setup errors caused by Windows TEMP permissions; exact two cases passed with fresh explicit basetemp",
+    "production": "Deploy journal confirms 320a851 successfully deployed; service status and public routes checked",
+    "public_catalog": "First and second SSR pages each contain 15 article cards",
+    "public_seo_preservation": "62 articles, zero capture errors; H1/search title/description/canonical unchanged against original archive",
+    "reader_context": "Anonymous context private,no-store; unknown visitor routes to existing bots; invalid recognition token rejected without Set-Cookie",
+    "editor_boundary": "Public host /admin/api/blog/articles remains 404",
+    "telegram_origin_api": "Two confirmed full-source articles published through existing versioned API; both draft version 2, published version 1; origin plaque present, subscription popup/script absent"
   },
   "boundaries": {
     "author_markdown_changed": false,
+    "metadata_only_api_updates": 2,
     "proposed_seo_values_applied": false,
     "new_login_or_cabinet": false,
     "metrics_and_search_consoles": "deferred",
@@ -32,13 +43,17 @@
   },
   "remaining_editorial": [
     "Subscription inline anchors beyond the approved Japan example",
-    "Full-source confirmation before assigning Telegram-origin metadata; announcements are not full posts"
+    "Full-source confirmation of remaining Telegram-origin candidates; two confirmed articles assigned, announcements are not full posts",
+    "Seven unconfirmed original publication dates remain unknown; no fabricated dates"
   ],
-  "library_read_only": {
+  "library_provenance": {
     "resource": "knowledge://resource/article-family-routing",
-    "version": 32,
+    "version": 34,
     "canonical_families": 62,
     "deferred_families": 204,
-    "navigation_is_not_full_source_evidence": true
+    "navigation_is_not_full_source_evidence": true,
+    "full_source_review_records_updated": 3,
+    "origin_applied_articles": 2,
+    "exact_readback": "PASS"
   }
 }

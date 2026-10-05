@@ -150,7 +150,8 @@ python backend/scripts/publish_blog_draft.py `
 
 - редактор правит Markdown и выбирает карточную обложку из разрешённых media; hero, сам
   набор media, видимый title, CTA и related остаются manifest-backed; description и seo_title меняются в MD;
-- нет WYSIWYG, автоматического related, popup и blog-аналитики;
+- нет WYSIWYG, автоматического related и blog-аналитики; подписной popup
+  реализован по [читательскому контракту](modules/blog/READER_INSERTIONS.md);
 - закрытые материалы не попадают в sitemap, публичный каталог или поиск;
 - неизвестные slug и кнопка «Новая статья» не поддерживаются.
 
