@@ -15,5 +15,10 @@
     "exact_first_deploy_time_claimed": false
   },
   "reviews": {"code_wave_1": "clean", "test_wave_1": "source/fallback priority coverage missing", "correction": "real public route fixture with both timestamps and source priority", "code_wave_2": "clean", "test_wave_2": "clean"},
-  "public_verification": "pending release"
+  "local_tests": {"passed": 25, "files": ["backend/tests/test_blog_author_dates.py", "backend/tests/test_blog_content.py"]},
+  "documentation_review": {"wave_1": "clean", "wave_2": "clean"},
+  "release": {"source_commit": "4f7577328e4fa3dee85495311a61114d246aa9c8", "main_integration": "1e8a2e031a339bc6ca5225ea32866e90590625cd", "ci_run": 37318216723, "ci_conclusion": "success", "confirmed_production_commit": "02e6ab3deab3d76d71a0df4f97ab07f4b9f287d4", "journal_time_utc": "2026-10-05T13:55:31Z", "source_is_ancestor": true},
+  "public_verification": "pass",
+  "public_checks": {"approved_bio": true, "description_photo_links_preserved": true, "seven_datePublished_and_visible_labels": "7/7 pass", "article_bodies_H1_search_fields_changed_by_this_commit": false},
+  "future_topics": {"prepared_briefs": 20, "standalone_candidates": 10, "conditional": 6, "existing_source_routes": 4, "new_articles_written_or_published": 0, "full_future_article_factcheck_claimed": false}
 }
