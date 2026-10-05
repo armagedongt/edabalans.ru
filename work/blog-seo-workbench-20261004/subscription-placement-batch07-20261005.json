@@ -1,0 +1,43 @@
+{
+  "status": "local_verified_release_pending",
+  "browser_verification": {"engine": "Edge", "widths": [360, 1440], "cases": 12, "result": "pass"},
+  "source_basis": "Full current public SSR article body, not snippets; no author text replacement",
+  "articles": [
+    {
+      "source_id": "11269472",
+      "decision": "no_slot",
+      "reason": "Короткая история, исследование и практический температурный ориентир составляют цельный ответ. Подписную паузу между риском и советом не добавлять."
+    },
+    {
+      "source_id": "12237133",
+      "decision": "assigned",
+      "anchor": "7-40-сборы-и-работа",
+      "reason": "Завершена утренняя часть с процедурами; начинается организация рабочего дня. Related позже, перед дневным питанием."
+    },
+    {
+      "source_id": "11875492",
+      "decision": "assigned",
+      "anchor": "что-такое-умеренное-количество",
+      "reason": "Завершены состав и общий ориентир по сахарам; далее самостоятельный практический вопрос суммарного количества."
+    },
+    {
+      "source_id": "tilda-49734795",
+      "decision": "assigned",
+      "anchor": "уровень-любитель",
+      "reason": "Закончен блок начинающего из семи советов; далее новый уровень. Related позже, перед уровнем ПРО."
+    },
+    {
+      "source_id": "tilda-49745867",
+      "decision": "assigned",
+      "anchor": "мои-результаты",
+      "reason": "Правила учёта завершены примером повторного завтрака; далее самостоятельный личный эксперимент. Не прерывать подсчёт растений."
+    },
+    {
+      "source_id": "tilda-67280331",
+      "decision": "assigned",
+      "anchor": "нужны-ли-вам-умные-весы",
+      "reason": "Завершена аргументация регулярного измерения и исследования; далее отдельный выбор оборудования."
+    }
+  ],
+  "preservation": "Only manifest subscription anchors; author bodies, SEO, media, families and existing links unchanged"
+}

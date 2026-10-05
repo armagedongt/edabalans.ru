@@ -1,0 +1,16 @@
+{
+ "status":"local_verified_release_pending",
+ "checks":"16 actual Edge DOM cases passed at360/1440: five assigned slots, three no-slot decisions, popup available, no page errors",
+ "source_basis":"Full current public SSR article body, not snippets; no author text replacement",
+ "articles":[
+  {"source_id":"habits-formation-and-one-percent","decision":"no_slot","reason":"Сравнение пассивных/активных привычек не разрывать; на переходе к правилу1% уже related. Достаточно независимого popup."},
+  {"source_id":"11339712","decision":"no_slot","reason":"Компактный единый разбор раздельного питания с последовательным усилением аргумента; не добавлять рекламную паузу."},
+  {"source_id":"intuitivnoe-pitanie-04-27-2","decision":"assigned","anchor":"10-принципов-интуитивного-питания","reason":"Закончено объяснение назначения метода и исследования; далее отдельный практический слой принципов и примеров."},
+  {"source_id":"11665295","decision":"assigned","anchor":"аргумент-no3","reason":"Закончена проверка загрязнений/качества поставок; начинается самостоятельный вопрос пищевой ценности рыбы."},
+  {"source_id":"12109482","decision":"assigned","anchor":"продуктовая-корзина","reason":"Закончена тема зимней активности и лестницы; далее отдельная тема питания. Related расположен существенно позже, перед праздниками."},
+  {"source_id":"13178972","decision":"assigned","anchor":"а-теперь-давайте-измерим-вашу-жирность","reason":"Закончено объяснение диапазонов жирности; далее отдельная практическая инструкция измерения. Не прерывать саму инструкцию."},
+  {"source_id":"13762311","decision":"assigned","anchor":"менее-очевидные-продукты","reason":"Закончены основные продуктовые категории; далее дополнительный набор продуктов и способов приготовления. Related выше, конечная CTA далеко."},
+  {"source_id":"Minus-12-kilogramm-za-2-mesyaca-07-13","decision":"no_slot","reason":"Короткое предостережение о завышенных ожиданиях. Не разрывать расчёт и его ограничения подписной рекламой."}
+ ],
+ "preservation":"Only five manifest anchors; author bodies, medical claims, SEO metadata, media and existing links unchanged"
+}
