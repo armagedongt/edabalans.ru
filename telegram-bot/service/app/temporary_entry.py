@@ -12,6 +12,8 @@ POOL_NAME = "Временный вход — единый интенсив"
 BLOCKED_STATUSES = {"blocked", "stopped"}
 MARKETING_CODES = {"start_attribution_entry", "welcome_intensive", "prepurchase_nurture", "prepurchase_masterclass", "postmasterclass_nurture"}
 ENTRY_RULES = (("blocked", "silent"), ("has_masterclass", "normal"), ("stop_presale", "silent"))
+# Existing canonical CRM code; the visible name can be edited independently.
+STOP_TAG_CODE = "rule2_стоп_до_покупки_мастер_класса_64631f8d"
 BODY = (
     "<b>Посмотрите на своё питание и похудение совершенно другими глазами — развидеть это потом будет невозможно!</b>\n\n"
     "Похудеть — не трудно! Трудно — сделать так, чтобы не приходилось худеть каждый год заново!\n\n"
@@ -64,14 +66,21 @@ def entry_decision(session: Session, contact: Contact) -> str:
     from app.engine import has_paid_product
     from app.start_router import MASTERCLASS_CODES
     user = session.get(CrmUser, contact.user_id) if contact.user_id else None
+    stop_tag = session.scalar(select(CrmTag).where(CrmTag.code == STOP_TAG_CODE))
+    if stop_tag is None:
+        stop_tag = session.scalar(select(CrmTag).where(CrmTag.name == "Стоп - До покупки мастер-класса", CrmTag.status == "active"))
+    visited = set()
+    while stop_tag and stop_tag.merged_into_tag_id and stop_tag.id not in visited:
+        visited.add(stop_tag.id)
+        stop_tag = session.get(CrmTag, stop_tag.merged_into_tag_id)
     facts = {
         "blocked": contact.status in BLOCKED_STATUSES or bool(user and user.status == "blocked"),
         "stop_presale": bool(contact.user_id and session.scalar(
             select(CrmUserTag.id).join(CrmTag, CrmTag.id == CrmUserTag.tag_id).where(
                 CrmUserTag.user_id == contact.user_id, CrmTag.status == "active",
-                CrmTag.name == "Стоп - До покупки мастер-класса",
+                CrmTag.id == stop_tag.id,
             )
-        )),
+        )) if stop_tag else False,
     }
     for fact, decision in ENTRY_RULES:
         if fact == "has_masterclass":

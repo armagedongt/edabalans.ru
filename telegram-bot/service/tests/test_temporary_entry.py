@@ -219,6 +219,30 @@ def test_telegram_group_does_not_receive_personal_invitation(setup):
     assert not sender.sent
 
 
+def test_stop_tag_survives_rename_and_merge(setup):
+    from app.temporary_entry import STOP_TAG_CODE
+    session, sender = setup
+    main.process_update(tg(1), session)
+    contact = session.scalar(select(Contact))
+    tag = CrmTag(code=STOP_TAG_CODE, name="Переименованная остановка", status="active", category="manual")
+    session.add(tag)
+    session.flush()
+    session.add(CrmUserTag(user_id=contact.user_id, tag_id=tag.id, source="manual"))
+    session.commit()
+    sender.sent.clear()
+    main.process_update(tg(2), session)
+    assert not sender.sent
+    target = CrmTag(code="merged-stop", name="Остановка после объединения", status="active", category="manual")
+    session.add(target)
+    session.flush()
+    tag.status = "archived"
+    tag.merged_into_tag_id = target.id
+    session.query(CrmUserTag).filter_by(user_id=contact.user_id, tag_id=tag.id).update({"tag_id": target.id})
+    session.commit()
+    main.process_update(tg(3), session)
+    assert not sender.sent
+
+
 def test_max_service_and_self_events_are_not_answered(setup):
     session, sender = setup
     for e in [max_event(1, "bot_stopped"), {"update_type": "message_created", "message": {"sender": {"user_id": 5101, "is_bot": True}}}]:
