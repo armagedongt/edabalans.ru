@@ -8,15 +8,19 @@ body{margin:0;font-family:Arial,sans-serif}
 #article .intensive-title{margin:0 0 30px;font-family:Unbounded,Manrope,Arial,sans-serif;font-size:clamp(23px,6.25vw,52px);font-weight:800;line-height:1.06;letter-spacing:-.05em;text-transform:uppercase}
 #article .intensive-title span{display:block}
 #article .intensive-title__accent{width:max-content;max-width:100%;margin-top:10px;padding:clamp(5px,1.8vw,8px) clamp(7px,2.2vw,11px) clamp(7px,2.2vw,11px);border-radius:clamp(8px,2.7vw,12px);background:#ff6b36;color:#fff;font-size:.86em;line-height:1.05;letter-spacing:-.025em;white-space:nowrap;transform:rotate(-.8deg)}
+#article h2{margin:56px 0 20px;font:800 clamp(24px,3.4vw,32px)/1.2 Unbounded,Manrope,Arial,sans-serif;letter-spacing:-.035em;text-wrap:balance}
+#article h3{margin:32px 0 14px;font:800 clamp(20px,2.5vw,25px)/1.25 Manrope,Arial,sans-serif;letter-spacing:-.02em;text-wrap:balance}
+#article h2+h3{margin-top:18px}
 #article h2,#article h3,.section-anchor{scroll-margin-top:var(--header-offset)}
 .section-anchor{display:block;height:0}
 #article .comparison-unbalanced .article-note-accent{background:#fbe8e5}
 #article .comparison-balanced .article-note-accent{background:#e5f3df}
 #article .comparison .article-note-accent{padding:24px;border-radius:16px}
 .reading-header{position:fixed;z-index:10;top:12px;left:50%;transform:translateX(-50%);width:min(640px,calc(100% - 40px));padding:8px 14px;background:rgba(255,255,255,.97);border:1px solid #e7e9eb;border-radius:18px;box-shadow:0 7px 26px #19314716}
-.reading-header nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:6px}
-.reading-header a{min-height:36px;display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none;color:#65707b;font-size:13px;line-height:1.25;font-weight:600;text-wrap:balance}
-.reading-header a[aria-current]{color:#17191e}
+.reading-header nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-bottom:6px}
+.reading-header a{min-height:40px;display:flex;align-items:center;justify-content:center;padding:5px 4px;border-radius:10px;text-align:center;text-decoration:none;color:#65707b;font:800 13px/1.25 Manrope,Arial,sans-serif;text-wrap:balance}
+.reading-header a:hover,.reading-header a:focus-visible{color:#118ed8;background:#f4fbff}
+.reading-header a[aria-current]{color:#118ed8;background:#eaf8ff}
 .reading-track{height:6px;overflow:hidden;border-radius:10px;background:#e9edf0}
 .reading-fill{width:100%;height:100%;background:linear-gradient(90deg,#278ddc 0%,#42b782 45%,#f4a147 78%,#ed754d 100%);clip-path:inset(0 100% 0 0 round 10px);transition:clip-path .35s ease-out}
 .toc-trigger{position:fixed;right:24px;bottom:24px;z-index:20;display:flex;align-items:center;justify-content:center;gap:10px;height:48px;padding:0 16px;border:1px solid rgba(39,175,245,.45);border-radius:12px;background:#eaf8ff;box-shadow:0 8px 24px rgba(12,91,136,.12);color:#118ed8;font:800 14px/1.25 Manrope,Arial,sans-serif;cursor:pointer}
@@ -47,7 +51,7 @@ body:has(#contents[open]){overflow:hidden}
 #contents .toc-contact-links a{min-height:42px;padding:8px 10px;color:#303a42;font:700 14px/1.3 Manrope,Arial,sans-serif}
 #contents section+section{margin-top:20px}
 #contents a{display:block;color:inherit;font-weight:400;text-decoration:none;line-height:1.4;padding:8px 9px;border-radius:9px}
-#contents .toc-group{color:#202a32;font-weight:700;font-size:16px}
+#contents .toc-group{color:#202a32;font:800 15px/1.35 Unbounded,Manrope,Arial,sans-serif;letter-spacing:-.025em}
 #contents ul{list-style:none;padding:0 0 0 14px;margin:4px 0 0;border-left:2px solid #e8edf0;font-size:14px}
 #contents a:hover,#contents a:focus-visible{background:#eaf8ff;color:#118ed8}
 #article .article-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:28px 0}
@@ -67,6 +71,7 @@ body:has(#contents[open]){overflow:hidden}
  #article{width:calc(100% - 32px);margin-top:104px;margin-bottom:110px}
  #article .intensive-title{font-size:clamp(21px,6.2vw,28px);margin-bottom:24px}
  #article .intensive-title__accent{font-size:clamp(17px,5.15vw,23px)}
+ #article h2{margin-top:44px}
  .reading-header{top:8px;width:calc(100% - 24px);padding:7px 8px;border-radius:15px}
  .reading-header nav{gap:4px;margin-bottom:5px}
  .reading-header a{font-size:11px;min-height:30px;line-height:1.3}
