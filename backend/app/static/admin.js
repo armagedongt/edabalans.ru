@@ -819,10 +819,10 @@
         ? `<a href="/admin/users?user=${encodeURIComponent(item.user_id)}">${esc(item.display_name)}</a>`
         : `<b>${esc(item.display_name)}</b>`;
       const allActions = marketingTimeline(item);
-      const courseActions = allActions.filter((action) => /день|подписк|главная интенсива|видео/i.test(action.label));
+      const courseActions = allActions.filter((action) => /день|подписк|интенсив|видео/i.test(action.label));
       const maxDay = item.later_days?.max_day;
-      const courseSummary = maxDay ? `день ${maxDay}` : item.day_one ? "день 1" : item.subscription ? "подписан" : "—";
-      const status = item.status === "blocked" ? "Заблокировал" : item.status === "lost_before_start" ? "Не стартовал" : item.is_new_lead ? "Новый" : "Повторный";
+      const courseSummary = maxDay ? `день ${maxDay}` : item.day_one ? "день 1" : item.subscription ? "подписан" : courseActions.some(action => /статью|заголовок|текста|знакомиться|раздел|конец/i.test(action.label)) ? "Статья" : "—";
+      const status = item.status === "blocked" ? "Заблокировал" : item.status === "lost_before_start" ? "Не стартовал" : !item.start ? "Читатель" : item.is_new_lead ? "Новый" : "Повторный";
       const sourceDetails = [
         { label: `Источник: ${item.source}` },
         { label: `Размещение: ${item.placement}` },

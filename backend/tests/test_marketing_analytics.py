@@ -736,3 +736,37 @@ def test_real_intensive_course_events_appear_in_lead_path() -> None:
     assert row["day_one"] is not None
     assert row["other_actions"][-1]["label"] == "Смотрел видео"
     assert row["other_actions"][-1]["detail"] == "день 1, 50%"
+
+
+def test_readers_are_findable_without_start_in_period_and_do_not_inflate_bot_funnel():
+    client, factory = make_client()
+    with factory() as db:
+        user = User(display_name='Читатель статьи', status='active')
+        db.add(user)
+        db.flush()
+        user_id = user.id
+        db.add(MessengerAccount(user_id=user.id, platform='max', platform_user_id='reader', username='reader_qa', source='max_bot'))
+        db.add(CourseEvent(user_id=user.id, course_code='intensive', event_key='reading', event_type='intensive_onepage_progress',
+                           occurred_at=datetime(2026, 10, 7, 10, tzinfo=timezone.utc),
+                           details={'platform':'max', 'heading_title':'Ошибка № 1', 'furthest_heading_title':'Ошибка № 3', 'viewed_percent':47, 'active_seconds':60}))
+        db.commit()
+    for query in ['', '&user=reader_qa', f'&user={user_id}']:
+        result = client.get('/admin/api/marketing/overview?from=2026-10-07&to=2026-10-07'+query, auth=ADMIN_AUTH)
+        assert result.status_code == 200
+        payload = result.json()
+        assert len(payload['rows']) == 1
+        row = payload['rows'][0]
+        assert row['user_id'] == str(user_id)
+        assert row['start'] is None
+        assert row['messenger'] == 'max'
+        assert 'Ошибка № 3' in row['other_actions'][0]['detail']
+        assert '47%' in row['other_actions'][0]['detail']
+        assert next(item for item in payload['analytics'] if item['code']=='bot_start')['count'] == 0
+    with factory() as db:
+        db.add(TelegramTrackingEvent(id='previous-start', user_id=user_id, event_type='start_first',
+                                    occurred_at=datetime(2026, 10, 6, 10, tzinfo=timezone.utc), metadata_json={}))
+        db.commit()
+    payload = client.get('/admin/api/marketing/overview?from=2026-10-07&to=2026-10-07', auth=ADMIN_AUTH).json()
+    assert len(payload['rows']) == 1
+    assert payload['rows'][0]['start'] is None
+    assert next(item for item in payload['analytics'] if item['code']=='bot_start')['count'] == 0

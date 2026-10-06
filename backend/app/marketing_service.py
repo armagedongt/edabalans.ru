@@ -175,6 +175,8 @@ def _identity(
 
 
 def _raw_query(event: Any) -> dict[str, str]:
+    if isinstance(event, CourseEvent):
+        return {}
     if isinstance(event, AttributionEvent):
         return {
             key: str(value)
@@ -464,6 +466,12 @@ def marketing_dashboard(
         identity = _identity(event, telegram_user_map, canonical_user_map)
         starts.setdefault(identity, event)
 
+    # Reading activity must remain findable even without a bot start in this period.
+    # Such rows do not count as new starts in the advertising funnel.
+    for event in events:
+        if isinstance(event, CourseEvent) and event.event_type.startswith("intensive_onepage_"):
+            starts.setdefault(_identity(event, telegram_user_map, canonical_user_map), event)
+
     entry_by_journey: dict[str, TelegramTrackingEvent] = {}
     for event in entry_events:
         journey_id = _journey_context(event).get("journey_id")
@@ -561,7 +569,7 @@ def marketing_dashboard(
                 **attribution,
                 "journey_id": journey_id,
                 "messenger": landing_context.get("messenger") or (
-                    "max" if start_event.event_type.startswith("max_") else "telegram"
+                    (start_event.details or {}).get("platform", "telegram") if isinstance(start_event, CourseEvent) else "max" if start_event.event_type.startswith("max_") else "telegram"
                 ),
                 "device": landing_context.get("device") or "не определён",
                 "entry_method": landing_context.get("entry") or "не определён",
@@ -574,7 +582,7 @@ def marketing_dashboard(
                 }
                 if landing_event
                 else None,
-                "start": {"at": _iso(start_event.occurred_at), "label": _event_label(start_event)},
+                "start": {"at": _iso(start_event.occurred_at), "label": _event_label(start_event)} if _is_confirmed_bot_start(start_event) else None,
                 "check_before_day_one": [
                     {"at": _iso(event.occurred_at), "detail": _event_detail(event)}
                     for event in checks_before
