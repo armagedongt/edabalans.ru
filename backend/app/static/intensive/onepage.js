@@ -37,7 +37,10 @@ window.addEventListener('scroll', scheduleUpdate, {passive: true});
 window.addEventListener('resize', scheduleUpdate);
 window.addEventListener('load', scheduleUpdate);
 new ResizeObserver(scheduleUpdate).observe(document.getElementById('article'));
-trigger.addEventListener('click', () => dialog.showModal());
+trigger.addEventListener('click', () => {
+  dialog.showModal();
+  dialog.scrollTop = 0;
+});
 closeButton.addEventListener('click', () => dialog.close());
 dialog.addEventListener('click', event => {
   if (event.target.closest('a[href^="#"]')) dialog.close();
