@@ -44,16 +44,19 @@ def render_source(source: str):
 
     def anchor(match):
         nonlocal number
+        # New group titles do not renumber the existing public section links.
+        if match[1] == 'h2' and match[2] in {label for _, label, _ in GROUPS[:-1]}:
+            return match[0]
         number += 1
-        return f'<{match[1]} id="section-{number}">'
+        return f'<{match[1]} id="section-{number}">{match[2]}</{match[1]}>'
 
-    return title, re.sub(r'<(h2|h3)>', anchor, body), ''
+    return title, re.sub(r'<(h2|h3)>(.*?)</\1>', anchor, body, flags=re.S), ''
 
 
 GROUPS = [
     ('block-1', 'Здоровое питание', 'intensive:block-1:start'),
     ('block-2', 'Пищевые привычки', 'intensive:block-2:start'),
-    ('block-3', 'Порядок похудения', 'intensive:block-3:lead'),
+    ('block-3', 'Порядок похудения', 'intensive:block-3:start'),
     ('actions', 'Конкретные действия', 'intensive:actions:start'),
 ]
 MARKERS = {
@@ -124,11 +127,15 @@ def render_article(source: str):
         for key, _, marker in GROUPS:
             if line.strip() == f'<!-- {marker} -->':
                 current = key
-        match = re.match(r'^#{2,3} (.+)', line)
+        match = re.match(r'^(#{2,3}) (.+)', line)
         if match:
+            text = match.group(2).strip()
+            group_title = match.group(1) == '##' and text in {label for _, label, _ in GROUPS}
+            if group_title and text != GROUPS[-1][1]:
+                continue
             heading_number += 1
-            if current:
-                contents[current].append((f'section-{heading_number}', match.group(1).strip()))
+            if current and not group_title:
+                contents[current].append((f'section-{heading_number}', text))
     placeholders = {}
     for number, (marker, html) in enumerate(MARKERS.items()):
         comment = f'<!-- {marker} -->'
@@ -151,9 +158,9 @@ def render_article(source: str):
     if decorated.action_link_count != 2:
         raise ValueError('Expected exactly two channel links')
     toc = ''.join(
-        f'<section><a class="toc-group" href="#{key}">{escape(label)}</a><ul>' +
-        ''.join(f'<li><a href="#{anchor}">{escape(text)}</a></li>' for anchor, text in contents[key]) +
-        '</ul></section>' for key, label, _ in GROUPS
+        f'<section><a class="toc-group" href="#{key}">{escape(label)}</a>' +
+        ('<ul>' + ''.join(f'<li><a href="#{anchor}">{escape(text)}</a></li>' for anchor, text in contents[key]) + '</ul>' if contents[key] else '') +
+        '</section>' for key, label, _ in GROUPS
     )
     return title, ''.join(decorated.parts), toc
 
@@ -177,7 +184,7 @@ def page(*, identified: bool = False):
 <link rel="stylesheet" href="/intensive/onepage-components.css?v=20261005">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="/intensive/onepage.css?v=20261007-menu"><script defer src="/intensive/onepage.js?v=20261007-menu"></script>
+<link rel="stylesheet" href="/intensive/onepage.css?v=20261007-headings"><script defer src="/intensive/onepage.js?v=20261007-menu"></script>
 <script defer src="/intensive/onepage-tracking.js?v=20261005"></script></head><body>
 <header class="reading-header"><nav aria-label="Разделы интенсива">{tabs}</nav>
 <div class="reading-track" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="reading-fill"></div></div></header>

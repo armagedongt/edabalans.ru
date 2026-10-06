@@ -8,7 +8,7 @@ os.environ.setdefault('DATABASE_URL', 'sqlite+pysqlite:///:memory:')
 
 from sqlalchemy import select
 
-from app.intensive_onepage import SOURCE, render_article
+from app.intensive_onepage import GROUPS, SOURCE, render_article, render_source
 from app.intensive_web_access import issue_access_token
 from app.main import app
 from app.models import CourseEvent, CourseStageProgress, UserOffer
@@ -122,6 +122,34 @@ def test_renderer_preserves_markers_toc_and_safe_text():
     assert len(set(ids)) == len(ids)
     assert all(attrs['href'][1:] in ids for tag, attrs in Elements(toc).tags if tag == 'a')
     assert len([1 for tag, attrs in tags if tag == 'img' and attrs.get('class') != 'social-logo']) == len(re.findall(r'^!\[', source, re.M))
+
+
+def test_article_heading_hierarchy_preserves_existing_links_without_duplicate_toc_groups():
+    source = SOURCE.read_text(encoding='utf-8')
+    _, body, toc = render_article(source)
+    group_labels = [label for _, label, _ in GROUPS]
+    assert re.findall(r'<h2(?: [^>]*)?>(.*?)</h2>', body) == group_labels
+    assert re.search(r'<h3 id="section-\d+">', body)
+    for label in group_labels:
+        assert toc.count(f'>{label}</a>') == 1
+
+    # The three new group headings must not shift links published before this layout.
+    previous = source
+    for label in group_labels[:-1]:
+        previous = previous.replace(f'## {label}\n', '')
+    _, previous_body, _ = render_article(previous)
+    section_links = r'<h[23] id="(section-\d+)">(.*?)</h[23]>'
+    assert re.findall(section_links, body) == re.findall(section_links, previous_body)
+    fixture = (
+        f'# Test\n\n## {group_labels[0]}\n\n### A\n\n### B\n\n'
+        f'## {group_labels[1]}\n\n### C\n\n'
+        f'## {group_labels[2]}\n\n### D\n\n## {group_labels[-1]}\n'
+    )
+    _, numbered, _ = render_source(fixture)
+    assert re.findall(section_links, numbered) == [
+        ('section-1', 'A'), ('section-2', 'B'), ('section-3', 'C'),
+        ('section-4', 'D'), ('section-5', group_labels[-1]),
+    ]
 
 
 @pytest.mark.parametrize('destination', ['', 'https://max.ru/id230409966750_biz'])
