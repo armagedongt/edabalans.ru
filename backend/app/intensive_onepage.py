@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 import hashlib
-from html import escape
+from functools import lru_cache
+from html import escape, unescape
 from html.parser import HTMLParser
 from pathlib import Path
 import re
@@ -165,6 +166,21 @@ def render_article(source: str):
     return title, ''.join(decorated.parts), toc
 
 
+@lru_cache(maxsize=4)
+def reading_outline(source: str) -> tuple[str, dict[str, str]]:
+    """Resolve telemetry labels from the same article that the server renders."""
+    _, body, _ = render_article(source)
+    headings = {}
+    group_ids = {label: key for key, label, _ in GROUPS}
+    for level, attrs, text in re.findall(r'<(h2|h3)([^>]*)>(.*?)</\1>', body, re.S):
+        label = unescape(re.sub(r'<[^>]+>', '', text)).strip()
+        anchor = re.search(r' id="([^"]+)"', attrs)
+        key = anchor[1] if anchor else group_ids.get(label)
+        if key:
+            headings[key] = label
+    return hashlib.sha256(source.encode('utf-8')).hexdigest()[:12], headings
+
+
 def hero_title(title: str) -> str:
     if title == 'Как сделать похудение проще!?':
         return '<span>Как сделать</span><span class="intensive-title__accent">похудение проще!?</span>'
@@ -185,7 +201,7 @@ def page(*, identified: bool = False):
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="/intensive/onepage.css?v=20261007-headings"><script defer src="/intensive/onepage.js?v=20261007-menu"></script>
-<script defer src="/intensive/onepage-tracking.js?v=20261005"></script></head><body>
+<script defer src="/intensive/onepage-tracking.js?v=20261007-reading"></script></head><body>
 <header class="reading-header"><nav aria-label="Разделы интенсива">{tabs}</nav>
 <div class="reading-track" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="reading-fill"></div></div></header>
 <main id="article" data-intensive-onepage data-intensive-revision="{revision}" data-intensive-identified="{str(identified).lower()}"><h1 class="intensive-title">{hero_title(title)}</h1>{body}</main>
