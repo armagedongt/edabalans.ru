@@ -57,6 +57,9 @@ CLIENT_EVENT_TYPES = {
 }
 ONEPAGE_SECTIONS = {"block-1", "block-2", "block-3", "actions"}
 ONEPAGE_EVENT_TYPES = {
+    "intensive_onepage_reading_start",
+    "intensive_onepage_heading",
+    "intensive_onepage_progress",
     "intensive_onepage_open",
     "intensive_onepage_section",
     "intensive_onepage_end",
@@ -334,6 +337,49 @@ def record_client_event(
         if not math.isfinite(number) or not number.is_integer():
             raise ValueError(f"invalid intensive {name}")
         return int(number)
+
+    if event_type in {"intensive_onepage_reading_start", "intensive_onepage_heading", "intensive_onepage_progress"}:
+        from app.intensive_onepage import SOURCE, reading_outline
+
+        revision, headings = reading_outline(SOURCE.read_text(encoding="utf-8"))
+        if details.get("article_revision") != revision:
+            raise ValueError("intensive article revision changed; reload article")
+        visit_id = str(uuid.UUID(str(details.get("visit_id") or "")))
+        metrics = {name: integer_detail(name) for name in ("viewed_percent", "max_depth_percent", "active_seconds")}
+        if any(not 0 <= metrics[name] <= 100 for name in ("viewed_percent", "max_depth_percent")) or not 0 <= metrics["active_seconds"] <= SESSION_MAX_AGE:
+            raise ValueError("invalid intensive reading metrics")
+        heading_id = details.get("heading_id")
+        if heading_id is not None and heading_id not in headings:
+            raise ValueError("invalid intensive heading")
+        furthest_id = details.get("furthest_heading_id")
+        if furthest_id is not None and furthest_id not in headings:
+            raise ValueError("invalid intensive furthest heading")
+        if event_type == "intensive_onepage_heading" and heading_id is None:
+            raise ValueError("intensive heading is required")
+        if event_type == "intensive_onepage_reading_start" and (metrics["active_seconds"] < 10 or metrics["viewed_percent"] < 1):
+            raise ValueError("intensive reading has not started")
+        safe_details = {"client_event_id": event_id, "platform": platform, "page_key": "intensive-onepage",
+                        "article_revision": revision, "visit_id": visit_id, **metrics}
+        if heading_id is not None:
+            safe_details.update(heading_id=heading_id, heading_title=headings[heading_id])
+        if furthest_id is not None:
+            safe_details.update(furthest_heading_id=furthest_id, furthest_heading_title=headings[furthest_id])
+        key = f"onepage:{revision}:{visit_id}:{event_type}"
+        if event_type == "intensive_onepage_heading":
+            key += f":{heading_id}"
+        event = course_event(db, user_id, key, event_type, details=safe_details)
+        if event_type == "intensive_onepage_progress":
+            # One snapshot per opening; late requests must not move its totals backwards.
+            previous = event.details or {}
+            if metrics["active_seconds"] >= previous.get("active_seconds", 0):
+                old_furthest = previous.get("furthest_heading_id")
+                if old_furthest and (furthest_id is None or list(headings).index(old_furthest) > list(headings).index(furthest_id)):
+                    safe_details.update(furthest_heading_id=old_furthest, furthest_heading_title=headings[old_furthest])
+                for name in metrics:
+                    safe_details[name] = max(metrics[name], previous.get(name, 0))
+                event.details = safe_details
+                event.occurred_at = datetime.now(timezone.utc)
+        return event
 
     rows = progress_rows(db, user_id)
     day = integer_detail("day")

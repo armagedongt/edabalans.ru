@@ -19,9 +19,16 @@
   const common = {page_key: "intensive-onepage", article_revision: article.dataset.intensiveRevision || "draft", ...attribution};
   const once = new Set();
   const identified = article.dataset.intensiveIdentified === "true";
+  const visitId = crypto.randomUUID();
+  const headings = Array.from(article.querySelectorAll("h2,h3")).map(node => ({
+    node, id: node.id || node.previousElementSibling?.getAttribute("data-intensive-section"),
+    title: node.textContent.trim(), level: Number(node.tagName.slice(1))
+  })).filter(heading => heading.id);
+  let lastHeading = null, furthestHeading = null, nextSnapshot = 15000;
   const sections = Array.from(article.querySelectorAll("[data-intensive-section], [data-intensive-end]"));
   const end = article.querySelector("[data-intensive-end]");
   const header = document.querySelector(".reading-header");
+  const contents = document.querySelector("#contents");
   const blockSelector = "p,li,h1,h2,h3,blockquote";
   // Leaf text blocks avoid counting nested lists/quotes twice. Images are not reading progress.
   const blocks = Array.from(article.querySelectorAll(blockSelector))
@@ -66,22 +73,27 @@
   }
 
   function summary() {
-    return {active_seconds: Math.floor(activeMs / 1000), viewed_percent: Math.floor(coverage), max_depth_percent: Math.floor(maxDepth)};
+    return {...(furthestHeading ? {furthest_heading_id: furthestHeading.id, furthest_heading_title: furthestHeading.title} : {}), ...(lastHeading ? {heading_id: lastHeading.id, heading_title: lastHeading.title} : {}), active_seconds: Math.floor(activeMs / 1000), viewed_percent: Math.floor(coverage), max_depth_percent: Math.floor(maxDepth)};
   }
   function track(eventType, detail = {}, uniqueKey) {
     if (uniqueKey && once.has(uniqueKey)) return;
     if (uniqueKey) once.add(uniqueKey);
-    const data = {...common, ...summary(), ...detail};
+    const data = {...common, ...summary(), visit_id: visitId, ...detail};
     if (LOCAL) snapshots.push({event_type: eventType, ...data});
     else window.ym(COUNTER_ID, "reachGoal", eventType, data);
     // Only a server-rendered signed session writes personal facts for future reminders.
     if (!LOCAL && identified) {
       const channelClick = ["intensive_onepage_telegram_click", "intensive_onepage_max_click"].includes(eventType);
-      if (channelClick || ["intensive_onepage_open", "intensive_onepage_section", "intensive_onepage_end"].includes(eventType)) {
+      if (channelClick || ["intensive_onepage_open", "intensive_onepage_section", "intensive_onepage_end",
+        "intensive_onepage_reading_start", "intensive_onepage_heading", "intensive_onepage_session",
+        "intensive_onepage_view_10", "intensive_onepage_view_25", "intensive_onepage_view_50",
+        "intensive_onepage_view_75", "intensive_onepage_view_90"].includes(eventType)) {
         fetch("/api/intensive/events", {method: "POST", credentials: "same-origin", keepalive: true,
           headers: {"Content-Type": "application/json"}, body: JSON.stringify({
-            event_type: channelClick ? "intensive_onepage_messenger_click" : eventType,
-            event_id: crypto.randomUUID(), ...detail
+            event_type: channelClick ? "intensive_onepage_messenger_click" :
+              (eventType === "intensive_onepage_session" || eventType.startsWith("intensive_onepage_view_")) ? "intensive_onepage_progress" : eventType,
+            event_id: crypto.randomUUID(), visit_id: visitId, article_revision: common.article_revision,
+            ...summary(), ...detail
           })}).catch(() => {});
       }
     }
@@ -97,13 +109,13 @@
   }
   function accountTime() {
     const now = performance.now();
-    if (foreground && !suspended) activeMs += Math.max(0, Math.min(now, lastActivity + 60000) - lastTick);
+    if (foreground && !suspended && !contents?.open) activeMs += Math.max(0, Math.min(now, lastActivity + 60000) - lastTick);
     lastTick = now;
     if (activeMs >= 60000) track("intensive_onepage_active_60", {}, "active60");
   }
   function sample() {
     frame = 0;
-    if (document.hidden || !document.hasFocus() || suspended) return;
+    if (document.hidden || !document.hasFocus() || suspended || contents?.open) return;
     const top = Math.max(0, header ? header.getBoundingClientRect().bottom : 0);
     const bottom = window.innerHeight;
     for (const block of blocks) {
@@ -115,6 +127,15 @@
     coverage = total ? Math.min(100, viewed / total * 100) : 0;
     const distance = Math.max(1, end.getBoundingClientRect().top + window.scrollY - window.innerHeight);
     maxDepth = Math.max(maxDepth, Math.min(100, Math.max(0, window.scrollY / distance * 100)));
+    for (const heading of headings) {
+      const rect = heading.node.getBoundingClientRect();
+      if (rect.top < top - 5 || rect.bottom > bottom) continue;
+      lastHeading = heading;
+      if (!furthestHeading || headings.indexOf(heading) > headings.indexOf(furthestHeading)) furthestHeading = heading;
+      track("intensive_onepage_heading", {heading_id: heading.id, heading_title: heading.title,
+        heading_level: heading.level}, "heading:" + heading.id);
+    }
+    if (activeMs >= 10000 && coverage >= 1) track("intensive_onepage_reading_start", {}, "reading-start");
     [10, 25, 50, 75, 90].forEach(percent => {
       if (coverage >= percent) track("intensive_onepage_view_" + percent, {percent}, "view" + percent);
     });
@@ -188,7 +209,10 @@
   window.addEventListener("pagehide", () => { reportSession(); suspended = true; });
   window.addEventListener("pageshow", () => { suspended = false; lastTick = performance.now(); lastActivity = lastTick; foreground = !document.hidden && document.hasFocus(); schedule(); });
   if (window.ResizeObserver) new ResizeObserver(schedule).observe(article);
-  setInterval(() => { accountTime(); sample(); }, 1000);
+  setInterval(() => {
+    accountTime(); sample();
+    if (activeMs >= nextSnapshot) { nextSnapshot = activeMs + 15000; reportSession(); }
+  }, 1000);
   schedule();
 }());
 

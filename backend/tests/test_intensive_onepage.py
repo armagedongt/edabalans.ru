@@ -2,13 +2,14 @@ from html.parser import HTMLParser
 from pathlib import Path
 import os
 import re
+import uuid
 import pytest
 
 os.environ.setdefault('DATABASE_URL', 'sqlite+pysqlite:///:memory:')
 
 from sqlalchemy import select
 
-from app.intensive_onepage import GROUPS, SOURCE, render_article, render_source
+from app.intensive_onepage import GROUPS, SOURCE, reading_outline, render_article, render_source
 from app.intensive_web_access import issue_access_token
 from app.main import app
 from app.models import CourseEvent, CourseStageProgress, UserOffer
@@ -176,3 +177,60 @@ def test_empty_telegram_destination_is_rejected():
     source = re.sub(r'> \[Telegram\]\([^\n]*\)', '> [Telegram]()', SOURCE.read_text(encoding='utf-8'))
     with pytest.raises(ValueError, match='Only the MAX button'):
         render_article(source)
+
+
+def test_personal_reading_tracks_each_opening_and_updates_percent_without_trusting_labels():
+    client, factory = make_client()
+    user = create_user(factory)
+    revision, headings = reading_outline(SOURCE.read_text(encoding='utf-8'))
+    visit = str(uuid.uuid4())
+    base = dict(event_id='reading-1', visit_id=visit, article_revision=revision,
+                viewed_percent=12, max_depth_percent=30, active_seconds=15,
+                heading_id='section-1', heading_title='<script>forged</script>', user_id='forged')
+    try:
+        assert client.post('/api/intensive/events', json={**base, 'event_type':'intensive_onepage_heading'}).status_code == 401
+        with factory() as db:
+            token, _ = issue_access_token(db, user.id, 'telegram')
+            db.commit()
+        client.get(f'/intensive?i={token}')
+        for kind in ('heading', 'reading_start', 'progress'):
+            for _ in range(2):
+                result = client.post('/api/intensive/events', json={**base, 'event_type':'intensive_onepage_'+kind})
+                assert result.status_code == 200, result.text
+        progress = {**base, 'event_type':'intensive_onepage_progress'}
+        assert client.post('/api/intensive/events', json={**progress, 'viewed_percent':47, 'active_seconds':60, 'furthest_heading_id':'section-3'}).status_code == 200
+        assert client.post('/api/intensive/events', json=progress).status_code == 200
+        assert client.post('/api/intensive/events', json={**progress, 'active_seconds':60, 'furthest_heading_id':'section-1'}).status_code == 200
+        assert client.post('/api/intensive/events', json={**progress, 'active_seconds':90}).status_code == 200
+        second_visit = str(uuid.uuid4())
+        assert client.post('/api/intensive/events', json={**base, 'visit_id':second_visit, 'event_type':'intensive_onepage_heading'}).status_code == 200
+        for changes in ({'heading_id':'section-999'}, {'article_revision':'wrong'}, {'visit_id':'invalid'},
+                        {'viewed_percent':101}, {'active_seconds':-1}, {'viewed_percent':1.5}):
+            assert client.post('/api/intensive/events', json={**progress, **changes}).status_code == 422
+        assert client.post('/api/intensive/events', json={**base, 'event_type':'intensive_onepage_reading_start', 'active_seconds':9}).status_code == 422
+        assert client.post('/api/intensive/events', json={**base, 'event_type':'intensive_onepage_reading_start', 'viewed_percent':0}).status_code == 422
+        with factory() as db:
+            rows = list(db.scalars(select(CourseEvent)))
+            assert len(rows) == 4
+            snapshot = next(row for row in rows if row.event_type == 'intensive_onepage_progress')
+            assert snapshot.details['viewed_percent'] == 47
+            assert snapshot.details['active_seconds'] == 90
+            assert snapshot.details['furthest_heading_id'] == 'section-3'
+            assert all(row.user_id == user.id and row.details['platform'] == 'telegram' for row in rows)
+            assert all(row.details['heading_title'] == headings['section-1'] for row in rows)
+            assert db.scalar(select(CourseStageProgress)) is None
+            assert db.scalar(select(UserOffer)) is None
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_marketing_reading_details_show_heading_percent_and_active_time():
+    from app.marketing_service import _event_detail, _event_label
+    event = CourseEvent(event_type='intensive_onepage_progress', details={
+        'heading_title':'Ошибка № 1', 'viewed_percent':47, 'active_seconds':60,
+    })
+    assert _event_label(event) == 'Просмотр текста интенсива'
+    assert _event_detail(event) == 'дошёл до: Ошибка № 1; просмотрено 47% текста; активно 60 с'
+
+    event.details = {**event.details, 'furthest_heading_title':'Ошибка № 3'}
+    assert _event_detail(event) == 'дошёл до: Ошибка № 3; просмотрено 47% текста; активно 60 с'

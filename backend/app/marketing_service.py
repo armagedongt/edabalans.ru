@@ -70,6 +70,13 @@ EVENT_LABELS = {
     "intensive_masterclass_click": "Перешёл к мастер-классу",
     "intensive_telegram_click": "Нажал Telegram в интенсиве",
     "intensive_max_click": "Нажал MAX в интенсиве",
+    "intensive_onepage_open": "Открыл статью интенсива",
+    "intensive_onepage_reading_start": "Начал знакомиться с интенсивом",
+    "intensive_onepage_heading": "Увидел заголовок интенсива",
+    "intensive_onepage_progress": "Просмотр текста интенсива",
+    "intensive_onepage_section": "Увидел раздел интенсива",
+    "intensive_onepage_end": "Увидел конец интенсива",
+    "intensive_onepage_messenger_click": "Нажал кнопку канала в интенсиве",
     "page_progress": "Читал страницу",
     "video_engaged": "Начал смотреть видео",
     "video_progress": "Смотрел видео",
@@ -227,6 +234,14 @@ def _is_confirmed_bot_start(event: Any) -> bool:
 def _event_detail(event: Any) -> str | None:
     if isinstance(event, CourseEvent):
         details = event.details if isinstance(event.details, dict) else {}
+        if event.event_type.startswith("intensive_onepage_"):
+            title = (details.get("furthest_heading_title") if event.event_type == "intensive_onepage_progress" else None) or details.get("heading_title") or details.get("section")
+            parts = [f"дошёл до: {title}" if title and event.event_type == "intensive_onepage_progress" else title]
+            if "viewed_percent" in details:
+                parts.append(f"просмотрено {details['viewed_percent']}% текста")
+            if "active_seconds" in details:
+                parts.append(f"активно {details['active_seconds']} с")
+            return "; ".join(str(part) for part in parts if part) or None
         if event.event_type.startswith("video_"):
             day = details.get("day")
             progress = details.get("progress_percent")
