@@ -75,6 +75,9 @@ implementation_status: implemented
 `docs/INTENSIVE_PAGES.md`, `docs/INTENSIVE_ONEPAGE_ANALYTICS.md`, единый Markdown, intensive routes/static, content runtime и
 `backend/app/intensive_public_cta.py` для публичного CTA.
 
+Изображение отзыва `R008` в единой статье и первом архивном дне использует
+общую принятую версию главной из `docs/knowledge-base/PUBLIC_SITE.md`.
+
 Публичная карточка интенсива на внешних поверхностях использует заголовок
 «Как сделать похудение проще» и действие «Читать бесплатно»; URL и tracking key
 остаются типизированными фактами runtime.
