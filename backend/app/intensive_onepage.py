@@ -22,10 +22,13 @@ def render_source(source: str):
         for line in match.group(1).splitlines():
             if not line.strip():
                 continue
-            link = re.fullmatch(r'>\s*\[([^\]]+)\]\((https://[^\s)]+)\)', line)
-            if not link or not safe_href(link[2]):
+            link = re.fullmatch(r'>\s*\[([^\]]+)\]\((https://[^\s)]+)?\)', line)
+            if not link or (link[2] and not safe_href(link[2])):
                 raise ValueError('Invalid intensive channel link')
-            links.append(f'<a href="{escape(link[2], quote=True)}">{escape(link[1])}</a>')
+            if not link[2] and (len(links) != 1 or link[1] not in ('MAX', 'Открыть MAX')):
+                raise ValueError('Only the MAX button may have no destination')
+            destination = f'href="{escape(link[2], quote=True)}"' if link[2] else 'aria-disabled="true"'
+            links.append(f'<a {destination}>{escape(link[1])}</a>')
         if len(links) != 2:
             raise ValueError('Expected the two approved channel buttons')
         token = f'INTENSIVEACTIONPAIR{len(actions)}TOKEN'
@@ -85,7 +88,9 @@ class ArticleLinks(HTMLParser):
             brand = ('telegram', 'max')[self.action_link_count]
             self.action_link_count += 1
             self.in_action_link = True
-            attrs.extend((('class', 'social-' + brand), ('data-intensive-channel', brand)))
+            attrs.append(('class', 'social-' + brand))
+            if values.get('href'):
+                attrs.append(('data-intensive-channel', brand))
             self.parts.append('<a' + ''.join(f' {k}="{escape(v or "", quote=True)}"' for k, v in attrs) + '>')
             icon = 'assets/roadmap/telegram-plane.svg' if brand == 'telegram' else 'max-full-colored-official.png'
             self.parts.append(f'<img src="/intensive/{icon}" class="social-logo" alt="" aria-hidden="true">')

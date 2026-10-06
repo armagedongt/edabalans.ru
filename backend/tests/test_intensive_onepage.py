@@ -2,6 +2,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 import os
 import re
+import pytest
 
 os.environ.setdefault('DATABASE_URL', 'sqlite+pysqlite:///:memory:')
 
@@ -121,3 +122,29 @@ def test_renderer_preserves_markers_toc_and_safe_text():
     assert len(set(ids)) == len(ids)
     assert all(attrs['href'][1:] in ids for tag, attrs in Elements(toc).tags if tag == 'a')
     assert len([1 for tag, attrs in tags if tag == 'img' and attrs.get('class') != 'social-logo']) == len(re.findall(r'^!\[', source, re.M))
+
+
+@pytest.mark.parametrize('destination', ['', 'https://max.ru/id230409966750_biz'])
+def test_max_button_retains_brand_and_only_tracks_when_it_has_a_destination(destination):
+    source = re.sub(r'> \[Открыть MAX\]\([^\n]*\)', f'> [Открыть MAX]({destination})', SOURCE.read_text(encoding='utf-8'))
+    _, body, _ = render_article(source)
+    tags = Elements(body).tags
+    max_button = next(attrs for tag, attrs in tags if tag == 'a' and attrs.get('class') == 'social-max')
+    telegram = next(attrs for tag, attrs in tags if tag == 'a' and attrs.get('class') == 'social-telegram')
+    assert telegram['href'].startswith('https://t.me/')
+    assert telegram['data-intensive-channel'] == 'telegram'
+    assert any(tag == 'img' and attrs.get('src') == '/intensive/max-full-colored-official.png' for tag, attrs in tags)
+    if destination:
+        assert max_button['href'] == destination
+        assert max_button['data-intensive-channel'] == 'max'
+        assert 'aria-disabled' not in max_button
+    else:
+        assert max_button['aria-disabled'] == 'true'
+        assert 'href' not in max_button
+        assert 'data-intensive-channel' not in max_button
+
+
+def test_empty_telegram_destination_is_rejected():
+    source = re.sub(r'> \[Telegram\]\([^\n]*\)', '> [Telegram]()', SOURCE.read_text(encoding='utf-8'))
+    with pytest.raises(ValueError, match='Only the MAX button'):
+        render_article(source)
