@@ -12,7 +12,7 @@ from app.engine import advance_run, start_run
 from app.max import process_max_update
 from app.models import Contact, ContentItem, CrmTag, CrmUserTag, UserVariable, UpdateReceipt, SequenceRun, TrackingEvent
 from app.seed import seed_defaults, WELCOME_CODE
-from app.temporary_entry import CONTENT_CODE, NAVIGATION_CODE, BUTTON_TEXT, VIDEO_PATH, POOL_CODE, pause_marketing
+from app.temporary_entry import CONTENT_CODE, NAVIGATION_CODE, BUTTON_TEXT, VIDEO_PATH, POOL_CODE, REPEAT_OFFER_BODY, pause_marketing
 
 
 class Sender:
@@ -73,15 +73,23 @@ def run_max(session, sender, event):
     return process_max_update(session, event, bot_username="test_bot", intensive_public_url="https://edabalans.ru/intensive", sender=sender)
 
 
-def assert_invitation(session, sender):
+def assert_invitation(session, sender, repeat=False):
     _, content, config = sender.sent[-1]
     assert content.code == CONTENT_CODE
     assert content.media_kind == "video" and content.media_path == VIDEO_PATH
-    assert config["buttons"][0]["text"] == BUTTON_TEXT
+    if repeat:
+        assert config["buttons"] == []
+        assert content.body_source.endswith("\n\n" + REPEAT_OFFER_BODY)
+    else:
+        assert config["buttons"][0]["text"] == BUTTON_TEXT
+        assert REPEAT_OFFER_BODY not in content.body_source
     assert sender.sent[-2][1].code == NAVIGATION_CODE
     assert "{{" not in sender.sent[-2][1].body_source
     assert sender.sent[-2][2]["link_preview"] is False
-    url = config["buttons"][0]["url"]
+    import re
+    url = re.search(r'href="([^"]+)"', content.body_source).group(1)
+    if not repeat:
+        assert config["buttons"][0]["url"] == url
     assert url in content.body_source and "{{" not in content.body_source
     assert urlparse(url).path == "/intensive"
     assert parse_qs(urlparse(url).query).get("i")
@@ -98,9 +106,9 @@ def test_start_repeat_message_callback_and_duplicate(setup, platform):
     else:
         events = [max_event(1), max_event(2), max_event(3, "message_created"), max_event(4, "message_callback")]
         invoke = lambda e: run_max(session, sender, e)
-    for e in events:
+    for index, e in enumerate(events):
         assert invoke(e)["temporary_entry"]
-        assert_invitation(session, sender)
+        assert_invitation(session, sender, repeat=index > 0)
     assert len(sender.sent) == 8
     assert invoke(events[-1])["duplicate"]
     assert len(sender.sent) == 8
@@ -152,6 +160,7 @@ def test_lost_response_is_not_replayed_but_new_interaction_works(setup):
     assert len(sender.sent) == 1
     assert main.process_update(tg(2), session)["temporary_entry"]
     assert len(sender.sent) == 3
+    assert_invitation(session, sender)
     assert session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "temporary_intensive_entry")).metadata_json["delivery_status"] == "uncertain"
 
 
@@ -299,3 +308,36 @@ def test_uploaded_telegram_video_is_cached_for_following_entry(setup):
     assert session.scalar(select(ContentItem).where(ContentItem.code == CONTENT_CODE)).telegram_file_id == "telegram-video-file-id"
     main.process_update(tg(2), session)
     assert incoming_video_refs == [None, "telegram-video-file-id"]
+
+
+def test_old_placeholder_delivery_is_not_a_video_delivery(setup):
+    session, sender = setup
+    main.process_update(tg(1), session)
+    event = session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "temporary_intensive_entry"))
+    event.metadata_json = {"delivery_status": "sent", "message_id": "old-placeholder"}
+    session.commit()
+    main.process_update(tg(2), session)
+    assert_invitation(session, sender)
+
+
+def test_other_user_history_does_not_change_first_video(setup):
+    session, sender = setup
+    main.process_update(tg(1), session)
+    event = tg(2)
+    event["message"]["from"]["id"] = 4102
+    event["message"]["chat"]["id"] = 4102
+    main.process_update(event, session)
+    assert_invitation(session, sender)
+
+
+def test_linked_contact_uses_shared_user_video_history(setup):
+    from app.temporary_entry import send_temporary_entry
+    session, sender = setup
+    main.process_update(tg(1), session)
+    first = session.scalar(select(Contact))
+    linked = Contact(bot_instance_id=first.bot_instance_id, user_id=first.user_id,
+                     telegram_user_id="max:5101", chat_id="5101", status="active")
+    session.add(linked)
+    session.commit()
+    send_temporary_entry(session, linked, sender, "linked-max-first", "max", "https://edabalans.ru/intensive")
+    assert_invitation(session, sender, repeat=True)

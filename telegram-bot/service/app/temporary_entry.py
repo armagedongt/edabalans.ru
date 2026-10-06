@@ -8,8 +8,13 @@ from app.models import Broadcast, Contact, ContentItem, CrmTag, CrmUser, CrmUser
 
 CONTENT_CODE = "tpl_temporary_intensive_entry"
 NAVIGATION_CODE = "tpl_onepage_entry_navigation"
+REPEAT_OFFER_CODE = "tpl_onepage_entry_repeat_offer"
 VIDEO_PATH = "/app/media/intensive-entry-2026-09-13-57s80.mp4"
 BUTTON_TEXT = "Читать прямо сейчас"
+REPEAT_OFFER_BODY = (
+    "А если готовы серьезно взяться за похудение — прочитайте описание и отзывы моего "
+    "Мастер-класса по изменению питания и пищевых привычек: https://похудение-это-есть.рф"
+)
 POOL_CODE = "temporary_intensive_entry_20261005"
 POOL_NAME = "Временный вход — единый интенсив"
 BLOCKED_STATUSES = {"blocked", "stopped"}
@@ -99,6 +104,16 @@ def seed_temporary_entry(session: Session) -> None:
         ))
     session.flush()
 
+    if not session.scalar(select(ContentItem).where(ContentItem.code == REPEAT_OFFER_CODE)):
+        session.add(ContentItem(
+            code=REPEAT_OFFER_CODE, title="Повторный вход — приписка о Мастер-классе",
+            body_source=REPEAT_OFFER_BODY, source_format="telegram_html",
+            editorial_status="approved", status="published",
+            purpose="Добавить приписку к ранее выданному видео, без кнопки.",
+            writer_brief="Дословная приписка Сергея 07.10.2026. Только после успешной отправки видео; покупателям не отправлять.",
+        ))
+    session.flush()
+
 
 def entry_decision(session: Session, contact: Contact) -> str:
     from app.engine import has_paid_product
@@ -141,13 +156,28 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
         raise RuntimeError("Temporary entry content is not approved and ready")
     # Two messengers can contact the same CRM user concurrently.
     session.scalar(select(CrmUser).where(CrmUser.id == contact.user_id).with_for_update())
+    previous_deliveries = session.scalars(select(TrackingEvent).where(
+        TrackingEvent.user_id == contact.user_id,
+        TrackingEvent.event_type == "temporary_intensive_entry",
+    ))
+    repeat = any(
+        (previous.metadata_json or {}).get("delivery_status") == "sent"
+        and (previous.metadata_json or {}).get("message_id")
+        and (previous.metadata_json or {}).get("navigation_message_id")
+        for previous in previous_deliveries
+    )
+    repeat_offer = None
+    if repeat:
+        repeat_offer = session.scalar(select(ContentItem).where(ContentItem.code == REPEAT_OFFER_CODE))
+        if not repeat_offer or repeat_offer.status != "published" or not content_is_runtime_ready(repeat_offer):
+            raise RuntimeError("Repeat entry offer is not approved and ready")
     if not session.scalar(select(CrmUserTag.id).where(CrmUserTag.user_id == contact.user_id, CrmUserTag.tag_id == tag.id)):
         session.add(CrmUserTag(user_id=contact.user_id, tag_id=tag.id, source="system"))
     url, _ = get_or_create_intensive_access_link(session, user_id=contact.user_id, platform=platform, public_url=public_url)
     event = TrackingEvent(
         contact_id=contact.id, user_id=contact.user_id, telegram_user_id=contact.telegram_user_id,
         event_type="temporary_intensive_entry", deduplication_key=f"temporary_entry:{receipt_id}",
-        metadata_json={"messenger": platform, "delivery_status": "pending", "tag_id": tag.id},
+        metadata_json={"messenger": platform, "delivery_status": "pending", "tag_id": tag.id, "repeat": repeat},
     )
     session.add(event)
     # Keep the receipt and pool durable before sending. A lost API response must
@@ -165,11 +195,12 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
             sender.pin_message(contact.chat_id, navigation_id)
         video_content = SimpleNamespace(
             code=item.code, source_format="telegram_html",
-            body_source=replace_template_values(item.body_source, {"personal_intensive_url": url}),
+            body_source=replace_template_values(item.body_source, {"personal_intensive_url": url})
+            + ("\n\n" + repeat_offer.body_source if repeat_offer else ""),
             media_kind=item.media_kind, media_path=item.media_path, telegram_file_id=item.telegram_file_id,
         )
         message_id = sender.send_content(contact.chat_id, video_content,
-            {"buttons": [{"text": BUTTON_TEXT, "url": url}], "link_preview": False})
+            {"buttons": [] if repeat else [{"text": BUTTON_TEXT, "url": url}], "link_preview": False})
         if platform == "telegram" and video_content.telegram_file_id:
             item.telegram_file_id = video_content.telegram_file_id
     except Exception:

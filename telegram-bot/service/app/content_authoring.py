@@ -36,6 +36,13 @@ START_CONTEXT = {
     "tpl_intensive_entry_legacy_update": ("Найден старый участник", "Показать полностью открытый обновлённый интенсив"),
 }
 DIRECT_TRIGGER_CONTEXT = {
+    "tpl_onepage_entry_repeat_offer": {
+        "kind": "direct_trigger",
+        "module": "start_attribution",
+        "step": "temporary_repeat_article",
+        "previous": "Видео уже успешно отправлялось этому CRM-пользователю",
+        "next": "Добавить к подписи видео; отправить без кнопки",
+    },
     "tpl_temporary_intensive_entry": {
         "kind": "direct_trigger",
         "module": "start_attribution",
