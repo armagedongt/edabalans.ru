@@ -10,9 +10,9 @@ from app.config import get_settings
 from app.database import Base, make_engine
 from app.engine import advance_run, start_run
 from app.max import process_max_update
-from app.models import Contact, CrmTag, CrmUserTag, UserVariable, UpdateReceipt, SequenceRun, TrackingEvent
+from app.models import Contact, ContentItem, CrmTag, CrmUserTag, UserVariable, UpdateReceipt, SequenceRun, TrackingEvent
 from app.seed import seed_defaults, WELCOME_CODE
-from app.temporary_entry import CONTENT_CODE, POOL_CODE, pause_marketing
+from app.temporary_entry import CONTENT_CODE, NAVIGATION_CODE, BUTTON_TEXT, VIDEO_PATH, POOL_CODE, pause_marketing
 
 
 class Sender:
@@ -26,6 +26,11 @@ class Sender:
         if self.fail:
             raise RuntimeError("Response lost")
         return str(len(self.sent))
+
+    def pin_message(self, chat_id, message_id):
+        assert self.sent[-1][1].code == NAVIGATION_CODE
+        assert str(len(self.sent)) == message_id
+        self.answers.append(("pin", chat_id, message_id))
 
     def answer_callback(self, callback_id, *args, **kwargs):
         self.answers.append(callback_id)
@@ -71,6 +76,11 @@ def run_max(session, sender, event):
 def assert_invitation(session, sender):
     _, content, config = sender.sent[-1]
     assert content.code == CONTENT_CODE
+    assert content.media_kind == "video" and content.media_path == VIDEO_PATH
+    assert config["buttons"][0]["text"] == BUTTON_TEXT
+    assert sender.sent[-2][1].code == NAVIGATION_CODE
+    assert "{{" not in sender.sent[-2][1].body_source
+    assert sender.sent[-2][2]["link_preview"] is False
     url = config["buttons"][0]["url"]
     assert url in content.body_source and "{{" not in content.body_source
     assert urlparse(url).path == "/intensive"
@@ -91,12 +101,13 @@ def test_start_repeat_message_callback_and_duplicate(setup, platform):
     for e in events:
         assert invoke(e)["temporary_entry"]
         assert_invitation(session, sender)
-    assert len(sender.sent) == 4
+    assert len(sender.sent) == 8
     assert invoke(events[-1])["duplicate"]
-    assert len(sender.sent) == 4
+    assert len(sender.sent) == 8
     tag = session.scalar(select(CrmTag).where(CrmTag.code == POOL_CODE))
     assert session.scalar(select(func.count()).select_from(CrmUserTag).where(CrmUserTag.tag_id == tag.id)) == 1
-    assert sender.answers == ["cb4"]
+    assert [value for value in sender.answers if isinstance(value, str)] == ["cb4"]
+    assert [value[2] for value in sender.answers if isinstance(value, tuple)] == ["1", "3", "5", "7"]
 
 
 @pytest.mark.parametrize("platform", ["telegram", "max"])
@@ -140,7 +151,7 @@ def test_lost_response_is_not_replayed_but_new_interaction_works(setup):
     assert main.process_update(tg(1), session)["duplicate"]
     assert len(sender.sent) == 1
     assert main.process_update(tg(2), session)["temporary_entry"]
-    assert len(sender.sent) == 2
+    assert len(sender.sent) == 3
     assert session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "temporary_intensive_entry")).metadata_json["delivery_status"] == "uncertain"
 
 
@@ -248,3 +259,43 @@ def test_max_service_and_self_events_are_not_answered(setup):
     for e in [max_event(1, "bot_stopped"), {"update_type": "message_created", "message": {"sender": {"user_id": 5101, "is_bot": True}}}]:
         run_max(session, sender, e)
     assert not sender.sent
+
+
+def test_existing_placeholder_upgrades_once_and_preserves_later_owner_edits(setup):
+    from app.temporary_entry import BODY, LEGACY_BODY, seed_temporary_entry
+    session, sender = setup
+    item = session.scalar(select(ContentItem).where(ContentItem.code == CONTENT_CODE))
+    item.body_source = LEGACY_BODY
+    item.media_kind = None
+    item.media_path = None
+    item.content_version = 7
+    session.commit()
+    seed_temporary_entry(session)
+    session.commit()
+    assert item.body_source == BODY and item.content_version == 8
+    main.process_update(tg(1), session)
+    assert_invitation(session, sender)
+    item.body_source = "<b>Последующая правка Сергея</b>"
+    session.commit()
+    seed_temporary_entry(session)
+    session.commit()
+    assert item.body_source == "<b>Последующая правка Сергея</b>" and item.content_version == 8
+
+
+def test_uploaded_telegram_video_is_cached_for_following_entry(setup):
+    session, sender = setup
+    send = sender.send_content
+    incoming_video_refs = []
+    def send_with_file_id(chat_id, content, config):
+        if content.media_kind == "video":
+            incoming_video_refs.append(content.telegram_file_id)
+        message_id = send(chat_id, content, config)
+        if content.media_kind == "video":
+            content.telegram_file_id = "telegram-video-file-id"
+        return message_id
+    sender.send_content = send_with_file_id
+    main.process_update(tg(1), session)
+    session.expire_all()
+    assert session.scalar(select(ContentItem).where(ContentItem.code == CONTENT_CODE)).telegram_file_id == "telegram-video-file-id"
+    main.process_update(tg(2), session)
+    assert incoming_video_refs == [None, "telegram-video-file-id"]

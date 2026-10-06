@@ -618,6 +618,7 @@ def seed_defaults(
 ) -> dict[str, int]:
     resolved_username = (username or "TetrisgfgfgfBot").lstrip("@")
     from app.temporary_entry import seed_temporary_entry
+    # Startup data: navigation plus the approved video replace the unchanged placeholder.
     seed_temporary_entry(session)
     is_main_bot = resolved_username.casefold() == "fitness_talks_bot"
     bot = session.scalar(select(BotInstance).where(BotInstance.code == "test"))

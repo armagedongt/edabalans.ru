@@ -41,7 +41,14 @@ DIRECT_TRIGGER_CONTEXT = {
         "module": "start_attribution",
         "step": "temporary_article",
         "previous": "Временный режим: личный вход, не покупатель и без стоп-метки",
-        "next": "Статья и кнопка; старые маркетинговые цепочки не запускать",
+        "next": "Видео и персональная кнопка; старые маркетинговые цепочки не запускать",
+    },
+    "tpl_onepage_entry_navigation": {
+        "kind": "direct_trigger",
+        "module": "start_attribution",
+        "step": "temporary_navigation",
+        "previous": "Отмечен участник общей временной группы",
+        "next": "Закрепить навигацию в Telegram, затем отправить видео",
     },
     "tpl_apps_strength_admin": {
         "kind": "direct_trigger",
