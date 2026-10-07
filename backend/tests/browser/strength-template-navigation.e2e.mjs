@@ -42,6 +42,33 @@ try {
     const names = () => page.locator(width > 700 ? '.st-ex-row-name' : '.st-modern-title strong').allTextContents();
     assert.deepEqual(await names(), ['Верхний блок на трицепс', 'Жим штанги']);
     if (width > 700) assert.deepEqual(await page.locator('.st-day-number').allTextContents(), ['№1', '№3', '№5']);
+    const planWeight = () => page.locator(width > 700 ? '.st-ex-row:first-of-type .st-ex-day.current .st-plan-field' : '.st-modern-exercise:first-child .st-plan-inputs input').first();
+    const factWeight = () => page.locator(width > 700 ? '.st-ex-row:first-of-type .st-ex-day.current .st-fact-field' : '.st-modern-exercise:first-child .st-fact-inputs input').first();
+    async function enterWeight(locator, value, field, expected) {
+      await locator().fill(value);
+      await locator().blur();
+      assert.equal(await locator().inputValue(), String(expected));
+      await page.waitForFunction(({ field, expected }) => {
+        const saved = window.__saveBodies.filter((body) => body.action === 'saveSession').at(-1);
+        return saved?.session.exercises.find((exercise) => exercise.exercise_id === 'triceps')?.sets[0][field] === expected;
+      }, { field, expected });
+    }
+    assert.equal(await planWeight().getAttribute('inputmode'), 'decimal');
+    assert.equal(await factWeight().getAttribute('inputmode'), 'decimal');
+    await enterWeight(planWeight, '12,5', 'plan_weight', 12.5);
+    await enterWeight(factWeight, '7.25', 'fact_weight', 7.25);
+    await enterWeight(planWeight, '17.75', 'plan_weight', 17.75);
+    await enterWeight(factWeight, '8,5', 'fact_weight', 8.5);
+    await enterWeight(factWeight, '0', 'fact_weight', 0);
+    await enterWeight(factWeight, '', 'fact_weight', '');
+    await enterWeight(planWeight, '40', 'plan_weight', 40);
+    if (width <= 700) {
+      await page.getByRole('button', { name: 'Начать тренировку', exact: true }).click();
+      await enterWeight(factWeight, '3,75', 'fact_weight', 3.75);
+      await enterWeight(factWeight, '', 'fact_weight', '');
+      await page.getByRole('button', { name: 'Редактировать план', exact: true }).click();
+    }
+    await page.evaluate(() => { window.__saveBodies = []; });
     await page.getByRole('button', { name: 'Предыдущая тренировка', exact: true }).click();
     await page.getByText('Тренировка №3', { exact: true }).waitFor();
     const copyButton = page.locator(width > 700 ? '.st-ex-row' : '.st-modern-exercise', { hasText: 'Жим штанги' }).locator(width > 700 ? '.st-ex-day.current .st-copy-forward' : '.st-modern-copy');

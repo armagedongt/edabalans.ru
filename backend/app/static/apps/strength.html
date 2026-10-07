@@ -3970,10 +3970,10 @@ function renderSet(
       '<div class="st-set-num">'+
         (setIndex+1)+
       '</div>'+
-      '<input class="st-input st-plan-field '+(!blank(set.planWeight) ? 'has-value ' : '')+planClass(set.planWeight,previous ? previous.factWeight : '')+'" type="number" step="0.1" value="'+esc(set.planWeight)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'planWeight\',this.value)">'+
+      '<input class="st-input st-plan-field '+(!blank(set.planWeight) ? 'has-value ' : '')+planClass(set.planWeight,previous ? previous.factWeight : '')+'" type="text" inputmode="decimal" value="'+esc(set.planWeight)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'planWeight\',this.value)">'+
       '<input class="st-input st-plan-field '+(!blank(set.planReps) ? 'has-value ' : '')+planClass(set.planReps,previous ? previous.factReps : '')+'" type="number" step="1" value="'+esc(set.planReps)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'planReps\',this.value)">'+
       '<div class="st-divider"></div>'+
-      '<input class="st-input st-fact-field '+(!blank(set.factWeight) ? 'has-value' : '')+'" type="number" step="0.1" value="'+esc(set.factWeight)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'factWeight\',this.value)">'+
+      '<input class="st-input st-fact-field '+(!blank(set.factWeight) ? 'has-value' : '')+'" type="text" inputmode="decimal" value="'+esc(set.factWeight)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'factWeight\',this.value)">'+
       '<input class="st-input st-fact-field '+(!blank(set.factReps) ? 'has-value' : '')+'" type="number" step="1" value="'+esc(set.factReps)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'factReps\',this.value)">'+
       '<button class="st-rpe-button st-fact-rpe '+rpeClass(set.rpe)+'" data-exercise-id="'+esc(id)+'" onclick="ST.openRpe(event,'+sessionIndex+',this.dataset.exerciseId,'+setIndex+')">'+
         (
@@ -6082,7 +6082,7 @@ window.ST = {
       ?
       ''
       :
-      Number(value);
+      Number(String(value).replace(',', '.'));
 
     scheduleSave(index);
 
