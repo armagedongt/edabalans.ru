@@ -3075,10 +3075,6 @@ function isLatest(){
 
 function clientLocked(index){
 
-  if(app.isAdmin){
-    return false;
-  }
-
   var session =
     currentWorkout()
       .sessions[index];
@@ -3961,8 +3957,8 @@ function renderSet(
       '<div class="st-set-num">'+
         (setIndex+1)+
       '</div>'+
-      '<input class="st-input st-plan-field '+(!blank(set.planWeight) ? 'has-value ' : '')+planClass(set.planWeight,previous ? previous.factWeight : '')+'" type="text" inputmode="decimal" value="'+esc(set.planWeight)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'planWeight\',this.value)">'+
-      '<input class="st-input st-plan-field '+(!blank(set.planReps) ? 'has-value ' : '')+planClass(set.planReps,previous ? previous.factReps : '')+'" type="number" step="1" value="'+esc(set.planReps)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'planReps\',this.value)">'+
+      '<input class="st-input st-plan-field '+(!blank(set.planWeight) ? 'has-value ' : '')+planClass(set.planWeight,previous ? previous.factWeight : '')+'" type="text" inputmode="decimal" value="'+esc(set.planWeight)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+',true)" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'planWeight\',this.value)">'+
+      '<input class="st-input st-plan-field '+(!blank(set.planReps) ? 'has-value ' : '')+planClass(set.planReps,previous ? previous.factReps : '')+'" type="number" step="1" value="'+esc(set.planReps)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+',true)" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'planReps\',this.value)">'+
       '<div class="st-divider"></div>'+
       '<input class="st-input st-fact-field '+(!blank(set.factWeight) ? 'has-value' : '')+'" type="text" inputmode="decimal" value="'+esc(set.factWeight)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'factWeight\',this.value)">'+
       '<input class="st-input st-fact-field '+(!blank(set.factReps) ? 'has-value' : '')+'" type="number" step="1" value="'+esc(set.factReps)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'factReps\',this.value)">'+
@@ -5069,7 +5065,7 @@ function renderModal(){
       '<div class="st-modal-bg">'+
         '<div class="st-modal">'+
           '<div class="st-modal-title">Сначала укажите дату тренировки</div>'+
-          '<div class="st-modal-sub">После выбора даты можно заполнять вес, повторения, RPE и примечания.</div>'+
+          '<div class="st-modal-sub">После выбора даты можно вводить факт и RPE, отмечать выполненные подходы. План можно редактировать без даты.</div>'+
           '<div class="st-modal-actions">'+
             '<button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Понятно</button>'+
           '</div>'+
@@ -5616,6 +5612,11 @@ window.ST = {
 
 
   setEntryMode:function(mode){
+    if(mode === 'train' && clientLocked(app.selectedIndex)){
+      app.modal = {type:'dateWarning'};
+      render();
+      return;
+    }
     app.entryMode = mode === 'train' ? 'train' : 'edit';
     app.rpeMenu = null;
     render();
@@ -5695,6 +5696,11 @@ window.ST = {
   },
 
   completeSet:function(index,id,setIndex){
+    if(clientLocked(index)){
+      app.modal = {type:'dateWarning'};
+      render();
+      return;
+    }
     var exercise = findExercise(currentWorkout().sessions[index],id);
     if(!exercise || !exercise.sets[setIndex]){ return; }
     var set = exercise.sets[setIndex];
@@ -5921,11 +5927,12 @@ window.ST = {
 
   numberClick:function(
     event,
-    index
+    index,
+    isPlan
   ){
 
     if(
-      clientLocked(index)
+      !isPlan && clientLocked(index)
     ){
 
       event.preventDefault();
@@ -5973,7 +5980,7 @@ window.ST = {
   ){
 
     if(
-      clientLocked(index)
+      (field === 'factWeight' || field === 'factReps') && clientLocked(index)
     ){
 
       app.modal = {
@@ -6133,20 +6140,6 @@ window.ST = {
     index,
     id
   ){
-
-    if(
-      clientLocked(index)
-    ){
-
-      app.modal = {
-        type:'dateWarning'
-      };
-
-      render();
-
-      return;
-
-    }
 
     app.modal = {
       type:'note',

@@ -536,5 +536,104 @@ for (const width of [768, 1440]) {
   await page.close();
 }
 
+
+for (const {width,managed} of [{width:430,managed:false},{width:1440,managed:false},{width:430,managed:true},{width:1440,managed:true}]) {
+  const page = await browser.newPage({ viewport: { width, height: 900 } });
+  await page.addInitScript(({ workouts, managed }) => {
+    if(managed) window.EdabalansAppContext = {mode:"admin",targetUserId:"preview"};
+    window.EdabalansIdentity = { source: "native", email: "preview@example.test" };
+    window.__saveActions = [];
+    window.__saveBodies = [];
+    const payload = (value) => Promise.resolve(new Response(JSON.stringify(value), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }));
+    window.__workouts = workouts;
+    window.fetch = (url, options = {}) => {
+      const parsed = new URL(String(url), "https://edabalans.ru");
+      const body = options.body ? JSON.parse(options.body) : null;
+      const action = body?.action || parsed.searchParams.get("action");
+      if (action === "openUser") return payload({ ok: true, user: { user_id: "preview", email: "preview@example.test", display_name: "Предпросмотр" } });
+      if (action === "getWorkout") {
+        const type = Number(body?.type || parsed.searchParams.get("type") || 1);
+        return payload({ ok: true, workout: window.__workouts[type] });
+      }
+      window.__saveActions.push(action);
+      window.__saveBodies.push(body ? structuredClone(body) : null);
+      if (window.__failNextSave && action === "saveExerciseCatalog") {
+        window.__failNextSave = false;
+        return payload({ ok: false, error: "Сеть недоступна" });
+      }
+      const responseBody = action === "saveSession"
+        ? {
+            ok: true,
+            version: 2,
+            session: {
+              ...body.session,
+              session_id: body.session.session_id || `server-${body.workout_type}-${body.session.session_number}`,
+            },
+          }
+        : { ok: true, version: 2 };
+      return new Promise((resolve) => setTimeout(() => resolve(new Response(JSON.stringify(responseBody), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      })), 120));
+    };
+  }, (() => {
+    const workouts = { 1: workout(1, 26), 2: workout(2, 25), 3: workout(3, 1, true) };
+    addSameNamedCustomHistory(workouts[1], "custom-same-a");
+    addSameNamedCustomHistory(workouts[2], "custom-same-b");
+    workouts[1].sets
+      .filter((set) => set.exercise_id === "bench-press")
+      .forEach((set) => { set.fact_weight = "70"; set.fact_reps = "8"; set.rpe = "9"; });
+    workouts[1].sessions[0].date = "";
+    workouts[1].sets.forEach(set => {set.fact_weight = ""; set.fact_reps = ""; set.rpe = "";});
+    return { managed, workouts: Object.fromEntries(Object.keys(workouts).map((type) => [type, globalWorkoutForType(workouts, Number(type))])) };
+  })());
+  await page.goto(pathToFileURL(appPath).href);
+  await page.locator(".st-type-edit").first().waitFor();
+
+
+  const plan = page.locator(managed && width > 700 ? '.st-ex-day.current .st-plan-field' : '.st-plan-inputs input');
+  const fact = page.locator(managed && width > 700 ? '.st-ex-day.current .st-fact-field' : '.st-fact-inputs input');
+  await plan.first().click();
+  assert.equal(await page.locator('.st-modal-bg').count(), 0);
+  await plan.first().fill('42,5');
+  await plan.first().blur();
+  await plan.nth(1).fill('12');
+  await plan.nth(1).blur();
+  await page.waitForFunction(() => window.__saveBodies.some(body => body?.action === 'saveSession' && body.session.date === '' && body.session.exercises[0].sets[0].plan_weight === 42.5 && body.session.exercises[0].sets[0].plan_reps === 12));
+  const sessionIndex = Number((await fact.first().getAttribute('onchange')).match(/ST.changeField\((\d+)/)[1]);
+  await page.evaluate(index => ST.completeSet(index,'bench-press',0), sessionIndex);
+  await page.getByText('Сначала укажите дату тренировки', {exact:true}).waitFor();
+  await page.getByText('Понятно', {exact:true}).click();
+  if(managed && width > 700){
+    await page.locator('.st-ex-day.current .st-note').first().click();
+    await page.locator('#st-note-text').fill('План заранее');
+    await page.getByRole('button',{name:'Сохранить',exact:true}).click();
+  } else {
+    await page.locator('.st-modern-comment textarea').first().fill('План заранее');
+    await page.locator('.st-modern-comment textarea').first().blur();
+  }
+  await page.waitForFunction(() => window.__saveBodies.some(body => body?.action === 'saveSession' && body.session.date === '' && body.session.exercises[0].note === 'План заранее' && body.session.exercises[0].sets[0].fact_weight === ''));
+  await fact.first().fill('41');
+  await fact.first().blur();
+  await page.getByText('Сначала укажите дату тренировки', {exact:true}).waitFor();
+  await page.getByText('Понятно', {exact:true}).click();
+  assert.equal(await fact.first().inputValue(), '');
+  await page.locator(managed && width > 700 ? '.st-ex-day.current .st-rpe-button' : '.st-rpe-button').first().click();
+  await page.getByText('Сначала укажите дату тренировки', {exact:true}).waitFor();
+  await page.getByText('Понятно', {exact:true}).click();
+  await page.getByRole('button', {name:'Начать тренировку',exact:true}).click();
+  await page.getByText('Сначала укажите дату тренировки', {exact:true}).waitFor();
+  await page.getByText('Понятно', {exact:true}).click();
+
+  await page.evaluate(index => ST.setDate(index,'2026-10-07'), sessionIndex);
+  await page.getByRole('button', {name:'Начать тренировку',exact:true}).click();
+  await page.locator('.st-set-done').first().click();
+  await page.waitForFunction(() => window.__saveBodies.some(body => body?.action === 'saveSession' && body.session.date === '2026-10-07' && body.session.exercises[0].sets[0].fact_weight === 42.5 && body.session.exercises[0].sets[0].fact_reps === 12));
+  await page.close();
+}
+
 await browser.close();
 console.log("strength editor mobile checks passed");
