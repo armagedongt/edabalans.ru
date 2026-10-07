@@ -145,7 +145,7 @@ class ManualPaymentCheckoutIn(BaseModel):
     amount: Decimal = Field(gt=0, le=10_000_000, max_digits=14, decimal_places=2)
     payer_name: str = Field(min_length=1, max_length=255)
     email: str = Field(min_length=3, max_length=320)
-    comment: str = Field(min_length=1, max_length=1000)
+    comment: str = Field(default="", max_length=1000)
 
 
 class SubscriptionCheckoutIn(BaseModel):
@@ -660,7 +660,10 @@ def robokassa_course_offer_checkout(
         raise HTTPException(409, "Предложение больше не доступно")
     try:
         checkout = create_offer_checkout_record(db, user, payload, card)
-        return create_member_offer_payment(db, settings, checkout, user, primary_email(db, user.id))
+        return create_member_offer_payment(
+            db, settings, checkout, user, primary_email(db, user.id),
+            purchase_place="account" if body.placement == "offers-hub" else "course",
+        )
     except RobokassaError as exc:
         db.rollback()
         raise HTTPException(422, str(exc)) from exc

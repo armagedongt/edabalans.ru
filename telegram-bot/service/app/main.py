@@ -8,6 +8,7 @@ import json
 import logging
 import secrets
 import time
+from uuid import NAMESPACE_URL, uuid5
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
@@ -149,6 +150,17 @@ def _owner_payment_alert_contact(session: Session) -> Contact | None:
 
 def _owner_payment_alert_digest(message_text: str) -> str:
     return hashlib.sha256(message_text.encode("utf-8")).hexdigest()
+
+
+def technical_client() -> TelegramClient:
+    if not settings.technical_telegram_bot_token:
+        raise HTTPException(503, "Technical Telegram token is not configured")
+    return TelegramClient(
+        settings.technical_telegram_bot_token,
+        proxy_url=settings.telegram_proxy_url,
+        api_base_url=settings.telegram_api_base_url,
+        gateway_token=settings.telegram_gateway_token,
+    )
 
 
 def max_client() -> MaxClient:
@@ -1416,64 +1428,73 @@ async def owner_payment_alert(
         raise HTTPException(400, "Invalid payment alert payload")
     notification_id = str(payload.get("notification_id") or "").strip()
     message_text = str(payload.get("message_text") or "").strip()
-    if not notification_id or not message_text or len(message_text) > 4096:
+    if not notification_id or not message_text:
         raise HTTPException(422, "Invalid payment alert fields")
     expected = _owner_payment_alert_signature(notification_id, message_text)
     if not secrets.compare_digest(x_edabalans_payment_signature or "", expected):
         raise HTTPException(403, "Invalid payment alert signature")
-    contact = _owner_payment_alert_contact(session)
-    if contact is None:
-        raise HTTPException(503, "Payment alert owner Telegram contact is unavailable")
+    recipients = list(dict.fromkeys(
+        item.strip() for item in settings.technical_telegram_recipient_ids.split(",") if item.strip()
+    ))
+    if not recipients or any(not item.isdigit() for item in recipients):
+        raise HTTPException(503, "Technical Telegram recipients are not configured")
+    telegram = technical_client()
+    bot_id = settings.technical_telegram_bot_token.split(":", 1)[0]
     digest = _owner_payment_alert_digest(message_text)
-    delivery = session.get(OwnerPaymentAlertDelivery, notification_id)
-    if delivery is not None:
-        if not secrets.compare_digest(delivery.message_digest, digest):
-            raise HTTPException(409, "Payment alert notification payload changed")
-        if delivery.status == "sent":
-            return {"ok": True, "message_id": delivery.platform_message_id or ""}
-        updated_at = delivery.updated_at
-        if updated_at is not None and updated_at.tzinfo is None:
-            updated_at = updated_at.replace(tzinfo=UTC)
-        if (
-            delivery.status == "sending"
-            and updated_at is not None
-            and datetime.now(UTC) - updated_at < timedelta(minutes=2)
-        ):
-            raise HTTPException(503, "Payment alert delivery is in progress")
-        delivery.status = "sending"
-        delivery.attempt_count += 1
-    else:
-        delivery = OwnerPaymentAlertDelivery(
-            notification_id=notification_id,
-            message_digest=digest,
-            status="sending",
-            attempt_count=1,
-        )
-        session.add(delivery)
-    try:
+    message_ids = []
+    failures = []
+    for recipient in recipients:
+        receipt_id = str(uuid5(NAMESPACE_URL, f"owner-alert:{notification_id}:{bot_id}:{recipient}"))
+        delivery = session.get(OwnerPaymentAlertDelivery, receipt_id)
+        if delivery is not None:
+            if delivery.status == "sent" and secrets.compare_digest(delivery.message_digest, digest):
+                message_ids.append(delivery.platform_message_id or "")
+                continue
+            updated_at = delivery.updated_at
+            if updated_at is not None and updated_at.tzinfo is None:
+                updated_at = updated_at.replace(tzinfo=UTC)
+            if delivery.status == "sending" and updated_at and datetime.now(UTC) - updated_at < timedelta(minutes=2):
+                failures.append(recipient)
+                continue
+            delivery.status = "sending"
+            delivery.attempt_count += 1
+        else:
+            delivery = OwnerPaymentAlertDelivery(
+                notification_id=receipt_id, message_digest=digest, status="sending", attempt_count=1,
+            )
+            session.add(delivery)
+        try:
+            session.commit()
+        except IntegrityError:
+            session.rollback()
+            failures.append(recipient)
+            continue
+        method = "editMessageText" if delivery.platform_message_id else "sendMessage"
+        outgoing = {
+            "chat_id": recipient, "text": message_text,
+            "parse_mode": "HTML", "disable_web_page_preview": True,
+        }
+        if delivery.platform_message_id:
+            outgoing["message_id"] = int(delivery.platform_message_id)
+        try:
+            result = telegram.call(method, outgoing)
+        except Exception as exc:
+            # A lost edit ACK can leave Telegram ahead of the durable receipt.
+            if method == "editMessageText" and isinstance(exc, TelegramError) and "message is not modified" in str(exc).lower():
+                result = {"message_id": delivery.platform_message_id}
+            else:
+                delivery.status = "retry"
+                session.commit()
+                failures.append(recipient)
+                continue
+        delivery.status = "sent"
+        delivery.message_digest = digest
+        delivery.platform_message_id = str(result.get("message_id") or delivery.platform_message_id or "")[:128] or None
         session.commit()
-    except IntegrityError:
-        # A simultaneous retry claimed the same notification. The backend will
-        # retry this durable outbox row; never send a second Telegram message.
-        session.rollback()
-        raise HTTPException(503, "Payment alert delivery is in progress") from None
-    try:
-        result = client().call(
-            "sendMessage",
-            {
-                "chat_id": contact.chat_id,
-                "text": message_text,
-                "disable_web_page_preview": True,
-            },
-        )
-    except TelegramError as exc:
-        delivery.status = "retry"
-        session.commit()
-        raise HTTPException(502, "Telegram rejected payment alert") from exc
-    delivery.status = "sent"
-    delivery.platform_message_id = str(result.get("message_id") or "")[:128] or None
-    session.commit()
-    return {"ok": True, "message_id": delivery.platform_message_id or ""}
+        message_ids.append(delivery.platform_message_id or "")
+    if failures:
+        raise HTTPException(502, "Technical Telegram alert was not delivered to every recipient")
+    return {"ok": True, "message_id": ",".join(message_ids)}
 
 
 @app.post("/bot/max/webhook")

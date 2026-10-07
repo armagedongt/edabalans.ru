@@ -85,7 +85,14 @@ def test_admin_can_upload_media(tmp_path, monkeypatch):
     assert (tmp_path / response.json()["media_path"].split("/")[-1]).read_bytes() == b"jpeg-data"
 
 
-def test_internal_owner_payment_alert_uses_signed_payload_and_active_owner_contact(tmp_path, monkeypatch):
+def test_technical_client_uses_technical_token_without_changing_customer_client(monkeypatch):
+    monkeypatch.setattr(main_module.settings, "telegram_test_bot_token", "111:customer-token")
+    monkeypatch.setattr(main_module.settings, "technical_telegram_bot_token", "999:technical-token")
+    assert main_module.technical_client().token == "999:technical-token"
+    assert main_module.client().token == "111:customer-token"
+
+
+def test_internal_owner_payment_alert_fans_out_retries_and_edits_each_receipt(tmp_path, monkeypatch):
     engine = make_engine(f"sqlite:///{tmp_path / 'owner-alert.sqlite'}")
     Base.metadata.create_all(engine)
     with Session(engine) as session:
@@ -110,17 +117,22 @@ def test_internal_owner_payment_alert_uses_signed_payload_and_active_owner_conta
     class PaymentAlertTelegram:
         def __init__(self):
             self.calls = []
+            self.fail_second = True
 
         def call(self, method, payload):
             self.calls.append((method, payload))
-            return {"message_id": 444}
+            if payload["chat_id"] == "88" and self.fail_second:
+                self.fail_second = False
+                raise TelegramError("Temporary failure")
+            return {"message_id": 444 if payload["chat_id"] == "77" else 445}
 
     fake = PaymentAlertTelegram()
     app.dependency_overrides[get_db] = db_override
-    monkeypatch.setattr(main_module, "client", lambda: fake)
+    monkeypatch.setattr(main_module, "technical_client", lambda: fake)
     monkeypatch.setattr(main_module.settings, "app_auth_secret", "owner-alert-tests")
-    monkeypatch.setattr(main_module.settings, "payment_owner_telegram_user_id", "77")
-    payload = {"notification_id": "a12", "message_text": "Оплата прошла\nСумма: 9 900 ₽"}
+    monkeypatch.setattr(main_module.settings, "technical_telegram_bot_token", "999:test-token")
+    monkeypatch.setattr(main_module.settings, "technical_telegram_recipient_ids", "77,88,77")
+    payload = {"notification_id": "a12", "message_text": "<b>$ Новая покупка · 9 900 ₽</b>\n\nМессенджер: не привязан"}
     signature = main_module._owner_payment_alert_signature(
         payload["notification_id"], payload["message_text"]
     )
@@ -136,14 +148,34 @@ def test_internal_owner_payment_alert_uses_signed_payload_and_active_owner_conta
         json=payload,
         headers={"X-Edabalans-Payment-Signature": signature},
     )
+    repeated_again = client.post("/internal/owner-payment-alert", json=payload,
+                                 headers={"X-Edabalans-Payment-Signature": signature})
     rejected = client.post("/internal/owner-payment-alert", json=payload)
 
-    assert accepted.status_code == 200
-    assert accepted.json() == {"ok": True, "message_id": "444"}
+    assert accepted.status_code == 502
     assert repeated.status_code == 200
-    assert repeated.json() == {"ok": True, "message_id": "444"}
-    assert fake.calls == [("sendMessage", {"chat_id": "77", "text": payload["message_text"], "disable_web_page_preview": True})]
+    assert repeated.json() == {"ok": True, "message_id": "444,445"}
+    assert repeated_again.status_code == 200
+    assert [(method, body["chat_id"]) for method, body in fake.calls] == [("sendMessage", "77"), ("sendMessage", "88"), ("sendMessage", "88")]
+    assert all(body["parse_mode"] == "HTML" for _, body in fake.calls)
     assert rejected.status_code == 403
+    changed = {**payload, "message_text": payload["message_text"].replace("не привязан", '@buyer')}
+    changed_signature = main_module._owner_payment_alert_signature(changed["notification_id"], changed["message_text"])
+    updated = client.post("/internal/owner-payment-alert", json=changed,
+                          headers={"X-Edabalans-Payment-Signature": changed_signature})
+    assert updated.status_code == 200
+    assert [(method, body["chat_id"], body.get("message_id")) for method, body in fake.calls[-2:]] == [
+        ("editMessageText", "77", 444), ("editMessageText", "88", 445),
+    ]
+    # Telegram limits rendered text, rather than the escaped HTML source.
+    escaped_comment = "&lt;&gt;&amp;" * 333
+    long_payload = {"notification_id": "long-comment", "message_text": "<b>$ Индив. оплата</b>\n" + escaped_comment}
+    assert len(long_payload["message_text"]) > 4096
+    long_signature = main_module._owner_payment_alert_signature(long_payload["notification_id"], long_payload["message_text"])
+    long_accepted = client.post("/internal/owner-payment-alert", json=long_payload,
+                               headers={"X-Edabalans-Payment-Signature": long_signature})
+    assert long_accepted.status_code == 200
+    assert [body["chat_id"] for _, body in fake.calls[-2:]] == ["77", "88"]
     app.dependency_overrides.clear()
 
 

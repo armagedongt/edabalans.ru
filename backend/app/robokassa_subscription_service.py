@@ -20,6 +20,7 @@ from app.account_onboarding_service import _send_message
 from app.owner_payment_notification_service import (
     enqueue_failed_payment_notification,
     enqueue_paid_payment_notification,
+    enqueue_subscription_cancelled_notification,
 )
 from app.database import SessionLocal
 from app.models import (
@@ -330,7 +331,7 @@ def cancel_subscription(db: Session, user: User) -> RecurringSubscription:
     )
     if row is None:
         raise RobokassaError("У вас нет подписки на сопровождение")
-    if row.status == "cancelled":
+    if row.status == "cancelled" or row.cancelled_at is not None:
         return row
     if row.status not in {"active", "charging"}:
         raise RobokassaError("Эту подписку сейчас нельзя отключить")
@@ -339,6 +340,7 @@ def cancel_subscription(db: Session, user: User) -> RecurringSubscription:
     row.next_charge_at = None
     if row.status == "active":
         row.status = "cancelled"
+    enqueue_subscription_cancelled_notification(db, row)
     db.commit()
     return row
 

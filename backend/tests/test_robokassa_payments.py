@@ -378,6 +378,24 @@ def test_checkout_uses_database_price_and_does_not_create_user() -> None:
     app.dependency_overrides.clear()
 
 
+def test_public_checkout_preserves_homepage_through_paid_callback() -> None:
+    client, factory, key = make_client(test_mode=False)
+    seed_catalog(factory)
+    result = create_checkout(client)
+    with factory() as db:
+        assert db.scalar(select(Payment)).raw_payload["purchase_place"] == "homepage"
+    callback = client.post("/integrations/robokassa/result2", content=signed_result(key, result["invoice_id"], "5900.00"))
+    assert callback.status_code == 200, callback.text
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        assert payment.user_id is not None
+        assert payment.raw_payload["purchase_place"] == "homepage"
+        alert = db.scalar(select(OwnerPaymentNotification))
+        assert "Место покупки: Главная страница" in alert.message_text
+        assert "$ Новая покупка" in alert.message_text
+    app.dependency_overrides.clear()
+
+
 def test_go_test_page_is_one_button_with_database_price() -> None:
     _, factory, _ = make_client()
     seed_catalog(factory)
@@ -1337,9 +1355,10 @@ def test_account_purchase_is_not_exported_as_initial_public_purchase() -> None:
 
 
 def test_course_offer_opens_native_payment_and_rechecks_placement(monkeypatch) -> None:
-    client, factory, _ = make_client()
+    client, factory, key = make_client(test_mode=False)
     seed_catalog(factory)
     with factory() as db:
+        db.add(Resource(code="ACCESS_RECIPES", name="Система рецептов"))
         user = User(data_origin="native", first_seen_at=datetime.now(timezone.utc))
         db.add(user)
         db.flush()
@@ -1374,9 +1393,15 @@ def test_course_offer_opens_native_payment_and_rechecks_placement(monkeypatch) -
     assert checkout.status_code == 200, checkout.text
     assert checkout.json()["payment_form"]["method"] == "POST"
     assert calls[-1][1] == "day-1-offer"
+    callback = client.post("/integrations/robokassa/result2", content=signed_result(key, checkout.json()["invoice_id"], "1900.00"))
+    assert callback.status_code == 200, callback.text
     with factory() as db:
         assert db.scalar(select(func.count(OfferCheckout.id))) == 1
         assert db.scalar(select(func.count(Payment.id))) == 1
+        assert db.scalar(select(Payment)).raw_payload["purchase_place"] == "course"
+        alert = db.scalar(select(OwnerPaymentNotification))
+        assert "$ Доп. продажа" in alert.message_text
+        assert "Место покупки: Материалы Мастер-класса" in alert.message_text
     app.dependency_overrides.clear()
 
 
@@ -1707,6 +1732,42 @@ def test_manual_payment_keeps_comment_without_creating_access_or_account() -> No
     app.dependency_overrides.clear()
 
 
+def test_manual_payment_accepts_omitted_comment_and_still_requires_name() -> None:
+    from html.parser import HTMLParser
+
+    class FormFields(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.fields = {}
+
+        def handle_starttag(self, tag, attrs):
+            values = dict(attrs)
+            if values.get("id") in {"comment", "payer-name"}:
+                self.fields[values["id"]] = values
+
+    client, factory, key = make_client(test_mode=False)
+    fields = FormFields()
+    fields.feed(client.get("/pay").text)
+    assert "required" not in fields.fields["comment"]
+    assert "required" in fields.fields["payer-name"]
+    body = {"amount": "3500", "payer_name": "Ирина", "email": "irina@example.test"}
+    headers = {"Origin": "https://app.edabalans.ru"}
+    for invalid_name in ("", "   "):
+        rejected = client.post("/api/payments/robokassa/manual-checkout", json={**body, "payer_name": invalid_name}, headers=headers)
+        assert rejected.status_code == 422
+    response = client.post("/api/payments/robokassa/manual-checkout", json=body, headers=headers)
+    assert response.status_code == 200, response.text
+    callback = client.post("/integrations/robokassa/result2", content=signed_result(key, response.json()["invoice_id"], "3500.00"))
+    assert callback.status_code == 200
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        assert payment.raw_payload["comment"] == ""
+        assert payment.raw_payload["payer_name"] == "Ирина"
+        assert db.scalar(select(func.count(User.id))) == 0
+        assert db.scalar(select(func.count(UserAccess.id))) == 0
+    app.dependency_overrides.clear()
+
+
 def test_personal_offer_rejects_another_email_before_payment() -> None:
     client, factory, _ = make_client()
     seed_catalog(factory)
@@ -1894,10 +1955,15 @@ def test_subscription_cancellation_requires_login_and_stops_future_charge() -> N
 
     assert cancelled.status_code == 200, cancelled.text
     assert cancelled.json()["subscription"]["status"] == "cancelled"
+    repeated = client.post("/api/payments/robokassa/subscription/cancel", headers={"Origin": "https://app.edabalans.ru"})
+    assert repeated.status_code == 200
     with factory() as db:
         row = db.scalar(select(RecurringSubscription))
         assert row is not None and row.next_charge_at is None
         assert row.current_period_end is not None
+        alerts = db.scalars(select(OwnerPaymentNotification).where(OwnerPaymentNotification.event_kind == "subscription_cancelled")).all()
+        assert len(alerts) == 1
+        assert "❌ Отмена подписки · 9 800 ₽ / месяц" in alerts[0].message_text
     app.dependency_overrides.clear()
 
 

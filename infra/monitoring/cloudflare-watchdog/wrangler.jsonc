@@ -27,6 +27,7 @@
     }
   ],
   "vars": {
+    "TELEGRAM_ALERT_CHAT_IDS": "446056103,5677281049",
     "PLATFORM_READY_URL": "https://edabalans.ru/ready",
     "TELEGRAM_READY_URL": "https://edabalans.ru/api/health/telegram",
     "MAX_READY_URL": "https://edabalans.ru/api/health/max",
@@ -40,7 +41,7 @@
     "CHECK_TIMEOUT_MS": "10000",
     "MARKETING_REPORT_URL": "https://edabalans.ru/api/internal/marketing/daily-report",
     "REPORT_STATE_CUTOVER_DATE": "2026-09-08",
-    "SEND_REPORT_AI_DEMO_ONCE": "true",
-    "SEND_RICH_REPORT_PREVIEW_ONCE": "true"
+    "SEND_REPORT_AI_DEMO_ONCE": "false",
+    "SEND_RICH_REPORT_PREVIEW_ONCE": "false"
   }
 }

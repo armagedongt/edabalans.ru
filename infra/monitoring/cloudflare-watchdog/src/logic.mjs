@@ -281,7 +281,7 @@ function configurationFor(action, env) {
   if (!parseBoolean(env.ACTIONS_ENABLED, false)) {
     return { ok: false, reason: "автоматические действия пока выключены" };
   }
-  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_ALERT_CHAT_ID) {
+  if (!env.TELEGRAM_BOT_TOKEN || !telegramRecipients(env).length) {
     return { ok: false, reason: "не настроен канал аварийных уведомлений Telegram" };
   }
   if (action.kind === "reboot") {
@@ -418,64 +418,96 @@ class CampaignActionError extends Error {
   }
 }
 
-async function sendTelegramAlert(text, env, fetchImpl) {
-  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_ALERT_CHAT_ID) {
+function telegramRecipients(env) {
+  return [...new Set(String(env.TELEGRAM_ALERT_CHAT_IDS || env.TELEGRAM_ALERT_CHAT_ID || "")
+    .split(",").map((value) => value.trim()).filter(Boolean))];
+}
+
+async function sendTelegramAlert(text, env, fetchImpl, deliveredTo = [], onDelivered = async () => {}) {
+  if (!env.TELEGRAM_BOT_TOKEN || !telegramRecipients(env).length) {
     throw new Error("Telegram alert route is not configured");
   }
-  const response = await fetchWithTimeout(
-    `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: env.TELEGRAM_ALERT_CHAT_ID,
-        text,
-        disable_web_page_preview: true,
-      }),
-    },
-    fetchImpl,
-    parsePositiveInteger(env.ACTION_TIMEOUT_MS, DEFAULT_TIMEOUT_MS),
-  );
-  if (!response.ok) throw new Error(`Telegram HTTP ${response.status}`);
-  const body = await response.json();
-  if (!body.ok) throw new Error("Telegram rejected the alert");
+  const failures = [];
+  for (const recipient of telegramRecipients(env)) {
+    if (deliveredTo.includes(recipient)) continue;
+    try {
+      const response = await fetchWithTimeout(
+        `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ chat_id: recipient, text, disable_web_page_preview: true }),
+        },
+        fetchImpl,
+        parsePositiveInteger(env.ACTION_TIMEOUT_MS, DEFAULT_TIMEOUT_MS),
+      );
+      if (!response.ok) throw new Error(`Telegram HTTP ${response.status}`);
+      const body = await response.json();
+      if (!body.ok) throw new Error("Telegram rejected the alert");
+      deliveredTo.push(recipient);
+      await onDelivered();
+    } catch (error) { failures.push(error); }
+  }
+  if (failures.length) throw failures[0];
 }
 
 async function sendTelegramRichMessage(item, env, fetchImpl) {
-  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_ALERT_CHAT_ID) {
+  if (!env.TELEGRAM_BOT_TOKEN || !telegramRecipients(env).length) {
     throw new Error("Telegram alert route is not configured");
   }
-  try {
-    const response = await fetchWithTimeout(
-      `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendRichMessage`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: env.TELEGRAM_ALERT_CHAT_ID,
-          rich_message: item.rich_message,
-        }),
-      },
-      fetchImpl,
-      parsePositiveInteger(env.ACTION_TIMEOUT_MS, DEFAULT_TIMEOUT_MS),
-    );
-    if (!response.ok) throw new Error(`Telegram HTTP ${response.status}`);
-    const body = await response.json();
-    if (!body.ok) throw new Error("Telegram rejected the rich message");
-  } catch (error) {
-    if (!item.fallback_text) throw error;
-    await sendTelegramAlert(item.fallback_text, env, fetchImpl);
+  const failures = [];
+  for (const recipient of telegramRecipients(env)) {
+    const recipientEnv = { ...env, TELEGRAM_ALERT_CHAT_IDS: recipient, TELEGRAM_ALERT_CHAT_ID: recipient };
+    try {
+      try {
+        const response = await fetchWithTimeout(
+          `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendRichMessage`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: recipient, rich_message: item.rich_message }),
+          },
+          fetchImpl,
+          parsePositiveInteger(env.ACTION_TIMEOUT_MS, DEFAULT_TIMEOUT_MS),
+        );
+        if (!response.ok) throw new Error(`Telegram HTTP ${response.status}`);
+        const body = await response.json();
+        if (!body.ok) throw new Error("Telegram rejected the rich message");
+      } catch (error) {
+        if (!item.fallback_text) throw error;
+        await sendTelegramAlert(item.fallback_text, recipientEnv, fetchImpl);
+      }
+    } catch (error) { failures.push(error); }
   }
+  if (failures.length) throw failures[0];
 }
 
-async function deliverDailyReport(report, env, fetchImpl) {
+async function deliverDailyReport(report, env, fetchImpl, state, storage, reportDate) {
   const richMessages = report.payload?.telegram_rich_messages;
-  if (Array.isArray(richMessages) && richMessages.length) {
-    for (const message of richMessages) await sendTelegramRichMessage(message, env, fetchImpl);
-    return true;
+  const rich = Array.isArray(richMessages) && richMessages.length > 0;
+  const messages = rich ? richMessages : (report.messages || []);
+  if (state.report.deliveryDate !== reportDate) {
+    state.report.deliveryDate = reportDate;
+    state.report.deliveredParts = [];
   }
-  for (const message of report.messages || []) await sendTelegramAlert(message, env, fetchImpl);
-  return false;
+  state.report.deliveredParts ??= [];
+  const failures = [];
+  for (const recipient of telegramRecipients(env)) {
+    const recipientEnv = { ...env, TELEGRAM_ALERT_CHAT_IDS: recipient, TELEGRAM_ALERT_CHAT_ID: recipient };
+    for (const [index, message] of messages.entries()) {
+      const key = `${rich ? "rich" : "text"}:${index}:${recipient}`;
+      if (state.report.deliveredParts.includes(key)) continue;
+      try {
+        if (rich) await sendTelegramRichMessage(message, recipientEnv, fetchImpl);
+        else await sendTelegramAlert(message, recipientEnv, fetchImpl);
+        state.report.deliveredParts.push(key);
+        await persist(storage, state);
+      } catch (error) { failures.push(error); }
+    }
+  }
+  if (!telegramRecipients(env).length) throw new Error("Telegram alert route is not configured");
+  if (failures.length) throw failures[0];
+  return rich;
 }
 
 async function fetchWithTimeout(url, options, fetchImpl, timeoutMs) {
@@ -556,14 +588,17 @@ async function executeAction(state, action, env, fetchImpl, storage, now) {
 }
 
 async function flushAlerts(state, env, fetchImpl, storage) {
-  while (state.pendingAlerts.length) {
+  state.pendingAlerts = state.pendingAlerts.map((alert) => (
+    typeof alert === "string" ? { text: alert, deliveredTo: [] } : alert
+  ));
+  for (const alert of [...state.pendingAlerts]) {
     try {
-      await sendTelegramAlert(state.pendingAlerts[0], env, fetchImpl);
+      await sendTelegramAlert(alert.text, env, fetchImpl, alert.deliveredTo, () => persist(storage, state));
     } catch (error) {
       console.error("Telegram alert delivery failed", String(error?.message || error));
-      return;
+      continue;
     }
-    state.pendingAlerts.shift();
+    state.pendingAlerts = state.pendingAlerts.filter((item) => item !== alert);
     await persist(storage, state);
   }
 }
@@ -679,7 +714,7 @@ async function runDailyReport(state, env, fetchImpl, storage, now) {
     }
     if (snapshotReady && deliveryReady && state.report.sentDate !== reportDate) {
       const report = await reportRequest(`${env.MARKETING_REPORT_URL}?date=${reportDate}`, env.MARKETING_REPORT_TOKEN, "GET", fetchImpl);
-      const usedRichMessages = await deliverDailyReport(report, env, fetchImpl);
+      const usedRichMessages = await deliverDailyReport(report, env, fetchImpl, state, storage, reportDate);
       if (usedRichMessages) state.report.richPreviewSent = true;
       if (parseBoolean(env.SEND_REPORT_AI_DEMO_ONCE, false) && !state.report.demoSent && report.payload?.demo_ai_message) {
         await sendTelegramAlert(report.payload.demo_ai_message, env, fetchImpl);
@@ -693,7 +728,7 @@ async function runDailyReport(state, env, fetchImpl, storage, now) {
     if (parseBoolean(env.SEND_RICH_REPORT_PREVIEW_ONCE, false) && !state.report.richPreviewSent) {
       await reportRequest(`${env.MARKETING_REPORT_URL}/generate?date=${reportDate}`, env.MARKETING_REPORT_TOKEN, "POST", fetchImpl);
       const report = await reportRequest(`${env.MARKETING_REPORT_URL}?date=${reportDate}`, env.MARKETING_REPORT_TOKEN, "GET", fetchImpl);
-      const usedRichMessages = await deliverDailyReport(report, env, fetchImpl);
+      const usedRichMessages = await deliverDailyReport(report, env, fetchImpl, state, storage, reportDate);
       if (!usedRichMessages) throw new Error("marketing report does not contain rich messages");
       await reportRequest(`${env.MARKETING_REPORT_URL}/delivered?date=${reportDate}`, env.MARKETING_REPORT_TOKEN, "POST", fetchImpl);
       state.report.generatedDate = reportDate;

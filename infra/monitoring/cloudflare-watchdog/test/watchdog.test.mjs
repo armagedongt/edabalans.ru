@@ -26,6 +26,33 @@ class MemoryStorage {
   }
 }
 
+test("technical alerts reach both owners and retry only the failed recipient", async () => {
+  const state = initialState();
+  state.pendingAlerts = ["Incident", "Service recovered"];
+  const storage = new MemoryStorage(state);
+  const delivered = [];
+  let failSecond = true;
+  const fetchImpl = async (_url, options) => {
+    const body = JSON.parse(options.body);
+    delivered.push([body.chat_id, body.text]);
+    if (body.chat_id === "88" && failSecond) {
+      return response(503, { ok: false });
+    }
+    return response(200, { ok: true });
+  };
+  const env = { TELEGRAM_BOT_TOKEN: "technical-token", TELEGRAM_ALERT_CHAT_IDS: "77,88,77", ACTIONS_ENABLED: "false" };
+  const checks = {
+    platform: { ok: true }, telegram: { ok: true }, max: { ok: true },
+  };
+  await runWatchdog(env, storage, { checks, skipReport: true, fetchImpl, now: 1000 });
+  assert.deepEqual(storage.value.pendingAlerts[0].deliveredTo, ["77"]);
+  assert.deepEqual(delivered, [["77", "Incident"], ["88", "Incident"], ["77", "Service recovered"], ["88", "Service recovered"]]);
+  failSecond = false;
+  await runWatchdog(env, storage, { checks, skipReport: true, fetchImpl, now: 2000 });
+  assert.deepEqual(delivered.slice(4), [["88", "Incident"], ["88", "Service recovered"]]);
+  assert.equal(storage.value.pendingAlerts.length, 0);
+});
+
 function response(status, body) {
   return new Response(JSON.stringify(body), {
     status,
@@ -612,6 +639,37 @@ test("daily report is generated, delivered as native rich tables after 03:30 Mos
   assert.equal(storage.value.report.sentDate, "2026-09-07");
   assert.equal(storage.value.report.demoSent, true);
   assert.equal(storage.value.report.richPreviewSent, true);
+});
+
+test("daily report retries only unsent parts for the second owner", async () => {
+  const calls = [];
+  let failSecond = true;
+  const fetchImpl = async (url, options = {}) => {
+    if (String(url).includes("api.telegram.org")) {
+      const body = JSON.parse(options.body);
+      if (body.text.startsWith("report-")) {
+        calls.push([body.chat_id, body.text]);
+        if (body.chat_id === "88" && body.text === "report-search" && failSecond) {
+          failSecond = false;
+          return response(503, { ok: false });
+        }
+      }
+      return response(200, { ok: true });
+    }
+    if (String(url).includes("/daily-report?")) return response(200, { messages: ["report-network", "report-search"], payload: {} });
+    return response(200, { status: "sent" });
+  };
+  const env = { MARKETING_REPORT_URL: "https://api.example/daily-report", MARKETING_REPORT_TOKEN: "test",
+    TELEGRAM_BOT_TOKEN: "technical-token", TELEGRAM_ALERT_CHAT_IDS: "77,88" };
+  const storage = new MemoryStorage();
+  const now = Date.UTC(2026, 8, 8, 0, 30);
+  await runDailyReportTask(env, storage, { fetchImpl, now });
+  await runDailyReportTask(env, storage, { fetchImpl, now: now + 60_000 });
+  assert.deepEqual(calls, [
+    ["77", "report-network"], ["77", "report-search"],
+    ["88", "report-network"], ["88", "report-search"], ["88", "report-search"],
+  ]);
+  assert.equal(storage.value.report.sentDate, "2026-09-07");
 });
 
 test("daily report snapshot waits for 03:00 Moscow and delivery waits for 03:30", async () => {

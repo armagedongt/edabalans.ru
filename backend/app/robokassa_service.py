@@ -373,6 +373,7 @@ def create_payment(
         raw_payload={
             "test_mode": settings.robokassa_test_mode,
             "account_purchase": account_user is not None,
+            "purchase_place": "account" if account_user is not None else "homepage",
             "success_kind": (
                 SUCCESS_KIND_MEMBER_OFFER if account_user is not None else SUCCESS_KIND_PUBLIC_MASTERCLASS
             ),
@@ -401,6 +402,7 @@ def create_payment(
         "checkout_id": str(checkout.id),
         "offer_code": OFFER_CODE if offer else None,
         "account_purchase": account_user is not None,
+        "purchase_place": "account" if account_user is not None else "homepage",
     }
     if source_snapshot is not None:
         payment.raw_payload["trusted_source_snapshot"] = source_snapshot
@@ -429,6 +431,8 @@ def create_member_offer_payment(
     checkout: OfferCheckout,
     user: User,
     email_original: str,
+    *,
+    purchase_place: str = "account",
 ) -> dict:
     """Create a Robokassa invoice for an offer already recomputed for one signed-in user."""
     _require_checkout_settings(settings)
@@ -477,6 +481,7 @@ def create_member_offer_payment(
         raw_payload={
             "test_mode": settings.robokassa_test_mode,
             "account_purchase": True,
+            "purchase_place": purchase_place,
             "success_kind": SUCCESS_KIND_MEMBER_OFFER,
             "checkout_id": str(checkout.id),
         },
@@ -595,7 +600,7 @@ def create_manual_service_payment(
     amount: Decimal,
     payer_name: str,
     email_original: str,
-    comment: str,
+    comment: str = "",
 ) -> dict:
     """Create a no-access payment for an individually agreed service."""
     _require_checkout_settings(settings)
@@ -604,8 +609,6 @@ def create_manual_service_payment(
     clean_comment = " ".join(comment.split())
     if not clean_name:
         raise RobokassaError("Укажите имя")
-    if not clean_comment:
-        raise RobokassaError("Напишите, за что вы платите")
     if amount <= 0 or amount > Decimal("10000000"):
         raise RobokassaError("Укажите сумму от 1 до 10 000 000 ₽")
     now = datetime.now(timezone.utc)
@@ -919,6 +922,7 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
     payment.raw_payload = {
         "success_kind": success_kind,
         "account_purchase": account_purchase,
+        "purchase_place": checkout_metadata.get("purchase_place"),
         "checkout_id": checkout_metadata.get("checkout_id"),
         "subscription_id": checkout_metadata.get("subscription_id"),
         "recurring_role": checkout_metadata.get("recurring_role"),
