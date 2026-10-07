@@ -255,15 +255,17 @@ def test_admin_surfaces_use_the_lightning_favicon() -> None:
         "/admin/content",
         "/admin/marketing",
         "/admin/masterclass-offers-preview",
-        "/admin/dqs",
-        "/admin/strength",
-        "/admin/metabolism",
         "/admin/messaging",
         "/admin/pricing",
     ):
         response = client.get(path)
         assert response.status_code == 200, path
         assert favicon_link in response.text, path
+
+    for section in ("dqs", "strength", "metabolism"):
+        response = client.get(f"/admin/{section}")
+        assert response.status_code == 200
+        assert f'href="/assets/{section}-favicon.svg"' in response.text
 
 
 def test_content_catalog_uses_unified_admin_shell() -> None:

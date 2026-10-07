@@ -284,6 +284,14 @@ def admin_section(
         raise HTTPException(status_code=404, detail="Административный раздел не найден")
     if not admin_identity(request, credentials):
         return protected_file("admin-login.html")
+    if section in {"dqs", "strength", "metabolism"}:
+        source = (STATIC_DIR / "admin.html").read_text(encoding="utf-8")
+        source = source.replace(
+            "/admin/static/admin-favicon.svg",
+            f"/assets/{section}-favicon.svg",
+            1,
+        )
+        return HTMLResponse(source, headers={"Cache-Control": "no-store"})
     return protected_file("admin.html")
 
 

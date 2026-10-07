@@ -723,7 +723,17 @@ def recipes_standalone() -> HTMLResponse:
 
 def standalone_app_page(app_code: str, title: str) -> HTMLResponse:
     template = (STATIC_DIR / "standalone-app.html").read_text(encoding="utf-8")
-    template = template.replace("{{APP_CODE}}", app_code).replace("{{APP_TITLE}}", title)
+    favicon_code = "metabolism" if app_code == "metabolism-old" else app_code
+    favicon = (
+        f"/assets/{favicon_code}-favicon.svg"
+        if favicon_code in {"dqs", "strength", "metabolism"}
+        else "/favicon.png"
+    )
+    template = (
+        template.replace("{{APP_CODE}}", app_code)
+        .replace("{{APP_TITLE}}", title)
+        .replace("{{APP_FAVICON}}", favicon)
+    )
     return HTMLResponse(
         template,
         headers={"Cache-Control": "no-cache", "X-Robots-Tag": "noindex, nofollow"},
@@ -751,6 +761,7 @@ def app_asset(asset_name: str) -> FileResponse:
         filename = asset_name.removeprefix("article-")
         return public_asset(STATIC_DIR.parents[2] / "content" / "article-components" / filename)
     if asset_name not in {
+        "dqs-favicon.svg", "strength-favicon.svg", "metabolism-favicon.svg",
         "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png",
         "content-gallery.js", "public-program-card.css", "public-program-card.js",
         "account-visual.css", "course-visual.css", "calories-course.css",

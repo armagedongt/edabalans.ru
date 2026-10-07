@@ -166,6 +166,20 @@ def test_dqs_and_training_have_standalone_account_aware_pages() -> None:
         assert "max-web-app.js" in response.text
         assert response.headers["x-robots-tag"] == "noindex, nofollow"
 
+    for path, icon, emoji in (
+        ("/dqs", "dqs", "🥑"),
+        ("/strength", "strength", "💪"),
+        ("/training", "strength", "💪"),
+        ("/metabolism", "metabolism", "🔥"),
+        ("/metabolism-old", "metabolism", "🔥"),
+    ):
+        assert f'href="/assets/{icon}-favicon.svg"' in client.get(path).text
+        favicon = client.get(f"/assets/{icon}-favicon.svg")
+        assert favicon.status_code == 200
+        assert favicon.headers["content-type"].startswith("image/svg+xml")
+        assert emoji in favicon.text
+    assert 'href="/favicon.png"' in client.get("/recipes").text
+
     loader = client.get("/embed.js").text
     assert "destination += '?next=' + encodeURIComponent(returnTo)" in loader
     portal = client.get("/lk?next=/training").text
