@@ -52,6 +52,9 @@ alias, закрытый порт PostgreSQL, Telegram `getMe` через proxy �
   читает шаблон `seed.py` при каждом сообщении.
 - Тексты и медиа хранятся в `tg_content_items`; отправляет их Telegram-клиент из
   `telegram-bot/service/app/telegram.py`.
+  Для обычного видео (`sendVideo`) передаётся `supports_streaming=true` как при
+  загрузке файла, так и при повторной отправке по `file_id`. Это не включает
+  автозагрузку у получателя: она определяется настройками его Telegram.
 - Описание таблиц Telegram-модуля находится в
   `telegram-bot/service/app/models.py`, схема создаётся миграциями из
   `backend/migrations/versions/`.

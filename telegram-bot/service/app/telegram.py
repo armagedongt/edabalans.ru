@@ -106,6 +106,8 @@ class TelegramClient:
                 "voice": ("sendVoice", "voice"),
                 "photo": ("sendPhoto", "photo"),
             }[content.media_kind]
+            if content.media_kind == "video":
+                common["supports_streaming"] = True
             payload = {**common, field: media_ref}
             if rendered_body and content.media_kind != "video_note":
                 payload["caption"] = rendered_body

@@ -17,10 +17,33 @@ def test_local_media_is_uploaded_and_file_id_is_reused(tmp_path):
         return httpx.Response(200, json={"ok": True, "result": {"message_id": 7, "video": {"file_id": "cached-file"}}})
 
     content = SimpleNamespace(media_kind="video", media_path=str(media), telegram_file_id=None, body_source="Подпись", title="Видео")
-    message_id = TelegramClient("secret", httpx.MockTransport(handler)).send_content("42", content, {})
+    client = TelegramClient("secret", httpx.MockTransport(handler))
+    message_id = client.send_content("42", content, {})
     assert message_id == "7"
     assert content.telegram_file_id == "cached-file"
     assert b'filename="clip.mp4"' in seen[0].read()
+    assert b'name="supports_streaming"\r\n\r\ntrue\r\n' in seen[0].read()
+    assert client.send_content("42", content, {}) == "7"
+    cached_payload = json.loads(seen[1].content)
+    assert cached_payload["video"] == "cached-file"
+    assert cached_payload["supports_streaming"] is True
+    assert cached_payload["caption"] == "Подпись"
+
+
+@pytest.mark.parametrize("media_kind", ["video_note", "voice", "photo"])
+def test_non_video_media_does_not_receive_streaming_flag(media_kind):
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        return httpx.Response(200, json={"ok": True, "result": {"message_id": 7}})
+
+    content = SimpleNamespace(
+        media_kind=media_kind, media_path=None, telegram_file_id="cached-media",
+        body_source="Подпись", title="Медиа",
+    )
+    TelegramClient("secret", httpx.MockTransport(handler)).send_content("42", content, {})
+    assert "supports_streaming" not in json.loads(seen[0].content)
 
 
 def test_http_error_does_not_expose_bot_token():
