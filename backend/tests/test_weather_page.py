@@ -23,7 +23,11 @@ def test_weather_page_and_assets_are_public() -> None:
     assert 'id="weather-app"' in page.text
     assert 'id="windy-embed"' in page.text
     assert 'href="styles.css"' in page.text
+    assert 'rel="icon" type="image/svg+xml" href="cloud-favicon.svg"' in page.text
     assert 'src="app.js"' in page.text
+    favicon = client.get("/weather/cloud-favicon.svg")
+    assert favicon.status_code == 200
+    assert favicon.headers["content-type"].startswith("image/svg+xml")
     assert client.get("/weather/styles.css").status_code == 200
     script = client.get("/weather/app.js")
     assert script.status_code == 200

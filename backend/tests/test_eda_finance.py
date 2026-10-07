@@ -27,6 +27,7 @@ def test_finance_model_uses_admin_session_and_contains_browser_persistence() -> 
     response = client.get("/finance")
 
     assert response.status_code == 200
+    assert '<link rel="icon" type="image/svg+xml" href="/admin/static/admin-favicon.svg">' in response.text
     assert 'id="save"' in response.text
     assert 'id="restore"' in response.text
     assert "digitalAverage:4840" in response.text

@@ -198,7 +198,7 @@ def private_weather() -> FileResponse:
 
 @router.get("/weather/{asset_name}", include_in_schema=False)
 def private_weather_asset(asset_name: str) -> FileResponse:
-    if asset_name not in {"styles.css", "app.js"}:
+    if asset_name not in {"styles.css", "app.js", "cloud-favicon.svg"}:
         raise HTTPException(status_code=404, detail="asset not found")
     return FileResponse(WEATHER_DIR / asset_name, headers={"Cache-Control": "no-cache"})
 
