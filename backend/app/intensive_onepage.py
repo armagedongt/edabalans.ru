@@ -203,7 +203,7 @@ def page(*, identified: bool = False):
 <link rel="stylesheet" href="/intensive/onepage-components.css?v=20261005">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="/intensive/onepage.css?v=20261007-drawer"><script defer src="/intensive/onepage.js?v=20261007-neutral-nav"></script>
+<link rel="stylesheet" href="/intensive/onepage.css?v=20261007-fullwidth"><script defer src="/intensive/onepage.js?v=20261007-neutral-nav"></script>
 <script defer src="/intensive/onepage-tracking.js?v=20261007-reading"></script></head><body>
 <header class="reading-header"><nav aria-label="Разделы интенсива">{tabs}</nav>
 <div class="reading-track" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="reading-fill"></div></div></header>
