@@ -683,6 +683,8 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             "account_status": (tilda_snapshot.raw_payload or {}).get("account_status"),
             "member_created_at": (tilda_snapshot.raw_payload or {}).get("member_created_at"),
             "last_active_at": (tilda_snapshot.raw_payload or {}).get("last_active_at"),
+            "resource_codes": list((tilda_snapshot.raw_payload or {}).get("resource_codes", [])),
+            "imported_at": tilda_snapshot.created_at,
             "source": tilda_snapshot.source,
         } if tilda_snapshot else None,
         "product_progress": product_progress,
@@ -699,6 +701,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             "password_available": bool(credential and credential.password_ciphertext),
             "password_version": credential.password_version if credential else None,
             "issued_via": credential.issued_via if credential else None,
+            "created_at": credential.created_at if credential else None,
             "updated_at": credential.updated_at if credential else None,
         },
         "messengers": [

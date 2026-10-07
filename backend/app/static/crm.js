@@ -856,6 +856,19 @@
     });
   }
 
+  function accountIdentityCard(user) {
+    const membership = user.tilda_membership;
+    const registeredEmails = user.emails.filter((item) => item.verification_status === "tilda_registered");
+    const tildaStatus = membership ? "Найден в выгрузке" : registeredEmails.length ? "Регистрация подтверждена" : "Не проверено";
+    const memberStatus = membership && ({Active:"Активен",Inactive:"Неактивен"}[membership.account_status] || membership.account_status);
+    return `<section class="crm-card" id="crm-account-identity"><div class="crm-card-title">Личные кабинеты</div>
+      <div class="crm-row"><div class="crm-k">КАБИНЕТ САЙТА · EDABALANS.RU</div><div class="crm-row-main"><strong>${user.credential.exists ? "Создан" : "Не создан"}</strong></div>${user.credential.created_at ? `<div class="crm-row-meta">Создан ${date(user.credential.created_at, true)}</div>` : ""}</div>
+      <div class="crm-row"><div class="crm-k">КАБИНЕТ TILDA</div><div class="crm-row-main"><strong>${tildaStatus}</strong>${memberStatus ? `<span>${esc(memberStatus)}</span>` : ""}</div>
+        ${registeredEmails.length ? `<div class="crm-row-meta">Email регистрации: ${registeredEmails.map((item) => esc(item.email)).join(", ")}</div>` : ""}
+        ${membership ? `<div class="crm-row-meta">Регистрация: ${date(membership.member_created_at, true)} · Последняя активность: ${date(membership.last_active_at, true)}</div><div class="crm-row-meta"><strong>Группы Tilda:</strong> ${membership.groups.length ? membership.groups.map(esc).join(" · ") : "групп нет"}</div><div class="crm-row-meta">Сохранённая выгрузка Tilda${membership.imported_at ? ` · загружена ${date(membership.imported_at, true)}` : ""}. Текущее состояние проверяется в Tilda.</div>` : `<div class="crm-row-meta">${registeredEmails.length ? "Список групп не загружен." : "Регистрация и группы Tilda не проверены."}</div>`}
+      </div></section>`;
+  }
+
   async function openUser(id, updateUrl = true) {
     if (updateUrl && new URLSearchParams(location.search).get("user") !== id) {
       setCurrentUserUrl(id);
@@ -894,6 +907,7 @@
           <span class="crm-profile-email">${esc(primaryEmail || "email не указан")}</span><span class="crm-profile-messengers">${profileMessengerButton(user, "telegram")}${profileMessengerButton(user, "max")}</span></div>
         </div>
       </div>
+      ${accountIdentityCard(user)}
       <section class="crm-card crm-apps-card"><div class="crm-card-title">Человек в системе</div>
         <div class="crm-app-links">
           <a class="crm-app-link ${modules.dqs.exists || modules.dqs.has_access ? "available" : "disabled"}" href="${modules.dqs.exists || modules.dqs.has_access ? `/admin/dqs?user=${user.id}` : "#"}"><strong>DQS</strong><span>${modules.dqs.exists ? "открыть аналитику" : modules.dqs.has_access ? "доступ есть, данных нет" : "нет доступа"}</span></a>
@@ -943,7 +957,7 @@
           <section class="crm-card"><div class="crm-card-title">Контакты</div>
             <form class="crm-form" id="name-form"><label><div class="crm-k">ИМЯ</div><input class="crm-input" id="display-name" value="${esc(user.display_name || "")}"></label>
               <button class="crm-btn small" type="submit">Сохранить имя</button></form>
-            ${user.emails.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.email)}</span><span>${item.primary ? "основной" : ""}</span></div></div>`).join("") || `<form class="crm-two" id="email-form"><input class="crm-input" id="link-email" type="email" placeholder="Email после регистрации в ЛК"><button class="crm-btn small">Связать</button></form>`}
+            ${user.emails.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.email)}</span><span>${item.primary ? "основной" : ""}</span></div>${item.verification_status === "tilda_registered" ? '<div class="crm-row-meta">Регистрация в Tilda подтверждена выгрузкой</div>' : ""}</div>`).join("") || `<form class="crm-two" id="email-form"><input class="crm-input" id="link-email" type="email" placeholder="Email после регистрации в ЛК"><button class="crm-btn small">Связать</button></form>`}
             ${user.phones.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.phone)}</span><span>телефон</span></div></div>`).join("")}
             <div class="crm-row"><div class="crm-k">ВХОД В ЛИЧНЫЙ КАБИНЕТ</div><div class="crm-row-main"><span>${user.credential.exists ? "Пароль создан" : "Пароль ещё не создан"}</span><code id="account-password-value">••••••••</code></div><div class="crm-two" style="margin-top:10px"><button class="crm-btn small" id="reveal-account-password" type="button" ${user.credential.password_available ? "" : "disabled"}>Показать пароль</button><button class="crm-btn small" id="reset-account-password" type="button">${user.credential.exists ? "Задать новый" : "Создать пароль"}</button></div></div>
           </section>
@@ -1020,6 +1034,7 @@
     document.getElementById("reset-account-password").addEventListener("click", async () => {
       if (user.credential.exists && !window.confirm("Текущий пароль перестанет работать, а все активные входы клиента завершатся. Продолжить?")) return;
       const result = await api(`/admin/api/users/${id}/credential/reset`, {method:"POST"});
+      await refreshUser(id);
       document.getElementById("account-password-value").textContent = result.password;
     });
     root.querySelectorAll("[data-personal-setting]").forEach((input) => input.addEventListener("change", () => {

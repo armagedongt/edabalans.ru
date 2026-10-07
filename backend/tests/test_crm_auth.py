@@ -16,7 +16,7 @@ from app.config import get_settings  # noqa: E402
 from app.database import Base  # noqa: E402
 from app.application_access_service import application_access_state, set_manual_application_start  # noqa: E402
 from app.crm_service import user_detail  # noqa: E402
-from app.models import Payment, Resource, User, UserAccess  # noqa: E402
+from app.models import AccountCredential, ImportBatch, LegacyImportRecord, Payment, Resource, User, UserAccess, UserEmail  # noqa: E402
 
 get_settings.cache_clear()
 
@@ -55,6 +55,43 @@ def test_user_detail_opens_and_marks_an_unmapped_historical_tariff() -> None:
 
     assert detail is not None
     assert detail["payments"][0]["tariff"] == "Загружено · тариф не определён"
+
+
+def test_user_detail_separates_server_account_from_tilda_snapshot() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    with Session(engine) as db:
+        user = User(display_name="Account status test")
+        db.add(user)
+        db.flush()
+        db.add(UserEmail(user_id=user.id, email_original="member@example.test",
+                         email_normalized="member@example.test", verification_status="tilda_registered", source="test"))
+        batch = ImportBatch(source="tilda_members_test", status="completed")
+        db.add(batch)
+        db.flush()
+        snapshot_at = datetime(2026, 8, 22, 4, 30, tzinfo=timezone.utc)
+        db.add(LegacyImportRecord(import_batch_id=batch.id, user_id=user.id,
+                                 source="tilda_members_test", source_row_number=1,
+                                 row_hash="snapshot", status="imported", created_at=snapshot_at,
+                                 raw_payload={"groups":["Мастер-класс (Стандартный)"], "account_status":"Active",
+                                              "member_created_at":"2026-05-15T20:42:28+03:00",
+                                              "last_active_at":"2026-08-08T09:43:31+03:00",
+                                              "resource_codes":["ACCESS_MASTERCLASS"]}))
+        db.commit()
+        detail = user_detail(db, user.id)
+        assert detail["credential"]["exists"] is False
+        assert detail["credential"]["created_at"] is None
+        assert detail["tilda_membership"]["account_status"] == "Active"
+        assert detail["tilda_membership"]["groups"] == ["Мастер-класс (Стандартный)"]
+        assert detail["tilda_membership"]["resource_codes"] == ["ACCESS_MASTERCLASS"]
+        assert detail["tilda_membership"]["imported_at"].replace(tzinfo=timezone.utc) == snapshot_at
+        assert detail["emails"][0]["verification_status"] == "tilda_registered"
+        db.add(AccountCredential(user_id=user.id, password_hash="test-only", issued_via="manual", created_at=snapshot_at))
+        db.commit()
+        detail = user_detail(db, user.id)
+        assert detail["credential"]["exists"] is True
+        assert detail["credential"]["created_at"].replace(tzinfo=timezone.utc) == snapshot_at
+        assert detail["tilda_membership"]["groups"] == ["Мастер-класс (Стандартный)"]
 
 
 def test_standalone_app_checkbox_does_not_change_course_rights() -> None:
