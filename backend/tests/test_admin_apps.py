@@ -477,6 +477,49 @@ def test_strength_edit_preserves_stored_history_provenance_and_creation_time():
         assert stored["updated_at"] != stored["created_at"]
 
 
+def test_strength_history_command_dry_run_and_version_guard(monkeypatch):
+    from scripts import migrate_strength_global_history as command
+
+    _, factory = make_client()
+    original = [
+        {"session_id": "later", "workout_type": 1, "session_number": 1, "date": "2026-09-03", "exercises": [{"sets": [{"fact_weight": 20}]}]},
+        {"session_id": "earlier", "workout_type": 2, "session_number": 1, "date": "2026-09-02", "exercises": []},
+    ]
+    with factory() as db:
+        user = add_user(db, "strength-history-command@example.test", "Порядок")
+        db.add(StrengthState(user_id=user.id, workout_types=[], hidden_exercises=[], workouts=original))
+        db.commit()
+        user_id = str(user.id)
+    monkeypatch.setattr(command, "SessionLocal", factory)
+    preview = command.run(apply=False, user_id=user_id, details=True)
+    assert preview["version_before"] == 1
+    assert preview["number_changes"] == [
+        {"template": 2, "old": 1, "new": 1, "date": "2026-09-02"},
+        {"template": 1, "old": 1, "new": 2, "date": "2026-09-03"},
+    ]
+    with factory() as db:
+        state = db.scalar(select(StrengthState).where(StrengthState.user_id == uuid.UUID(user_id)))
+        assert state.workouts == original
+        assert state.version == 1
+    with pytest.raises(ValueError, match="approved user_id"):
+        command.run(apply=True)
+    with pytest.raises(ValueError, match="STRENGTH_STATE_CONFLICT"):
+        command.run(apply=True, user_id=user_id, expected_version=0)
+    with factory() as db:
+        state = db.scalar(select(StrengthState).where(StrengthState.user_id == uuid.UUID(user_id)))
+        assert state.workouts == original
+        assert state.version == 1
+    applied = command.run(apply=True, user_id=user_id, expected_version=1)
+    assert applied["states_changed"] == 1
+    with factory() as db:
+        state = db.scalar(select(StrengthState).where(StrengthState.user_id == uuid.UUID(user_id)))
+        assert [item["session_id"] for item in state.workouts] == ["earlier", "later"]
+        assert state.workouts[1]["session_number"] == 2
+        assert state.workouts[1]["exercises"] == original[0]["exercises"]
+        assert state.version == 2
+    assert command.run(apply=True, user_id=user_id, expected_version=2)["states_changed"] == 0
+
+
 def test_strength_undo_can_delete_a_newly_created_session():
     client, factory = make_client()
     with factory() as db:

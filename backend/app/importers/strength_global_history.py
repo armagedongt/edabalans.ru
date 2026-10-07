@@ -8,12 +8,8 @@ it must perform backup, restore verification and a dry run first.
 from __future__ import annotations
 
 from copy import deepcopy
-from datetime import date, timedelta
-import re
+from datetime import date
 from typing import Any
-
-
-_LEGACY_COLUMN = re.compile(r"(?:^|_)column_(\d+)(?:$|_)", re.IGNORECASE)
 
 
 def _integer(value: Any) -> int:
@@ -21,11 +17,6 @@ def _integer(value: Any) -> int:
         return int(value)
     except (TypeError, ValueError):
         return 0
-
-
-def _legacy_column(value: Any) -> int | None:
-    match = _LEGACY_COLUMN.search(str(value or ""))
-    return int(match.group(1)) if match else None
 
 
 def _valid_date(value: Any) -> date | None:
@@ -36,29 +27,21 @@ def _valid_date(value: Any) -> date | None:
 
 
 def workout_sort_key(workout: dict[str, Any]) -> tuple[Any, ...]:
-    """Return the stable global order prescribed for old mixed histories."""
-    column = _legacy_column(workout.get("legacy_group"))
-    if column is not None:
-        return (
-            0,
-            column,
-            _integer(workout.get("workout_type")),
-            _integer(workout.get("legacy_session_number") or workout.get("session_number")),
-            str(workout.get("session_id") or ""),
-        )
-    return (
-        1,
-        str(workout.get("created_at") or ""),
-        str(workout.get("updated_at") or ""),
-        str(workout.get("session_id") or ""),
-    )
+    """Order the person's entire history by date before filtering by template."""
+    recorded_date = _valid_date(workout.get("date"))
+    old_number = _integer(workout.get("legacy_session_number") or workout.get("session_number"))
+    workout_type = _integer(workout.get("workout_type"))
+    if recorded_date is not None:
+        return (0, recorded_date.isoformat(), workout_type, old_number, str(workout.get("session_id") or ""))
+    # Undated plans remain after dated history; their dates are never invented.
+    return (1, "", old_number, workout_type, str(workout.get("session_id") or ""))
 
 
 def migrate_workouts(workouts: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Copy and globally renumber legacy workouts without changing their contents.
 
-    Missing dates are marked rather than invented when no preceding/adjacent
-    source date exists.  Inferred dates never participate in ordering.
+    Existing dates and all exercise data are preserved. Undated plans follow
+    dated history without an inferred date.
     """
     migrated = [deepcopy(item) for item in workouts if isinstance(item, dict)]
     migrated.sort(key=workout_sort_key)
@@ -69,25 +52,11 @@ def migrate_workouts(workouts: list[dict[str, Any]]) -> list[dict[str, Any]]:
         workout["session_number"] = number
         workout["history_schema_version"] = 2
 
-    original_dates = [_valid_date(item.get("date")) for item in migrated]
-    for index, workout in enumerate(migrated):
-        if original_dates[index] is not None:
+    for workout in migrated:
+        if _valid_date(workout.get("date")) is not None:
             workout.pop("date_unknown", None)
-            continue
-        previous = next((original_dates[pos] for pos in range(index - 1, -1, -1) if original_dates[pos]), None)
-        following = next((original_dates[pos] for pos in range(index + 1, len(migrated)) if original_dates[pos]), None)
-        if previous and following:
-            inferred = previous + timedelta(days=(following - previous).days // 2)
         else:
-            inferred = previous
-        if inferred is None:
-            workout["date"] = ""
             workout["date_unknown"] = True
-            workout.pop("date_inferred", None)
-        else:
-            workout["date"] = inferred.isoformat()
-            workout["date_inferred"] = True
-            workout.pop("date_unknown", None)
     return migrated
 
 
