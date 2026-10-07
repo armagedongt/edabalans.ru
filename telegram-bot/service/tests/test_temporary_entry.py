@@ -12,7 +12,7 @@ from app.engine import advance_run, start_run
 from app.max import process_max_update
 from app.models import Contact, ContentItem, CrmTag, CrmUserTag, UserVariable, UpdateReceipt, SequenceRun, TrackingEvent
 from app.seed import seed_defaults, WELCOME_CODE
-from app.temporary_entry import CONTENT_CODE, NAVIGATION_CODE, BUTTON_TEXT, VIDEO_PATH, POOL_CODE, REPEAT_OFFER_BODY, pause_marketing
+from app.temporary_entry import CONTENT_CODE, NAVIGATION_CODE, NAVIGATION_TAG_CODE, BUTTON_TEXT, VIDEO_PATH, POOL_CODE, REPEAT_OFFER_BODY, pause_marketing
 
 
 class Sender:
@@ -83,9 +83,6 @@ def assert_invitation(session, sender, repeat=False):
     else:
         assert config["buttons"][0]["text"] == BUTTON_TEXT
         assert REPEAT_OFFER_BODY not in content.body_source
-    assert sender.sent[-2][1].code == NAVIGATION_CODE
-    assert "{{" not in sender.sent[-2][1].body_source
-    assert sender.sent[-2][2]["link_preview"] is False
     import re
     url = re.search(r'href="([^"]+)"', content.body_source).group(1)
     if not repeat:
@@ -107,15 +104,24 @@ def test_start_repeat_message_callback_and_duplicate(setup, platform):
         events = [max_event(1), max_event(2), max_event(3, "message_created"), max_event(4, "message_callback")]
         invoke = lambda e: run_max(session, sender, e)
     for index, e in enumerate(events):
+        before = len(sender.sent)
         assert invoke(e)["temporary_entry"]
         assert_invitation(session, sender, repeat=index > 0)
-    assert len(sender.sent) == 8
+        assert [content.code for _, content, _ in sender.sent[before:]] == ([NAVIGATION_CODE, CONTENT_CODE] if index == 0 else [CONTENT_CODE])
+    nav = sender.sent[0]
+    assert "{{" not in nav[1].body_source and nav[2]["link_preview"] is False
+    assert "<b>Навигация!</b>" in nav[1].body_source
+    assert "https://похудение-это-есть.рф" not in sender.sent[-1][1].body_source
+    assert "<b>похудение-это-есть.рф</b>" in sender.sent[-1][1].body_source
+    assert len(sender.sent) == 5
     assert invoke(events[-1])["duplicate"]
-    assert len(sender.sent) == 8
+    assert len(sender.sent) == 5
     tag = session.scalar(select(CrmTag).where(CrmTag.code == POOL_CODE))
     assert session.scalar(select(func.count()).select_from(CrmUserTag).where(CrmUserTag.tag_id == tag.id)) == 1
     assert [value for value in sender.answers if isinstance(value, str)] == ["cb4"]
-    assert [value[2] for value in sender.answers if isinstance(value, tuple)] == ["1", "3", "5", "7"]
+    assert [value[2] for value in sender.answers if isinstance(value, tuple)] == ["1"]
+    nav_tag = session.scalar(select(CrmTag).where(CrmTag.code == NAVIGATION_TAG_CODE))
+    assert session.scalar(select(func.count()).select_from(CrmUserTag).where(CrmUserTag.tag_id == nav_tag.id)) == 1
 
 
 @pytest.mark.parametrize("platform", ["telegram", "max"])
@@ -341,3 +347,47 @@ def test_linked_contact_uses_shared_user_video_history(setup):
     session.commit()
     send_temporary_entry(session, linked, sender, "linked-max-first", "max", "https://edabalans.ru/intensive")
     assert_invitation(session, sender, repeat=True)
+    assert [content.code for _, content, _ in sender.sent] == [NAVIGATION_CODE, CONTENT_CODE, CONTENT_CODE]
+
+
+def test_existing_navigation_history_assigns_tag_without_resending(setup):
+    session, sender = setup
+    main.process_update(tg(1), session)
+    contact = session.scalar(select(Contact))
+    tag = session.scalar(select(CrmTag).where(CrmTag.code == NAVIGATION_TAG_CODE))
+    assignment = session.scalar(select(CrmUserTag).where(CrmUserTag.tag_id == tag.id))
+    session.delete(assignment)
+    first_event = session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "temporary_intensive_entry"))
+    # A delivery recorded before the new content tag existed.
+    first_event.metadata_json = {key: value for key, value in first_event.metadata_json.items() if key != "video_message_id"}
+    session.commit()
+    sender.sent.clear()
+    main.process_update(tg(2), session)
+    assert [content.code for _, content, _ in sender.sent] == [CONTENT_CODE]
+    assert_invitation(session, sender, repeat=True)
+    assignment = session.scalar(select(CrmUserTag).where(CrmUserTag.user_id == contact.user_id, CrmUserTag.tag_id == tag.id))
+    assert assignment.source == "temporary_navigation_history"
+    assert assignment.created_at == first_event.occurred_at
+    received_at = assignment.created_at
+    main.process_update(tg(3), session)
+    assert_invitation(session, sender, repeat=True)
+    assert assignment.created_at == received_at
+
+
+def test_video_failure_after_navigation_does_not_resend_navigation(setup):
+    session, sender = setup
+    send = sender.send_content
+    def fail_video(chat_id, content, configuration):
+        if content.code == CONTENT_CODE:
+            raise RuntimeError("Video failed")
+        return send(chat_id, content, configuration)
+    sender.send_content = fail_video
+    with pytest.raises(RuntimeError, match="Video failed"):
+        main.process_update(tg(1), session)
+    sender.send_content = send
+    main.process_update(tg(2), session)
+    assert [content.code for _, content, _ in sender.sent] == [NAVIGATION_CODE, CONTENT_CODE]
+    assert_invitation(session, sender, repeat=False)
+    main.process_update(tg(3), session)
+    assert_invitation(session, sender, repeat=True)
+    assert [value for value in sender.answers if isinstance(value, tuple)] == [("pin", "4101", "1")]

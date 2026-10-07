@@ -177,16 +177,17 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         {"id": "e20", "source": "send_legacy", "target": "exit_legacy", "label": "Отправлено", "branch": "default"},
     ]
     from app.config import get_settings
-    from app.temporary_entry import CONTENT_CODE, NAVIGATION_CODE, REPEAT_OFFER_CODE, ENTRY_RULES, POOL_NAME
+    from app.temporary_entry import CONTENT_CODE, NAVIGATION_CODE, NAVIGATION_TAG_NAME, REPEAT_OFFER_CODE, ENTRY_RULES, POOL_NAME
     enabled = get_settings().temporary_intensive_entry_enabled
     nodes.extend([
         node("temporary_gate", "condition", "Временный вход включён?", "TEMPORARY_INTENSIVE_ENTRY_ENABLED", 25, Включён=enabled),
         node("temporary_silent", "module_exit", "Не отправлять приглашение", "Блокировка или стоп-метка", 26),
         node("temporary_pool", "action", "Отметить временную группу", POOL_NAME, 27, Хранение="user_tags; общий user_id"),
+        node("temporary_navigation_seen", "condition", "Навигация уже получена?", NAVIGATION_TAG_NAME + "; учитывать прежние доставки", 28),
         node("temporary_navigation", "message", "Отправить навигацию", "Персональные ссылки; preview выключен", 28, NAVIGATION_CODE),
         node("temporary_pin", "action", "Закрепить навигацию", "Telegram: pin_message; MAX: без закрепления", 29),
         node("temporary_article", "message", "Отправить видео и кнопку", "Читать прямо сейчас; персональная ссылка", 30, CONTENT_CODE),
-        node("temporary_video_seen", "condition", "Видео уже успешно отправлялось?", "Общий user_id; sent с message_id и navigation_message_id", 30),
+        node("temporary_video_seen", "condition", "Видео уже успешно отправлялось?", "Общий user_id; успешная доставка видео, не старой заглушки", 30),
         node("temporary_repeat_article", "message", "Видео с припиской о Мастер-классе, без кнопки", "Тот же текст и видео; приписка из отдельного слота", 31, REPEAT_OFFER_CODE),
         node("temporary_exit", "module_exit", "Не запускать старые рассылки", "Пауза Welcome, продающих цепочек и broadcast", 29),
     ])
@@ -203,7 +204,9 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         previous = node_id
     edges.extend([
         {"id": "temporary_eligible", "source": previous, "target": "temporary_pool", "label": "Нет", "branch": "false"},
-        {"id": "temporary_send", "source": "temporary_pool", "target": "temporary_navigation", "label": "Сохранено", "branch": "default"},
+        {"id": "temporary_send", "source": "temporary_pool", "target": "temporary_navigation_seen", "label": "Сохранено", "branch": "default"},
+        {"id": "temporary_nav_first", "source": "temporary_navigation_seen", "target": "temporary_navigation", "label": "Нет", "branch": "false"},
+        {"id": "temporary_nav_skip", "source": "temporary_navigation_seen", "target": "temporary_video_seen", "label": "Да", "branch": "true"},
         {"id": "temporary_pin_nav", "source": "temporary_navigation", "target": "temporary_pin", "label": "Отправлено", "branch": "default"},
         {"id": "temporary_video", "source": "temporary_pin", "target": "temporary_video_seen", "label": "Далее", "branch": "default"},
         {"id": "temporary_video_first", "source": "temporary_video_seen", "target": "temporary_article", "label": "Нет", "branch": "false"},

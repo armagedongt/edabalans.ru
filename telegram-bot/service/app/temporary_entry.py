@@ -8,12 +8,14 @@ from app.models import Broadcast, Contact, ContentItem, CrmTag, CrmUser, CrmUser
 
 CONTENT_CODE = "tpl_temporary_intensive_entry"
 NAVIGATION_CODE = "tpl_onepage_entry_navigation"
+NAVIGATION_TAG_CODE = "post_onepage_entry_navigation"
+NAVIGATION_TAG_NAME = "Пост - Навигация"
 REPEAT_OFFER_CODE = "tpl_onepage_entry_repeat_offer"
 VIDEO_PATH = "/app/media/intensive-entry-2026-09-13-57s80.mp4"
 BUTTON_TEXT = "Читать прямо сейчас"
 REPEAT_OFFER_BODY = (
     "А если готовы серьезно взяться за похудение — прочитайте описание и отзывы моего "
-    "Мастер-класса по изменению питания и пищевых привычек: https://похудение-это-есть.рф"
+    "Мастер-класса по изменению питания и пищевых привычек: <b>похудение-это-есть.рф</b>"
 )
 POOL_CODE = "temporary_intensive_entry_20261005"
 POOL_NAME = "Временный вход — единый интенсив"
@@ -39,7 +41,7 @@ BODY = (
     '✅ Начните с моей статьи <b><a href="{{personal_intensive_url}}">«Как сделать похудение проще!»</a></b>, в конце которой забирайте 4 задания, чтобы начать худеть по-новому уже сегодня!!'
 )
 NAVIGATION_BODY = (
-    "📌 Навигация!\n\n"
+    "📌 <b>Навигация!</b>\n\n"
     '<a href="https://t.me/Fitness_Talks">Telegram-канал</a> | <a href="https://max.ru/id230409966750_biz">Канал в MAX</a>\n\n'
     'Обязательно к прочтению: <a href="{{personal_intensive_url}}">«Что надо сделать, чтобы похудение стало проще, а силы воли надо было меньше!»</a>\n\n'
     "Нравится мой подход?👇\n\n"
@@ -75,6 +77,8 @@ def temporary_response(session: Session, contact: Contact, sender, receipt_id: s
 def seed_temporary_entry(session: Session) -> None:
     if not session.scalar(select(CrmTag).where(CrmTag.code == POOL_CODE)):
         session.add(CrmTag(code=POOL_CODE, name=POOL_NAME, category="manual", status="active"))
+    if not session.scalar(select(CrmTag).where(CrmTag.code == NAVIGATION_TAG_CODE)):
+        session.add(CrmTag(code=NAVIGATION_TAG_CODE, name=NAVIGATION_TAG_NAME, category="content", status="active"))
     item = session.scalar(select(ContentItem).where(ContentItem.code == CONTENT_CODE))
     if not item:
         item = ContentItem(
@@ -145,27 +149,38 @@ def entry_decision(session: Session, contact: Contact) -> str:
 
 def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id: str, platform: str, public_url: str) -> dict:
     from app.content_formatting import content_is_runtime_ready, replace_template_values
-    from app.engine import personalized_delivery
+    from app.engine import personalized_delivery, _has_content_tag, _assign_content_tag
     from app.intensive_access import get_or_create_intensive_access_link
     item = session.scalar(select(ContentItem).where(ContentItem.code == CONTENT_CODE))
     navigation = session.scalar(select(ContentItem).where(ContentItem.code == NAVIGATION_CODE))
     tag = session.scalar(select(CrmTag).where(CrmTag.code == POOL_CODE, CrmTag.status == "active"))
-    if not item or not navigation or item.status != "published" or not tag or not contact.user_id:
+    navigation_tag = session.scalar(select(CrmTag).where(CrmTag.code == NAVIGATION_TAG_CODE))
+    visited = set()
+    while navigation_tag and navigation_tag.merged_into_tag_id and navigation_tag.id not in visited:
+        visited.add(navigation_tag.id)
+        navigation_tag = session.get(CrmTag, navigation_tag.merged_into_tag_id)
+    if not item or not navigation or item.status != "published" or not tag or not contact.user_id or not navigation_tag or navigation_tag.status != "active":
         raise RuntimeError("Temporary entry content or pool is unavailable")
     if not content_is_runtime_ready(item) or not content_is_runtime_ready(navigation):
         raise RuntimeError("Temporary entry content is not approved and ready")
     # Two messengers can contact the same CRM user concurrently.
     session.scalar(select(CrmUser).where(CrmUser.id == contact.user_id).with_for_update())
-    previous_deliveries = session.scalars(select(TrackingEvent).where(
+    previous_deliveries = list(session.scalars(select(TrackingEvent).where(
         TrackingEvent.user_id == contact.user_id,
         TrackingEvent.event_type == "temporary_intensive_entry",
-    ))
+    ).order_by(TrackingEvent.occurred_at)))
     repeat = any(
         (previous.metadata_json or {}).get("delivery_status") == "sent"
         and (previous.metadata_json or {}).get("message_id")
-        and (previous.metadata_json or {}).get("navigation_message_id")
+        and ((previous.metadata_json or {}).get("navigation_message_id")
+             or (previous.metadata_json or {}).get("video_message_id"))
         for previous in previous_deliveries
     )
+    first_navigation = next((previous for previous in previous_deliveries
+                             if (previous.metadata_json or {}).get("navigation_message_id")), None)
+    if first_navigation and not _has_content_tag(session, contact, navigation_tag.id):
+        session.add(CrmUserTag(user_id=contact.user_id, tag_id=navigation_tag.id,
+                               source="temporary_navigation_history", created_at=first_navigation.occurred_at))
     repeat_offer = None
     if repeat:
         repeat_offer = session.scalar(select(ContentItem).where(ContentItem.code == REPEAT_OFFER_CODE))
@@ -184,15 +199,20 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
     # not make a replayed webhook send the same invitation again.
     session.commit()
     try:
-        nav_content, nav_config = personalized_delivery(session, contact, navigation, {
-            "buttons": [{"text": "Перейти в канал", "url": "https://t.me/Fitness_Talks"}], "link_preview": False,
-        })
-        session.commit()
-        navigation_id = sender.send_content(contact.chat_id, nav_content, nav_config)
-        event.metadata_json = {**event.metadata_json, "navigation_message_id": str(navigation_id)}
-        session.commit()
-        if hasattr(sender, "pin_message"):
-            sender.pin_message(contact.chat_id, navigation_id)
+        # Keep the user lock until the one-time navigation delivery is recorded.
+        session.scalar(select(CrmUser).where(CrmUser.id == contact.user_id).with_for_update())
+        if not _has_content_tag(session, contact, navigation_tag.id):
+            nav_content, nav_config = personalized_delivery(session, contact, navigation, {
+                "buttons": [{"text": "Перейти в канал", "url": "https://t.me/Fitness_Talks"}], "link_preview": False,
+            })
+            navigation_id = sender.send_content(contact.chat_id, nav_content, nav_config)
+            event.metadata_json = {**event.metadata_json, "navigation_message_id": str(navigation_id)}
+            _assign_content_tag(session, contact, navigation_tag.id)
+            session.commit()
+            if hasattr(sender, "pin_message"):
+                sender.pin_message(contact.chat_id, navigation_id)
+        else:
+            session.commit()
         video_content = SimpleNamespace(
             code=item.code, source_format="telegram_html",
             body_source=replace_template_values(item.body_source, {"personal_intensive_url": url})
@@ -207,6 +227,7 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
         event.metadata_json = {**event.metadata_json, "delivery_status": "uncertain"}
         session.commit()
         raise
-    event.metadata_json = {**event.metadata_json, "delivery_status": "sent", "message_id": str(message_id)}
+    event.metadata_json = {**event.metadata_json, "delivery_status": "sent", "message_id": str(message_id),
+                           "video_message_id": str(message_id)}
     session.commit()
     return {"ok": True, "temporary_entry": True}
