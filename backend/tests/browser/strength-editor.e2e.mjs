@@ -81,7 +81,7 @@ function adminWorkout() {
   const sets = [];
   for (let sessionNumber = 1; sessionNumber <= 5; sessionNumber += 1) {
     const sessionId = `admin-session-${sessionNumber}`;
-    sessions.push({ session_id: sessionId, workout_type: sessionNumber === 4 ? 2 : 1, session_number: sessionNumber, date: `2026-09-${String(sessionNumber).padStart(2, "0")}` });
+    sessions.push({ session_id: sessionId, workout_type: 1, session_number: sessionNumber, date: `2026-09-${String(sessionNumber).padStart(2, "0")}` });
     for (const exercise of base.session_exercises) {
       sessionExercises.push({ ...exercise, session_id: sessionId });
       for (const set of base.sets.filter((item) => item.exercise_id === exercise.exercise_id)) {
@@ -336,7 +336,7 @@ for (const width of [360, 430, 768, 1440]) {
   assert.equal(await page.locator(".st-modern-set.edit input").first().inputValue(), "55");
   const savesBeforeNavigation = await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveSession").length);
   await page.getByRole("button", { name: "Предыдущая тренировка" }).click();
-  await page.getByText("Тренировка №26", { exact: true }).waitFor();
+  await page.getByText("Тренировка №25", { exact: true }).waitFor();
   await page.locator(width < 701 ? ".st-modern-copy" : ".st-plan-copy-label").first().click();
   await page.waitForFunction(() => window.__saveBodies.some((body) => body?.action === "saveSession" && body.session?.session_number === 27 && body.session.exercises.some((exercise) => exercise.exercise_id === "bench-press" && String(exercise.sets[0].plan_weight) === "40")));
   const copiedPlan = await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveSession" && body.session?.session_number === 27).at(-1));
@@ -354,7 +354,7 @@ for (const width of [360, 430, 768, 1440]) {
   await firstExercise.getByText("Добавить", { exact: true }).click();
   await page.getByText("Закрыть", { exact: true }).click();
   if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-empty-template-${width}.png`), fullPage: false });
-  await page.getByText("Новая тренировка", { exact: false }).click();
+  await page.getByText("Создать первую тренировку", { exact: false }).click();
   await page.getByText("Тренировка №28", { exact: true }).waitFor();
   const firstSession = await page.evaluate(() => window.__saveBodies.find((body) => body?.action === "saveSession" && body.workout_type === 3));
   assert.equal(firstSession.session.session_number, 28);

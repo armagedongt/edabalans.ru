@@ -489,6 +489,21 @@
   align-items:stretch;
 }
 
+.st-ex-row-days > div{
+  position:relative;
+}
+
+.st-ex-row-days > div + div::before{
+  content:'';
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:-5px;
+  width:2px;
+  background:#d6d7df;
+  pointer-events:none;
+}
+
 .st-row-hide{
   flex:0 0 auto;
   min-height:29px;
@@ -1867,6 +1882,27 @@ function templateWorkout(){
 }
 
 
+function templateSessionIndices(type){
+  type = Number(type || app.workoutType);
+  var indices = [];
+  currentWorkout().sessions.forEach(function(session,index){
+    if(Number(session.workoutType || type) === type){ indices.push(index); }
+  });
+  return indices;
+}
+
+function selectLatestTemplateSession(){
+  var indices = templateSessionIndices();
+  app.selectedIndex = indices.length ? indices[indices.length-1] : -1;
+}
+
+function adjacentTemplateSession(direction){
+  var indices = templateSessionIndices();
+  var position = indices.indexOf(app.selectedIndex);
+  return position >= 0 && indices[position+direction] !== undefined ? indices[position+direction] : -1;
+}
+
+
 function selectGlobalSession(index){
   var sessions = currentWorkout().sessions;
   if(index < 0 || index >= sessions.length){ return false; }
@@ -1911,6 +1947,7 @@ function restoreUndo(snapshot){
   }
   app.workoutType = Number(snapshot.workoutType || app.workoutType);
   app.selectedIndex = Math.max(0,Math.min(Number(snapshot.selectedIndex || 0),app.globalWorkout.sessions.length-1));
+  if(templateSessionIndices().indexOf(app.selectedIndex) < 0){ selectLatestTemplateSession(); }
 }
 
 
@@ -2438,14 +2475,7 @@ function chooseInitialWorkoutType(){
 
   }
 
-  var sessions =
-    currentWorkout()
-      .sessions;
-
-  app.selectedIndex = sessions.length ? sessions.length-1 : 0;
-  if(sessions.length){
-    selectGlobalSession(app.selectedIndex);
-  }
+  selectLatestTemplateSession();
 
 }
 
@@ -2721,13 +2751,7 @@ function syncPersistedSession(body,saved){
   session.status = saved.status || session.status || '';
   session.workoutType = Number(saved.workout_type || body.workout_type || session.workoutType || app.workoutType);
   workout.sessions.sort(function(a,b){ return Number(a.number)-Number(b.number); });
-  if(
-    !selectedBeforeSave ||
-    String(selectedBeforeSave.session_id || '') === String(session.session_id || '') ||
-    !body.session.session_id
-  ){
-    app.selectedIndex = workout.sessions.indexOf(session);
-  }
+  app.selectedIndex = selectedBeforeSave ? workout.sessions.indexOf(selectedBeforeSave) : -1;
 
 }
 
@@ -2909,13 +2933,10 @@ function previousExercise(
     return null;
   }
 
-  return findExercise(
-    currentWorkout()
-      .sessions[
-        index-1
-      ],
-    id
-  );
+  var sessions = currentWorkout().sessions;
+  var indices = templateSessionIndices(sessions[index].workoutType);
+  var position = indices.indexOf(index);
+  return position > 0 ? findExercise(sessions[indices[position-1]],id) : null;
 
 }
 
@@ -3015,18 +3036,10 @@ function isFilled(session){
 
 
 function isLatest(){
-
-  var sessions =
-    currentWorkout()
-      .sessions;
-
-  return (
-    sessions.length &&
-    app.selectedIndex ===
-      sessions.length-1
-  );
-
+  var indices = templateSessionIndices();
+  return indices.length > 0 && app.selectedIndex === indices[indices.length-1];
 }
+
 
 
 function clientLocked(index){
@@ -3360,17 +3373,17 @@ function renderJournalHeader(){
 
   var sessions = currentWorkout().sessions;
 
-  if(!sessions.length){
+  if(!templateSessionIndices().length){
     return '<div class="st-empty">'+(activeCatalog().length ? 'В этом шаблоне пока нет тренировок.' : 'В этом шаблоне пока нет упражнений. Нажмите значок редактирования у шаблона и добавьте нужные.')+'</div>'+(activeCatalog().length ? '<button class="st-new-session" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Создать первую тренировку')+'</button>' : '');
   }
 
   var session = sessions[app.selectedIndex];
-  var canCreate = app.entryMode === 'edit' && app.selectedIndex === sessions.length-1;
+  var canCreate = app.entryMode === 'edit' && isLatest();
 
   return '<div class="st-nav">'+
-    '<button class="st-arrow" onclick="ST.prevSession()" '+(app.selectedIndex>0?'':'disabled')+' aria-label="Предыдущая тренировка">‹</button>'+
+    '<button class="st-arrow" onclick="ST.prevSession()" '+(adjacentTemplateSession(-1)>=0?'':'disabled')+' aria-label="Предыдущая тренировка">‹</button>'+
     '<div class="st-nav-center"><div class="st-nav-title">Тренировка №'+session.number+'</div><div class="st-nav-sub"><span class="st-nav-template">Шаблон '+Number(session.workoutType || app.workoutType)+'</span><span class="st-nav-status"> · '+(isFilled(session)?'заполнена':'не заполнена')+'</span></div></div>'+
-    '<div class="st-nav-end"><button class="st-arrow" onclick="ST.nextSession()" '+(app.selectedIndex<sessions.length-1?'':'disabled')+' aria-label="Следующая тренировка">›</button><div class="st-undo-controls st-header-undo"><button onclick="ST.undo()" '+(app.undoStack.length?'':'disabled')+' aria-label="Отменить действие">↶</button><button onclick="ST.redo()" '+(app.redoStack.length?'':'disabled')+' aria-label="Повторить действие">↷</button></div>'+(canCreate ? '<button class="st-new-session st-new-session-inline" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Новая тренировка')+'</button>' : '')+'</div>'+
+    '<div class="st-nav-end"><button class="st-arrow" onclick="ST.nextSession()" '+(adjacentTemplateSession(1)>=0?'':'disabled')+' aria-label="Следующая тренировка">›</button><div class="st-undo-controls st-header-undo"><button onclick="ST.undo()" '+(app.undoStack.length?'':'disabled')+' aria-label="Отменить действие">↶</button><button onclick="ST.redo()" '+(app.redoStack.length?'':'disabled')+' aria-label="Повторить действие">↷</button></div>'+(canCreate ? '<button class="st-new-session st-new-session-inline" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Новая тренировка')+'</button>' : '')+'</div>'+
     '</div>'+
     '<div id="st-save-state" class="st-saving'+(app.saveError?' error':'')+'">'+(app.saveError ? 'Ошибка сохранения: '+esc(app.saveError) : app.saving ? 'Сохраняю…' : '')+'</div>';
 
@@ -3379,7 +3392,7 @@ function renderJournalHeader(){
 
 function renderEntryControls(){
 
-  var hasSession = currentWorkout().sessions.length > 0;
+  var hasSession = templateSessionIndices().length > 0;
 
   return (
     '<div class="st-entry-control-bar">'+
@@ -3461,7 +3474,7 @@ function renderJournal(){
     currentWorkout()
       .sessions;
 
-  if(!sessions.length){
+  if(!templateSessionIndices().length){
     return '';
   }
 
@@ -3474,10 +3487,12 @@ function renderJournal(){
 
 function adminSheetSessions(){
   var sessions = currentWorkout().sessions;
-  var end = Math.max(0,Math.min(app.selectedIndex,sessions.length-1));
+  var indices = templateSessionIndices();
+  var end = indices.indexOf(app.selectedIndex);
   var start = Math.max(0,end-2);
   var visible = [];
-  for(var index=start;index<=end;index++){
+  for(var position=start;position<=end;position++){
+    var index = indices[position];
     visible.push({index:index,session:sessions[index],current:index===app.selectedIndex});
   }
   return {start:start,visible:visible};
@@ -3500,7 +3515,7 @@ function renderAdminSheet(){
   var sheet = adminSheetSessions();
   var first = sheet.visible[0] && sheet.visible[0].session;
   var last = sheet.visible[sheet.visible.length-1] && sheet.visible[sheet.visible.length-1].session;
-  return '<section class="st-admin-sheet"><div class="st-admin-sheet-title">План и факт по тренировкам</div><div class="st-admin-window-nav"><button onclick="ST.prevSession()" '+(app.selectedIndex > 0 ? '' : 'disabled')+'>← Предыдущие</button><div class="st-admin-window-range">'+(first ? '№'+esc(first.number) : '')+(last ? ' — №'+esc(last.number) : '')+'</div><button onclick="ST.nextSession()" '+(app.selectedIndex < currentWorkout().sessions.length-1 ? '' : 'disabled')+'>Следующие →</button></div><div class="st-admin-sheet-scroll"><div class="st-admin-sheet-grid">'+renderDayHeads(sheet.visible)+renderExerciseRows(sheet.visible)+'</div></div></section>';
+  return '<section class="st-admin-sheet"><div class="st-admin-sheet-title">План и факт по тренировкам</div><div class="st-admin-window-nav"><button onclick="ST.prevSession()" '+(adjacentTemplateSession(-1)>=0 ? '' : 'disabled')+'>← Предыдущие</button><div class="st-admin-window-range">'+(first ? '№'+esc(first.number) : '')+(last ? ' — №'+esc(last.number) : '')+'</div><button onclick="ST.nextSession()" '+(adjacentTemplateSession(1)>=0 ? '' : 'disabled')+'>Следующие →</button></div><div class="st-admin-sheet-scroll"><div class="st-admin-sheet-grid">'+renderDayHeads(sheet.visible)+renderExerciseRows(sheet.visible)+'</div></div></section>';
 }
 
 
@@ -3590,9 +3605,12 @@ function renderCurrentExercises(){
   var session = workout.sessions[app.selectedIndex];
   if(!session){ return ''; }
   var html = '<div class="st-modern-list">';
+  var exercises = displayExercises().map(function(item){
+    return findExercise(session,item.exercise_id);
+  }).filter(function(exercise){ return exercise !== null; });
 
-  for(var i=0;i<session.exercises.length;i++){
-    var exercise = session.exercises[i];
+  for(var i=0;i<exercises.length;i++){
+    var exercise = exercises[i];
     var exerciseInfo = catalogItemById(exercise.id);
     while(exercise.sets.length < 4){
       exercise.sets.push({set_number:exercise.sets.length+1,planWeight:'',planReps:'',factWeight:'',factReps:'',rpe:''});
@@ -3812,6 +3830,10 @@ function renderExerciseRows(
 
 
 function displayExercises(){
+  return activeCatalog();
+}
+
+function analysisExercises(){
   var byId = {};
   activeCatalog().forEach(function(item){ byId[String(item.exercise_id)] = item; });
   currentWorkout().sessions.forEach(function(session){
@@ -4508,7 +4530,7 @@ function statsHistory(
 function renderAnalysis(){
 
   var catalog =
-    displayExercises();
+    analysisExercises();
 
   if(!catalog.length){
 
@@ -5660,10 +5682,7 @@ window.ST = {
       Number(type);
     app.entryMode = 'edit';
 
-    var sessions = currentWorkout().sessions;
-    if(sessions.length){
-      app.selectedIndex = sessions.length-1;
-    }
+    selectLatestTemplateSession();
 
     app.statsExerciseId = '';
 
@@ -5717,7 +5736,7 @@ window.ST = {
     rememberUndo();
     var targetIndex = -1;
     for(var index=sourceIndex+1;index<sessions.length;index++){
-      if(!isFilled(sessions[index])){ targetIndex=index; break; }
+      if(Number(sessions[index].workoutType) === Number(sourceSession.workoutType) && !isFilled(sessions[index])){ targetIndex=index; break; }
     }
     if(targetIndex < 0){
       var sourceType = Number(sourceSession.workoutType || app.workoutType);
@@ -5850,33 +5869,13 @@ window.ST = {
   },
 
   prevSession:function(){
-
-    if(
-      app.selectedIndex > 0
-    ){
-
-      selectGlobalSession(app.selectedIndex-1);
-
-      render();
-
-    }
-
+    var index = adjacentTemplateSession(-1);
+    if(index >= 0){ selectGlobalSession(index); render(); }
   },
 
-
   nextSession:function(){
-
-    if(
-      app.selectedIndex <
-      currentWorkout().sessions.length-1
-    ){
-
-      selectGlobalSession(app.selectedIndex+1);
-
-      render();
-
-    }
-
+    var index = adjacentTemplateSession(1);
+    if(index >= 0){ selectGlobalSession(index); render(); }
   },
 
 
@@ -6290,8 +6289,7 @@ window.ST = {
 
     if(type && app.workouts[Number(type)]){
       app.workoutType = Number(type);
-      var sessions = currentWorkout().sessions;
-      app.selectedIndex = sessions.length ? sessions.length-1 : 0;
+      selectLatestTemplateSession();
       app.statsExerciseId = '';
     }
 
