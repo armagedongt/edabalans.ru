@@ -1421,11 +1421,20 @@
 .st-admin-window-nav{margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .st-admin-window-nav button{min-height:32px;padding:0 10px;border:1px solid var(--st-line);border-radius:8px;background:#fff;color:#505463;font-size:11px;font-weight:800}
 .st-admin-window-nav button:disabled{opacity:.38;cursor:default}
-.st-admin-window-range{color:var(--st-muted);font-size:11px;font-weight:800;white-space:nowrap}
 .st-copy-forward{min-height:29px;padding:0 8px;border:1px solid rgba(68,131,90,.24);border-radius:7px;background:#eff8f0;color:#39704b;font-size:10px;font-weight:800}
+.st-copy-forward:disabled,.st-modern-copy:disabled{opacity:.4;cursor:default}
 .st-copy-forward:hover,.st-copy-forward:focus-visible{border-color:#39704b}
 .st-admin-sheet-scroll{margin-top:12px;overflow-x:auto;padding-bottom:5px}
 .st-admin-sheet-grid{min-width:810px}
+.st-day-identity{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.st-day-identity .st-day-state{margin:0;font-size:9px;font-weight:400}
+.st-day-head{padding:8px 10px}
+.st-date-text{text-align:right}
+.st-date-text .st-weekday{margin-top:2px;font-size:9px}
+@media(min-width:1000px){
+  .st-admin-sheet-scroll{overflow:visible}
+  .st-admin-sheet .st-days{position:sticky;top:70px;z-index:11;background:#fff;padding:5px 0;margin-top:6px}
+}
 .st-admin-history{margin-top:10px;border-top:1px solid var(--st-line);padding-top:10px}
 .st-admin-history summary{cursor:pointer;color:#5c5f6b;font-size:12px;font-weight:800}
 .st-admin-history-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
@@ -2358,6 +2367,17 @@ function loadAdminUsers(){
 
 function loadClient(user){
 
+  if(hasSaveConflict()){
+    Object.keys(app.saveTimers).forEach(function(key){ clearTimeout(app.saveTimers[key]); });
+    app.saveTimers = {};
+    app.sessionSaveQueues = {};
+    app.managerSavePending = null;
+    app.saving = false;
+    app.creatingSession = false;
+    app.saveError = '';
+  }
+
+
   app.selectedUser =
     user;
 
@@ -2606,7 +2626,7 @@ function scheduleSave(
   }
 
   app.saving = true;
-  app.saveError = '';
+  if(!hasSaveConflict()){ app.saveError = ''; }
 
   app.saveTimers[timerKey] =
     setTimeout(
@@ -2706,10 +2726,14 @@ function persistSessionBody(body){
 
   var queue = app.sessionSaveQueues[timerKey] || {
     running:false,
-    pending:null,
+    pending:[],
     retryCount:0
   };
-  queue.pending = body;
+  var pendingIndex = queue.pending.findIndex(function(item){
+    return String(item.session.session_id || item.session.session_number) === String(body.session.session_id || body.session.session_number) && Number(item.workout_type) === Number(body.workout_type);
+  });
+  if(pendingIndex >= 0){ queue.pending[pendingIndex] = body; }
+  else{ queue.pending.push(body); }
   queue.retryCount = 0;
   app.sessionSaveQueues[timerKey] = queue;
   flushSessionSave(timerKey);
@@ -2759,12 +2783,11 @@ function syncPersistedSession(body,saved){
 function flushSessionSave(timerKey){
 
   var queue = app.sessionSaveQueues[timerKey];
-  if(!queue || queue.running || !queue.pending){
+  if(!queue || queue.running || !queue.pending.length || app.managerSaveRunning || app.saveRequests > 0 || hasSaveConflict()){
     return;
   }
 
-  var body = queue.pending;
-  queue.pending = null;
+  var body = queue.pending.shift();
   queue.running = true;
   app.saveError = '';
   body.version = app.version;
@@ -2800,11 +2823,9 @@ function flushSessionSave(timerKey){
         render();
       }
 
-      if(queue.pending){
-        flushSessionSave(timerKey);
-      }else{
-        delete app.sessionSaveQueues[timerKey];
-      }
+      if(!queue.pending.length){ delete app.sessionSaveQueues[timerKey]; }
+      flushManagerSave();
+      Object.keys(app.sessionSaveQueues).forEach(function(key){ flushSessionSave(key); });
 
     })
     .catch(function(error){
@@ -2813,8 +2834,10 @@ function flushSessionSave(timerKey){
         Math.max(0,app.saveRequests-1);
 
       queue.running = false;
-      if(!queue.pending){
-        queue.pending = body;
+      if(!queue.pending.some(function(item){
+        return String(item.session.session_id || item.session.session_number) === String(body.session.session_id || body.session.session_number) && Number(item.workout_type) === Number(body.workout_type);
+      })){
+        queue.pending.unshift(body);
       }
       queue.retryCount = Number(queue.retryCount || 0)+1;
 
@@ -2845,6 +2868,14 @@ function flushSessionSave(timerKey){
 }
 
 
+function hasSaveConflict(){
+  return String(app.saveError).indexOf('STRENGTH_STATE_CONFLICT') >= 0;
+}
+
+function saveErrorText(){
+  return hasSaveConflict() ? 'Данные изменились в другой вкладке. Загрузите актуальную версию перед продолжением.' : app.saveError;
+}
+
 function renderSavingOnly(){
 
   var el =
@@ -2863,8 +2894,8 @@ function renderSavingOnly(){
 
     el.innerHTML =
       'Ошибка сохранения: ' +
-      esc(app.saveError) +
-      ' <button class="st-save-retry" onclick="ST.retrySave()">Повторить</button>'+
+      esc(saveErrorText()) +
+      (hasSaveConflict() ? '' : ' <button class="st-save-retry" onclick="ST.retrySave()">Повторить</button>')+
       (String(app.saveError).indexOf('STRENGTH_STATE_CONFLICT') >= 0 ? ' <button class="st-save-retry" onclick="ST.reloadCurrent()">Загрузить актуальное</button>' : '');
 
     return;
@@ -3385,7 +3416,7 @@ function renderJournalHeader(){
     '<div class="st-nav-center"><div class="st-nav-title">Тренировка №'+session.number+'</div><div class="st-nav-sub"><span class="st-nav-template">Шаблон '+Number(session.workoutType || app.workoutType)+'</span><span class="st-nav-status"> · '+(isFilled(session)?'заполнена':'не заполнена')+'</span></div></div>'+
     '<div class="st-nav-end"><button class="st-arrow" onclick="ST.nextSession()" '+(adjacentTemplateSession(1)>=0?'':'disabled')+' aria-label="Следующая тренировка">›</button><div class="st-undo-controls st-header-undo"><button onclick="ST.undo()" '+(app.undoStack.length?'':'disabled')+' aria-label="Отменить действие">↶</button><button onclick="ST.redo()" '+(app.redoStack.length?'':'disabled')+' aria-label="Повторить действие">↷</button></div>'+(canCreate ? '<button class="st-new-session st-new-session-inline" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Новая тренировка')+'</button>' : '')+'</div>'+
     '</div>'+
-    '<div id="st-save-state" class="st-saving'+(app.saveError?' error':'')+'">'+(app.saveError ? 'Ошибка сохранения: '+esc(app.saveError) : app.saving ? 'Сохраняю…' : '')+'</div>';
+    '<div id="st-save-state" class="st-saving'+(app.saveError?' error':'')+'">'+(app.saveError ? 'Ошибка сохранения: '+esc(saveErrorText()) : app.saving ? 'Сохраняю…' : '')+'</div>';
 
 }
 
@@ -3513,9 +3544,7 @@ function renderAdminHistory(start){
 
 function renderAdminSheet(){
   var sheet = adminSheetSessions();
-  var first = sheet.visible[0] && sheet.visible[0].session;
-  var last = sheet.visible[sheet.visible.length-1] && sheet.visible[sheet.visible.length-1].session;
-  return '<section class="st-admin-sheet"><div class="st-admin-sheet-title">План и факт по тренировкам</div><div class="st-admin-window-nav"><button onclick="ST.prevSession()" '+(adjacentTemplateSession(-1)>=0 ? '' : 'disabled')+'>← Предыдущие</button><div class="st-admin-window-range">'+(first ? '№'+esc(first.number) : '')+(last ? ' — №'+esc(last.number) : '')+'</div><button onclick="ST.nextSession()" '+(adjacentTemplateSession(1)>=0 ? '' : 'disabled')+'>Следующие →</button></div><div class="st-admin-sheet-scroll"><div class="st-admin-sheet-grid">'+renderDayHeads(sheet.visible)+renderExerciseRows(sheet.visible)+'</div></div></section>';
+  return '<section class="st-admin-sheet"><div class="st-admin-sheet-title">План и факт по тренировкам</div><div class="st-admin-window-nav"><button onclick="ST.prevSession()" '+(adjacentTemplateSession(-1)>=0 ? '' : 'disabled')+'>← Предыдущие</button><button onclick="ST.nextSession()" '+(adjacentTemplateSession(1)>=0 ? '' : 'disabled')+'>Следующие →</button></div><div class="st-admin-sheet-scroll"><div class="st-admin-sheet-grid">'+renderDayHeads(sheet.visible)+renderExerciseRows(sheet.visible)+'</div></div></section>';
 }
 
 
@@ -3605,7 +3634,7 @@ function renderCurrentExercises(){
   var session = workout.sessions[app.selectedIndex];
   if(!session){ return ''; }
   var html = '<div class="st-modern-list">';
-  var exercises = displayExercises().map(function(item){
+  var exercises = displayExercises([{session:session}]).map(function(item){
     return findExercise(session,item.exercise_id);
   }).filter(function(exercise){ return exercise !== null; });
 
@@ -3620,12 +3649,12 @@ function renderCurrentExercises(){
         '<div class="st-modern-title"><strong>'+esc(exercise.name)+'</strong>'+(exerciseInfo && exerciseInfo.source === 'base' ? '<button class="st-exercise-info st-modern-exercise-info" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Как выполнять упражнение" title="Об упражнении"><span>i</span><span class="st-exercise-button-label">Информация</span></button>' : '')+'</div>'+
         '<div class="st-modern-tools">'+
         '<button class="st-exercise-stats st-modern-exercise-stats" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseStats(this.dataset.exerciseId)" aria-label="Статистика упражнения" title="Статистика упражнения"><span>↗</span><span class="st-exercise-button-label">Статистика</span></button>'+
-        (app.entryMode === 'edit' ? '<button class="st-modern-copy" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId)" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">⇢</button>' : '')+
+        (app.entryMode === 'edit' ? '<button class="st-modern-copy" '+(templateIncludesExercise(exercise.id) ? '' : 'disabled ')+'data-exercise-id="'+esc(exercise.id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId)" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">⇢</button>' : '')+
         '</div>'+
       '</header>'+
       '<section class="st-modern-editor">'+
         '<div class="st-modern-labels '+app.entryMode+'">'+
-          (app.entryMode === 'edit' ? '<span></span>' : '')+'<span class="st-plan-label">'+(app.entryMode === 'edit' ? '<button class="st-plan-copy-label" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId)" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">Копировать</button>' : '')+'<span>План</span><br><small>вес · разы</small></span>'+
+          (app.entryMode === 'edit' ? '<span></span>' : '')+'<span class="st-plan-label">'+(app.entryMode === 'edit' ? '<button class="st-plan-copy-label" '+(templateIncludesExercise(exercise.id) ? '' : 'disabled ')+'data-exercise-id="'+esc(exercise.id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId)" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">Копировать</button>' : '')+'<span>План</span><br><small>вес · разы</small></span>'+
           (app.entryMode === 'train' ? '<span>✓</span>' : '')+'<span class="st-fact-label">Факт<br><small>вес · разы</small></span><span>Усилие</span>'+
         '</div>';
     for(var setIndex=0;setIndex<exercise.sets.length;setIndex++){
@@ -3648,78 +3677,14 @@ function renderCurrentExercises(){
 }
 
 
-function renderDayHeads(
-  visible
-){
-
-  var html =
-    '<div class="st-days">';
-
-  for(
-    var i=0;
-    i<visible.length;
-    i++
-  ){
-
-    if(
-      !visible[i].session
-    ){
-
-      html += '<div></div>';
-      continue;
-
-    }
-
-    var session =
-      visible[i].session;
-
-    html +=
-      '<div class="st-day-head '+
-      (
-        visible[i].current
-        ?
-        'current'
-        :
-        ''
-      )+
-      '">'+
-        '<div class="st-day-top">'+
-          '<div class="st-day-number">№'+
-            session.number+
-          '</div>'+
-          renderDateControl(
-            visible[i].index,
-            session.date
-          )+
-        '</div>'+
-        (
-          session.date
-          ?
-          '<div class="st-weekday">'+
-            weekday(
-              session.date
-            )+
-          '</div>'
-          :
-          ''
-        )+
-        '<div class="st-day-state">'+
-          (
-            isFilled(session)
-            ?
-            'заполнена'
-            :
-            'не заполнена'
-          )+
-        '</div>'+
-      '</div>';
-
-  }
-
-  html += '</div>';
-
-  return html;
-
+function renderDayHeads(visible){
+  return '<div class="st-days">'+visible.map(function(item){
+    if(!item.session){ return '<div></div>'; }
+    var session = item.session;
+    return '<div class="st-day-head '+(item.current ? 'current' : '')+'"><div class="st-day-top">'+
+      '<div class="st-day-identity"><span class="st-day-number">№'+esc(session.number)+'</span><span class="st-day-state">'+(isFilled(session) ? 'заполнена' : 'не заполнена')+'</span></div>'+
+      renderDateControl(item.index,session.date)+'</div></div>';
+  }).join('')+'</div>';
 }
 
 
@@ -3752,6 +3717,7 @@ function renderDateControl(
           :
           'Выбрать дату'
         )+
+        (date ? '<div class="st-weekday">'+esc(weekday(date))+'</div>' : '')+
       '</div>'+
       '<button class="st-date-button" onclick="ST.openDate(\''+id+'\')">'+
         '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">'+
@@ -3770,7 +3736,7 @@ function renderExerciseRows(
   visible
 ){
 
-  var catalog = displayExercises();
+  var catalog = displayExercises(visible);
 
   var html = '';
 
@@ -3829,8 +3795,33 @@ function renderExerciseRows(
 }
 
 
-function displayExercises(){
-  return activeCatalog();
+function exerciseHasFact(exercise){
+  return (exercise.sets || []).some(function(set){
+    return !blank(set.factWeight) || !blank(set.factReps) || !blank(set.rpe);
+  });
+}
+
+function templateIncludesExercise(id){
+  return activeCatalog().some(function(item){ return String(item.exercise_id) === String(id); });
+}
+
+function sessionShowsExercise(session,id){
+  return templateIncludesExercise(id) || exerciseHasFact(findExercise(session,id) || {});
+}
+
+function displayExercises(visible){
+  var catalog = activeCatalog().slice();
+  var seen = {};
+  catalog.forEach(function(item){ seen[String(item.exercise_id)] = true; });
+  (visible || []).forEach(function(item){
+    (item.session ? item.session.exercises : []).forEach(function(exercise){
+      if(!seen[String(exercise.id)] && exerciseHasFact(exercise)){
+        catalog.push({exercise_id:exercise.id,exercise_name:exercise.name});
+        seen[String(exercise.id)] = true;
+      }
+    });
+  });
+  return catalog;
 }
 
 function analysisExercises(){
@@ -3872,7 +3863,7 @@ function renderExerciseDay(
     в старой тренировке.
   */
 
-  if(!ex){
+  if(!ex || !sessionShowsExercise(item.session,id)){
     return '<div></div>';
   }
 
@@ -3895,7 +3886,7 @@ function renderExerciseDay(
 
   html +=
     '<div class="st-groups">'+
-      '<div class="st-group-plan"><button class="st-copy-forward" data-exercise-id="'+esc(id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId,'+item.index+')" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">Копировать</button><span class="st-group-title">План</span></div>'+
+      '<div class="st-group-plan"><button class="st-copy-forward" '+(templateIncludesExercise(id) ? '' : 'disabled ')+'data-exercise-id="'+esc(id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId,'+item.index+')" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">Копировать</button><span class="st-group-title">План</span></div>'+
       '<div class="st-group-fact">Факт</div>'+
     '</div>'+
     '<div class="st-set-head">'+
@@ -5276,87 +5267,8 @@ function renderFloatingRpe(){
 ========================================================= */
 
 function saveExerciseSettings(){
-
-  var catalog =
-    templateWorkout()
-      .catalog;
-
-  var arr = [];
-
-  for(
-    var i=0;
-    i<catalog.length;
-    i++
-  ){
-
-    arr.push({
-      exercise_id:
-        catalog[i]
-          .exercise_id,
-
-      active:
-        !(
-          catalog[i].active === false ||
-          String(
-            catalog[i].active
-          ).toLowerCase() ===
-          'false'
-        ),
-
-      sort_order:
-        Number(
-          catalog[i]
-            .sort_order ||
-          i+1
-        )
-    });
-
-  }
-
-  var body = {
-    action:
-      'saveExerciseSettings',
-
-    workout_type:
-      app.workoutType,
-
-    version:app.version,
-
-    exercises:
-      arr
-  };
-
-  if(app.isAdmin){
-
-    body.user_id =
-      currentUserId();
-
-    body.target_user_id =
-      currentUserId();
-
-    body.admin_email =
-      app.email;
-
-  }else{
-
-    body.email =
-      app.email;
-
-  }
-
-  postApi(body)
-  .then(function(result){
-    app.version = Number(result.version || app.version);
-  })
-  .catch(function(error){
-
-    alert(
-      'Не удалось сохранить упражнения: '+
-      error.message
-    );
-
-  });
-
+  app.managerDraft = copyCatalog(templateWorkout().catalog || []);
+  queueManagerSave();
 }
 
 
@@ -5469,16 +5381,19 @@ function latestManagerSessionBody(pending){
 
 
 function flushManagerSave(){
-  if(app.managerSaveRunning || !app.managerSavePending){
+  if(app.managerSaveRunning || !app.managerSavePending || app.saveRequests > 0 || hasSaveConflict()){
     return;
   }
-  var pending = app.managerSavePending;
-  app.managerSavePending = null;
+  var pending = app.managerSavePending.shift();
+  if(!app.managerSavePending.length){ app.managerSavePending = null; }
   app.managerSaveRunning = true;
   app.saveError = '';
   app.saving = true;
   renderManagerSavingOnly();
   renderSavingOnly();
+  // Names and catalog visibility belong to the account, including edits made in another template while this request waited.
+  pending.catalogBody.exercises = managerCatalogBody(copyCatalog(app.workouts[pending.workoutType].catalog || [])).exercises;
+  pending.catalogBody.version = app.version;
   postApi(pending.catalogBody)
     .then(function(result){
       app.version = Number(result.version || app.version);
@@ -5490,6 +5405,7 @@ function flushManagerSave(){
       renderManagerSavingOnly();
       renderSavingOnly();
       flushManagerSave();
+      Object.keys(app.sessionSaveQueues).forEach(function(key){ flushSessionSave(key); });
     })
     .catch(function(error){
       app.managerSaveRunning = false;
@@ -5497,12 +5413,16 @@ function flushManagerSave(){
       app.saving = true;
       renderManagerSavingOnly();
       renderSavingOnly();
-      if(app.managerSavePending){
+      app.managerSavePending = app.managerSavePending || [];
+      if(!app.managerSavePending.some(function(item){ return item.workoutType === pending.workoutType; })){
+        app.managerSavePending.unshift(pending);
+      }
+      if(hasSaveConflict()){ return; }
+      if(app.managerSavePending[0] !== pending){
         flushManagerSave();
         return;
       }
       pending.retryCount = Number(pending.retryCount || 0)+1;
-      app.managerSavePending = pending;
       if(pending.retryCount <= 2){
         setTimeout(flushManagerSave,pending.retryCount*700);
       }else{
@@ -5516,12 +5436,16 @@ function queueManagerSave(){
   var catalog = copyCatalog(app.managerDraft || []);
   app.managerDraft = catalog;
   applyManagerDraft(catalog);
-  app.saveError = '';
-  app.managerSavePending = {
+  if(!hasSaveConflict()){ app.saveError = ''; }
+  var pending = {
     catalogBody:managerCatalogBody(catalog),
     workoutType:app.workoutType,
     retryCount:0
   };
+  app.managerSavePending = app.managerSavePending || [];
+  var pendingIndex = app.managerSavePending.findIndex(function(item){ return item.workoutType === pending.workoutType; });
+  if(pendingIndex >= 0){ app.managerSavePending[pendingIndex] = pending; }
+  else{ app.managerSavePending.push(pending); }
   flushManagerSave();
 }
 
@@ -5727,6 +5651,7 @@ window.ST = {
   },
 
   copyExerciseToNext:function(id,sourceIndex){
+    if(!templateIncludesExercise(id)){ return; }
     var sessions = currentWorkout().sessions;
     sourceIndex = Number(sourceIndex);
     if(!isFinite(sourceIndex) || sourceIndex < 0 || sourceIndex >= sessions.length){ sourceIndex = app.selectedIndex; }

@@ -391,6 +391,7 @@ for (const width of [360, 430, 768, 1440]) {
   if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-empty-template-${width}.png`), fullPage: false });
   await page.getByText("Создать первую тренировку", { exact: false }).click();
   await page.getByText("Тренировка №28", { exact: true }).waitFor();
+  await page.waitForFunction(() => window.__saveBodies.some(body => body?.action === "saveSession" && body.workout_type === 3));
   const firstSession = await page.evaluate(() => window.__saveBodies.find((body) => body?.action === "saveSession" && body.workout_type === 3));
   assert.equal(firstSession.session.session_number, 28);
   await page.close();

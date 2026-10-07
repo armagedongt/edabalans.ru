@@ -16,11 +16,11 @@ function fixture(type) {
   ];
   const sessions = Array.from({ length: 6 }, (_, i) => ({ session_id: `s${i + 1}`, workout_type: i % 2 + 1, session_number: i + 1, date: '2026-09-21' }));
   const exercises = sessions.flatMap((session) => ['bench', 'triceps', 'row', 'history-only'].map((id, i) => ({ session_id: session.session_id, exercise_id: id, exercise_name: catalog.find((item) => item.exercise_id === id)?.exercise_name || 'Историческое упражнение', sort_order: i + 1, note: 'Сохранённая заметка' })));
-  return { version: 1, exercise_catalog: type === 3 ? catalog.map((item) => ({ ...item, active: false })) : catalog, sessions, session_exercises: exercises, sets: exercises.flatMap((exercise) => Array.from({ length: 4 }, (_, i) => ({ ...exercise, set_number: i + 1, plan_weight: '40', plan_reps: '10', fact_weight: exercise.session_id === 's1' ? '35' : '', fact_reps: '', rpe: '' }))) };
+  return { version: 1, exercise_catalog: type === 3 ? catalog.map((item) => ({ ...item, active: false })) : catalog, sessions, session_exercises: exercises, sets: exercises.flatMap((exercise) => Array.from({ length: 4 }, (_, i) => ({ ...exercise, set_number: i + 1, plan_weight: '40', plan_reps: '10', fact_weight: exercise.session_id === 's1' && ['bench', 'triceps'].includes(exercise.exercise_id) ? '35' : '', fact_reps: '', rpe: '' }))) };
 }
 
 try {
-  for (const width of [360, 430, 700, 701, 768, 1412, 1440, 1480]) {
+  for (const width of [360, 430, 700, 701, 768, 999, 1000, 1412, 1440, 1480, 1648]) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     await page.addInitScript(({ workouts }) => {
       window.EdabalansAppContext = { mode: 'admin', targetUserId: 'synthetic-profile' };
@@ -102,11 +102,26 @@ try {
     if (width > 700) assert.deepEqual(await page.locator('.st-day-number').allTextContents(), ['№2', '№4', '№6']);
     await page.getByRole('button', { name: 'Шаблон 1', exact: true }).click();
     await page.getByText('Тренировка №5', { exact: true }).waitFor();
+    if (width > 700) {
+      assert.equal(await page.locator('.st-admin-window-range').count(), 0);
+      assert.equal(await page.locator('.st-day-identity .st-day-state').count(), 3);
+      assert.equal(await page.locator('.st-date-text .st-weekday').count(), 3);
+      assert.ok((await page.locator('.st-day-head').first().boundingBox()).height < 65, 'Шапка дня компактна');
+      if (width >= 1000) {
+        await page.evaluate(() => window.scrollTo(0, 500));
+        const header = await page.locator('.st-days').boundingBox();
+        const modes = await page.locator('.st-entry-control-bar').boundingBox();
+        assert.ok(header.y >= modes.y + modes.height - 1 && header.y < 80, 'Номера закреплены под переключателем режима');
+        if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-sticky-${width}.png`) });
+        await page.evaluate(() => window.scrollTo(0, 0));
+      }
+    }
     if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-template-${width}.png`), fullPage: true });
     await page.getByRole('button', { name: 'Редактировать шаблон 1', exact: true }).click();
     await page.locator('.st-manager-row', { hasText: 'Верхний блок на трицепс' }).getByText('Убрать', { exact: true }).click();
     await page.getByText('Закрыть', { exact: true }).click();
-    assert.deepEqual(await names(), ['Жим штанги']);
+    assert.deepEqual(await names(), width > 700 ? ['Жим штанги', 'Верхний блок на трицепс'] : ['Жим штанги']);
+    if (width > 700) assert.equal(await page.locator('.st-ex-row', { hasText: 'Верхний блок на трицепс' }).locator('.st-ex-day.current').count(), 0, 'Исключённое упражнение с фактом показывается только в своей старой тренировке');
     assert.equal(await page.evaluate(() => window.__saveBodies.some((body) => body.action === 'saveSession')), false);
     await page.locator('.st-top-stats').click();
     await page.getByRole('button', { name: 'Анализ', exact: true }).click();
@@ -115,6 +130,10 @@ try {
     await page.getByRole('button', { name: 'Предыдущая тренировка', exact: true }).click();
     await page.getByRole('button', { name: 'Предыдущая тренировка', exact: true }).click();
     await page.getByText('Тренировка №1', { exact: true }).waitFor();
+    assert.deepEqual(await names(), ['Жим штанги', 'Верхний блок на трицепс'], 'Исторический факт исключённого упражнения виден и на телефоне');
+    const excludedHistory = page.locator(width > 700 ? '.st-ex-row' : '.st-modern-exercise', { hasText: 'Верхний блок на трицепс' });
+    assert.equal(await excludedHistory.locator(width > 700 ? '.st-copy-forward' : '.st-modern-copy').first().isDisabled(), true, 'Исключённое упражнение не копируется в будущий план');
+    if (width <= 700) assert.equal(await excludedHistory.locator('.st-plan-copy-label').isDisabled(), true);
     const field = page.locator(width > 700 ? '.st-ex-day.current .st-plan-field' : '.st-modern-set.edit input').first();
     await field.fill('42');
     await field.blur();

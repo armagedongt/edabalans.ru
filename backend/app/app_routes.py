@@ -1656,7 +1656,7 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
                 if existing is None:
                     number = max(all_numbers, default=0) + 1
                 now = datetime.now(timezone.utc).isoformat()
-                item = {**session, "session_id": session_id, "workout_type": workout_type, "session_number": number, "updated_at": now, "created_at": session.get("created_at") or now, "source": "app"}
+                item = {**(existing or {}), **session, "session_id": session_id, "workout_type": workout_type, "session_number": number, "updated_at": now, "created_at": (existing or {}).get("created_at") or now, "source": (existing or {}).get("source") or "app"}
                 item["status"] = "filled" if any(
                     set_item.get("rpe") not in (None, "")
                     for exercise in item.get("exercises", []) for set_item in exercise.get("sets", [])

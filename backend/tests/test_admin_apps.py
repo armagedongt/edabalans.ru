@@ -446,6 +446,37 @@ def test_strength_rejects_stale_state_version_without_overwriting_session():
         assert [workout["session_number"] for workout in state.workouts] == [1]
 
 
+def test_strength_edit_preserves_stored_history_provenance_and_creation_time():
+    client, factory = make_client()
+    original = {
+        "session_id": "legacy-session", "workout_type": 1, "session_number": 9,
+        "date": "2026-01-02", "source": "legacy_import", "legacy_group": "archive:AF",
+        "legacy_session_number": 6, "history_schema_version": 2,
+        "created_at": "2026-09-19T10:00:00+00:00", "exercises": [],
+    }
+    with factory() as db:
+        user = add_user(db, "strength-provenance@example.test", "История")
+        db.add(StrengthState(user_id=user.id, workout_types=[], hidden_exercises=[], workouts=[original]))
+        db.commit()
+        user_id = user.id
+    login(client)
+    response = client.post("/api/apps/strength", json={
+        "action": "saveSession", "target_user_id": str(user_id), "workout_type": 1,
+        "version": 1, "session": {
+            "session_id": "legacy-session", "session_number": 99, "date": "2026-01-03",
+            "created_at": "2099-01-01", "exercises": [{"exercise_id": "bench", "sets": [{"fact_weight": 12.5}]}],
+        },
+    }).json()
+    assert response["ok"] is True
+    with factory() as db:
+        stored = db.scalar(select(StrengthState).where(StrengthState.user_id == user_id)).workouts[0]
+        for field in ("session_id", "session_number", "source", "legacy_group", "legacy_session_number", "history_schema_version", "created_at"):
+            assert stored[field] == original[field]
+        assert stored["date"] == "2026-01-03"
+        assert stored["exercises"][0]["sets"][0]["fact_weight"] == 12.5
+        assert stored["updated_at"] != stored["created_at"]
+
+
 def test_strength_undo_can_delete_a_newly_created_session():
     client, factory = make_client()
     with factory() as db:
