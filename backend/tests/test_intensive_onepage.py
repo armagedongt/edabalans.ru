@@ -129,15 +129,20 @@ def test_article_heading_hierarchy_preserves_existing_links_without_duplicate_to
     source = SOURCE.read_text(encoding='utf-8')
     _, body, toc = render_article(source)
     group_labels = [label for _, label, _ in GROUPS]
-    assert re.findall(r'<h2(?: [^>]*)?>(.*?)</h2>', body) == group_labels
+    major_headings = ['Сначала закройте базовые потребности!', 'Цена пищевых привычек',
+                      'Ошибка № 1. Браться за всё сразу', 'Ошибка № 2. Пытаться «перетренировать» своё питание',
+                      'Ошибка № 3. Неадекватные ожидания', 'План адекватного похудения', 'Конкретные действия']
+    assert re.findall(r'<h2(?: [^>]*)?>(.*?)</h2>', body) == major_headings
     assert re.search(r'<h3 id="section-\d+">', body)
     for label in group_labels:
         assert toc.count(f'>{label}</a>') == 1
 
-    # The three new group headings must not shift links published before this layout.
+    # Changing heading levels and removing group titles preserves published anchors.
     previous = source
-    for label in group_labels[:-1]:
-        previous = previous.replace(f'## {label}\n', '')
+    for label in major_headings[:-1]:
+        previous = previous.replace(f'## {label}\n', f'### {label}\n')
+    for _, label, marker in GROUPS[:-1]:
+        previous = previous.replace(f'<!-- {marker} -->', f'<!-- {marker} -->\n\n## {label}')
     _, previous_body, _ = render_article(previous)
     section_links = r'<h[23] id="(section-\d+)">(.*?)</h[23]>'
     assert re.findall(section_links, body) == re.findall(section_links, previous_body)

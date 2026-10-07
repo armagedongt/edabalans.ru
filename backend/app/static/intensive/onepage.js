@@ -3,7 +3,6 @@ const header = document.querySelector('.reading-header');
 const progress = document.querySelector('.reading-track');
 const fill = document.querySelector('.reading-fill');
 const end = document.getElementById('reading-end');
-const tabs = Array.from(header.querySelectorAll('a[data-section]'));
 const dialog = document.getElementById('contents');
 const trigger = document.querySelector('.toc-trigger');
 const closeButton = document.querySelector('.toc-close');
@@ -18,16 +17,7 @@ function updateReading() {
   const actual = Math.max(0, Math.min(1, window.scrollY / distance));
   fill.style.clipPath = `inset(0 ${(1 - displayProgress(actual)) * 100}% 0 0 round 10px)`;
   progress.setAttribute('aria-valuenow', String(Math.round(actual * 100)));
-  let current = tabs[0];
-  const offset = header.getBoundingClientRect().bottom + 30;
-  for (const tab of tabs) {
-    if (document.getElementById(tab.dataset.section).getBoundingClientRect().top <= offset) current = tab;
-  }
-  if (actual === 1) current = tabs[tabs.length - 1];
-  for (const tab of tabs) {
-    if (tab === current) tab.setAttribute('aria-current', 'location');
-    else tab.removeAttribute('aria-current');
-  }
+
 }
 let frame = 0;
 function scheduleUpdate() {

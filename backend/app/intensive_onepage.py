@@ -203,7 +203,7 @@ def page(*, identified: bool = False):
 <link rel="stylesheet" href="/intensive/onepage-components.css?v=20261005">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="/intensive/onepage.css?v=20261007-labels"><script defer src="/intensive/onepage.js?v=20261007-menu"></script>
+<link rel="stylesheet" href="/intensive/onepage.css?v=20261007-drawer"><script defer src="/intensive/onepage.js?v=20261007-neutral-nav"></script>
 <script defer src="/intensive/onepage-tracking.js?v=20261007-reading"></script></head><body>
 <header class="reading-header"><nav aria-label="Разделы интенсива">{tabs}</nav>
 <div class="reading-track" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="reading-fill"></div></div></header>
@@ -220,7 +220,7 @@ def page(*, identified: bool = False):
 <a href="https://t.me/Fitness_Talks" target="_blank" rel="noopener">Telegram-канал</a>
 <a href="https://max.ru/id230409966750_biz" target="_blank" rel="noopener">Канал в MAX</a>
 </div></details></nav>
-<h2 id="contents-title">В этом материале</h2><nav aria-label="Все темы интенсива">{toc}</nav></dialog>
+<h2 id="contents-title">В этом материале:</h2><nav aria-label="Все темы интенсива">{toc}</nav></dialog>
 <div data-edabalans-site-footer></div><script defer src="/site-footer.js"></script>
 <script src="/cookie-notice.js" defer></script></body></html>'''.encode('utf-8')
 
