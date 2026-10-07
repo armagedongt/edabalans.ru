@@ -42,6 +42,19 @@ try {
     const names = () => page.locator(width > 700 ? '.st-ex-row-name' : '.st-modern-title strong').allTextContents();
     assert.deepEqual(await names(), ['Верхний блок на трицепс', 'Жим штанги']);
     if (width > 700) assert.deepEqual(await page.locator('.st-day-number').allTextContents(), ['№1', '№3', '№5']);
+    if (width <= 700) {
+      const note = () => page.locator('.st-modern-comment textarea').first();
+      await note().fill('Изменённое примечание');
+      await page.keyboard.press('Control+Z');
+      assert.equal(await note().inputValue(), 'Сохранённая заметка', 'Первое изменение примечания доступно для отмены');
+      await note().focus();
+      await page.keyboard.press('Control+Y');
+      assert.equal(await note().inputValue(), 'Изменённое примечание');
+      await note().focus();
+      await page.keyboard.press('Control+Z');
+      assert.equal(await note().inputValue(), 'Сохранённая заметка');
+      await page.evaluate(() => { window.__saveBodies = []; });
+    }
     const planWeight = () => page.locator(width > 700 ? '.st-ex-row:first-of-type .st-ex-day.current .st-plan-field' : '.st-modern-exercise:first-child .st-plan-inputs input').first();
     const factWeight = () => page.locator(width > 700 ? '.st-ex-row:first-of-type .st-ex-day.current .st-fact-field' : '.st-modern-exercise:first-child .st-fact-inputs input').first();
     async function enterWeight(locator, value, field, expected) {

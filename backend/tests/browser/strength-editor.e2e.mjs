@@ -223,6 +223,9 @@ for (const width of [360, 430, 768, 1440]) {
 
   await page.locator(".st-type-edit").nth(1).click();
   assert.equal(await page.getByText("Редактировать · Шаблон 2", { exact: true }).count(), 1);
+  await page.locator("#st-new-exercise").fill("Несохранённое название");
+  await page.keyboard.press("Control+Z");
+  assert.equal(await page.locator("#st-new-exercise").inputValue(), "Несохранённое название", "Отключённая кнопка отмены не стирает название нового упражнения");
   await page.getByText("Закрыть", { exact: true }).click();
   await page.locator(".st-type-edit").first().click();
   assert.equal(await page.getByText("Редактировать · Шаблон 1", { exact: true }).count(), 1);
@@ -247,7 +250,8 @@ for (const width of [360, 430, 768, 1440]) {
 
   const undoProbeRow = page.locator(".st-manager-row", { hasText: "Жим лёжа узким хватом" });
   await undoProbeRow.getByText("Добавить", { exact: true }).click();
-  await page.getByText("Отменить", { exact: false }).click();
+  await page.locator("#st-new-exercise").focus();
+  await page.keyboard.press("Control+Z");
   assert.equal(await undoProbeRow.getByText("Добавить", { exact: true }).count(), 1);
   await page.waitForFunction(() => {
     const saved = window.__saveBodies.filter((body) => body?.action === "saveExerciseCatalog" && body.workout_type === 1).at(-1);
@@ -328,6 +332,37 @@ for (const width of [360, 430, 768, 1440]) {
   await page.getByRole("button", { name: "Отменить действие" }).first().click();
   assert.equal(await page.locator(".st-modern-set.edit input").first().inputValue(), "");
   await page.getByRole("button", { name: "Повторить действие" }).first().click();
+  assert.equal(await page.locator(".st-modern-set.edit input").first().inputValue(), "55");
+  await page.evaluate(() => {
+    window.__shortcutClicks = [];
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('button');
+      const action = button?.getAttribute('onclick');
+      if (action === 'ST.undo()' || action === 'ST.redo()') window.__shortcutClicks.push(action);
+    });
+  });
+  await page.locator(".st-modern-set.edit input").first().focus();
+  await page.keyboard.press("Control+Z");
+  assert.equal(await page.locator(".st-modern-set.edit input").first().inputValue(), "");
+  await page.locator(".st-modern-set.edit input").first().focus();
+  await page.keyboard.press("Control+Y");
+  assert.equal(await page.locator(".st-modern-set.edit input").first().inputValue(), "55");
+  // Russian layout reports Cyrillic key values while retaining physical key codes.
+  await page.locator(".st-modern-set.edit input").first().focus();
+  await page.evaluate(() => document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'я', code: 'KeyZ', ctrlKey: true, bubbles: true, cancelable: true })));
+  assert.equal(await page.locator(".st-modern-set.edit input").first().inputValue(), "");
+  await page.locator(".st-modern-set.edit input").first().focus();
+  await page.evaluate(() => document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'н', code: 'KeyY', ctrlKey: true, bubbles: true, cancelable: true })));
+  assert.equal(await page.locator(".st-modern-set.edit input").first().inputValue(), "55");
+  assert.deepEqual(await page.evaluate(() => window.__shortcutClicks), ['ST.undo()', 'ST.redo()', 'ST.undo()', 'ST.redo()']);
+  await page.locator(".st-modern-set.edit input").first().fill("66");
+  await page.keyboard.press("Control+Z");
+  assert.equal(await page.locator(".st-modern-set.edit input").first().inputValue(), "55", "Отмена фиксирует и отменяет ввод, который ещё не потерял фокус");
+  await page.locator(".st-modern-set.edit input").first().focus();
+  await page.keyboard.press("Control+Y");
+  assert.equal(await page.locator(".st-modern-set.edit input").first().inputValue(), "66");
+  await page.locator(".st-modern-set.edit input").first().focus();
+  await page.keyboard.press("Control+Z");
   assert.equal(await page.locator(".st-modern-set.edit input").first().inputValue(), "55");
   await page.locator("#strength-app").click({ position: { x: 4, y: 4 } });
   await page.keyboard.press("Control+Z");

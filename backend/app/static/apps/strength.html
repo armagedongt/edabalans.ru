@@ -6940,17 +6940,30 @@ document.addEventListener(
 
 
 document.addEventListener('keydown',function(event){
-  if(!(event.ctrlKey || event.metaKey) || String(event.key).toLowerCase() !== 'z'){
+  if(!(event.ctrlKey || event.metaKey) || event.altKey){ return; }
+  var key = String(event.key).toLowerCase();
+  var isZ = event.code === 'KeyZ' || key === 'z';
+  var isY = event.code === 'KeyY' || key === 'y';
+  if(!isZ && !isY){ return; }
+  var redo = isY || event.shiftKey;
+  var selector = redo ? 'button[onclick="ST.redo()"]' : 'button[onclick="ST.undo()"]';
+  if(app.modal){
+    if(app.modal.type !== 'manager' || redo){ return; }
+    selector = '.st-manager-undo';
+  }else if(app.mode !== 'client' || app.mainTab !== 'training'){
     return;
   }
   var target = event.target;
-  var tag = target && String(target.tagName || '').toLowerCase();
-  if(tag === 'input' || tag === 'textarea'){
-    // Native typing undo wins while the field still has focus.
-    return;
-  }
+  var editable = target && target.closest && target.closest('input,textarea,[contenteditable="true"]');
+  if(editable && !root.contains(editable)){ return; }
   event.preventDefault();
-  if(event.shiftKey){ ST.redo(); }else{ ST.undo(); }
+  // Clicking an editor button commits the focused field before applying undo.
+  if(editable && editable.blur){
+    editable.blur();
+    if(!app.modal){ render(); }
+  }
+  var button = root.querySelector(selector);
+  if(button){ button.click(); }
 });
 
 
