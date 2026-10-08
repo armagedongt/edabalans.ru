@@ -98,7 +98,6 @@ def test_git_authoring_runtime_hash_proves_exact_reader_original_and_detects_que
     import app.course_material_routes as routes
     import app.course_material_service as service
     from app.masterclass_editorial import editable_material_path
-    from tools.editorial_git_adapter import read, runtime_matches
     client, factory = setup()
     step_id = "day-01-article-02"
     local = tmp_path / "original.md"
@@ -124,11 +123,12 @@ def test_git_authoring_runtime_hash_proves_exact_reader_original_and_detects_que
             return response.json()
 
     item = {"api_path": "/admin/api/editorial/masterclass/materials/" + step_id, "title": "Материал"}
-    remote = read(API(), item)
-    assert runtime_matches(remote)
+    remote = API().request("GET", item["api_path"])
+    runtime_hash = remote["runtime_source"]["sha256"]
+    assert runtime_hash == hashlib.sha256(remote["main"]["content"].encode("utf-8")).hexdigest()
     course_source = client.get("/admin/api/courses/masterclass-21/materials/" + step_id).json()
     assert course_source["source_content"] == deployed
-    assert remote["runtime_hash"] == hashlib.sha256(course_source["source_content"].encode("utf-8")).hexdigest()
+    assert runtime_hash == hashlib.sha256(course_source["source_content"].encode("utf-8")).hexdigest()
     authoring = client.get(item["api_path"]).json()
     assert authoring["runtime_source"]["path"] == editable_material_path(step_id)
     with factory() as db:
@@ -136,9 +136,9 @@ def test_git_authoring_runtime_hash_proves_exact_reader_original_and_detects_que
     assert reader["html"] == course_source["html"] and "Точное тело." in reader["html"]
     assert "Служебный заголовок" not in reader["html"] and "source_content" not in reader
     main.update(content=deployed.replace("Точное тело.", "Очередь выпуска."), sha="b" * 40)
-    queued = read(API(), item)
-    assert not runtime_matches(queued)
-    assert queued["runtime_hash"] == remote["runtime_hash"]  # Remote Git hash is not runtime proof.
+    queued = API().request("GET", item["api_path"])
+    assert queued["runtime_source"]["sha256"] != hashlib.sha256(queued["main"]["content"].encode("utf-8")).hexdigest()
+    assert queued["runtime_source"]["sha256"] == runtime_hash  # Remote Git hash is not runtime proof.
 
 
 def test_source_current_profile_follows_original_into_database_version(monkeypatch, tmp_path):

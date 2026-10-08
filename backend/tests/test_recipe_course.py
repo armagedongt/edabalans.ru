@@ -11,7 +11,9 @@ from app.course_structure_service import course_context, DOCUMENT_TYPE, DOCUMENT
 from app.managed_documents import publish_document
 
 
-def test_standalone_recipe_course_uses_own_right_and_shared_published_materials():
+def test_standalone_recipe_course_uses_own_right_and_shared_published_materials(monkeypatch, tmp_path):
+    import app.course_material_service as material_service
+    monkeypatch.setattr(material_service, "COURSE_CONTENT_ROOT", tmp_path)
     client, factory = make_client()
     try:
         with factory() as db:
