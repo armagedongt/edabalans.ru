@@ -52,6 +52,26 @@ try {
     assert.equal(await page.locator('.st-guide-body').evaluate((el) => el === document.activeElement), true);
     await page.keyboard.press('Shift+Tab');
     assert.equal(await page.locator('.st-guide-close').evaluate((el) => el === document.activeElement), true);
+    {
+      const sources = [
+        { name: 'BurnFit', url: 'https://burnfit.io/' },
+        { name: 'FitnessProgramer', url: 'https://fitnessprogramer.com/' },
+      ];
+      assert.deepEqual(await dialog.locator('.st-guide-credit a').allTextContents(), sources.map((item) => item.name));
+      assert.equal(await dialog.locator('.st-guide-copy > :last-child').getAttribute('class'), 'st-guide-credit');
+      for (const source of sources) {
+        const link = dialog.getByRole('link', { name: source.name, exact: true });
+        assert.equal(await link.getAttribute('href'), source.url);
+        assert.equal(await link.getAttribute('rel'), 'noopener noreferrer');
+      }
+      await page.keyboard.press('Tab');
+      for (const source of sources) {
+        await page.keyboard.press('Tab');
+        assert.equal(await dialog.getByRole('link', { name: source.name, exact: true }).evaluate((el) => el === document.activeElement), true);
+      }
+      await page.keyboard.press('Tab');
+      assert.equal(await page.locator('.st-guide-close').evaluate((el) => el === document.activeElement), true);
+    }
     if (screenshots) await page.screenshot({ path: path.join(screenshots, `guide-${width}-top.png`) });
     await dialog.locator('.st-guide-body').evaluate((el) => { el.scrollTop = el.scrollHeight; });
     if (screenshots) await page.screenshot({ path: path.join(screenshots, `guide-${width}-bottom.png`) });

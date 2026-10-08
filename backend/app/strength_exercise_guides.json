@@ -20,7 +20,17 @@
       "target_muscles": "большие грудные мышцы.",
       "auxiliary_muscles": "трицепсы, передние дельты; мышцы верхней части спины и корпуса удерживают положение тела.",
       "muscle_image_url": "/assets/strength-exercises/9134478bcb7c6c0fc06d.png",
-      "title": "Жим штанги лёжа"
+      "title": "Жим штанги лёжа",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {

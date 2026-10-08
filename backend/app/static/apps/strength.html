@@ -1274,6 +1274,8 @@
 .st-guide-copy ul{margin:0 0 16px;padding-left:20px}
 .st-guide-copy li+li{margin-top:7px}
 .st-guide-muscles{display:block;width:100%;max-width:500px;height:auto;margin:12px auto 0}
+.st-guide-credit{margin-top:12px;color:var(--st-muted);font-size:12px;line-height:1.4;text-align:center}
+.st-guide-credit a{color:inherit;text-underline-offset:2px}
 @media(min-width:768px){
   .st-guide-header{padding:10px 20px}
   .st-guide-body{padding:16px 20px}
@@ -5078,8 +5080,13 @@ function renderModal(){
       if(guide.note){ guideHtml += '<h3>Примечание</h3><p>'+esc(guide.note)+'</p>'; }
       guideHtml += '<p><strong>Целевые мышцы:</strong> '+esc(guide.target_muscles)+'</p>'+
         '<p><strong>Вспомогательные мышцы:</strong> '+esc(guide.auxiliary_muscles)+'</p>'+
-        '<img class="st-guide-muscles" src="'+esc(guide.muscle_image_url)+'" alt="Схема мышц">'+
-        '</div></div></section>';
+        '<img class="st-guide-muscles" src="'+esc(guide.muscle_image_url)+'" alt="Схема мышц">';
+      if(guide.media_sources && guide.media_sources.length){
+        guideHtml += '<div class="st-guide-credit">Источник медиа: '+guide.media_sources.map(function(source){
+          return '<a href="'+esc(source.url)+'" target="_blank" rel="noopener noreferrer">'+esc(source.name)+'</a>';
+        }).join(' · ')+'</div>';
+      }
+      guideHtml += '</div></div></section>';
       return guideHtml;
     }
     var infoTips = info && Array.isArray(info.tips) ? info.tips : [];
@@ -6950,10 +6957,14 @@ document.addEventListener('keydown',function(event){
   if(app.modal && app.modal.type === 'exerciseInfo' && document.querySelector('.st-exercise-guide')){
     if(event.key === 'Escape'){ event.preventDefault(); ST.closeModal(); return; }
     if(event.key === 'Tab'){
-      var guideClose = document.querySelector('.st-guide-close');
-      var guideBody = document.querySelector('.st-guide-body');
-      event.preventDefault();
-      (document.activeElement === guideClose ? guideBody : guideClose).focus();
+      var guideTargets = document.querySelectorAll('.st-exercise-guide button, .st-exercise-guide [tabindex="0"], .st-exercise-guide a[href]');
+      var firstGuideTarget = guideTargets[0];
+      var lastGuideTarget = guideTargets[guideTargets.length-1];
+      if(event.shiftKey && document.activeElement === firstGuideTarget){
+        event.preventDefault(); lastGuideTarget.focus();
+      }else if(!event.shiftKey && document.activeElement === lastGuideTarget){
+        event.preventDefault(); firstGuideTarget.focus();
+      }
       return;
     }
   }
