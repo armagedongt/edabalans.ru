@@ -96,9 +96,6 @@ def source(value, *, semantic=True):
             raise ValueError("enabled должен быть boolean")
         for field in MONEY:
             row[field] = amount(row[field], nullable=field != "sale_amount")
-        for field in ("regular_amount", "compare_at_amount"):
-            if row[field] is not None and Decimal(row[field]) < Decimal(row["sale_amount"]):
-                raise ValueError("Обычная/зачёркнутая цена меньше цены продажи")
     first = min(entries, key=lambda row: row["code"])
     if semantic and valid_stamp(first["metadata"].get(STAMP)):
         first["metadata"].pop(STAMP)
@@ -155,6 +152,12 @@ def read(api, item):
 
 def validate_changes(proposed, current):
     proposed, current = source(proposed), source(current)
+    # Read the accepted original even if its old amounts violate today's write
+    # rules. Validate the complete proposed version before creating any draft.
+    for row in proposed["entries"]:
+        for field in ("regular_amount", "compare_at_amount"):
+            if row[field] is not None and Decimal(row[field]) < Decimal(row["sale_amount"]):
+                raise ValueError(f"{row['code']}: обычная/зачёркнутая цена меньше цены продажи")
     for new, old in zip(proposed["entries"], current["entries"], strict=False):
         if any(json.dumps(new[key], sort_keys=True, allow_nan=False) != json.dumps(old[key], sort_keys=True, allow_nan=False)
                for key in ENTRY_FIELDS - MONEY):

@@ -261,3 +261,41 @@ def test_read_rejects_malformed_draft_revision_before_writes(bad_revision):
     with pytest.raises(ValueError, match="ревизи"):
         adapter.read(api, ITEM)
     assert not writes(api)
+
+
+@pytest.mark.parametrize("field", ["regular_amount", "compare_at_amount"])
+def test_existing_inconsistent_amounts_are_read_and_compared_without_repair(field):
+    original = deepcopy(SOURCE)
+    original["entries"][0][field] = "50.00"
+    api = API(); api.active = version(4, original)
+    remote = adapter.read(api, ITEM)
+    assert remote["source"] == original
+    assert remote["version"] == api.active["revision"]
+    assert adapter.parse(remote["text"])["entries"][0][field] == "50.00"
+    assert adapter.normalize(remote["text"]) == adapter.canonical(original)
+    assert not writes(api)
+    changed = deepcopy(original); changed["note"] = "Only a local note"
+    with pytest.raises(ValueError, match="example-base"):
+        adapter.publish(api, ITEM, adapter.render(ITEM, 4, changed), remote)
+    assert not writes(api)
+
+
+def test_explicitly_corrected_proposal_can_use_inconsistent_original_as_guarded_base():
+    original = deepcopy(SOURCE)
+    original["entries"][0]["regular_amount"] = "50.00"
+    api = API(); api.active = version(4, original)
+    remote = adapter.read(api, ITEM)
+    changed = deepcopy(original); changed["entries"][0]["regular_amount"] = "100.00"
+    result = adapter.publish(api, ITEM, adapter.render(ITEM, 4, changed), remote)
+    assert result["source"]["entries"][0]["regular_amount"] == "100.00"
+    assert result["source"]["entries"][0]["sale_amount"] == "100.00"
+    assert [call[0] for call in writes(api)] == ["POST", "PUT", "POST"]
+    assert writes(api)[0][2]["expected_active"] == remote["version"]
+
+
+def test_new_inconsistent_proposal_is_blocked_before_any_draft_write():
+    api = API(); remote = adapter.read(api, ITEM)
+    changed = deepcopy(SOURCE); changed["entries"][0]["sale_amount"] = "300.00"
+    with pytest.raises(ValueError, match="example-base"):
+        adapter.publish(api, ITEM, adapter.render(ITEM, 4, changed), remote)
+    assert not writes(api)

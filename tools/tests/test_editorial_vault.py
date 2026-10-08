@@ -162,6 +162,21 @@ def test_clean_readonly_prices_migrate_in_same_file_to_guarded_original(tmp_path
     assert all(call[0] == "GET" for call in api.calls)
 
 
+def test_refresh_preserves_inconsistent_accepted_prices_in_actual_original_file(tmp_path):
+    from copy import deepcopy
+    from tools.tests.test_editorial_pricing_adapter import SOURCE, version
+    from tools.editorial_pricing_adapter import parse
+    vault, api, file = legacy_pricing_fixture(tmp_path)
+    accepted = deepcopy(SOURCE); accepted["entries"][0]["regular_amount"] = "50.00"
+    api.active = version(4, accepted)
+    assert vault.refresh()[0]["status"] == "clean"
+    assert parse(file.read_text(encoding="utf-8"))["entries"] == accepted["entries"]
+    assert vault.load()["items"]["pricing:active"]["base_version"] == api.active["revision"]
+    assert vault.status()[0]["status"] == "clean"
+    assert vault.publish(["pricing:active"])[0]["status"] == "clean"
+    assert all(call[0] == "GET" for call in api.calls)
+
+
 def test_dirty_legacy_prices_are_preserved_without_inventing_new_base(tmp_path):
     vault, api, file = legacy_pricing_fixture(tmp_path)
     original_state = vault.load()
