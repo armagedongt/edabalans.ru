@@ -54,7 +54,17 @@
       "target_muscles": "трицепсы.",
       "auxiliary_muscles": "большие грудные мышцы, передние дельты; мышцы спины и корпуса удерживают положение тела.",
       "muscle_image_url": "/assets/strength-exercises/fb3a1c9c5a1e01cc841f.png",
-      "title": "Жим штанги лёжа узким хватом"
+      "title": "Жим штанги лёжа узким хватом",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -78,7 +88,17 @@
       "target_muscles": "большие грудные мышцы, с акцентом на верхнюю часть.",
       "auxiliary_muscles": "передние дельты, трицепсы; мышцы плечевого пояса удерживают гантели.",
       "muscle_image_url": "/assets/strength-exercises/9134478bcb7c6c0fc06d.png",
-      "title": "Жим гантелей на наклонной скамье"
+      "title": "Жим гантелей на наклонной скамье",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -102,7 +122,17 @@
       "target_muscles": "широчайшие мышцы спины.",
       "auxiliary_muscles": "бицепсы, плечевая мышца, трапеции, ромбовидные и мышцы предплечий.",
       "muscle_image_url": "/assets/strength-exercises/8ea49e0fe96dced6e860.png",
-      "title": "Подтягивания в гравитроне"
+      "title": "Подтягивания в гравитроне",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -126,7 +156,17 @@
       "target_muscles": "широчайшие мышцы спины.",
       "auxiliary_muscles": "бицепсы, плечевая мышца, большая круглая, трапеции, ромбовидные и мышцы предплечий.",
       "muscle_image_url": "/assets/strength-exercises/48499e70edc0395e2322.png",
-      "title": "Тяга верхнего блока сидя"
+      "title": "Тяга верхнего блока сидя",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -150,7 +190,17 @@
       "target_muscles": "широчайшие, трапеции и ромбовидные мышцы.",
       "auxiliary_muscles": "задние дельты, сгибатели локтя, мышцы предплечий; разгибатели спины и мышцы живота удерживают корпус.",
       "muscle_image_url": "/assets/strength-exercises/48499e70edc0395e2322.png",
-      "title": "Горизонтальная тяга нижнего блока"
+      "title": "Горизонтальная тяга нижнего блока",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -174,7 +224,17 @@
       "target_muscles": "широчайшие мышцы спины.",
       "auxiliary_muscles": "бицепсы, плечевая мышца, трапеции, ромбовидные, мышцы предплечий и корпуса.",
       "muscle_image_url": "/assets/strength-exercises/be45af297ef744edc55c.png",
-      "title": "Подтягивания"
+      "title": "Подтягивания",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -198,7 +258,17 @@
       "target_muscles": "широчайшие мышцы спины.",
       "auxiliary_muscles": "трапеции, ромбовидные, задние дельты, сгибатели локтя и мышцы предплечий; мышцы корпуса удерживают положение тела.",
       "muscle_image_url": "/assets/strength-exercises/48499e70edc0395e2322.png",
-      "title": "Тяга гантели одной рукой"
+      "title": "Тяга гантели одной рукой",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -222,7 +292,17 @@
       "target_muscles": "широчайшие, трапеции и ромбовидные мышцы.",
       "auxiliary_muscles": "задние дельты, сгибатели локтя и мышцы предплечий; разгибатели спины и мышцы живота удерживают наклон.",
       "muscle_image_url": "/assets/strength-exercises/48499e70edc0395e2322.png",
-      "title": "Тяга штанги в наклоне"
+      "title": "Тяга штанги в наклоне",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -246,7 +326,17 @@
       "target_muscles": "квадрицепсы, ягодичные и приводящие мышцы бедра.",
       "auxiliary_muscles": "разгибатели спины, мышцы живота и голени.",
       "muscle_image_url": "/assets/strength-exercises/96995e2018c860dd7c26.png",
-      "title": "Приседание со штангой"
+      "title": "Приседание со штангой",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -270,7 +360,17 @@
       "target_muscles": "квадрицепсы.",
       "auxiliary_muscles": "ягодичные, приводящие мышцы бедра и мышцы голени.",
       "muscle_image_url": "/assets/strength-exercises/514e6a549042c682a921.png",
-      "title": "Жим ногами в тренажёре"
+      "title": "Жим ногами в тренажёре",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -294,7 +394,17 @@
       "target_muscles": "квадрицепсы и ягодичные.",
       "auxiliary_muscles": "приводящие мышцы бедра, мышцы задней поверхности бедра, голени и корпуса.",
       "muscle_image_url": "/assets/strength-exercises/3e9c45d86d6381518ae1.png",
-      "title": "Выпады"
+      "title": "Выпады",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -318,7 +428,17 @@
       "target_muscles": "ягодичные, задняя поверхность бедра, разгибатели спины.",
       "auxiliary_muscles": "приводящие мышцы бедра, трапеции, мышцы предплечий и живота.",
       "muscle_image_url": "/assets/strength-exercises/0dfb6acda69fbc1bc37d.png",
-      "title": "Румынская тяга со штангой"
+      "title": "Румынская тяга со штангой",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -342,7 +462,17 @@
       "target_muscles": "ягодичные, квадрицепсы, задняя поверхность бедра, разгибатели спины.",
       "auxiliary_muscles": "приводящие мышцы бедра, трапеции, широчайшие, мышцы предплечий и живота.",
       "muscle_image_url": "/assets/strength-exercises/b9f7af3549ca6fb77087.png",
-      "title": "Становая тяга со штангой"
+      "title": "Становая тяга со штангой",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -366,7 +496,17 @@
       "target_muscles": "ягодичные.",
       "auxiliary_muscles": "задняя поверхность бедра, приводящие мышцы; мышцы живота и спины удерживают корпус.",
       "muscle_image_url": "/assets/strength-exercises/7d8ded3fca79264e2c09.png",
-      "title": "Ягодичный мост в тренажёре"
+      "title": "Ягодичный мост в тренажёре",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -390,7 +530,17 @@
       "target_muscles": "ягодичные.",
       "auxiliary_muscles": "задняя поверхность бедра, приводящие мышцы; мышцы корпуса удерживают положение тела.",
       "muscle_image_url": "/assets/strength-exercises/7d8ded3fca79264e2c09.png",
-      "title": "Ягодичный мост со штангой"
+      "title": "Ягодичный мост со штангой",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -414,7 +564,17 @@
       "target_muscles": "мышцы задней поверхности бедра.",
       "auxiliary_muscles": "икроножные мышцы.",
       "muscle_image_url": "/assets/strength-exercises/506f2b8124e569188ac6.png",
-      "title": "Сгибание ног в тренажёре лёжа"
+      "title": "Сгибание ног в тренажёре лёжа",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -438,7 +598,17 @@
       "target_muscles": "квадрицепсы.",
       "auxiliary_muscles": "мышцы корпуса удерживают положение тела; выраженного второго двигателя в этом движении нет.",
       "muscle_image_url": "/assets/strength-exercises/8b92db7cb895a2c5c28b.png",
-      "title": "Разгибание ног в тренажёре сидя"
+      "title": "Разгибание ног в тренажёре сидя",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -462,7 +632,17 @@
       "target_muscles": "приводящие мышцы бедра.",
       "auxiliary_muscles": "мышцы корпуса и таза удерживают положение тела.",
       "muscle_image_url": "/assets/strength-exercises/54a77e193c68084de19e.png",
-      "title": "Сведение ног в тренажёре"
+      "title": "Сведение ног в тренажёре",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -486,7 +666,17 @@
       "target_muscles": "средние и малые ягодичные мышцы.",
       "auxiliary_muscles": "напрягатель широкой фасции бедра, верхние волокна больших ягодичных; мышцы корпуса удерживают положение тела.",
       "muscle_image_url": "/assets/strength-exercises/59906928b3ec8fd8a30e.png",
-      "title": "Разведение ног в тренажёре"
+      "title": "Разведение ног в тренажёре",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -510,7 +700,17 @@
       "target_muscles": "икроножные мышцы.",
       "auxiliary_muscles": "камбаловидные мышцы, мышцы стопы; мышцы корпуса удерживают положение тела.",
       "muscle_image_url": "/assets/strength-exercises/94a84f7ac220870e1b6e.png",
-      "title": "Подъём на носки стоя"
+      "title": "Подъём на носки стоя",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -534,7 +734,17 @@
       "target_muscles": "бицепсы.",
       "auxiliary_muscles": "плечевые и плечелучевые мышцы, мышцы предплечий.",
       "muscle_image_url": "/assets/strength-exercises/ef9eff20c5c66209d798.png",
-      "title": "Подъём гантелей на бицепс стоя"
+      "title": "Подъём гантелей на бицепс стоя",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -558,7 +768,17 @@
       "target_muscles": "бицепсы.",
       "auxiliary_muscles": "плечевые и плечелучевые мышцы, мышцы предплечий.",
       "muscle_image_url": "/assets/strength-exercises/ef9eff20c5c66209d798.png",
-      "title": "Подъём штанги на бицепс стоя"
+      "title": "Подъём штанги на бицепс стоя",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -582,7 +802,17 @@
       "target_muscles": "трицепсы.",
       "auxiliary_muscles": "мышцы предплечий и плечевого пояса удерживают рукоять; мышцы корпуса сохраняют положение тела.",
       "muscle_image_url": "/assets/strength-exercises/6702c9bfa5bc7d658761.png",
-      "title": "Разгибание рук на верхнем блоке"
+      "title": "Разгибание рук на верхнем блоке",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -606,7 +836,17 @@
       "target_muscles": "средние дельты.",
       "auxiliary_muscles": "надостные мышцы, трапеции, передние зубчатые; мышцы корпуса удерживают положение тела.",
       "muscle_image_url": "/assets/strength-exercises/3909840012b1bf8a8e39.png",
-      "title": "Разведение гантелей в стороны"
+      "title": "Разведение гантелей в стороны",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -630,7 +870,17 @@
       "target_muscles": "задние дельты.",
       "auxiliary_muscles": "трапеции, ромбовидные и мышцы вращательной манжеты плеча; мышцы спины и живота удерживают наклон.",
       "muscle_image_url": "/assets/strength-exercises/3909840012b1bf8a8e39.png",
-      "title": "Разведение гантелей на задние дельты"
+      "title": "Разведение гантелей на задние дельты",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -654,7 +904,17 @@
       "target_muscles": "бицепсы.",
       "auxiliary_muscles": "плечевые и плечелучевые мышцы, мышцы предплечий.",
       "muscle_image_url": "/assets/strength-exercises/ef9eff20c5c66209d798.png",
-      "title": "Подъём гантелей на бицепс на наклонной скамье"
+      "title": "Подъём гантелей на бицепс на наклонной скамье",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -678,7 +938,17 @@
       "target_muscles": "разгибатели спины, ягодичные и задняя поверхность бедра.",
       "auxiliary_muscles": "приводящие мышцы бедра; мышцы живота удерживают положение позвоночника.",
       "muscle_image_url": "/assets/strength-exercises/b1defaa25cfb4366cae9.png",
-      "title": "Гиперэкстензия"
+      "title": "Гиперэкстензия",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -702,7 +972,17 @@
       "target_muscles": "средние дельты.",
       "auxiliary_muscles": "надостные мышцы, трапеции и передние зубчатые мышцы.",
       "muscle_image_url": "/assets/strength-exercises/3909840012b1bf8a8e39.png",
-      "title": "Разведение рук в тренажёре на средние дельты"
+      "title": "Разведение рук в тренажёре на средние дельты",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -726,7 +1006,17 @@
       "target_muscles": "ягодичные и квадрицепсы.",
       "auxiliary_muscles": "приводящие мышцы бедра, задняя поверхность бедра, мышцы голени и корпуса.",
       "muscle_image_url": "/assets/strength-exercises/514e6a549042c682a921.png",
-      "title": "Жим платформы гравитрона одной ногой вниз"
+      "title": "Жим платформы гравитрона одной ногой вниз",
+      "media_sources": [
+        {
+          "name": "Gymvisual",
+          "url": "https://gymvisual.com/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -750,7 +1040,17 @@
       "target_muscles": "большие грудные мышцы.",
       "auxiliary_muscles": "передние дельты; бицепсы и мышцы плечевого пояса удерживают положение рук.",
       "muscle_image_url": "/assets/strength-exercises/9134478bcb7c6c0fc06d.png",
-      "title": "Разведение гантелей лёжа"
+      "title": "Разведение гантелей лёжа",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -774,7 +1074,17 @@
       "target_muscles": "квадрицепсы, ягодичные и приводящие мышцы бедра.",
       "auxiliary_muscles": "мышцы живота и спины; мышцы рук и плеч удерживают гантель.",
       "muscle_image_url": "/assets/strength-exercises/697fa4cc026fbac70308.png",
-      "title": "Гоблет-приседание"
+      "title": "Гоблет-приседание",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -798,7 +1108,17 @@
       "target_muscles": "квадрицепсы.",
       "auxiliary_muscles": "ягодичные, приводящие мышцы бедра, мышцы задней поверхности бедра и голени; мышцы корпуса удерживают равновесие.",
       "muscle_image_url": "/assets/strength-exercises/514e6a549042c682a921.png",
-      "title": "Болгарские выпады с гантелями"
+      "title": "Болгарские выпады с гантелями",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -824,7 +1144,17 @@
       "target_muscles": "ягодичные, задняя поверхность бедра, разгибатели спины.",
       "auxiliary_muscles": "приводящие мышцы бедра, трапеции, мышцы предплечий и корпуса.",
       "muscle_image_url": "/assets/strength-exercises/0dfb6acda69fbc1bc37d.png",
-      "title": "Румынская тяга с гантелями"
+      "title": "Румынская тяга с гантелями",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -848,7 +1178,17 @@
       "target_muscles": "мышцы задней поверхности бедра.",
       "auxiliary_muscles": "икроножные мышцы.",
       "muscle_image_url": "/assets/strength-exercises/506f2b8124e569188ac6.png",
-      "title": "Сгибание ног в тренажёре сидя"
+      "title": "Сгибание ног в тренажёре сидя",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -872,7 +1212,17 @@
       "target_muscles": "большие ягодичные мышцы.",
       "auxiliary_muscles": "мышцы задней поверхности бедра; средние ягодичные и мышцы корпуса стабилизируют таз.",
       "muscle_image_url": "/assets/strength-exercises/7d8ded3fca79264e2c09.png",
-      "title": "Отведение ноги назад в кроссовере"
+      "title": "Отведение ноги назад в кроссовере",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -896,7 +1246,17 @@
       "target_muscles": "камбаловидные мышцы голени.",
       "auxiliary_muscles": "икроножные и другие мышцы голени, удерживающие положение стоп.",
       "muscle_image_url": "/assets/strength-exercises/94a84f7ac220870e1b6e.png",
-      "title": "Подъём на носки сидя"
+      "title": "Подъём на носки сидя",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -922,7 +1282,17 @@
       "target_muscles": "широчайшие и мышцы середины спины — трапеции и ромбовидные.",
       "auxiliary_muscles": "задние дельты, сгибатели локтя, мышцы предплечий и вращательной манжеты плеча.",
       "muscle_image_url": "/assets/strength-exercises/48499e70edc0395e2322.png",
-      "title": "Горизонтальная тяга в тренажёре"
+      "title": "Горизонтальная тяга в тренажёре",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -946,7 +1316,17 @@
       "target_muscles": "задние дельты, трапеции и ромбовидные мышцы.",
       "auxiliary_muscles": "наружные ротаторы плеча, сгибатели локтя и мышцы предплечий.",
       "muscle_image_url": "/assets/strength-exercises/7352e5f6aa19425b9251.png",
-      "title": "Тяга каната к лицу"
+      "title": "Тяга каната к лицу",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -970,7 +1350,17 @@
       "target_muscles": "большие грудные мышцы.",
       "auxiliary_muscles": "трицепсы, передние дельты; мышцы плечевого пояса удерживают гантели.",
       "muscle_image_url": "/assets/strength-exercises/9134478bcb7c6c0fc06d.png",
-      "title": "Жим гантелей лёжа на горизонтальной скамье"
+      "title": "Жим гантелей лёжа на горизонтальной скамье",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -994,7 +1384,17 @@
       "target_muscles": "большие грудные мышцы.",
       "auxiliary_muscles": "трицепсы и передние дельты.",
       "muscle_image_url": "/assets/strength-exercises/9134478bcb7c6c0fc06d.png",
-      "title": "Жим от груди в тренажёре"
+      "title": "Жим от груди в тренажёре",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -1018,7 +1418,17 @@
       "target_muscles": "большие грудные мышцы.",
       "auxiliary_muscles": "передние дельты; мышцы плечевого пояса удерживают положение рук.",
       "muscle_image_url": "/assets/strength-exercises/c3f958f13995d2ef48e2.png",
-      "title": "Сведение рук в тренажёре — бабочка"
+      "title": "Сведение рук в тренажёре — бабочка",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -1042,7 +1452,17 @@
       "target_muscles": "трицепсы и большие грудные мышцы.",
       "auxiliary_muscles": "передние дельты; мышцы плечевого пояса удерживают положение тела.",
       "muscle_image_url": "/assets/strength-exercises/c093f35cb74e1098e9bd.png",
-      "title": "Отжимания на брусьях в гравитроне"
+      "title": "Отжимания на брусьях в гравитроне",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -1068,7 +1488,17 @@
       "target_muscles": "дельтовидные, прежде всего передняя часть.",
       "auxiliary_muscles": "трицепсы, трапеции, передние зубчатые мышцы; мышцы корпуса удерживают положение тела.",
       "muscle_image_url": "/assets/strength-exercises/01549f436e118210d1d7.png",
-      "title": "Жим штанги стоя"
+      "title": "Жим штанги стоя",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -1092,7 +1522,17 @@
       "target_muscles": "дельтовидные, прежде всего передняя и средняя части.",
       "auxiliary_muscles": "трицепсы, трапеции и передние зубчатые мышцы.",
       "muscle_image_url": "/assets/strength-exercises/01549f436e118210d1d7.png",
-      "title": "Жим от плеч в тренажёре"
+      "title": "Жим от плеч в тренажёре",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -1116,7 +1556,17 @@
       "target_muscles": "задние дельты.",
       "auxiliary_muscles": "средние дельты, трапеции, ромбовидные и мышцы вращательной манжеты плеча.",
       "muscle_image_url": "/assets/strength-exercises/3909840012b1bf8a8e39.png",
-      "title": "Разведение рук в тренажёре на задние дельты — обратная бабочка"
+      "title": "Разведение рук в тренажёре на задние дельты — обратная бабочка",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -1140,7 +1590,17 @@
       "target_muscles": "плечевые, плечелучевые мышцы и бицепсы.",
       "auxiliary_muscles": "мышцы предплечий; мышцы корпуса удерживают положение тела.",
       "muscle_image_url": "/assets/strength-exercises/ef9eff20c5c66209d798.png",
-      "title": "Молотковые сгибания рук с гантелями"
+      "title": "Молотковые сгибания рук с гантелями",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -1164,7 +1624,17 @@
       "target_muscles": "трицепсы, с выраженным участием длинной головки.",
       "auxiliary_muscles": "мышцы предплечий и плечевого пояса; мышцы корпуса удерживают положение тела.",
       "muscle_image_url": "/assets/strength-exercises/6702c9bfa5bc7d658761.png",
-      "title": "Разгибание рук с канатом над головой"
+      "title": "Разгибание рук с канатом над головой",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -1188,7 +1658,17 @@
       "target_muscles": "прямые мышцы живота.",
       "auxiliary_muscles": "косые мышцы живота; мышцы рук удерживают канат.",
       "muscle_image_url": "/assets/strength-exercises/c76e08b4358f0e742efb.png",
-      "title": "Скручивания на верхнем блоке"
+      "title": "Скручивания на верхнем блоке",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   },
   {
@@ -1212,7 +1692,17 @@
       "target_muscles": "мышцы живота — прямые, косые и поперечная.",
       "auxiliary_muscles": "ягодичные, мышцы плечевого пояса, квадрицепсы и разгибатели спины.",
       "muscle_image_url": "/assets/strength-exercises/f1165ca517e60fdae3a2.png",
-      "title": "Планка"
+      "title": "Планка",
+      "media_sources": [
+        {
+          "name": "BurnFit",
+          "url": "https://burnfit.io/"
+        },
+        {
+          "name": "FitnessProgramer",
+          "url": "https://fitnessprogramer.com/"
+        }
+      ]
     }
   }
 ]
