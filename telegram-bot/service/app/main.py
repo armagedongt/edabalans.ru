@@ -30,6 +30,7 @@ from app.app_menu import REFRESH_CALLBACK, app_request, refresh_menu, send_menu
 from app.engine import advance_run, due_runs, personalized_delivery, resume_callback, resume_wait_timeout, start_run
 from app.delivery_registry import validate_body
 from app.graph import module_graph, module_overview_graph, sequence_graph
+from app.graph_authoring import GraphDraftIn, GraphPublishIn, load_source, publish_draft, save_draft
 from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_CODE, allowed_telegram_ids, maintenance_allows, record_maintenance_contact
 from app.temporary_entry import BLOCKED_STATUSES, pause_marketing, temporary_response
 from app.metrika import MetrikaOfflineClient, sync_offline_conversions
@@ -1692,6 +1693,32 @@ def _sequence_rule(code: str) -> dict:
             "next": "Следующий postmasterclass-модуль создан пустым и отключён до отдельного утверждения.",
         }
     return {"start": "Запускается по настроенному событию.", "stop": "Завершается последним блоком.", "next": "Дальнейший переход не настроен."}
+
+
+@app.get("/bot-api/sequences/{sequence_code}/source", dependencies=[Depends(require_admin)])
+def sequence_source(sequence_code: str, response: Response, session: Session = Depends(get_db)) -> dict:
+    response.headers["Cache-Control"] = "private, no-store"
+    return load_source(session, sequence_code)
+
+
+@app.put("/bot-api/sequences/{sequence_code}/source/draft", dependencies=[Depends(require_admin)])
+def sequence_source_draft(sequence_code: str, body: GraphDraftIn, response: Response,
+                          session: Session = Depends(get_db)) -> dict:
+    response.headers["Cache-Control"] = "private, no-store"
+    try:
+        return save_draft(session, sequence_code, body)
+    except ValueError as error:
+        raise HTTPException(422, str(error)) from error
+
+
+@app.post("/bot-api/sequences/{sequence_code}/source/publish", dependencies=[Depends(require_admin)])
+def sequence_source_publish(sequence_code: str, body: GraphPublishIn, response: Response,
+                            session: Session = Depends(get_db)) -> dict:
+    response.headers["Cache-Control"] = "private, no-store"
+    try:
+        return publish_draft(session, sequence_code, body)
+    except ValueError as error:
+        raise HTTPException(422, str(error)) from error
 
 
 @app.get("/bot-api/sequences/{sequence_code}", dependencies=[Depends(require_admin)])

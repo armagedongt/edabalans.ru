@@ -52,6 +52,58 @@ def vault_fixture(tmp_path, kind="public"):
     return vault, api, tmp_path / "Материал.md"
 
 
+def test_invalid_structured_file_does_not_hide_other_materials(tmp_path):
+    vault, api, file = vault_fixture(tmp_path)
+    state = vault.load()
+    state["items"]["broken"] = {**state["items"]["one"], "kind": "graph", "path": "Broken.md"}
+    atomic_json(vault.state_path, state)
+    (tmp_path / "Broken.md").write_text("{broken", encoding="utf-8")
+    rows = {row["id"]: row for row in vault.status()}
+    assert rows["one"]["status"] == "clean"
+    assert rows["broken"]["status"] == "invalid"
+    assert rows["broken"]["message"]
+    assert api.calls == []
+
+
+@pytest.mark.parametrize("bad", [None, ["bad"], {}])
+def test_invalid_catalog_array_keeps_other_materials_available(tmp_path, bad):
+    from tools.editorial_catalog_adapter import render
+    vault, api, file = vault_fixture(tmp_path)
+    item = {"id": "product:core", "kind": "catalog", "title": "Каталог", "path": "Catalog.md", "base_hash": "unused"}
+    state = vault.load()
+    state["items"]["product:core"] = item
+    atomic_json(vault.state_path, state)
+    (tmp_path / "Catalog.md").write_text(render(item, 1, {"products": bad, "tariffs": []}), encoding="utf-8")
+    rows = {row["id"]: row for row in vault.status()}
+    assert rows["one"]["status"] == "clean"
+    assert rows["product:core"]["status"] == "invalid"
+    assert api.calls == []
+
+
+def test_graph_activation_and_lost_response_do_not_use_numeric_version_arithmetic(tmp_path, monkeypatch):
+    from tools import editorial_graph_adapter as adapter
+    source = json.dumps({"schema_version": 1, "sequence": {"code": "welcome_intensive", "name": "Цепочка"},
+                         "steps": [{"key": "start", "position": 1, "configuration": {}}], "edges": []})
+    vault = Vault(tmp_path, FakeAPI())
+    vault.state_path.parent.mkdir(parents=True)
+    remote = {"text": source, "version": {"version": 1, "sha256": "a" * 64}, "title": "Цепочка", "editorial_owned": False}
+    item = {"kind": "graph", "code": "welcome_intensive", "group": "Логика бота", "title": "Цепочка",
+            "path": "Graph.md", "base_version": remote["version"], "base_hash": digest(comparable(source, "graph"))}
+    atomic_json(vault.state_path, {"schema": 1, "items": {"graph:welcome_intensive": item}})
+    (tmp_path / "Graph.md").write_text(source, encoding="utf-8")
+    monkeypatch.setattr(adapter, "read", lambda api, item: dict(remote))
+    writes = []
+    def activate(api, item, text, expected):
+        writes.append(text)
+        remote.update(version={"version": 7, "sha256": "b" * 64}, editorial_owned=True)
+        raise TimeoutError("Ответ потерян после принятия")
+    monkeypatch.setattr(adapter, "publish", activate)
+    assert vault.publish(["graph:welcome_intensive"])[0]["status"] == "error"
+    assert vault.publish(["graph:welcome_intensive"])[0]["status"] == "clean"
+    assert len(writes) == 1
+    assert vault.load()["items"]["graph:welcome_intensive"]["base_version"] == remote["version"]
+
+
 def test_refresh_keeps_local_draft_and_marks_server_conflict(tmp_path):
     vault, api, file = vault_fixture(tmp_path)
     file.write_text("Моя правка", encoding="utf-8")
@@ -242,3 +294,22 @@ def test_course_missing_or_stale_validation_blocks_put(tmp_path):
     gate.with_suffix(".report.json").write_text(json.dumps(report), encoding="utf-8")
     assert vault.publish(["one"])[0]["status"] == "published"
     assert len([call for call in api.calls if call[0] == "PUT"]) == 1
+
+
+def test_owner_can_publish_his_obsidian_course_edit_without_ai_reports(tmp_path):
+    vault, api, file = vault_fixture(tmp_path, "course")
+    state = vault.load()
+    state["items"]["one"]["format"] = "markdown"
+    atomic_json(vault.state_path, state)
+    file.write_text("Готовая правка Сергея", encoding="utf-8")
+    assert vault.publish(["one"], owner_edited=True)[0]["status"] == "published"
+    assert api.text == "Готовая правка Сергея"
+    assert not (vault.state_path.parent / "reviews").exists()
+
+
+def test_owner_publication_preserves_the_same_server_conflict_checks(tmp_path):
+    vault, api, file = vault_fixture(tmp_path, "course")
+    file.write_text("Моя правка", encoding="utf-8")
+    api.version = 2
+    assert vault.publish(["one"], owner_edited=True)[0]["status"] == "error"
+    assert not any(call[0] == "PUT" for call in api.calls)

@@ -151,7 +151,9 @@ owns_files = [
   "docs/knowledge-base/EDITORIAL_VAULT.md",
     "tools/editorial_vault.py", "tools/editorial_vault_desktop.py",
     "tools/editorial_bot_adapter.py", "tools/editorial_git_adapter.py", "tools/editorial_email_adapter.py",
+    "tools/editorial_catalog_adapter.py", "tools/editorial_graph_adapter.py",
     "tools/tests/test_editorial_bot_adapter.py", "tools/tests/test_editorial_git_adapter.py", "tools/tests/test_editorial_email_adapter.py",
+    "tools/tests/test_editorial_catalog_adapter.py", "tools/tests/test_editorial_graph_adapter.py",
     "backend/app/service_email_templates.py", "backend/app/service_email_editorial_routes.py",
     "content/service-messages/**", "backend/tests/test_service_email_templates.py",
     "backend/tests/fixtures/service_email_originals.json",
@@ -243,6 +245,7 @@ owns_tables = [
 owns_routes = ["*/admin/api/content*", "*/admin/api/editorial/service-emails*"]
 sources = [
   { path = "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md", role = "rule", shared = true, consumers = ["platform.knowledge", "operations.imports"] },
+    { path = "docs/knowledge-base/EDITORIAL_VAULT.md", role = "rule", shared = true, consumers = ["products.catalog", "platform.commerce", "products.masterclass.course", "products.calories", "messaging.telegram.engine"] },
     { path = "content/author-voice/recipe-authoring-v1.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.recipes"] },
     { path = "backend/app/service_email_templates.py", role = "runtime", shared = true, consumers = ["platform.auth", "platform.commerce"] },
     { path = "content/service-messages/email", role = "copy", shared = true, consumers = ["platform.auth", "platform.commerce"] },
@@ -410,7 +413,7 @@ admin_catalog = [{ category = "commerce", order = 10, url = "/admin/products", l
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.catalog.md"
 depends_on = ["platform.auth", "platform.commerce"]
-reads_from = ["products.public-site", "platform", "platform.commerce", "messaging.telegram", "messaging.max", "operations.proxy", "operations.health"]
+reads_from = ["products.public-site", "platform", "platform.content", "platform.commerce", "messaging.telegram", "messaging.max", "operations.proxy", "operations.health"]
 owns_files = [
   "backend/app/product_catalog_service.py", "backend/app/product_catalog_routes.py",
   "backend/app/static/product-catalog-editor.*", "docs/knowledge-base/PRODUCT_CATALOG.md",
@@ -502,7 +505,7 @@ depends_on = [
   "platform.auth", "platform.content", "products.catalog",
   "products.masterclass.course", "products.metabolism", "operations.delivery",
 ]
-reads_from = ["platform"]
+reads_from = ["platform", "platform.content"]
 owns_files = [
   "backend/app/calorie_course_routes.py", "backend/app/calorie_course_service.py",
   "backend/app/calorie_course_material_service.py",
@@ -910,6 +913,7 @@ owns_routes = ["*/bot-api/*broadcast*", "*/bot-api/*manual-message*"]
 id = "messaging.telegram.engine"
 admin_catalog = [{ category = "service", order = 10, url = "https://edabalans.ru/admin/messaging", label = "Telegram-бот", icon = "💬", description = "Пока не редактируется в админке: канонические тексты и правила меняются через Codex." }]
 parent = "messaging.telegram"
+reads_from = ["platform.content"]
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.engine.md"
 owns_files = [
   "telegram-bot/.env.example", "telegram-bot/.gitignore", "telegram-bot/schema/**",
@@ -923,7 +927,7 @@ owns_files = [
   "telegram-bot/service/app/customer_lifecycle.py", "telegram-bot/service/app/database.py",
   "telegram-bot/service/app/engine.py", "telegram-bot/service/app/formatting.py",
   "telegram-bot/service/app/delivery_registry.py", "telegram-bot/service/app/messenger_resolver.py",
-  "telegram-bot/service/app/graph.py", "telegram-bot/service/app/main.py",
+  "telegram-bot/service/app/graph.py", "telegram-bot/service/app/graph_authoring.py", "telegram-bot/service/app/main.py",
   "telegram-bot/service/app/maintenance.py", "telegram-bot/service/app/masterclass_dispatch.py",
   "telegram-bot/service/app/metrika.py",
   "telegram-bot/service/app/masterclass_link.py", "telegram-bot/service/app/masterclass_triggers.py",

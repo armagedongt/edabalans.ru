@@ -29,6 +29,12 @@ def digest(text: str) -> str:
 
 
 def comparable(text: str, kind: str) -> str:
+    if kind == "graph":
+        from tools.editorial_graph_adapter import normalize
+        return normalize(text)
+    if kind in ("catalog", "names", "pricing"):
+        from tools.editorial_catalog_adapter import normalize
+        return normalize(text)
     if kind == "bot":
         from tools.editorial_bot_adapter import normalize
         return json.dumps(normalize(text), ensure_ascii=False)
@@ -150,6 +156,12 @@ class Vault:
         return path
 
     def read(self, item: dict) -> dict:
+        if item["kind"] == "graph":
+            from tools.editorial_graph_adapter import read
+            return read(self.api, item)
+        if item["kind"] in ("catalog", "names", "pricing"):
+            from tools.editorial_catalog_adapter import read
+            return read(self.api, item)
         if item["kind"] == "git":
             from tools.editorial_git_adapter import read
             return read(self.api, item)
@@ -173,11 +185,17 @@ class Vault:
         for ident, item in self.load()["items"].items():
             path = self.file(item)
             text = path.read_text(encoding="utf-8") if path.exists() else ""
-            changed = digest(comparable(text, item["kind"])) != item["base_hash"]
+            error = None
+            try:
+                changed = digest(comparable(text, item["kind"])) != item["base_hash"]
+            except ValueError as exc:
+                changed, error = True, str(exc)
             status = "conflict" if item.get("conflict") else "changed" if changed or item.get("pending_draft") or item.get("pending_runtime") else "clean"
+            if error:
+                status = "invalid"
             if item.get("unsupported"):
                 status = "unsupported"
-            rows.append({**item, "id": ident, "status": status})
+            rows.append({**item, "id": ident, "status": status, **({"message": error} if error else {})})
         return rows
 
     def discover(self) -> dict:
@@ -212,6 +230,10 @@ class Vault:
         items.update(discover(self.api))
         from tools.editorial_email_adapter import discover as discover_emails
         items.update(discover_emails(self.api))
+        from tools.editorial_catalog_adapter import discover as discover_catalog
+        items.update(discover_catalog(self.api))
+        from tools.editorial_graph_adapter import discover as discover_graphs
+        items.update(discover_graphs(self.api))
         return items
 
     def refresh(self) -> list[dict]:
@@ -228,7 +250,7 @@ class Vault:
                     local = path.read_text(encoding="utf-8") if path.exists() else None
                     remote_hash = digest(comparable(remote["text"], item["kind"]))
                     local_hash = digest(comparable(local, item["kind"])) if local is not None else None
-                    if item.get("pending_hash") == remote_hash and remote["version"] == item.get("pending_base_version", -2) + 1:
+                    if item["kind"] != "graph" and item.get("pending_hash") == remote_hash and remote["version"] == item.get("pending_base_version", -2) + 1:
                         item.update(base_version=remote["version"], base_hash=remote_hash)
                         if item["kind"] == "blog":
                             item["pending_draft"] = remote["version"]
@@ -254,6 +276,10 @@ class Vault:
                     if item["kind"] == "git":
                         from tools.editorial_git_adapter import runtime_matches
                         item["pending_runtime"] = not runtime_matches(remote)
+                    if item["kind"] == "graph":
+                        item["editorial_owned"] = remote["editorial_owned"]
+                        if remote.get("pending_draft"):
+                            item["pending_draft"] = remote["pending_draft"]
                     for key in ("usages", "allowed_variables"):
                         if key in remote:
                             item[key] = remote[key]
@@ -290,7 +316,7 @@ class Vault:
                 path.unlink()
         return locked()
 
-    def publish(self, ids: list[str]) -> list[dict]:
+    def publish(self, ids: list[str], *, owner_edited: bool = False) -> list[dict]:
         results = []
         with self.lock():
             state = self.load()
@@ -304,14 +330,21 @@ class Vault:
                     content_hash = digest(comparable(text, item["kind"]))
                     remote = self.read({**item, "id": ident})
                     remote_hash = digest(comparable(remote["text"], item["kind"]))
-                    if item.get("pending_hash") == remote_hash and remote["version"] == item.get("pending_base_version", -2) + 1:
+                    if item["kind"] != "graph" and item.get("pending_hash") == remote_hash and remote["version"] == item.get("pending_base_version", -2) + 1:
                         item.update(base_version=remote["version"], base_hash=remote_hash)
                         if item["kind"] == "blog":
                             item["pending_draft"] = remote["version"]
                         item.pop("pending_hash", None)
                         item.pop("pending_base_version", None)
-                    if remote_hash == content_hash and item["kind"] != "blog":
+                    activate_graph = item["kind"] == "graph" and not remote["editorial_owned"]
+                    if remote_hash == content_hash and item["kind"] != "blog" and not activate_graph:
                         item.update(base_version=remote["version"], base_hash=remote_hash, conflict=False)
+                        if item["kind"] == "graph":
+                            item["editorial_owned"] = remote["editorial_owned"]
+                            if remote.get("pending_draft"):
+                                item["pending_draft"] = remote["pending_draft"]
+                            else:
+                                item.pop("pending_draft", None)
                         if item["kind"] == "git":
                             from tools.editorial_git_adapter import runtime_matches
                             item["pending_runtime"] = not runtime_matches(remote)
@@ -323,14 +356,16 @@ class Vault:
                         if not (item["kind"] == "blog" and item.get("pending_draft") == remote["version"] and remote_hash == content_hash):
                             item["conflict"] = True
                             raise VaultError("Серверная редакция изменилась. Локальный файл сохранён; объедините правки через Codex")
-                    if content_hash == item["base_hash"] and not item.get("pending_draft"):
+                    if content_hash == item["base_hash"] and not item.get("pending_draft") and not activate_graph:
                         results.append({"id": ident, "status": "clean", "message": "Нет изменений"})
                         continue
                     if item["kind"] == "course":
-                        # The existing author-validation gate remains mandatory.
-                        from tools.publish_course_material import verify_publish_gate
-                        gate = self.state_path.parent / "reviews" / ident.replace(":", "_")
-                        verify_publish_gate(path, gate.with_suffix(".pack.json"), gate.with_suffix(".report.json"))
+                        # Codex-authored work uses its writer gate; the owner's manual edits
+                        # are published by his explicit desktop action without an AI review.
+                        if not owner_edited:
+                            from tools.publish_course_material import verify_publish_gate
+                            gate = self.state_path.parent / "reviews" / ident.replace(":", "_")
+                            verify_publish_gate(path, gate.with_suffix(".pack.json"), gate.with_suffix(".report.json"))
                         if path.read_text(encoding="utf-8") != text:
                             raise VaultError("Материал изменён во время проверки; отправка отменена")
                         item.update(pending_hash=content_hash, pending_base_version=remote["version"])
@@ -348,6 +383,14 @@ class Vault:
                     elif item["kind"] == "git":
                         from tools.editorial_git_adapter import publish
                         publish(self.api, item, text, remote)
+                    elif item["kind"] == "graph":
+                        from tools.editorial_graph_adapter import publish
+                        publish(self.api, item, text, remote)
+                    elif item["kind"] in ("catalog", "names"):
+                        from tools.editorial_catalog_adapter import publish
+                        item.update(pending_hash=content_hash, pending_base_version=remote["version"])
+                        atomic_json(self.state_path, state)
+                        publish(self.api, {**item, "id": ident}, text, remote["version"])
                     else:
                         if remote_hash != content_hash:
                             item.update(pending_hash=content_hash, pending_base_version=remote["version"])
@@ -370,6 +413,8 @@ class Vault:
                     item.pop("pending_draft", None)
                     item.pop("pending_hash", None)
                     item.pop("pending_base_version", None)
+                    if item["kind"] == "graph":
+                        item["editorial_owned"] = verified["editorial_owned"]
                     if item["kind"] == "git":
                         from tools.editorial_git_adapter import runtime_matches
                         item["pending_runtime"] = not runtime_matches(verified)
@@ -388,10 +433,11 @@ def main() -> int:
     commands.add_parser("refresh")
     commands.add_parser("status")
     publish = commands.add_parser("publish")
+    publish.add_argument("--owner-edited", action="store_true", help="Опубликовать готовые правки Сергея из Obsidian без ИИ-редактуры")
     publish.add_argument("ids", nargs="+")
     args = parser.parse_args()
     vault = Vault(args.root)
-    result = vault.publish(args.ids) if args.command == "publish" else getattr(vault, args.command)()
+    result = vault.publish(args.ids, owner_edited=args.owner_edited) if args.command == "publish" else getattr(vault, args.command)()
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return int(any(row.get("status") == "error" for row in result))
 

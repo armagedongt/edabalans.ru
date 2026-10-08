@@ -29,7 +29,7 @@ class DesktopSelectionTests(unittest.TestCase):
         results = [{"id": "e", "status": "error", "error": "API недоступен"}]
         self.vault.publish.return_value = results
         self.assertEqual(self.controller.publish_selected(["e", "e"]), results)
-        self.vault.publish.assert_called_once_with(["e"])
+        self.vault.publish.assert_called_once_with(["e"], owner_edited=True)
 
     def test_selecting_unpublishable_item_cannot_publish_other_items_silently(self):
         for blocked in ("b", "c", "d", "unknown"):

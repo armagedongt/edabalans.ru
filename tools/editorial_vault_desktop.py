@@ -15,6 +15,7 @@ STATUS_LABELS = {
     "changed": "Изменён",
     "conflict": "Конфликт — нужна сверка",
     "unsupported": "Публикация через Codex",
+    "invalid": "Ошибка разметки — исправьте файл",
 }
 
 
@@ -47,7 +48,7 @@ class SelectionController:
         if blocked:
             raise ValueError("Нельзя опубликовать выбранные материалы: " + ", ".join(sorted(blocked)))
         ids = [item["id"] for item in self.items if item["id"] in selected]
-        return self.vault.publish(ids)
+        return self.vault.publish(ids, owner_edited=True)
 
 
 def format_results(results):
