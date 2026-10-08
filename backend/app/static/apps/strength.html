@@ -370,7 +370,7 @@
   margin-top:11px;
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:14px;
+  gap:8px;
 }
 
 .st-day-head{
@@ -487,22 +487,15 @@
   grid-template-columns:repeat(3,1fr);
   gap:8px;
   align-items:stretch;
+  background:#f4f4f7;
 }
 
 .st-ex-row-days > div{
+  background:#fff;
   position:relative;
 }
 
-.st-ex-row-days > div + div::before{
-  content:'';
-  position:absolute;
-  top:0;
-  bottom:0;
-  left:-5px;
-  width:2px;
-  background:#d6d7df;
-  pointer-events:none;
-}
+
 
 .st-row-hide{
   flex:0 0 auto;
@@ -522,6 +515,7 @@
 }
 
 .st-ex-day{
+  background:#fff;
   min-width:0;
   display:flex;
   flex-direction:column;
@@ -579,7 +573,7 @@
 .st-set{
   display:grid;
   grid-template-columns:
-    22px
+    14px
     46px 46px
     10px
     46px 46px 46px;
@@ -590,7 +584,7 @@
 .st-groups{
   min-height:36px;
   align-items:end;
-  padding:6px 8px 4px;
+  padding:6px 4px 4px;
   background:linear-gradient(90deg,rgba(234,243,255,.72) 0 41.5%,transparent 41.5% 46.5%,rgba(255,240,232,.72) 46.5% 100%);
 }
 
@@ -623,7 +617,7 @@
 .st-set-head{
   min-height:30px;
   align-items:center;
-  padding:2px 8px 5px;
+  padding:2px 4px 5px;
   border-bottom:1px solid rgba(70,70,90,.08);
   background:linear-gradient(90deg,rgba(234,243,255,.54) 0 41.5%,transparent 41.5% 46.5%,rgba(255,240,232,.54) 46.5% 100%);
   color:#838793;
@@ -773,10 +767,14 @@
 .st-note-preview{
   margin-top:2px;
   overflow:hidden;
-  white-space:nowrap;
-  text-overflow:ellipsis;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+  white-space:pre-wrap;
+  line-height:1.45;
+  min-height:4.35em;
   color:#737784;
-  font-weight:600;
+  font-weight:400;
 }
 
 /* CALENDAR */
@@ -1395,13 +1393,13 @@
 .st-modern-labels small{font-size:9px;font-weight:700}
 .st-plan-label,.st-fact-label{padding:5px 3px;border:1px solid;border-radius:8px}
 .st-plan-label{border-color:#cbdff3;background:#eaf3ff;color:#386494}
-.st-fact-label{border-color:#f0cfbd;background:#fff0e8;color:#a8502a}
+.st-fact-label{border-color:#f3ddd0;background:#fffbf9;color:#a8502a}
 .st-modern-set{min-height:43px;padding:5px 0;border-top:1px solid rgba(70,70,90,.07)}
 .st-modern-number{text-align:center;color:#838692;font-size:10px;font-weight:900}
 .st-input-pair,.st-readonly-pair{display:grid;grid-template-columns:1fr 1fr;gap:4px}
 .st-plan-inputs,.st-fact-inputs{padding:3px;border:1px solid;border-radius:9px}
 .st-plan-inputs{border-color:#cbdff3;background:#edf6ff}
-.st-fact-inputs{border-color:#f0cfbd;background:#fff2eb}
+.st-fact-inputs{border-color:#f3ddd0;background:#fffbf9}
 .st-input-pair input{width:100%;min-width:0;height:32px;padding:0 2px;border:1px solid #d6d7df;border-radius:7px;background:#fff;text-align:center;font-size:12px;font-weight:800}
 .st-readonly-pair span{min-width:0;padding:7px 2px;border-radius:7px;background:rgba(255,255,255,.55);text-align:center;font-size:11px;font-weight:800}
 .st-set-done{width:29px;height:29px;padding:0;border:1px solid #cfd2dc;border-radius:50%;background:#fff;color:transparent;font-size:16px;font-weight:900}
@@ -1444,15 +1442,21 @@
 @media(max-width:700px){.st-admin-sheet{padding:10px}.st-admin-sheet .st-days{display:grid}.st-admin-sheet .st-day-head{display:block}.st-admin-sheet .st-ex-row-days{display:grid}.st-admin-sheet .st-ex-day{display:flex}}
 
 /* Header-only colors in the desktop admin sheet. */
-.st-days + .st-ex-row{margin-top:16px}.st-ex-row{background:#fff}.st-ex-tools{min-height:40px;padding:6px 8px 3px;display:grid;grid-template-columns:22px 46px 46px 10px 46px 46px 46px;gap:2px;justify-content:center}.st-copy-forward{grid-column:1/4;width:100%}.st-groups{min-height:34px;align-items:end;padding:5px 8px 3px;background:transparent}.st-group-plan,.st-group-fact{min-height:24px;display:flex;align-items:flex-end;justify-content:center;border:0;background:transparent;color:#647080}.st-set-head,.st-set{background:transparent}.st-plan-field,.st-fact-field,.st-fact-rpe{background:#fff;border-color:#d6d7df}.st-plan-field.has-value{background:#f7fbff;border-color:#cbdff3}.st-fact-field.has-value{background:#fff8f4;border-color:#f0cfbd}.st-note.has-note{background:transparent}.st-note.has-note .st-note-symbol{background:#eeeaf9;color:var(--st-purple)}.st-admin-set-actions{display:flex;justify-content:center;gap:8px;padding:7px 8px;background:#fff;border-bottom:1px solid rgba(70,70,90,.06)}.st-admin-set-actions button{min-height:29px;padding:0 9px;border:1px solid rgba(70,70,90,.16);border-radius:7px;background:#fff;color:#647080;font-size:10px;font-weight:700}
+.st-days + .st-ex-row{margin-top:16px}.st-ex-row{background:#fff}.st-ex-tools{min-height:40px;padding:6px 8px 3px;display:grid;grid-template-columns:22px 46px 46px 10px 46px 46px 46px;gap:2px;justify-content:center}.st-copy-forward{grid-column:1/4;width:100%}.st-groups{min-height:34px;align-items:end;padding:5px 4px 3px;background:transparent}.st-group-plan,.st-group-fact{min-height:24px;display:flex;align-items:flex-end;justify-content:center;border:0;background:transparent;color:#647080}.st-set-head,.st-set{background:transparent}.st-plan-field,.st-fact-field,.st-fact-rpe{background:#fff;border-color:#d6d7df}.st-plan-field.has-value{background:#f7fbff;border-color:#cbdff3}.st-fact-field.has-value{background:#fffbf9;border-color:#f3ddd0}.st-note.has-note{background:transparent}.st-note.has-note .st-note-symbol{background:#eeeaf9;color:var(--st-purple)}.st-admin-set-actions{display:flex;justify-content:center;gap:8px;padding:7px 8px;background:#fff;border-bottom:1px solid rgba(70,70,90,.06)}.st-admin-set-actions button{min-height:29px;padding:0 9px;border:1px solid rgba(70,70,90,.16);border-radius:7px;background:#fff;color:#647080;font-size:10px;font-weight:700}
 
 /* Compact admin-sheet controls and the exercise outline. */
 .st-ex-row{border:3px solid var(--st-exercise-tone,#e7e7ef);border-radius:11px}.st-ex-row-head{background:var(--st-exercise-tone,#fff)}.st-ex-tools{display:none}.st-group-plan{gap:4px}.st-copy-forward{grid-column:auto;width:auto;min-height:24px;padding:0 6px;font-size:9px;line-height:1}.st-note:not(.has-note){min-height:34px;padding:5px 8px;color:var(--st-muted)}.st-note:not(.has-note) .st-note-title{font-size:10px;font-weight:700}.st-note:not(.has-note) .st-note-preview{font-size:10px;margin-top:0}
 
 /* Focused strength header and compact exercise controls. */
-.st-top{grid-template-columns:1fr 42px}.st-title-actions{display:flex;align-items:center;gap:12px}.st-top-stats{border:0;background:transparent;color:var(--st-purple);font-size:13px;font-weight:800;text-decoration:underline;text-underline-offset:3px}.st-types{grid-template-columns:repeat(3,1fr)}.st-type-cell{display:grid;grid-template-columns:minmax(0,1fr) 30px;gap:2px;align-items:stretch}.st-type-edit{border:0;border-radius:8px;background:transparent;color:#737784;font-size:15px;font-weight:900}.st-type-cell:has(.st-type.active) .st-type-edit{background:#fff;color:var(--st-purple);box-shadow:0 2px 6px rgba(0,0,0,.05)}.st-nav{grid-template-columns:42px minmax(0,1fr) auto}.st-nav-end{display:flex;gap:8px;align-items:center}.st-new-session-inline{width:auto;min-height:40px;margin:0;padding:0 12px;font-size:11px;white-space:nowrap}.st-ex-row-head{align-items:center}.st-ex-row-name{flex:1}.st-ex-row-tools{display:flex;align-items:center;gap:5px}.st-exercise-stats{display:inline-grid;width:24px;height:24px;place-items:center;padding:0;border:1px solid rgba(111,61,232,.2);border-radius:50%;background:#f6f3ff;color:var(--st-purple);font-size:14px;font-weight:900}.st-plan-label{border-color:#c4e1c9;background:#eff8f0;color:#39704b}.st-plan-inputs{border-color:#c4e1c9;background:#eff8f0}.st-plan-inputs input{border-color:#c4e1c9;background:#fff}.st-copy-forward{border:0;background:transparent;color:#39704b;text-decoration:underline;text-underline-offset:2px}.st-plan-field.has-value,.plan-up,.plan-down{background:#eff8f0!important;border-color:#c4e1c9}.st-note:not(.has-note){grid-template-columns:minmax(0,1fr) 13px}.st-note:not(.has-note) .st-note-preview{overflow:visible;text-overflow:clip;white-space:normal}.st-note.has-note{grid-template-columns:23px minmax(0,1fr) 13px}.st-note.has-note .st-note-symbol{background:#eeeaf9;color:var(--st-purple)}
+.st-top{grid-template-columns:1fr 42px}.st-title-actions{display:flex;align-items:center;gap:12px}.st-top-stats{border:0;background:transparent;color:var(--st-purple);font-size:13px;font-weight:800;text-decoration:underline;text-underline-offset:3px}.st-types{grid-template-columns:repeat(3,1fr)}.st-type-cell{display:grid;grid-template-columns:minmax(0,1fr) 30px;gap:2px;align-items:stretch}.st-type-edit{border:0;border-radius:8px;background:transparent;color:#737784;font-size:15px;font-weight:900}.st-type-cell:has(.st-type.active) .st-type-edit{background:#fff;color:var(--st-purple);box-shadow:0 2px 6px rgba(0,0,0,.05)}.st-nav{grid-template-columns:42px minmax(0,1fr) auto}.st-nav-end{display:flex;gap:8px;align-items:center}.st-new-session-inline{width:auto;min-height:40px;margin:0;padding:0 12px;font-size:11px;white-space:nowrap}.st-ex-row-head{align-items:center}.st-ex-row-name{flex:1}.st-ex-row-tools{display:flex;align-items:center;gap:5px}.st-exercise-stats{display:inline-grid;width:24px;height:24px;place-items:center;padding:0;border:1px solid rgba(111,61,232,.2);border-radius:50%;background:#f6f3ff;color:var(--st-purple);font-size:14px;font-weight:900}.st-plan-label{border-color:#d6e8da;background:#f6fbf7;color:#39704b}.st-plan-inputs{border-color:#d6e8da;background:#f6fbf7}.st-plan-inputs input{border-color:#c4e1c9;background:#fff}.st-copy-forward{border:0;background:transparent;color:#39704b;text-decoration:underline;text-underline-offset:2px}.st-plan-field.has-value,.plan-up,.plan-down{background:#f6fbf7!important;border-color:#d6e8da}.st-note:not(.has-note){grid-template-columns:minmax(0,1fr) 13px}.st-note:not(.has-note) .st-note-preview{overflow:visible;text-overflow:clip;white-space:normal}.st-note.has-note{grid-template-columns:23px minmax(0,1fr) 13px}.st-note.has-note .st-note-symbol{background:#eeeaf9;color:var(--st-purple)}
 @media(max-width:700px){.st-title-actions{gap:8px}.st-top-stats,.st-help{font-size:12px}.st-nav{grid-template-columns:34px minmax(0,1fr) auto}.st-nav-end{gap:5px}.st-new-session-inline{padding:0 7px;font-size:9px}.st-type-cell{grid-template-columns:minmax(0,1fr) 26px}.st-type-edit{font-size:14px}}
-.st-mobile-undo{display:none}.st-exercise-button-label{display:none}.st-plan-copy-label{display:none}.st-title-block{min-width:0}.st-header-user{display:flex;align-items:baseline;gap:8px;margin-top:4px;color:var(--st-muted);font-size:11px;line-height:1.25}.st-header-user span:first-child{font-weight:800;color:#565968}.st-mobile-client-head{display:none}.st-nav-end .st-header-undo{display:flex;margin:0;gap:4px}.st-header-undo button{width:30px;height:30px;font-size:16px}.st-ex-row-tools .st-admin-exercise-info,.st-ex-row-tools .st-admin-exercise-stats{width:auto;height:30px;display:inline-flex;align-items:center;gap:5px;padding:0 9px;border-radius:8px;font-size:11px}.st-ex-row-tools .st-admin-exercise-info{margin-left:0}.st-ex-row-tools .st-admin-exercise-stats{font-size:11px}.st-group-plan .st-copy-forward,.st-group-plan .st-group-title{min-height:0;margin:0;padding:0;border:0;background:transparent;color:#647080;font-size:11px;font-weight:800;line-height:1.2}.st-group-plan .st-copy-forward{cursor:pointer;text-decoration:underline;text-underline-offset:2px}.st-note:not(.has-note){grid-template-columns:minmax(0,1fr) 13px}.st-note-empty{font-size:10px;font-weight:700;color:var(--st-muted)}@media(min-width:701px){.st-modern-exercise .st-exercise-info,.st-modern-exercise .st-exercise-stats{width:auto;height:30px;display:inline-flex;align-items:center;gap:5px;padding:0 9px;border-radius:8px;font-size:11px;vertical-align:middle}.st-modern-exercise .st-exercise-button-label,.st-ex-row-tools .st-exercise-button-label{display:inline}.st-modern-exercise .st-modern-copy{display:none}.st-plan-copy-label{display:inline;margin:0 6px 0 0;padding:0;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:2px}.st-plan-label>span{white-space:nowrap}}@media(max-width:700px){.st-title-row{align-items:flex-start}.st-title{font-size:20px}.st-title-actions{flex-direction:column;align-items:flex-end;gap:3px}.st-new-session-inline{width:34px;padding:0;font-size:0}.st-new-session-inline::after{content:'＋';font-size:17px}}@media(max-width:700px){.st-header-user{display:none}.st-mobile-client-head{display:block}}@media(max-width:700px){.st-types{padding:3px;gap:2px}.st-type-cell{grid-template-columns:minmax(0,1fr) 22px;gap:0}.st-type{min-height:32px;padding:0 2px;font-size:12px;white-space:nowrap}.st-type-edit{padding:0;font-size:12px}.st-nav{grid-template-columns:30px minmax(0,1fr) auto;gap:4px}.st-arrow{height:32px;font-size:20px}.st-nav-title{font-size:15px;line-height:1.1}.st-nav-sub{margin-top:1px;font-size:10px}.st-nav-status{display:none}.st-undo-controls,.st-nav-end .st-header-undo{display:none}.st-modern-set-actions{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px}.st-modern-set-actions button{min-width:0;padding:0 5px;font-size:11px}.st-mobile-undo{display:contents}.st-mobile-undo button{font-size:18px}}</style>
+.st-mobile-undo{display:none}.st-exercise-button-label{display:none}.st-plan-copy-label{display:none}.st-title-block{min-width:0}.st-header-user{display:flex;align-items:baseline;gap:8px;margin-top:4px;color:var(--st-muted);font-size:11px;line-height:1.25}.st-header-user span:first-child{font-weight:800;color:#565968}.st-mobile-client-head{display:none}.st-nav-end .st-header-undo{display:flex;margin:0;gap:4px}.st-header-undo button{width:30px;height:30px;font-size:16px}.st-ex-row-tools .st-admin-exercise-info,.st-ex-row-tools .st-admin-exercise-stats{width:auto;height:30px;display:inline-flex;align-items:center;gap:5px;padding:0 9px;border-radius:8px;font-size:11px}.st-ex-row-tools .st-admin-exercise-info{margin-left:0}.st-ex-row-tools .st-admin-exercise-stats{font-size:11px}.st-group-plan .st-copy-forward,.st-group-plan .st-group-title{min-height:0;margin:0;padding:0;border:0;background:transparent;color:#647080;font-size:11px;font-weight:800;line-height:1.2}.st-group-plan .st-copy-forward{cursor:pointer;text-decoration:underline;text-underline-offset:2px}.st-note:not(.has-note){grid-template-columns:minmax(0,1fr) 13px}.st-note-empty{font-size:10px;font-weight:700;color:var(--st-muted)}@media(min-width:701px){.st-modern-exercise .st-exercise-info,.st-modern-exercise .st-exercise-stats{width:auto;height:30px;display:inline-flex;align-items:center;gap:5px;padding:0 9px;border-radius:8px;font-size:11px;vertical-align:middle}.st-modern-exercise .st-exercise-button-label,.st-ex-row-tools .st-exercise-button-label{display:inline}.st-modern-exercise .st-modern-copy{display:none}.st-plan-copy-label{display:inline;margin:0 6px 0 0;padding:0;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:2px}.st-plan-label>span{white-space:nowrap}}@media(max-width:700px){.st-title-row{align-items:flex-start}.st-title{font-size:20px}.st-title-actions{flex-direction:column;align-items:flex-end;gap:3px}.st-new-session-inline{width:34px;padding:0;font-size:0}.st-new-session-inline::after{content:'＋';font-size:17px}}@media(max-width:700px){.st-header-user{display:none}.st-mobile-client-head{display:block}}@media(max-width:700px){.st-types{padding:3px;gap:2px}.st-type-cell{grid-template-columns:minmax(0,1fr) 22px;gap:0}.st-type{min-height:32px;padding:0 2px;font-size:12px;white-space:nowrap}.st-type-edit{padding:0;font-size:12px}.st-nav{grid-template-columns:30px minmax(0,1fr) auto;gap:4px}.st-arrow{height:32px;font-size:20px}.st-nav-title{font-size:15px;line-height:1.1}.st-nav-sub{margin-top:1px;font-size:10px}.st-nav-status{display:none}.st-undo-controls,.st-nav-end .st-header-undo{display:none}.st-modern-set-actions{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px}.st-modern-set-actions button{min-width:0;padding:0 5px;font-size:11px}.st-mobile-undo{display:contents}.st-mobile-undo button{font-size:18px}}
+.st-exercise-number{flex:0 0 24px;display:inline-block;width:24px;text-align:center;font-size:16px;font-weight:700;line-height:1.22;color:var(--st-text);font-variant-numeric:tabular-nums}
+.st-modern-title{position:relative;padding-left:34px}
+.st-modern-title .st-exercise-number{position:absolute;left:0;top:0;font-size:20px}
+.st-plan-inputs input{border-color:#d6e8da}
+.st-modern-comment.has-note textarea{min-height:74px;font-weight:400}
+</style>
 
 <script>
 (function(){
@@ -3642,7 +3646,7 @@ function renderCurrentExercises(){
     }
     html += '<article class="st-modern-exercise ex'+(i%6)+'">'+
       '<header class="st-modern-head">'+
-        '<div class="st-modern-title"><strong>'+esc(exercise.name)+'</strong>'+(exerciseInfo && exerciseInfo.source === 'base' ? '<button class="st-exercise-info st-modern-exercise-info" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Как выполнять упражнение" title="Об упражнении"><span>i</span><span class="st-exercise-button-label">Информация</span></button>' : '')+'</div>'+
+        '<div class="st-modern-title"><span class="st-exercise-number">'+(i+1)+'</span><strong>'+esc(exercise.name)+'</strong>'+(exerciseInfo && exerciseInfo.source === 'base' ? '<button class="st-exercise-info st-modern-exercise-info" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Как выполнять упражнение" title="Об упражнении"><span>i</span><span class="st-exercise-button-label">Информация</span></button>' : '')+'</div>'+
         '<div class="st-modern-tools">'+
         '<button class="st-exercise-stats st-modern-exercise-stats" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseStats(this.dataset.exerciseId)" aria-label="Статистика упражнения" title="Статистика упражнения"><span>↗</span><span class="st-exercise-button-label">Статистика</span></button>'+
         (app.entryMode === 'edit' ? '<button class="st-modern-copy" '+(templateIncludesExercise(exercise.id) ? '' : 'disabled ')+'data-exercise-id="'+esc(exercise.id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId)" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">⇢</button>' : '')+
@@ -3753,7 +3757,7 @@ function renderExerciseRows(
     html +=
       '<section class="st-ex-row" style="--st-exercise-tone:var(--ex'+(c%6+1)+')">'+
       '<header class="st-ex-row-head">'+
-      '<div class="st-ex-row-name">'+esc(catalog[c].exercise_name)+'</div>'+
+      '<span class="st-exercise-number">'+(c+1)+'</span><div class="st-ex-row-name">'+esc(catalog[c].exercise_name)+'</div>'+
       '<div class="st-ex-row-tools">'+
         ((catalogItemById(id) || {}).source === 'base' ? '<button class="st-exercise-info st-admin-exercise-info" data-exercise-id="'+esc(id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Информация об упражнении" title="Информация об упражнении"><span>i</span><span class="st-exercise-button-label">Информация</span></button>' : '')+
         '<button class="st-exercise-stats st-admin-exercise-stats" data-exercise-id="'+esc(id)+'" onclick="ST.openExerciseStats(this.dataset.exerciseId)" aria-label="Статистика упражнения" title="Статистика упражнения"><span>↗</span><span class="st-exercise-button-label">Статистика</span></button>'+
@@ -5747,7 +5751,7 @@ window.ST = {
 
   autoGrow:function(field){
     field.style.height = 'auto';
-    field.style.height = Math.max(38,field.scrollHeight)+'px';
+    field.style.height = Math.max(String(field.value||'').trim() ? 74 : 38,field.scrollHeight)+'px';
   },
 
   openExerciseHistory:function(id){

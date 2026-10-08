@@ -449,9 +449,8 @@ for (const width of [768, 1440]) {
   assert.equal(await firstExerciseRow.locator(".st-ex-name").count(), 0, "в дневных колонках нет отдельных заголовков упражнения");
   assert.equal(await firstExerciseRow.evaluate((node) => getComputedStyle(node).backgroundColor), "rgb(255, 255, 255)", "тело упражнения остаётся нейтральным");
   assert.notEqual(await firstExerciseRow.locator(".st-ex-row-head").evaluate((node) => getComputedStyle(node).backgroundColor), "rgb(255, 255, 255)", "цвет упражнения остаётся только в общей шапке");
-  assert.equal(await firstExerciseRow.locator(".st-ex-row-days").evaluate((node) => getComputedStyle(node).backgroundColor), "rgba(0, 0, 0, 0)", "под шапкой нет отдельной цветной подложки");
   assert.equal(await firstExerciseDays.evaluateAll((nodes) => new Set(nodes.map((node) => getComputedStyle(node).backgroundColor)).size), 1, "три дневные области не получают разные фоны");
-  assert.equal(await firstExerciseDays.evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).backgroundColor === "rgba(0, 0, 0, 0)")), true, "равномерный фон строки идёт от общего блока, а не от отдельных карточек");
+  assert.equal(await firstExerciseDays.evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).backgroundColor === "rgb(255, 255, 255)")), true, "дневные колонки остаются белыми на фоне промежутков");
   assert.equal(await page.locator(".st-admin-sheet .st-group-plan").first().evaluate((node) => getComputedStyle(node).backgroundColor), "rgba(0, 0, 0, 0)", "ярлык плана не получает отдельную заливку");
   assert.equal(await page.locator(".st-admin-sheet .st-group-fact").first().evaluate((node) => getComputedStyle(node).backgroundColor), "rgba(0, 0, 0, 0)", "ярлык факта не получает отдельную заливку");
   assert.equal(await firstExerciseRow.locator(".st-ex-day.current .st-fact-field.has-value").count(), 0, "пустые поля факта не подсвечиваются");

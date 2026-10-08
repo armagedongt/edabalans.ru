@@ -8,6 +8,8 @@ const { chromium } = require(path.join(process.env.CODEX_NODE_MODULES, 'playwrig
 const browser = await chromium.launch({ headless: true });
 const screenshots = process.env.STRENGTH_EVIDENCE_DIR;
 
+const sampleNote = 'Сохранённая заметка.\nНамеренно не стала доделывать 20 повторений.\nСледующий подход выполнила по плану.\nПоследняя строка длинного комментария.';
+
 function fixture(type) {
   const catalog = [
     { exercise_id: 'bench', exercise_name: 'Жим штанги', active: true, sort_order: 2 },
@@ -15,12 +17,12 @@ function fixture(type) {
     { exercise_id: 'row', exercise_name: 'Тяга в тренажёре', active: type === 2, sort_order: 3 },
   ];
   const sessions = Array.from({ length: 6 }, (_, i) => ({ session_id: `s${i + 1}`, workout_type: i % 2 + 1, session_number: i + 1, date: '2026-09-21' }));
-  const exercises = sessions.flatMap((session) => ['bench', 'triceps', 'row', 'history-only'].map((id, i) => ({ session_id: session.session_id, exercise_id: id, exercise_name: catalog.find((item) => item.exercise_id === id)?.exercise_name || 'Историческое упражнение', sort_order: i + 1, note: 'Сохранённая заметка' })));
-  return { version: 1, exercise_catalog: type === 3 ? catalog.map((item) => ({ ...item, active: false })) : catalog, sessions, session_exercises: exercises, sets: exercises.flatMap((exercise) => Array.from({ length: 4 }, (_, i) => ({ ...exercise, set_number: i + 1, plan_weight: '40', plan_reps: '10', fact_weight: exercise.session_id === 's1' && ['bench', 'triceps'].includes(exercise.exercise_id) ? '35' : '', fact_reps: '', rpe: '' }))) };
+  const exercises = sessions.flatMap((session) => ['bench', 'triceps', 'row', 'history-only'].map((id, i) => ({ session_id: session.session_id, exercise_id: id, exercise_name: catalog.find((item) => item.exercise_id === id)?.exercise_name || 'Историческое упражнение', sort_order: i + 1, note: session.session_id === 's3' ? '' : sampleNote })));
+  return { version: 1, exercise_catalog: type === 3 ? catalog.map((item) => ({ ...item, active: false })) : catalog, sessions, session_exercises: exercises, sets: exercises.flatMap((exercise) => Array.from({ length: 4 }, (_, i) => ({ ...exercise, set_number: i + 1, plan_weight: '40', plan_reps: '10', fact_weight: exercise.session_id === 's1' && ['bench', 'triceps'].includes(exercise.exercise_id) ? '35' : '', fact_reps: '', rpe: exercise.session_id === 's1' && exercise.exercise_id === 'triceps' && i === 0 ? '7' : '' }))) };
 }
 
 try {
-  for (const width of [360, 430, 700, 701, 768, 999, 1000, 1412, 1440, 1480, 1648]) {
+  for (const width of [360, 430, 700, 701, 768, 999, 1000, 1412, 1440, 1480, 1488, 1648]) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     await page.addInitScript(({ workouts }) => {
       window.EdabalansAppContext = { mode: 'admin', targetUserId: 'synthetic-profile' };
@@ -41,18 +43,31 @@ try {
     await page.getByText('Тренировка №5', { exact: true }).waitFor();
     const names = () => page.locator(width > 700 ? '.st-ex-row-name' : '.st-modern-title strong').allTextContents();
     assert.deepEqual(await names(), ['Верхний блок на трицепс', 'Жим штанги']);
+    const numbers = () => page.locator(width > 700 ? '.st-ex-row-head .st-exercise-number' : '.st-modern-title .st-exercise-number').allTextContents();
+    assert.deepEqual(await numbers(), ['1','2']);
+    await page.getByRole('button', { name: 'Редактировать шаблон 1', exact: true }).click();
+    await page.locator('.st-manager-row', {hasText:'Жим штанги'}).getByRole('button',{name:'Выше',exact:true}).click();
+    await page.getByText('Закрыть',{exact:true}).click();
+    assert.deepEqual(await names(), ['Жим штанги','Верхний блок на трицепс']);
+    assert.deepEqual(await numbers(), ['1','2'], 'Номера следуют за перестановкой упражнений');
+    await page.getByRole('button', { name: 'Редактировать шаблон 1', exact: true }).click();
+    await page.locator('.st-manager-row', {hasText:'Жим штанги'}).getByRole('button',{name:'Ниже',exact:true}).click();
+    await page.getByText('Закрыть',{exact:true}).click();
+    assert.deepEqual(await names(), ['Верхний блок на трицепс','Жим штанги']);
+    assert.deepEqual(await numbers(), ['1','2']);
+
     if (width > 700) assert.deepEqual(await page.locator('.st-day-number').allTextContents(), ['№1', '№3', '№5']);
     if (width <= 700) {
       const note = () => page.locator('.st-modern-comment textarea').first();
       await note().fill('Изменённое примечание');
       await page.keyboard.press('Control+Z');
-      assert.equal(await note().inputValue(), 'Сохранённая заметка', 'Первое изменение примечания доступно для отмены');
+      assert.equal(await note().inputValue(), sampleNote, 'Первое изменение примечания доступно для отмены');
       await note().focus();
       await page.keyboard.press('Control+Y');
       assert.equal(await note().inputValue(), 'Изменённое примечание');
       await note().focus();
       await page.keyboard.press('Control+Z');
-      assert.equal(await note().inputValue(), 'Сохранённая заметка');
+      assert.equal(await note().inputValue(), sampleNote);
       await page.evaluate(() => { window.__saveBodies = []; });
     }
     const planWeight = () => page.locator(width > 700 ? '.st-ex-row:first-of-type .st-ex-day.current .st-plan-field' : '.st-modern-exercise:first-child .st-plan-inputs input').first();
@@ -121,6 +136,7 @@ try {
     await page.locator('.st-manager-row', { hasText: 'Верхний блок на трицепс' }).getByText('Убрать', { exact: true }).click();
     await page.getByText('Закрыть', { exact: true }).click();
     assert.deepEqual(await names(), width > 700 ? ['Жим штанги', 'Верхний блок на трицепс'] : ['Жим штанги']);
+    assert.deepEqual(await numbers(), width > 700 ? ['1','2'] : ['1'], 'После исключения первого упражнения оставшийся план начинается с номера 1');
     if (width > 700) assert.equal(await page.locator('.st-ex-row', { hasText: 'Верхний блок на трицепс' }).locator('.st-ex-day.current').count(), 0, 'Исключённое упражнение с фактом показывается только в своей старой тренировке');
     assert.equal(await page.evaluate(() => window.__saveBodies.some((body) => body.action === 'saveSession')), false);
     await page.locator('.st-top-stats').click();
@@ -141,8 +157,8 @@ try {
     const saved = await page.evaluate(() => window.__saveBodies.find((body) => body.action === 'saveSession'));
     assert.equal(saved.session.session_id, 's1');
     assert.deepEqual(saved.session.exercises.map((exercise) => exercise.exercise_id), ['bench', 'triceps', 'row', 'history-only']);
-    assert.equal(saved.session.exercises.find((exercise) => exercise.exercise_id === 'triceps').note, 'Сохранённая заметка');
-    assert.deepEqual(saved.session.exercises.find((exercise) => exercise.exercise_id === 'triceps').sets.map((set) => [String(set.plan_weight), String(set.plan_reps), String(set.fact_weight), set.rpe]), Array.from({ length: 4 }, () => ['40', '10', '35', '']));
+    assert.equal(saved.session.exercises.find((exercise) => exercise.exercise_id === 'triceps').note, sampleNote);
+    assert.deepEqual(saved.session.exercises.find((exercise) => exercise.exercise_id === 'triceps').sets.map((set) => [String(set.plan_weight), String(set.plan_reps), String(set.fact_weight), set.rpe]), Array.from({ length: 4 }, (_,i) => ['40', '10', '35', i === 0 ? '7' : '']));
     await page.getByRole('button', { name: 'Следующая тренировка', exact: true }).click();
     await page.getByRole('button', { name: 'Следующая тренировка', exact: true }).click();
     await page.getByText('Тренировка №5', { exact: true }).waitFor();
