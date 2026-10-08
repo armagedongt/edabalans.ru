@@ -782,7 +782,7 @@ def app_asset(asset_name: str) -> FileResponse:
         "dqs-favicon.svg", "strength-favicon.svg", "metabolism-favicon.svg",
         "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png",
         "content-gallery.js", "public-program-card.css", "public-program-card.js",
-        "account-visual.css", "course-visual.css", "calories-course.css",
+        "account-visual.css", "account-legacy-offer.js", "course-visual.css", "calories-course.css",
         "course-product-popup.js", "course-product-popup.css",
         "account-theme.css", "account-theme.js",
         "questionnaire-person.js", "questionnaire-person.css",

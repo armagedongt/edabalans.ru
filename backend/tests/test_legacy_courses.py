@@ -38,6 +38,8 @@ def legacy_setup(*, recipes=False):
 
 def test_old_course_uses_same_program_and_protects_locked_materials_even_with_full_open():
     client, factory = legacy_setup()
+    asset = client.get('/assets/account-legacy-offer.js')
+    assert asset.status_code == 200 and 'EdabalansLegacyOffer' in asset.text
     manifest = client.get('/api/masterclass/course/manifest',params={'email':'member@example.test'}).json()
     steps = {step['id']:step for day in manifest['days'] for step in day['steps']}
     assert manifest['accessEdition'] == 'non_updating'
