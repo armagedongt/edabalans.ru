@@ -1,0 +1,198 @@
+interview_metadata:
+  started: '2026-10-08T11:50:26'
+  last_updated: '2026-10-08T11:50:26'
+  status: completed
+  can_resume: true
+conversation_history:
+- asked_at: '2026-10-08T11:50:26'
+  topic_keys:
+  - feature_description
+  - constraints
+  - edge_cases
+  - success_criteria
+  agent_questions: 'Предложено: бот→персональная ссылка→visitor cookie→интенсив→главная→checkout,
+    контакт и путь в уведомлении; 30мин отдельное Оплата не завершена.'
+  user_answer: Да, подходит, реализуй полностью. Сохранять анонимные касания до входа
+    из персональной ссылки, присоединять контакты бота до ЛК. Пересланная ссылка —
+    принимаемая погрешность. Объединить контекст доменов всей экосистемы. Ускорение
+    Tilda отдельно. Уведомлять о неуспехе и объяснить сроки/доступные причины.
+- asked_at: '2026-10-08T11:56:17'
+  topic_keys:
+  - data_requirements
+  - technical_decisions
+  agent_questions: 'Уточни срок и начало сохранения истории. Рекомендую: хранить браузерную
+    историю 365 дней и начинать после принятия cookie-уведомления; текст: «Мы используем
+    cookies, чтобы сохранять ваши переходы и связывать их с аккаунтом Telegram или
+    MAX при переходе по персональной ссылке из бота». В каноне проекта прямо записано:
+    «Перед включением cookies отдельно согласуются текст уведомления, срок хранения
+    и правила обработки данных» (docs/knowledge-base/modules/telegram/LINKS_AND_ATTRIBUTION.md).
+    Какой вариант применить?'
+  user_answer: важно. вот эту связь приказываю включать до наатия кнопки куки. а после
+    нажатия все остальное. ответственность беру на себя. кстати ты делаешь какие-то
+    примечания в коде сайта? ты только оп кукам не делай примечание что мы их так
+    включаем. чтобы не палиться. и да 365 дней
+general_understanding:
+  feature_name:
+    score: 100
+    value: Единая история браузера и контакты из бота
+    gaps: []
+    required: true
+  feature_description:
+    score: 100
+    value: Анонимные касания рекламы/канала и сайта сохраняются; персональная ссылка
+      Telegram/MAX связывает историю с существующим CRM-контактом; контакты и путь
+      используются в owner payment alerts.
+    gaps: []
+    required: true
+  work_type:
+    score: 100
+    value: feature
+    gaps: []
+    required: true
+  user_problem:
+    score: 100
+    value: Сергей не видит контакт и полный путь покупки или незавершённой оплаты
+      до отдельной привязки мессенджера в ЛК.
+    gaps: []
+    required: true
+  target_users:
+    score: 100
+    value: Посетители публичной экосистемы и Сергей в CRM/техническом боте.
+    gaps: []
+    required: false
+  success_criteria:
+    score: 100
+    value: Анонимная история появляется у контакта после персонального перехода; два
+      домена продолжают один visitor; покупка и pending30min имеют контакт, источник,
+      путь и ссылки.
+    gaps: []
+    required: true
+  constraints:
+    score: 100
+    value: Сохранить единую CRM/user_id, покупателей и права разрешать существующей
+      логикой, browser identity не авторизует и не выдаёт права. Пересланные ссылки
+      приняты как погрешность атрибуции. Tilda optimisation и domain cutover отдельно.
+    gaps: []
+    required: true
+  testing_strategy:
+    score: 100
+    value: Unit token invalid/expiry/purpose; integration anon/bind/backfill and payment
+      snapshots/status/dedup; browser managed loaders/carrier/checkout; security/code/test/docs
+      review.
+    gaps: []
+    required: true
+user_experience:
+  user_stories:
+    score: 100
+    value: Реклама/канал→анонимный сайт→бот→персональная ссылка→интенсив→главная→checkout→paid
+      или pending30min/finalfailure. Повторная главная узнаёт сохранённый browser.
+    gaps: []
+    required: true
+  acceptance_criteria:
+    score: 100
+    value: Поддержка Telegram/MAX; backfill анонимных касаний; две first-party cookies
+      со связанным серверным visitor; UTM не стирают контакт; сообщения обоим владельцам;
+      pending не отменяет позднюю оплату; CRM видит исходного бота и наблюдаемый контакт.
+    gaps: []
+    required: true
+  edge_cases:
+    score: 100
+    value: Пересланный код приписывает контакт владельца ссылки для аналитики, не
+      логина. Другой messenger после explicit LK link сохраняет прежний observed contact.
+      Cookies очищены/другое устройство без нового перехода не узнаются. Разные корневые
+      домены требуют carrier при переходе. Последняя персональная ссылка применяется
+      к новым действиям; ранее уже идентифицированные события остаются прежнему контакту.
+      Это локальная трактовка принятой погрешности пересылки, не merge accounts.
+    gaps: []
+    required: true
+  error_scenarios:
+    score: 100
+    value: Invalid/expired carrier игнорировать и вести анонимный visit; tracker недоступен
+      не мешает странице/платежу; OpStateExt failure неизвестен не отказ; поздний
+      paid после pending допустим.
+    gaps: []
+    required: true
+  verification_strategy:
+    score: 100
+    value: API SQLite integration+browser twoorigin crossdomain + anon→bind backfill
+      + payment contact snapshot and delayed webhook; actual production readiness/API
+      and synthetic technical delivery to bothowners.
+    gaps: []
+    required: true
+  ui_ux_requirements:
+    score: 100
+    value: 'Существующая CRM: контакты и путь с пометкой персональной ссылки; уведомления
+      стандартные жирный заголовок+сумма, поля и ссылки; без новой админки.'
+    gaps: []
+    required: false
+  risks:
+    score: 100
+    value: Пересылка ссылки принята владельцем. Не переносить authenticated identities/paid
+      rights. Не записывать приватные URL/token/пароли в события.
+    gaps: []
+    required: true
+  technical_decisions:
+    score: 100
+    value: 365дней visitor согласно ранее установленной целевой схеме; encrypted non-auth
+      token с purpose separation, домены edabalans.ru и публичные домены проекта/поддомены;
+      metadata ledger без migration; 30мин отдельный unpaid event; confirmedcodes10/60
+      отдельный failed.
+    gaps: []
+    required: false
+  deploy_approach:
+    score: 100
+    value: Target tests/reviews, freshmain push штатный CI/deploy. Проверить livehomepage
+      loader; если отсутствует, подготовить точную trackingвставку и не объявлять
+      её опубликованной без liveподтверждения.
+    gaps: []
+    required: false
+  manual_user_actions:
+    score: 100
+    value: Не ожидаются для существующих managed loaders; standalone Tilda страницы
+      без наших loaders требуют установки общего script, которую выполнить только
+      при доступном авторизованном пути.
+    gaps: []
+    required: false
+integration:
+  integration_points:
+    score: 100
+    value: Backend visitor service/routes, public scripts, intensive/personal entry,
+      homepage checkout, bot start-link journey metadata, CRM, owner alerts and direct
+      invoice worker; Caddy allowed public routes.
+    gaps: []
+    required: true
+  dependencies:
+    score: 100
+    value: Existing personal codes/source_context, CRM MessengerAccount, tg_tracking_events,
+      outbox worker, Robokassa OpStateExt, common loaders/cookie notice.
+    gaps: []
+    required: false
+  technical_constraints:
+    score: 100
+    value: Одна literal cookie невозможна между разными rootdomains. Signed/encrypted
+      carrier в внутренних переходах и first-party storage; отдельные браузеры не
+      объединять по IP/fingerprint.
+    gaps: []
+    required: false
+  data_requirements:
+    score: 100
+    value: 'Reuse tg_tracking_events nullable user_id+metadata+indexed dedup key для
+      visitor ledger; Payment.raw_payload immutable observed source; не новая база/сервис.
+      Прямое решение08.10: минимальная visitor-cookie и bind персонального контакта
+      до cookie-accept; pageviews/actions/analytics послеaccept. Срок365дней, техническую
+      tracking-историю старше срока удалять без удаления CRM-контактов/покупок.'
+    gaps: []
+    required: false
+  migration_needs:
+    score: 100
+    value: 'Schema migration не требуется: имеющиеся shared tables и JSON. Технические
+      факты schema проверить перед выпуском.'
+    gaps: []
+    required: false
+notes: 'Запрос на полную реализацию уже авторизован 08.10.2026; не повторять согласование
+  раскрытого маршрута. Дословный полный запрос хранится в текущем чате. Исследование:
+  code-research.md. Не принимать browser identity за login. Completenesswave1: A→B
+  policyresolved latestpersonal affectsnewactions only, nooldidentified rewrite. Cookie
+  timingresolved explicituserreply08.10. Needwave2samechecker. Completeness2/2 clean.
+  Specquality/adequacy/facts2/2 clean. Полная реализация одобрена прямым userrequest;
+  latestconsentreply входитвfinalspec. Implementationreview ещё0/2.'
