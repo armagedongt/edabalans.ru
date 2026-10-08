@@ -131,7 +131,8 @@ reads_from = ["platform.commerce", "platform.content"]
 
 [[modules]]
 id = "platform.content"
-reads_from = ["products.masterclass.course"]
+reads_from = ["products.masterclass.course", "platform.commerce"]
+writes_to = ["platform.commerce"]
 admin_catalog = [{ category = "marketing", order = 20, url = "/admin/content", label = "Каталог материалов", icon = "🗂️", description = "Материалы Telegram, Pikabu и рабочий каталог контента." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.content.md"
@@ -151,9 +152,9 @@ owns_files = [
   "docs/knowledge-base/EDITORIAL_VAULT.md",
     "tools/editorial_vault.py", "tools/editorial_vault_desktop.py",
     "tools/editorial_bot_adapter.py", "tools/editorial_git_adapter.py", "tools/editorial_email_adapter.py",
-    "tools/editorial_catalog_adapter.py", "tools/editorial_graph_adapter.py",
+    "tools/editorial_catalog_adapter.py", "tools/editorial_graph_adapter.py", "tools/editorial_pricing_adapter.py",
     "tools/tests/test_editorial_bot_adapter.py", "tools/tests/test_editorial_git_adapter.py", "tools/tests/test_editorial_email_adapter.py",
-    "tools/tests/test_editorial_catalog_adapter.py", "tools/tests/test_editorial_graph_adapter.py",
+    "tools/tests/test_editorial_catalog_adapter.py", "tools/tests/test_editorial_graph_adapter.py", "tools/tests/test_editorial_pricing_adapter.py",
     "backend/app/service_email_templates.py", "backend/app/service_email_editorial_routes.py",
     "content/service-messages/**", "backend/tests/test_service_email_templates.py",
     "backend/tests/fixtures/service_email_originals.json",
@@ -611,6 +612,7 @@ writes_to = ["products.recipes"]
 owns_files = [
   "backend/app/course_structure_routes.py", "backend/app/course_structure_service.py",
     "backend/app/course_material_routes.py", "backend/app/course_material_service.py",
+    "backend/tests/test_course_source_current_authoring.py",
     "backend/app/recipe_material_authoring.py", "backend/tests/test_recipe_material_authoring.py",
   "backend/app/github_content_editor.py", "backend/app/masterclass_editorial.py",
   "backend/scripts/publish_course_structure_seed.py",

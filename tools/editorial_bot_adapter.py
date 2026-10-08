@@ -84,8 +84,10 @@ def parse(text):
             raise ValueError("Повреждён служебный раздел: " + name)
         sections[name] = section[1]
         remaining = remaining[section.end():]
-    if not remaining.strip() and fields["media_kind"] != "video_note":
-        raise ValueError("Пустой текст допустим только для видеокружка")
+    # Existing photo/video/voice originals may have no caption. The server,
+    # using its real immutable media fields, remains the publication authority.
+    if not remaining.strip() and fields["media_kind"] not in {"photo", "video", "video_note", "voice"}:
+        raise ValueError("Пустой текст допустим только у сообщения с медиа")
     return {
         "code": fields["code"], "purpose": sections[PURPOSE],
         "writer_brief": sections[BRIEF], "body_source": remaining,

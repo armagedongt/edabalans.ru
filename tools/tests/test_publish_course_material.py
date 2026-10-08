@@ -41,6 +41,29 @@ class FakeResponse:
         return json.dumps(self.payload, ensure_ascii=False).encode("utf-8")
 
 
+@pytest.mark.parametrize("explicit", [False, True])
+def test_first_source_current_publish_transmits_original_hash_without_rebasing_explicit_guard(monkeypatch, tmp_path, explicit):
+    material = tmp_path / "material.md"
+    material.write_text("# Полный оригинал\n\nПравка автора.\n", encoding="utf-8")
+    pack, report = write_gate(tmp_path, material)
+    calls = []
+    def request(args, method, path, payload=None):
+        calls.append((method, payload))
+        if method == "GET":
+            return {"version": 0, "source_hash": "b" * 64}
+        return {"ok": True, "version": 1}
+    monkeypatch.setattr(publisher, "api_request", request)
+    argv = ["publish_course_material.py", "publish", "day-18-video-01", str(material),
+            "--pack", str(pack), "--validation-report", str(report)]
+    if explicit:
+        argv += ["--expected-version", "0", "--expected-source-hash", "a" * 64]
+    monkeypatch.setattr(sys, "argv", argv)
+    assert publisher.main() == 0
+    assert [c[0] for c in calls] == (["PUT"] if explicit else ["GET", "PUT"])
+    assert calls[-1][1] == {"expected_version": 0, "expected_source_hash": ("a" if explicit else "b") * 64,
+                           "content": material.read_text(encoding="utf-8"), "format": "markdown"}
+
+
 def test_api_request_uses_basic_auth_without_password_in_url(monkeypatch) -> None:
     monkeypatch.setenv("EDABALANS_ADMIN_USERNAME", "writer@example.test")
     monkeypatch.setenv("EDABALANS_ADMIN_PASSWORD", "secret-value")

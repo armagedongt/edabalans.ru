@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from html import escape
 import difflib
+import hashlib
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -26,7 +27,9 @@ from app.course_structure_service import course_context
 from app.github_content_editor import GitHubContentEditor
 from app.masterclass_editorial import (
     EDITABLE_MATERIALS,
+    editable_material_path,
     editorial_body_text,
+    local_editable_material,
     validate_editorial_source,
 )
 from app import calorie_course_material_service
@@ -137,6 +140,7 @@ def masterclass_article_component_script() -> Response:
 
 class CourseMaterialUpdate(BaseModel):
     expected_version: int = Field(ge=0)
+    expected_source_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     content: str = Field(min_length=1, max_length=500_000)
     format: Literal["markdown", "html"] = "markdown"
 
@@ -187,7 +191,11 @@ def admin_editorial_material(
         payload = editorial_editor().load(step_id)
     except KeyError as exc:
         raise HTTPException(404, str(exc)) from exc
-    return {**payload, "day": day, "title": title}
+    source = local_editable_material(step_id).read_text(encoding="utf-8")
+    return {**payload, "day": day, "title": title, "runtime_source": {
+        "path": editable_material_path(step_id),
+        "sha256": hashlib.sha256(source.encode("utf-8")).hexdigest(),
+    }}
 
 
 @router.post("/admin/api/editorial/masterclass/materials/{step_id}/preview")
@@ -345,6 +353,7 @@ def admin_publish_course_material(
         content_format=body.format,
         expected_version=body.expected_version,
         admin=admin,
+        **({"expected_source_hash": body.expected_source_hash} if service is None else {}),
     )
 @router.get("/admin/api/courses/{course_code}/materials/{step_id}/versions")
 def admin_course_material_versions(

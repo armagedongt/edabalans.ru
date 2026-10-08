@@ -132,6 +132,7 @@ def main() -> int:
     publish_parser.add_argument("file", type=Path)
     publish_parser.add_argument("--format", choices=("markdown", "html"), default="markdown")
     publish_parser.add_argument("--expected-version", type=int)
+    publish_parser.add_argument("--expected-source-hash", help="Hash прочитанного source-current оригинала для первой публикации")
     publish_parser.add_argument("--pack", type=Path, required=True)
     publish_parser.add_argument("--validation-report", type=Path, required=True)
     restore_parser = commands.add_parser("restore", help="Вернуть старую редакцию новой версией")
@@ -150,8 +151,12 @@ def main() -> int:
     elif args.command == "publish":
         verify_publish_gate(args.file, args.pack, args.validation_report)
         expected = args.expected_version
+        expected_source_hash = args.expected_source_hash
         if expected is None:
-            expected = int(api_request(args, "GET", material_path(args))["version"])
+            current = api_request(args, "GET", material_path(args))
+            expected = int(current["version"])
+            if expected == 0 and expected_source_hash is None:
+                expected_source_hash = current.get("source_hash")
         result = api_request(
             args,
             "PUT",
@@ -160,6 +165,7 @@ def main() -> int:
                 "expected_version": expected,
                 "content": args.file.read_text(encoding="utf-8"),
                 "format": args.format,
+                **({"expected_source_hash": expected_source_hash} if expected_source_hash is not None else {}),
             },
         )
     else:

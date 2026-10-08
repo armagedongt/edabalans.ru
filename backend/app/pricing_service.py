@@ -2,12 +2,19 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from decimal import Decimal
+from copy import deepcopy
+import hashlib
+import json
+import re
 import uuid
 
+from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models import PriceEntry, PricingVersion
+
+AUTHORING_METADATA = "_editorial_pricing"
 
 
 def site_tariff_amount(
@@ -29,6 +36,7 @@ def version_entries(db: Session, version_id: uuid.UUID) -> list[PriceEntry]:
             select(PriceEntry)
             .where(PriceEntry.version_id == version_id)
             .order_by(PriceEntry.section, PriceEntry.sort_order, PriceEntry.code)
+            .execution_options(populate_existing=True)
         )
     )
 
@@ -91,26 +99,139 @@ def serialize_version(db: Session, version: PricingVersion, *, include_entries: 
     }
     if include_entries:
         result["entries"] = [serialize_entry(entry) for entry in version_entries(db, version.id)]
+        source = pricing_source(db, version)
+        result.update(source=source, revision=pricing_revision(db, version),
+                      semantic_sha256=source_hash(source, semantic=True),
+                      base_active=base_active(db, version),
+                      authoring_ready=version.status == "draft" and draft_base_known(db, version))
     return result
 
 
-def create_draft(db: Session, admin: str) -> PricingVersion:
+def pricing_source(db: Session, version: PricingVersion) -> dict:
+    entries = []
+    for entry in version_entries(db, version.id):
+        item = serialize_entry(entry)
+        item.pop("id")
+        for field in ("regular_amount", "compare_at_amount", "sale_amount"):
+            value = getattr(entry, field)
+            item[field] = None if value is None else format(value, ".2f")
+        entries.append(item)
+    return {"schema_version": 1, "name": version.name, "note": version.note, "entries": entries}
+
+
+def source_hash(source: dict, *, semantic: bool = False) -> str:
+    source = deepcopy(source)
+    source["entries"].sort(key=lambda item: item["code"])
+    if semantic:
+        if source["entries"]:
+            first = source["entries"][0]
+            if valid_authoring_metadata(first["metadata"].get(AUTHORING_METADATA)):
+                first["metadata"].pop(AUTHORING_METADATA)
+    return hashlib.sha256(json.dumps(source, sort_keys=True, ensure_ascii=False,
+                                    separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+
+
+def valid_authoring_metadata(marker) -> bool:
+    if not isinstance(marker, dict) or set(marker) != {"schema_version", "owner", "base_active"} or type(marker["schema_version"]) is not int or marker["schema_version"] != 1 or marker["owner"] != "platform.commerce":
+        return False
+    base = marker["base_active"]
+    if base is None:
+        return True
+    if not isinstance(base, dict) or set(base) != {"id", "version_number", "sha256"} or type(base["version_number"]) is not int or base["version_number"] < 1:
+        return False
+    try:
+        uuid.UUID(base["id"])
+    except (ValueError, TypeError, AttributeError):
+        return False
+    return isinstance(base["sha256"], str) and re.fullmatch(r"[a-f0-9]{64}", base["sha256"]) is not None
+
+
+def pricing_revision(db: Session, version: PricingVersion) -> dict:
+    return {"id": str(version.id), "version_number": version.version_number,
+            "sha256": source_hash(pricing_source(db, version))}
+
+
+def _marker(db: Session, version: PricingVersion) -> dict | None:
+    entries = version_entries(db, version.id)
+    if not entries:
+        return None
+    marker = (min(entries, key=lambda entry: entry.code).metadata_json or {}).get(AUTHORING_METADATA)
+    if valid_authoring_metadata(marker):
+        return marker
+    return None
+
+
+def _initial_draft(db: Session, version: PricingVersion) -> bool:
+    # The migration's sole initial draft predates authoring metadata and has no
+    # possible published base. Other legacy drafts are never silently adopted.
+    return version.status == "draft" and version.version_number == 1 and db.scalar(select(func.count(PricingVersion.id))) == 1
+
+
+def base_active(db: Session, version: PricingVersion) -> dict | None:
+    marker = _marker(db, version)
+    return marker["base_active"] if marker else None
+
+
+def draft_base_known(db: Session, version: PricingVersion) -> bool:
+    return _marker(db, version) is not None or _initial_draft(db, version)
+
+
+def lock_active(db: Session, expected: dict | None) -> PricingVersion | None:
+    if expected:
+        # Lock the expected stable identity, then reread active after waiting.
+        db.scalar(select(PricingVersion).where(PricingVersion.id == uuid.UUID(expected["id"]))
+                  .with_for_update().execution_options(populate_existing=True))
+    current = db.scalar(select(PricingVersion).where(PricingVersion.status == "active")
+                        .execution_options(populate_existing=True))
+    if (current is None) != (expected is None) or (current and pricing_revision(db, current) != expected):
+        raise HTTPException(409, "Действующая версия цен изменилась; обновите каталог")
+    return current
+
+
+def lock_version(db: Session, version_id: uuid.UUID, expected: dict) -> PricingVersion:
+    version = db.scalar(select(PricingVersion).where(PricingVersion.id == version_id)
+                        .with_for_update().execution_options(populate_existing=True))
+    if version is None:
+        raise HTTPException(404, "Версия цен не найдена")
+    if pricing_revision(db, version) != expected:
+        raise HTTPException(409, "Черновик цен изменился; обновите каталог")
+    return version
+
+
+def check_draft_base(db: Session, version: PricingVersion, expected: dict | None) -> None:
+    if not draft_base_known(db, version) or base_active(db, version) != expected:
+        raise HTTPException(409, "Черновик создан на другой версии цен; объедините изменения")
+
+
+def create_draft(db: Session, admin: str, *, expected_active: dict | None) -> PricingVersion:
+    source = lock_active(db, expected_active)
     current = draft_pricing_version(db)
     if current is not None:
-        return current
-    source = active_pricing_version(db) or latest_pricing_version(db)
+        raise HTTPException(409, "Уже существует черновик цен; получите его и объедините изменения")
+    if source is None:
+        raise HTTPException(409, "Первоначальный каталог требует отдельной настройки")
     next_number = int(db.scalar(select(func.max(PricingVersion.version_number))) or 0) + 1
     draft = PricingVersion(
         version_number=next_number,
-        name=f"Каталог цен v{next_number}",
+        name=source.name,
         status="draft",
         created_by=admin,
-        note="Черновик: не влияет на сайт и новые покупки до публикации и включения режима",
+        note=source.note,
     )
     db.add(draft)
     db.flush()
     if source is not None:
-        for entry in version_entries(db, source.id):
+        entries = version_entries(db, source.id)
+        if not entries:
+            raise HTTPException(409, "В действующем каталоге отсутствуют строки цен")
+        first_code = min(entry.code for entry in entries)
+        for entry in entries:
+            metadata = deepcopy(entry.metadata_json or {})
+            existing = metadata.get(AUTHORING_METADATA)
+            if existing is not None and not valid_authoring_metadata(existing):
+                raise HTTPException(409, "Конфликт служебного поля каталога цен")
+            if entry.code == first_code:
+                metadata[AUTHORING_METADATA] = {"schema_version": 1, "owner": "platform.commerce", "base_active": expected_active}
             db.add(
                 PriceEntry(
                     version_id=draft.id,
@@ -127,7 +248,7 @@ def create_draft(db: Session, admin: str) -> PricingVersion:
                     currency=entry.currency,
                     enabled=entry.enabled,
                     sort_order=entry.sort_order,
-                    metadata_json=dict(entry.metadata_json or {}),
+                    metadata_json=metadata,
                 )
             )
     db.commit()
@@ -151,3 +272,4 @@ def publish_draft(db: Session, version: PricingVersion, admin: str) -> None:
     version.effective_from = now
     version.activated_by = admin
     db.commit()
+    db.refresh(version)

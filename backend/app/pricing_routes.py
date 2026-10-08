@@ -7,10 +7,12 @@ from threading import Lock
 import time
 from urllib.parse import urlsplit
 import uuid
+from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, model_validator
 from sqlalchemy import delete, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.auth import require_admin
@@ -30,6 +32,9 @@ from app.pricing_service import (
     active_pricing_version,
     amount_value,
     create_draft,
+    check_draft_base,
+    lock_active,
+    lock_version,
     latest_pricing_version,
     pricing_entry_map,
     publish_draft,
@@ -49,11 +54,12 @@ _preview_checkout_rate_state: dict[str, tuple[float, int]] = {}
 
 
 class PriceEntryUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     code: str = Field(min_length=3, max_length=120)
-    regular_amount: Decimal | None = Field(default=None, ge=0, le=10_000_000)
-    compare_at_amount: Decimal | None = Field(default=None, ge=0, le=10_000_000)
-    sale_amount: Decimal = Field(ge=0, le=10_000_000)
-    enabled: bool = True
+    regular_amount: Decimal | None = Field(ge=0, le=10_000_000, decimal_places=2)
+    compare_at_amount: Decimal | None = Field(ge=0, le=10_000_000, decimal_places=2)
+    sale_amount: Decimal = Field(ge=0, le=10_000_000, decimal_places=2)
+    enabled: StrictBool
 
     @model_validator(mode="after")
     def validate_prices(self):
@@ -64,7 +70,30 @@ class PriceEntryUpdate(BaseModel):
         return self
 
 
-class PricingDraftUpdate(BaseModel):
+class PricingRevision(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    id: uuid.UUID
+    version_number: StrictInt = Field(ge=1)
+    sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+
+
+class PricingDraftCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    expected_active: PricingRevision | None
+    expected_draft: None
+
+
+class PricingGuards(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    expected_active: PricingRevision | None
+    expected_draft: PricingRevision
+
+
+class PricingPublish(PricingGuards):
+    confirm: Literal[True]
+
+
+class PricingDraftUpdate(PricingGuards):
     name: str = Field(min_length=1, max_length=160)
     note: str | None = Field(default=None, max_length=10_000)
     entries: list[PriceEntryUpdate] = Field(min_length=1, max_length=200)
@@ -119,18 +148,29 @@ def admin_pricing(
     versions = list(
         db.scalars(select(PricingVersion).order_by(PricingVersion.version_number.desc()))
     )
+    serialized = [serialize_version(db, version, include_entries=True) for version in versions]
     return {
         "ok": True,
         "live_consumption_enabled": settings.pricing_catalog_enabled,
-        "versions": [serialize_version(db, version, include_entries=True) for version in versions],
+        "versions": serialized,
+        "active_revision": next((version["revision"] for version in serialized if version["status"] == "active"), None),
+        "draft_revision": next((version["revision"] for version in serialized if version["status"] == "draft"), None),
     }
 
 
 @router.post("/admin/api/pricing/drafts")
 def admin_create_pricing_draft(
+    body: PricingDraftCreate,
     admin: str = Depends(require_admin), db: Session = Depends(get_db)
 ) -> dict:
-    version = create_draft(db, admin)
+    try:
+        version = create_draft(db, admin, expected_active=body.expected_active.model_dump(mode="json") if body.expected_active else None)
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(409, "Каталог изменился; обновите версии") from exc
+    except Exception:
+        db.rollback()
+        raise
     return {"ok": True, "version": serialize_version(db, version, include_entries=True)}
 
 
@@ -141,11 +181,12 @@ def admin_update_pricing_draft(
     admin: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> dict:
-    version = db.get(PricingVersion, version_id)
-    if version is None:
-        raise HTTPException(404, "Версия цен не найдена")
+    expected_active = body.expected_active.model_dump(mode="json") if body.expected_active else None
+    lock_active(db, expected_active)
+    version = lock_version(db, version_id, body.expected_draft.model_dump(mode="json"))
     if version.status != "draft":
         raise HTTPException(409, "Опубликованную версию нельзя редактировать; создайте новый черновик")
+    check_draft_base(db, version, expected_active)
     rows = pricing_entry_map(db, version)
     supplied = [item.code for item in body.entries]
     if len(supplied) != len(set(supplied)):
@@ -155,6 +196,8 @@ def admin_update_pricing_draft(
     for item in body.entries:
         if not PRICE_CODE.match(item.code):
             raise HTTPException(422, f"Некорректный код цены: {item.code}")
+    # Validate every row before changing any value.
+    for item in body.entries:
         row = rows[item.code]
         row.regular_amount = item.regular_amount
         row.compare_at_amount = item.compare_at_amount
@@ -162,7 +205,11 @@ def admin_update_pricing_draft(
         row.enabled = item.enabled
     version.name = body.name.strip()
     version.note = (body.note or "").strip() or None
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(409, "Каталог изменился; обновите версии") from exc
     db.refresh(version)
     return {"ok": True, "version": serialize_version(db, version, include_entries=True)}
 
@@ -170,17 +217,33 @@ def admin_update_pricing_draft(
 @router.post("/admin/api/pricing/versions/{version_id}/publish")
 def admin_publish_pricing_version(
     version_id: uuid.UUID,
+    body: PricingPublish,
     admin: str = Depends(require_admin),
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> dict:
-    version = db.get(PricingVersion, version_id)
-    if version is None:
-        raise HTTPException(404, "Версия цен не найдена")
+    expected_active = body.expected_active.model_dump(mode="json") if body.expected_active else None
+    # A lost accepted response can be retried with the original guards. Lock the
+    # original active identity first, then the target in the ordinary lock order.
+    if expected_active:
+        db.scalar(select(PricingVersion).where(PricingVersion.id == uuid.UUID(expected_active["id"]))
+                  .with_for_update().execution_options(populate_existing=True))
+    version = lock_version(db, version_id, body.expected_draft.model_dump(mode="json"))
+    current = active_pricing_version(db)
+    if version.status == "active" and current is not None and current.id == version.id:
+        check_draft_base(db, version, expected_active)
+        return {"ok": True, "already_active": True, "live_consumption_enabled": settings.pricing_catalog_enabled,
+                "version": serialize_version(db, version, include_entries=True)}
+    lock_active(db, expected_active)
+    check_draft_base(db, version, expected_active)
     try:
         publish_draft(db, version, admin)
     except ValueError as exc:
+        db.rollback()
         raise HTTPException(409, str(exc)) from exc
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(409, "Каталог изменился; обновите версии") from exc
     return {
         "ok": True,
         "live_consumption_enabled": settings.pricing_catalog_enabled,

@@ -21,13 +21,14 @@ from app.course_structure_service import (
 )
 from app.models import ContentItem, ContentItemVersion, ContentSource
 from app.masterclass_article_components import render_masterclass_component
-from app.masterclass_editorial import EDITABLE_MATERIALS, editorial_body, local_editable_material
+from app.masterclass_editorial import EDITABLE_MATERIALS, editable_material_path, editorial_body, local_editable_material
 
 
 SOURCE_PLATFORM = "internal"
 SOURCE_ACCOUNT_KEY = "masterclass-course-materials"
 PARSER_VERSION = "masterclass-material-v2"
 MAX_MATERIAL_BYTES = 500_000
+SOURCE_CURRENT_PROFILE = "masterclass-source-current"
 
 
 def checked_course(course_code: str) -> str:
@@ -101,6 +102,9 @@ def editorial_source_payload(version: ContentItemVersion | None, fallback_html: 
                 "source_content": block["content"],
                 "source_format": block["format"],
                 "source_provenance": "editorial_source",
+                **({"source_render_profile": SOURCE_CURRENT_PROFILE,
+                    "source_hash": hashlib.sha256(block["content"].encode("utf-8")).hexdigest()}
+                   if block.get("render_profile") == SOURCE_CURRENT_PROFILE else {}),
             }
     return {
         "source_content": version.text_content if version else fallback_html,
@@ -110,7 +114,10 @@ def editorial_source_payload(version: ContentItemVersion | None, fallback_html: 
 
 
 def reader_material_payload(payload: dict) -> dict:
-    return {key: value for key, value in payload.items() if not key.startswith("source_")}
+    return {
+        key: value for key, value in payload.items()
+        if not key.startswith("source_") and key != "publication_profile"
+    }
 
 
 def version_payload(
@@ -164,6 +171,16 @@ def legacy_material_html(step: dict) -> str:
     return f"<p>{summary}</p>" if summary else ""
 
 
+def source_current_markdown(step: dict) -> str | None:
+    if step["id"] in EDITABLE_MATERIALS or step["id"].startswith("day-15-recipe-"):
+        return None
+    asset = step.get("contentAsset")
+    if asset in {None, "extracted-2026-08-23.json"}:
+        return None
+    path = COURSE_CONTENT_ROOT / "source-current" / str(asset)
+    return path.read_text(encoding="utf-8") if path.is_file() else None
+
+
 def get_material(db: Session, step_id: str) -> dict:
     context = course_context(db)
     day_number, step = article_step(context, step_id)
@@ -183,6 +200,11 @@ def get_material(db: Session, step_id: str) -> dict:
                 source_format="markdown",
                 source_provenance="git_markdown",
             )
+            if source_current_markdown(step) is not None:
+                payload.update(
+                    source_render_profile=SOURCE_CURRENT_PROFILE,
+                    source_hash=hashlib.sha256(payload["source_content"].encode("utf-8")).hexdigest(),
+                )
     if step_id in EDITABLE_MATERIALS:
         html = render_material(editorial_body(local_editable_material(step_id)), "markdown")
         payload.update(
@@ -194,7 +216,25 @@ def get_material(db: Session, step_id: str) -> dict:
             source_format="markdown",
             source_provenance="git_markdown",
         )
+    profile = publication_profile(step, version)
+    if profile:
+        payload["publication_profile"] = profile
     return payload
+
+
+def publication_profile(step: dict, version: ContentItemVersion | None) -> dict | None:
+    step_id = step["id"]
+    if step_id in EDITABLE_MATERIALS:
+        path = editable_material_path(step_id)
+        if step_id.startswith("day-07-recipe-"):
+            return {"type": "archive", "source_path": path,
+                    "reason": "Исторический оригинал; текущие рецепты используют day-15-recipe ID"}
+        return {"type": "git", "api_path": f"/admin/api/editorial/masterclass/materials/{step_id}",
+                "source_path": path}
+    if (version is None and source_current_markdown(step) is not None
+            or version is not None and editorial_source_payload(version).get("source_render_profile") == SOURCE_CURRENT_PROFILE):
+        return {"type": "api", "render_profile": SOURCE_CURRENT_PROFILE}
+    return None
 
 
 def list_materials(db: Session) -> dict:
@@ -214,6 +254,7 @@ def list_materials(db: Session) -> dict:
             if step.get("kind") != "article" or step.get("contentKind") == "tutorial":
                 continue
             version = versions.get(step["id"])
+            profile = publication_profile(step, version)
             materials.append({
                 "step_id": step["id"],
                 "day": day_number,
@@ -223,16 +264,18 @@ def list_materials(db: Session) -> dict:
                 "version": version.version_no if version else 0,
                 "published": version is not None,
                 "updated_at": version.imported_at.isoformat() if version else None,
+                **({"publication_profile": profile} if profile else {}),
             })
     return {"ok": True, "course_code": DOCUMENT_KEY, "materials": materials}
 
 
-def render_material(content: str, content_format: str) -> str:
+def render_material(content: str, content_format: str, *, render_profile: str | None = None) -> str:
     if len(content.encode("utf-8")) > MAX_MATERIAL_BYTES:
         raise HTTPException(413, "Текст материала превышает допустимый размер")
     if content_format == "markdown":
         return markdown_to_article_html(
-            content, component_renderer=render_masterclass_component
+            content, component_renderer=render_masterclass_component,
+            strip_source_metadata=render_profile == SOURCE_CURRENT_PROFILE,
         )
     if content_format == "html":
         return sanitize_article_html(
@@ -262,19 +305,10 @@ def publish_material(
     admin: str,
     commit: bool = True,
     _restore_version: ContentItemVersion | None = None,
+    expected_source_hash: str | None = None,
 ) -> dict:
     context = course_context(db)
     day_number, step = article_step(context, step_id)
-    clean_html = _restore_version.text_content if _restore_version else render_material(content, content_format)
-    source_payload = editorial_source_payload(_restore_version) if _restore_version else {
-        "source_content": content,
-        "source_format": "html" if content_format == "trusted_component_html" else content_format,
-    }
-    source_block = {
-        "type": "editorial_source",
-        "content": source_payload["source_content"],
-        "format": source_payload["source_format"],
-    }
     try:
         source = material_source(db, create=True)
         item = material_item(db, step_id, for_update=True)
@@ -285,6 +319,27 @@ def publish_material(
                 409,
                 "Материал уже изменён. Получите актуальную версию перед публикацией",
             )
+        source_payload = editorial_source_payload(_restore_version) if _restore_version else {
+            "source_content": content,
+            "source_format": "html" if content_format == "trusted_component_html" else content_format,
+        }
+        render_profile = editorial_source_payload(_restore_version or current).get("source_render_profile")
+        if _restore_version is None and current is None:
+            fallback = source_current_markdown(step)
+            if fallback is not None:
+                if expected_source_hash != hashlib.sha256(fallback.encode("utf-8")).hexdigest():
+                    raise HTTPException(409, "Исходный Markdown изменён. Получите актуальную версию и hash")
+                render_profile = SOURCE_CURRENT_PROFILE
+        if _restore_version is None and render_profile == SOURCE_CURRENT_PROFILE and content_format != "markdown":
+            raise HTTPException(422, "Этот материал редактируется по полному оригиналу Markdown")
+        clean_html = _restore_version.text_content if _restore_version else render_material(
+            content, content_format, render_profile=render_profile,
+        )
+        source_block = {
+            "type": "editorial_source", "content": source_payload["source_content"],
+            "format": source_payload["source_format"],
+            **({"render_profile": SOURCE_CURRENT_PROFILE} if render_profile == SOURCE_CURRENT_PROFILE else {}),
+        }
         if (current and current.text_content == clean_html
                 and any(block == source_block for block in (current.blocks or []))):
             return version_payload(step_id, day_number, step, current)

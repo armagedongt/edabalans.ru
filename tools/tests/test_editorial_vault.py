@@ -52,6 +52,35 @@ def vault_fixture(tmp_path, kind="public"):
     return vault, api, tmp_path / "Материал.md"
 
 
+@pytest.mark.parametrize("supported", [False, True])
+def test_source_current_only_server_profile_allows_first_full_md_put(tmp_path, supported):
+    vault, api, file = vault_fixture(tmp_path, "course")
+    state = vault.load()
+    state["items"]["one"].update(base_version=0, unsupported=True)
+    atomic_json(vault.state_path, state)
+    api.version = 0
+    original = api.request
+    def request(method, path, payload=None):
+        result = original(method, path, payload)
+        if method == "GET":
+            result["source_provenance"] = "git_markdown" if api.version == 0 else "editorial_source"
+            if supported:
+                result.update(publication_profile={"type": "api", "render_profile": "masterclass-source-current"},
+                              source_hash=digest(api.text))
+        return result
+    api.request = request
+    vault.refresh()
+    file.write_text("Полный Markdown с правками", encoding="utf-8")
+    row = vault.publish(["one"], owner_edited=True)[0]
+    if supported:
+        assert row["status"] == "published"
+        payload = next(c[2] for c in api.calls if c[0] == "PUT")
+        assert payload["expected_version"] == 0 and payload["expected_source_hash"] == digest("Оригинальный текст\n")
+        assert api.text == "Полный Markdown с правками"
+    else:
+        assert row["status"] == "error" and all(c[0] == "GET" for c in api.calls)
+
+
 def test_invalid_structured_file_does_not_hide_other_materials(tmp_path):
     vault, api, file = vault_fixture(tmp_path)
     state = vault.load()
@@ -102,6 +131,83 @@ def test_graph_activation_and_lost_response_do_not_use_numeric_version_arithmeti
     assert vault.publish(["graph:welcome_intensive"])[0]["status"] == "clean"
     assert len(writes) == 1
     assert vault.load()["items"]["graph:welcome_intensive"]["base_version"] == remote["version"]
+
+
+def legacy_pricing_fixture(tmp_path):
+    from tools.tests.test_editorial_pricing_adapter import API, ITEM, SOURCE
+    from tools.editorial_catalog_adapter import render, normalize
+    api = API()
+    vault = Vault(tmp_path, api)
+    item = {**ITEM, "group": "Каталог", "path": "Цены.md", "format": "markdown", "unsupported": True,
+            "base_version": 4}
+    text = render(item, 4, {"version_number": 4, "status": "active", "name": SOURCE["name"],
+                            "note": SOURCE["note"], "entries": SOURCE["entries"]})
+    item["base_hash"] = digest(normalize(text))
+    vault.state_path.parent.mkdir(parents=True)
+    atomic_json(vault.state_path, {"schema": 1, "items": {"pricing:active": item}})
+    file = tmp_path / item["path"]
+    file.write_text(text, encoding="utf-8")
+    vault.discover = lambda: {"pricing:active": item}
+    return vault, api, file
+
+
+def test_clean_readonly_prices_migrate_in_same_file_to_guarded_original(tmp_path):
+    vault, api, file = legacy_pricing_fixture(tmp_path)
+    assert vault.refresh()[0]["status"] == "clean"
+    item = vault.load()["items"]["pricing:active"]
+    assert item["path"] == "Цены.md" and item["format"] == "pricing-json-v1"
+    assert item["base_version"] == api.active["revision"]
+    assert item["unsupported"] is False
+    assert vault.status()[0]["status"] == "clean"
+    assert all(call[0] == "GET" for call in api.calls)
+
+
+def test_dirty_legacy_prices_are_preserved_without_inventing_new_base(tmp_path):
+    vault, api, file = legacy_pricing_fixture(tmp_path)
+    original_state = vault.load()
+    draft = file.read_text(encoding="utf-8").replace('"100.00"', '"95.00"')
+    file.write_text(draft, encoding="utf-8")
+    assert vault.refresh()[0]["status"] == "error"
+    assert file.read_text(encoding="utf-8") == draft
+    assert vault.load() == original_state
+    assert all(call[0] == "GET" for call in api.calls)
+
+
+def test_price_migration_preserves_edit_made_during_refresh(tmp_path, monkeypatch):
+    vault, api, file = legacy_pricing_fixture(tmp_path)
+    original_state = vault.load()
+    def concurrent_edit(path, expected, replacement):
+        path.write_text("Правка во время обновления", encoding="utf-8")
+        return False
+    monkeypatch.setattr("tools.editorial_vault.update_if_unchanged", concurrent_edit)
+    assert vault.refresh()[0]["status"] == "error"
+    assert file.read_text(encoding="utf-8") == "Правка во время обновления"
+    assert vault.load() == original_state
+
+
+def test_guarded_pricing_publish_recovers_accepted_response_in_same_file(tmp_path):
+    from tools.tests.test_editorial_pricing_adapter import desired
+    vault, api, file = legacy_pricing_fixture(tmp_path)
+    vault.refresh()
+    file.write_text(desired(vault.read(vault.load()["items"]["pricing:active"])), encoding="utf-8")
+    api.lose = "publish"
+    assert vault.publish(["pricing:active"])[0]["status"] == "published"
+    assert vault.status()[0]["status"] == "clean"
+    count = sum(call[0] != "GET" for call in api.calls)
+    assert vault.publish(["pricing:active"])[0]["status"] == "clean"
+    assert sum(call[0] != "GET" for call in api.calls) == count
+
+
+def test_missing_active_prices_never_replace_existing_working_file(tmp_path):
+    vault, api, file = legacy_pricing_fixture(tmp_path)
+    original = file.read_text(encoding="utf-8")
+    original_state = vault.load()
+    api.draft, api.active = api.active, None
+    api.draft["status"] = "draft"
+    assert vault.refresh()[0]["status"] == "error"
+    assert file.read_text(encoding="utf-8") == original
+    assert vault.load() == original_state
+    assert all(call[0] == "GET" for call in api.calls)
 
 
 def test_refresh_keeps_local_draft_and_marks_server_conflict(tmp_path):

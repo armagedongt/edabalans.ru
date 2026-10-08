@@ -29,10 +29,13 @@ def digest(text: str) -> str:
 
 
 def comparable(text: str, kind: str) -> str:
+    if kind == "pricing":
+        from tools.editorial_pricing_adapter import normalize
+        return normalize(text)
     if kind == "graph":
         from tools.editorial_graph_adapter import normalize
         return normalize(text)
-    if kind in ("catalog", "names", "pricing"):
+    if kind in ("catalog", "names"):
         from tools.editorial_catalog_adapter import normalize
         return normalize(text)
     if kind == "bot":
@@ -156,10 +159,13 @@ class Vault:
         return path
 
     def read(self, item: dict) -> dict:
+        if item["kind"] == "pricing":
+            from tools.editorial_pricing_adapter import read
+            return read(self.api, item)
         if item["kind"] == "graph":
             from tools.editorial_graph_adapter import read
             return read(self.api, item)
-        if item["kind"] in ("catalog", "names", "pricing"):
+        if item["kind"] in ("catalog", "names"):
             from tools.editorial_catalog_adapter import read
             return read(self.api, item)
         if item["kind"] == "git":
@@ -176,9 +182,12 @@ class Vault:
             data = raw["article"]
             return {"version": data["version"], "text": data["markdown"], "title": data["title"],
                     "published_version": data.get("published_version", 0), "editorial_status": data.get("editorial_status")}
+        profile = raw.get("publication_profile", {})
+        source_current = profile.get("type") == "api" and profile.get("render_profile") == "masterclass-source-current"
         return {"version": raw["version"], "text": raw.get("source_content", raw["html"]),
                 "title": raw["title"], "format": raw.get("source_format", "html"),
-                "unsupported": raw.get("source_provenance") == "git_markdown" or raw.get("source") == "git_markdown" or ("recipe" in item["id"] and raw.get("recipe_authoring", {}).get("status") != "ready")}
+                "source_hash": raw.get("source_hash") if source_current else None,
+                "unsupported": ((raw.get("source_provenance") == "git_markdown" or raw.get("source") == "git_markdown") and not source_current) or ("recipe" in item["id"] and raw.get("recipe_authoring", {}).get("status") != "ready")}
 
     def status(self) -> list[dict]:
         rows = []
@@ -223,9 +232,13 @@ class Vault:
                 step = material["step_id"]
                 if not re.fullmatch(r"[a-z0-9-]+", step):
                     raise VaultError("Недопустимый ID материала")
-                items[f"course:{course}:{step}"] = {"kind": "course", "group": course,
+                item = {"kind": "course", "group": course, "title": material["title"],
                     "api_path": f"/admin/api/courses/{course}/materials/{step}",
                     "path": f"Курсы/{course}/{step}.md"}
+                profile = material.get("publication_profile", {})
+                if profile.get("type") == "git":
+                    item.update(kind="git", api_path=profile["api_path"], source_path=profile["source_path"])
+                items[f"course:{course}:{step}"] = item
         from tools.editorial_bot_adapter import discover
         items.update(discover(self.api))
         from tools.editorial_email_adapter import discover as discover_emails
@@ -245,12 +258,53 @@ class Vault:
             for ident, seed in discovered.items():
                 item = state["items"].get(ident, seed)
                 try:
+                    if item["kind"] == "course" and seed["kind"] == "git":
+                        if any(item.get(key) for key in ("pending_hash", "pending_draft", "pending_runtime")):
+                            raise VaultError("Сначала разрешите незавершённую публикацию материала через Codex")
+                        replacement = {**item, "kind": "git", "api_path": seed["api_path"],
+                                       "source_path": seed["source_path"], "title": seed["title"]}
+                        remote = self.read({**replacement, "id": ident})
+                        path = self.file(item)
+                        local = path.read_text(encoding="utf-8") if path.exists() else None
+                        remote_hash = digest(comparable(remote["text"], "git"))
+                        dirty = local is not None and digest(comparable(local, "course")) != item["base_hash"]
+                        if dirty and remote_hash != item["base_hash"]:
+                            item["conflict"] = True
+                            state["items"][ident] = item
+                            atomic_json(self.state_path, state)
+                            raise VaultError("Оригинал материала изменился; локальный черновик сохранён для объединения через Codex")
+                        if not dirty and not update_if_unchanged(path, local, remote["text"]):
+                            raise VaultError("Материал изменён во время обновления; локальные правки сохранены")
+                        from tools.editorial_git_adapter import runtime_matches
+                        replacement.update(base_version=remote["version"], base_hash=remote_hash, conflict=False,
+                                           format="markdown", unsupported=False, pending_runtime=not runtime_matches(remote))
+                        state["items"][ident] = replacement
+                        atomic_json(self.state_path, state)
+                        results.append({"id": ident, "status": "draft" if dirty else "clean"})
+                        continue
+                    if item["kind"] == "git" and ident.startswith("course:"):
+                        item = {**item, "title": seed["title"]}
                     remote = self.read({**item, "id": ident})
                     path = self.file(item)
                     local = path.read_text(encoding="utf-8") if path.exists() else None
                     remote_hash = digest(comparable(remote["text"], item["kind"]))
+                    if item["kind"] == "pricing" and "base_hash" in item and item.get("format") != "pricing-json-v1":
+                        from tools.editorial_catalog_adapter import normalize as legacy_normalize
+                        if any(item.get(key) for key in ("pending_hash", "pending_draft", "pending_runtime")):
+                            raise VaultError("Сначала разрешите незавершённую публикацию старого файла цен через Codex")
+                        if local is not None and digest(legacy_normalize(local)) != item["base_hash"]:
+                            raise VaultError("Правки старого файла цен сохранены; Codex поможет перенести их в действующий оригинал")
+                        path.parent.mkdir(parents=True, exist_ok=True)
+                        if not update_if_unchanged(path, local, remote["text"]):
+                            raise VaultError("Файл цен изменён во время обновления; локальные правки сохранены")
+                        item.update(base_version=remote["version"], base_hash=remote_hash, conflict=False,
+                                    title=remote["title"], format=remote["format"], unsupported=False)
+                        state["items"][ident] = item
+                        atomic_json(self.state_path, state)
+                        results.append({"id": ident, "status": "clean"})
+                        continue
                     local_hash = digest(comparable(local, item["kind"])) if local is not None else None
-                    if item["kind"] != "graph" and item.get("pending_hash") == remote_hash and remote["version"] == item.get("pending_base_version", -2) + 1:
+                    if type(remote["version"]) is int and item.get("pending_hash") == remote_hash and remote["version"] == item.get("pending_base_version", -2) + 1:
                         item.update(base_version=remote["version"], base_hash=remote_hash)
                         if item["kind"] == "blog":
                             item["pending_draft"] = remote["version"]
@@ -330,7 +384,7 @@ class Vault:
                     content_hash = digest(comparable(text, item["kind"]))
                     remote = self.read({**item, "id": ident})
                     remote_hash = digest(comparable(remote["text"], item["kind"]))
-                    if item["kind"] != "graph" and item.get("pending_hash") == remote_hash and remote["version"] == item.get("pending_base_version", -2) + 1:
+                    if type(remote["version"]) is int and item.get("pending_hash") == remote_hash and remote["version"] == item.get("pending_base_version", -2) + 1:
                         item.update(base_version=remote["version"], base_hash=remote_hash)
                         if item["kind"] == "blog":
                             item["pending_draft"] = remote["version"]
@@ -359,7 +413,7 @@ class Vault:
                     if content_hash == item["base_hash"] and not item.get("pending_draft") and not activate_graph:
                         results.append({"id": ident, "status": "clean", "message": "Нет изменений"})
                         continue
-                    if item["kind"] == "course":
+                    if item["kind"] == "course" or (item["kind"] == "git" and ident.startswith("course:")):
                         # Codex-authored work uses its writer gate; the owner's manual edits
                         # are published by his explicit desktop action without an AI review.
                         if not owner_edited:
@@ -368,9 +422,13 @@ class Vault:
                             verify_publish_gate(path, gate.with_suffix(".pack.json"), gate.with_suffix(".report.json"))
                         if path.read_text(encoding="utf-8") != text:
                             raise VaultError("Материал изменён во время проверки; отправка отменена")
+                    if item["kind"] == "course":
                         item.update(pending_hash=content_hash, pending_base_version=remote["version"])
                         atomic_json(self.state_path, state)
-                        self.api.request("PUT", item["api_path"], {"expected_version": remote["version"], "content": text, "format": item["format"]})
+                        payload = {"expected_version": remote["version"], "content": text, "format": item["format"]}
+                        if remote["version"] == 0 and remote.get("source_hash"):
+                            payload["expected_source_hash"] = remote["source_hash"]
+                        self.api.request("PUT", item["api_path"], payload)
                     elif item["kind"] in ("public", "homepage"):
                         item.update(pending_hash=content_hash, pending_base_version=remote["version"])
                         atomic_json(self.state_path, state)
@@ -385,6 +443,9 @@ class Vault:
                         publish(self.api, item, text, remote)
                     elif item["kind"] == "graph":
                         from tools.editorial_graph_adapter import publish
+                        publish(self.api, item, text, remote)
+                    elif item["kind"] == "pricing":
+                        from tools.editorial_pricing_adapter import publish
                         publish(self.api, item, text, remote)
                     elif item["kind"] in ("catalog", "names"):
                         from tools.editorial_catalog_adapter import publish

@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import pytest
+from types import SimpleNamespace
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("ADMIN_PASSWORD", "test-app-secret")
@@ -65,6 +66,111 @@ def teardown_function() -> None:
 
 def aware(value: datetime) -> datetime:
     return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value.astimezone(timezone.utc)
+
+
+def test_editorial_list_profiles_current_git_archives_and_current_recipe_originals(monkeypatch):
+    import app.course_material_service as service
+    from app.masterclass_editorial import EDITABLE_MATERIALS
+    client, _ = setup()
+    steps = [{"id": ident, "kind": "article", "title": ident} for ident in EDITABLE_MATERIALS]
+    steps.append({"id": "day-15-recipe-test-original", "kind": "article", "title": "Текущий рецепт",
+                  "nested": True, "required": False, "parentStepId": "day-15-recipes-part-2"})
+    monkeypatch.setattr(service, "course_context", lambda db: SimpleNamespace(days={1: {"steps": steps}}))
+    response = client.get("/admin/api/courses/masterclass-21/materials")
+    assert response.status_code == 200
+    rows = {row["step_id"]: row for row in response.json()["materials"]}
+    current = rows["day-01-article-02"]["publication_profile"]
+    assert current == {"type": "git", "api_path": "/admin/api/editorial/masterclass/materials/day-01-article-02",
+                       "source_path": EDITABLE_MATERIALS["day-01-article-02"]}
+    assert len(rows) == len(steps)
+    for ident, path in EDITABLE_MATERIALS.items():
+        if ident.startswith("day-07-recipe-"):
+            profile = rows[ident]["publication_profile"]
+            assert profile["type"] == "archive" and profile["source_path"] == path
+            assert "api_path" not in profile
+    assert "publication_profile" not in rows["day-15-recipe-test-original"]
+    recipe = client.get("/admin/api/courses/masterclass-21/materials/day-15-recipe-test-original")
+    assert recipe.status_code == 200
+    assert "recipe_authoring" in recipe.json() and recipe.json().get("source") != "git_markdown"
+
+
+def test_git_authoring_runtime_hash_proves_exact_reader_original_and_detects_queued_release(monkeypatch, tmp_path):
+    import app.course_material_routes as routes
+    import app.course_material_service as service
+    from app.masterclass_editorial import editable_material_path
+    from tools.editorial_git_adapter import read, runtime_matches
+    client, factory = setup()
+    step_id = "day-01-article-02"
+    local = tmp_path / "original.md"
+    source = "# Служебный заголовок\r\n\r\n<!-- step_id: day-01-article-02 -->\r\n\r\n## Раздел\r\n\r\nТочное тело.\r\n"
+    local.write_bytes(source.encode("utf-8"))
+    deployed = source.replace("\r\n", "\n")
+    monkeypatch.setattr(service, "local_editable_material", lambda ident: local)
+    monkeypatch.setattr(routes, "local_editable_material", lambda ident: local)
+    main = {"content": deployed, "sha": "a" * 40}
+
+    class Editor:
+        def load(self, ident):
+            assert ident == step_id
+            return {"main": dict(main), "draft": None, "draft_base_main_sha": None}
+
+    monkeypatch.setattr(routes, "editorial_editor", lambda: Editor())
+
+    class API:
+        def request(self, method, path):
+            assert method == "GET"
+            response = client.get(path)
+            assert response.status_code == 200
+            return response.json()
+
+    item = {"api_path": "/admin/api/editorial/masterclass/materials/" + step_id, "title": "Материал"}
+    remote = read(API(), item)
+    assert runtime_matches(remote)
+    course_source = client.get("/admin/api/courses/masterclass-21/materials/" + step_id).json()
+    assert course_source["source_content"] == deployed
+    assert remote["runtime_hash"] == hashlib.sha256(course_source["source_content"].encode("utf-8")).hexdigest()
+    authoring = client.get(item["api_path"]).json()
+    assert authoring["runtime_source"]["path"] == editable_material_path(step_id)
+    with factory() as db:
+        reader = service.published_materials(db, allowed_days={1}, step_id=step_id)["materials"][step_id]
+    assert reader["html"] == course_source["html"] and "Точное тело." in reader["html"]
+    assert "Служебный заголовок" not in reader["html"] and "source_content" not in reader
+    main.update(content=deployed.replace("Точное тело.", "Очередь выпуска."), sha="b" * 40)
+    queued = read(API(), item)
+    assert not runtime_matches(queued)
+    assert queued["runtime_hash"] == remote["runtime_hash"]  # Remote Git hash is not runtime proof.
+
+
+def test_source_current_profile_follows_original_into_database_version(monkeypatch, tmp_path):
+    import app.course_material_service as service
+    client, factory = setup()
+    root = tmp_path / "content"
+    (root / "source-current").mkdir(parents=True)
+    (root / "source-current" / "fallback.md").write_text("## Материал\n\nИсходное тело.\n", encoding="utf-8")
+    step = {"id": "day-03-article-02", "kind": "article", "title": "Материал", "contentAsset": "fallback.md"}
+    monkeypatch.setattr(service, "COURSE_CONTENT_ROOT", root)
+    monkeypatch.setattr(service, "course_context", lambda db: SimpleNamespace(days={3: {"steps": [step]}}))
+    rows = client.get("/admin/api/courses/masterclass-21/materials").json()["materials"]
+    assert rows[0]["publication_profile"]["type"] == "api"
+    assert "api_path" not in rows[0]["publication_profile"]
+    import hashlib
+    original = (root / "source-current" / "fallback.md").read_text(encoding="utf-8")
+    with factory() as db:
+        service.publish_material(db, step_id=step["id"], content="## DB оригинал\n\nДействующий текст.\n",
+                                 content_format="markdown", expected_version=0, admin="test",
+                                 expected_source_hash=hashlib.sha256(original.encode("utf-8")).hexdigest())
+    after = client.get("/admin/api/courses/masterclass-21/materials").json()["materials"]
+    assert after[0]["publication_profile"]["type"] == "api"
+    material = client.get("/admin/api/courses/masterclass-21/materials/" + step["id"]).json()
+    assert material["source_provenance"] == "editorial_source" and "DB оригинал" in material["source_content"]
+
+
+def test_other_course_material_list_does_not_get_masterclass_git_profiles():
+    client, _ = setup()
+    response = client.get("/admin/api/courses/calories/materials")
+    assert response.status_code == 200
+    assert response.json()["materials"]
+    assert all("publication_profile" not in row for row in response.json()["materials"])
 
 
 def test_optional_course_steps_do_not_block_required_progression():
@@ -137,7 +243,7 @@ def test_course_structure_editor_publishes_one_version_and_runtime_uses_it():
     assert conflict.status_code == 409
 
 
-def test_recipe_day_articles_are_not_delivered_without_recipe_access():
+def test_recipe_day_articles_are_not_delivered_without_recipe_access(ordinary_material_sources):
     client, factory = setup()
     manifest = client.get(
         "/api/masterclass/course/manifest?email=member@example.test"
@@ -675,7 +781,14 @@ def test_git_markdown_editor_uses_same_renderer_and_separate_draft(monkeypatch):
     assert calls["draft"][1]["admin"] == "test-admin"
 
 
-def test_course_material_publisher_supports_markdown_history_restore_and_blocks_special_steps():
+@pytest.fixture
+def ordinary_material_sources(monkeypatch, tmp_path):
+    # These tests exercise ordinary DB articles, independently of retained Git originals.
+    import app.course_material_service as material_service
+    monkeypatch.setattr(material_service, "COURSE_CONTENT_ROOT", tmp_path)
+
+
+def test_course_material_publisher_supports_markdown_history_restore_and_blocks_special_steps(ordinary_material_sources):
     client, _ = setup()
     endpoint = "/admin/api/courses/masterclass-21/materials/day-03-article-02"
     first = client.put(
@@ -759,7 +872,7 @@ def test_course_material_publisher_supports_markdown_history_restore_and_blocks_
     assert first_article.json()["published"] is True
 
 
-def test_course_material_markdown_blocks_notes_and_dqs_components():
+def test_course_material_markdown_blocks_notes_and_dqs_components(ordinary_material_sources):
     client, _ = setup()
     endpoint = "/admin/api/courses/masterclass-21/materials/day-04-article-01"
     content = """<!-- редакторский комментарий -->
@@ -3886,7 +3999,7 @@ def test_masterclass_duration_counts_present_video_and_hides_zero_time_steps() -
     ('markdown', '<!-- редакторский комментарий -->\r\n\r\n## Раздел\r\n\r\n**Точный** исходник.\r\n'),
     ('html', '<h2>Раздел</h2>\n<p onclick="bad()">Точный исходник.</p>\n'),
 ])
-def test_course_material_source_roundtrip_restore_and_reader_separation(course_code, content_format, content):
+def test_course_material_source_roundtrip_restore_and_reader_separation(course_code, content_format, content, ordinary_material_sources):
     client, factory = setup()
     listed = client.get(f'/admin/api/courses/{course_code}/materials').json()['materials']
     step_id = 'day-03-article-02' if course_code == 'masterclass-21' else listed[0]['step_id']
@@ -3923,7 +4036,7 @@ def test_course_material_source_roundtrip_restore_and_reader_separation(course_c
 
 
 @pytest.mark.parametrize('course_code', ['masterclass-21', 'calories'])
-def test_course_material_source_only_edits_create_version_and_legacy_html_is_honest(course_code):
+def test_course_material_source_only_edits_create_version_and_legacy_html_is_honest(course_code, ordinary_material_sources):
     client, factory = setup()
     listed = client.get(f'/admin/api/courses/{course_code}/materials').json()['materials']
     step_id = 'day-03-article-02' if course_code == 'masterclass-21' else listed[0]['step_id']

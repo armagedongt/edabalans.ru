@@ -140,3 +140,60 @@ def test_server_trimming_service_fields_is_not_a_false_publication_conflict():
     assert remote["version"] == 4
     assert api.item["purpose"] == original()["purpose"]
     assert api.item["body_source"] == original()["body_source"]
+
+
+@pytest.mark.parametrize("code", ["tpl_intensive_masterclass_followup_image", "tpl_intensive_mid2_photo", "tpl_intensive_reminder_photo"])
+@pytest.mark.parametrize("body", ["", "\n  \n"])
+def test_photo_only_originals_read_and_normalize_without_fabricated_caption(code, body):
+    api = API()
+    api.item.update(code=code, media_kind="photo", media_path="existing-photo.jpg", body_source=body)
+    item = bot.discover(api)["bot:" + code]
+    remote = bot.read(api, item)
+    assert bot.parse(remote["text"])["body_source"] == body
+    assert bot.normalize(remote["text"])[-1] == body
+    assert [method for method, _, _ in api.calls] == ["GET", "GET"]
+    assert api.item["media_path"] == "existing-photo.jpg"
+
+
+@pytest.mark.parametrize("media_kind", ["video", "voice"])
+def test_server_supported_media_only_originals_are_lossless(media_kind):
+    item = original(); item.update(media_kind=media_kind, body_source="")
+    assert bot.parse(bot.render(item))["body_source"] == ""
+
+
+@pytest.mark.parametrize("forged_kind", ["photo", "video_note"])
+def test_media_header_cannot_bypass_actual_server_validation(forged_kind):
+    class ServerValidatedAPI(API):
+        def request(self, method, path, payload=None):
+            if method == "POST" and path.endswith("/validate") and not payload["body_source"].strip():
+                self.calls.append((method, path, copy.deepcopy(payload)))
+                # Actual publication only permits empty video_note with real media.
+                if self.item["media_kind"] != "video_note" or not self.item["media_path"]:
+                    raise ValueError("Нельзя опубликовать пустой текст")
+            return super().request(method, path, payload)
+
+    api = ServerValidatedAPI()
+    forged = copy.deepcopy(api.item); forged.update(media_kind=forged_kind, body_source="")
+    with pytest.raises(ValueError, match="пустой текст"):
+        bot.publish(api, {"code": api.item["code"]}, bot.render(forged), 3)
+    assert len(api.calls) == 1 and api.calls[0][1].endswith("/validate")
+    assert "media_kind" not in api.calls[0][2] and "media_path" not in api.calls[0][2]
+    assert api.item == original()
+
+
+def test_actual_photo_only_publication_rejection_preserves_original_and_never_calls_put():
+    api = API()
+    api.item.update(media_kind="photo", media_path="existing.jpg", body_source="")
+    before = copy.deepcopy(api.item)
+    api.invalid = True  # Existing server publication gate rejects a blank photo caption.
+    with pytest.raises(ValueError, match="Validation rejected"):
+        bot.publish(api, {"code": api.item["code"]}, bot.render(api.item), 3)
+    assert api.item == before and len(api.calls) == 1 and api.calls[0][0] == "POST"
+
+
+@pytest.mark.parametrize("damage", [lambda text: text.replace("media_kind: photo", "media_kind: photo\nmedia_kind: video_note"),
+                                  lambda text: text.replace("media_kind: photo\n", "")])
+def test_photo_only_malformed_header_is_rejected_before_any_request(damage):
+    api = API(); api.item.update(media_kind="photo", body_source="")
+    with pytest.raises(ValueError): bot.publish(api, {"code": api.item["code"]}, damage(bot.render(api.item)), 3)
+    assert api.calls == []

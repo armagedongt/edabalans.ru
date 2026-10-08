@@ -1,7 +1,10 @@
 import os
+import json
+import uuid
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+import pytest
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 
@@ -118,6 +121,203 @@ def seed_draft(factory: sessionmaker[Session]) -> str:
         return str(version.id)
 
 
+def pricing_guards(client: TestClient, version_id: str) -> dict:
+    catalog = client.get("/admin/api/pricing").json()
+    selected = next(version for version in catalog["versions"] if version["id"] == version_id)
+    return {"expected_active": catalog["active_revision"], "expected_draft": selected["revision"]}
+
+
+def publish_pricing(client: TestClient, version_id: str):
+    return client.post(f"/admin/api/pricing/versions/{version_id}/publish",
+                       json={**pricing_guards(client, version_id), "confirm": True})
+
+
+def create_pricing_draft(client: TestClient):
+    catalog = client.get("/admin/api/pricing").json()
+    return client.post("/admin/api/pricing/drafts",
+                       json={"expected_active": catalog["active_revision"], "expected_draft": None})
+
+
+def source_update(source: dict) -> dict:
+    return {"name": source["name"], "note": source["note"], "entries": [
+        {key: entry[key] for key in ("code", "regular_amount", "compare_at_amount", "sale_amount", "enabled")}
+        for entry in source["entries"]]}
+
+
+def active_with_disabled_original(client, factory):
+    initial_id = seed_draft(factory)
+    with factory() as db:
+        db.add(PriceEntry(version_id=uuid.UUID(initial_id), code="product.disabled", section="products",
+            name="Исходный выключенный продукт", resource_codes=["ACCESS_RECIPES"],
+            regular_amount=None, compare_at_amount=None, sale_amount=Decimal("0"), enabled=False,
+            metadata_json={"original": {"items": [None, False, 0, "untouched"]}}, sort_order=999))
+        db.commit()
+    result = publish_pricing(client, initial_id)
+    assert result.status_code == 200
+    return result.json()["version"]
+
+
+def test_guarded_clone_noop_and_update_preserve_full_pricing_original():
+    client, factory = make_client(enabled=True)
+    try:
+        active = active_with_disabled_original(client, factory)
+        draft = create_pricing_draft(client).json()["version"]
+        assert draft["base_active"] == active["revision"]
+        assert draft["authoring_ready"]
+        assert draft["semantic_sha256"] == active["semantic_sha256"]
+        source = deepcopy(draft["source"])
+        source["entries"][0]["metadata"].pop("_editorial_pricing")
+        assert source == active["source"]
+        assert source["entries"][0]["enabled"] is False
+        assert source["entries"][0]["regular_amount"] is None
+        assert source["entries"][0]["sale_amount"] == "0.00"
+        body = {**source_update(draft["source"]), **pricing_guards(client, draft["id"])}
+        unchanged = client.put(f"/admin/api/pricing/versions/{draft['id']}", json=body)
+        assert unchanged.status_code == 200
+        assert unchanged.json()["version"]["revision"] == draft["revision"]
+        body["entries"][1]["sale_amount"] = "14900.01"
+        updated = client.put(f"/admin/api/pricing/versions/{draft['id']}", json=body)
+        assert updated.status_code == 200
+        assert updated.json()["version"]["version_number"] == draft["version_number"]
+        assert updated.json()["version"]["revision"] != draft["revision"]
+        assert updated.json()["version"]["base_active"] == active["revision"]
+        snapshot = client.get("/admin/api/pricing").json()
+        assert client.put(f"/admin/api/pricing/versions/{draft['id']}", json=body).status_code == 409
+        assert client.get("/admin/api/pricing").json() == snapshot
+        stored_active = next(row for row in snapshot["versions"] if row["status"] == "active")
+        assert stored_active["source"] == active["source"]
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_existing_foreign_draft_is_never_adopted_and_create_replay_is_safe():
+    client, factory = make_client(enabled=True)
+    try:
+        active_with_disabled_original(client, factory)
+        draft = create_pricing_draft(client).json()["version"]
+        before = client.get("/admin/api/pricing").json()
+        assert create_pricing_draft(client).status_code == 409
+        assert client.get("/admin/api/pricing").json() == before
+        assert before["draft_revision"] == draft["revision"]
+        assert len(before["versions"]) == 2
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_activation_and_accepted_response_replay_keep_original_history_without_payment():
+    client, factory = make_client(enabled=True)
+    try:
+        active = active_with_disabled_original(client, factory)
+        draft = create_pricing_draft(client).json()["version"]
+        guards = pricing_guards(client, draft["id"])
+        body = source_update(draft["source"])
+        body["entries"][1]["sale_amount"] = "14900.01"
+        saved = client.put(f"/admin/api/pricing/versions/{draft['id']}", json={**guards, **body})
+        assert saved.status_code == 200
+        publish_body = {**pricing_guards(client, draft["id"]), "confirm": True}
+        accepted = client.post(f"/admin/api/pricing/versions/{draft['id']}/publish", json=publish_body)
+        assert accepted.status_code == 200
+        assert accepted.json()["live_consumption_enabled"] is True
+        assert accepted.json()["version"]["status"] == "active"
+        replay = client.post(f"/admin/api/pricing/versions/{draft['id']}/publish", json=publish_body)
+        assert replay.status_code == 200
+        assert replay.json()["already_active"] is True
+        assert replay.json()["version"] == accepted.json()["version"]
+        history = client.get("/admin/api/pricing").json()["versions"]
+        assert len(history) == 2
+        assert sum(version["status"] == "active" for version in history) == 1
+        archived = next(version for version in history if version["status"] == "archived")
+        assert archived["source"] == active["source"]
+        assert archived["revision"] == active["revision"]
+        with factory() as db:
+            assert db.scalar(select(func.count(Payment.id))) == 0
+            assert db.scalar(select(func.count(OfferCheckout.id))) == 0
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_stale_draft_base_is_rejected_even_with_refetched_current_active_revision():
+    client, factory = make_client(enabled=True)
+    try:
+        active = active_with_disabled_original(client, factory)
+        draft = create_pricing_draft(client).json()["version"]
+        # Simulate an independent controlled catalog publication, outside this draft.
+        with factory() as db:
+            db.get(PricingVersion, uuid.UUID(active["id"])).status = "archived"
+            version = PricingVersion(version_number=3, name="Independent active", status="active", created_by="test")
+            db.add(version); db.flush()
+            db.add(PriceEntry(version_id=version.id, code="site.masterclass.consult", section="site_tariffs",
+                name="Independent", sale_amount=Decimal("12000"), resource_codes=["ACCESS_MASTERCLASS"]))
+            db.commit()
+        before = client.get("/admin/api/pricing").json()
+        fresh = pricing_guards(client, draft["id"])
+        assert fresh["expected_active"] != active["revision"]
+        assert client.put(f"/admin/api/pricing/versions/{draft['id']}", json={**fresh, **source_update(draft["source"])}).status_code == 409
+        assert client.post(f"/admin/api/pricing/versions/{draft['id']}/publish", json={**fresh, "confirm": True}).status_code == 409
+        assert client.get("/admin/api/pricing").json() == before
+    finally:
+        app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize("case", ["missing_guard", "unknown_system_field", "missing_price", "fraction", "duplicate", "missing_row", "wrong_hash"])
+def test_guarded_write_rejects_unsafe_or_stale_input_atomically(case):
+    client, factory = make_client(enabled=True)
+    try:
+        active_with_disabled_original(client, factory)
+        draft = create_pricing_draft(client).json()["version"]
+        body = {**source_update(draft["source"]), **pricing_guards(client, draft["id"])}
+        if case == "missing_guard": del body["expected_active"]
+        elif case == "unknown_system_field": body["entries"][0]["resource_codes"] = []
+        elif case == "missing_price": del body["entries"][0]["compare_at_amount"]
+        elif case == "fraction": body["entries"][1]["sale_amount"] = "100.001"
+        elif case == "duplicate": body["entries"].append(deepcopy(body["entries"][0]))
+        elif case == "missing_row": body["entries"].pop()
+        elif case == "wrong_hash": body["expected_draft"]["sha256"] = "0" * 64
+        before = client.get("/admin/api/pricing").json()
+        response = client.put(f"/admin/api/pricing/versions/{draft['id']}", json=body)
+        assert response.status_code == (409 if case == "wrong_hash" else 422)
+        assert client.get("/admin/api/pricing").json() == before
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_semantic_hash_strips_only_valid_provenance_on_the_first_code():
+    from app.pricing_service import source_hash
+    source = {"schema_version": 1, "name": "Original", "note": None, "entries": [
+        {"code": "a", "metadata": {}}, {"code": "b", "metadata": {}}]}
+    original_hash = source_hash(source, semantic=True)
+    source["entries"][0]["metadata"]["_editorial_pricing"] = {"schema_version": 1, "owner": "platform.commerce", "base_active": None}
+    assert source_hash(source, semantic=True) == original_hash
+    source["entries"][0]["metadata"]["_editorial_pricing"]["business"] = "must stay original"
+    assert source_hash(source, semantic=True) != original_hash
+    source["entries"][0]["metadata"].clear()
+    source["entries"][1]["metadata"]["_editorial_pricing"] = {"schema_version": 1, "owner": "platform.commerce", "base_active": None}
+    assert source_hash(source, semantic=True) != original_hash
+
+
+def test_existing_admin_enabled_edit_remains_available_under_revision_guards():
+    client, factory = make_client(enabled=True)
+    try:
+        active = active_with_disabled_original(client, factory)
+        draft = create_pricing_draft(client).json()["version"]
+        body = {**source_update(draft["source"]), **pricing_guards(client, draft["id"])}
+        body["entries"][0]["enabled"] = True
+        saved = client.put(f"/admin/api/pricing/versions/{draft['id']}", json=body)
+        assert saved.status_code == 200
+        assert saved.json()["version"]["source"]["entries"][0]["enabled"] is True
+        assert saved.json()["version"]["revision"] != draft["revision"]
+        assert client.put(f"/admin/api/pricing/versions/{draft['id']}", json=body).status_code == 409
+        current = client.get("/admin/api/pricing").json()
+        assert next(version for version in current["versions"] if version["status"] == "active")["source"] == active["source"]
+    finally:
+        app.dependency_overrides.clear()
+
+
+def update_pricing(client: TestClient, version_id: str, *, json: dict):
+    return client.put(f"/admin/api/pricing/versions/{version_id}",
+                      json={**json, **pricing_guards(client, version_id)})
+
+
 def test_draft_is_editable_but_does_not_change_public_prices() -> None:
     client, factory = make_client(enabled=False)
     version_id = seed_draft(factory)
@@ -127,8 +327,8 @@ def test_draft_is_editable_but_does_not_change_public_prices() -> None:
     assert catalog.json()["live_consumption_enabled"] is False
     assert catalog.json()["versions"][0]["entries"][0]["sale_amount"] == 15900
 
-    update = client.put(
-        f"/admin/api/pricing/versions/{version_id}",
+    update = update_pricing(
+        client, version_id,
         json={
             "name": "Цены для нового сайта",
             "note": "Пока выключено",
@@ -195,12 +395,12 @@ def test_product_catalog_keeps_technical_connections_out_of_editor() -> None:
 def test_published_version_is_immutable_and_new_draft_is_a_copy() -> None:
     client, factory = make_client(enabled=False)
     version_id = seed_draft(factory)
-    published = client.post(f"/admin/api/pricing/versions/{version_id}/publish")
+    published = publish_pricing(client, version_id)
     assert published.status_code == 200
     assert published.json()["version"]["status"] == "active"
 
-    rejected = client.put(
-        f"/admin/api/pricing/versions/{version_id}",
+    rejected = update_pricing(
+        client, version_id,
         json={
             "name": "Нельзя поменять",
             "entries": [
@@ -215,12 +415,12 @@ def test_published_version_is_immutable_and_new_draft_is_a_copy() -> None:
         },
     )
     assert rejected.status_code == 409
-    copied = client.post("/admin/api/pricing/drafts")
+    copied = create_pricing_draft(client)
     assert copied.status_code == 200
     assert copied.json()["version"]["version_number"] == 2
     assert copied.json()["version"]["entries"][0]["sale_amount"] == 15900
     copied_id = copied.json()["version"]["id"]
-    republished = client.post(f"/admin/api/pricing/versions/{copied_id}/publish")
+    republished = publish_pricing(client, copied_id)
     assert republished.status_code == 200
     assert republished.json()["version"]["status"] == "active"
     catalog = client.get("/admin/api/pricing")
@@ -251,7 +451,7 @@ def test_preview_reads_prices_and_preview_checkout_requires_published_version() 
         version = db.scalar(select(PricingVersion).where(PricingVersion.version_number == version_id))
         assert version is not None
         publish_id = str(version.id)
-    assert client.post(f"/admin/api/pricing/versions/{publish_id}/publish").status_code == 200
+    assert publish_pricing(client, publish_id).status_code == 200
     assert "/api/pricing/site/preview-checkout" not in client.get("/openapi.json").json()["paths"]
     with factory() as db:
         db.add(
@@ -294,7 +494,7 @@ def test_preview_reads_prices_and_preview_checkout_requires_published_version() 
 def test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot() -> None:
     client, factory = make_client(enabled=True)
     version_id = seed_draft(factory)
-    assert client.post(f"/admin/api/pricing/versions/{version_id}/publish").status_code == 200
+    assert publish_pricing(client, version_id).status_code == 200
 
     prices = client.get("/api/pricing/site")
     assert prices.status_code == 200
@@ -344,7 +544,7 @@ def test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot() -> No
 def test_public_checkout_rejects_tampered_amount_without_creating_payment() -> None:
     client, factory = make_client(enabled=True)
     version_id = seed_draft(factory)
-    assert client.post(f"/admin/api/pricing/versions/{version_id}/publish").status_code == 200
+    assert publish_pricing(client, version_id).status_code == 200
     checkout_response = client.post(
         "/api/pricing/site/checkout",
         json={"price_code": "site.masterclass.consult"},
@@ -375,7 +575,7 @@ def test_public_checkout_rejects_tampered_amount_without_creating_payment() -> N
 def test_intensive_offer_discounts_checkout_but_binds_access_to_payer_email() -> None:
     client, factory = make_client(enabled=True)
     version_id = seed_draft(factory)
-    assert client.post(f"/admin/api/pricing/versions/{version_id}/publish").status_code == 200
+    assert publish_pricing(client, version_id).status_code == 200
 
     with factory() as db:
         user = User(display_name="Клиент из Telegram", data_origin="native")
