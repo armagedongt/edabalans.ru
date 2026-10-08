@@ -9,6 +9,7 @@
 
 | Слой | Состояние | Адрес |
 |---|---|---|
+| Каталог упражнений по мышцам | 09.10.2026 создан отдельный справочный материал: все 50 упражнений действующего каталога, 12 групп целевых мышц; названия перенесены дословно, структурная проверка Писаря — pass. Материал локальный, в runtime курса не опубликован | [Рабочий материал](<D:/Codex/work/edabalans-materials/Курс по тренировкам/Силовой тренинг/Каталог упражнений по мышцам.md>); источник названий и целевых мышц — `backend/app/strength_exercise_guides.json` модуля `products.strength` |
 | Авторская позиция и замечания | Зафиксированы дословно; основание принятых требований | [Постановка](../../../../work/training-course-design/01-owner-position.md), [пересборка](../../../../work/training-course-design/13-owner-rebuild-2026-09-01.md), [второй раунд](../../../../work/training-course-design/16-owner-notes-2026-09-01-round2.md) |
 | Дерево программы | v3.1 принято 01.09.2026 | Текущий владелец — [программа](COURSE_PROGRAM.md); [историческое дерево](../../../../work/training-course-design/17-course-program-v3.1-tree.md) |
 | Посмысловой сценарий | v3.2, 28 единиц: функции, тезисы, практика, выходы и незаполненные слоты; не принят | [Blueprint](../../../../work/training-course-design/18-course-content-blueprint-v1.md) и [аудит](../../../../work/training-course-design/19-course-content-blueprint-audit-v1.md) |
