@@ -1,41 +1,41 @@
-/* Shared reading layer. The course shell owns navigation, not authored MD. */
-#article{--article-link:#118ed8;--article-action-bg:#27aff5;--article-action-color:#fff;font-family:Manrope,Arial,sans-serif;color:#17191e;font-size:18px;line-height:1.65}
-#article p,#article li{max-width:none;font:400 18px/1.65 Manrope,Arial,sans-serif;color:inherit;letter-spacing:normal}
-#article p{margin:0 0 18px}
-#article strong{font-weight:600;color:inherit;font-size:inherit}
-#article h1{font:800 clamp(32px,3.6vw,44px)/1.12 Manrope,Arial,sans-serif;letter-spacing:-.035em;color:inherit;margin:0 0 28px;overflow-wrap:normal}
-#article h2{font:800 29px/1.2 Manrope,Arial,sans-serif;letter-spacing:-.025em;color:inherit;margin:44px 0 14px;scroll-margin-top:90px}
-#article h3{font:800 23px/1.25 Manrope,Arial,sans-serif;color:inherit;margin:32px 0 10px;scroll-margin-top:90px}
-#article a{color:var(--article-link);font-weight:600;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
-#article a:hover{color:#0c76b5}
-#article ul,#article ol{margin:20px 0;padding-left:26px}
-#article li{margin:8px 0}
-#article ul.article-recipe-roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 16px;list-style:none;padding:0;margin:16px 0 24px}
-#article .article-recipe-roles li{display:flex;align-items:center;gap:8px;margin:0;font-size:15px;line-height:1.5}
-#article .article-recipe-roles li:only-child{grid-column:1/-1}
-#article .article-role-check{position:relative;display:inline-block;flex:0 0 14px;width:14px;height:14px;box-sizing:border-box;border:1px solid #a2abb4;border-radius:3px}
-#article .article-role-checked{border-color:#118ed8;background:#118ed8}
-#article .article-role-checked::after{content:"";position:absolute;left:4px;top:1px;width:3px;height:7px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
-#article .article-role-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-#article blockquote{margin:24px 0;padding:0 0 0 20px;border:0;border-left:4px solid #f39a2f;border-radius:0;background:none;box-shadow:none;color:inherit}
-#article blockquote p{font-size:inherit;line-height:inherit}
-#article figure{margin:24px 0 28px;width:100%}
-#article img,#article .article-inline-image,#article .article-hero-image{display:block;width:auto;max-width:100%;height:auto;margin:24px auto 28px;border-radius:14px;object-fit:contain}
-#article figure img{margin:0 auto}
-#article .article-inline-image,#article .article-hero-image,#article figure>img{width:100%}
-#article figcaption{font:400 14px/1.45 Manrope,Arial,sans-serif;color:#46515b;margin-top:10px}
-#article .article-note-accent,#article .article-spoiler,#article .article-copy-block{font-family:inherit}
-#article .article-copy-block pre{font:inherit;letter-spacing:normal}
-#article .article-note-accent strong{font-weight:600}
-#article .article-actions a,#article .article-copy-button{font-family:inherit}
-#article .article-actions a{color:var(--article-action-color);text-decoration:none}
-#article .article-actions a:hover{background:#118ed8;color:#fff}
-#article .article-copy-button:hover{background:#eaf8ff}
+/* Shared reading layer for course/blog articles and product descriptions. */
+:is(#article,.edb-program-card){--article-link:#118ed8;--article-action-bg:#27aff5;--article-action-color:#fff;font-family:Manrope,Arial,sans-serif;color:var(--article-ink,#17191e);font-size:18px;line-height:1.65}
+:is(#article,.edb-program-card) p,:is(#article,.edb-program-card) li{max-width:none;font:400 18px/1.65 Manrope,Arial,sans-serif;color:inherit;letter-spacing:normal}
+:is(#article,.edb-program-card) p{margin:0 0 18px}
+:is(#article,.edb-program-card) strong{font-weight:600;color:inherit;font-size:inherit}
+:is(#article,.edb-program-card) h1{font:800 clamp(32px,3.6vw,44px)/1.12 Manrope,Arial,sans-serif;letter-spacing:-.035em;color:inherit;margin:0 0 28px;overflow-wrap:normal}
+:is(#article,.edb-program-card) h2{font:800 29px/1.2 Manrope,Arial,sans-serif;letter-spacing:-.025em;color:inherit;margin:44px 0 14px;scroll-margin-top:90px}
+:is(#article,.edb-program-card) h3{font:800 23px/1.25 Manrope,Arial,sans-serif;color:inherit;margin:32px 0 10px;scroll-margin-top:90px}
+:is(#article,.edb-program-card) a{color:var(--article-link);font-weight:600;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+:is(#article,.edb-program-card) a:hover{color:var(--article-link-hover,#0c76b5)}
+:is(#article,.edb-program-card) ul,:is(#article,.edb-program-card) ol{margin:20px 0;padding-left:26px}
+:is(#article,.edb-program-card) li{margin:8px 0}
+:is(#article,.edb-program-card) ul.article-recipe-roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 16px;list-style:none;padding:0;margin:16px 0 24px}
+:is(#article,.edb-program-card) .article-recipe-roles li{display:flex;align-items:center;gap:8px;margin:0;font-size:15px;line-height:1.5}
+:is(#article,.edb-program-card) .article-recipe-roles li:only-child{grid-column:1/-1}
+:is(#article,.edb-program-card) .article-role-check{position:relative;display:inline-block;flex:0 0 14px;width:14px;height:14px;box-sizing:border-box;border:1px solid #a2abb4;border-radius:3px}
+:is(#article,.edb-program-card) .article-role-checked{border-color:#118ed8;background:#118ed8}
+:is(#article,.edb-program-card) .article-role-checked::after{content:"";position:absolute;left:4px;top:1px;width:3px;height:7px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+:is(#article,.edb-program-card) .article-role-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+:is(#article,.edb-program-card) blockquote{margin:24px 0;padding:0 0 0 20px;border:0;border-left:4px solid #f39a2f;border-radius:0;background:none;box-shadow:none;color:inherit}
+:is(#article,.edb-program-card) blockquote p{font-size:inherit;line-height:inherit}
+:is(#article,.edb-program-card) figure{margin:24px 0 28px;width:100%}
+:is(#article,.edb-program-card) img,:is(#article,.edb-program-card) .article-inline-image,:is(#article,.edb-program-card) .article-hero-image{display:block;width:auto;max-width:100%;height:auto;margin:24px auto 28px;border-radius:14px;object-fit:contain}
+:is(#article,.edb-program-card) figure img{margin:0 auto}
+:is(#article,.edb-program-card) .article-inline-image,:is(#article,.edb-program-card) .article-hero-image,:is(#article,.edb-program-card) figure>img{width:100%}
+:is(#article,.edb-program-card) figcaption{font:400 14px/1.45 Manrope,Arial,sans-serif;color:#46515b;margin-top:10px}
+:is(#article,.edb-program-card) .article-note-accent,:is(#article,.edb-program-card) .article-spoiler,:is(#article,.edb-program-card) .article-copy-block{font-family:inherit}
+:is(#article,.edb-program-card) .article-copy-block pre{font:inherit;letter-spacing:normal}
+:is(#article,.edb-program-card) .article-note-accent strong{font-weight:600}
+:is(#article,.edb-program-card) .article-actions a,:is(#article,.edb-program-card) .article-copy-button{font-family:inherit}
+:is(#article,.edb-program-card) .article-actions a{color:var(--article-action-color);text-decoration:none}
+:is(#article,.edb-program-card) .article-actions a:hover{background:#118ed8;color:#fff}
+:is(#article,.edb-program-card) .article-copy-button:hover{background:#eaf8ff}
 @media(max-width:620px){
- #article,#article p,#article li{font-size:17px}
- #article ul.article-recipe-roles{grid-template-columns:repeat(2,minmax(0,1fr))}
- #article h1{font-size:32px;margin-bottom:22px}
- #article h2{font-size:25px}
- #article h3{font-size:21px}
- #article img,#article .article-inline-image,#article .article-hero-image{max-width:100%;margin-left:auto;margin-right:auto}
+ :is(#article,.edb-program-card),:is(#article,.edb-program-card) p,:is(#article,.edb-program-card) li{font-size:17px}
+ :is(#article,.edb-program-card) ul.article-recipe-roles{grid-template-columns:repeat(2,minmax(0,1fr))}
+ :is(#article,.edb-program-card) h1{font-size:32px;margin-bottom:22px}
+ :is(#article,.edb-program-card) h2{font-size:25px}
+ :is(#article,.edb-program-card) h3{font-size:21px}
+ :is(#article,.edb-program-card) img,:is(#article,.edb-program-card) .article-inline-image,:is(#article,.edb-program-card) .article-hero-image{max-width:100%;margin-left:auto;margin-right:auto}
 }

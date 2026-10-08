@@ -1303,8 +1303,8 @@
       #edb-pricing-neurozeh-v1 .edb-pricing-intro{text-align:left}
     }
   </style>
-  <link rel="stylesheet" href="/assets/public-program-card.css?v=20260917-3">
-  <script src="/assets/public-program-card.js?v=20260917-3"></script>
+  <link rel="stylesheet" href="/assets/public-program-card.css?v=20261008-unified">
+  <script src="/assets/public-program-card.js?v=20261008-unified"></script>
 </head>
 <body data-page-theme="blue-mist">
   <script>
@@ -1906,7 +1906,7 @@
       color: rgba(255, 255, 255, .88);
     }
 
-    #edb-pricing-neurozeh-v1 ul {
+    #edb-pricing-neurozeh-v1 ul:not(:where(.edb-program-card ul)) {
       display: grid;
       gap: 11px;
       margin: 22px 0 0;
@@ -1914,7 +1914,7 @@
       list-style: none;
     }
 
-    #edb-pricing-neurozeh-v1 li {
+    #edb-pricing-neurozeh-v1 li:not(:where(.edb-program-card li)) {
       display: grid;
       grid-template-columns: 24px 1fr;
       gap: 11px;
@@ -2760,7 +2760,7 @@
     @media(min-width:720px){.anya-story__viewport{margin-right:0;margin-left:0}.anya-story__track{padding:18px 0 42px}}
     @media(prefers-reduced-motion:reduce){.anya-swipe-tilda__cards,.anya-swipe-tilda__hand,.anya-swipe-finger svg,.anya-swipe-nudge i{animation:none}}
 
-    #edb-pricing-neurozeh-v1 .edb-product-overlay-points > p {
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-points:not(.edb-program-card) > p {
       margin: 0 0 16px;
       color: #4f5965;
       font-size: 16px;
@@ -2768,8 +2768,8 @@
       line-height: 1.6;
     }
 
-    #edb-pricing-neurozeh-v1 .edb-product-overlay-points > h2,
-    #edb-pricing-neurozeh-v1 .edb-product-overlay-points > h3 {
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-points:not(.edb-program-card) > h2,
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-points:not(.edb-program-card) > h3 {
       margin: 12px 0 0;
       padding: 18px 0 8px;
       border-top: 1px solid #dfe5ea;
@@ -2780,7 +2780,7 @@
       line-height: 1.3;
     }
 
-    #edb-pricing-neurozeh-v1 .edb-product-overlay-points > h2 + p {
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-points:not(.edb-program-card) > h2 + p {
       margin: 0 0 16px;
       color: #4f5965;
       font-size: 16px;
@@ -2788,7 +2788,7 @@
       line-height: 1.6;
     }
 
-    #edb-pricing-neurozeh-v1 .edb-product-overlay-points > ul {
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-points:not(.edb-program-card) > ul {
       margin: 10px 0 24px;
       padding-left: 22px;
       color: #4f5965;
@@ -2797,13 +2797,8 @@
       line-height: 1.6;
     }
 
-    #edb-pricing-neurozeh-v1 .edb-product-overlay-points > ul > li {
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-points:not(.edb-program-card) > ul > li {
       margin: 0 0 8px;
-    }
-
-    #edb-pricing-neurozeh-v1 .edb-product-overlay-points .edb-program-card__sections {
-      display: block !important;
-      column-count: 1 !important;
     }
 
     #edb-pricing-neurozeh-v1 .edb-product-overlay-point {

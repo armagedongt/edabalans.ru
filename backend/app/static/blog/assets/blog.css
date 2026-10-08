@@ -224,13 +224,14 @@ html[data-theme="dark"] .card-tag { background: var(--cloud); color: #fff; }
 .article-hero figure img { width: 100%; height: auto; display: block; object-fit: contain; }
 .article-layout { width: min(760px, 100%); margin: 28px auto 0; }
 .article-body { width: 100%; margin: 0; }
-/* Geometry/typography come from the same shared CSS as the masterclass.
-   The blog owns only its existing palette and the approved product plaque. */
-#article { color: var(--text); --article-link: var(--blue); --article-note-bg: var(--note-bg); }
+/* Article bodies use the cabinet reading layer; blog navigation and CTA keep their palette. */
 #article h2, #article h3 { scroll-margin-top: 110px; }
-#article a:hover { color: var(--blue); }
-#article blockquote { border-left-color: var(--orange); }
-#article .article-note-accent { color: var(--note-text); }
+html[data-theme="dark"] #article {
+  --article-ink: var(--text);
+  --article-link: #69c9ff;
+  --article-link-hover: #69c9ff;
+  --article-note-bg: #51472b;
+}
 #article figcaption { color: var(--muted); text-align: center; }
 .toc-dock { position: fixed; z-index: 28; bottom: 24px; right: 24px; }
 .toc-button { padding: 11px 16px; border: 1px solid color-mix(in srgb, var(--blue) 45%, var(--border)); border-radius: 11px; background: var(--surface); color: var(--blue); box-shadow: 0 8px 24px rgba(36, 54, 75, .09); font-size: 14px; font-weight: 800; cursor: pointer; }

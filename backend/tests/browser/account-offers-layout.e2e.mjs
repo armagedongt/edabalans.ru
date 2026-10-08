@@ -11,6 +11,8 @@ const accountFragment = await readFile(new URL('apps/account.html', staticRoot),
 const accountCss = await readFile(new URL('account-visual.css', staticRoot), 'utf8');
 const accountThemeCss = await readFile(new URL('account-theme.css', staticRoot), 'utf8');
 const masterclassCss = await readFile(new URL('masterclass.css', staticRoot), 'utf8');
+const articleTypography = await readFile(new URL('../../../content/article-components/typography.css', import.meta.url), 'utf8');
+const articleNote = await readFile(new URL('../../../content/article-components/note.css', import.meta.url), 'utf8');
 const programCardCss = await readFile(new URL('public-program-card.css', staticRoot), 'utf8');
 const programCardJs = await readFile(new URL('public-program-card.js', staticRoot), 'utf8');
 const masterclassJs = await readFile(new URL('masterclass.js', staticRoot), 'utf8');
@@ -116,7 +118,7 @@ async function captureOffers() {
     window.EdabalansIdentity={email:'sergey@example.test',source:'native'};
     window.fetch=function(){return Promise.resolve(new Response(${JSON.stringify(JSON.stringify(offerData))},{status:200,headers:{'Content-Type':'application/json'}}));};
   </script>`;
-  await page.setContent(`<!doctype html><meta charset="utf-8"><style>${manropeFace}</style><style id="edabalans-masterclass-css">${masterclassCss}</style><style>${programCardCss}</style><style>${accountThemeCss}</style><div id="masterclass-offers-app"></div>${setup}<script>${programCardJs}</script><script>${masterclassJs}</script>`, {waitUntil: 'domcontentloaded'});
+  await page.setContent(`<!doctype html><meta charset="utf-8"><style>${manropeFace}</style><style id="edabalans-masterclass-css">${masterclassCss}</style><style>${articleTypography}${articleNote}${programCardCss.replace(/^@import[^;]+;/gm, '')}</style><style>${accountThemeCss}</style><div id="masterclass-offers-app"></div>${setup}<script>${programCardJs}</script><script>${masterclassJs}</script>`, {waitUntil: 'domcontentloaded'});
   await page.locator('.mc-offer-card').first().waitFor();
   await page.evaluate(() => document.fonts.ready);
   assert(await page.evaluate(() => document.fonts.check('16px Manrope')), 'Manrope fixture font is unavailable');
@@ -132,7 +134,8 @@ async function captureOffers() {
   await page.screenshot({path: `${out}/offers-dark-360.png`, fullPage: true});
   await page.evaluate(() => { document.documentElement.dataset.accountTheme = 'light'; });
   await page.locator('[data-product-info="recipes"]').click();
-  await page.locator('.edb-program-card__section').first().waitFor();
+  await page.locator('.edb-program-card h3').first().waitFor();
+  assert.equal(await page.locator('.edb-program-card').evaluate(el => el.innerHTML), offerData.product_presentations.recipes.canonical_html, 'product content and order must remain unchanged');
   for (const width of [360, 1440]) {
     await page.setViewportSize({width, height: 1000});
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `offer details overflow at ${width}`);
@@ -140,8 +143,8 @@ async function captureOffers() {
   }
   await page.evaluate(() => { document.documentElement.dataset.accountTheme = 'dark'; });
   await page.setViewportSize({width: 360, height: 1000});
-  assert.equal(await page.locator('.edb-program-card>blockquote').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(38, 52, 66)');
-  assert.equal(await page.locator('.edb-program-card>blockquote p').evaluate(el => getComputedStyle(el).color), 'rgb(189, 199, 209)');
+  assert.equal(await page.locator('.edb-program-card>blockquote').evaluate(el => getComputedStyle(el).backgroundColor), 'rgba(0, 0, 0, 0)');
+  assert.equal(await page.locator('.edb-program-card>blockquote p').evaluate(el => getComputedStyle(el).color), 'rgb(237, 241, 245)');
   await page.screenshot({path: `${out}/offer-recipes-dark-360.png`, fullPage: true});
   await page.close();
 }

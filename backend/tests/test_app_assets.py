@@ -616,12 +616,12 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert program_card_js.status_code == 200
     assert program_card_css.status_code == 200
     assert "canonical_html" in offers_js.text
-    assert "edb-program-card__sections" in program_card_js.text
+    assert "EdabalansProgramCard" in program_card_js.text
     assert "o.code==='single:consultation'?' is-featured':''" in offers_js.text
     assert ".mc-offer-card.is-featured" in offers_css.text
     assert ".mc.mc-offer-page{--ink:#17191e" in offers_css.text.replace("\r\n", "\n")
     assert "font:500 16px/1.55 Manrope,Arial,sans-serif" in offers_css.text
-    assert "font-family:Manrope,Arial,sans-serif" in program_card_css.text
+    assert "/assets/article-typography.css" in program_card_css.text
     assert "fonts.googleapis.com/css2?family=Manrope" in client.get("/apps/masterclass-offers.html").text
     theme_css = client.get("/assets/account-theme.css").text
     assert 'html[data-account-theme="dark"] .mc.mc-offer-page' in theme_css
