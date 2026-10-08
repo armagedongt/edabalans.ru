@@ -18,7 +18,7 @@ function fixture(type) {
   ];
   const sessions = Array.from({ length: 6 }, (_, i) => ({ session_id: `s${i + 1}`, workout_type: i % 2 + 1, session_number: i + 1, date: '2026-09-21' }));
   const exercises = sessions.flatMap((session) => ['bench', 'triceps', 'row', 'history-only'].map((id, i) => ({ session_id: session.session_id, exercise_id: id, exercise_name: catalog.find((item) => item.exercise_id === id)?.exercise_name || 'Историческое упражнение', sort_order: i + 1, note: session.session_id === 's3' ? '' : sampleNote })));
-  return { version: 1, exercise_catalog: type === 3 ? catalog.map((item) => ({ ...item, active: false })) : catalog, sessions, session_exercises: exercises, sets: exercises.flatMap((exercise) => Array.from({ length: 4 }, (_, i) => ({ ...exercise, set_number: i + 1, plan_weight: '40', plan_reps: '10', fact_weight: exercise.session_id === 's1' && ['bench', 'triceps'].includes(exercise.exercise_id) ? '35' : '', fact_reps: '', rpe: exercise.session_id === 's1' && exercise.exercise_id === 'triceps' && i === 0 ? '7' : '' }))) };
+  return { version: 1, exercise_catalog: type === 3 ? catalog.map((item) => ({ ...item, active: false })) : catalog, sessions, session_exercises: exercises, sets: exercises.flatMap((exercise) => Array.from({ length: 4 }, (_, i) => ({ ...exercise, set_number: i + 1, plan_weight: '40', plan_reps: '10', fact_weight: exercise.session_id === 's1' && ['bench', 'triceps'].includes(exercise.exercise_id) && !(exercise.exercise_id === 'triceps' && i === 3) ? '35' : '', fact_reps: '', rpe: exercise.session_id === 's1' && exercise.exercise_id === 'triceps' ? (i === 0 ? '7' : i === 3 ? '8' : '') : '' }))) };
 }
 
 try {
@@ -99,7 +99,7 @@ try {
     await page.evaluate(() => { window.__saveBodies = []; });
     await page.getByRole('button', { name: 'Предыдущая тренировка', exact: true }).click();
     await page.getByText('Тренировка №3', { exact: true }).waitFor();
-    const copyButton = page.locator(width > 700 ? '.st-ex-row' : '.st-modern-exercise', { hasText: 'Жим штанги' }).locator(width > 700 ? '.st-ex-day.current .st-copy-forward' : '.st-modern-copy');
+    const copyButton = page.locator(width > 700 ? '.st-ex-row' : '.st-modern-exercise', { hasText: 'Жим штанги' }).locator(width > 700 ? '.st-ex-day.current .st-copy-forward' : '.st-plan-copy-label');
     await copyButton.click();
     await page.getByText('Тренировка №5', { exact: true }).waitFor();
     await page.waitForFunction(() => window.__saveBodies.some((body) => body.action === 'saveSession'));
@@ -111,6 +111,30 @@ try {
     await page.getByRole('button', { name: 'Предыдущая тренировка', exact: true }).click();
     await page.getByText('Тренировка №1', { exact: true }).waitFor();
     assert.equal(await page.getByRole('button', { name: 'Предыдущая тренировка', exact: true }).isDisabled(), true);
+    await page.evaluate(() => {window.__saveBodies=[];});
+    const sourceBench = page.locator(width > 700 ? '.st-ex-row' : '.st-modern-exercise', {hasText:'Жим штанги'});
+    await sourceBench.locator(width > 700 ? '.st-ex-day:first-child .st-copy-forward' : '.st-plan-copy-label').click();
+    await page.getByText('Тренировка №5',{exact:true}).waitFor();
+    await page.waitForFunction(() => window.__saveBodies.some(body => body.action === 'saveSession' && body.session.session_id === 's5'));
+    assert.deepEqual(await page.evaluate(() => window.__saveBodies.filter(body => body.action === 'saveSession').map(body => body.session.session_id)), ['s5'], 'План из №1 копируется в последнюю пустую №5, пропуская пустую №3');
+    await page.getByRole('button',{name:'Предыдущая тренировка',exact:true}).click();
+    await page.getByRole('button',{name:'Предыдущая тренировка',exact:true}).click();
+    await page.getByText('Тренировка №1',{exact:true}).waitFor();
+    await page.evaluate(() => {window.__saveBodies=[];});
+    const sourceTriceps = page.locator(width > 700 ? '.st-ex-row' : '.st-modern-exercise', {hasText:'Верхний блок на трицепс'});
+    await sourceTriceps.locator(width > 700 ? '.st-ex-day:first-child .st-copy-fact' : '.st-fact-copy-label').click();
+    await page.getByText('Тренировка №5',{exact:true}).waitFor();
+    await page.waitForFunction(() => window.__saveBodies.some(body => body.action === 'saveSession' && body.session.session_id === 's5'));
+    const factCopy = await page.evaluate(() => window.__saveBodies.find(body => body.action === 'saveSession'));
+    const copiedFactExercise = factCopy.session.exercises.find(ex => ex.exercise_id === 'triceps');
+    assert.deepEqual(copiedFactExercise.sets.map(set => [String(set.plan_weight),String(set.plan_reps)]), [['35','10'],['35',''],['35',''],['40','10']], 'Факт переносится в план; RPE без факта использует плановые значения');
+    assert.ok(copiedFactExercise.sets.every(set => set.fact_weight === '' && set.fact_reps === '' && set.rpe === '' && !set.completed));
+    assert.equal(Number(factCopy.session.exercises.find(ex => ex.exercise_id === 'bench').sets[0].plan_weight), 40, 'План соседнего упражнения сохранён');
+    assert.deepEqual(await page.evaluate(() => window.__saveBodies.filter(body => body.action === 'saveSession').map(body => body.session.session_id)), ['s5']);
+    await page.getByRole('button',{name:'Предыдущая тренировка',exact:true}).click();
+    await page.getByRole('button',{name:'Предыдущая тренировка',exact:true}).click();
+    await page.getByText('Тренировка №1',{exact:true}).waitFor();
+
     await page.getByRole('button', { name: 'Шаблон 2', exact: true }).click();
     await page.getByText('Тренировка №6', { exact: true }).waitFor();
     assert.deepEqual(await names(), ['Жим штанги', 'Тяга в тренажёре']);
@@ -153,6 +177,7 @@ try {
       }
     }
     if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-template-${width}.png`), fullPage: true });
+    await page.evaluate(() => {window.__saveBodies=[];});
     await page.getByRole('button', { name: 'Редактировать шаблон 1', exact: true }).click();
     await page.locator('.st-manager-row', { hasText: 'Верхний блок на трицепс' }).getByText('Убрать', { exact: true }).click();
     await page.getByText('Закрыть', { exact: true }).click();
@@ -169,7 +194,7 @@ try {
     await page.getByText('Тренировка №1', { exact: true }).waitFor();
     assert.deepEqual(await names(), ['Жим штанги', 'Верхний блок на трицепс'], 'Исторический факт исключённого упражнения виден и на телефоне');
     const excludedHistory = page.locator(width > 700 ? '.st-ex-row' : '.st-modern-exercise', { hasText: 'Верхний блок на трицепс' });
-    assert.equal(await excludedHistory.locator(width > 700 ? '.st-copy-forward' : '.st-modern-copy').first().isDisabled(), true, 'Исключённое упражнение не копируется в будущий план');
+    assert.equal(await excludedHistory.locator(width > 700 ? '.st-copy-forward' : '.st-plan-copy-label').first().isDisabled(), true, 'Исключённое упражнение не копируется в будущий план');
     if (width <= 700) assert.equal(await excludedHistory.locator('.st-plan-copy-label').isDisabled(), true);
     const field = page.locator(width > 700 ? '.st-ex-day.current .st-plan-field' : '.st-modern-set.edit input').first();
     await field.fill('42');
@@ -179,7 +204,7 @@ try {
     assert.equal(saved.session.session_id, 's1');
     assert.deepEqual(saved.session.exercises.map((exercise) => exercise.exercise_id), ['bench', 'triceps', 'row', 'history-only']);
     assert.equal(saved.session.exercises.find((exercise) => exercise.exercise_id === 'triceps').note, sampleNote);
-    assert.deepEqual(saved.session.exercises.find((exercise) => exercise.exercise_id === 'triceps').sets.map((set) => [String(set.plan_weight), String(set.plan_reps), String(set.fact_weight), set.rpe]), Array.from({ length: 4 }, (_,i) => ['40', '10', '35', i === 0 ? '7' : '']));
+    assert.deepEqual(saved.session.exercises.find((exercise) => exercise.exercise_id === 'triceps').sets.map((set) => [String(set.plan_weight), String(set.plan_reps), String(set.fact_weight), set.rpe]), Array.from({ length: 4 }, (_,i) => ['40', '10', i === 3 ? '' : '35', i === 0 ? '7' : i === 3 ? '8' : '']));
     await page.getByRole('button', { name: 'Следующая тренировка', exact: true }).click();
     await page.getByRole('button', { name: 'Следующая тренировка', exact: true }).click();
     await page.getByText('Тренировка №5', { exact: true }).waitFor();

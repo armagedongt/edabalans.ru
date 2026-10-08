@@ -1461,6 +1461,13 @@
 .st-modern-title .st-exercise-number{position:absolute;left:0;top:0;font-size:20px}
 .st-plan-inputs input{border-color:#d6e8da}
 .st-modern-comment.has-note textarea{min-height:74px;font-weight:400}
+
+.st-copy-icon{display:inline-grid;place-items:center;width:22px;height:22px;min-height:22px!important;padding:0!important;margin:0 2px 0 0;border:0;background:transparent;color:#647080;font-size:16px!important;line-height:1;text-decoration:none!important;vertical-align:middle;cursor:pointer}
+.st-copy-icon:disabled{opacity:.35;cursor:default}
+.st-copy-icon:focus-visible{outline:2px solid var(--st-purple);outline-offset:1px;border-radius:3px}
+.st-group-fact{gap:4px}
+.st-plan-copy-label.st-copy-icon{display:inline-grid}
+@media(max-width:700px){.st-copy-icon{width:26px;height:26px;min-height:26px!important;margin:0}}
 </style>
 
 <script>
@@ -3654,13 +3661,13 @@ function renderCurrentExercises(){
         '<div class="st-modern-title"><span class="st-exercise-number">'+(i+1)+'</span><strong>'+esc(exercise.name)+'</strong>'+(exerciseInfo && exerciseInfo.source === 'base' ? '<button class="st-exercise-info st-modern-exercise-info" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Как выполнять упражнение" title="Об упражнении"><span>i</span><span class="st-exercise-button-label">Информация</span></button>' : '')+'</div>'+
         '<div class="st-modern-tools">'+
         '<button class="st-exercise-stats st-modern-exercise-stats" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseStats(this.dataset.exerciseId)" aria-label="Статистика упражнения" title="Статистика упражнения"><span>↗</span><span class="st-exercise-button-label">Статистика</span></button>'+
-        (app.entryMode === 'edit' ? '<button class="st-modern-copy" '+(templateIncludesExercise(exercise.id) ? '' : 'disabled ')+'data-exercise-id="'+esc(exercise.id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId)" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">⇢</button>' : '')+
+
         '</div>'+
       '</header>'+
       '<section class="st-modern-editor">'+
         '<div class="st-modern-labels '+app.entryMode+'">'+
-          (app.entryMode === 'edit' ? '<span></span>' : '')+'<span class="st-plan-label">'+(app.entryMode === 'edit' ? '<button class="st-plan-copy-label" '+(templateIncludesExercise(exercise.id) ? '' : 'disabled ')+'data-exercise-id="'+esc(exercise.id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId)" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">Копировать</button>' : '')+'<span>План</span><br><small>вес · разы</small></span>'+
-          (app.entryMode === 'train' ? '<span>✓</span>' : '')+'<span class="st-fact-label">Факт<br><small>вес · разы</small></span><span>Усилие</span>'+
+          (app.entryMode === 'edit' ? '<span></span>' : '')+'<span class="st-plan-label">'+(app.entryMode === 'edit' ? renderCopyButton(exercise.id,app.selectedIndex,false,'st-plan-copy-label',false) : '')+'<span>План</span><br><small>вес · разы</small></span>'+
+          (app.entryMode === 'train' ? '<span>✓</span>' : '')+'<span class="st-fact-label">'+(app.entryMode === 'edit' ? renderCopyButton(exercise.id,app.selectedIndex,true,'st-fact-copy-label',!exerciseHasFact(exercise)) : '')+'<span>Факт</span><br><small>вес · разы</small></span><span>Усилие</span>'+
         '</div>';
     for(var setIndex=0;setIndex<exercise.sets.length;setIndex++){
       html += renderModernSet(app.selectedIndex,exercise,setIndex,exercise.sets[setIndex]);
@@ -3846,6 +3853,11 @@ function analysisExercises(){
 }
 
 
+function renderCopyButton(id,index,fromFact,className,empty){
+  var label = 'Скопировать '+(fromFact ? 'факт в план' : 'план')+' последней незаполненной тренировки';
+  return '<button class="st-copy-icon '+className+'" '+(!templateIncludesExercise(id) || empty ? 'disabled ' : '')+'data-exercise-id="'+esc(id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId,'+index+','+(fromFact ? 'true' : 'false')+')" aria-label="'+label+'" title="'+label+'">⧉</button>';
+}
+
 function renderExerciseDay(
   item,
   id,
@@ -3891,8 +3903,8 @@ function renderExerciseDay(
 
   html +=
     '<div class="st-groups">'+
-      '<div class="st-group-plan"><button class="st-copy-forward" '+(templateIncludesExercise(id) ? '' : 'disabled ')+'data-exercise-id="'+esc(id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId,'+item.index+')" aria-label="Скопировать план в ближайшую незавершённую тренировку" title="Скопировать план вперёд">Копировать</button><span class="st-group-title">План</span></div>'+
-      '<div class="st-group-fact">Факт</div>'+
+      '<div class="st-group-plan">'+renderCopyButton(id,item.index,false,'st-copy-forward',false)+'<span class="st-group-title">План</span></div>'+
+      '<div class="st-group-fact">'+renderCopyButton(id,item.index,true,'st-copy-fact',!exerciseHasFact(ex))+'<span class="st-group-title">Факт</span></div>'+
     '</div>'+
     '<div class="st-set-head">'+
       '<div>№</div>'+
@@ -5660,17 +5672,17 @@ window.ST = {
     render();
   },
 
-  copyExerciseToNext:function(id,sourceIndex){
+  copyExerciseToNext:function(id,sourceIndex,fromFact){
     if(!templateIncludesExercise(id)){ return; }
     var sessions = currentWorkout().sessions;
     sourceIndex = Number(sourceIndex);
     if(!isFinite(sourceIndex) || sourceIndex < 0 || sourceIndex >= sessions.length){ sourceIndex = app.selectedIndex; }
     var sourceSession = sessions[sourceIndex];
     var source = findExercise(sourceSession,id);
-    if(!source){ return; }
+    if(!source || (fromFact && !exerciseHasFact(source))){ return; }
     rememberUndo();
     var targetIndex = -1;
-    for(var index=sourceIndex+1;index<sessions.length;index++){
+    for(var index=sessions.length-1;index>sourceIndex;index--){
       if(Number(sessions[index].workoutType) === Number(sourceSession.workoutType) && !isFilled(sessions[index])){ targetIndex=index; break; }
     }
     if(targetIndex < 0){
@@ -5694,7 +5706,10 @@ window.ST = {
       targetSession.exercises.push(destination);
     }
     destination.sets = source.sets.map(function(set,index){
-      return {set_number:index+1,planWeight:set.planWeight,planReps:set.planReps,factWeight:'',factReps:'',rpe:'',completed:false};
+      return {set_number:index+1,
+        planWeight:fromFact ? (blank(set.factWeight) && !blank(set.rpe) ? set.planWeight : set.factWeight) : set.planWeight,
+        planReps:fromFact ? (blank(set.factReps) && !blank(set.rpe) ? set.planReps : set.factReps) : set.planReps,
+        factWeight:'',factReps:'',rpe:'',completed:false};
     });
     while(destination.sets.length < 4){
       destination.sets.push({set_number:destination.sets.length+1,planWeight:'',planReps:'',factWeight:'',factReps:'',rpe:'',completed:false});

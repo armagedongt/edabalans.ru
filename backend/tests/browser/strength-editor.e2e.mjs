@@ -372,7 +372,7 @@ for (const width of [360, 430, 768, 1440]) {
   const savesBeforeNavigation = await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveSession").length);
   await page.getByRole("button", { name: "Предыдущая тренировка" }).click();
   await page.getByText("Тренировка №25", { exact: true }).waitFor();
-  await page.locator(width < 701 ? ".st-modern-copy" : ".st-plan-copy-label").first().click();
+  await page.locator(".st-plan-copy-label").first().click();
   await page.waitForFunction(() => window.__saveBodies.some((body) => body?.action === "saveSession" && body.session?.session_number === 27 && body.session.exercises.some((exercise) => exercise.exercise_id === "bench-press" && String(exercise.sets[0].plan_weight) === "40")));
   const copiedPlan = await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveSession" && body.session?.session_number === 27).at(-1));
   const destinationBench = copiedPlan.session.exercises.filter((exercise) => exercise.exercise_id === "bench-press");
@@ -505,8 +505,8 @@ for (const width of [768, 1440]) {
   assert.equal(await page.getByText("Следующие →", { exact: true }).isDisabled(), true);
 
   const copyForward = page.locator(".st-admin-sheet .st-copy-forward").first();
-  assert.equal(await copyForward.innerText(), "Копировать");
-  assert.equal(await copyForward.getAttribute("aria-label"), "Скопировать план в ближайшую незавершённую тренировку");
+  assert.equal(await copyForward.innerText(), "⧉");
+  assert.equal(await copyForward.getAttribute("aria-label"), "Скопировать план последней незаполненной тренировки");
   assert.equal(await copyForward.locator("xpath=..").getByText("План", { exact: true }).count(), 1, "кнопка стоит в области плана");
   await copyForward.click();
   await page.waitForFunction(() => window.__saveBodies.some((body) => body?.action === "saveSession" && body.session?.session_number === 5 && body.session.exercises.some((exercise) => exercise.exercise_id === "bench-press" && String(exercise.sets[0].plan_weight) === "43" && exercise.sets[0].fact_weight === "")));
