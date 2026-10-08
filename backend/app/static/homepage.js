@@ -277,6 +277,10 @@
 
   prepareTildaShell();
   window.EdabalansCheckoutSourceContext = restoreSourceContext();
+  var journeyScript = document.createElement('script');
+  journeyScript.src = appHost + '/browser-journey.js';
+  journeyScript.dataset.browserJourney = 'true';
+  document.head.appendChild(journeyScript);
   var loaderReady = sharedLoader().then(function () { if (!loadFailed) window.EdabalansEmbed.beginLoading(mount, 'Загрузка страницы'); });
   var offerReady = restoreOffer();
   var pageRequest = fetch(appHost + '/preview/homepage-release-candidate?embed=tilda', {

@@ -28,6 +28,7 @@ class PublicMessengerStartLinkIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     messenger: Literal["tg", "max"]
+    browser_context: str | None = Field(default=None, max_length=512)
     entry: Literal["button", "qr"] = "button"
     alias: str | None = Field(default=None, min_length=2, max_length=64)
     rule_id: str | None = Field(default=None, min_length=1, max_length=36)

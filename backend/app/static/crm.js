@@ -929,6 +929,10 @@
       <div class="crm-profile-main-grid">
         <div class="crm-profile-stack">
         ${courseAccessPreview(id, courseResult.courses, modules)}
+        <section class="crm-card crm-journey-card"><div class="crm-card-title">Путь по сайту и ботам</div>
+          ${(user.observed_contacts || []).map(contact => `<div class="crm-row-meta">Контакт из персональной ссылки: ${esc(contact.platform === "telegram" ? "Telegram" : "MAX")} · ${esc(contact.username || contact.first_name || contact.platform_user_id)}${contact.source_bot ? ` · @${esc(contact.source_bot.replace(/^@/, ""))}` : ""} · <a href="/crm?user=${esc(contact.user_id)}">Карточка контакта и его путь</a></div>`).join("")}
+          ${(user.browser_journey || []).length ? user.browser_journey.map(item => `<div class="crm-row-meta">${date(item.occurred_at)} · ${esc(({visitor_state:"Связь браузера с контактом", browser_page:"Открытие страницы", browser_action:"Переход", start_first:"Первый старт бота", start_repeat:"Повторный старт бота"})[item.event_type] || item.event_type)}${item.source_bot ? ` · @${esc(item.source_bot.replace(/^@/, ""))}` : ""}${item.page_url ? ` · ${esc(item.page_url)}` : ""}${item.raw_query?.utm_source ? ` · ${esc(item.raw_query.utm_source)}` : ""}${item.raw_query?.utm_campaign ? ` / ${esc(item.raw_query.utm_campaign)}` : ""}</div>`).join("") : '<div class="crm-row-meta">Переходы ещё не сохранены</div>'}
+        </section>
         <section class="crm-card crm-purchases-card"><div class="crm-card-title">История покупок</div>
           <div class="crm-purchase-grid">${purchaseHistory.map((item) => purchaseCard(item, user)).join("") || '<div class="crm-empty">Подтверждённых покупок пока нет</div>'}</div>
           <details class="crm-inline-personal"><summary><strong>Ссылка для текущего ЛК</strong></summary>

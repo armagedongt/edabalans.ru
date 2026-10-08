@@ -102,3 +102,5 @@ PostgreSQL pricing/payments/access/subscription tables и `payment_browser_grant
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.
 
+
+Checkout сохраняет наблюдаемый контакт браузера отдельно от плательщика. Прямой pending после 30 минут и подтверждённый отказ имеют разные технические уведомления; правила — ROBOKASSA_PAYMENTS.md.

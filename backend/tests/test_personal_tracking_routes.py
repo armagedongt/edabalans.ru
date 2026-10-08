@@ -126,7 +126,8 @@ def test_personal_redirect_recognizes_reader_on_shared_blog_domain(route, monkey
             cookie = response.headers['set-cookie']
             assert f'Domain={root}' in cookie
             assert all(flag in cookie for flag in ('HttpOnly', 'Secure', 'SameSite=lax'))
-            assert [c.name for c in browser.cookies.jar] == [COOKIE]
+            expected = {COOKIE, "edabalans_visitor"} if route == "/m/{token}" else {COOKIE}
+            assert {c.name for c in browser.cookies.jar} == expected
             context = browser.get(f'https://blog.{root}/blog/reader/context').json()
             assert context['recognized'] is True
             assert context['show_subscription'] is True

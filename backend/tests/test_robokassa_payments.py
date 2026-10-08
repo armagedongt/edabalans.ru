@@ -2,6 +2,7 @@ import base64
 import hashlib
 import json
 import os
+import pytest
 import uuid
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
@@ -730,6 +731,45 @@ def test_expired_direct_invoice_enqueues_final_failure_owner_alert(monkeypatch) 
         assert alert is not None
         assert alert.event_kind == "failed"
         assert "истёк" in alert.message_text
+    app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize("age_minutes,result,state,kind", [
+    (2, 0, 5, None), (29, 0, 5, None), (31, 0, 5, "unfinished"),
+    (31, 3, None, "unfinished"), (31, 1, None, None),
+    (31, 0, 20, None), (31, 0, 50, None), (31, 0, 80, None),
+    (31, 0, 100, None), (6, 0, 10, "failed"), (6, 0, 60, "failed"),
+])
+def test_direct_invoice_distinguishes_unfinished_from_refusal(monkeypatch, age_minutes, result, state, kind):
+    _, factory, _ = make_client(test_mode=False)
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        payment = Payment(source="robokassa", external_order_id="unfinished-test",
+                          email_at_purchase="buyer@example.test", product_name_raw="Мастер-класс",
+                          amount=Decimal("5900"), payment_status="pending", raw_payload={},
+                          created_at=now - timedelta(minutes=age_minutes))
+        db.add(payment)
+        db.flush()
+        db.add(OfferCheckout(checkout_kind="public_site_robokassa", offer_code="site.masterclass.basic",
+                             title="Мастер-класс", items=[], amount=payment.amount,
+                             expires_at=now + timedelta(hours=1), payment_id=payment.id))
+        db.commit()
+    monkeypatch.setattr(subscription_service, "SessionLocal", factory)
+    monkeypatch.setattr(subscription_service, "_operation_state", lambda *_: (result, state))
+    settings = app.dependency_overrides[get_settings]()
+    assert subscription_service.check_one_expired_direct_payment(settings) == (age_minutes >= 5)
+    with factory() as db:
+        alerts = db.scalars(select(OwnerPaymentNotification)).all()
+        assert [alert.event_kind for alert in alerts] == ([kind] if kind else [])
+        payment = db.scalar(select(Payment))
+        assert payment.payment_status == ("failed" if kind == "failed" else "pending")
+        if kind == "unfinished":
+            payment.raw_payload = {**payment.raw_payload, "owner_payment_alert_status_check_at": now.isoformat()}
+            db.commit()
+    if kind == "unfinished":
+        assert subscription_service.check_one_expired_direct_payment(settings)
+        with factory() as db:
+            assert len(db.scalars(select(OwnerPaymentNotification)).all()) == 1
     app.dependency_overrides.clear()
 
 
@@ -1523,6 +1563,9 @@ def test_channel_attributes_are_frozen_and_override_personal_context() -> None:
         payment = db.scalar(select(Payment))
         snapshot = payment.raw_payload["trusted_source_snapshot"]
         assert snapshot["status"] == "reported"
+        personal = payment.raw_payload["personal_source_snapshot"]
+        assert personal["status"] == "verified"
+        assert personal["original_acquisition"]["raw_query"]["yclid"] == "old-bot"
         assert snapshot["original_acquisition"]["raw_query"] == {
             "utm_source": "telegram_channel", "utm_content": "post_42", "yclid": "channel-click"
         }
@@ -1530,6 +1573,7 @@ def test_channel_attributes_are_frozen_and_override_personal_context() -> None:
     with factory() as db:
         event = db.scalar(select(TelegramTrackingEvent).where(TelegramTrackingEvent.event_type == "purchase_paid"))
         assert event.metadata_json["raw_query"] == {"yclid": "channel-click"}
+        assert db.scalar(select(Payment)).raw_payload["personal_source_snapshot"] == personal
     app.dependency_overrides.clear()
 
 
@@ -2248,4 +2292,42 @@ def test_operation_state_recovers_success_when_result2_is_delayed(monkeypatch) -
         assert row.next_charge_at == row.current_period_end
         assert child is not None and child.payment_status == "paid"
         assert child.raw_payload["reconciled_via"] == "OpStateExt"
+    app.dependency_overrides.clear()
+
+
+def test_browser_contact_survives_callback_without_becoming_the_buyer():
+    from app.browser_journey_service import resolve_browser, bind_personal, issue_context
+    from app.models import MessengerAccount
+    from app.owner_payment_notification_service import _message_for_payment
+    client, factory, key = make_client(test_mode=False)
+    seed_catalog(factory)
+    with factory() as db:
+        observed_user=User(data_origin="native", status="active")
+        db.add(observed_user); db.flush()
+        personal,_=issue_access_token(db,observed_user.id,"telegram")
+        db.add(MessengerAccount(user_id=observed_user.id,platform="telegram",platform_user_id="1234567",username="fixture_buyer",source="test",is_deliverable=True))
+        row=resolve_browser(db,"robokassa-tests",None)
+        bind_personal(db,row,"robokassa-tests",token=personal)
+        context=issue_context("robokassa-tests",row.metadata_json["browser_id"])
+        db.commit(); observed_id=observed_user.id
+    result=client.post("/api/payments/robokassa/checkout", json={"price_code":"site.masterclass.basic", "email":"actual@example.test", "browser_context":context},headers={"Origin":"https://app.edabalans.ru"})
+    assert result.status_code==200, result.text
+    invoice=result.json()["invoice_id"]
+    with factory() as db:
+        payment=db.scalar(select(Payment).where(Payment.external_order_id==invoice))
+        assert payment.user_id is None
+        assert payment.raw_payload["observed_browser"]["user_id"]==str(observed_id)
+    assert client.post("/integrations/robokassa/result2",content=signed_result(key,invoice,"5900.00")).status_code==200
+    with factory() as db:
+        payment=db.scalar(select(Payment).where(Payment.external_order_id==invoice))
+        assert payment.user_id != observed_id
+        assert payment.email_at_purchase=="actual@example.test"
+        assert payment.raw_payload["observed_browser"]["user_id"]==str(observed_id)
+        assert "https://t.me/fixture_buyer" in _message_for_payment(db,payment,"paid")
+        assert db.scalar(select(UserAccess).where(UserAccess.user_id==observed_id)) is None
+        from app.crm_service import user_detail
+        card=user_detail(db,payment.user_id)
+        assert card["observed_contacts"][0]["username"]=="fixture_buyer"
+        assert card["observed_contacts"][0]["user_id"]==str(observed_id)
+        assert card["messengers"]==[]
     app.dependency_overrides.clear()

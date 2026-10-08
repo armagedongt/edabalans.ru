@@ -3779,6 +3779,7 @@
         }
         checkoutSubmit.disabled = true;
         checkoutSubmit.textContent = 'Создаю счёт…';
+        await window.EdabalansBrowserJourney?.ready;
         const paymentStart = document.createElement('form');
         paymentStart.method = 'POST';
         paymentStart.action = root.dataset.checkoutEndpoint;
@@ -3786,7 +3787,8 @@
           price_code: selectedPlan.dataset.priceCode,
           email: checkoutEmail.value,
           intensive_offer: activeOfferToken || '',
-          source_context: activeSourceContext || ''
+          source_context: activeSourceContext || '',
+          browser_context: window.EdabalansBrowserJourney?.context() || ''
         };
         const query = new URLSearchParams(window.location.search);
         ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid'].forEach(key => {

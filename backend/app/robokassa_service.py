@@ -307,6 +307,7 @@ def create_payment(
     account_user: User | None = None,
     source_context: str | None = None,
     acquisition_query: dict[str, str] | None = None,
+    browser_context: str | None = None,
 ) -> dict:
     _require_checkout_settings(settings)
     email = normalize_checkout_email(email_original)
@@ -335,6 +336,9 @@ def create_payment(
         }
         if query else trusted_source_snapshot(db, settings, source_context)
     )
+    from app.browser_journey_service import snapshot_for_context
+    observed = snapshot_for_context(db, settings.app_auth_secret, browser_context)
+    trusted = trusted_source_snapshot(db, settings, source_context)
     entry = pricing_entry_map(db, version).get(price_code)
     if entry is None or entry.section != "site_tariffs" or not entry.enabled:
         raise RobokassaError("Тариф недоступен")
@@ -406,6 +410,10 @@ def create_payment(
     }
     if source_snapshot is not None:
         payment.raw_payload["trusted_source_snapshot"] = source_snapshot
+    if query and trusted and trusted.get("status") == "verified":
+        payment.raw_payload["personal_source_snapshot"] = trusted
+    if observed:
+        payment.raw_payload["observed_browser"] = observed
     fields = _payment_fields(settings, payment, title, email, expires_at)
     db.commit()
     return {
@@ -934,6 +942,12 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
     trusted_snapshot = checkout_metadata.get("trusted_source_snapshot")
     if isinstance(trusted_snapshot, dict):
         payment.raw_payload["trusted_source_snapshot"] = trusted_snapshot
+    personal_source = checkout_metadata.get("personal_source_snapshot")
+    if isinstance(personal_source, dict):
+        payment.raw_payload["personal_source_snapshot"] = personal_source
+    observed = checkout_metadata.get("observed_browser")
+    if isinstance(observed, dict):
+        payment.raw_payload["observed_browser"] = observed
     checkout.user_id = user.id
     if personal_link is not None:
         personal_link.user_id = user.id

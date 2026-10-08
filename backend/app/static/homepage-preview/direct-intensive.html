@@ -263,14 +263,14 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
     const state={status:'pending',url:config.fallbackUrl,payload:null,clickUrl:null,promise:null};
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),2500);
-    state.promise=fetch(CONTENT.links.apiUrl,{
+    state.promise=Promise.resolve(window.EdabalansBrowserJourney?.ready).then(()=>fetch(CONTENT.links.apiUrl,{
       method:'POST',
       mode:'cors',
       credentials:'omit',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messenger:config.apiMessenger,entry,alias:CONTENT.links.alias,landing_variant:ACTIVE_VARIANT,...attribution}),
+      body:JSON.stringify({messenger:config.apiMessenger,entry,alias:CONTENT.links.alias,landing_variant:ACTIVE_VARIANT,...attribution,browser_context:window.EdabalansBrowserJourney?.context()||null}),
       signal:controller.signal
-    }).then(response=>{
+    })).then(response=>{
       if(!response.ok)throw new Error(`start-link ${response.status}`);
       return response.json();
     }).then(payload=>{

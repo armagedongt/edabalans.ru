@@ -59,13 +59,18 @@ from app.public_not_found import router as public_not_found_router, public_http_
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.marketing_routes import router as marketing_router
 from app.personal_tracking_routes import router as personal_tracking_router
+from app.browser_journey_routes import router as browser_journey_router
 from app.database import SessionLocal, get_db
+from app.browser_journey_service import public_host
+from urllib.parse import urlsplit
 
 settings = get_settings()
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    from app.browser_journey_service import browser_history_worker
+    history_task = asyncio.create_task(browser_history_worker())
     stop_email_worker = asyncio.Event()
     email_task = None
     stop_recurring_worker = asyncio.Event()
@@ -86,6 +91,9 @@ async def lifespan(_: FastAPI):
         async with knowledge_mcp.session_manager.run():
             yield
     finally:
+        history_task.cancel()
+        with suppress(asyncio.CancelledError):
+            await history_task
         stop_email_worker.set()
         stop_recurring_worker.set()
         stop_owner_payment_alerts.set()
@@ -113,6 +121,27 @@ app.add_middleware(
     allow_headers=["Content-Type", "Authorization"],
 )
 app.add_middleware(BlogDraftBodyLimitMiddleware)
+
+
+@app.middleware("http")
+async def browser_journey_cors(request: Request, call_next):
+    if request.url.path != "/api/public/browser-journey":
+        return await call_next(request)
+    origin = request.headers.get("origin", "")
+    parsed = urlsplit(origin)
+    allowed = parsed.scheme == "https" and public_host(parsed.hostname or "") and not parsed.username
+    if origin and not allowed:
+        return JSONResponse({"detail": "Browser origin rejected"}, status_code=403)
+    if request.method == "OPTIONS":
+        response = JSONResponse(None, status_code=200)
+    else:
+        response = await call_next(request)
+    if allowed:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        response.headers["Vary"] = "Origin"
+    return response
 
 
 @app.middleware("http")
@@ -199,6 +228,7 @@ app.include_router(blog_router)
 app.include_router(brand_router)
 app.include_router(public_video_analytics_router)
 app.include_router(public_homepage_analytics_router)
+app.include_router(browser_journey_router)
 app.include_router(public_site_router)
 app.include_router(public_not_found_router)
 app.mount("/mcp", knowledge_mcp_app)

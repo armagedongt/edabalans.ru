@@ -895,6 +895,8 @@ def public_messenger_start_link(
                 "entry": body.entry,
                 "messenger": body.messenger,
                 "device": device,
+                "browser_context": body.browser_context,
+                "source_bot": settings.max_bot_username if body.messenger == "max" else settings.telegram_test_bot_username,
             },
             deduplication_key=f"link_prepared:{tracking_row.id}",
         )
@@ -1064,9 +1066,18 @@ def _go_response(token: str, request: Request, session: Session) -> Response:
         raise HTTPException(404, "Ссылка не найдена или отключена")
     query = tracking_query_params(request.query_params.multi_items())
     start_payload = alias.token
-    if query and link.target_kind == "bot_start":
-        start_payload, _ = create_tracking_session(session, link, alias, query)
     requested_messenger = request.query_params.get("to", "").strip().lower()
+    browser_context = (request.query_params.get("browser_context") or request.cookies.get("edabalans_visitor") or "")[:512]
+    if (query or browser_context) and link.target_kind == "bot_start":
+        start_payload, tracking_row = create_tracking_session(session, link, alias, query)
+        session.flush()
+        session.add(TrackingEvent(tracking_link_id=link.id, alias_id=alias.id,
+            event_type="link_prepared", deduplication_key=f"link_prepared:{tracking_row.id}",
+            metadata_json={"raw_query": query, "path_token": alias.token,
+                "journey_id": tracking_row.id, "entry": "button",
+                "messenger": "max" if requested_messenger == "max" else "tg",
+                "browser_context": browser_context,
+                "source_bot": settings.max_bot_username if requested_messenger == "max" else settings.telegram_test_bot_username}))
     if link.target_kind == "channel_invite":
         destination = alias.telegram_invite_url
     elif requested_messenger == "max":

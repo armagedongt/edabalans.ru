@@ -23,6 +23,7 @@ from app.product_catalog_service import PRODUCT_CATALOG_SEED
 
 EVENT_PAID = "paid"
 EVENT_FAILED = "failed"
+EVENT_UNFINISHED = "unfinished"
 EVENT_SUBSCRIPTION_CANCELLED = "subscription_cancelled"
 LIVE_PROBE_CHECKOUT_KIND = "robokassa_live_probe"
 
@@ -44,8 +45,9 @@ def _checkout(db: Session, payment: Payment) -> OfferCheckout | None:
     return db.scalar(select(OfferCheckout).where(OfferCheckout.payment_id == payment.id))
 
 
-def _is_real_payment(db: Session, payment: Payment) -> bool:
-    if payment.payment_status not in {"paid", "failed", "cancelled"}:
+def _is_real_payment(db: Session, payment: Payment, event_kind: str = EVENT_PAID) -> bool:
+    allowed = {"pending"} if event_kind == EVENT_UNFINISHED else {"paid", "failed", "cancelled"}
+    if payment.payment_status not in allowed:
         return False
     metadata = payment.raw_payload or {}
     integration = metadata.get("integration") if isinstance(metadata, dict) else None
@@ -134,6 +136,8 @@ def _message_for_payment(
         heading = f"❌ Отмена подписки · {_amount(payment)} / месяц"
     elif event_kind == EVENT_FAILED:
         heading = f"❌ Ошибка оплаты · {_amount(payment)}"
+    elif event_kind == EVENT_UNFINISHED:
+        heading = f"⏳ Оплата не завершена · {_amount(payment)}"
     else:
         heading = f"$ {kind} · {_amount(payment)}"
     lines = [f"<b>{escape(heading)}</b>", "", f"Продукт: {escape(_product_label(db, payment))}",
@@ -145,26 +149,38 @@ def _message_for_payment(
         MessengerAccount.user_id == user_id, MessengerAccount.platform_user_id.is_not(None),
         MessengerAccount.is_deliverable.is_(True),
     ).order_by(MessengerAccount.platform)).all() if user_id else []
+    from app.browser_journey_service import observed_accounts
+    observed = (payment.raw_payload or {}).get("observed_browser")
+    seen = {(account.platform, account.platform_user_id) for account in accounts}
+    accounts.extend(account for account in observed_accounts(db, observed)
+                    if (account.platform, account.platform_user_id) not in seen)
+    if observed and observed.get("source_bot"):
+        lines.append(f"Бот: {escape(str(observed['source_bot']))}")
     if not accounts:
         lines.append("Мессенджер: не привязан")
     for account in accounts:
         name = account.username or account.first_name or account.platform_user_id
+        observed_only = (account.platform, account.platform_user_id) not in seen
+        provenance = " (из персональной ссылки)" if observed_only else ""
         if account.platform == "telegram":
             url = f"https://t.me/{account.username}" if account.username else f"tg://user?id={account.platform_user_id}"
             label = "Telegram"
         elif account.platform == "max":
             # MAX user IDs are not public profile URLs.
-            lines.append(f"MAX: {escape(name)} (привязан)")
+            lines.append(f"MAX: {escape(name)}{provenance or ' (привязан)'}")
             continue
         else:
             continue
-        lines.append(f'{label}: <a href="{escape(url, quote=True)}">{escape(name)}</a>')
-    if user_id:
-        lines.append(f'<a href="https://edabalans.ru/crm?user={user_id}">Карточка клиента</a>')
+        lines.append(f'{label}: <a href="{escape(url, quote=True)}">{escape(name)}</a>{provenance}')
+    contact_id = user_id or (observed or {}).get("user_id")
+    if contact_id:
+        lines.append(f'<a href="https://edabalans.ru/crm?user={escape(str(contact_id), quote=True)}">Карточка клиента</a>')
     if payment.external_order_id:
         lines.extend(("", f"Счёт: {escape(payment.external_order_id)}"))
     if event_kind == EVENT_FAILED and failure_reason:
         lines.append(f"Статус Robokassa: {escape(failure_reason)}")
+    if event_kind == EVENT_UNFINISHED:
+        lines.append("Через 30 минут после начала счёта оплата не подтверждена. Это не отказ банка.")
     if event_kind == EVENT_SUBSCRIPTION_CANCELLED:
         lines.append("Будущие списания отключены. Отмена не является оплатой или возвратом.")
     metadata = payment.raw_payload or {}
@@ -185,9 +201,9 @@ def enqueue_owner_payment_notification(
     *,
     failure_reason: str | None = None,
 ) -> OwnerPaymentNotification | None:
-    if event_kind not in {EVENT_PAID, EVENT_FAILED, EVENT_SUBSCRIPTION_CANCELLED}:
+    if event_kind not in {EVENT_PAID, EVENT_FAILED, EVENT_UNFINISHED, EVENT_SUBSCRIPTION_CANCELLED}:
         raise ValueError("Unsupported owner payment notification event")
-    if not _is_real_payment(db, payment):
+    if not _is_real_payment(db, payment, event_kind):
         return None
     existing = db.scalar(
         select(OwnerPaymentNotification).where(
@@ -218,6 +234,10 @@ def enqueue_failed_payment_notification(
     return enqueue_owner_payment_notification(
         db, payment, EVENT_FAILED, failure_reason=reason
     )
+
+
+def enqueue_unfinished_payment_notification(db: Session, payment: Payment) -> OwnerPaymentNotification | None:
+    return enqueue_owner_payment_notification(db, payment, EVENT_UNFINISHED)
 
 
 def enqueue_subscription_cancelled_notification(db: Session, subscription: RecurringSubscription) -> None:
@@ -298,6 +318,13 @@ def send_one_owner_payment_notification(settings: Settings) -> bool:
         if row is None:
             db.commit()
             return False
+        payment = db.get(Payment, row.payment_id)
+        if row.event_kind == EVENT_UNFINISHED and (payment.payment_status != "pending" or
+                (payment.raw_payload or {}).get("owner_payment_alert_operation_state") in {20, 50, 80, 100}):
+            row.status = "cancelled"
+            row.next_attempt_at = None
+            db.commit()
+            return True
         if row.event_kind == EVENT_PAID:
             row.message_text = _message_for_payment(db, db.get(Payment, row.payment_id), row.event_kind)
         try:

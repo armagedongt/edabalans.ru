@@ -39,6 +39,31 @@ def _paid_payment(*, raw_payload: dict | None = None) -> Payment:
     )
 
 
+def test_unfinished_alert_is_suppressed_when_payment_finishes_before_delivery(monkeypatch):
+    factory = _factory()
+    monkeypatch.setattr(notification_service, "SessionLocal", factory)
+    delivered = []
+    monkeypatch.setattr(notification_service, "_deliver", lambda *_: delivered.append(True))
+    with factory() as db:
+        payment = _paid_payment()
+        payment.payment_status = "pending"
+        db.add(payment)
+        db.flush()
+        notification_service.enqueue_unfinished_payment_notification(db, payment)
+        db.flush()
+        payment.payment_status = "paid"
+        notification_service.enqueue_paid_payment_notification(db, payment)
+        db.commit()
+    settings = Settings(database_url="sqlite+pysqlite:///:memory:")
+    assert notification_service.send_one_owner_payment_notification(settings)
+    assert delivered == []
+    assert notification_service.send_one_owner_payment_notification(settings)
+    assert delivered == [True]
+    with factory() as db:
+        states = {row.event_kind: row.status for row in db.scalars(select(OwnerPaymentNotification))}
+        assert states == {"unfinished": "cancelled", "paid": "sent"}
+
+
 def test_paid_owner_alert_is_durable_idempotent_and_delivered(monkeypatch) -> None:
     factory = _factory()
     with factory() as db:
@@ -225,3 +250,21 @@ def test_linking_messenger_refreshes_existing_notification_without_another_purch
     assert "не привязан" in delivered[0][1]
     assert 'href="https://t.me/buyer"' in delivered[1][1]
     assert not notification_service.send_one_owner_payment_notification(settings)
+
+
+@pytest.mark.parametrize("state", [20,50,80,100])
+def test_queued_unfinished_is_suppressed_when_operation_progresses(monkeypatch,state):
+    factory=_factory()
+    monkeypatch.setattr(notification_service,"SessionLocal",factory)
+    delivered=[]
+    monkeypatch.setattr(notification_service,"_deliver",lambda *_: delivered.append(True))
+    with factory() as db:
+        payment=_paid_payment();payment.payment_status="pending"
+        db.add(payment);db.flush()
+        notification_service.enqueue_unfinished_payment_notification(db,payment)
+        payment.raw_payload={"owner_payment_alert_operation_state":state}
+        db.commit()
+    assert notification_service.send_one_owner_payment_notification(Settings(database_url="sqlite://"))
+    assert delivered==[]
+    with factory() as db:
+        assert db.scalar(select(OwnerPaymentNotification.status))=="cancelled"

@@ -9,7 +9,10 @@ const browser = await chromium.launch({
 
 try {
   const page = await browser.newPage({ viewport: { width: 1200, height: 800 } })
-  await page.addInitScript(() => { window.ym = () => {} })
+  await page.addInitScript(() => {
+    window.ym = () => {};
+    window.EdabalansBrowserJourney={ready:Promise.resolve(),decorate:value=>{const url=new URL(value);url.searchParams.set('visitor_transfer','day4-visitor-carrier');return url.href;}};
+  })
   let offerRequests = 0
   await page.route(`${baseUrl}/api/intensive/state`, route => route.fulfill({
     contentType: 'application/json',
@@ -72,7 +75,7 @@ try {
   if (offerRequests !== 1) {
     throw new Error(`Offer endpoint called an unexpected number of times: ${offerRequests}`)
   }
-  if (!href?.includes('/mk1?intensive_offer=offer-scroll-test#masterclass')) {
+  if (!href?.includes('/mk1?intensive_offer=offer-scroll-test') || !href?.includes('visitor_transfer=day4-visitor-carrier#masterclass')) {
     throw new Error(`Day-four CTA does not target discounted /mk1: ${href}`)
   }
 } finally {

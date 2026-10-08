@@ -12,6 +12,7 @@ from app.blog_reader_context import recognize_reader
 from app.database import get_db
 from app.intensive_web_access import access_token_row, issue_checkout_source_context
 from app.models import AttributionEvent
+from app.browser_journey_service import attach_personal_browser
 
 
 router = APIRouter()
@@ -101,6 +102,7 @@ def personal_masterclass_link(
     )
     db.commit()
     response = _redirect(target)
+    attach_personal_browser(db, request, response, settings.app_auth_secret, token)
     recognize_reader(db, request, response, settings.app_auth_secret, token)
     return response
 

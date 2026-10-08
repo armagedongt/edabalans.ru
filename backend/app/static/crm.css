@@ -432,3 +432,5 @@ button { cursor: pointer; }
   .crm-access-matrix { overflow-x:auto; }
   .crm-access-matrix-head,.crm-access-matrix-row { min-width:440px; }
 }
+
+.crm-journey-card { grid-column:1 / -1; min-width:0; }

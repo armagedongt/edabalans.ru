@@ -21,6 +21,16 @@
     element.style.padding = '0';
   });
 
+  var journey = document.createElement('script');
+  journey.src = appHost + '/browser-journey.js';
+  journey.dataset.browserJourney = 'true';
+  var journeyReady = new Promise(function (resolve) {
+    journey.onload = function () { Promise.resolve(window.EdabalansBrowserJourney?.ready).then(resolve); };
+    journey.onerror = resolve;
+    setTimeout(resolve, 1800);
+  });
+  document.head.appendChild(journey);
+
   fetch(appHost + '/preview/direct-intensive', {
     credentials: 'omit',
     mode: 'cors',
@@ -30,7 +40,8 @@
       if (!response.ok) throw new Error('landing ' + response.status);
       return response.text();
     })
-    .then(function (source) {
+    .then(async function (source) {
+      await journeyReady;
       var parsed = new DOMParser().parseFromString(source, 'text/html');
       var landing = parsed.getElementById('edb-direct-intensive-v1');
       var style = parsed.getElementById('edb-direct-intensive-v1-styles');

@@ -6,6 +6,7 @@
   const STORAGE_KEY = "edabalans:cookie-notice:accepted-v1";
   const ACCEPTED_EVENT = "edabalans:cookie-accepted";
   const MAX_AGE_SECONDS = 365 * 24 * 60 * 60;
+  const ownerScript = document.currentScript;
   const SHARED_COOKIE_ROOTS = [
     "edabalans.ru",
     "xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
@@ -158,6 +159,14 @@
     eventName: ACCEPTED_EVENT,
     version: COOKIE_VALUE
   });
+
+  if (!window.EdabalansBrowserJourney && !document.querySelector('[data-browser-journey]')) {
+    const tracker = document.createElement('script');
+    tracker.src = new URL('/browser-journey.js', ownerScript?.src || location.href).href;
+    tracker.dataset.browserJourney = 'true';
+    tracker.defer = true;
+    document.head.appendChild(tracker);
+  }
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => boot(document), {once: true});

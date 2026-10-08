@@ -26,6 +26,7 @@ sources = [
 
 [[modules]]
 id = "platform.crm"
+reads_from = ["messaging.telegram.attribution"]
 admin_catalog = [{ category = "clients", order = 10, url = "/crm", label = "CRM", icon = "👥", description = "Люди, покупки, доступы, теги и заметки." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.crm.md"
@@ -46,6 +47,7 @@ owns_tables = [
 
 [[modules]]
 id = "platform.commerce"
+reads_from = ["messaging.telegram.attribution"]
 admin_catalog = [{ category = "commerce", order = 20, url = "/admin/pricing", label = "Цены и тарифы", icon = "🏷️", description = "Цены продуктов, тарифы и дополнительные предложения." }, { category = "commerce", order = 40, url = "/finance", label = "Финансовая модель", icon = "📊", description = "Расчёт потока, выручки, рекламы, нагрузки и маржи." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.commerce.md"
@@ -763,6 +765,7 @@ telegram_name = "Старт и атрибуция"
 telegram_status = "Исполняемый модуль · временный вход в единую статью"
 telegram_order = 10
 owns_files = [
+  "backend/app/browser_journey_service.py", "backend/app/browser_journey_routes.py", "backend/app/static/browser-journey.js", "backend/tests/test_browser_journey.py", "backend/tests/browser/browser-journey.e2e.mjs",
   "backend/app/telegram_public_cta.py",
   "backend/app/personal_tracking_routes.py", "backend/tests/test_personal_tracking_routes.py",
   "telegram-bot/service/app/start_router.py", "telegram-bot/service/app/tracking.py",
@@ -778,7 +781,7 @@ owns_tables = [
   "attribution_events", "tg_tracking_links", "tg_tracking_link_aliases",
   "tg_tracking_link_tags", "tg_utm_tag_rules", "tg_tracking_sessions", "tg_tracking_events",
 ]
-owns_routes = [
+owns_routes = ["*/browser-journey.js", "*/api/public/browser-journey",
   "*/telegram/webhook", "*/bot-api/*tracking*", "*/bot-api/*link*", "*/bot-api/*utm*",
   "*/bot/public/start-link", "*/bot/public/start-link/click", "*/q/*",
   "*/go/*", "*/r/*", "*/m/*", "*/p/*",

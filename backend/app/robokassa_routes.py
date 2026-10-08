@@ -120,6 +120,7 @@ class RobokassaCheckoutIn(BaseModel):
     email: str = Field(min_length=3, max_length=320)
     intensive_offer: str | None = Field(default=None, max_length=1024)
     source_context: str | None = Field(default=None, max_length=160)
+    browser_context: str | None = Field(default=None, max_length=512)
     acquisition_query: dict[
         Annotated[str, StringConstraints(max_length=64)],
         Annotated[str, StringConstraints(max_length=512)],
@@ -470,6 +471,7 @@ def robokassa_checkout(
             body.email,
             offer_user_id=discount_user_id,
             source_context=body.source_context,
+            browser_context=body.browser_context,
             acquisition_query=body.acquisition_query,
         )
         payment = db.scalar(select(Payment).where(
@@ -529,6 +531,7 @@ async def robokassa_first_party_start(
             email=form.get("email", ""),
             intensive_offer=form.get("intensive_offer") or None,
             source_context=form.get("source_context") or None,
+            browser_context=form.get("browser_context") or None,
             acquisition_query={
                 key: form[key]
                 for key in ("utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "yclid")
@@ -548,6 +551,7 @@ async def robokassa_first_party_start(
             db, settings, version, body.price_code, body.email,
             offer_user_id=discount_user_id,
             source_context=body.source_context,
+            browser_context=body.browser_context,
             acquisition_query=body.acquisition_query,
         )
         payment = db.scalar(select(Payment).where(

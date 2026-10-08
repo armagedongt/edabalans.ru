@@ -8,9 +8,11 @@ from zoneinfo import ZoneInfo
 
 from sqlalchemy import Uuid, bindparam, case, distinct, exists, func, or_, select, text, update
 from sqlalchemy.orm import Session
+from app.browser_journey_service import observed_accounts
 
 from app.models import (
     AttributionEvent,
+    TelegramTrackingEvent,
     ClientNote,
     LegacyImportRecord,
     MessengerAccount,
@@ -738,6 +740,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
                 "source": payment.source,
                 "payment_system": payment.payment_system,
                 "external_order_id": payment.external_order_id,
+                "observed_browser": (payment.raw_payload or {}).get("observed_browser"),
                 "paid_at": payment.paid_at,
                 "source_event_at": payment.source_event_at,
             }
@@ -754,6 +757,29 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
                 "paused_at": access.paused_at,
             }
             for access, code, name in accesses
+        ],
+        "observed_contacts": [
+            {"user_id": snapshot.get("user_id"), "source_bot": snapshot.get("source_bot"),
+             "platform": account.platform, "platform_user_id": account.platform_user_id,
+             "username": account.username, "first_name": account.first_name}
+            for snapshot in {
+                (payment.raw_payload or {}).get("observed_browser", {}).get("user_id"):
+                (payment.raw_payload or {}).get("observed_browser", {})
+                for payment, _, _ in payments if (payment.raw_payload or {}).get("observed_browser")
+            }.values()
+            for account in observed_accounts(db, snapshot)
+        ],
+        "browser_journey": [
+            {"event_type": event.event_type, "occurred_at": event.occurred_at,
+             "page_url": (event.metadata_json or {}).get("page_url"),
+             "action": (event.metadata_json or {}).get("action"),
+             "source_bot": (event.metadata_json or {}).get("source_bot"),
+             "raw_query": (event.metadata_json or {}).get("raw_query", {})}
+            for event in db.scalars(select(TelegramTrackingEvent).where(
+                TelegramTrackingEvent.user_id == user_id,
+                TelegramTrackingEvent.event_type.in_(("visitor_state", "browser_page", "browser_action", "start_first", "start_repeat")),
+                TelegramTrackingEvent.occurred_at >= datetime.now(timezone.utc) - timedelta(days=365),
+            ).order_by(TelegramTrackingEvent.occurred_at.desc()).limit(200))
         ],
         "attribution": [
             {

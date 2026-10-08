@@ -1015,6 +1015,7 @@ def _assign_first_touch(
             "payload_status": payload_status,
             "raw_query": raw_query,
             **journey_context,
+            "source_bot": get_settings().max_bot_username,
             "max_delivery_status": "pending",
             "max_intensive_token_id": intensive_token_id,
         },

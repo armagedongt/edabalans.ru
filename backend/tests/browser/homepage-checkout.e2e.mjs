@@ -28,7 +28,7 @@ try {
 
   await page.route(`${tildaUrl}**`, route => route.fulfill({
     contentType: 'text/html',
-    body: `<!doctype html><html><head></head><body>
+    body: `<!doctype html><html><head><meta charset="utf-8"></head><body>
       <div class="t-rec"><div class="t123__centeredContainer">
         <div data-edabalans-homepage></div>
       </div></div>
@@ -39,6 +39,10 @@ try {
   await page.route(`${appUrl}/**`, async route => {
     const request = route.request()
     const url = new URL(request.url())
+    if (url.pathname === '/api/public/browser-journey') {
+      await route.fulfill({contentType:'application/json',headers:{'access-control-allow-origin':'*','access-control-allow-methods':'POST, OPTIONS','access-control-allow-headers':'Content-Type'},body:JSON.stringify({context:'managed-homepage-browser',transfer:'managed-homepage-transfer'})});
+      return;
+    }
     if (url.pathname.startsWith('/api/pricing/site')) {
       if (request.method() === 'GET' && url.searchParams.get('intensive_offer') === 'offer-test' && failNextStoredOfferValidation) {
         failNextStoredOfferValidation = false
@@ -105,6 +109,7 @@ try {
   await page.locator('.edb-checkout-form').evaluate(form => form.requestSubmit())
   await paymentNavigation
 
+  if (checkoutBody?.browser_context !== 'managed-homepage-browser') throw new Error('Managed homepage checkout lost browser context');
   if (checkoutBody?.price_code !== 'site.masterclass.basic' || checkoutBody?.intensive_offer !== 'offer-test') {
     throw new Error(`Stored intensive offer was not restored in Tilda checkout: ${JSON.stringify(checkoutBody)}`)
   }

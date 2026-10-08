@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test:browser-journey": "node browser-journey.e2e.mjs",
     "test:recipe-calculator": "node recipe-calculator.e2e.mjs",
     "test:video-player": "node video-player.e2e.mjs",
     "test:embed-loading": "node embed-loading.e2e.mjs",

@@ -365,9 +365,11 @@
         const response = await fetch("/api/intensive/offer-token", {credentials: "same-origin", headers: {Accept: "application/json"}});
         if (!response.ok) throw new Error(`offer ${response.status}`);
         const offer = await response.json();
+        await window.EdabalansBrowserJourney?.ready;
         const target = new URL(MASTERCLASS_URL);
         target.searchParams.set("intensive_offer", offer.token);
-        offerTarget = addAttribution(target.href);
+        const destination = addAttribution(target.href);
+        offerTarget = window.EdabalansBrowserJourney?.decorate(destination) || destination;
         links.forEach((link) => {
           link.removeAttribute("aria-disabled");
           link.href = offerTarget;

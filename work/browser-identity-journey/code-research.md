@@ -94,3 +94,38 @@ CRM `user_detail(db, user_id)` выдаёт emails, messengers, AttributionEvent
 ## 9. External libraries
 
 Новая external library для этой функции не установлена/не требуется исследованием. Context7 инструменты в доступном tool catalog не найдены; описаны только APIs, уже применённые в repository. Внешние правила cookie/Robokassa parent должен сверить по первичной официальной документации перед ответом о browser constraints и issuer rejection detail.
+
+## Updated: 2026-10-08 — generic redirects and browser SDK carrier
+
+### Exact generic `/go` trace
+
+`telegram-bot/service/app/main.py:1061` `_go_response(token, request, session)` вызывается `/go/{token}` (1088) и `/r/{token}` (1093). После resolve_alias и active_link:
+
+- `query = tracking_query_params(request.query_params.multi_items())` сохраняет только `utm_*` и yclid; произвольный visitor parameter в query не проходит этот helper.
+- `start_payload = alias.token`; только `if query and link.target_kind == "bot_start"` вызывает `create_tracking_session(session, link, alias, query)`. Без UTM общая ссылка остаётся B...; individual prepared journey для неё не создаётся.
+- Для channel_invite открывается alias.telegram_invite_url; для `to=max` configured MAX username, иначе configured Telegram username.
+- `web_click` создаётся с tracking_link_id, alias_id и metadata `{"raw_query": query, "warning": suffix_warning, "path_token": token}`. Ни visitor cookie, ни visitor ID, ни journey_id сейчас нет.
+- Созданная generic `/go` U-сессия также не имеет `link_prepared` companion event. `tracking_session_context` ищет именно deduplication_key `link_prepared:{row.id}`; поэтому такой U-start возвращает raw UTM, но пустой journey_context. Это отдельный разрыв относительно landing public/start-link flow.
+
+Existing SDK-compatible boundary состоит из небольшого расширения public input, prepared metadata и context whitelist; bot engine/replay/account processing не требуется переписывать. Для generic redirects аналогичный prepared event/carrier необходимо создавать отдельно и для общих ссылок без UTM; существующий TrackSession resolver и first-touch consumers уже умеют передать подготовленный context на start.
+
+### Exact landing preparation
+
+- `backend/app/static/homepage-preview/direct-intensive-loader.js:24` только fetches `/preview/direct-intensive` с credentials omit, вставляет DOM и выполняет scripts полученного HTML. Непосредственного API start-link body в loader нет.
+- `backend/app/static/homepage-preview/direct-intensive.html:215`: anonymous attribution читает sessionStorage `edb_direct_intensive_attribution_v1`, накладывает текущие query UTM/yclid и сохраняет назад. Это source storage на текущем root, не browser identity storage.
+- `direct-intensive.html:261` `prepare(channel, entry)` делает POST CONTENT.links.apiUrl, mode cors, credentials omit, abort2500ms; exact body `JSON.stringify({messenger:config.apiMessenger,entry,alias:CONTENT.links.alias,landing_variant:ACTIVE_VARIANT,...attribution})`.
+- `direct-intensive.html:289` готовит четыре отдельных состояния: button/qr для tg/max; fallback постоянный alias. SDK visitor context должен быть готов до этих подготовок, иначе один из четырёх prepared journeys потеряет связь с anonymous browser.
+- `telegram-bot/service/app/schemas.py:25` `PublicMessengerStartLinkIn` имеет `ConfigDict(extra="forbid")`. Простое добавление visitor field frontend сейчас даст422; schema необходимо расширить bounded field, передавая opaque visitor carrier, не произвольный user_id.
+- `telegram-bot/service/app/tracking.py:122` `tracking_session_context(session,row)` пропускает только `("journey_id","entry","messenger","device")`; visitor carrier нужно явно включить или обработать до этого return. Метаданные JSON не передаются целиком.
+
+### Actual start events and bot identity
+
+`bot_scenario_started` literal отсутствует во всём Python/doc repository. Фактические raw DB events — `start_first`, `start_repeat`, `start_maintenance`, `start_unknown`, `start_expired_session` (TG); MAX uses first/repeat with platform metadata.
+
+- `tracking.py:271`: TG metadata `payload_status`, `raw_query`, `is_first_bot_visit`, затем `**journey_context`. Contact id и user id — отдельные columns.
+- `max.py:1007`: MAX metadata `messenger:"max"`, `payload_status`, `raw_query`, `**journey_context`, `max_delivery_status:"pending"`, `max_intensive_token_id`; later delivery добавляет max_message_id и меняет status. Telegram-named tracking_user column хранит MAX user ID в этом пути.
+- `main.py:1294`: resolve_start_payload→assign_first_touch получают context существующим argument. `max.py:1502` делает equivalent flow. Если prepared context содержит новый visitor field после whitelist, можно связать bot identity с anonymous visitor именно здесь, без переписывания scenario engine.
+- `telegram-bot/service/app/models.py:23`: `BotInstance`/tg_bot_instances хранит id, code, username, display_name, token_env_name, active/production flags. Только username/code/display_name пригодны для CRM source; token_env_name не секретное значение, но не нужен в публичной истории.
+- `models.py:35`: Contact/tg_contacts содержит bot_instance_id FK и user_id; unique bot_instance_id+telegram_user_id. Соединение tracking.contact_id→Contact.bot_instance_id→BotInstance обеспечивает точное имя бота при known event. Telegram `ensure_contact` обновляет contact и вызывает ensure_crm_identity ещё до first-touch обработки; MAX `_ensure_contact` также получает bot instance и account.
+
+История общей anonymous ссылки не может быть восстановлена из текущих данных по browser без новой visitor capture: ни generic web_click, ни direct landing source sessionStorage не дают постоянную browser связь. После внедрения SDK идентификатор/подписанный carrier сохраняется root-local и переносится в prepared bot journey; персональная ссылка другого root затем даёт user association уже записанным anonymous events. Исторические события без visitor связать достоверно по этому механизму невозможно.

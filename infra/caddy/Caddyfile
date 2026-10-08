@@ -246,7 +246,7 @@ www.{$PUBLIC_DOMAIN} {
 		reverse_proxy backend:8000
 	}
 
-	@account_app path /lk /lk/ /embed.js /site-footer.js /site-header.js /apps/* /assets/* /content/* /api/*
+	@account_app path /lk /lk/ /embed.js /site-footer.js /site-header.js /browser-journey.js /apps/* /assets/* /content/* /api/*
 	handle @account_app {
 		reverse_proxy backend:8000
 	}
@@ -258,7 +258,7 @@ www.{$PUBLIC_DOMAIN} {
 
 	@intensive_entry path_regexp intensive_entry ^/i/([A-Za-z0-9_-]+)$
 	handle @intensive_entry {
-		redir https://app.edabalans.ru/intensive/start?i={re.intensive_entry.1} 307
+		redir https://app.edabalans.ru/intensive/start?i={re.intensive_entry.1}&{query} 307
 	}
 
 	@personal_outbound path_regexp personal_outbound ^/(m|p)/.*$
@@ -284,6 +284,11 @@ www.{$PUBLIC_DOMAIN} {
 		X-Frame-Options "DENY"
 		Referrer-Policy "strict-origin-when-cross-origin"
 		-Server
+	}
+
+	@journey path /browser-journey.js /site-cookie-notice.js /api/public/browser-journey
+	handle @journey {
+		reverse_proxy backend:8000
 	}
 
 	@brand_icons path /favicon.ico /favicon.png /apple-touch-icon.png

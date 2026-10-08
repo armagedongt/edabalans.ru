@@ -25,6 +25,7 @@ from fastapi.responses import (
 )
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
+from app.browser_journey_service import attach_personal_browser
 
 from app.app_service import (
     AppAccessError,
@@ -877,6 +878,7 @@ def intensive_onepage(
         query = urlencode([(key, value) for key, value in request.query_params.multi_items()
                            if key not in {"i", "token"}])
         response = RedirectResponse("/intensive" + ("?" + query if query else ""), status_code=303)
+        attach_personal_browser(db, request, response, settings.app_auth_secret, supplied_token)
         set_session(response, request, settings.app_auth_secret, token_row.user_id, token_row.platform)
     else:
         identity = session_identity(request, settings.app_auth_secret)
@@ -908,6 +910,7 @@ def intensive_menu(
             raise HTTPException(status_code=404, detail="intensive link not found")
         record_entry_attribution(db, token_row.user_id, token_row.platform, request)
         db.commit()
+        attach_personal_browser(db, request, response, settings.app_auth_secret, supplied_token)
         set_session(
             response,
             request,
@@ -944,6 +947,8 @@ def intensive_entry(
     target = "/intensive" if 4 in rows else f"/intensive/day-{current_day(rows)}"
     response = RedirectResponse(attributed_path(request, target), status_code=307)
     response.headers["Referrer-Policy"] = "no-referrer"
+    if supplied_token:
+        attach_personal_browser(db, request, response, settings.app_auth_secret, supplied_token)
     set_session(response, request, settings.app_auth_secret, user_id, platform)
     return response
 

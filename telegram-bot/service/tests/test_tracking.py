@@ -249,6 +249,7 @@ def test_public_start_link_returns_direct_telegram_u_payload_and_static_b_fallba
             "landing_variant": "topics",
             "utm_source": "yandex",
             "yclid": "click-public-1",
+            "browser_context": "encrypted-browser-context",
         },
     )
 
@@ -293,7 +294,11 @@ def test_public_start_link_returns_direct_telegram_u_payload_and_static_b_fallba
             "entry": "button",
             "messenger": "tg",
             "device": "desktop",
+            "browser_context": "encrypted-browser-context",
+            "source_bot": "TetrisgfgfgfBot",
         }
+        assert start.metadata_json["browser_context"] == "encrypted-browser-context"
+        assert start.metadata_json["source_bot"] == "TetrisgfgfgfBot"
         assert len(clicks) == 1
         assert clicks[0].metadata_json["journey_id"] == prepared.metadata_json["journey_id"]
         assert start.metadata_json["raw_query"] == {
@@ -399,4 +404,38 @@ def test_channel_invite_touch_is_claimed_on_first_bot_start(tmp_path, monkeypatc
         assert join.processed_at is not None
         start = session.scalar(select(TrackingEvent).where(TrackingEvent.telegram_user_id == "701", TrackingEvent.event_type == "start_first"))
         assert start.tracking_link_id == join.tracking_link_id
+    app.dependency_overrides.clear()
+
+
+def test_prepared_bot_start_carries_browser_context(tmp_path, monkeypatch):
+    client,engine=make_client(tmp_path,monkeypatch)
+    alias=client.post("/bot-api/link-rules",json={"name":"Browser journey"}).json()["aliases"][0]["token"]
+    result=client.post("/bot/public/start-link",json={"messenger":"tg","alias":alias,"browser_context":"encrypted-browser-fixture"})
+    assert result.status_code==200, result.text
+    from app.tracking import tracking_session_by_payload, tracking_session_context
+    with Session(engine) as session:
+        row=tracking_session_by_payload(session,result.json()["payload"])
+        context=tracking_session_context(session,row)
+        assert context["browser_context"]=="encrypted-browser-fixture"
+        assert context["source_bot"]=="TetrisgfgfgfBot"
+    app.dependency_overrides.clear()
+
+
+def test_generic_go_persists_unique_prepared_journey_with_autoflush_disabled(tmp_path,monkeypatch):
+    client,engine=make_client(tmp_path,monkeypatch)
+    alias=client.post("/bot-api/link-rules",json={"name":"Generic journey"}).json()["aliases"][0]["token"]
+    def production_db():
+        with Session(engine,autoflush=False) as session:
+            yield session
+    app.dependency_overrides[get_db]=production_db
+    from app.tracking import tracking_session_by_payload,tracking_session_context
+    for _ in range(2):
+        response=client.get(f"/go/{alias}?browser_context=encrypted-browser&utM_ignored=no",follow_redirects=False)
+        assert response.status_code==307,response.text
+        payload=parse_qs(urlparse(response.headers["location"]).query)["start"][0]
+        with Session(engine) as session:
+            row=tracking_session_by_payload(session,payload)
+            context=tracking_session_context(session,row)
+            assert context["journey_id"]==row.id
+            assert context["browser_context"]=="encrypted-browser"
     app.dependency_overrides.clear()

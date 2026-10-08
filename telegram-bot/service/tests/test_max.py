@@ -543,6 +543,7 @@ def test_max_start_saves_identity_and_sends_intensive_link(tmp_path, monkeypatch
             "messenger": "max",
             "payload_status": "empty",
             "raw_query": {},
+            "source_bot": "id230409966750_bot",
             "max_delivery_status": "sent",
             "max_message_id": "2",
             "max_start_decision": "launch_welcome",
@@ -1247,7 +1248,7 @@ def test_max_start_uses_existing_link_catalog_once(tmp_path, monkeypatch):
             "messenger": "max",
             "alias": alias_token,
             "utm_source": "yandex",
-            "yclid": "max-click-901",
+            "yclid": "max-click-901", "browser_context": "max-browser-context",
         },
     )
     assert issued.status_code == 200
@@ -1267,6 +1268,8 @@ def test_max_start_uses_existing_link_catalog_once(tmp_path, monkeypatch):
             TrackingEvent.user_id == account.user_id,
             TrackingEvent.event_type == "start_first",
         ))
+        assert tracking.metadata_json["browser_context"] == "max-browser-context"
+        assert tracking.metadata_json["source_bot"] == "id230409966750_bot"
         assert tracking.metadata_json["messenger"] == "max"
         assert tracking.metadata_json["raw_query"] == {
             "utm_source": "yandex",

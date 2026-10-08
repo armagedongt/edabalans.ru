@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 from app.models import (
     Contact,
+    BotInstance,
     CrmAttributionEvent,
     CrmMessengerAccount,
     CrmTag,
@@ -128,7 +129,7 @@ def tracking_session_context(session: Session, row: TrackingSession) -> dict[str
     metadata = prepared.metadata_json if prepared and isinstance(prepared.metadata_json, dict) else {}
     return {
         key: str(metadata[key])
-        for key in ("journey_id", "entry", "messenger", "device")
+        for key in ("journey_id", "entry", "messenger", "device", "browser_context", "source_bot")
         if metadata.get(key)
     }
 
@@ -280,6 +281,7 @@ def assign_first_touch(
                 "payload_status": payload_status,
                 "raw_query": raw_query,
                 "is_first_bot_visit": is_first_bot_visit,
+                "source_bot": session.get(BotInstance, contact.bot_instance_id).username,
                 **(journey_context or {}),
             },
         )

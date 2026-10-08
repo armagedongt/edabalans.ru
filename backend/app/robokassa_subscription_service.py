@@ -21,6 +21,7 @@ from app.owner_payment_notification_service import (
     enqueue_failed_payment_notification,
     enqueue_paid_payment_notification,
     enqueue_subscription_cancelled_notification,
+    enqueue_unfinished_payment_notification,
 )
 from app.database import SessionLocal
 from app.models import (
@@ -537,7 +538,7 @@ def _next_direct_status_check(metadata: dict) -> datetime | None:
 
 
 def check_one_expired_direct_payment(settings: Settings) -> bool:
-    """Record only a final Robokassa refusal for an expired server-created invoice."""
+    """Reconcile direct invoices; an unfinished attempt is distinct from a refusal."""
     if settings.robokassa_test_mode:
         return False
     now = datetime.now(timezone.utc)
@@ -549,7 +550,11 @@ def check_one_expired_direct_payment(settings: Settings) -> bool:
                 Payment.source == SOURCE,
                 Payment.payment_status == "pending",
                 OfferCheckout.checkout_kind != LIVE_PROBE_CHECKOUT_KIND,
-                OfferCheckout.expires_at <= now,
+                or_(Payment.created_at <= now - timedelta(minutes=5), OfferCheckout.expires_at <= now),
+                or_(
+                    Payment.raw_payload["owner_payment_alert_status_check_at"].as_string().is_(None),
+                    Payment.raw_payload["owner_payment_alert_status_check_at"].as_string() <= now.isoformat(),
+                ),
             )
             .order_by(OfferCheckout.expires_at)
             .limit(50)
@@ -584,6 +589,7 @@ def check_one_expired_direct_payment(settings: Settings) -> bool:
             payment.raw_payload = metadata
             db.commit()
             return True
+        metadata["owner_payment_alert_operation_state"] = state_code if result_code == 0 else None
         if result_code == 0 and state_code in {10, 60}:
             payment.payment_status = "failed"
             payment.source_event_at = now
@@ -608,8 +614,15 @@ def check_one_expired_direct_payment(settings: Settings) -> bool:
             }[state_code]
             enqueue_failed_payment_notification(db, payment, reason)
         else:
+            started_at = payment.created_at
+            if started_at.tzinfo is None:
+                started_at = started_at.replace(tzinfo=timezone.utc)
+            if now - started_at >= timedelta(minutes=30) and (
+                (result_code == 0 and state_code == 5) or result_code == 3
+            ):
+                enqueue_unfinished_payment_notification(db, payment)
             metadata["owner_payment_alert_status_check_at"] = (
-                now + timedelta(minutes=15)
+                now + timedelta(minutes=5 if now - started_at < timedelta(hours=2) else 15)
             ).isoformat()
             metadata["owner_payment_alert_status_result"] = result_code
             metadata["owner_payment_alert_status_state"] = state_code
