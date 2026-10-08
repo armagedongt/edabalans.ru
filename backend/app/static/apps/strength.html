@@ -2971,6 +2971,26 @@ function findExercise(
 }
 
 
+function exerciseForDisplay(session,id){
+  var exercise = findExercise(session,id);
+  if(exercise && exercise.sets.length){ return exercise; }
+  if(!session || !templateIncludesExercise(id)){ return null; }
+  var item = catalogItemById(id);
+  return Object.assign({id:String(id),name:item.exercise_name,sort_order:item.sort_order,note:''},exercise || {},{sets:
+    [1,2,3,4].map(function(number){
+      return {set_number:number,planWeight:'',planReps:'',factWeight:'',factReps:'',rpe:'',completed:false};
+    })
+  });
+}
+
+function materializeExercise(session,exercise){
+  var existing = findExercise(session,exercise.id);
+  if(!existing){ session.exercises.push(exercise); }
+  else if(existing !== exercise){ session.exercises[session.exercises.indexOf(existing)] = exercise; }
+  return exercise;
+}
+
+
 function previousExercise(
   index,
   id
@@ -3647,15 +3667,12 @@ function renderCurrentExercises(){
   if(!session){ return ''; }
   var html = '<div class="st-modern-list">';
   var exercises = displayExercises([{session:session}]).map(function(item){
-    return findExercise(session,item.exercise_id);
+    return exerciseForDisplay(session,item.exercise_id);
   }).filter(function(exercise){ return exercise !== null; });
 
   for(var i=0;i<exercises.length;i++){
     var exercise = exercises[i];
     var exerciseInfo = catalogItemById(exercise.id);
-    while(exercise.sets.length < 4){
-      exercise.sets.push({set_number:exercise.sets.length+1,planWeight:'',planReps:'',factWeight:'',factReps:'',rpe:''});
-    }
     html += '<article class="st-modern-exercise ex'+(i%6)+'">'+
       '<header class="st-modern-head">'+
         '<div class="st-modern-title"><span class="st-exercise-number">'+(i+1)+'</span><strong>'+esc(exercise.name)+'</strong>'+(exerciseInfo && exerciseInfo.source === 'base' ? '<button class="st-exercise-info st-modern-exercise-info" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Как выполнять упражнение" title="Об упражнении"><span>i</span><span class="st-exercise-button-label">Информация</span></button>' : '')+'</div>'+
@@ -3666,7 +3683,7 @@ function renderCurrentExercises(){
       '</header>'+
       '<section class="st-modern-editor">'+
         '<div class="st-modern-labels '+app.entryMode+'">'+
-          (app.entryMode === 'edit' ? '<span></span>' : '')+'<span class="st-plan-label">'+(app.entryMode === 'edit' ? renderCopyButton(exercise.id,app.selectedIndex,false,'st-plan-copy-label',false) : '')+'<span>План</span><br><small>вес · разы</small></span>'+
+          (app.entryMode === 'edit' ? '<span></span>' : '')+'<span class="st-plan-label">'+(app.entryMode === 'edit' ? renderCopyButton(exercise.id,app.selectedIndex,false,'st-plan-copy-label',!findExercise(session,exercise.id)) : '')+'<span>План</span><br><small>вес · разы</small></span>'+
           (app.entryMode === 'train' ? '<span>✓</span>' : '')+'<span class="st-fact-label">'+(app.entryMode === 'edit' ? renderCopyButton(exercise.id,app.selectedIndex,true,'st-fact-copy-label',!exerciseHasFact(exercise)) : '')+'<span>Факт</span><br><small>вес · разы</small></span><span>Усилие</span>'+
         '</div>';
     for(var setIndex=0;setIndex<exercise.sets.length;setIndex++){
@@ -3817,23 +3834,8 @@ function templateIncludesExercise(id){
   return activeCatalog().some(function(item){ return String(item.exercise_id) === String(id); });
 }
 
-function sessionShowsExercise(session,id){
-  return templateIncludesExercise(id) || exerciseHasFact(findExercise(session,id) || {});
-}
-
-function displayExercises(visible){
-  var catalog = activeCatalog().slice();
-  var seen = {};
-  catalog.forEach(function(item){ seen[String(item.exercise_id)] = true; });
-  (visible || []).forEach(function(item){
-    (item.session ? item.session.exercises : []).forEach(function(exercise){
-      if(!seen[String(exercise.id)] && exerciseHasFact(exercise)){
-        catalog.push({exercise_id:exercise.id,exercise_name:exercise.name});
-        seen[String(exercise.id)] = true;
-      }
-    });
-  });
-  return catalog;
+function displayExercises(){
+  return activeCatalog();
 }
 
 function analysisExercises(){
@@ -3869,7 +3871,7 @@ function renderExerciseDay(
   }
 
   var ex =
-    findExercise(
+    exerciseForDisplay(
       item.session,
       id
     );
@@ -3880,7 +3882,7 @@ function renderExerciseDay(
     в старой тренировке.
   */
 
-  if(!ex || !sessionShowsExercise(item.session,id)){
+  if(!ex){
     return '<div></div>';
   }
 
@@ -3903,7 +3905,7 @@ function renderExerciseDay(
 
   html +=
     '<div class="st-groups">'+
-      '<div class="st-group-plan">'+renderCopyButton(id,item.index,false,'st-copy-forward',false)+'<span class="st-group-title">План</span></div>'+
+      '<div class="st-group-plan">'+renderCopyButton(id,item.index,false,'st-copy-forward',!findExercise(item.session,id))+'<span class="st-group-title">План</span></div>'+
       '<div class="st-group-fact">'+renderCopyButton(id,item.index,true,'st-copy-fact',!exerciseHasFact(ex))+'<span class="st-group-title">Факт</span></div>'+
     '</div>'+
     '<div class="st-set-head">'+
@@ -3939,7 +3941,7 @@ function renderExerciseDay(
   }
 
   html +=
-    (item.current && !isFilled(item.session) ? '<div class="st-admin-set-actions"><button data-exercise-id="'+esc(id)+'" onclick="ST.addSet(this.dataset.exerciseId)">＋ Добавить подход</button><button data-exercise-id="'+esc(id)+'" onclick="ST.removeSet(this.dataset.exerciseId)">− Удалить подход</button></div>' : '')+
+    (item.current ? '<div class="st-admin-set-actions"><button data-exercise-id="'+esc(id)+'" onclick="ST.addSet(this.dataset.exerciseId)">＋ Добавить подход</button><button data-exercise-id="'+esc(id)+'" onclick="ST.removeSet(this.dataset.exerciseId)">− Удалить подход</button></div>' : '')+
     renderNote(
       item.index,
       id,
@@ -4975,7 +4977,7 @@ function renderModal(){
         ];
 
     var ex =
-      findExercise(
+      exerciseForDisplay(
         session,
         app.modal.exerciseId
       );
@@ -5030,7 +5032,7 @@ function renderModal(){
   }
 
   if(app.modal.type === 'tutorial'){
-    return '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal"><div class="st-modal-title">Как пользоваться тренировками</div><ol class="st-tutorial-list"><li>Выберите «Шаблон 1», «Шаблон 2» или «Шаблон 3». Шаблон задаёт состав будущей тренировки; номер и история тренировок общие для человека.</li><li>Нажмите «Редактировать», добавьте упражнения из общего каталога и расставьте их в нужном порядке. Это меняет только будущий план. Чтобы отменить добавление в шаблон, нажмите «Убрать».</li><li>Кнопка «Новая тренировка» создаёт следующий общий номер и ставит сегодняшнюю дату.</li><li>В режиме «Редактировать план» заполните будущие вес и повторы. Кнопка «Копировать» рядом с «Планом» переносит только план упражнения в ближайшую незаполненную тренировку.</li><li>В таблице «План» — назначенные вес и повторы, «Факт» — выполненные, RPE — субъективная тяжесть подхода от 1 до 10. «Примечание» добавляет короткий комментарий к упражнению в этой тренировке.</li><li>Нажмите «Начать тренировку». Галочка у подхода переносит план в факт; после этого укажите RPE. Галочку можно снять.</li><li>Стрелки у номера листают тренировки. Стрелки ↶ ↷ и Ctrl/Cmd+Z отменяют или возвращают последнее действие до обновления страницы. Значок i — краткая техника базового упражнения.</li></ol><div class="st-modal-actions"><button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Понятно</button></div></div></div>';
+    return '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal"><div class="st-modal-title">Как пользоваться тренировками</div><ol class="st-tutorial-list"><li>Выберите «Шаблон 1», «Шаблон 2» или «Шаблон 3». Шаблон задаёт текущий список упражнений на экране; номер и история тренировок общие для человека.</li><li>Нажмите «Редактировать», добавьте упражнения из общего каталога и расставьте их в нужном порядке. Нажмите «Убрать», чтобы скрыть упражнение из шаблона. Его записи сохранятся и снова появятся при повторном добавлении. У нового упражнения сразу доступны пустые поля плана и кнопки подходов.</li><li>Кнопка «Новая тренировка» создаёт следующий общий номер и ставит сегодняшнюю дату.</li><li>В режиме «Редактировать план» заполните будущие вес и повторы. Иконки копирования рядом с «Планом» и «Фактом» переносят вес и повторы в план последней незаполненной тренировки этого шаблона.</li><li>В таблице «План» — назначенные вес и повторы, «Факт» — выполненные, RPE — субъективная тяжесть подхода от 1 до 10. «Примечание» добавляет короткий комментарий к упражнению в этой тренировке.</li><li>Нажмите «Начать тренировку». Галочка у подхода переносит план в факт; после этого укажите RPE. Галочку можно снять.</li><li>Стрелки у номера листают тренировки. Стрелки ↶ ↷ и Ctrl/Cmd+Z отменяют или возвращают последнее действие до обновления страницы. Значок i — краткая техника базового упражнения.</li></ol><div class="st-modal-actions"><button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Понятно</button></div></div></div>';
   }
 
   if(app.modal.type === 'exerciseInfo'){
@@ -5366,7 +5368,7 @@ function applyManagerDraft(catalog){
     });
   }
   // Template editing deliberately does not change saved sessions. A template
-  // is a future-plan recipe; historical exercise instances remain intact.
+  // controls the visible exercises; historical exercise instances remain intact.
 }
 
 
@@ -5652,13 +5654,14 @@ window.ST = {
   },
 
   copyPreviousToPlan:function(id){
-    var exercise = findExercise(currentWorkout().sessions[app.selectedIndex],id);
+    var exercise = exerciseForDisplay(currentWorkout().sessions[app.selectedIndex],id);
     if(!exercise){ return; }
     var history = exerciseHistory(exercise.id);
     var selected = Number(app.selectedPrevious[app.workoutType+'|'+id] || 0);
     var source = history[selected] || history[0];
     if(!source){ return; }
     rememberUndo();
+    materializeExercise(currentWorkout().sessions[app.selectedIndex],exercise);
     exercise.sets = source.exercise.sets.map(function(set,index){
       return {set_number:index+1,
         planWeight:blank(set.factWeight)?set.planWeight:set.factWeight,
@@ -5744,27 +5747,30 @@ window.ST = {
   },
 
   addSet:function(id){
-    var exercise = findExercise(currentWorkout().sessions[app.selectedIndex],id);
+    var exercise = exerciseForDisplay(currentWorkout().sessions[app.selectedIndex],id);
     if(!exercise){ return; }
     rememberUndo();
+    materializeExercise(currentWorkout().sessions[app.selectedIndex],exercise);
     exercise.sets.push({set_number:exercise.sets.length+1,planWeight:'',planReps:'',factWeight:'',factReps:'',rpe:''});
     scheduleSave(app.selectedIndex);
     render();
   },
 
   removeSet:function(id){
-    var exercise = findExercise(currentWorkout().sessions[app.selectedIndex],id);
+    var exercise = exerciseForDisplay(currentWorkout().sessions[app.selectedIndex],id);
     if(!exercise || exercise.sets.length <= 1){ return; }
     rememberUndo();
+    materializeExercise(currentWorkout().sessions[app.selectedIndex],exercise);
     exercise.sets.pop();
     scheduleSave(app.selectedIndex);
     render();
   },
 
   changeNote:function(id,value){
-    var exercise = findExercise(currentWorkout().sessions[app.selectedIndex],id);
+    var exercise = exerciseForDisplay(currentWorkout().sessions[app.selectedIndex],id);
     if(!exercise){ return; }
     rememberUndo();
+    materializeExercise(currentWorkout().sessions[app.selectedIndex],exercise);
     exercise.note = value;
     scheduleSave(app.selectedIndex);
   },
@@ -6018,7 +6024,7 @@ window.ST = {
     }
 
     var ex =
-      findExercise(
+      exerciseForDisplay(
         currentWorkout()
           .sessions[index],
         id
@@ -6032,6 +6038,7 @@ window.ST = {
     }
 
     rememberUndo();
+    materializeExercise(currentWorkout().sessions[index],ex);
 
     ex.sets[setIndex][field] =
       value === ''
@@ -6130,7 +6137,7 @@ window.ST = {
       app.rpeMenu;
 
     var ex =
-      findExercise(
+      exerciseForDisplay(
         currentWorkout()
           .sessions[
             m.index
@@ -6143,6 +6150,7 @@ window.ST = {
     }
 
     rememberUndo();
+    materializeExercise(currentWorkout().sessions[m.index],ex);
 
     ex.sets[
       m.setIndex
@@ -6193,7 +6201,7 @@ window.ST = {
       );
 
     var ex =
-      findExercise(
+      exerciseForDisplay(
         currentWorkout()
           .sessions[
             app.modal
@@ -6206,6 +6214,9 @@ window.ST = {
     if(!ex){
       return;
     }
+
+    rememberUndo();
+    materializeExercise(currentWorkout().sessions[app.modal.sessionIndex],ex);
 
     ex.note =
       textarea

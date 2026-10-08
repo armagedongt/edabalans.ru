@@ -15,6 +15,7 @@ function fixture(type) {
     { exercise_id: 'bench', exercise_name: 'Жим штанги', active: true, sort_order: 2 },
     { exercise_id: 'triceps', exercise_name: 'Верхний блок на трицепс', active: type === 1, sort_order: 1 },
     { exercise_id: 'row', exercise_name: 'Тяга в тренажёре', active: type === 2, sort_order: 3 },
+    { exercise_id: 'bridge', exercise_name: 'Ягодичный мост', active: false, sort_order: 4 },
   ];
   const sessions = Array.from({ length: 6 }, (_, i) => ({ session_id: `s${i + 1}`, workout_type: i % 2 + 1, session_number: i + 1, date: '2026-09-21' }));
   const exercises = sessions.flatMap((session) => ['bench', 'triceps', 'row', 'history-only'].map((id, i) => ({ session_id: session.session_id, exercise_id: id, exercise_name: catalog.find((item) => item.exercise_id === id)?.exercise_name || 'Историческое упражнение', sort_order: i + 1, note: session.session_id === 's3' ? '' : sampleNote })));
@@ -181,9 +182,9 @@ try {
     await page.getByRole('button', { name: 'Редактировать шаблон 1', exact: true }).click();
     await page.locator('.st-manager-row', { hasText: 'Верхний блок на трицепс' }).getByText('Убрать', { exact: true }).click();
     await page.getByText('Закрыть', { exact: true }).click();
-    assert.deepEqual(await names(), width > 700 ? ['Жим штанги', 'Верхний блок на трицепс'] : ['Жим штанги']);
-    assert.deepEqual(await numbers(), width > 700 ? ['1','2'] : ['1'], 'После исключения первого упражнения оставшийся план начинается с номера 1');
-    if (width > 700) assert.equal(await page.locator('.st-ex-row', { hasText: 'Верхний блок на трицепс' }).locator('.st-ex-day.current').count(), 0, 'Исключённое упражнение с фактом показывается только в своей старой тренировке');
+    assert.deepEqual(await names(), ['Жим штанги']);
+    assert.deepEqual(await numbers(), ['1'], 'После исключения первого упражнения оставшийся план начинается с номера 1');
+    assert.equal(await page.locator(width > 700 ? '.st-ex-row' : '.st-modern-exercise', { hasText: 'Верхний блок на трицепс' }).count(), 0, 'Исключённое упражнение скрыто во всех колонках');
     assert.equal(await page.evaluate(() => window.__saveBodies.some((body) => body.action === 'saveSession')), false);
     await page.locator('.st-top-stats').click();
     await page.getByRole('button', { name: 'Анализ', exact: true }).click();
@@ -192,10 +193,7 @@ try {
     await page.getByRole('button', { name: 'Предыдущая тренировка', exact: true }).click();
     await page.getByRole('button', { name: 'Предыдущая тренировка', exact: true }).click();
     await page.getByText('Тренировка №1', { exact: true }).waitFor();
-    assert.deepEqual(await names(), ['Жим штанги', 'Верхний блок на трицепс'], 'Исторический факт исключённого упражнения виден и на телефоне');
-    const excludedHistory = page.locator(width > 700 ? '.st-ex-row' : '.st-modern-exercise', { hasText: 'Верхний блок на трицепс' });
-    assert.equal(await excludedHistory.locator(width > 700 ? '.st-copy-forward' : '.st-plan-copy-label').first().isDisabled(), true, 'Исключённое упражнение не копируется в будущий план');
-    if (width <= 700) assert.equal(await excludedHistory.locator('.st-plan-copy-label').isDisabled(), true);
+    assert.deepEqual(await names(), ['Жим штанги'], 'Исключение действует и при выборе старой тренировки');
     const field = page.locator(width > 700 ? '.st-ex-day.current .st-plan-field' : '.st-modern-set.edit input').first();
     await field.fill('42');
     await field.blur();
@@ -205,14 +203,71 @@ try {
     assert.deepEqual(saved.session.exercises.map((exercise) => exercise.exercise_id), ['bench', 'triceps', 'row', 'history-only']);
     assert.equal(saved.session.exercises.find((exercise) => exercise.exercise_id === 'triceps').note, sampleNote);
     assert.deepEqual(saved.session.exercises.find((exercise) => exercise.exercise_id === 'triceps').sets.map((set) => [String(set.plan_weight), String(set.plan_reps), String(set.fact_weight), set.rpe]), Array.from({ length: 4 }, (_,i) => ['40', '10', i === 3 ? '' : '35', i === 0 ? '7' : i === 3 ? '8' : '']));
-    await page.getByRole('button', { name: 'Следующая тренировка', exact: true }).click();
-    await page.getByRole('button', { name: 'Следующая тренировка', exact: true }).click();
+    await page.evaluate(() => {window.__saveBodies=[];});
+    await page.getByRole('button', { name: 'Редактировать шаблон 1', exact: true }).click();
+    await page.locator('.st-manager-row', { hasText: 'Верхний блок на трицепс' }).getByText('Добавить', { exact: true }).click();
+    await page.getByText('Закрыть', { exact: true }).click();
+    await page.getByRole('button', {name:'Предыдущая тренировка',exact:true}).click();
+    await page.getByRole('button', {name:'Предыдущая тренировка',exact:true}).click();
+    await page.getByText('Тренировка №1', {exact:true}).waitFor();
+    const restoredHistory = page.locator(width > 700 ? '.st-ex-row' : '.st-modern-exercise', { hasText: 'Верхний блок на трицепс' });
+    assert.equal(await restoredHistory.count(), 1, 'Повторное включение возвращает прежнюю запись');
+    assert.equal(await restoredHistory.locator(width > 700 ? '.st-ex-day.current .st-fact-field' : '.st-fact-inputs input').first().inputValue(), '35');
+    assert.equal((await restoredHistory.locator(width > 700 ? '.st-ex-day.current .st-rpe-button' : '.st-rpe-button').first().textContent()).trim(), '7');
+    assert.equal(await page.evaluate(() => window.__saveBodies.some(body => body.action === 'saveSession')), false, 'Возврат упражнения не переписывает историю');
+    await page.getByRole('button', { name: 'Редактировать шаблон 1', exact: true }).click();
+    await page.locator('.st-manager-row', { hasText: 'Верхний блок на трицепс' }).getByText('Убрать', { exact: true }).click();
+    await page.getByText('Закрыть', { exact: true }).click();
     await page.getByText('Тренировка №5', { exact: true }).waitFor();
     await page.getByText('Новая тренировка', { exact: false }).click();
     await page.getByText('Тренировка №7', { exact: true }).waitFor();
     const created = await page.evaluate(() => window.__saveBodies.find((body) => body.action === 'saveSession' && body.session.session_number === 7));
     assert.equal(created.workout_type, 1);
     assert.deepEqual(created.session.exercises.map((exercise) => exercise.exercise_id), ['bench']);
+    if ([430,1440].includes(width)) {
+      await page.waitForFunction(() => !document.querySelector('.st-new-session').disabled);
+      await page.evaluate(() => window.ST.setDate(6,''));
+      await page.waitForFunction(() => window.__saveBodies.filter(body => body.action === 'saveSession').at(-1)?.session.date === '');
+      await page.evaluate(() => {window.__saveBodies=[];});
+      await page.getByRole('button', {name:'Редактировать шаблон 1',exact:true}).click();
+      await page.locator('.st-manager-row',{hasText:'Ягодичный мост'}).getByText('Добавить',{exact:true}).click();
+      await page.getByText('Закрыть',{exact:true}).click();
+      assert.deepEqual(await names(), ['Жим штанги','Ягодичный мост']);
+      const bridge = () => page.locator(width > 700 ? '.st-ex-row' : '.st-modern-exercise',{hasText:'Ягодичный мост'});
+      const bridgeDay = () => width > 700 ? bridge().locator('.st-ex-day.current') : bridge();
+      const bridgeSets = () => bridgeDay().locator(width > 700 ? '.st-set' : '.st-modern-set');
+      const bridgeWeight = () => bridgeDay().locator(width > 700 ? '.st-plan-field' : '.st-plan-inputs input').first();
+      assert.equal(await bridgeSets().count(),4);
+      assert.equal(await bridgeWeight().inputValue(),'');
+      await page.waitForTimeout(750); // Beyond the session-save debounce: viewing must not enqueue a save.
+      assert.equal(await page.evaluate(() => window.__saveBodies.some(body => body.action === 'saveSession')),false,'Пустые поля не создают записи при просмотре');
+      await bridgeDay().getByRole('button',{name:width > 700 ? '＋ Добавить подход' : '＋ Подход',exact:true}).click();
+      assert.equal(await bridgeSets().count(),5,'Добавить подход работает до первого ввода');
+      await page.waitForFunction(() => window.__saveBodies.some(body => body.action === 'saveSession' && body.session.exercises.some(ex => ex.exercise_id === 'bridge' && ex.sets.length === 5)));
+      await page.keyboard.press('Control+Z');
+      assert.equal(await bridgeSets().count(),4);
+      await page.waitForFunction(() => window.__saveBodies.filter(body => body.action === 'saveSession').at(-1)?.session.exercises.every(ex => ex.exercise_id !== 'bridge'));
+      await bridgeWeight().fill('12,5');
+      await bridgeWeight().blur();
+      await page.waitForFunction(() => window.__saveBodies.filter(body => body.action === 'saveSession').at(-1)?.session.exercises.find(ex => ex.exercise_id === 'bridge')?.sets[0].plan_weight === 12.5);
+      await bridgeDay().getByRole('button',{name:width > 700 ? '− Удалить подход' : '− Подход',exact:true}).click();
+      assert.equal(await bridgeSets().count(),3,'Удаление подхода не восстанавливается перерисовкой');
+      await page.waitForFunction(() => window.__saveBodies.filter(body => body.action === 'saveSession').at(-1)?.session.exercises.find(ex => ex.exercise_id === 'bridge')?.sets.length === 3);
+      const bridgeSaves=await page.evaluate(() => window.__saveBodies.filter(body => body.action === 'saveSession'));
+      assert.ok(bridgeSaves.every(body => body.session.session_number === 7 && body.workout_type === 1),'Изменяется только выбранная тренировка');
+      assert.ok(bridgeSaves.every(body => body.session.date === ''),'План доступен без даты: '+JSON.stringify(bridgeSaves.map(body => body.session.date)));
+      assert.ok(bridgeSaves.every(body => body.session.exercises.filter(ex => ex.exercise_id === 'bridge').every(ex => ex.sets.every(set => set.fact_weight === '' && set.fact_reps === '' && set.rpe === ''))),'Факты не заполняются автоматически');
+      await page.locator(width > 700 ? '.st-ex-row' : '.st-modern-exercise',{hasText:'Жим штанги'}).locator(width > 700 ? '.st-ex-day.current .st-copy-forward' : '.st-plan-copy-label').click();
+      await page.getByText('Тренировка №8',{exact:true}).waitFor();
+      assert.equal(await bridgeSets().count(),4,'Копирование одного упражнения оставляет поля остальных активных упражнений доступными');
+      assert.equal(await bridgeWeight().inputValue(),'');
+      await bridgeWeight().fill('20');
+      await bridgeWeight().blur();
+      await page.waitForFunction(() => window.__saveBodies.filter(body => body.action === 'saveSession').at(-1)?.session.exercises.find(ex => ex.exercise_id === 'bridge')?.sets[0]?.plan_weight === 20);
+      const afterCopy=await page.evaluate(() => window.__saveBodies.filter(body => body.action === 'saveSession').at(-1));
+      assert.equal(afterCopy.session.session_number,8);
+      assert.equal(afterCopy.session.exercises.find(ex => ex.exercise_id === 'bridge').sets.length,4);
+    }
     await page.getByRole('button', { name: 'Шаблон 3', exact: true }).click();
     assert.equal(await page.locator('.st-nav-title').count(), 0);
     assert.deepEqual(await names(), []);
