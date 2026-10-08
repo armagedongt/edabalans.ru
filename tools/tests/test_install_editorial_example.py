@@ -79,6 +79,7 @@ def test_normal_owner_install_does_not_require_or_initialize_database(tmp_path):
     environment.pop("DATABASE_URL", None)
     script = ("from pathlib import Path; import sys; "
               "from tools.install_editorial_example import install; "
+              "assert 'app.article_markup' not in sys.modules; "
               "install(Path(sys.argv[1])); "
               "assert 'app.database' not in sys.modules; "
               "assert 'app.config' not in sys.modules; "

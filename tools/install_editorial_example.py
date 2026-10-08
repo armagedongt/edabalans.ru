@@ -6,7 +6,6 @@ import sys
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "backend"))
-from app.article_markup import markdown_to_article_html
 
 
 def page(title: str, body: str, css: str, script: str = "", *, article_class: str = "",
@@ -35,6 +34,7 @@ def local_media_links(body: str) -> str:
 
 
 def blog_example(markdown: str) -> str:
+    from app.article_markup import markdown_to_article_html
     from app.blog_content import (add_heading_anchors, insert_inline_related, load_blog_catalog,
                                   related_cards_html, render_blog_component)
     matches = re.findall(r"<!-- example-blog-source-id: ([a-zA-Z0-9_-]+) -->", markdown)
@@ -62,6 +62,7 @@ def blog_example(markdown: str) -> str:
 
 
 def install(root: Path) -> None:
+    from app.article_markup import markdown_to_article_html
     source = REPO / "content/article-components"
     folder = root / "Шпаргалка"
     folder.mkdir(parents=True, exist_ok=True)
