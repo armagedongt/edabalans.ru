@@ -552,6 +552,69 @@ for (const [name, route] of Object.entries(integratedPages)) {
   await page.close();
 }
 
+{
+  const page = await browser.newPage({viewport:{width:430,height:900}});
+  let revealCount = 0;
+  let sentText = null;
+  let failSending = true;
+  let connected = false;
+  let changedRights = false;
+  await page.route("**/admin/api/users/u1/course-accesses", route => route.fulfill({json:{courses:changedRights
+    ? [{resource_code:"ACCESS_RECIPES",name:"Система рецептов",entitled:true,start_open:true,all_lessons_open:true,available:true}, {resource_code:"ACCESS_CALORIES",name:"Курс о калориях",entitled:false,start_open:false,all_lessons_open:false,available:true}]
+    : [{resource_code:"ACCESS_MASTERCLASS",name:"Мастер-класс",entitled:true,start_open:true,all_lessons_open:false,available:true}, {resource_code:"ACCESS_CALORIES",name:"Курс о калориях",entitled:false,start_open:false,all_lessons_open:false,available:true}]}}));
+  await page.route("**/admin/api/users/u1", route => route.fulfill({json:{...sampleUserDetail,credential:{exists:true,password_available:true}}}));
+  await page.route("**/admin/api/users/u1/credential/reveal", route => {
+    revealCount += 1;
+    return route.fulfill({json:{password:"SamplePassword123"}});
+  });
+  await page.route("**/bot-api/users/u1", route => route.fulfill(connected
+    ? {json:{run_status:"active",sent:0,total:0}}
+    : {status:404,json:{detail:"Telegram contact not found"}}));
+  await page.route("**/bot-api/users/u1/messages", route => {
+    sentText = route.request().postDataJSON().text;
+    return route.fulfill(failSending ? {status:502,json:{detail:"Delivery failed"}} : {json:{status:"sent"}});
+  });
+  await page.goto(`http://127.0.0.1:${port}/crm?user=u1`);
+  await page.locator("#prepare-account-message").waitFor();
+  assert.equal(revealCount,0);
+  assert.equal(await page.locator("#send-account-message").isDisabled(),true);
+  changedRights = true;
+  await page.locator("#prepare-account-message").click();
+  await page.waitForFunction(() => document.querySelector("#telegram-message").value.includes("SamplePassword123"));
+  const prepared = await page.locator("#telegram-message").inputValue();
+  assert.match(prepared,/anna@example\.com/);
+  assert.match(prepared,/Система рецептов.*материалы открыты сразу/);
+  assert.doesNotMatch(prepared,/• Мастер-класс/);
+  assert.match(prepared,/Quality Score \(DQS\)/);
+  assert.doesNotMatch(prepared,/• Курс о калориях/);
+  assert.equal(sentText,null);
+  const edited = prepared + "\nМоя личная приписка.";
+  await page.locator("#telegram-message").fill(edited);
+  await page.evaluate(() => {window.copiedMessage=null;Object.defineProperty(navigator,"clipboard",{configurable:true,value:{writeText:async text => {window.copiedMessage=text;}}});});
+  await page.locator("#copy-account-message").click();
+  await page.waitForFunction(() => window.copiedMessage !== null);
+  assert.equal(await page.evaluate(() => window.copiedMessage),edited);
+  await page.evaluate(() => {
+    Object.defineProperty(navigator,"clipboard",{configurable:true,value:{writeText:async () => {throw new Error("Clipboard unavailable");}}});
+    document.execCommand=() => false;
+  });
+  await page.locator("#copy-account-message").click();
+  await page.locator("#account-message-status",{hasText:"Не удалось скопировать"}).waitFor();
+  assert.equal(await page.locator("#telegram-message").inputValue(),edited);
+  connected = true;
+  await page.reload();
+  await page.locator("#telegram-message").fill(edited);
+  await page.locator("#send-account-message").click();
+  await page.locator("#account-message-status",{hasText:"Delivery failed"}).waitFor();
+  assert.equal(await page.locator("#telegram-message").inputValue(),edited);
+  assert.equal(await page.locator("#send-account-message").isEnabled(),true);
+  failSending = false;
+  await page.locator("#send-account-message").click();
+  await page.locator("#account-message-status",{hasText:"Сообщение отправлено"}).waitFor();
+  assert.equal(sentText,edited);
+  await page.close();
+}
+
 await browser.close();
 await new Promise((resolve) => server.close(resolve));
 console.log("admin shell e2e: ok");

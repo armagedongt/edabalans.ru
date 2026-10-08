@@ -953,7 +953,14 @@
             ${botState ? `<div class="crm-row-meta">Шаг: ${esc(botState.current_step || "—")} · отправлено ${botState.sent} из ${botState.total}</div>
               <div style="height:8px;background:#edf1ea;border-radius:8px;overflow:hidden;margin:10px 0"><div style="height:100%;width:${botState.total ? Math.min(100, botState.sent / botState.total * 100) : 0}%;background:#2f6b47"></div></div>
               ${botState.error ? `<div class="crm-row-meta" style="color:#a83d16">${esc(botState.error)}</div>` : ""}
-              <form class="crm-form" id="telegram-message-form"><textarea class="crm-textarea" id="telegram-message" placeholder="Написать этому клиенту в Telegram"></textarea><button class="crm-btn small" type="submit">Отправить сообщение</button></form>` : '<div class="crm-row-meta">У клиента пока нет связанного аккаунта тестового Telegram-бота.</div>'}
+              ` : '<div class="crm-row-meta">У клиента нет доступного контакта в боте. Сообщение можно скопировать и отправить самостоятельно.</div>'}
+            <form class="crm-form" id="telegram-message-form">
+              <div class="crm-two-fields"><button class="crm-btn small" id="prepare-account-message" type="button" ${user.credential.password_available && primaryEmail ? "" : "disabled"}>Подготовить логин и пароль</button><button class="crm-btn small" id="copy-account-message" type="button">Скопировать сообщение</button></div>
+              ${!user.credential.password_available ? '<div class="crm-row-meta">Сначала создайте пароль в блоке «Контакты».</div>' : ""}
+              <label><div class="crm-k">СООБЩЕНИЕ ЧЕЛОВЕКУ</div><textarea class="crm-textarea" id="telegram-message" rows="10" placeholder="Подготовьте сообщение с доступами или напишите свой текст"></textarea></label>
+              <button class="crm-btn small" id="send-account-message" type="submit" ${botState ? "" : "disabled"}>Отправить в бота</button>
+              <div class="crm-row-meta" id="account-message-status" role="status"></div>
+            </form>
         </section>
         </div>
         <div class="crm-profile-stack">
@@ -1078,13 +1085,52 @@
       await refreshUser(id);
     });
     const telegramForm = document.getElementById("telegram-message-form");
+    const messageField = document.getElementById("telegram-message");
+    const messageStatus = document.getElementById("account-message-status");
+    document.getElementById("prepare-account-message").addEventListener("click", async (event) => {
+      const button = event.currentTarget;
+      button.disabled = true;
+      try {
+        const [credential, currentCourses, currentModules] = await Promise.all([
+          api(`/admin/api/users/${id}/credential/reveal`, {method:"POST"}),
+          api(`/admin/api/users/${id}/course-accesses`),
+          api(`/admin/api/users/${id}/modules`)
+        ]);
+        const courses = currentCourses.courses.filter(course => course.entitled).map(course =>
+          `• ${course.name} — ${!course.start_open ? "начало по условиям программы" : course.all_lessons_open ? "материалы открыты сразу" : "можно начать, материалы открываются последовательно"}.`
+        );
+        const applications = [["dqs", "Quality Score (DQS)"], ["metabolism", "Калькулятор метаболизма"], ["strength", "Дневник силовых тренировок"]]
+          .filter(([code]) => currentModules.modules[code]?.has_access)
+          .map(([code, name]) => `• ${name} — ${currentModules.modules[code].start_open ? "доступен" : "откроется по условиям программы"}.`);
+        messageField.value = [
+          `${user.display_name || "Здравствуйте"}, ваш личный кабинет готов.`,
+          "", "Вход: https://похудение-это-есть.рф/lk", `Логин: ${primaryEmail}`, `Пароль: ${credential.password}`,
+          "", "Ваши доступы:", ...(courses.length || applications.length ? [...courses, ...applications] : ["Доступы к программам пока не выданы."]),
+          "", "Если возникнут проблемы со входом или доступами, напишите мне."
+        ].join("\n");
+        messageStatus.textContent = "Сообщение подготовлено. Можно отредактировать, скопировать или отправить в бота.";
+      } catch (error) { messageStatus.textContent = error.message; }
+      finally { button.disabled = false; }
+    });
+    document.getElementById("copy-account-message").addEventListener("click", async () => {
+      if (!messageField.value.trim()) { messageStatus.textContent = "Сначала подготовьте или напишите сообщение."; return; }
+      try {
+        const copied = await copyText(messageField.value);
+        messageStatus.textContent = copied ? "Сообщение скопировано." : "Не удалось скопировать. Выделите текст и скопируйте вручную.";
+      }
+      catch (error) { messageStatus.textContent = error.message; }
+    });
     if (telegramForm) telegramForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const text = document.getElementById("telegram-message").value.trim();
-      if (!text) return;
-      await api(`/bot-api/users/${id}/messages`, { method: "POST", body: JSON.stringify({ text }) });
-      document.getElementById("telegram-message").value = "";
-      event.submitter.textContent = "Отправлено";
+      const text = messageField.value.trim();
+      if (!text || !botState) return;
+      const button = document.getElementById("send-account-message");
+      button.disabled = true;
+      try {
+        await api(`/bot-api/users/${id}/messages`, { method: "POST", body: JSON.stringify({ text }) });
+        messageStatus.textContent = "Сообщение отправлено в бота.";
+      } catch (error) { messageStatus.textContent = error.message; }
+      finally { button.disabled = false; }
     });
   }
 
