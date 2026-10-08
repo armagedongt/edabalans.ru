@@ -645,7 +645,7 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
         params={"action": "getWorkout", "target_user_id": str(user_id), "type": 2},
     ).json()["workout"]["exercise_catalog"]
 
-    assert len([item for item in first if item["source"] == "base"]) == 25
+    assert len([item for item in first if item["source"] == "base"]) == 31
     base_names = {item["name"] for item in BASE_STRENGTH_EXERCISES}
     assert base_names == {
         "Жим штанги лёжа",
@@ -662,17 +662,23 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
         "Выпады",
         "Румынская тяга",
         "Становая тяга",
-        "Ягодичный мост",
-        "Сгибание ног в тренажёре",
+        "Ягодичный мост в тренажёре",
+        "Ягодичный мост со штангой",
+        "Сгибание ног лёжа в тренажёре",
         "Разгибание ног в тренажёре",
         "Сведение ног в тренажёре",
         "Разведение ног в тренажёре",
-        "Подъёмы на носки",
-        "Сгибание рук с гантелями",
-        "Тяга верхнего блока на трицепс",
+        "Подъёмы на носки стоя",
+        "Сгибание рук с гантелями стоя",
+        "Подъём на бицепс стоя",
+        "Разгибание рук на верхнем блоке",
         "Разведение гантелей в стороны",
         "Разведение рук на заднюю дельту",
         "Подъём гантелей на бицепс сидя на наклонной скамье",
+        "Гиперэкстензия",
+        "Разведение рук в тренажёре",
+        "Жим платформы гравитрона одной ногой",
+        "Разведение гантелей лёжа",
     }
     assert all(
         item["muscles"].strip()

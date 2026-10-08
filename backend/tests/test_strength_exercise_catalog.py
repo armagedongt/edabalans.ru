@@ -1,6 +1,9 @@
 from copy import deepcopy
+import os
 
 import pytest
+
+os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 
 from app.importers.strength_exercise_catalog import normalize_exercise_catalog
 
@@ -77,3 +80,63 @@ def test_colliding_results_refuse_conversion_without_changing_original():
     with pytest.raises(ValueError, match="combine results"):
         normalize_exercise_catalog([workout], [], NAMES)
     assert workout == before
+
+
+@pytest.fixture
+def migration_db(monkeypatch):
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from app.database import Base
+    from app.models import StrengthState, User
+    from scripts import migrate_strength_exercise_catalog as migration
+
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    factory = sessionmaker(engine, expire_on_commit=False)
+    monkeypatch.setattr(migration, "SessionLocal", factory)
+    with factory() as db:
+        users = [User(display_name="Selected", status="active"), User(display_name="Other", status="active")]
+        db.add_all(users)
+        db.flush()
+        for user in users:
+            db.add(StrengthState(user_id=user.id, version=3, workout_types=[],
+                                 workouts=[session(1, "hip_bridge")], hidden_exercises=[]))
+        db.commit()
+        ids = [user.id for user in users]
+    yield migration, factory, ids
+    engine.dispose()
+
+
+def test_cli_dry_run_changes_nothing_and_apply_only_changes_selected_profile(migration_db):
+    from sqlalchemy import select
+    from app.models import StrengthState
+
+    migration, factory, ids = migration_db
+    result = migration.run(user_id=str(ids[0]), expected_version=3)
+    assert result["dry_run"] is True and result["changed"] is True
+    with factory() as db:
+        before = {s.user_id: (deepcopy(s.workouts), s.version) for s in db.scalars(select(StrengthState))}
+    assert all(version == 3 and w[0]["exercises"][0]["exercise_id"] == "hip_bridge" for w, version in before.values())
+    migration.run(user_id=str(ids[0]), expected_version=3, apply=True)
+    with factory() as db:
+        states = {s.user_id: s for s in db.scalars(select(StrengthState))}
+        selected = states[ids[0]]
+        other = states[ids[1]]
+        assert selected.version == 4
+        assert selected.workouts[0]["exercises"][0]["exercise_id"] == "hip-thrust"
+        assert selected.workouts[0]["exercises"][0]["sets"] == before[ids[0]][0][0]["exercises"][0]["sets"]
+        assert (other.workouts, other.version) == before[ids[1]]
+    assert migration.run(user_id=str(ids[0]), expected_version=4, apply=True)["changed"] is False
+
+
+def test_cli_refuses_changed_version_before_writing(migration_db):
+    from sqlalchemy import select
+    from app.models import StrengthState
+
+    migration, factory, ids = migration_db
+    with pytest.raises(ValueError, match="STRENGTH_STATE_CONFLICT"):
+        migration.run(user_id=str(ids[0]), expected_version=2, apply=True)
+    with factory() as db:
+        state = db.scalar(select(StrengthState).where(StrengthState.user_id == ids[0]))
+        assert state.version == 3
+        assert state.workouts[0]["exercises"][0]["exercise_id"] == "hip_bridge"
