@@ -27,6 +27,7 @@ COPY content/article-components /app/content/article-components
 COPY content/calories/course/course.json /app/content/calories/course/course.json
 COPY content/blog /app/content/blog
 COPY content/public-site /app/content/public-site
+COPY content/service-messages /app/content/service-messages
 COPY prototypes/private-weather /app/prototypes/private-weather
 
 RUN chmod -R a+rX /app

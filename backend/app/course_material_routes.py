@@ -33,6 +33,8 @@ from app import calorie_course_material_service
 from app.calorie_course_service import DOCUMENT_KEY as CALORIE_COURSE_CODE
 from app.course_structure_service import COURSE_CONTENT_ROOT
 from app.database import get_db
+from app.recipe_originals import STEP_PREFIX as RECIPE_STEP_PREFIX
+from app.recipe_material_authoring import authoring_status, publish_recipe_source, restore_recipe_source
 
 
 def material_service(course_code: str):
@@ -299,7 +301,21 @@ def admin_course_material(
     db: Session = Depends(get_db),
 ) -> dict:
     service = material_service(course_code)
-    return get_material(db, step_id) if service is None else service.get_material(db, step_id)
+    payload = get_material(db, step_id) if service is None else service.get_material(db, step_id)
+    if service is None and step_id.startswith(RECIPE_STEP_PREFIX):
+        payload["recipe_authoring"] = authoring_status(db, step_id)
+    return payload
+
+
+@router.post("/admin/api/courses/{course_code}/materials/{step_id}/recipe-source")
+def admin_adopt_recipe_source(
+    course_code: str, step_id: str, body: CourseMaterialUpdate,
+    admin: str = Depends(require_admin), db: Session = Depends(get_db),
+) -> dict:
+    if material_service(course_code) is not None or body.format != "markdown":
+        raise HTTPException(422, "Подключение исходника доступно только для Markdown рецепта Мастер-класса")
+    return publish_recipe_source(db, step_id=step_id, content=body.content,
+                                 expected_version=body.expected_version, admin=admin, adopt=True)
 
 
 @router.put("/admin/api/courses/{course_code}/materials/{step_id}")
@@ -317,6 +333,11 @@ def admin_publish_course_material(
             "Этот материал управляется каноническим Markdown-файлом. Используйте новый редактор материала",
         )
     publisher = publish_material if service is None else service.publish_material
+    if service is None and step_id.startswith(RECIPE_STEP_PREFIX):
+        if body.format != "markdown":
+            raise HTTPException(422, "Рецепт редактируется по полному оригиналу Markdown")
+        return publish_recipe_source(db, step_id=step_id, content=body.content,
+                                     expected_version=body.expected_version, admin=admin)
     return publisher(
         db,
         step_id=step_id,
@@ -358,6 +379,9 @@ def admin_restore_course_material(
             "Этот материал управляется каноническим Markdown-файлом. Используйте историю нового редактора",
         )
     restorer = restore_material if service is None else service.restore_material
+    if service is None and step_id.startswith(RECIPE_STEP_PREFIX):
+        return restore_recipe_source(db, step_id=step_id, version_no=version_no,
+                                     expected_version=body.expected_version, admin=admin)
     return restorer(
         db,
         step_id=step_id,

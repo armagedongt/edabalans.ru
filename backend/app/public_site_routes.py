@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import require_admin
 from app.database import get_db
+from app.homepage_content_service import active_homepage, publish_homepage, serialize_homepage
 from app.managed_documents import version_history
 from app.product_catalog_service import product_public
 from app.public_site_content_service import (
@@ -33,6 +34,23 @@ PRODUCT_SLUGS = {
 class PublicSiteContentUpdate(BaseModel):
     expected_version: int = Field(ge=1)
     markdown: str = Field(min_length=1, max_length=250_000)
+
+
+class HomepageContentUpdate(BaseModel):
+    expected_version: int = Field(ge=1)
+    markdown: str = Field(min_length=1, max_length=500_000)
+
+
+@router.get("/admin/api/public-site/homepage")
+def homepage_source(_: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
+    return {"ok": True, "active": serialize_homepage(active_homepage(db))}
+
+
+@router.put("/admin/api/public-site/homepage")
+def update_homepage_source(body: HomepageContentUpdate, admin: str = Depends(require_admin),
+                           db: Session = Depends(get_db)) -> dict:
+    document = publish_homepage(db, markdown=body.markdown, expected_version=body.expected_version, admin=admin)
+    return {"ok": True, "active": serialize_homepage(document)}
 
 
 @router.get("/api/public-site/content/{slug}")

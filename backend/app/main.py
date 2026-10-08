@@ -38,6 +38,8 @@ from app.owner_payment_notification_service import (
 )
 from app.intensive_routes import router as intensive_router
 from app.intensive_login_routes import router as intensive_login_router
+from app.intensive_editorial_routes import router as intensive_editorial_router
+from app.service_email_editorial_routes import router as service_email_editorial_router
 from app.knowledge_routes import router as knowledge_router
 from app.knowledge_library_routes import router as knowledge_library_router
 from app.knowledge_mcp import knowledge_mcp_app, mcp as knowledge_mcp
@@ -219,6 +221,8 @@ app.include_router(knowledge_router)
 app.include_router(knowledge_library_router)
 app.include_router(course_structure_router)
 app.include_router(course_material_router)
+app.include_router(intensive_editorial_router)
+app.include_router(service_email_editorial_router)
 app.include_router(product_catalog_router)
 app.include_router(recipe_router)
 app.include_router(calorie_course_router)

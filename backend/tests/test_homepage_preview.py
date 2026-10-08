@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 import json
 import os
 import re
+import pytest
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
@@ -16,9 +17,33 @@ from fastapi.testclient import TestClient  # noqa: E402
 
 from app.intensive_public_cta import INTENSIVE_PUBLIC_CTA  # noqa: E402
 from app.main import app  # noqa: E402
+from app.database import Base, get_db  # noqa: E402
+from sqlalchemy import create_engine  # noqa: E402
+from sqlalchemy.orm import Session  # noqa: E402
+from sqlalchemy.pool import StaticPool  # noqa: E402
 
 
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def homepage_content_database():
+    engine = create_engine("sqlite+pysqlite:///:memory:",
+                           connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    Base.metadata.create_all(engine)
+
+    def database():
+        with Session(engine) as db:
+            yield db
+
+    previous = app.dependency_overrides.get(get_db)
+    app.dependency_overrides[get_db] = database
+    yield
+    if previous is None:
+        app.dependency_overrides.pop(get_db, None)
+    else:
+        app.dependency_overrides[get_db] = previous
+    engine.dispose()
 
 
 class RobotsMetaParser(HTMLParser):
@@ -913,7 +938,8 @@ def test_homepage_versions_preserve_snapshots_and_separate_current_runtime_and_n
 
     runtime_response = client.get("/preview/homepage-release-candidate")
     assert runtime_response.status_code == 200
-    assert runtime_response.text == (preview_dir / "release-candidate.html").read_text(encoding="utf-8")
+    assert "<!-- homepage-slot:" not in runtime_response.text
+    assert 'data-homepage-block="hero-title"' in runtime_response.text
 
     draft_response = client.get(draft["route"])
     assert draft_response.status_code == 200

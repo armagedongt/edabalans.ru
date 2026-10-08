@@ -7,13 +7,17 @@ $pythonPath = (Get-Command python).Source
 $toolsRoot = Join-Path $InstallRoot 'tools'
 [IO.Directory]::CreateDirectory($toolsRoot) | Out-Null
 [IO.Directory]::CreateDirectory($VaultRoot) | Out-Null
-foreach ($name in @('editorial_vault.py', 'editorial_vault_desktop.py', 'publish_course_material.py')) {
+foreach ($name in @('editorial_vault.py', 'editorial_vault_desktop.py', 'publish_course_material.py', 'editorial_bot_adapter.py', 'editorial_git_adapter.py', 'editorial_email_adapter.py')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination (Join-Path $toolsRoot $name)
 }
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 [IO.File]::WriteAllText((Join-Path $toolsRoot '__init__.py'), '', $utf8)
 $repoRoot = Split-Path -Parent $PSScriptRoot
-Copy-Item -LiteralPath (Join-Path $repoRoot 'docs/knowledge-base/EDITORIAL_VAULT.md') -Destination (Join-Path $VaultRoot 'Правила публикации.md')
+$rulesText = [IO.File]::ReadAllText((Join-Path $repoRoot 'docs/knowledge-base/EDITORIAL_VAULT.md'))
+$homepageRulesPath = (Join-Path $repoRoot 'docs/knowledge-base/PUBLIC_SITE.md').Replace('\', '/')
+$recipeRulesPath = (Join-Path $repoRoot 'content/masterclass/recipes/README.md').Replace('\', '/')
+$rulesText = $rulesText.Replace('(PUBLIC_SITE.md)', '(<'+$homepageRulesPath+'>)').Replace('(../../content/masterclass/recipes/README.md)', '(<'+$recipeRulesPath+'>)')
+[IO.File]::WriteAllText((Join-Path $VaultRoot 'Правила публикации.md'), $rulesText, $utf8)
 $quickGuide = @'
 # Как пользоваться
 
@@ -44,6 +48,8 @@ D:\Codex\tools\edabalans-editorial. Сначала Каталог.md и .publish
 исключения выполняются через действующий маршрут Codex, не обычный PUT.
 '@
 [IO.File]::WriteAllText((Join-Path $VaultRoot 'AGENTS.md'), $instructions, $utf8)
+& $pythonPath (Join-Path $PSScriptRoot 'install_editorial_example.py') $VaultRoot
+if ($LASTEXITCODE -ne 0) { throw 'Не удалось установить пример Markdown' }
 $desktop = [Environment]::GetFolderPath('Desktop')
 $shell = New-Object -ComObject WScript.Shell
 $publisher = $shell.CreateShortcut((Join-Path $desktop 'Опубликовать материалы.lnk'))

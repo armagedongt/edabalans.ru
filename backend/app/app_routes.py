@@ -40,6 +40,7 @@ from app.application_access_service import application_access_state
 from app.dqs_access_service import require_dqs_revealed
 from app.auth import admin_identity, require_admin, security, session_admin
 from app.database import get_db
+from app.homepage_content_service import render_homepage
 from app.legal_service import legal_status_payload
 from app.intensive_public_cta import INTENSIVE_PUBLIC_CTA
 from app.intensive_onepage import page as render_intensive_onepage
@@ -225,8 +226,10 @@ def homepage_library_fragment(source: str, name: str) -> str:
     return source[start:end].strip()
 
 
-def homepage_preview_response(template_path: Path, embed: str | None) -> HTMLResponse:
+def homepage_preview_response(template_path: Path, embed: str | None, db: Session | None = None) -> HTMLResponse:
     template = template_path.read_text(encoding="utf-8")
+    if db is not None:
+        template = render_homepage(db, template)
     if embed == "tilda":
         template = template.replace(
             '<body data-page-theme="blue-mist">',
@@ -410,11 +413,13 @@ def direct_intensive_preview() -> HTMLResponse:
 
 @router.get("/preview/homepage-release-candidate", include_in_schema=False)
 @router.get("/preview/homepage-release-candidate/", include_in_schema=False)
-def homepage_release_candidate_preview(embed: str | None = Query(default=None)) -> HTMLResponse:
+def homepage_release_candidate_preview(embed: str | None = Query(default=None),
+                                       db: Session = Depends(get_db)) -> HTMLResponse:
     """Accepted public homepage source, with an optional T123-safe embedded form."""
     return homepage_preview_response(
         STATIC_DIR / "homepage-preview" / "release-candidate.html",
         embed,
+        db,
     )
 
 

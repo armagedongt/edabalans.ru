@@ -19,6 +19,7 @@ from sqlalchemy.orm import Session
 from app.account_security import decrypt_password, encrypt_password, generate_password, password_hash, token_hash
 from app.app_service import EMAIL_RE, normalize_email
 from app.config import Settings
+from app.service_email_templates import render_section
 from app.database import SessionLocal
 from app.models import AccountCredential, AccountOnboarding, MessengerLinkToken, Payment, User, UserEmail
 
@@ -320,89 +321,36 @@ def account_access_email(
     password: str | None = None,
 ) -> EmailMessage:
     message = EmailMessage()
-    message["Subject"] = (
-        "Доступ в личный кабинет" if payment_completed else "Регистрация в личном кабинете"
-    )
+    variant = "paid" if payment_completed else "free"
+    message["Subject"] = render_section("account-onboarding", "subject_" + variant)
     sender = settings.smtp_from_email
     message["From"] = f"{settings.smtp_from_name} <{sender}>" if settings.smtp_from_name else sender
     message["To"] = email
     if settings.smtp_reply_to:
         message["Reply-To"] = settings.smtp_reply_to
-    intro = "Оплата прошла успешно." if payment_completed else "Регистрация почти готова."
+    intro = render_section("account-onboarding", "intro_" + variant)
     if password:
         account_url = settings.account_public_url
-        safe_intro = html.escape(intro)
-        safe_email = html.escape(email)
-        safe_password = html.escape(password)
-        safe_account_url = html.escape(account_url, quote=True)
-        lines = [
-            intro,
-            "",
-            "Доступ в личный кабинет готов.",
-            f"Логин: {email}",
-            f"Пароль: {password}",
-            f"Личный кабинет: {account_url}",
-            "",
-            "Сохраните это письмо: логин и пароль понадобятся на другом устройстве.",
-            "Если что-то не получилось, напишите мне в личные сообщения:",
-            "Telegram: https://t.me/FitnessSergey",
-            "MAX: https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw",
-        ]
-        message.set_content("\n".join(lines))
-        message.add_alternative(
-            f"""<!doctype html><html><body style="font:16px/1.55 Arial,sans-serif;color:#17172b">
-            <div style="max-width:620px;margin:auto;padding:28px 20px">
-            <p>{safe_intro}</p><h2>Доступ в личный кабинет готов</h2>
-            <p>Логин: <strong>{safe_email}</strong><br>Пароль: <strong>{safe_password}</strong></p>
-            <p><a href="{safe_account_url}" style="display:inline-block;padding:12px 20px;border-radius:10px;background:#159ee4;color:#fff;text-decoration:none;font-weight:700">Открыть личный кабинет</a></p>
-            <p>Сохраните это письмо: логин и пароль понадобятся на другом устройстве.</p>
-            <p style="color:#5b6472;font-size:14px">Если что-то не получилось, напишите мне: <a href="https://t.me/FitnessSergey">Telegram</a> или <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw">MAX</a>.</p>
-            </div></body></html>""",
-            subtype="html",
-        )
+        message.set_content(render_section("account-direct", "text", intro=intro,
+                                           email=email, password=password, account_url=account_url))
+        message.add_alternative(render_section("account-direct", "html",
+            intro_html=html.escape(intro), email_html=html.escape(email),
+            password_html=html.escape(password), account_url_html=html.escape(account_url, quote=True)), subtype="html")
         return message
     # Stored SQLite datetimes may be naive; PostgreSQL stores this deadline in UTC.
     deadline = expires_at if expires_at.tzinfo else expires_at.replace(tzinfo=UTC)
     deadline_msk = deadline.astimezone(timezone(timedelta(hours=3)))
-    expiry_notice = f"Ссылки действуют до {deadline_msk:%d.%m.%Y %H:%M} (мск)."
-    lines = [
-        intro,
-        "",
-        "Чтобы получить логин и пароль от личного кабинета на моём сайте, "
-        "откройте любой удобный для вас мессенджер:",
-    ]
-    if links.get("telegram"):
-        lines.append(f"Telegram: {links['telegram']}")
-    if links.get("max"):
-        lines.append(f"MAX: {links['max']}")
-    lines.extend(
-        (
-            "",
-            expiry_notice,
-            "",
-            "Это техническое письмо, я не увижу ответ.",
-            "Если ссылка перестала действовать или что-то не получилось, напишите мне в личные сообщения:",
-            "Telegram: https://t.me/FitnessSergey",
-            "MAX: https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw",
-        )
-    )
-    message.set_content("\n".join(lines))
-    buttons = "".join(
-        f'<td style="padding-right:12px"><a href="{url}" style="display:inline-block;padding:12px 20px;border-radius:10px;background:{"#229ED9" if platform == "telegram" else "#2563eb"};color:#fff;text-decoration:none;font-weight:700">{"Telegram" if platform == "telegram" else "MAX"}</a></td>'
-        for platform, url in links.items()
-        if url
-    )
-    message.add_alternative(
-        f"""<!doctype html><html><body style="font:16px/1.55 Arial,sans-serif;color:#17172b">
-        <div style="max-width:620px;margin:auto;padding:28px 20px">
-        <p>{intro}</p>
-        <p>Чтобы получить логин и пароль от личного кабинета на моём сайте, откройте любой удобный для вас мессенджер:</p>
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr>{buttons}</tr></table>
-        <p>{expiry_notice}</p>
-        <p style="color:#5b6472;font-size:14px">Это техническое письмо, я не увижу ответ. Если ссылка перестала действовать или что-то не получилось, напишите мне в личные сообщения: <a href="https://t.me/FitnessSergey">Telegram</a> или <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw">MAX</a>.</p>
-        </div></body></html>""",
-        subtype="html",
-    )
+    expiry_notice = render_section("account-messenger", "expiry", deadline=f"{deadline_msk:%d.%m.%Y %H:%M}")
+    link_lines = [render_section("account-messenger", platform + "_link", url=links[platform])
+                  for platform in ("telegram", "max") if links.get(platform)]
+    messenger_links = "\n" + "\n".join(link_lines) if link_lines else ""
+    message.set_content(render_section("account-messenger", "text", intro=intro,
+                                       messenger_links=messenger_links, expiry_notice=expiry_notice))
+    buttons = "".join(render_section("account-messenger",
+        "telegram_button_html" if platform == "telegram" else "max_button_html", url=url)
+        for platform, url in links.items() if url)
+    message.add_alternative(render_section("account-messenger", "html", intro=intro,
+                                           buttons=buttons, expiry_notice=expiry_notice), subtype="html")
     return message
 
 

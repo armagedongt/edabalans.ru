@@ -20,6 +20,7 @@ from sqlalchemy.orm import Session
 from app.app_service import AppAccessError, normalize_email, resolve_user_for_resource
 from app.auth import session_admin
 from app.config import Settings, get_settings
+from app.service_email_templates import render_section
 from app.database import get_db
 from app.models import User
 
@@ -85,13 +86,10 @@ def send_login_code(email: str, code: str, settings: Settings) -> None:
     if not settings.smtp_host or not settings.smtp_from_email:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "email delivery is not configured")
     message = EmailMessage()
-    message["Subject"] = "Код входа в ЕдаБаланс"
+    message["Subject"] = render_section("login-code", "subject")
     message["From"] = settings.smtp_from_email
     message["To"] = email
-    message.set_content(
-        "Код входа в приложение ЕдаБаланс: "
-        f"{code}\n\nОн действует 10 минут. Если вы не запрашивали код, ничего делать не нужно."
-    )
+    message.set_content(render_section("login-code", "text", code=code))
     context = ssl.create_default_context()
     try:
         if settings.smtp_use_ssl:

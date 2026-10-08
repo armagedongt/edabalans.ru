@@ -24,43 +24,1588 @@
     "overlay": "Компактный слой поверх страницы."
   },
   "blocks": [
-    { "order": 10, "id": "hero-label", "label": "Плашка «Мастер-класс · 21 день»", "selector": "[data-homepage-block=\"hero-label\"]", "fields": ["text"], "width": "intrinsic", "source": "backend/app/static/homepage-preview/release-candidate.html" },
-    { "order": 20, "id": "hero-title", "label": "Хиро-заголовок", "selector": "[data-homepage-block=\"hero-title\"]", "fields": ["accent", "line-1", "line-2"], "width": "hero", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "hero_intro" },
-    { "order": 30, "id": "hero-intro", "label": "Вводный текст", "selector": "[data-homepage-block=\"hero-intro\"]", "fields": ["text"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
-    { "order": 40, "id": "hero-video", "label": "Главное видео", "selector": "[data-homepage-block=\"hero-video\"]", "fields": [], "width": "video-main", "source": "backend/app/static/homepage-preview/vsl-player.html", "analyticsSection": "hero_video" },
-    { "order": 50, "id": "hero-outro", "label": "Обещание, гарантия и первый CTA", "selector": "[data-homepage-block=\"hero-outro\"]", "fields": ["paragraph-1", "paragraph-2"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsCta": "pricing_hero" },
-    { "order": 60, "id": "recognition-intro", "label": "Знакомый совет", "selector": "[data-homepage-block=\"recognition-intro\"]", "fields": ["media", "title"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "recognition" },
-    { "order": 70, "id": "recognition-explanation", "label": "Почему одного дефицита недостаточно", "selector": "[data-homepage-block=\"recognition-explanation\"]", "fields": ["text"], "width": null, "source": "backend/app/static/homepage-preview/release-candidate.html" },
-    { "order": 80, "id": "approach", "label": "Пора менять подход", "selector": "[data-homepage-block=\"approach\"]", "fields": ["html"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "approach" },
-    { "order": 90, "id": "inside", "label": "Как всё будет устроено", "selector": "[data-homepage-block=\"inside\"]", "fields": ["steps"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "program_inside" },
-    { "order": 100, "id": "before-after", "label": "До и после Мастер-класса", "selector": "[data-homepage-block=\"before-after\"]", "fields": ["visual"], "width": "visual", "source": ["backend/app/static/homepage-preview/weight-loss-before-masterclass.svg", "backend/app/static/homepage-preview/weight-loss-after-masterclass.svg"], "analyticsSection": "before_after" },
-    { "order": 110, "id": "experience-proof", "label": "Опыт автора", "selector": "[data-homepage-block=\"experience-proof\"]", "fields": ["text"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "experience" },
-    { "order": 120, "id": "reviews-featured-heading", "label": "Заголовок избранных отзывов", "selector": "[data-homepage-block=\"reviews-featured-heading\"]", "fields": ["title"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "reviews_featured" },
-    { "order": 130, "id": "reviews-voice-1", "label": "Голосовой отзыв 1", "selector": "[data-homepage-block=\"reviews-voice-1\"]", "fields": ["author"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
-    { "order": 140, "id": "reviews-voice-2", "label": "Голосовой отзыв 2", "selector": "[data-homepage-block=\"reviews-voice-2\"]", "fields": ["author"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
-    { "order": 150, "id": "reviews-featured", "label": "Избранные фотоотзывы", "selector": "[data-homepage-block=\"reviews-featured\"]", "fields": ["media"], "width": "visual", "source": "backend/app/static/homepage-preview/release-candidate.html" },
-    { "order": 160, "id": "method-proof", "label": "О подходе автора", "selector": "[data-homepage-block=\"method-proof\"]", "fields": ["points", "title"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "method" },
-    { "order": 170, "id": "reviews-voice-3", "label": "Голосовой отзыв Татьяны", "selector": "[data-homepage-block=\"reviews-voice-3\"]", "fields": [], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
-    { "order": 180, "id": "pricing-heading", "label": "Заголовок тарифов", "selector": "[data-homepage-block=\"pricing-heading\"]", "fields": ["text"], "width": "wide", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "pricing" },
-    { "order": 190, "id": "pricing-cards", "label": "Тарифные карточки", "selector": "[data-homepage-block=\"pricing-cards\"]", "fields": ["catalog"], "width": "wide", "source": "platform.commerce", "api": "/api/pricing/site/preview", "analyticsCtas": ["pricing_plan_basic", "pricing_plan_recipes", "pricing_plan_consult"] },
-    { "order": 200, "id": "pricing-trust", "label": "Гарантии и условия доступа", "selector": "[data-homepage-block=\"pricing-trust\"]", "fields": ["text"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
-    { "order": 210, "id": "pricing-program", "label": "Программа по дням", "selector": "[data-homepage-block=\"pricing-program\"]", "fields": ["links"], "width": "content", "source": "content/public-site/homepage/*.md", "analyticsSection": "program_days", "analyticsCta": "pricing_program_overlay" },
-    { "order": 220, "id": "approach-article-link", "label": "Ссылка на подробный материал о подходе", "selector": "[data-homepage-block=\"approach-article-link\"]", "fields": [], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
-    { "order": 230, "id": "anya-heading", "label": "Заголовок истории Ани", "selector": "[data-homepage-block=\"anya-heading\"]", "fields": ["kicker", "title"], "width": "story", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "anya_story" },
-    { "order": 240, "id": "anya-intro", "label": "Вводный текст истории Ани", "selector": "[data-homepage-block=\"anya-intro\"]", "fields": ["text"], "width": "story", "source": "backend/app/static/homepage-preview/release-candidate.html" },
-    { "order": 250, "id": "anya-slider", "label": "Видеоистория Ани", "selector": "[data-homepage-block=\"anya-slider\"]", "fields": ["media"], "width": "video-portrait", "source": "backend/app/static/homepage-preview/release-candidate.html" },
-    { "order": 260, "id": "anya-outro", "label": "Текст после истории Ани", "selector": "[data-homepage-block=\"anya-outro\"]", "fields": ["paragraph-1", "paragraph-2"], "width": "story", "source": "backend/app/static/homepage-preview/release-candidate.html" },
-    { "order": 270, "id": "anya-cta", "label": "CTA после истории Ани", "selector": "[data-homepage-block=\"anya-cta\"]", "fields": ["cta"], "width": "story", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsCta": "pricing_anya_story" },
-    { "order": 280, "id": "result", "label": "Исторический блок результата", "selector": "[data-homepage-block=\"result\"]", "fields": [], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "status": "hidden" },
-    { "order": 290, "id": "author", "label": "Об авторе", "selector": "[data-homepage-block=\"author\"]", "fields": ["media", "paragraph-1", "paragraph-2", "paragraph-3", "paragraph-4", "paragraph-5", "title"], "width": "content", "source": ["backend/app/static/homepage-preview/release-candidate.html", "backend/app/static/blog/assets/sergey-author.png"], "analyticsSection": "about" },
-    { "order": 300, "id": "faq", "label": "Важные вопросы", "selector": "[data-homepage-block=\"faq\"]", "fields": ["items"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "faq" },
-    { "order": 310, "id": "final-cta", "label": "Финальный выбор", "selector": "[data-homepage-block=\"final-cta\"]", "fields": ["contact-copy", "lead", "title"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "final_choice", "analyticsCta": "pricing_final_choice" },
-    { "order": 320, "id": "reviews-after-cat", "label": "Заголовок дополнительных отзывов", "selector": "[data-homepage-block=\"reviews-after-cat\"]", "fields": ["text", "title"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "reviews_more" },
-    { "order": 330, "id": "reviews-voice-more", "label": "Дополнительные голосовые отзывы", "selector": "[data-homepage-block=\"reviews-voice-more\"]", "fields": [], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html" },
-    { "order": 340, "id": "reviews-wall", "label": "Полотно дополнительных отзывов", "selector": "[data-homepage-block=\"reviews-wall\"]", "fields": ["media"], "width": "visual", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "reviews_wall" },
-    { "order": 350, "id": "reviews-wall-cta", "label": "CTA после отзывов", "selector": "[data-homepage-block=\"reviews-wall-cta\"]", "fields": [], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsCta": "pricing_after_reviews" },
-    { "order": 360, "id": "free-intensive", "label": "Сомнения и бесплатный интенсив", "selector": "[data-homepage-block=\"free-intensive\"]", "fields": ["paragraph-1", "title"], "width": "content", "source": "backend/app/static/homepage-preview/release-candidate.html", "analyticsSection": "free_intensive" },
-    { "order": 370, "id": "footer", "label": "Общий публичный подвал", "selector": "[data-homepage-block=\"footer\"]", "fields": [], "width": "shared", "source": "backend/app/static/site-footer.js" },
-    { "order": 380, "id": "cookie-notice", "label": "Уведомление cookie", "selector": "[data-homepage-block=\"cookie-notice\"]", "fields": ["action", "copy", "policy"], "width": "overlay", "source": ["backend/app/static/homepage-preview/release-candidate.html", "backend/app/static/site-cookie-notice.js"] }
+    {
+      "order": 10,
+      "id": "hero-label",
+      "label": "Плашка «Мастер-класс · 21 день»",
+      "selector": "[data-homepage-block=\"hero-label\"]",
+      "fields": [
+        "text"
+      ],
+      "width": "intrinsic",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 20,
+      "id": "hero-title",
+      "label": "Хиро-заголовок",
+      "selector": "[data-homepage-block=\"hero-title\"]",
+      "fields": [
+        "accent",
+        "line-1",
+        "line-2"
+      ],
+      "width": "hero",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "hero_intro",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 30,
+      "id": "hero-intro",
+      "label": "Вводный текст",
+      "selector": "[data-homepage-block=\"hero-intro\"]",
+      "fields": [
+        "text"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 40,
+      "id": "hero-video",
+      "label": "Главное видео",
+      "selector": "[data-homepage-block=\"hero-video\"]",
+      "fields": [],
+      "width": "video-main",
+      "source": "backend/app/static/homepage-preview/vsl-player.html",
+      "analyticsSection": "hero_video"
+    },
+    {
+      "order": 50,
+      "id": "hero-outro",
+      "label": "Обещание, гарантия и первый CTA",
+      "selector": "[data-homepage-block=\"hero-outro\"]",
+      "fields": [
+        "paragraph-1",
+        "paragraph-2"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsCta": "pricing_hero",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 60,
+      "id": "recognition-intro",
+      "label": "Знакомый совет",
+      "selector": "[data-homepage-block=\"recognition-intro\"]",
+      "fields": [
+        "media",
+        "title"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "recognition",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 70,
+      "id": "recognition-explanation",
+      "label": "Почему одного дефицита недостаточно",
+      "selector": "[data-homepage-block=\"recognition-explanation\"]",
+      "fields": [
+        "text"
+      ],
+      "width": null,
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 80,
+      "id": "approach",
+      "label": "Пора менять подход",
+      "selector": "[data-homepage-block=\"approach\"]",
+      "fields": [
+        "html"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "approach",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 90,
+      "id": "inside",
+      "label": "Как всё будет устроено",
+      "selector": "[data-homepage-block=\"inside\"]",
+      "fields": [
+        "steps"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "program_inside",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 100,
+      "id": "before-after",
+      "label": "До и после Мастер-класса",
+      "selector": "[data-homepage-block=\"before-after\"]",
+      "fields": [
+        "visual"
+      ],
+      "width": "visual",
+      "source": [
+        "backend/app/static/homepage-preview/weight-loss-before-masterclass.svg",
+        "backend/app/static/homepage-preview/weight-loss-after-masterclass.svg"
+      ],
+      "analyticsSection": "before_after"
+    },
+    {
+      "order": 110,
+      "id": "experience-proof",
+      "label": "Опыт автора",
+      "selector": "[data-homepage-block=\"experience-proof\"]",
+      "fields": [
+        "text"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "experience",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 120,
+      "id": "reviews-featured-heading",
+      "label": "Заголовок избранных отзывов",
+      "selector": "[data-homepage-block=\"reviews-featured-heading\"]",
+      "fields": [
+        "title"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "reviews_featured",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 130,
+      "id": "reviews-voice-1",
+      "label": "Голосовой отзыв 1",
+      "selector": "[data-homepage-block=\"reviews-voice-1\"]",
+      "fields": [
+        "author"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 140,
+      "id": "reviews-voice-2",
+      "label": "Голосовой отзыв 2",
+      "selector": "[data-homepage-block=\"reviews-voice-2\"]",
+      "fields": [
+        "author"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 150,
+      "id": "reviews-featured",
+      "label": "Избранные фотоотзывы",
+      "selector": "[data-homepage-block=\"reviews-featured\"]",
+      "fields": [
+        "media"
+      ],
+      "width": "visual",
+      "source": "backend/app/static/homepage-preview/release-candidate.html"
+    },
+    {
+      "order": 160,
+      "id": "method-proof",
+      "label": "О подходе автора",
+      "selector": "[data-homepage-block=\"method-proof\"]",
+      "fields": [
+        "points",
+        "title"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "method",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 170,
+      "id": "reviews-voice-3",
+      "label": "Голосовой отзыв Татьяны",
+      "selector": "[data-homepage-block=\"reviews-voice-3\"]",
+      "fields": [],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 180,
+      "id": "pricing-heading",
+      "label": "Заголовок тарифов",
+      "selector": "[data-homepage-block=\"pricing-heading\"]",
+      "fields": [
+        "text"
+      ],
+      "width": "wide",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "pricing",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 190,
+      "id": "pricing-cards",
+      "label": "Тарифные карточки",
+      "selector": "[data-homepage-block=\"pricing-cards\"]",
+      "fields": [
+        "catalog"
+      ],
+      "width": "wide",
+      "source": "platform.commerce",
+      "api": "/api/pricing/site/preview",
+      "analyticsCtas": [
+        "pricing_plan_basic",
+        "pricing_plan_recipes",
+        "pricing_plan_consult"
+      ]
+    },
+    {
+      "order": 200,
+      "id": "pricing-trust",
+      "label": "Гарантии и условия доступа",
+      "selector": "[data-homepage-block=\"pricing-trust\"]",
+      "fields": [
+        "text"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 210,
+      "id": "pricing-program",
+      "label": "Программа по дням",
+      "selector": "[data-homepage-block=\"pricing-program\"]",
+      "fields": [
+        "links"
+      ],
+      "width": "content",
+      "source": "content/public-site/homepage/*.md",
+      "analyticsSection": "program_days",
+      "analyticsCta": "pricing_program_overlay",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 220,
+      "id": "approach-article-link",
+      "label": "Ссылка на подробный материал о подходе",
+      "selector": "[data-homepage-block=\"approach-article-link\"]",
+      "fields": [],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 230,
+      "id": "anya-heading",
+      "label": "Заголовок истории Ани",
+      "selector": "[data-homepage-block=\"anya-heading\"]",
+      "fields": [
+        "kicker",
+        "title"
+      ],
+      "width": "story",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "anya_story",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 240,
+      "id": "anya-intro",
+      "label": "Вводный текст истории Ани",
+      "selector": "[data-homepage-block=\"anya-intro\"]",
+      "fields": [
+        "text"
+      ],
+      "width": "story",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 250,
+      "id": "anya-slider",
+      "label": "Видеоистория Ани",
+      "selector": "[data-homepage-block=\"anya-slider\"]",
+      "fields": [
+        "media"
+      ],
+      "width": "video-portrait",
+      "source": "backend/app/static/homepage-preview/release-candidate.html"
+    },
+    {
+      "order": 260,
+      "id": "anya-outro",
+      "label": "Текст после истории Ани",
+      "selector": "[data-homepage-block=\"anya-outro\"]",
+      "fields": [
+        "paragraph-1",
+        "paragraph-2"
+      ],
+      "width": "story",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 270,
+      "id": "anya-cta",
+      "label": "CTA после истории Ани",
+      "selector": "[data-homepage-block=\"anya-cta\"]",
+      "fields": [
+        "cta"
+      ],
+      "width": "story",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsCta": "pricing_anya_story",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 280,
+      "id": "result",
+      "label": "Исторический блок результата",
+      "selector": "[data-homepage-block=\"result\"]",
+      "fields": [],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "status": "hidden"
+    },
+    {
+      "order": 290,
+      "id": "author",
+      "label": "Об авторе",
+      "selector": "[data-homepage-block=\"author\"]",
+      "fields": [
+        "media",
+        "paragraph-1",
+        "paragraph-2",
+        "paragraph-3",
+        "paragraph-4",
+        "paragraph-5",
+        "title"
+      ],
+      "width": "content",
+      "source": [
+        "backend/app/static/homepage-preview/release-candidate.html",
+        "backend/app/static/blog/assets/sergey-author.png"
+      ],
+      "analyticsSection": "about",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 300,
+      "id": "faq",
+      "label": "Важные вопросы",
+      "selector": "[data-homepage-block=\"faq\"]",
+      "fields": [
+        "items"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "faq",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 310,
+      "id": "final-cta",
+      "label": "Финальный выбор",
+      "selector": "[data-homepage-block=\"final-cta\"]",
+      "fields": [
+        "contact-copy",
+        "lead",
+        "title"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "final_choice",
+      "analyticsCta": "pricing_final_choice",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 320,
+      "id": "reviews-after-cat",
+      "label": "Заголовок дополнительных отзывов",
+      "selector": "[data-homepage-block=\"reviews-after-cat\"]",
+      "fields": [
+        "text",
+        "title"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "reviews_more",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 330,
+      "id": "reviews-voice-more",
+      "label": "Дополнительные голосовые отзывы",
+      "selector": "[data-homepage-block=\"reviews-voice-more\"]",
+      "fields": [],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 340,
+      "id": "reviews-wall",
+      "label": "Полотно дополнительных отзывов",
+      "selector": "[data-homepage-block=\"reviews-wall\"]",
+      "fields": [
+        "media"
+      ],
+      "width": "visual",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "reviews_wall"
+    },
+    {
+      "order": 350,
+      "id": "reviews-wall-cta",
+      "label": "CTA после отзывов",
+      "selector": "[data-homepage-block=\"reviews-wall-cta\"]",
+      "fields": [],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsCta": "pricing_after_reviews",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 360,
+      "id": "free-intensive",
+      "label": "Сомнения и бесплатный интенсив",
+      "selector": "[data-homepage-block=\"free-intensive\"]",
+      "fields": [
+        "paragraph-1",
+        "title"
+      ],
+      "width": "content",
+      "source": "backend/app/static/homepage-preview/release-candidate.html",
+      "analyticsSection": "free_intensive",
+      "textSource": "public-site-homepage/homepage"
+    },
+    {
+      "order": 370,
+      "id": "footer",
+      "label": "Общий публичный подвал",
+      "selector": "[data-homepage-block=\"footer\"]",
+      "fields": [],
+      "width": "shared",
+      "source": "backend/app/static/site-footer.js"
+    },
+    {
+      "order": 380,
+      "id": "cookie-notice",
+      "label": "Уведомление cookie",
+      "selector": "[data-homepage-block=\"cookie-notice\"]",
+      "fields": [
+        "action",
+        "copy",
+        "policy"
+      ],
+      "width": "overlay",
+      "source": [
+        "backend/app/static/homepage-preview/release-candidate.html",
+        "backend/app/static/site-cookie-notice.js"
+      ]
+    }
+  ],
+  "editorialSource": "content/public-site/homepage/homepage.md",
+  "editorialSchemaVersion": 1,
+  "textSlots": [
+    {
+      "key": "hero-label.p-01",
+      "block": "hero-label",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "hero-title.h1-01",
+      "block": "hero-title",
+      "tag": "h1",
+      "requiredMarkup": [
+        "<span class=\"site-title__plain\" data-homepage-field=\"line-1\">",
+        "</span>",
+        "<span class=\"site-title__plain\" data-homepage-field=\"line-2\">",
+        "<small>",
+        "</small>",
+        "</span>",
+        "<span class=\"site-title__accent\" data-homepage-field=\"accent\">",
+        "</span>"
+      ]
+    },
+    {
+      "key": "hero-intro.p-01",
+      "block": "hero-intro",
+      "tag": "p",
+      "requiredMarkup": [
+        "<mark>",
+        "</mark>"
+      ]
+    },
+    {
+      "key": "hero-outro.p-01",
+      "block": "hero-outro",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "hero-outro.p-02",
+      "block": "hero-outro",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "hero-outro.p-03",
+      "block": "hero-outro",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "hero-outro.p-04",
+      "block": "hero-outro",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "hero-outro.a-05",
+      "block": "hero-outro",
+      "tag": "a",
+      "requiredMarkup": []
+    },
+    {
+      "key": "hero-outro.p-06",
+      "block": "hero-outro",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "recognition-intro.h2-01",
+      "block": "recognition-intro",
+      "tag": "h2",
+      "requiredMarkup": []
+    },
+    {
+      "key": "recognition-explanation.p-01",
+      "block": "recognition-explanation",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "recognition-explanation.p-02",
+      "block": "recognition-explanation",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "recognition-explanation.p-03",
+      "block": "recognition-explanation",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "approach.h2-01",
+      "block": "approach",
+      "tag": "h2",
+      "requiredMarkup": []
+    },
+    {
+      "key": "approach.p-02",
+      "block": "approach",
+      "tag": "p",
+      "requiredMarkup": [
+        "<span>",
+        "</span>",
+        "<strong>",
+        "</strong>"
+      ]
+    },
+    {
+      "key": "approach.p-03",
+      "block": "approach",
+      "tag": "p",
+      "requiredMarkup": [
+        "<span>",
+        "</span>",
+        "<strong>",
+        "<span class=\"method-list__no-break\">",
+        "</span>",
+        "</strong>"
+      ]
+    },
+    {
+      "key": "approach.p-04",
+      "block": "approach",
+      "tag": "p",
+      "requiredMarkup": [
+        "<span>",
+        "</span>",
+        "<strong>",
+        "<span class=\"method-list__no-break\">",
+        "</span>",
+        "</strong>"
+      ]
+    },
+    {
+      "key": "approach.p-05",
+      "block": "approach",
+      "tag": "p",
+      "requiredMarkup": [
+        "<span>",
+        "</span>",
+        "<strong>",
+        "<span class=\"method-list__no-break\">",
+        "</span>",
+        "</strong>"
+      ]
+    },
+    {
+      "key": "approach.p-06",
+      "block": "approach",
+      "tag": "p",
+      "requiredMarkup": [
+        "<span>",
+        "</span>",
+        "<strong>",
+        "</strong>"
+      ]
+    },
+    {
+      "key": "approach.p-07",
+      "block": "approach",
+      "tag": "p",
+      "requiredMarkup": [
+        "<span>",
+        "</span>",
+        "<strong>",
+        "<span class=\"method-list__no-break\">",
+        "</span>",
+        "</strong>"
+      ]
+    },
+    {
+      "key": "inside.h2-01",
+      "block": "inside",
+      "tag": "h2",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.p-02",
+      "block": "inside",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.h3-03",
+      "block": "inside",
+      "tag": "h3",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.p-04",
+      "block": "inside",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.p-05",
+      "block": "inside",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.h3-06",
+      "block": "inside",
+      "tag": "h3",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.p-07",
+      "block": "inside",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.p-08",
+      "block": "inside",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.h3-09",
+      "block": "inside",
+      "tag": "h3",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.p-10",
+      "block": "inside",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.p-11",
+      "block": "inside",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.h3-12",
+      "block": "inside",
+      "tag": "h3",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.p-13",
+      "block": "inside",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.p-14",
+      "block": "inside",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.h3-15",
+      "block": "inside",
+      "tag": "h3",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.p-16",
+      "block": "inside",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.p-17",
+      "block": "inside",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.p-18",
+      "block": "inside",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "inside.p-19",
+      "block": "inside",
+      "tag": "p",
+      "requiredMarkup": [
+        "<em>",
+        "</em>"
+      ]
+    },
+    {
+      "key": "experience-proof.p-01",
+      "block": "experience-proof",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "experience-proof.li-02",
+      "block": "experience-proof",
+      "tag": "li",
+      "requiredMarkup": []
+    },
+    {
+      "key": "experience-proof.li-03",
+      "block": "experience-proof",
+      "tag": "li",
+      "requiredMarkup": []
+    },
+    {
+      "key": "experience-proof.li-04",
+      "block": "experience-proof",
+      "tag": "li",
+      "requiredMarkup": []
+    },
+    {
+      "key": "experience-proof.p-05",
+      "block": "experience-proof",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "experience-proof.p-06",
+      "block": "experience-proof",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "reviews-featured-heading.h2-01",
+      "block": "reviews-featured-heading",
+      "tag": "h2",
+      "requiredMarkup": []
+    },
+    {
+      "key": "reviews-voice-1.span-01",
+      "block": "reviews-voice-1",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "reviews-voice-1.p-02",
+      "block": "reviews-voice-1",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "reviews-voice-2.span-01",
+      "block": "reviews-voice-2",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "reviews-voice-2.p-02",
+      "block": "reviews-voice-2",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "method-proof.h2-01",
+      "block": "method-proof",
+      "tag": "h2",
+      "requiredMarkup": []
+    },
+    {
+      "key": "method-proof.li-02",
+      "block": "method-proof",
+      "tag": "li",
+      "requiredMarkup": [
+        "<span>",
+        "</span>"
+      ]
+    },
+    {
+      "key": "method-proof.li-03",
+      "block": "method-proof",
+      "tag": "li",
+      "requiredMarkup": [
+        "<span>",
+        "</span>"
+      ]
+    },
+    {
+      "key": "method-proof.li-04",
+      "block": "method-proof",
+      "tag": "li",
+      "requiredMarkup": [
+        "<span>",
+        "</span>"
+      ]
+    },
+    {
+      "key": "method-proof.li-05",
+      "block": "method-proof",
+      "tag": "li",
+      "inlineComponents": {
+        "button-1": "<button class=\"method-proof__link\" type=\"button\" data-method-overlay-open=\"education\">Подробнее <svg class=\"method-proof__link-icon\" viewBox=\"0 0 20 20\" aria-hidden=\"true\"><path d=\"M7 13 13 7M8 7h5v5\"/></svg></button>"
+      },
+      "requiredMarkup": [
+        "<span>",
+        "</span>"
+      ]
+    },
+    {
+      "key": "method-proof.li-06",
+      "block": "method-proof",
+      "tag": "li",
+      "inlineComponents": {
+        "button-1": "<button class=\"method-proof__link\" type=\"button\" data-method-overlay-open=\"sources\">Каких <svg class=\"method-proof__link-icon\" viewBox=\"0 0 20 20\" aria-hidden=\"true\"><path d=\"M7 13 13 7M8 7h5v5\"/></svg></button>"
+      },
+      "requiredMarkup": [
+        "<span>",
+        "</span>"
+      ]
+    },
+    {
+      "key": "method-proof.p-07",
+      "block": "method-proof",
+      "tag": "p",
+      "requiredMarkup": [
+        "<span aria-hidden=\"true\">",
+        "</span>"
+      ]
+    },
+    {
+      "key": "reviews-voice-3.span-01",
+      "block": "reviews-voice-3",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "reviews-voice-3.p-02",
+      "block": "reviews-voice-3",
+      "tag": "p",
+      "requiredMarkup": [
+        "<strong>",
+        "</strong>"
+      ]
+    },
+    {
+      "key": "pricing-heading.div-01",
+      "block": "pricing-heading",
+      "tag": "div",
+      "requiredMarkup": []
+    },
+    {
+      "key": "pricing-trust.span-01",
+      "block": "pricing-trust",
+      "tag": "span",
+      "requiredMarkup": [
+        "<strong>",
+        "</strong>"
+      ]
+    },
+    {
+      "key": "pricing-trust.span-02",
+      "block": "pricing-trust",
+      "tag": "span",
+      "requiredMarkup": [
+        "<strong>",
+        "</strong>"
+      ]
+    },
+    {
+      "key": "pricing-trust.span-03",
+      "block": "pricing-trust",
+      "tag": "span",
+      "requiredMarkup": [
+        "<strong>",
+        "</strong>"
+      ]
+    },
+    {
+      "key": "pricing-program.h3-01",
+      "block": "pricing-program",
+      "tag": "h3",
+      "requiredMarkup": []
+    },
+    {
+      "key": "pricing-program.p-02",
+      "block": "pricing-program",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "pricing-program.p-03",
+      "block": "pricing-program",
+      "tag": "p",
+      "requiredMarkup": [
+        "<strong>",
+        "</strong>"
+      ]
+    },
+    {
+      "key": "approach-article-link.aside-01",
+      "block": "approach-article-link",
+      "tag": "aside",
+      "requiredMarkup": [
+        "<a href=\"https://похудение-это-есть.рф/intensive\">",
+        "</a>"
+      ]
+    },
+    {
+      "key": "anya-heading.span-01",
+      "block": "anya-heading",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "anya-heading.span-02",
+      "block": "anya-heading",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "anya-intro.p-01",
+      "block": "anya-intro",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "anya-outro.p-01",
+      "block": "anya-outro",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "anya-outro.p-02",
+      "block": "anya-outro",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "anya-cta.a-01",
+      "block": "anya-cta",
+      "tag": "a",
+      "requiredMarkup": []
+    },
+    {
+      "key": "author.h2-01",
+      "block": "author",
+      "tag": "h2",
+      "requiredMarkup": []
+    },
+    {
+      "key": "author.p-02",
+      "block": "author",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "author.p-03",
+      "block": "author",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "author.p-04",
+      "block": "author",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "author.h3-05",
+      "block": "author",
+      "tag": "h3",
+      "requiredMarkup": []
+    },
+    {
+      "key": "author.p-06",
+      "block": "author",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "author.p-07",
+      "block": "author",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "author.p-08",
+      "block": "author",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.h1-01",
+      "block": "faq",
+      "tag": "h1",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-02",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-03",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-04",
+      "block": "faq",
+      "tag": "p",
+      "inlineComponents": {
+        "button-1": "<button class=\"method-proof__link\" type=\"button\" data-method-overlay-open=\"education\">по ссылке <svg class=\"method-proof__link-icon\" viewBox=\"0 0 20 20\" aria-hidden=\"true\"><path d=\"M7 13 13 7M8 7h5v5\"/></svg></button>"
+      },
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-05",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-06",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-07",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-08",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-09",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-10",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-11",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-12",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.li-13",
+      "block": "faq",
+      "tag": "li",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.li-14",
+      "block": "faq",
+      "tag": "li",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.li-15",
+      "block": "faq",
+      "tag": "li",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.li-16",
+      "block": "faq",
+      "tag": "li",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.li-17",
+      "block": "faq",
+      "tag": "li",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-18",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": [
+        "<strong>",
+        "</strong>"
+      ]
+    },
+    {
+      "key": "faq.p-19",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-20",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-21",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-22",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-23",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-24",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-25",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-26",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-27",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-28",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-29",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-30",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-31",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-32",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-33",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-34",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-35",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-36",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-37",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-38",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-39",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-40",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-41",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-42",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-43",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-44",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-45",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-46",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-47",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-48",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-49",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-50",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-51",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-52",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-53",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-54",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-55",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-56",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-57",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-58",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-59",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-60",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-61",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-62",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-63",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-64",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-65",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-66",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.span-67",
+      "block": "faq",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-68",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "faq.p-69",
+      "block": "faq",
+      "tag": "p",
+      "requiredMarkup": [
+        "<em>",
+        "</em>"
+      ]
+    },
+    {
+      "key": "final-cta.h1-01",
+      "block": "final-cta",
+      "tag": "h1",
+      "requiredMarkup": []
+    },
+    {
+      "key": "final-cta.p-02",
+      "block": "final-cta",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "final-cta.p-03",
+      "block": "final-cta",
+      "tag": "p",
+      "requiredMarkup": [
+        "<strong>",
+        "</strong>"
+      ]
+    },
+    {
+      "key": "final-cta.a-04",
+      "block": "final-cta",
+      "tag": "a",
+      "requiredMarkup": []
+    },
+    {
+      "key": "reviews-after-cat.h2-01",
+      "block": "reviews-after-cat",
+      "tag": "h2",
+      "requiredMarkup": []
+    },
+    {
+      "key": "reviews-after-cat.p-02",
+      "block": "reviews-after-cat",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "reviews-voice-more.span-01",
+      "block": "reviews-voice-more",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "reviews-voice-more.p-02",
+      "block": "reviews-voice-more",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "reviews-voice-more.span-03",
+      "block": "reviews-voice-more",
+      "tag": "span",
+      "requiredMarkup": []
+    },
+    {
+      "key": "reviews-voice-more.p-04",
+      "block": "reviews-voice-more",
+      "tag": "p",
+      "requiredMarkup": []
+    },
+    {
+      "key": "reviews-wall-cta.a-01",
+      "block": "reviews-wall-cta",
+      "tag": "a",
+      "requiredMarkup": []
+    },
+    {
+      "key": "free-intensive.h2-01",
+      "block": "free-intensive",
+      "tag": "h2",
+      "requiredMarkup": []
+    },
+    {
+      "key": "free-intensive.aside-02",
+      "block": "free-intensive",
+      "tag": "aside",
+      "requiredMarkup": [
+        "<a href=\"https://похудение-это-есть.рф/intensive\">",
+        "</a>"
+      ]
+    }
   ]
 }

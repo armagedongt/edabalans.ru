@@ -71,6 +71,13 @@ implementation_status: implemented
 
 ## Источники истины
 
+Одностраничный оригинал `content/masterclass/editorial/weight-loss-roadmap.md`
+редактируется также из постоянной папки через защищённый Git draft/publish.
+Профиль, сравнения, кнопки и порядок структурных маркеров сохраняются;
+готовность выпуска подтверждается hash действующего серверного исходника,
+до этого публикация имеет статус queued. Договор рабочей копии —
+[EDITORIAL_VAULT](../../EDITORIAL_VAULT.md).
+
 [Видео: главный вход, размещения и настройки](../../../../backend/app/static/video-player-development/README.md).
 Первый день использует публичный плеер с preset `intensive-day-1`;
 это не учебный preset МК.

@@ -23,8 +23,16 @@ def audit_actor(value: str) -> str:
 
 
 class GitHubContentEditor:
+    profile_name = "masterclass"
+
     def __init__(self, settings: Settings | None = None) -> None:
         self.settings = settings or get_settings()
+
+    def source_path(self, step_id: str) -> str:
+        return editable_material_path(step_id)
+
+    def validate_source(self, step_id: str, content: str) -> None:
+        validate_editorial_source(step_id, content)
 
     @property
     def repository(self) -> str:
@@ -155,7 +163,7 @@ class GitHubContentEditor:
         )
 
     def load(self, step_id: str) -> dict[str, Any]:
-        path = editable_material_path(step_id)
+        path = self.source_path(step_id)
         main = self._file(path, self.main_branch)
         draft = self._file(path, self.draft_branch, allow_missing=True)
         base_sha = None
@@ -182,7 +190,7 @@ class GitHubContentEditor:
         path: str,
         branch: str,
         content: str,
-        current_sha: str,
+        current_sha: str | None,
         message: str,
     ) -> dict[str, Any]:
         return self._request(
@@ -192,7 +200,7 @@ class GitHubContentEditor:
                 "message": message,
                 "content": base64.b64encode(content.encode("utf-8")).decode("ascii"),
                 "branch": branch,
-                "sha": current_sha,
+                **({"sha": current_sha} if current_sha is not None else {}),
             },
             write=True,
         )
@@ -206,18 +214,18 @@ class GitHubContentEditor:
         expected_draft_sha: str | None,
         admin: str,
     ) -> dict[str, Any]:
-        path = editable_material_path(step_id)
-        validate_editorial_source(step_id, content)
+        path = self.source_path(step_id)
+        self.validate_source(step_id, content)
         self._ensure_draft_branch()
         main = self._file(path, self.main_branch)
-        draft = self._file(path, self.draft_branch)
+        draft = self._file(path, self.draft_branch, allow_missing=True)
         if main["sha"] != expected_main_sha:
             raise HTTPException(409, "Опубликованный файл изменился. Обновите редактор")
-        if expected_draft_sha and draft["sha"] != expected_draft_sha:
+        if expected_draft_sha and (draft is None or draft["sha"] != expected_draft_sha):
             raise HTTPException(409, "Черновик уже изменился. Обновите редактор")
-        if not expected_draft_sha and draft["sha"] != main["sha"]:
+        if not expected_draft_sha and draft is not None and draft["sha"] != main["sha"]:
             raise HTTPException(409, "В GitHub уже есть другой черновик. Обновите редактор")
-        if content == main["content"] and draft["sha"] == main["sha"]:
+        if content == main["content"] and (draft is None or draft["sha"] == main["sha"]):
             return {
                 "ok": True,
                 "sha": None,
@@ -229,9 +237,9 @@ class GitHubContentEditor:
             path=path,
             branch=self.draft_branch,
             content=content,
-            current_sha=draft["sha"],
+            current_sha=draft["sha"] if draft is not None else None,
             message=(
-                f"draft(masterclass): {step_id} by {audit_actor(admin)} "
+                f"draft({self.profile_name}): {step_id} by {audit_actor(admin)} "
                 f"[base:{main['sha']}]"
             ),
         )
@@ -250,7 +258,7 @@ class GitHubContentEditor:
         expected_draft_sha: str,
         admin: str,
     ) -> dict[str, Any]:
-        path = editable_material_path(step_id)
+        path = self.source_path(step_id)
         main = self._file(path, self.main_branch)
         draft = self._file(path, self.draft_branch, allow_missing=True)
         if main["sha"] != expected_main_sha:
@@ -258,7 +266,7 @@ class GitHubContentEditor:
         if draft is None or draft["sha"] != expected_draft_sha:
             raise HTTPException(409, "Черновик изменился или отсутствует. Обновите редактор")
         try:
-            validate_editorial_source(step_id, draft["content"])
+            self.validate_source(step_id, draft["content"])
         except ValueError as exc:
             raise HTTPException(422, str(exc)) from exc
         commit = self._latest_path_commit(path, self.draft_branch)
@@ -271,7 +279,7 @@ class GitHubContentEditor:
             branch=self.main_branch,
             content=draft["content"],
             current_sha=main["sha"],
-            message=f"content(masterclass): publish {step_id} by {audit_actor(admin)}",
+            message=f"content({self.profile_name}): publish {step_id} by {audit_actor(admin)}",
         )
         return {
             "ok": True,
@@ -281,7 +289,7 @@ class GitHubContentEditor:
         }
 
     def history(self, step_id: str, *, limit: int = 20) -> dict[str, Any]:
-        path = editable_material_path(step_id)
+        path = self.source_path(step_id)
         rows = self._request(
             "GET",
             "commits",
@@ -313,13 +321,13 @@ class GitHubContentEditor:
         expected_main_sha: str,
         admin: str,
     ) -> dict[str, Any]:
-        path = editable_material_path(step_id)
+        path = self.source_path(step_id)
         main = self._file(path, self.main_branch)
         if main["sha"] != expected_main_sha:
             raise HTTPException(409, "Опубликованный файл изменился. Обновите редактор")
         old = self._file(path, commit_sha)
         try:
-            validate_editorial_source(step_id, old["content"])
+            self.validate_source(step_id, old["content"])
         except ValueError as exc:
             raise HTTPException(422, str(exc)) from exc
         result = self._put(
@@ -328,7 +336,7 @@ class GitHubContentEditor:
             content=old["content"],
             current_sha=main["sha"],
             message=(
-                f"content(masterclass): rollback {step_id} to {commit_sha[:12]} "
+                f"content({self.profile_name}): rollback {step_id} to {commit_sha[:12]} "
                 f"by {audit_actor(admin)}"
             ),
         )

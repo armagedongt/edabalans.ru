@@ -65,13 +65,38 @@ class FakeEditor(GitHubContentEditor):
             }]
         if method == "PUT" and suffix.startswith("contents/"):
             branch = payload["branch"]
-            assert payload["sha"] == self.files[branch]["sha"]
+            if branch in self.files:
+                assert payload["sha"] == self.files[branch]["sha"]
+            else:
+                assert "sha" not in payload
             content = base64.b64decode(payload["content"]).decode()
             next_sha = ("b" if branch == "content-drafts" else "d") * 40
             self.files[branch] = {"sha": next_sha, "content": content}
             self.writes.append(payload)
             return {"content": {"sha": next_sha}, "commit": {"sha": "e" * 40}}
         raise AssertionError((method, suffix, kwargs))
+
+
+def test_first_original_can_create_its_draft_in_an_existing_older_branch():
+    editor = FakeEditor()
+    del editor.files["content-drafts"]
+    content = editor.files["main"]["content"].replace("Опубликовано", "Изменено")
+    saved = editor.save_draft("day-01-article-02", content=content,
+                              expected_main_sha="a" * 40, expected_draft_sha=None, admin="owner")
+    assert saved["sha"] == "b" * 40
+    assert "sha" not in editor.writes[0]
+    assert editor.files["main"]["content"] != content
+    assert editor.files["content-drafts"]["content"] == content
+
+
+def test_deleted_expected_draft_conflicts_instead_of_recreating():
+    editor = FakeEditor()
+    del editor.files["content-drafts"]
+    with pytest.raises(HTTPException) as error:
+        editor.save_draft("day-01-article-02", content=editor.files["main"]["content"],
+                          expected_main_sha="a" * 40, expected_draft_sha="b" * 40, admin="owner")
+    assert error.value.status_code == 409
+    assert editor.writes == []
 
 
 def test_editorial_body_removes_only_service_wrapper() -> None:

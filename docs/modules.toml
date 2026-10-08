@@ -47,7 +47,7 @@ owns_tables = [
 
 [[modules]]
 id = "platform.commerce"
-reads_from = ["messaging.telegram.attribution"]
+reads_from = ["messaging.telegram.attribution", "platform.content"]
 admin_catalog = [{ category = "commerce", order = 20, url = "/admin/pricing", label = "Цены и тарифы", icon = "🏷️", description = "Цены продуктов, тарифы и дополнительные предложения." }, { category = "commerce", order = 40, url = "/finance", label = "Финансовая модель", icon = "📊", description = "Расчёт потока, выручки, рекламы, нагрузки и маржи." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.commerce.md"
@@ -127,10 +127,11 @@ owns_files = [
 owns_tables = ["account_credentials", "account_sessions"]
 owns_routes = ["*/account-auth/*", "*/app-auth/*", "*/lk", "*/admin/api/login", "*/admin/api/logout", "*/admin/api/session"]
 depends_on = ["platform.crm"]
-reads_from = ["platform.commerce"]
+reads_from = ["platform.commerce", "platform.content"]
 
 [[modules]]
 id = "platform.content"
+reads_from = ["products.masterclass.course"]
 admin_catalog = [{ category = "marketing", order = 20, url = "/admin/content", label = "Каталог материалов", icon = "🗂️", description = "Материалы Telegram, Pikabu и рабочий каталог контента." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.content.md"
@@ -148,8 +149,14 @@ owns_files = [
   "docs/CONTENT_CATALOG.md", "tools/pikabu_collect.py",
   "docs/knowledge-base/ARTICLE_STANDARD.md",
   "docs/knowledge-base/EDITORIAL_VAULT.md",
-  "tools/editorial_vault.py", "tools/editorial_vault_desktop.py",
-  "tools/install_editorial_vault.ps1",
+    "tools/editorial_vault.py", "tools/editorial_vault_desktop.py",
+    "tools/editorial_bot_adapter.py", "tools/editorial_git_adapter.py", "tools/editorial_email_adapter.py",
+    "tools/tests/test_editorial_bot_adapter.py", "tools/tests/test_editorial_git_adapter.py", "tools/tests/test_editorial_email_adapter.py",
+    "backend/app/service_email_templates.py", "backend/app/service_email_editorial_routes.py",
+    "content/service-messages/**", "backend/tests/test_service_email_templates.py",
+    "backend/tests/fixtures/service_email_originals.json",
+    "tools/install_editorial_vault.ps1",
+    "tools/install_editorial_example.py",
   "tools/tests/test_editorial_vault.py", "tools/tests/test_editorial_vault_desktop.py",
   "docs/knowledge-base/MARKDOWN_MATERIAL_TRANSFER.md",
   "docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md",
@@ -233,10 +240,12 @@ owns_tables = [
   "content_links", "content_metric_snapshots", "content_comments", "content_import_runs",
   "content_families", "content_family_memberships", "content_family_candidates",
 ]
-owns_routes = ["*/admin/api/content*"]
+owns_routes = ["*/admin/api/content*", "*/admin/api/editorial/service-emails*"]
 sources = [
   { path = "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md", role = "rule", shared = true, consumers = ["platform.knowledge", "operations.imports"] },
-  { path = "content/author-voice/recipe-authoring-v1.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.recipes"] },
+    { path = "content/author-voice/recipe-authoring-v1.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.recipes"] },
+    { path = "backend/app/service_email_templates.py", role = "runtime", shared = true, consumers = ["platform.auth", "platform.commerce"] },
+    { path = "content/service-messages/email", role = "copy", shared = true, consumers = ["platform.auth", "platform.commerce"] },
 ]
 
 [[modules]]
@@ -353,7 +362,8 @@ card = "docs/knowledge-base/modules/catalog/products.public-site.md"
 depends_on = ["platform.content", "platform.commerce", "platform.web_design"]
 reads_from = ["platform"]
 owns_files = [
-  "backend/app/public_site_content_service.py", "backend/app/public_site_routes.py",
+    "backend/app/public_site_content_service.py", "backend/app/public_site_routes.py",
+    "backend/app/homepage_content_service.py", "backend/tests/test_homepage_content.py",
   "backend/app/public_not_found.py", "backend/app/static/public-site-errors/**",
   "backend/tests/test_public_not_found.py",
   "backend/app/public_site_content_cli.py", "backend/app/static/homepage-preview/**",
@@ -389,6 +399,7 @@ owns_routes = [
   "*/api/public/video-analytics", "*/api/public/homepage-analytics",
   "*/api/admin/public-homepage-analytics", "*/public-site-assets/*",
   "*/api/public-site/content/*",
+  "*/admin/api/public-site/homepage",
   "*/admin/api/public-site/content*",
 ]
 owns_tables = ["public_video_views", "public_homepage_events"]
@@ -534,6 +545,10 @@ owns_routes = ["*/apps/recipes*", "*/api/apps/recipes*", "*/api/recipes/course*"
 depends_on = ["platform.auth", "platform.commerce", "operations.imports", "products.masterclass.course"]
 reads_from = ["platform.content", "products.masterclass.runtime"]
 writes_to = ["platform.content", "products.masterclass.runtime"]
+sources = [
+  { path = "backend/app/recipe_originals.py", role = "runtime", shared = true, consumers = ["products.masterclass.course"] },
+  { path = "backend/scripts/publish_recipe_originals.py", role = "runtime", shared = true, consumers = ["products.masterclass.course"] },
+]
 
 [[modules]]
 id = "products.intensive"
@@ -541,7 +556,8 @@ admin_catalog = [{ category = "courses", order = 30, url = "https://edabalans.ru
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.intensive.md"
 owns_files = [
-  "backend/app/intensive_public_cta.py", "backend/app/intensive_onepage.py",
+    "backend/app/intensive_public_cta.py", "backend/app/intensive_onepage.py",
+    "backend/app/intensive_editorial_routes.py", "backend/tests/test_intensive_editorial.py",
   "content/masterclass/editorial/weight-loss-roadmap.md",
   "backend/tests/test_intensive_onepage.py", "backend/tests/browser/intensive-onepage-tracking.cjs",
   "docs/INTENSIVE_ONEPAGE_ANALYTICS.md", "docs/intensive-analytics-goals.json", "docs/intensive-analytics-status.json",
@@ -553,9 +569,9 @@ owns_files = [
   "docs/INTENSIVE_PAGES.md",
   "backend/migrations/versions/20260822_0010_intensive_restart_guard.py",
 ]
-owns_routes = ["*/intensive*", "*/admin/api/intensive*"]
+owns_routes = ["*/intensive*", "*/admin/api/intensive*", "*/admin/api/editorial/intensive*"]
 depends_on = ["platform.content"]
-reads_from = ["platform", "products.public-site"]
+reads_from = ["platform", "products.public-site", "products.masterclass.course"]
 
 [[modules]]
 id = "products.intensive.telegram-login"
@@ -587,10 +603,12 @@ id = "products.masterclass.course"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.course.md"
 depends_on = ["platform.content"]
-reads_from = ["platform", "platform.content"]
+reads_from = ["platform", "platform.content", "products.recipes"]
+writes_to = ["products.recipes"]
 owns_files = [
   "backend/app/course_structure_routes.py", "backend/app/course_structure_service.py",
-  "backend/app/course_material_routes.py", "backend/app/course_material_service.py",
+    "backend/app/course_material_routes.py", "backend/app/course_material_service.py",
+    "backend/app/recipe_material_authoring.py", "backend/tests/test_recipe_material_authoring.py",
   "backend/app/github_content_editor.py", "backend/app/masterclass_editorial.py",
   "backend/scripts/publish_course_structure_seed.py",
   "backend/scripts/bootstrap_masterclass_editorial.py",
@@ -636,7 +654,8 @@ owns_routes = [
 ]
 sources = [
   { path = "content/masterclass/course/course.json", role = "seed", shared = true, consumers = ["products.masterclass.runtime"] },
-  { path = "content/masterclass/source-current", role = "copy", shared = true, consumers = ["products.masterclass.runtime"] },
+    { path = "content/masterclass/source-current", role = "copy", shared = true, consumers = ["products.masterclass.runtime"] },
+    { path = "backend/app/github_content_editor.py", role = "runtime", shared = true, consumers = ["platform.content", "products.intensive"] },
 ]
 
 [[modules]]

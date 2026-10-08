@@ -29,6 +29,9 @@ def digest(text: str) -> str:
 
 
 def comparable(text: str, kind: str) -> str:
+    if kind == "bot":
+        from tools.editorial_bot_adapter import normalize
+        return json.dumps(normalize(text), ensure_ascii=False)
     if kind == "public":
         text = re.sub(r"^<!-- public-site-version: \d+ -->\s*", "", text)
         text = text.replace("\r", "").strip()
@@ -83,7 +86,7 @@ class API:
     """Basic over HTTPS, or the existing SSH alias without exporting secrets."""
 
     def request(self, method: str, path: str, payload: dict | None = None) -> dict:
-        if not path.startswith("/admin/api/") or "\n" in path:
+        if not path.startswith(("/admin/api/", "/bot-api/")) or "\n" in path:
             raise VaultError("Недопустимый путь API")
         username = os.getenv("EDABALANS_ADMIN_USERNAME") or os.getenv("EDABALANS_ADMIN_USER")
         password = os.getenv("EDABALANS_ADMIN_PASSWORD")
@@ -106,7 +109,8 @@ from app.config import get_settings
 settings=get_settings()
 data=json.load(sys.stdin)
 token=base64.b64encode((settings.admin_username+':'+settings.admin_password).encode()).decode()
-req=urllib.request.Request('http://127.0.0.1:8000'+data['path'],method=data['method'],data=None if data['payload'] is None else json.dumps(data['payload']).encode(),headers={'Authorization':'Basic '+token,'Content-Type':'application/json'})
+origin='http://telegram-bot:8001' if data['path'].startswith('/bot-api/') else 'http://127.0.0.1:8000'
+req=urllib.request.Request(origin+data['path'],method=data['method'],data=None if data['payload'] is None else json.dumps(data['payload']).encode(),headers={'Authorization':'Basic '+token,'Content-Type':'application/json'})
 try:
  with urllib.request.urlopen(req,timeout=45) as response: print(response.read().decode())
 except urllib.error.HTTPError as error:
@@ -146,17 +150,23 @@ class Vault:
         return path
 
     def read(self, item: dict) -> dict:
+        if item["kind"] == "git":
+            from tools.editorial_git_adapter import read
+            return read(self.api, item)
+        if item["kind"] == "bot":
+            from tools.editorial_bot_adapter import read
+            return read(self.api, item)
         raw = self.api.request("GET", item["api_path"])
-        if item["kind"] == "public":
+        if item["kind"] in ("public", "homepage"):
             data = raw["active"]
-            return {"version": data["version"], "text": data["markdown"], "title": data["title"]}
+            return {"version": data["version"], "text": data["markdown"], "title": data.get("title", "Главная")}
         if item["kind"] == "blog":
             data = raw["article"]
             return {"version": data["version"], "text": data["markdown"], "title": data["title"],
                     "published_version": data.get("published_version", 0), "editorial_status": data.get("editorial_status")}
         return {"version": raw["version"], "text": raw.get("source_content", raw["html"]),
                 "title": raw["title"], "format": raw.get("source_format", "html"),
-                "unsupported": raw.get("source_provenance") == "git_markdown" or raw.get("source") == "git_markdown" or "recipe" in item["id"]}
+                "unsupported": raw.get("source_provenance") == "git_markdown" or raw.get("source") == "git_markdown" or ("recipe" in item["id"] and raw.get("recipe_authoring", {}).get("status") != "ready")}
 
     def status(self) -> list[dict]:
         rows = []
@@ -164,14 +174,17 @@ class Vault:
             path = self.file(item)
             text = path.read_text(encoding="utf-8") if path.exists() else ""
             changed = digest(comparable(text, item["kind"])) != item["base_hash"]
-            status = "conflict" if item.get("conflict") else "changed" if changed or item.get("pending_draft") else "clean"
+            status = "conflict" if item.get("conflict") else "changed" if changed or item.get("pending_draft") or item.get("pending_runtime") else "clean"
             if item.get("unsupported"):
                 status = "unsupported"
             rows.append({**item, "id": ident, "status": status})
         return rows
 
     def discover(self) -> dict:
-        items = {}
+        items = {
+            "homepage": {"kind": "homepage", "group": "Главная", "api_path": "/admin/api/public-site/homepage", "path": "Главная/Главная.md"},
+            "intensive": {"kind": "git", "title": "Бесплатный интенсив", "group": "Интенсив", "api_path": "/admin/api/editorial/intensive", "path": "Интенсив/Интенсив.md"},
+        }
         docs = self.api.request("GET", "/admin/api/public-site/content")["documents"]
         for document in docs:
             slug = document["slug"]
@@ -195,6 +208,10 @@ class Vault:
                 items[f"course:{course}:{step}"] = {"kind": "course", "group": course,
                     "api_path": f"/admin/api/courses/{course}/materials/{step}",
                     "path": f"Курсы/{course}/{step}.md"}
+        from tools.editorial_bot_adapter import discover
+        items.update(discover(self.api))
+        from tools.editorial_email_adapter import discover as discover_emails
+        items.update(discover_emails(self.api))
         return items
 
     def refresh(self) -> list[dict]:
@@ -234,6 +251,12 @@ class Vault:
                             item.pop("pending_draft", None)
                         results.append({"id": ident, "status": "clean"})
                     item.update(title=remote["title"], format=remote.get("format", "markdown"), unsupported=remote.get("unsupported", False))
+                    if item["kind"] == "git":
+                        from tools.editorial_git_adapter import runtime_matches
+                        item["pending_runtime"] = not runtime_matches(remote)
+                    for key in ("usages", "allowed_variables"):
+                        if key in remote:
+                            item[key] = remote[key]
                     state["items"][ident] = item
                     atomic_json(self.state_path, state)
                 except Exception as exc:
@@ -289,7 +312,11 @@ class Vault:
                         item.pop("pending_base_version", None)
                     if remote_hash == content_hash and item["kind"] != "blog":
                         item.update(base_version=remote["version"], base_hash=remote_hash, conflict=False)
-                        results.append({"id": ident, "status": "clean", "message": "Уже опубликовано"})
+                        if item["kind"] == "git":
+                            from tools.editorial_git_adapter import runtime_matches
+                            item["pending_runtime"] = not runtime_matches(remote)
+                        queued = item.get("pending_runtime", False)
+                        results.append({"id": ident, "status": "queued" if queued else "clean", "message": "Выпуск ожидает обновления сервера" if queued else "Уже опубликовано"})
                         atomic_json(self.state_path, state)
                         continue
                     if remote["version"] != item["base_version"] or remote_hash != item["base_hash"]:
@@ -309,10 +336,18 @@ class Vault:
                         item.update(pending_hash=content_hash, pending_base_version=remote["version"])
                         atomic_json(self.state_path, state)
                         self.api.request("PUT", item["api_path"], {"expected_version": remote["version"], "content": text, "format": item["format"]})
-                    elif item["kind"] == "public":
+                    elif item["kind"] in ("public", "homepage"):
                         item.update(pending_hash=content_hash, pending_base_version=remote["version"])
                         atomic_json(self.state_path, state)
                         self.api.request("PUT", item["api_path"], {"expected_version": remote["version"], "markdown": text})
+                    elif item["kind"] == "bot":
+                        from tools.editorial_bot_adapter import publish
+                        item.update(pending_hash=content_hash, pending_base_version=remote["version"])
+                        atomic_json(self.state_path, state)
+                        publish(self.api, item, text, remote["version"])
+                    elif item["kind"] == "git":
+                        from tools.editorial_git_adapter import publish
+                        publish(self.api, item, text, remote)
                     else:
                         if remote_hash != content_hash:
                             item.update(pending_hash=content_hash, pending_base_version=remote["version"])
@@ -335,7 +370,11 @@ class Vault:
                     item.pop("pending_draft", None)
                     item.pop("pending_hash", None)
                     item.pop("pending_base_version", None)
-                    results.append({"id": ident, "status": "published", "message": "Опубликовано и проверено"})
+                    if item["kind"] == "git":
+                        from tools.editorial_git_adapter import runtime_matches
+                        item["pending_runtime"] = not runtime_matches(verified)
+                    queued = item.get("pending_runtime", False)
+                    results.append({"id": ident, "status": "queued" if queued else "published", "message": "Принято; выпуск ожидает обновления сервера" if queued else "Опубликовано и проверено"})
                 except (Exception, SystemExit) as exc:
                     results.append({"id": ident, "status": "error", "message": str(exc) + ". При сетевой ошибке сначала обновите статус; не повторяйте вслепую"})
                 atomic_json(self.state_path, state)
