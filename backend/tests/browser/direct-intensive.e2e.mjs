@@ -116,7 +116,7 @@ try {
     const expectedAttribution = { alias: 'BMB6Y', landing_variant: 'instead', utm_source: 'yandex', utm_medium: 'cpc', utm_campaign: 'search', utm_content: 'cat', utm_term: 'start', yclid: 'click-901' }
     const byKey = Object.fromEntries(requests.map(body => [`${body.messenger}:${body.entry}`, body]))
     for (const messenger of ['tg', 'max']) for (const entry of ['button', 'qr']) {
-      const expected = { messenger, entry, ...expectedAttribution }
+      const expected = { messenger, entry, ...expectedAttribution, browser_context: null }
       if (JSON.stringify(byKey[`${messenger}:${entry}`]) !== JSON.stringify(expected)) throw new Error(`Bad ${messenger}:${entry} request: ${JSON.stringify(byKey[`${messenger}:${entry}`])}`)
     }
 
