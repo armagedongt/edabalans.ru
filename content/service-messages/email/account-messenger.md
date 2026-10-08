@@ -69,4 +69,3 @@ MAX: ${url}
 ```html
 <td style="padding-right:12px"><a href="${url}" style="display:inline-block;padding:12px 20px;border-radius:10px;background:#2563eb;color:#fff;text-decoration:none;font-weight:700">MAX</a></td>
 ```
-

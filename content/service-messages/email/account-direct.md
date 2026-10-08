@@ -35,4 +35,3 @@ MAX: https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvE
             <p style="color:#5b6472;font-size:14px">Если что-то не получилось, напишите мне: <a href="https://t.me/FitnessSergey">Telegram</a> или <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw">MAX</a>.</p>
             </div></body></html>
 ```
-

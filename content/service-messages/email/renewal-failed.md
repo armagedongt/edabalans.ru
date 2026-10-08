@@ -38,4 +38,3 @@ Telegram: https://t.me/FitnessSergey
         <p style="color:#657984;font-size:14px">Если деньги всё-таки списались, не оплачивайте повторно и <a href="https://t.me/FitnessSergey">напишите мне</a>.</p>
         </div></body></html>
 ```
-
