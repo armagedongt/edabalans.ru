@@ -1749,7 +1749,7 @@ def test_direct_intensive_prefetch_contract_is_allowlisted_and_fail_open() -> No
     response = client.get("/preview/direct-intensive")
 
     assert "new Set(['utm_source','utm_medium','utm_campaign','utm_content','utm_term','yclid'])" in response.text
-    assert "body:JSON.stringify({messenger:config.apiMessenger,entry,alias:CONTENT.links.alias,landing_variant:ACTIVE_VARIANT,...attribution})" in response.text
+    assert "body:JSON.stringify({messenger:config.apiMessenger,entry,alias:CONTENT.links.alias,landing_variant:ACTIVE_VARIANT,...attribution,browser_context:window.EdabalansBrowserJourney?.context()||null})" in response.text
     assert "if(!response.ok)throw new Error(`start-link ${response.status}`)" in response.text
     assert ".catch(()=>config.fallbackUrl)" in response.text
     assert "states[channel]={button:prepare(channel,'button'),qr:prepare(channel,'qr')}" in response.text
