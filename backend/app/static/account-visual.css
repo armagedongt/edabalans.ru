@@ -4,9 +4,10 @@
 .legacy-upgrade { margin-top: 24px; min-height: 0; gap: 14px; }
 #account-app .account-card.legacy-upgrade-first { border: 2px solid var(--accent); }
 .legacy-upgrade h2 { margin: 0; font-size: 29px; line-height: 1.15; }
-.legacy-upgrade-columns { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+.legacy-upgrade-columns { display: grid; grid-template-columns: 1fr; gap: 0; }
 .legacy-upgrade-columns h3 { font-size: 23px; }
 .legacy-upgrade-columns ul { padding-left: 0; list-style: none; }
+.legacy-upgrade-product { font-weight: 800; text-transform: uppercase; }
 .legacy-upgrade-columns li { margin-top: 10px; overflow-wrap: anywhere; }
 .legacy-upgrade-price { display: flex; flex-wrap: wrap; gap: 14px; align-items: baseline; }
 .legacy-upgrade-price strong { color: var(--ink); font-size: 29px; }
