@@ -16,6 +16,8 @@ COURSE_RESOURCE_CODES = frozenset(
         "ACCESS_RECIPES",
         "ACCESS_CALORIES",
         "ACCESS_STRENGTH",
+        "ACCESS_MASTERCLASS_LEGACY",
+        "ACCESS_CALORIES_LEGACY",
     }
 )
 MASTERCLASS_PREREQUISITE_RESOURCES = frozenset(
@@ -41,6 +43,8 @@ def active_resource_codes(db: Session, user_id: uuid.UUID) -> set[str]:
 
 
 def course_unlock_mode(db: Session, user_id: uuid.UUID, resource_code: str) -> str:
+    from app.legacy_course_access import course_resource
+    resource_code = course_resource(active_resource_codes(db, user_id), resource_code)
     mode = db.scalar(
         select(UserCoursePolicy.unlock_mode)
         .join(Resource, Resource.id == UserCoursePolicy.resource_id)
@@ -66,6 +70,10 @@ def masterclass_completed(db: Session, user_id: uuid.UUID) -> bool:
 
 
 def course_entry_unlocked(db: Session, user_id: uuid.UUID, resource_code: str) -> bool:
+    from app.legacy_course_access import course_resource
+    resolved = course_resource(active_resource_codes(db, user_id), resource_code)
+    if resolved != resource_code:
+        return course_start_mode(db, user_id, resolved) != "blocked"
     mode = course_start_mode(db, user_id, resource_code)
     if mode == "blocked" or course_waits_for_consultation(db, user_id, resource_code):
         return False

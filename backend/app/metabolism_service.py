@@ -14,7 +14,7 @@ def metabolism_is_unlocked(db: Session, user_id: uuid.UUID) -> bool:
 
 
 def require_metabolism_user(db: Session, user: User) -> User:
-    require_user_resource(db, user, ("metabolism", "ACCESS_CALORIES"))
+    require_user_resource(db, user, ("metabolism", "ACCESS_CALORIES", "ACCESS_CALORIES_LEGACY"))
     if not metabolism_is_unlocked(db, user.id):
         raise AppAccessError("Калькулятор откроется после нужного этапа курса")
     return user

@@ -1271,7 +1271,7 @@ APP_STATE_MODELS = {
 
 def app_resource_codes(app_code: str) -> tuple[str, ...]:
     if app_code == "metabolism":
-        return ("metabolism", "ACCESS_CALORIES")
+        return ("metabolism", "ACCESS_CALORIES", "ACCESS_CALORIES_LEGACY")
     return (app_code,)
 
 

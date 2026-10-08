@@ -574,6 +574,25 @@ def grant_payment_access(
             select(Resource.code).where(Resource.status == "active")
         ))
         resource_codes = checkout_resource_codes(list(checkout.items), configured_codes)
+        if checkout.offer_code == "legacy-upgrade":
+            from app.legacy_course_access import LEGACY_COURSES
+            user = db.get(User, payment.user_id)
+            if user is None:
+                raise TildaPayloadError("upgrade user is missing")
+            modes, starts = {}, {}
+            for code in resource_codes:
+                policy = db.scalar(select(UserCoursePolicy).join(Resource).where(
+                    UserCoursePolicy.user_id == user.id, Resource.code == code))
+                if policy is None and code in LEGACY_COURSES:
+                    policy = db.scalar(select(UserCoursePolicy).join(Resource).where(
+                        UserCoursePolicy.user_id == user.id, Resource.code == LEGACY_COURSES[code]))
+                if policy is not None:
+                    modes[code], starts[code] = policy.unlock_mode, policy.start_mode
+            grant_resources(db, user, resource_codes, source="paid_legacy_upgrade",
+                            source_payment_id=payment.id, unlock_modes=modes, start_modes=starts)
+            record_offer_purchase_event_and_cancel_reminder(db, payment, checkout, occurred_at)
+            record_masterclass_purchase_event(db, payment, occurred_at)
+            return True
         personal_link = db.scalar(
             select(PersonalAccessLink).where(PersonalAccessLink.checkout_id == checkout.id)
         )

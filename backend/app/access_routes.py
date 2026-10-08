@@ -25,6 +25,7 @@ from app.access_service import (
 from app.account_onboarding_service import direct_credential_email_configuration_error
 from app.auth import require_admin
 from app.config import Settings, get_settings
+from app.legacy_course_access import has_course
 from app.checkout_reference import tilda_order_command
 from app.database import get_db
 from app.legal_service import (
@@ -183,10 +184,16 @@ def resolve_masterclass_resource_link(
             "unavailable", target=target, reason_code="target_not_published"
         )
     owned = active_resource_codes(db, user.id)
-    if "ACCESS_MASTERCLASS" not in owned:
+    if not has_course(owned, "ACCESS_MASTERCLASS"):
         return missing_resource_offer(target, "ACCESS_MASTERCLASS")
+    member = course_context_for_member(db, user.id)
+    member_step = member.days[day]["steps"][step_index]
+    if member_step.get("legacyLocked"):
+        return resource_link_response("locked", target=target, reason_code="legacy_upgrade_required",
+                                      title="В обновляемом доступе",
+                                      explanation=member_step["accessExplanation"])
     day_resource = str(base.days[day].get("accessResource") or "ACCESS_MASTERCLASS")
-    if day_resource not in owned:
+    if not has_course(owned, day_resource):
         return missing_resource_offer(target, day_resource)
     catalog_resource = str(parent.get("accessResource") or "") if parent else ""
     if catalog_resource and catalog_resource not in owned:
@@ -275,7 +282,7 @@ def resolve_calorie_resource_link(
                 "unavailable", target=target, reason_code="target_not_published"
             )
     owned = active_resource_codes(db, user.id)
-    if "ACCESS_CALORIES" not in owned:
+    if not has_course(owned, "ACCESS_CALORIES"):
         return missing_resource_offer(target, "ACCESS_CALORIES")
     if course_waits_for_consultation(db, user.id, "ACCESS_CALORIES"):
         return resource_link_response(
@@ -419,10 +426,10 @@ def account_product_definitions(db: Session) -> list[dict]:
 
 def account_courses(definitions: list[dict], owned: set[str], legal_required: bool) -> list[dict]:
     courses = []
-    has_masterclass = "ACCESS_MASTERCLASS" in owned
+    has_masterclass = has_course(owned, "ACCESS_MASTERCLASS")
     for definition in definitions:
         code = definition["account_code"]
-        has_access = definition["resource"] in owned
+        has_access = has_course(owned, definition["resource"])
         maintenance = bool(definition.get("maintenance"))
         courses.append({
             "code": code,
@@ -432,6 +439,7 @@ def account_courses(definitions: list[dict], owned: set[str], legal_required: bo
             "resource": definition["resource"],
             "catalog_status": definition["status"],
             "owned": has_access,
+            "access_edition": "non_updating" if has_access and definition["resource"] not in owned else "updating",
             "maintenance": maintenance,
             "ready": definition["ready"],
             "state": "maintenance" if maintenance else "available" if has_access and definition["ready"] else "preparing" if has_access else "not_owned",
@@ -488,6 +496,9 @@ def account_applications(
     metabolism["unlock_after_masterclass"] = True
     metabolism["state"] = "available" if metabolism["owned"] and metabolism_unlocked else "masterclass_locked" if metabolism["owned"] else "not_owned"
     metabolism["app"] = "metabolism" if metabolism["owned"] and metabolism_unlocked and not legal_required else None
+    if "ACCESS_CALORIES_LEGACY" in owned and not owned.intersection({"ACCESS_CALORIES", "ACCESS_RECIPES"}):
+        next(item for item in result if item["code"] == "recipes").update(owned=False, state="not_owned", app=None,
+            summary="Доступен после перехода на обновляемый доступ.")
     dqs = next(item for item in result if item["code"] == "dqs")
     if dqs["owned"] and not dqs_revealed:
         dqs.update({
@@ -615,6 +626,15 @@ def account_catalog(email: str, request: Request, db: Session = Depends(get_db))
 
     session_user = native_session_user(request, db)
     return account_payload(email, db, progress_user_id=session_user.id if session_user else None)
+
+
+@router.post("/api/account/legacy-offer/show")
+def show_legacy_offer(request: Request, db: Session = Depends(get_db)) -> dict:
+    from app.legacy_upgrade_service import offer_payload
+    user = native_user(request, db)
+    payload = offer_payload(db, user, start=True)
+    db.commit()
+    return payload
 
 
 @router.get("/api/account/resource-link")

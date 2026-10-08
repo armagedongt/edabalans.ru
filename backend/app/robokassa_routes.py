@@ -130,6 +130,7 @@ class RobokassaCheckoutIn(BaseModel):
 class NativeOfferCheckoutIn(BaseModel):
     offer_code: str = Field(min_length=3, max_length=120)
     focus_product_code: str | None = Field(default=None, max_length=40)
+    expected_price: int | None = Field(default=None, ge=0)
 
 
 class NativeCourseOfferCheckoutIn(BaseModel):
@@ -635,6 +636,8 @@ def robokassa_account_offer_checkout(
     card = next((item for item in payload["offers"] if item["code"] == body.offer_code), None)
     if card is None:
         raise HTTPException(409, "Предложение больше не доступно")
+    if card["code"] == "legacy-upgrade" and body.expected_price != card["price"]:
+        raise HTTPException(409, "Цена изменилась. Обновите предложение.")
     try:
         checkout = create_offer_checkout_record(db, user, payload, card)
         return create_member_offer_payment(db, settings, checkout, user, primary_email(db, user.id))

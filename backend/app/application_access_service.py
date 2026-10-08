@@ -23,7 +23,7 @@ APP_CODES = ("dqs", "strength", "metabolism")
 APP_RESOURCES: dict[str, tuple[str, ...]] = {
     "dqs": ("dqs",),
     "strength": ("strength", "ACCESS_STRENGTH"),
-    "metabolism": ("metabolism", "ACCESS_CALORIES"),
+    "metabolism": ("metabolism", "ACCESS_CALORIES", "ACCESS_CALORIES_LEGACY"),
 }
 
 
@@ -52,6 +52,8 @@ def application_access_state(db: Session, user_id: uuid.UUID, app_code: str) -> 
         raise ValueError("unknown_application")
     access_codes = active_resource_codes(db, user_id)
     entitled = bool(access_codes.intersection(APP_RESOURCES[app_code]))
+    if app_code == "dqs" and "ACCESS_MASTERCLASS_LEGACY" in access_codes and "ACCESS_MASTERCLASS" not in access_codes:
+        entitled = False
     policy = db.scalar(
         select(UserApplicationPolicy).where(
             UserApplicationPolicy.user_id == user_id,
