@@ -53,6 +53,48 @@ def test_machine_bridge_and_one_leg_platform_press_are_distinct_from_other_movem
     assert after[1]["exercises"][0]["exercise_name"] == "Ягодичный мост в тренажёре"
 
 
+@pytest.mark.parametrize(("old_id", "expected_id"), [
+    ("extensions", "hyperextension"),
+    ("squat", "back-squat"),
+    ("row", "seated-row"),
+    ("rdl", "romanian-deadlift"),
+    ("incline_press", "incline-dumbbell-press"),
+    ("triceps", "triceps-pushdown"),
+    ("lateral_raise", "lateral-raise"),
+    ("biceps", "standing-curl"),
+    ("abductor", "hip-abduction"),
+    ("close_grip_bench_press", "close-grip-bench-press"),
+    ("legacy-t1-верх-блок-на-трицепс", "triceps-pushdown"),
+    ("legacy-t1-жим-на-наклонной", "incline-dumbbell-press"),
+    ("legacy-t1-жим-штанги", "bench-press"),
+    ("legacy-t2-сгибание-ног", "leg-curl"),
+    ("legacy-t2-румынка", "romanian-deadlift"),
+    ("legacy-t1-грёбаная-тяга-в-тренажере", "seated-row"),
+    ("legacy-t1-подтягивания", "assisted-pull-up"),
+    ("legacy-t1-разведение-лежа", "dumbbell-fly"),
+    ("legacy-t2-приседания", "back-squat"),
+    ("legacy-t2-разведение-ног-с-наклоном-вперед", "hip-abduction"),
+    ("legacy-t2-плечи-тренажер", "machine-lateral-raise"),
+    ("legacy-t1-подтягивания-в-гравитроне", "assisted-pull-up"),
+    ("legacy-t1-плечи-тренажер", "machine-lateral-raise"),
+])
+def test_agreed_legacy_movement_keeps_results_under_correct_canonical_exercise(old_id, expected_id):
+    from app.app_routes import BASE_STRENGTH_EXERCISES
+
+    names = {item["code"]: item["name"] for item in BASE_STRENGTH_EXERCISES}
+    before = session(1, old_id, "Сохрани примечание")
+    settings = [{"exercise_id": old_id, "workout_type": 1, "active": True, "sort_order": 3}]
+    after, mapped_settings = normalize_exercise_catalog([before], settings, names)
+    exercise = after[0]["exercises"][0]
+    assert exercise["exercise_id"] == expected_id
+    assert exercise["exercise_name"] == names[expected_id]
+    assert exercise["sets"] == before["exercises"][0]["sets"]
+    assert exercise["note"] == "Сохрани примечание"
+    assert exercise["legacy_exercise_id"] == old_id
+    assert mapped_settings[0]["exercise_id"] == expected_id
+    assert mapped_settings[0]["active"] is True and mapped_settings[0]["sort_order"] == 3
+
+
 def test_merging_aliases_keeps_active_template_position_and_other_templates():
     settings = [
         {"exercise_id": "machine-lateral-raise", "workout_type": 2, "active": False, "sort_order": 30},
