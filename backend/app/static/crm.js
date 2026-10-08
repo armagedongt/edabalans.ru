@@ -907,7 +907,6 @@
           <span class="crm-profile-email">${esc(primaryEmail || "email не указан")}</span><span class="crm-profile-messengers">${profileMessengerButton(user, "telegram")}${profileMessengerButton(user, "max")}</span></div>
         </div>
       </div>
-      ${accountIdentityCard(user)}
       <section class="crm-card crm-apps-card"><div class="crm-card-title">Человек в системе</div>
         <div class="crm-app-links">
           <a class="crm-app-link ${modules.dqs.exists || modules.dqs.has_access ? "available" : "disabled"}" href="${modules.dqs.exists || modules.dqs.has_access ? `/admin/dqs?user=${user.id}` : "#"}"><strong>DQS</strong><span>${modules.dqs.exists ? "открыть аналитику" : modules.dqs.has_access ? "доступ есть, данных нет" : "нет доступа"}</span></a>
@@ -969,7 +968,8 @@
             <form class="crm-two" id="tag-form" style="margin-top:10px"><input class="crm-input" id="tag-name" placeholder="Например: рассылка 100"><button class="crm-btn small" type="submit">Добавить</button></form>
         </section>
         </div>
-      </div>`;
+      </div>
+      ${accountIdentityCard(user)}`;
 
     bindTop();
     const paidOfferForm = document.getElementById("paid-offer-form");
