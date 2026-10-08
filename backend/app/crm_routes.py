@@ -51,7 +51,7 @@ from app.crm_service import (
     set_manual_course_policy,
 )
 from app.application_access_service import set_manual_application_start
-from app.account_onboarding_service import direct_credential_email_configuration_error
+from app.account_onboarding_service import direct_credential_email_configuration_error, queue_admin_message_email
 from app.database import get_db
 from scripts.generate_masterclass_offer_simulator import render_simulator_page
 
@@ -117,6 +117,10 @@ class ManualAccountCreateIn(BaseModel):
 class AdminLogin(BaseModel):
     username: str = Field(min_length=1, max_length=320)
     password: str = Field(min_length=1, max_length=1024)
+
+
+class EmailMessageIn(BaseModel):
+    text: str = Field(min_length=1, max_length=10_000)
 
 
 def protected_file(name: str) -> FileResponse:
@@ -523,6 +527,19 @@ def admin_set_app_access(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return {"start_open": bool(state["start_open"]), "entitled": bool(state["entitled"])}
+
+
+@router.post("/admin/api/users/{user_id}/messages/email")
+def admin_email_message(user_id: uuid.UUID, payload: EmailMessageIn,
+                        admin: str = Depends(require_admin), db: Session = Depends(get_db),
+                        settings: Settings = Depends(get_settings)) -> dict:
+    if direct_credential_email_configuration_error(settings):
+        raise HTTPException(409, "Отправка почты пока не настроена")
+    try:
+        row, email = queue_admin_message_email(db, user_id=user_id, message_text=payload.text, settings=settings, admin=admin)
+    except ValueError as exc:
+        raise HTTPException(422, {"user_not_found":"Активный аккаунт не найден", "email_missing":"У человека не указан email", "empty_message":"Напишите сообщение"}.get(str(exc), "Не удалось подготовить письмо")) from exc
+    return {"status":"queued", "email":email, "delivery_id":str(row.id)}
 
 
 @router.post("/admin/api/users/{user_id}/credential/reveal")

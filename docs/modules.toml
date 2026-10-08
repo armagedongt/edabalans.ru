@@ -453,6 +453,8 @@ owns_files = [
   "backend/app/importers/strength_matrix.py", "backend/tests/test_strength_matrix_import.py",
     "backend/app/importers/strength_global_history.py",
     "backend/scripts/migrate_strength_global_history.py", "backend/tests/test_strength_global_history.py",
+    "backend/app/importers/strength_exercise_catalog.py",
+    "backend/scripts/migrate_strength_exercise_catalog.py", "backend/tests/test_strength_exercise_catalog.py",
     "backend/tests/browser/strength-template-navigation.e2e.mjs",
     "backend/tests/browser/strength-save-queue.e2e.mjs",
   "content/training/reference/**",
