@@ -80,8 +80,15 @@ def test_separately_bought_recipes_survive_legacy_masterclass_and_future_steps_a
     assert 'locked' not in base['days'][0]['steps'][0]
 
 
-def test_one_persisted_window_changes_price_at_exact_boundaries_and_checkout_grants_package():
+@pytest.mark.parametrize('legacy_calorie_start',[None,'auto','blocked'])
+def test_one_persisted_window_changes_price_at_exact_boundaries_and_checkout_grants_package(legacy_calorie_start):
     client, factory = legacy_setup()
+    if legacy_calorie_start:
+        with factory() as db:
+            user = db.scalar(select(User))
+            resource = db.scalar(select(Resource).where(Resource.code=='ACCESS_CALORIES_LEGACY'))
+            db.add(UserCoursePolicy(user_id=user.id,resource_id=resource.id,start_mode=legacy_calorie_start,unlock_mode='paced',source='test'))
+            db.commit()
     shown = client.post('/api/account/legacy-offer/show').json()
     again = client.post('/api/account/legacy-offer/show').json()
     assert shown['started_at'] == again['started_at'] and shown['offers'][0]['price'] == 1990
@@ -103,6 +110,7 @@ def test_one_persisted_window_changes_price_at_exact_boundaries_and_checkout_gra
         assert db.scalar(select(func.count(UserAccess.id))) == count
         policy = db.scalar(select(UserCoursePolicy).join(Resource).where(Resource.code=='ACCESS_MASTERCLASS'))
         assert policy.unlock_mode == 'fully_unlocked' and policy.start_mode == 'open'
+        assert course_entry_unlocked(db,user.id,'ACCESS_CALORIES') == (legacy_calorie_start != 'blocked'), 'Upgrade must preserve the legacy calories start'
         assert not offer_payload(db,user,start=False)['available']
         current = course_context_for_member(db,user.id)
         assert not current.manifest.get('accessEdition')

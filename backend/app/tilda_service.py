@@ -576,16 +576,24 @@ def grant_payment_access(
         resource_codes = checkout_resource_codes(list(checkout.items), configured_codes)
         if checkout.offer_code == "legacy-upgrade":
             from app.legacy_course_access import LEGACY_COURSES
+            from app.course_access_service import active_resource_codes
             user = db.get(User, payment.user_id)
             if user is None:
                 raise TildaPayloadError("upgrade user is missing")
+            owned_before = active_resource_codes(db, user.id)
             modes, starts = {}, {}
             for code in resource_codes:
                 policy = db.scalar(select(UserCoursePolicy).join(Resource).where(
                     UserCoursePolicy.user_id == user.id, Resource.code == code))
-                if policy is None and code in LEGACY_COURSES:
+                if policy is None and code in LEGACY_COURSES and code not in owned_before:
                     policy = db.scalar(select(UserCoursePolicy).join(Resource).where(
                         UserCoursePolicy.user_id == user.id, Resource.code == LEGACY_COURSES[code]))
+                    # Legacy calories have no MC prerequisite: retain that start
+                    # when replacing their edition, including an implicit policy.
+                    if code == "ACCESS_CALORIES" and LEGACY_COURSES[code] in owned_before:
+                        modes[code] = policy.unlock_mode if policy else "paced"
+                        starts[code] = "blocked" if policy and policy.start_mode == "blocked" else "open"
+                        continue
                 if policy is not None:
                     modes[code], starts[code] = policy.unlock_mode, policy.start_mode
             grant_resources(db, user, resource_codes, source="paid_legacy_upgrade",
