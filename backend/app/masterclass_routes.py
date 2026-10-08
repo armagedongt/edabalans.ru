@@ -279,7 +279,8 @@ def scheduled_unlock_at(
 
 
 def masterclass_fully_unlocked(db: Session, user_id: uuid.UUID) -> bool:
-    return course_fully_unlocked(db, user_id, "ACCESS_MASTERCLASS")
+    from app.legacy_course_access import course_resource
+    return course_fully_unlocked(db, user_id, course_resource(access_codes(db, user_id), "ACCESS_MASTERCLASS"))
 
 
 def notification_due(db: Session, user_id: uuid.UUID, normal: datetime) -> datetime:
@@ -312,9 +313,10 @@ def resolve_masterclass_user(
         user = require_user_resource(
             db,
             require_native_user(request, db),
-            "ACCESS_MASTERCLASS",
+            ("ACCESS_MASTERCLASS", "ACCESS_MASTERCLASS_LEGACY"),
         )
-        if not course_start_is_open(db, user.id, "ACCESS_MASTERCLASS"):
+        from app.legacy_course_access import course_resource
+        if not course_start_is_open(db, user.id, course_resource(access_codes(db, user.id), "ACCESS_MASTERCLASS")):
             raise AppAccessError("Мастер-класс пока закрыт по условиям доступа")
         return user
     except AppAccessError as exc:
@@ -426,8 +428,10 @@ def manifest_for_resources(manifest: dict, owned_resources: set[str]) -> dict:
 
 
 def course_context_for_member(db: Session, user_id: uuid.UUID) -> CourseContext:
+    from app.legacy_course_access import legacy_masterclass_manifest
     base = course_context_for_user(db, user_id)
-    manifest = manifest_for_resources(base.manifest, access_codes(db, user_id))
+    owned = access_codes(db, user_id)
+    manifest = manifest_for_resources(legacy_masterclass_manifest(base.manifest, owned), owned)
     days = {int(day["number"]): day for day in manifest["days"]}
     return CourseContext(
         revision=base.revision,
@@ -2114,6 +2118,10 @@ def build_offers(
     focus_product_code: str | None = None,
     readonly: bool = False,
 ) -> dict:
+    if user is not None and stage_override is None and owned_resources_override is None:
+        from app.legacy_upgrade_service import eligible, offer_payload
+        if eligible(db, user):
+            return offer_payload(db, user, start=False)
     products = offer_products(db)
     if stage_override is None:
         if user is None:

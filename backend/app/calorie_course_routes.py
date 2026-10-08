@@ -47,7 +47,7 @@ def aware_utc(value: datetime) -> datetime:
 
 def resolve_course_user(request: Request, db: Session, email: str) -> User:
     try:
-        user = require_user_resource(db, require_native_user(request, db), RESOURCE_CODE)
+        user = require_user_resource(db, require_native_user(request, db), (RESOURCE_CODE, "ACCESS_CALORIES_LEGACY"))
     except AppAccessError as exc:
         raise HTTPException(403, str(exc)) from exc
     if course_waits_for_consultation(db, user.id, RESOURCE_CODE):

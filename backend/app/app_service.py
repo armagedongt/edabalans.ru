@@ -72,6 +72,14 @@ def require_user_resource(
             "Исторические покупки требуют проверки. Напишите мне, и я открою нужные программы."
         )
 
+    from app.course_access_service import active_resource_codes
+    owned = active_resource_codes(db, user.id)
+    requested = {resource_code} if isinstance(resource_code, str) else set(resource_code)
+    if "dqs" in requested and "ACCESS_MASTERCLASS_LEGACY" in owned and "ACCESS_MASTERCLASS" not in owned:
+        raise AppAccessError("Приложение доступно в обновляемом Мастер-классе")
+    if "recipes" in requested and "ACCESS_CALORIES_LEGACY" in owned and not owned.intersection({"ACCESS_CALORIES", "ACCESS_RECIPES"}):
+        raise AppAccessError("Калькулятор рецептов доступен после перехода на обновляемый доступ")
+
     now = datetime.now(timezone.utc)
     resource_filter = (
         Resource.code.in_(resource_code)
