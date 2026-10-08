@@ -1429,9 +1429,14 @@
 .st-day-head{padding:8px 10px}
 .st-date-text{text-align:right}
 .st-date-text .st-weekday{margin-top:2px;font-size:9px}
+@media(min-width:701px) and (max-width:999px){
+  .st-admin-sheet-sticky .st-admin-window-nav{position:sticky;left:0;width:fit-content;justify-content:flex-start}
+}
 @media(min-width:1000px){
   .st-admin-sheet-scroll{overflow:visible}
-  .st-admin-sheet .st-days{position:sticky;top:70px;z-index:11;background:#fff;padding:5px 0;margin-top:6px}
+  .st-admin-sheet-sticky{position:sticky;top:70px;z-index:11;background:#fff;padding:5px 0}
+  .st-admin-sheet-sticky .st-admin-window-nav{margin-top:0}
+  .st-admin-sheet-sticky .st-days{margin-top:8px}
 }
 .st-admin-history{margin-top:10px;border-top:1px solid var(--st-line);padding-top:10px}
 .st-admin-history summary{cursor:pointer;color:#5c5f6b;font-size:12px;font-weight:800}
@@ -1442,7 +1447,7 @@
 @media(max-width:700px){.st-admin-sheet{padding:10px}.st-admin-sheet .st-days{display:grid}.st-admin-sheet .st-day-head{display:block}.st-admin-sheet .st-ex-row-days{display:grid}.st-admin-sheet .st-ex-day{display:flex}}
 
 /* Header-only colors in the desktop admin sheet. */
-.st-days + .st-ex-row{margin-top:16px}.st-ex-row{background:#fff}.st-ex-tools{min-height:40px;padding:6px 8px 3px;display:grid;grid-template-columns:22px 46px 46px 10px 46px 46px 46px;gap:2px;justify-content:center}.st-copy-forward{grid-column:1/4;width:100%}.st-groups{min-height:34px;align-items:end;padding:5px 4px 3px;background:transparent}.st-group-plan,.st-group-fact{min-height:24px;display:flex;align-items:flex-end;justify-content:center;border:0;background:transparent;color:#647080}.st-set-head,.st-set{background:transparent}.st-plan-field,.st-fact-field,.st-fact-rpe{background:#fff;border-color:#d6d7df}.st-plan-field.has-value{background:#f7fbff;border-color:#cbdff3}.st-fact-field.has-value{background:#fffbf9;border-color:#f3ddd0}.st-note.has-note{background:transparent}.st-note.has-note .st-note-symbol{background:#eeeaf9;color:var(--st-purple)}.st-admin-set-actions{display:flex;justify-content:center;gap:8px;padding:7px 8px;background:#fff;border-bottom:1px solid rgba(70,70,90,.06)}.st-admin-set-actions button{min-height:29px;padding:0 9px;border:1px solid rgba(70,70,90,.16);border-radius:7px;background:#fff;color:#647080;font-size:10px;font-weight:700}
+.st-admin-sheet-sticky + .st-ex-row{margin-top:16px}.st-ex-row{background:#fff}.st-ex-tools{min-height:40px;padding:6px 8px 3px;display:grid;grid-template-columns:22px 46px 46px 10px 46px 46px 46px;gap:2px;justify-content:center}.st-copy-forward{grid-column:1/4;width:100%}.st-groups{min-height:34px;align-items:end;padding:5px 4px 3px;background:transparent}.st-group-plan,.st-group-fact{min-height:24px;display:flex;align-items:flex-end;justify-content:center;border:0;background:transparent;color:#647080}.st-set-head,.st-set{background:transparent}.st-plan-field,.st-fact-field,.st-fact-rpe{background:#fff;border-color:#d6d7df}.st-plan-field.has-value{background:#f7fbff;border-color:#cbdff3}.st-fact-field.has-value{background:#fffbf9;border-color:#f3ddd0}.st-note.has-note{background:transparent}.st-note.has-note .st-note-symbol{background:#eeeaf9;color:var(--st-purple)}.st-admin-set-actions{display:flex;justify-content:center;gap:8px;padding:7px 8px;background:#fff;border-bottom:1px solid rgba(70,70,90,.06)}.st-admin-set-actions button{min-height:29px;padding:0 9px;border:1px solid rgba(70,70,90,.16);border-radius:7px;background:#fff;color:#647080;font-size:10px;font-weight:700}
 
 /* Compact admin-sheet controls and the exercise outline. */
 .st-ex-row{border:3px solid var(--st-exercise-tone,#e7e7ef);border-radius:11px}.st-ex-row-head{background:var(--st-exercise-tone,#fff)}.st-ex-tools{display:none}.st-group-plan{gap:4px}.st-copy-forward{grid-column:auto;width:auto;min-height:24px;padding:0 6px;font-size:9px;line-height:1}.st-note:not(.has-note){min-height:34px;padding:5px 8px;color:var(--st-muted)}.st-note:not(.has-note) .st-note-title{font-size:10px;font-weight:700}.st-note:not(.has-note) .st-note-preview{font-size:10px;margin-top:0}
@@ -3544,7 +3549,7 @@ function renderAdminHistory(start){
 
 function renderAdminSheet(){
   var sheet = adminSheetSessions();
-  return '<section class="st-admin-sheet"><div class="st-admin-sheet-title">План и факт по тренировкам</div><div class="st-admin-window-nav"><button onclick="ST.prevSession()" '+(adjacentTemplateSession(-1)>=0 ? '' : 'disabled')+'>← Предыдущие</button><button onclick="ST.nextSession()" '+(adjacentTemplateSession(1)>=0 ? '' : 'disabled')+'>Следующие →</button></div><div class="st-admin-sheet-scroll"><div class="st-admin-sheet-grid">'+renderDayHeads(sheet.visible)+renderExerciseRows(sheet.visible)+'</div></div></section>';
+  return '<section class="st-admin-sheet"><div class="st-admin-sheet-title">План и факт по тренировкам</div><div class="st-admin-sheet-scroll"><div class="st-admin-sheet-grid"><div class="st-admin-sheet-sticky"><div class="st-admin-window-nav"><button onclick="ST.prevSession()" '+(adjacentTemplateSession(-1)>=0 ? '' : 'disabled')+'>← Предыдущие</button><button onclick="ST.nextSession()" '+(adjacentTemplateSession(1)>=0 ? '' : 'disabled')+'>Следующие →</button></div>'+renderDayHeads(sheet.visible)+'</div>'+renderExerciseRows(sheet.visible)+'</div></div></section>';
 }
 
 

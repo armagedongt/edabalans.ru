@@ -122,12 +122,33 @@ try {
       assert.equal(await page.locator('.st-day-identity .st-day-state').count(), 3);
       assert.equal(await page.locator('.st-date-text .st-weekday').count(), 3);
       assert.ok((await page.locator('.st-day-head').first().boundingBox()).height < 65, 'Шапка дня компактна');
+      if (width < 1000) {
+        const scroll = page.locator('.st-admin-sheet-scroll');
+        for (const offset of [0, 810]) {
+          await scroll.evaluate((node,value) => {node.scrollLeft=value;},offset);
+          for (const button of await page.locator('.st-admin-window-nav button').all()) {
+            const box = await button.boundingBox();
+            assert.ok(box.x >= 0 && box.x + box.width <= width, 'Обе кнопки видны при горизонтальной прокрутке узкой таблицы');
+          }
+        }
+        await scroll.evaluate(node => {node.scrollLeft=0;});
+      }
       if (width >= 1000) {
         await page.evaluate(() => window.scrollTo(0, 500));
+        const sticky = () => page.locator('.st-admin-sheet-sticky');
         const header = await page.locator('.st-days').boundingBox();
+        const navigation = await page.locator('.st-admin-window-nav').boundingBox();
         const modes = await page.locator('.st-entry-control-bar').boundingBox();
-        assert.ok(header.y >= modes.y + modes.height - 1 && header.y < 80, 'Номера закреплены под переключателем режима');
+        const bar = await sticky().boundingBox();
+        assert.ok(bar.y >= modes.y + modes.height - 1 && bar.y < 80, 'Навигация и номера закреплены под переключателем режима');
+        assert.ok(header.y >= navigation.y + navigation.height, 'Кнопки расположены над шапками дней');
         if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-sticky-${width}.png`) });
+        await sticky().getByRole('button', {name:'← Предыдущие',exact:true}).click();
+        await page.getByText('Тренировка №3', {exact:true}).waitFor();
+        assert.ok((await sticky().boundingBox()).y < 80, 'После перелистывания панель остаётся закреплённой');
+        await sticky().getByRole('button', {name:'Следующие →',exact:true}).click();
+        await page.getByText('Тренировка №5', {exact:true}).waitFor();
+        assert.ok((await sticky().boundingBox()).y < 80, 'Следующая тренировка доступна при прокрутке');
         await page.evaluate(() => window.scrollTo(0, 0));
       }
     }
