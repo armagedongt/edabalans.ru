@@ -7,7 +7,7 @@ $pythonPath = (Get-Command python).Source
 $toolsRoot = Join-Path $InstallRoot 'tools'
 [IO.Directory]::CreateDirectory($toolsRoot) | Out-Null
 [IO.Directory]::CreateDirectory($VaultRoot) | Out-Null
-foreach ($name in @('editorial_vault.py', 'editorial_vault_desktop.py', 'publish_course_material.py', 'editorial_bot_adapter.py', 'editorial_git_adapter.py', 'editorial_email_adapter.py', 'editorial_catalog_adapter.py', 'editorial_graph_adapter.py', 'editorial_pricing_adapter.py')) {
+foreach ($name in @('editorial_vault.py', 'editorial_vault_desktop.py', 'publish_course_material.py', 'editorial_bot_adapter.py', 'editorial_git_adapter.py', 'editorial_email_adapter.py', 'editorial_catalog_adapter.py', 'editorial_graph_adapter.py', 'editorial_pricing_adapter.py', 'connect_editorial_github.py')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination (Join-Path $toolsRoot $name)
 }
 $utf8 = New-Object System.Text.UTF8Encoding($false)
@@ -16,8 +16,9 @@ $repoRoot = Split-Path -Parent $PSScriptRoot
 $rulesText = [IO.File]::ReadAllText((Join-Path $repoRoot 'docs/knowledge-base/EDITORIAL_VAULT.md'))
 $homepageRulesPath = (Join-Path $repoRoot 'docs/knowledge-base/PUBLIC_SITE.md').Replace('\', '/')
 $recipeRulesPath = (Join-Path $repoRoot 'content/masterclass/recipes/README.md').Replace('\', '/')
+$operationsRulesPath = (Join-Path $repoRoot 'docs/OPERATIONS.md').Replace('\', '/')
 $pricingRulesPath = (Join-Path $repoRoot 'docs/knowledge-base/PRICING_CATALOG.md').Replace('\', '/')
-$rulesText = $rulesText.Replace('(PUBLIC_SITE.md)', '(<'+$homepageRulesPath+'>)').Replace('(../../content/masterclass/recipes/README.md)', '(<'+$recipeRulesPath+'>)').Replace('(PRICING_CATALOG.md)', '(<'+$pricingRulesPath+'>)')
+$rulesText = $rulesText.Replace('(PUBLIC_SITE.md)', '(<'+$homepageRulesPath+'>)').Replace('(../../content/masterclass/recipes/README.md)', '(<'+$recipeRulesPath+'>)').Replace('(PRICING_CATALOG.md)', '(<'+$pricingRulesPath+'>)').Replace('(../OPERATIONS.md#однократное-подключение-git-редактора)', '(<'+$operationsRulesPath+'#однократное-подключение-git-редактора>)')
 [IO.File]::WriteAllText((Join-Path $VaultRoot 'Правила публикации.md'), $rulesText, $utf8)
 $quickGuide = @'
 # Как пользоваться

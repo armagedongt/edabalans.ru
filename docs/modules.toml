@@ -160,6 +160,7 @@ owns_files = [
     "backend/tests/fixtures/service_email_originals.json",
     "tools/install_editorial_vault.ps1",
     "tools/install_editorial_example.py",
+    "tools/tests/test_install_editorial_example.py",
   "tools/tests/test_editorial_vault.py", "tools/tests/test_editorial_vault_desktop.py",
   "docs/knowledge-base/MARKDOWN_MATERIAL_TRANSFER.md",
   "docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md",
@@ -1030,6 +1031,7 @@ parent = "operations"
 card = "docs/knowledge-base/modules/catalog/operations.delivery.md"
 depends_on = ["operations.database", "operations.backup", "operations.proxy", "operations.health"]
 owns_files = [
+  "tools/connect_editorial_github.py", "tools/tests/test_connect_editorial_github.py",
   ".github/workflows/production.yml", "backend/.dockerignore", "backend/Dockerfile",
   "backend/requirements*.txt", "infra/deploy/**", "infra/docker/**",
   "infra/systemd/edabalans-deploy-poll.*", "docs/OPERATIONS.md",

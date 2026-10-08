@@ -2,11 +2,24 @@
 from __future__ import annotations
 
 from html import escape
+from pathlib import Path
 from urllib.parse import urlencode
 
 from fastapi import HTTPException
 
 from app.article_markup import inline_markdown, safe_image_src, safe_video_source, safe_boomstream_source, safe_audio_arguments, safe_recipe_card_asset
+
+
+def component_styles() -> str:
+    """The same product CSS for the public asset route and static examples."""
+    root = Path(__file__).resolve().parents[2] / "content/masterclass/components"
+    return "\n".join((
+        (root / "dqs-image-slider/slider.css").read_text(encoding="utf-8"),
+        (root / "dqs-score-tables/score-tables.css").read_text(encoding="utf-8"),
+        (root / "article-spoiler/spoiler.css").read_text(encoding="utf-8"),
+        (root / "recipe-card/recipe-card.css").read_text(encoding="utf-8"),
+        '.article-audio{width:100%;margin:26px 0 30px}.article-audio iframe{display:block;width:100%;height:148px;border:0;background:transparent}',
+    ))
 
 
 DQS_SCORE_CATEGORIES = {

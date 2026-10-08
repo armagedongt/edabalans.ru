@@ -33,6 +33,7 @@ from app.masterclass_editorial import (
     validate_editorial_source,
 )
 from app import calorie_course_material_service
+from app.masterclass_article_components import component_styles
 from app.calorie_course_service import DOCUMENT_KEY as CALORIE_COURSE_CODE
 from app.course_structure_service import COURSE_CONTENT_ROOT
 from app.database import get_db
@@ -115,15 +116,8 @@ def masterclass_article_media(asset_path: str) -> FileResponse:
 
 @router.get("/course-assets/masterclass/article-components.css", include_in_schema=False)
 def masterclass_article_component_styles() -> Response:
-    css = "\n".join((
-        component_asset("dqs-image-slider", "slider.css"),
-        component_asset("dqs-score-tables", "score-tables.css"),
-        component_asset("article-spoiler", "spoiler.css"),
-        component_asset("recipe-card", "recipe-card.css"),
-        '.article-audio{width:100%;margin:26px 0 30px}.article-audio iframe{display:block;width:100%;height:148px;border:0;background:transparent}',
-    ))
     return Response(
-        css,
+        component_styles(),
         media_type="text/css",
         headers={"Cache-Control": "public, max-age=300"},
     )
