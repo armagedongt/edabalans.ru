@@ -1252,6 +1252,34 @@
   line-height:1.45;
 }
 
+.st-exercise-guide{
+  position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;
+  width:100%;height:100%;height:100dvh;background:#fff;color:var(--st-text);
+}
+.st-guide-header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 12px;border-bottom:1px solid var(--st-line);flex-shrink:0;
+}
+.st-guide-header h2{margin:0;font-size:20px;line-height:1.25;overflow-wrap:anywhere}
+.st-guide-close{
+  flex-shrink:0;width:40px;height:40px;border:1px solid var(--st-line);
+  border-radius:8px;background:#f6f3ff;color:var(--st-purple);font-size:26px;
+}
+.st-guide-body{overflow:auto;overscroll-behavior:contain;min-height:0;padding:12px}
+.st-guide-demo{display:block;width:100%;max-width:500px;max-height:48dvh;object-fit:contain;margin:0 auto 16px}
+.st-guide-copy{min-width:0;max-width:900px;margin:0 auto;font-size:15px;line-height:1.55;overflow-wrap:anywhere}
+.st-guide-copy h3{margin:16px 0 6px;font-size:17px;line-height:1.3}
+.st-guide-copy h3:first-child{margin-top:0}
+.st-guide-copy p{margin:0 0 12px}
+.st-guide-copy ul{margin:0 0 16px;padding-left:20px}
+.st-guide-copy li+li{margin-top:7px}
+.st-guide-muscles{display:block;width:100%;max-width:500px;height:auto;margin:12px auto 0}
+@media(min-width:768px){
+  .st-guide-header{padding:10px 20px}
+  .st-guide-body{padding:16px 20px}
+  .st-guide-demo{max-height:none}
+}
+
 .st-empty{
   margin-top:10px;
   padding:30px;
@@ -2044,7 +2072,8 @@ function copyCatalog(catalog){
       source:String(item.source || 'history'),
       muscles:String(item.muscles || ''),
       tips:Array.isArray(item.tips) ? item.tips.slice() : [],
-      media_url:String(item.media_url || '')
+      media_url:String(item.media_url || ''),
+      guide:item.guide ? cloneValue(item.guide) : null
     };
   });
 }
@@ -5032,11 +5061,27 @@ function renderModal(){
   }
 
   if(app.modal.type === 'tutorial'){
-    return '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal"><div class="st-modal-title">Как пользоваться тренировками</div><ol class="st-tutorial-list"><li>Выберите «Шаблон 1», «Шаблон 2» или «Шаблон 3». Шаблон задаёт текущий список упражнений на экране; номер и история тренировок общие для человека.</li><li>Нажмите «Редактировать», добавьте упражнения из общего каталога и расставьте их в нужном порядке. Нажмите «Убрать», чтобы скрыть упражнение из шаблона. Его записи сохранятся и снова появятся при повторном добавлении. У нового упражнения сразу доступны пустые поля плана и кнопки подходов.</li><li>Кнопка «Новая тренировка» создаёт следующий общий номер и ставит сегодняшнюю дату.</li><li>В режиме «Редактировать план» заполните будущие вес и повторы. Иконки копирования рядом с «Планом» и «Фактом» переносят вес и повторы в план последней незаполненной тренировки этого шаблона.</li><li>В таблице «План» — назначенные вес и повторы, «Факт» — выполненные, RPE — субъективная тяжесть подхода от 1 до 10. «Примечание» добавляет короткий комментарий к упражнению в этой тренировке.</li><li>Нажмите «Начать тренировку». Галочка у подхода переносит план в факт; после этого укажите RPE. Галочку можно снять.</li><li>Стрелки у номера листают тренировки. Стрелки ↶ ↷ и Ctrl/Cmd+Z отменяют или возвращают последнее действие до обновления страницы. Значок i — краткая техника базового упражнения. На демонстрации цветом выделены целевые мышцы; в блоке «Включённые мышцы» перечислены также основные мышцы, помогающие движению.</li></ol><div class="st-modal-actions"><button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Понятно</button></div></div></div>';
+    return '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal"><div class="st-modal-title">Как пользоваться тренировками</div><ol class="st-tutorial-list"><li>Выберите «Шаблон 1», «Шаблон 2» или «Шаблон 3». Шаблон задаёт текущий список упражнений на экране; номер и история тренировок общие для человека.</li><li>Нажмите «Редактировать», добавьте упражнения из общего каталога и расставьте их в нужном порядке. Нажмите «Убрать», чтобы скрыть упражнение из шаблона. Его записи сохранятся и снова появятся при повторном добавлении. У нового упражнения сразу доступны пустые поля плана и кнопки подходов.</li><li>Кнопка «Новая тренировка» создаёт следующий общий номер и ставит сегодняшнюю дату.</li><li>В режиме «Редактировать план» заполните будущие вес и повторы. Иконки копирования рядом с «Планом» и «Фактом» переносят вес и повторы в план последней незаполненной тренировки этого шаблона.</li><li>В таблице «План» — назначенные вес и повторы, «Факт» — выполненные, RPE — субъективная тяжесть подхода от 1 до 10. «Примечание» добавляет короткий комментарий к упражнению в этой тренировке.</li><li>Нажмите «Начать тренировку». Галочка у подхода переносит план в факт; после этого укажите RPE. Галочку можно снять.</li><li>Стрелки у номера листают тренировки. Стрелки ↶ ↷ и Ctrl/Cmd+Z отменяют или возвращают последнее действие до обновления страницы. Значок i открывает карточку упражнения на весь экран: демонстрацию, положение, движение и детали выполнения. В конце указаны целевые и вспомогательные мышцы и показана схема. На демонстрации цветом выделены целевые мышцы.</li></ol><div class="st-modal-actions"><button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Понятно</button></div></div></div>';
   }
 
   if(app.modal.type === 'exerciseInfo'){
     var info = catalogItemById(app.modal.exerciseId);
+    if(info && info.guide){
+      var guide = info.guide;
+      var guideHtml = '<section class="st-exercise-guide" role="dialog" aria-modal="true" aria-labelledby="st-guide-title">'+
+        '<header class="st-guide-header"><h2 id="st-guide-title">'+esc(guide.title || info.exercise_name)+'</h2><button class="st-guide-close" onclick="ST.closeModal()" aria-label="Закрыть информацию об упражнении">×</button></header>'+
+        '<div class="st-guide-body" tabindex="0">'+
+        '<img class="st-guide-demo" src="'+esc(info.media_url)+'" alt="Демонстрация упражнения">'+
+        '<div class="st-guide-copy"><h3>Положение</h3><p>'+esc(guide.position)+'</p><h3>Движение</h3><p>'+esc(guide.movement)+'</p><h3>Детали</h3><ul>';
+      (guide.details || []).forEach(function(detail){ guideHtml += '<li>'+esc(detail)+'</li>'; });
+      guideHtml += '</ul>';
+      if(guide.note){ guideHtml += '<h3>Примечание</h3><p>'+esc(guide.note)+'</p>'; }
+      guideHtml += '<p><strong>Целевые мышцы:</strong> '+esc(guide.target_muscles)+'</p>'+
+        '<p><strong>Вспомогательные мышцы:</strong> '+esc(guide.auxiliary_muscles)+'</p>'+
+        '<img class="st-guide-muscles" src="'+esc(guide.muscle_image_url)+'" alt="Схема мышц">'+
+        '</div></div></section>';
+      return guideHtml;
+    }
     var infoTips = info && Array.isArray(info.tips) ? info.tips : [];
     var infoHtml = '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal"><div class="st-modal-title">'+esc(info ? info.exercise_name : 'Об упражнении')+'</div>';
     infoHtml += '<div class="st-exercise-info-media">'+(info && info.media_url ? '<img src="'+esc(info.media_url)+'" alt="Техника упражнения">' : 'Демонстрация движения появится после утверждения каталога медиа')+'</div>';
@@ -5354,6 +5399,7 @@ function applyManagerDraft(catalog){
       local.muscles = item.muscles;
       local.tips = Array.isArray(item.tips) ? item.tips.slice() : [];
       local.media_url = item.media_url;
+      local.guide = item.guide ? cloneValue(item.guide) : null;
       if(workoutType === app.workoutType){
         local.active = item.active === true;
         local.sort_order = index+1;
@@ -6566,6 +6612,8 @@ window.ST = {
   openExerciseInfo:function(id){
     app.modal={type:'exerciseInfo',exerciseId:id};
     render();
+    var close = document.querySelector('.st-guide-close');
+    if(close){ close.focus(); }
   },
 
 
@@ -6817,10 +6865,16 @@ window.ST = {
 
 
   closeModal:function(){
-
+    var infoId = app.modal && app.modal.type === 'exerciseInfo' ? app.modal.exerciseId : null;
     app.modal = null;
 
     render();
+    if(infoId !== null){
+      var buttons = document.querySelectorAll('.st-exercise-info');
+      for(var i=0;i<buttons.length;i++){
+        if(buttons[i].dataset.exerciseId === String(infoId) && buttons[i].getClientRects().length){ buttons[i].focus(); break; }
+      }
+    }
 
   }
 
@@ -6893,6 +6947,16 @@ document.addEventListener(
 
 
 document.addEventListener('keydown',function(event){
+  if(app.modal && app.modal.type === 'exerciseInfo' && document.querySelector('.st-exercise-guide')){
+    if(event.key === 'Escape'){ event.preventDefault(); ST.closeModal(); return; }
+    if(event.key === 'Tab'){
+      var guideClose = document.querySelector('.st-guide-close');
+      var guideBody = document.querySelector('.st-guide-body');
+      event.preventDefault();
+      (document.activeElement === guideClose ? guideBody : guideClose).focus();
+      return;
+    }
+  }
   if(!(event.ctrlKey || event.metaKey) || event.altKey){ return; }
   var key = String(event.key).toLowerCase();
   var isZ = event.code === 'KeyZ' || key === 'z';

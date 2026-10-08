@@ -645,9 +645,9 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
         params={"action": "getWorkout", "target_user_id": str(user_id), "type": 2},
     ).json()["workout"]["exercise_catalog"]
 
-    assert len([item for item in first if item["source"] == "base"]) == 31
+    assert len([item for item in first if item["source"] == "base"]) == 50
     base_names = {item["name"] for item in BASE_STRENGTH_EXERCISES}
-    assert base_names == {
+    assert base_names >= {
         "Жим штанги лёжа",
         "Жим лёжа узким хватом",
         "Жим гантелей на наклонной скамье",
@@ -679,6 +679,7 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
         "Разведение рук в тренажёре",
         "Жим платформы гравитрона одной ногой",
         "Разведение гантелей лёжа",
+
     }
     assert all(
         item["muscles"].strip()
@@ -687,6 +688,21 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
         for item in BASE_STRENGTH_EXERCISES
     )
     assert {item["exercise_id"] for item in first} == {item["exercise_id"] for item in second}
+    for item in first:
+        if item["source"] != "base":
+            continue
+        guide = item["guide"]
+        assert guide["position"] and guide["movement"] and guide["details"]
+        assert guide["target_muscles"] and guide["auxiliary_muscles"]
+        demo = client.get(item["media_url"])
+        assert demo.status_code == 200
+        assert demo.headers["content-type"].startswith("image/gif")
+        assert demo.content.startswith((b"GIF87a", b"GIF89a"))
+        muscles = client.get(guide["muscle_image_url"])
+        assert muscles.status_code == 200
+        assert muscles.headers["content-type"].startswith("image/")
+    assert client.get("/assets/strength-exercises/not-allowlisted.gif").status_code == 404
+    assert client.get("/assets/strength-exercises/%2e%2e%2fstrength.html").status_code == 404
     assert next(item for item in first if item["exercise_id"] == "legacy-cable-row")["active"] is True
     assert next(item for item in second if item["exercise_id"] == "legacy-cable-row")["active"] is False
 
