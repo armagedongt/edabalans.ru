@@ -94,6 +94,25 @@ def word_count(html: str) -> int:
     return len(article_plain_text(html).split())
 
 
+def editorial_source_payload(version: ContentItemVersion | None, fallback_html: str = "") -> dict:
+    for block in (version.blocks or []) if version else []:
+        if block.get("type") == "editorial_source" and block.get("format") in {"markdown", "html"}:
+            return {
+                "source_content": block["content"],
+                "source_format": block["format"],
+                "source_provenance": "editorial_source",
+            }
+    return {
+        "source_content": version.text_content if version else fallback_html,
+        "source_format": "html",
+        "source_provenance": "legacy_html" if version else "fallback_html",
+    }
+
+
+def reader_material_payload(payload: dict) -> dict:
+    return {key: value for key, value in payload.items() if not key.startswith("source_")}
+
+
 def version_payload(
     step_id: str,
     day_number: int,
@@ -116,6 +135,7 @@ def version_payload(
         "word_count": word_count(html),
         "updated_at": version.imported_at.isoformat() if version else None,
         "format": "semantic_html",
+        **editorial_source_payload(version, fallback_html),
     }
 
 
@@ -155,6 +175,14 @@ def get_material(db: Session, step_id: str) -> dict:
         version,
         fallback_html=legacy_material_html(step) if version is None else "",
     )
+    if version is None and step.get("contentAsset") not in {None, "extracted-2026-08-23.json"}:
+        path = COURSE_CONTENT_ROOT / "source-current" / str(step["contentAsset"])
+        if path.is_file():
+            payload.update(
+                source_content=path.read_text(encoding="utf-8"),
+                source_format="markdown",
+                source_provenance="git_markdown",
+            )
     if step_id in EDITABLE_MATERIALS:
         html = render_material(editorial_body(local_editable_material(step_id)), "markdown")
         payload.update(
@@ -162,6 +190,9 @@ def get_material(db: Session, step_id: str) -> dict:
             word_count=word_count(html),
             published=True,
             source="git_markdown",
+            source_content=local_editable_material(step_id).read_text(encoding="utf-8"),
+            source_format="markdown",
+            source_provenance="git_markdown",
         )
     return payload
 
@@ -230,10 +261,20 @@ def publish_material(
     expected_version: int,
     admin: str,
     commit: bool = True,
+    _restore_version: ContentItemVersion | None = None,
 ) -> dict:
     context = course_context(db)
     day_number, step = article_step(context, step_id)
-    clean_html = render_material(content, content_format)
+    clean_html = _restore_version.text_content if _restore_version else render_material(content, content_format)
+    source_payload = editorial_source_payload(_restore_version) if _restore_version else {
+        "source_content": content,
+        "source_format": "html" if content_format == "trusted_component_html" else content_format,
+    }
+    source_block = {
+        "type": "editorial_source",
+        "content": source_payload["source_content"],
+        "format": source_payload["source_format"],
+    }
     try:
         source = material_source(db, create=True)
         item = material_item(db, step_id, for_update=True)
@@ -244,7 +285,8 @@ def publish_material(
                 409,
                 "Материал уже изменён. Получите актуальную версию перед публикацией",
             )
-        if current and current.text_content == clean_html:
+        if (current and current.text_content == clean_html
+                and any(block == source_block for block in (current.blocks or []))):
             return version_payload(step_id, day_number, step, current)
         if item is None:
             item = ContentItem(
@@ -273,7 +315,7 @@ def publish_material(
             version_no=next_version,
             content_hash=material_hash(step_id, next_version, clean_html),
             text_content=clean_html,
-            blocks=[{"type": "article_html", "html": clean_html}],
+            blocks=[{"type": "article_html", "html": clean_html}, source_block],
             parser_version=PARSER_VERSION,
             source_updated_at=datetime.now(timezone.utc),
         )
@@ -353,6 +395,7 @@ def restore_material(
         content_format="trusted_component_html",
         expected_version=expected_version,
         admin=admin,
+        _restore_version=source,
     )
 
 
@@ -393,9 +436,9 @@ def published_materials(
         if target is None:
             continue
         day_number, step = target
-        materials[item.external_id] = version_payload(
+        materials[item.external_id] = reader_material_payload(version_payload(
             item.external_id, day_number, step, version
-        )
+        ))
     for editable_step_id in EDITABLE_MATERIALS.keys() & allowed.keys():
         day_number, step = allowed[editable_step_id]
         current_version = latest_version(db, material_item(db, editable_step_id))
@@ -415,5 +458,5 @@ def published_materials(
             published=True,
             source="git_markdown",
         )
-        materials[editable_step_id] = payload
+        materials[editable_step_id] = reader_material_payload(payload)
     return {"ok": True, "materials": materials}

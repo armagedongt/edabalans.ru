@@ -28,6 +28,7 @@
 | Как называется сайт, что Сергей имеет в виду под сокращением, где продукты, каналы и боты | `knowledge-base/PROJECT_IDENTITY.md` → `PRODUCT_CATALOG.md` и владельцы настроек | `products.catalog`: общий вход, факты — у указанных владельцев |
 | Как Сергею ставить задачи и что значат термины | `knowledge-base/OWNER_PROJECT_GUIDE.md` | человекочитаемая памятка |
 | Как устроены контент, курсы, страницы, дизайн и публикация | `knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md` | канон редакционно-продуктового процесса |
+| Где править материалы в Obsidian и Codex и как опубликовать выбранные | `knowledge-base/EDITORIAL_VAULT.md` | `platform.content`; одна внешняя рабочая папка |
 | Что существует и как связано | `modules.toml`, `generated/module-map.md` | registry; Markdown — производная |
 | Что делает конкретный модуль | `knowledge-base/modules/catalog/<module_id>.md` | карточка модуля |
 | Полные правила бизнеса/продукта | `knowledge-base/README.md` и ссылки из карточки | канонический Markdown |

@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from app.article_markup import article_plain_text, markdown_to_article_html, sanitize_article_html
 from app.calorie_course_service import DOCUMENT_KEY, CalorieCourseContext, course_context
 from app.models import ContentItem, ContentItemVersion, ContentSource
+from app.course_material_service import editorial_source_payload, reader_material_payload
 
 
 SOURCE_PLATFORM = "internal"
@@ -95,6 +96,7 @@ def version_payload(
         "word_count": word_count(html),
         "updated_at": version.imported_at.isoformat() if version else None,
         "format": "semantic_html",
+        **editorial_source_payload(version),
     }
 
 
@@ -175,10 +177,20 @@ def publish_material(
     content_format: str,
     expected_version: int,
     admin: str,
+    _restore_version: ContentItemVersion | None = None,
 ) -> dict:
     context = course_context(db)
     stage_number, step = article_step(context, step_id)
-    clean_html = render_material(content, content_format)
+    clean_html = _restore_version.text_content if _restore_version else render_material(content, content_format)
+    source_payload = editorial_source_payload(_restore_version) if _restore_version else {
+        "source_content": content,
+        "source_format": content_format,
+    }
+    source_block = {
+        "type": "editorial_source",
+        "content": source_payload["source_content"],
+        "format": source_payload["source_format"],
+    }
     try:
         source = material_source(db, create=True)
         item = material_item(db, step_id, for_update=True)
@@ -188,7 +200,8 @@ def publish_material(
             raise HTTPException(
                 409, "Материал уже изменён. Получите актуальную версию перед публикацией"
             )
-        if current and current.text_content == clean_html:
+        if (current and current.text_content == clean_html
+                and any(block == source_block for block in (current.blocks or []))):
             return version_payload(step_id, stage_number, step, current)
         if item is None:
             item = ContentItem(
@@ -217,7 +230,7 @@ def publish_material(
             version_no=next_version,
             content_hash=material_hash(step_id, next_version, clean_html),
             text_content=clean_html,
-            blocks=[{"type": "article_html", "html": clean_html}],
+            blocks=[{"type": "article_html", "html": clean_html}, source_block],
             parser_version=PARSER_VERSION,
             source_updated_at=datetime.now(timezone.utc),
         )
@@ -292,6 +305,7 @@ def restore_material(
         content_format="html",
         expected_version=expected_version,
         admin=admin,
+        _restore_version=source,
     )
 
 
@@ -320,7 +334,7 @@ def published_materials(db: Session, *, allowed_stages: set[int], step_id: str |
         if target is None:
             continue
         stage_number, step = target
-        materials[item.external_id] = version_payload(
+        materials[item.external_id] = reader_material_payload(version_payload(
             item.external_id, stage_number, step, version
-        )
+        ))
     return {"ok": True, "materials": materials}

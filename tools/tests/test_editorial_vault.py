@@ -1,0 +1,244 @@
+import json
+from pathlib import Path
+
+import pytest
+
+from tools.editorial_vault import Vault, VaultError, atomic_json, comparable, digest, update_if_unchanged
+
+
+class FakeAPI:
+    def __init__(self, kind="public"):
+        self.kind = kind
+        self.text = "Оригинальный текст\n"
+        self.version = 1
+        self.published = True
+        self.calls = []
+        self.fail_publish = False
+        self.edit_while_publishing = None
+
+    def request(self, method, path, payload=None):
+        self.calls.append((method, path, payload))
+        if method == "GET":
+            if self.kind == "course":
+                return {"version": self.version, "source_content": self.text, "source_format": "markdown", "html": "<p>Текст</p>", "title": "Материал"}
+            data = {"version": self.version, "markdown": self.text, "title": "Материал",
+                    "editorial_status": "published" if self.published else "moderation"}
+            return {"active" if self.kind == "public" else "article": data}
+        if method == "POST":
+            if self.fail_publish:
+                raise TimeoutError("Сеть")
+            self.published = True
+        else:
+            assert payload["expected_version"] == self.version
+            self.version += 1
+            self.text = payload.get("markdown", payload.get("content"))
+            if self.kind == "public":
+                self.text = "<!-- public-site-version: " + str(self.version) + " -->\n\n" + self.text.strip()
+            self.published = self.kind == "public"
+            if self.edit_while_publishing:
+                self.edit_while_publishing()
+        return {"active" if self.kind == "public" else "article": {"version": self.version}}
+
+
+def vault_fixture(tmp_path, kind="public"):
+    api = FakeAPI(kind)
+    vault = Vault(tmp_path, api)
+    vault.state_path.parent.mkdir(parents=True)
+    item = {"kind": kind, "group": "Раздел", "title": "Материал", "api_path": "/admin/api/material",
+            "path": "Материал.md", "base_version": 1, "base_hash": digest(comparable(api.text, kind))}
+    atomic_json(vault.state_path, {"schema": 1, "items": {"one": item}})
+    (tmp_path / "Материал.md").write_text(api.text, encoding="utf-8")
+    vault.discover = lambda: {"one": item}
+    return vault, api, tmp_path / "Материал.md"
+
+
+def test_refresh_keeps_local_draft_and_marks_server_conflict(tmp_path):
+    vault, api, file = vault_fixture(tmp_path)
+    file.write_text("Моя правка", encoding="utf-8")
+    api.text, api.version = "Правка на сервере", 2
+    assert vault.refresh()[0]["status"] == "conflict"
+    assert file.read_text(encoding="utf-8") == "Моя правка"
+    assert vault.status()[0]["status"] == "conflict"
+
+
+def test_refresh_updates_clean_copy_without_new_version(tmp_path):
+    vault, api, file = vault_fixture(tmp_path)
+    api.text, api.version = "Серверная правка", 2
+    vault.refresh()
+    assert file.read_text(encoding="utf-8") == api.text
+    assert vault.load()["items"]["one"]["base_version"] == 2
+    assert all(call[0] == "GET" for call in api.calls)
+
+
+def test_refresh_does_not_overwrite_unregistered_file(tmp_path):
+    vault, api, file = vault_fixture(tmp_path)
+    atomic_json(vault.state_path, {"schema": 1, "items": {}})
+    vault.discover = lambda: {"one": {"kind": "public", "group": "Раздел", "api_path": "/admin/api/material", "path": "Материал.md"}}
+    file.write_text("Несохранённый оригинал", encoding="utf-8")
+    assert vault.refresh()[0]["status"] == "error"
+    assert file.read_text(encoding="utf-8") == "Несохранённый оригинал"
+
+
+def test_publish_selective_and_updates_base(tmp_path):
+    vault, api, file = vault_fixture(tmp_path)
+    file.write_text("Правка", encoding="utf-8")
+    assert vault.publish(["one"])[0]["status"] == "published"
+    assert vault.status()[0]["status"] == "clean"
+    assert len([c for c in api.calls if c[0] == "PUT"]) == 1
+    vault.publish(["one"])
+    assert len([c for c in api.calls if c[0] == "PUT"]) == 1
+
+
+def test_publish_conflict_does_not_write_server(tmp_path):
+    vault, api, file = vault_fixture(tmp_path)
+    file.write_text("Локально", encoding="utf-8")
+    api.version = 2
+    assert vault.publish(["one"])[0]["status"] == "error"
+    assert all(c[0] == "GET" for c in api.calls)
+
+
+def test_blog_partial_save_retries_publication_without_resaving(tmp_path):
+    vault, api, file = vault_fixture(tmp_path, "blog")
+    file.write_text("Новый текст", encoding="utf-8")
+    api.fail_publish = True
+    assert vault.publish(["one"])[0]["status"] == "error"
+    assert vault.status()[0]["status"] == "changed"
+    api.fail_publish = False
+    assert vault.publish(["one"])[0]["status"] == "published"
+    assert len([c for c in api.calls if c[0] == "PATCH"]) == 1
+
+
+def test_unknown_blog_save_result_refresh_preserves_pending_publication(tmp_path):
+    vault, api, file = vault_fixture(tmp_path, "blog")
+    file.write_text("Отправленная правка", encoding="utf-8")
+    api.text, api.version, api.published = "Отправленная правка", 2, False
+    vault.refresh()
+    assert vault.status()[0]["status"] == "changed"
+    assert vault.publish(["one"])[0]["status"] == "published"
+    assert not any(c[0] == "PATCH" for c in api.calls)
+
+
+def test_blog_further_edit_after_saved_draft_can_publish(tmp_path):
+    vault, api, file = vault_fixture(tmp_path, "blog")
+    file.write_text("Первая правка", encoding="utf-8")
+    api.fail_publish = True
+    assert vault.publish(["one"])[0]["status"] == "error"
+    file.write_text("Вторая правка", encoding="utf-8")
+    assert vault.refresh()[0]["status"] == "draft"
+    api.fail_publish = False
+    assert vault.publish(["one"])[0]["status"] == "published"
+    assert api.text == "Вторая правка"
+
+
+def test_unknown_save_then_further_local_edit_recovers_own_base(tmp_path):
+    vault, api, file = vault_fixture(tmp_path, "blog")
+    file.write_text("Отправленная правка", encoding="utf-8")
+    original = api.request
+    def lost_response(method, path, payload=None):
+        result = original(method, path, payload)
+        if method == "PATCH":
+            raise TimeoutError("Ответ потерян после записи")
+        return result
+    api.request = lost_response
+    assert vault.publish(["one"])[0]["status"] == "error"
+    file.write_text("Продолженная правка", encoding="utf-8")
+    assert vault.refresh()[0]["status"] == "draft"
+    api.request = original
+    assert vault.publish(["one"])[0]["status"] == "published"
+    assert api.text == "Продолженная правка"
+
+
+def test_update_checks_current_file_before_writing(tmp_path):
+    file = tmp_path / "Материал.md"
+    file.write_text("Новая правка", encoding="utf-8")
+    assert not update_if_unchanged(file, "Прежний текст", "Сервер")
+    assert file.read_text(encoding="utf-8") == "Новая правка"
+    assert update_if_unchanged(file, "Новая правка", "Принято")
+    assert not update_if_unchanged(file, None, "Не перезаписывать существующий")
+
+
+def test_refresh_preserves_autosave_after_initial_read(tmp_path, monkeypatch):
+    vault, api, file = vault_fixture(tmp_path)
+    api.text, api.version = "Серверная версия", 2
+    from tools import editorial_vault
+    original = editorial_vault.update_if_unchanged
+    def autosave(path, expected, replacement):
+        path.write_text("Правка Obsidian", encoding="utf-8")
+        return original(path, expected, replacement)
+    monkeypatch.setattr(editorial_vault, "update_if_unchanged", autosave)
+    assert vault.refresh()[0]["status"] == "error"
+    assert file.read_text(encoding="utf-8") == "Правка Obsidian"
+
+
+def test_edit_during_publish_remains_local_changed_draft(tmp_path):
+    vault, api, file = vault_fixture(tmp_path)
+    file.write_text("Отправлено", encoding="utf-8")
+    api.edit_while_publishing = lambda: file.write_text("Ещё одна правка", encoding="utf-8")
+    assert vault.publish(["one"])[0]["status"] == "published"
+    assert file.read_text(encoding="utf-8") == "Ещё одна правка"
+    assert vault.status()[0]["status"] == "changed"
+
+
+def test_vault_blocks_outside_path_and_parallel_operation(tmp_path):
+    vault, api, file = vault_fixture(tmp_path)
+    with pytest.raises(VaultError):
+        vault.file({"path": "../outside.md"})
+    with vault.lock():
+        with pytest.raises(VaultError):
+            with vault.lock():
+                pass
+
+
+def test_public_version_marker_is_not_an_editorial_change():
+    assert comparable("<!-- public-site-version: 2 -->\n\nТекст", "public") == comparable("<!-- public-site-version: 3 -->\n\nТекст", "public")
+
+
+def test_public_publish_with_obsidian_final_newline_matches_server_normalization(tmp_path):
+    vault, api, file = vault_fixture(tmp_path)
+    file.write_text("  Новый текст\n", encoding="utf-8")
+    assert vault.publish(["one"])[0]["status"] == "published"
+    assert vault.status()[0]["status"] == "clean"
+    vault.refresh()
+    assert vault.status()[0]["status"] == "clean"
+
+
+def test_selected_item_publishes_without_touching_other_changed_draft(tmp_path):
+    vault, first_api, first_file = vault_fixture(tmp_path)
+    second_api = FakeAPI()
+    state = vault.load()
+    state["items"]["two"] = {**state["items"]["one"], "path": "Второй.md", "api_path": "/admin/api/second"}
+    atomic_json(vault.state_path, state)
+    second_file = tmp_path / "Второй.md"
+    second_file.write_text("Невыбранный черновик", encoding="utf-8")
+    first_file.write_text("Выбранная правка", encoding="utf-8")
+    class RoutingAPI:
+        def request(self, method, path, payload=None):
+            return (second_api if path.endswith("second") else first_api).request(method, path, payload)
+    vault.api = RoutingAPI()
+    assert vault.publish(["one"])[0]["status"] == "published"
+    assert second_api.calls == []
+    assert second_file.read_text(encoding="utf-8") == "Невыбранный черновик"
+    assert vault.load()["items"]["two"] == state["items"]["two"]
+
+
+def test_course_missing_or_stale_validation_blocks_put(tmp_path):
+    vault, api, file = vault_fixture(tmp_path, "course")
+    state = vault.load()
+    state["items"]["one"]["format"] = "markdown"
+    atomic_json(vault.state_path, state)
+    file.write_text("Правка курса", encoding="utf-8")
+    assert vault.publish(["one"])[0]["status"] == "error"
+    assert not any(call[0] == "PUT" for call in api.calls)
+    gate = vault.state_path.parent / "reviews" / "one"
+    gate.parent.mkdir()
+    pack = gate.with_suffix(".pack.json")
+    pack.write_text("{}", encoding="utf-8")
+    report = {"schema_version": "author-validation-v1", "status": "pass",
+              "pack_sha256": digest("{}"), "draft_sha256": digest("Предыдущий текст")}
+    gate.with_suffix(".report.json").write_text(json.dumps(report), encoding="utf-8")
+    assert vault.publish(["one"])[0]["status"] == "error"
+    assert not any(call[0] == "PUT" for call in api.calls)
+    report["draft_sha256"] = digest("Правка курса")
+    gate.with_suffix(".report.json").write_text(json.dumps(report), encoding="utf-8")
+    assert vault.publish(["one"])[0]["status"] == "published"
+    assert len([call for call in api.calls if call[0] == "PUT"]) == 1

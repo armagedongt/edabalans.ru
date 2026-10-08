@@ -1,0 +1,361 @@
+"""One persistent editorial working copy, using existing versioned APIs."""
+from __future__ import annotations
+
+import argparse
+import base64
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError
+
+DEFAULT_ROOT = Path("D:/Codex/work/edabalans-materials")
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+POPUPS = ("program", "recipes", "consultation", "calories", "training")
+COURSES = ("masterclass-21", "calories")
+
+
+class VaultError(RuntimeError):
+    pass
+
+
+def digest(text: str) -> str:
+    return hashlib.sha256(text.replace("\r\n", "\n").encode("utf-8")).hexdigest()
+
+
+def comparable(text: str, kind: str) -> str:
+    if kind == "public":
+        text = re.sub(r"^<!-- public-site-version: \d+ -->\s*", "", text)
+        text = text.replace("\r", "").strip()
+    return text.replace("\r\n", "\n")
+
+
+def atomic_json(path: Path, data: dict) -> None:
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    temporary.replace(path)
+
+
+def update_if_unchanged(path: Path, expected: str | None, replacement: str) -> bool:
+    """Check and write under one Windows handle that denies other writers/deletes."""
+    if expected is None:
+        try:
+            with path.open("x", encoding="utf-8", newline="") as file:
+                file.write(replacement)
+            return True
+        except FileExistsError:
+            return False
+    if os.name == "nt":
+        import ctypes
+        import msvcrt
+        from ctypes import wintypes
+        kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel.CreateFileW.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD,
+                                      wintypes.LPVOID, wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE]
+        kernel.CreateFileW.restype = wintypes.HANDLE
+        handle = kernel.CreateFileW(str(path), 0xC0000000, 1, None, 3, 0x80, None)
+        if handle == wintypes.HANDLE(-1).value:
+            return False
+        descriptor = msvcrt.open_osfhandle(handle, os.O_RDWR | os.O_BINARY)
+        file = os.fdopen(descriptor, "r+b")
+    else:
+        # CLI on Unix uses the normal cooperative file lock; desktop target is Windows.
+        import fcntl
+        file = path.open("r+b")
+        fcntl.flock(file.fileno(), fcntl.LOCK_EX)
+    with file:
+        current = file.read().decode("utf-8").replace("\r\n", "\n")
+        if current != expected.replace("\r\n", "\n"):
+            return False
+        file.seek(0)
+        file.write(replacement.encode("utf-8"))
+        file.truncate()
+        file.flush()
+    return True
+
+
+class API:
+    """Basic over HTTPS, or the existing SSH alias without exporting secrets."""
+
+    def request(self, method: str, path: str, payload: dict | None = None) -> dict:
+        if not path.startswith("/admin/api/") or "\n" in path:
+            raise VaultError("Недопустимый путь API")
+        username = os.getenv("EDABALANS_ADMIN_USERNAME") or os.getenv("EDABALANS_ADMIN_USER")
+        password = os.getenv("EDABALANS_ADMIN_PASSWORD")
+        if username and password:
+            origin = os.getenv("EDABALANS_API_URL", "https://edabalans.ru")
+            if not origin.startswith("https://"):
+                raise VaultError("Для пароля администратора нужен HTTPS")
+            token = base64.b64encode(f"{username}:{password}".encode()).decode()
+            request = Request(origin.rstrip("/") + path, method=method,
+                              data=None if payload is None else json.dumps(payload).encode(),
+                              headers={"Authorization": "Basic " + token, "Content-Type": "application/json"})
+            try:
+                with urlopen(request, timeout=45) as response:
+                    return json.load(response)
+            except HTTPError as exc:
+                raise VaultError(f"API {exc.code}: {exc.read().decode('utf-8', errors='replace')}") from exc
+        # Only the normal application API; no private-directory or database access.
+        script = """import sys,json,base64,urllib.request,urllib.error
+from app.config import get_settings
+settings=get_settings()
+data=json.load(sys.stdin)
+token=base64.b64encode((settings.admin_username+':'+settings.admin_password).encode()).decode()
+req=urllib.request.Request('http://127.0.0.1:8000'+data['path'],method=data['method'],data=None if data['payload'] is None else json.dumps(data['payload']).encode(),headers={'Authorization':'Basic '+token,'Content-Type':'application/json'})
+try:
+ with urllib.request.urlopen(req,timeout=45) as response: print(response.read().decode())
+except urllib.error.HTTPError as error:
+ print(json.dumps({'api_error':error.code,'detail':error.read().decode()}))
+"""
+        encoded = base64.b64encode(script.encode()).decode()
+        command = "cd /opt/edabalans && docker compose exec -T backend python -c \"import base64;exec(base64.b64decode('" + encoded + "'))\""
+        result = subprocess.run(["ssh", "-o", "BatchMode=yes", "edabalans-prod", command],
+                                input=json.dumps({"method": method, "path": path, "payload": payload}),
+                                capture_output=True, text=True, encoding="utf-8", timeout=65)
+        if result.returncode:
+            raise VaultError("Не удалось выполнить запрос через SSH: " + result.stderr[-1500:])
+        response = json.loads(result.stdout)
+        if "api_error" in response:
+            raise VaultError(f"API {response['api_error']}: {response['detail']}")
+        return response
+
+
+class Vault:
+    def __init__(self, root: Path | str = DEFAULT_ROOT, api=None):
+        self.root = Path(root).resolve()
+        self.api = api or API()
+        self.state_path = self.root / ".publisher" / "state.json"
+
+    def load(self) -> dict:
+        if not self.state_path.exists():
+            return {"schema": 1, "items": {}}
+        state = json.loads(self.state_path.read_text(encoding="utf-8"))
+        if state.get("schema") != 1:
+            raise VaultError("Неизвестная версия каталога")
+        return state
+
+    def file(self, item: dict) -> Path:
+        path = (self.root / item["path"]).resolve()
+        if not path.is_relative_to(self.root) or path == self.root:
+            raise VaultError("Файл выходит за пределы редакционной папки")
+        return path
+
+    def read(self, item: dict) -> dict:
+        raw = self.api.request("GET", item["api_path"])
+        if item["kind"] == "public":
+            data = raw["active"]
+            return {"version": data["version"], "text": data["markdown"], "title": data["title"]}
+        if item["kind"] == "blog":
+            data = raw["article"]
+            return {"version": data["version"], "text": data["markdown"], "title": data["title"],
+                    "published_version": data.get("published_version", 0), "editorial_status": data.get("editorial_status")}
+        return {"version": raw["version"], "text": raw.get("source_content", raw["html"]),
+                "title": raw["title"], "format": raw.get("source_format", "html"),
+                "unsupported": raw.get("source_provenance") == "git_markdown" or raw.get("source") == "git_markdown" or "recipe" in item["id"]}
+
+    def status(self) -> list[dict]:
+        rows = []
+        for ident, item in self.load()["items"].items():
+            path = self.file(item)
+            text = path.read_text(encoding="utf-8") if path.exists() else ""
+            changed = digest(comparable(text, item["kind"])) != item["base_hash"]
+            status = "conflict" if item.get("conflict") else "changed" if changed or item.get("pending_draft") else "clean"
+            if item.get("unsupported"):
+                status = "unsupported"
+            rows.append({**item, "id": ident, "status": status})
+        return rows
+
+    def discover(self) -> dict:
+        items = {}
+        docs = self.api.request("GET", "/admin/api/public-site/content")["documents"]
+        for document in docs:
+            slug = document["slug"]
+            if slug in POPUPS:
+                ident = "public:" + slug
+                items[ident] = {"kind": "public", "group": "Описания продуктов", "api_path": "/admin/api/public-site/content/" + slug,
+                                "path": "Описания продуктов/" + slug + ".md"}
+        articles = self.api.request("GET", "/admin/api/blog/articles")["articles"]
+        for article in articles:
+            slug = article["slug"]
+            if not re.fullmatch(r"[a-z0-9-]+", slug):
+                raise VaultError("Недопустимый slug статьи")
+            items["blog:" + slug] = {"kind": "blog", "group": "Блог", "api_path": "/admin/api/blog/articles/" + slug,
+                                     "path": "Блог/" + slug + ".md"}
+        for course in COURSES:
+            materials = self.api.request("GET", f"/admin/api/courses/{course}/materials")["materials"]
+            for material in materials:
+                step = material["step_id"]
+                if not re.fullmatch(r"[a-z0-9-]+", step):
+                    raise VaultError("Недопустимый ID материала")
+                items[f"course:{course}:{step}"] = {"kind": "course", "group": course,
+                    "api_path": f"/admin/api/courses/{course}/materials/{step}",
+                    "path": f"Курсы/{course}/{step}.md"}
+        return items
+
+    def refresh(self) -> list[dict]:
+        self.state_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.lock():
+            state = self.load()
+            discovered = self.discover()
+            results = []
+            for ident, seed in discovered.items():
+                item = state["items"].get(ident, seed)
+                try:
+                    remote = self.read({**item, "id": ident})
+                    path = self.file(item)
+                    local = path.read_text(encoding="utf-8") if path.exists() else None
+                    remote_hash = digest(comparable(remote["text"], item["kind"]))
+                    local_hash = digest(comparable(local, item["kind"])) if local is not None else None
+                    if item.get("pending_hash") == remote_hash and remote["version"] == item.get("pending_base_version", -2) + 1:
+                        item.update(base_version=remote["version"], base_hash=remote_hash)
+                        if item["kind"] == "blog":
+                            item["pending_draft"] = remote["version"]
+                        item.pop("pending_hash", None)
+                        item.pop("pending_base_version", None)
+                    if "base_hash" not in item and local is not None:
+                        raise VaultError("В папке уже есть незарегистрированный файл; сохранён без замены")
+                    dirty = "base_hash" in item and local_hash != item["base_hash"]
+                    if dirty and local_hash != remote_hash:
+                        item["conflict"] = remote["version"] != item["base_version"] or remote_hash != item["base_hash"]
+                        results.append({"id": ident, "status": "conflict" if item["conflict"] else "draft", "message": "Локальные правки сохранены"})
+                    else:
+                        path.parent.mkdir(parents=True, exist_ok=True)
+                        if not update_if_unchanged(path, local, remote["text"]):
+                            raise VaultError("Файл изменён или занят редактором; локальные правки сохранены, повторите обновление")
+                        item.update(base_version=remote["version"], base_hash=remote_hash, conflict=False)
+                        if item["kind"] == "blog" and remote.get("editorial_status") == "moderation":
+                            item["pending_draft"] = remote["version"]
+                        else:
+                            item.pop("pending_draft", None)
+                        results.append({"id": ident, "status": "clean"})
+                    item.update(title=remote["title"], format=remote.get("format", "markdown"), unsupported=remote.get("unsupported", False))
+                    state["items"][ident] = item
+                    atomic_json(self.state_path, state)
+                except Exception as exc:
+                    results.append({"id": ident, "status": "error", "message": str(exc)})
+            self.catalog(state)
+            return results
+
+    def catalog(self, state: dict) -> None:
+        lines = ["# Материалы сайта", "", "Оригиналы рабочих правок лежат в этой папке. Ссылки открывают сами файлы.", ""]
+        for ident, item in state["items"].items():
+            title = item["title"].replace("[", "\\[").replace("]", "\\]")
+            lines.append(f"- [{title}](<{item['path']}>) — {item['group']} · `{ident}`")
+        (self.root / "Каталог.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    def lock(self):
+        from contextlib import contextmanager
+
+        @contextmanager
+        def locked():
+            self.state_path.parent.mkdir(parents=True, exist_ok=True)
+            path = self.state_path.parent / "operation.lock"
+            try:
+                handle = path.open("x")
+            except FileExistsError as exc:
+                raise VaultError("Уже выполняется обновление или публикация этой папки") from exc
+            try:
+                with handle:
+                    handle.write(str(os.getpid()))
+                yield
+            finally:
+                path.unlink()
+        return locked()
+
+    def publish(self, ids: list[str]) -> list[dict]:
+        results = []
+        with self.lock():
+            state = self.load()
+            for ident in dict.fromkeys(ids):
+                try:
+                    item = state["items"][ident]
+                    if item.get("unsupported"):
+                        raise VaultError("Особый материал: требуется его действующий маршрут через Codex")
+                    path = self.file(item)
+                    text = path.read_text(encoding="utf-8")
+                    content_hash = digest(comparable(text, item["kind"]))
+                    remote = self.read({**item, "id": ident})
+                    remote_hash = digest(comparable(remote["text"], item["kind"]))
+                    if item.get("pending_hash") == remote_hash and remote["version"] == item.get("pending_base_version", -2) + 1:
+                        item.update(base_version=remote["version"], base_hash=remote_hash)
+                        if item["kind"] == "blog":
+                            item["pending_draft"] = remote["version"]
+                        item.pop("pending_hash", None)
+                        item.pop("pending_base_version", None)
+                    if remote_hash == content_hash and item["kind"] != "blog":
+                        item.update(base_version=remote["version"], base_hash=remote_hash, conflict=False)
+                        results.append({"id": ident, "status": "clean", "message": "Уже опубликовано"})
+                        atomic_json(self.state_path, state)
+                        continue
+                    if remote["version"] != item["base_version"] or remote_hash != item["base_hash"]:
+                        if not (item["kind"] == "blog" and item.get("pending_draft") == remote["version"] and remote_hash == content_hash):
+                            item["conflict"] = True
+                            raise VaultError("Серверная редакция изменилась. Локальный файл сохранён; объедините правки через Codex")
+                    if content_hash == item["base_hash"] and not item.get("pending_draft"):
+                        results.append({"id": ident, "status": "clean", "message": "Нет изменений"})
+                        continue
+                    if item["kind"] == "course":
+                        # The existing author-validation gate remains mandatory.
+                        from tools.publish_course_material import verify_publish_gate
+                        gate = self.state_path.parent / "reviews" / ident.replace(":", "_")
+                        verify_publish_gate(path, gate.with_suffix(".pack.json"), gate.with_suffix(".report.json"))
+                        if path.read_text(encoding="utf-8") != text:
+                            raise VaultError("Материал изменён во время проверки; отправка отменена")
+                        item.update(pending_hash=content_hash, pending_base_version=remote["version"])
+                        atomic_json(self.state_path, state)
+                        self.api.request("PUT", item["api_path"], {"expected_version": remote["version"], "content": text, "format": item["format"]})
+                    elif item["kind"] == "public":
+                        item.update(pending_hash=content_hash, pending_base_version=remote["version"])
+                        atomic_json(self.state_path, state)
+                        self.api.request("PUT", item["api_path"], {"expected_version": remote["version"], "markdown": text})
+                    else:
+                        if remote_hash != content_hash:
+                            item.update(pending_hash=content_hash, pending_base_version=remote["version"])
+                            atomic_json(self.state_path, state)
+                            saved = self.api.request("PATCH", item["api_path"] + "/text", {"expected_version": remote["version"], "markdown": text})
+                            item["pending_draft"] = saved["article"]["version"]
+                            item.update(base_version=saved["article"]["version"], base_hash=content_hash)
+                            atomic_json(self.state_path, state)
+                        else:
+                            item["pending_draft"] = remote["version"]
+                        self.api.request("POST", item["api_path"] + "/publish", {"expected_version": item["pending_draft"], "confirm": True})
+                    verified = self.read({**item, "id": ident})
+                    if digest(comparable(verified["text"], item["kind"])) != content_hash:
+                        raise VaultError("Проверка после публикации не совпала с отправленным текстом")
+                    if item["kind"] == "blog" and verified.get("editorial_status") != "published":
+                        raise VaultError("Черновик сохранён, но публичная версия ещё не подтверждена")
+                    # A simultaneous Obsidian edit is left intact and remains changed.
+                    update_if_unchanged(path, text, verified["text"])
+                    item.update(base_version=verified["version"], base_hash=content_hash, conflict=False)
+                    item.pop("pending_draft", None)
+                    item.pop("pending_hash", None)
+                    item.pop("pending_base_version", None)
+                    results.append({"id": ident, "status": "published", "message": "Опубликовано и проверено"})
+                except (Exception, SystemExit) as exc:
+                    results.append({"id": ident, "status": "error", "message": str(exc) + ". При сетевой ошибке сначала обновите статус; не повторяйте вслепую"})
+                atomic_json(self.state_path, state)
+        return results
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Единая рабочая папка Obsidian и Codex")
+    parser.add_argument("--root", type=Path, default=DEFAULT_ROOT)
+    commands = parser.add_subparsers(dest="command", required=True)
+    commands.add_parser("refresh")
+    commands.add_parser("status")
+    publish = commands.add_parser("publish")
+    publish.add_argument("ids", nargs="+")
+    args = parser.parse_args()
+    vault = Vault(args.root)
+    result = vault.publish(args.ids) if args.command == "publish" else getattr(vault, args.command)()
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return int(any(row.get("status") == "error" for row in result))
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -524,6 +524,10 @@ def test_course_material_publisher_preserves_article_semantics_and_runtime_overr
     assert current.json()["version"] == 0
     assert current.json()["published"] is True
     assert current.json()["source"] == "git_markdown"
+    from app.masterclass_editorial import local_editable_material
+    assert current.json()["source_content"] == local_editable_material("day-01-article-02").read_text(encoding="utf-8")
+    assert current.json()["source_format"] == "markdown"
+    assert current.json()["source_provenance"] == "git_markdown"
     assert current.json()["html"]
 
     blocked_legacy_publish = client.put(
@@ -600,7 +604,10 @@ def test_course_material_publisher_preserves_article_semantics_and_runtime_overr
             ContentItem.external_id == "day-01-article-03",
         ))
         version = db.get(ContentItemVersion, item.latest_version_id)
-        assert version.blocks == [{"type": "article_html", "html": body["html"]}]
+        assert version.blocks == [
+            {"type": "article_html", "html": body["html"]},
+            {"type": "editorial_source", "format": "html", "content": source},
+        ]
 
     stale = client.put(
         "/admin/api/courses/masterclass-21/materials/day-01-article-03",
@@ -789,6 +796,8 @@ spoiler(
         json={"expected_version": 0, "format": "markdown", "content": content},
     )
     assert response.status_code == 200
+    assert response.json()["source_content"] == content
+    assert response.json()["source_format"] == "markdown"
     html = response.json()["html"]
     assert "редакторский комментарий" not in html
     assert "<p>Это одна мягко перенесённая строка абзаца.</p>" in html
@@ -852,6 +861,8 @@ spoiler(
     assert restored.status_code == 200
     restored_html = restored.json()["html"]
     assert restored_html == html
+    assert restored.json()["source_content"] == content
+    assert restored.json()["source_format"] == "markdown"
     assert '<table class="dqs-score-table">' in restored_html
     assert 'data-component="image-slider"' in restored_html
     assert 'class="gallery-arrow gallery-next"' in restored_html
@@ -3868,3 +3879,85 @@ def test_masterclass_duration_counts_present_video_and_hides_zero_time_steps() -
     assert "step.durationMinutes!==undefined&&step.durationMinutes!==null" in course_html
     assert "var video=String(d.videoId||'').trim()?" in course_html
     assert course_html.count("minutes>0?") >= 3
+
+
+@pytest.mark.parametrize('course_code', ['masterclass-21', 'calories'])
+@pytest.mark.parametrize('content_format,content', [
+    ('markdown', '<!-- редакторский комментарий -->\r\n\r\n## Раздел\r\n\r\n**Точный** исходник.\r\n'),
+    ('html', '<h2>Раздел</h2>\n<p onclick="bad()">Точный исходник.</p>\n'),
+])
+def test_course_material_source_roundtrip_restore_and_reader_separation(course_code, content_format, content):
+    client, factory = setup()
+    listed = client.get(f'/admin/api/courses/{course_code}/materials').json()['materials']
+    step_id = 'day-03-article-02' if course_code == 'masterclass-21' else listed[0]['step_id']
+    endpoint = f'/admin/api/courses/{course_code}/materials/{step_id}'
+    first = client.put(endpoint, json={'expected_version': 0, 'format': content_format, 'content': content})
+    assert first.status_code == 200
+    assert first.json()['source_content'] == content
+    assert first.json()['source_format'] == content_format
+    assert first.json()['source_provenance'] == 'editorial_source'
+    assert client.get(endpoint).json()['source_content'] == content
+    html = first.json()['html']
+    assert 'onclick' not in html
+    assert 'редакторский комментарий' not in html
+    unchanged = client.put(endpoint, json={'expected_version': 1, 'format': content_format, 'content': content})
+    assert unchanged.status_code == 200
+    assert unchanged.json()['version'] == 1
+    replacement = client.put(endpoint, json={'expected_version': 1, 'format': 'markdown', 'content': 'Другой текст.'})
+    assert replacement.status_code == 200
+    restored = client.post(endpoint + '/versions/1/restore', json={'expected_version': 2})
+    assert restored.status_code == 200
+    assert restored.json()['version'] == 3
+    assert restored.json()['source_content'] == content
+    assert restored.json()['source_format'] == content_format
+    assert restored.json()['html'] == html
+    with factory() as db:
+        if course_code == 'masterclass-21':
+            from app.course_material_service import published_materials
+            public = published_materials(db, allowed_days={3})
+        else:
+            from app.calorie_course_material_service import published_materials
+            public = published_materials(db, allowed_stages={listed[0]['stage']})
+        assert public['materials'][step_id]['html'] == html
+        assert not any(key.startswith('source_') for key in public['materials'][step_id])
+
+
+@pytest.mark.parametrize('course_code', ['masterclass-21', 'calories'])
+def test_course_material_source_only_edits_create_version_and_legacy_html_is_honest(course_code):
+    client, factory = setup()
+    listed = client.get(f'/admin/api/courses/{course_code}/materials').json()['materials']
+    step_id = 'day-03-article-02' if course_code == 'masterclass-21' else listed[0]['step_id']
+    endpoint = f'/admin/api/courses/{course_code}/materials/{step_id}'
+    first = client.put(endpoint, json={'expected_version': 0, 'format': 'markdown', 'content': 'Текст.\n'})
+    second = client.put(endpoint, json={'expected_version': 1, 'format': 'markdown', 'content': '<!-- Новая заметка -->\n\nТекст.\n'})
+    assert first.status_code == second.status_code == 200
+    assert second.json()['html'] == first.json()['html']
+    assert second.json()['version'] == 2
+    assert second.json()['source_content'] == '<!-- Новая заметка -->\n\nТекст.\n'
+    with factory() as db:
+        # Reproduce an already existing pre-source-storage version without republishing it.
+        source_key = 'masterclass-course-materials' if course_code == 'masterclass-21' else 'calories-course-materials'
+        row = db.scalar(select(ContentItemVersion).join(ContentItem, ContentItemVersion.item_id == ContentItem.id).join(ContentSource).where(
+            ContentSource.account_key == source_key, ContentItem.external_id == step_id,
+            ContentItemVersion.version_no == 1,
+        ))
+        row.blocks = [{'type': 'article_html', 'html': row.text_content}]
+        db.commit()
+    restored = client.post(endpoint + '/versions/1/restore', json={'expected_version': 2})
+    assert restored.status_code == 200
+    assert restored.json()['source_format'] == 'html'
+    assert restored.json()['source_content'] == first.json()['html']
+    assert restored.json()['html'] == first.json()['html']
+    with factory() as db:
+        row = db.scalar(select(ContentItemVersion).join(ContentItem, ContentItemVersion.item_id == ContentItem.id).join(ContentSource).where(
+            ContentSource.account_key == source_key, ContentItem.external_id == step_id,
+            ContentItemVersion.version_no == 3,
+        ))
+        row.blocks = [{'type': 'article_html', 'html': row.text_content}]
+        db.commit()
+    legacy = client.get(endpoint).json()
+    assert legacy['source_provenance'] == 'legacy_html'
+    assert legacy['source_content'] == legacy['html']
+    assert legacy['source_format'] == 'html'
+    denied = client.put(endpoint, json={'expected_version': 3, 'format': 'trusted_component_html', 'content': '<p>Текст.</p>'})
+    assert denied.status_code == 422
