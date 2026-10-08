@@ -958,7 +958,7 @@
               <div class="crm-two-fields"><button class="crm-btn small" id="prepare-account-message" type="button" ${user.credential.password_available && primaryEmail ? "" : "disabled"}>Подготовить логин и пароль</button><button class="crm-btn small" id="copy-account-message" type="button">Скопировать сообщение</button></div>
               ${!user.credential.password_available ? '<div class="crm-row-meta">Сначала создайте пароль в блоке «Контакты».</div>' : ""}
               <label><div class="crm-k">СООБЩЕНИЕ ЧЕЛОВЕКУ</div><textarea class="crm-textarea" id="telegram-message" rows="10" placeholder="Подготовьте сообщение с доступами или напишите свой текст"></textarea></label>
-              <button class="crm-btn small" id="send-account-message" type="submit" ${botState ? "" : "disabled"}>Отправить в бота</button>
+              <div class="crm-two-fields"><button class="crm-btn small" id="send-account-message" type="submit" ${botState ? "" : "disabled"}>Отправить в бота</button><button class="crm-btn small" id="send-account-email" type="button" ${primaryEmail ? "" : "disabled"}>Отправить на почту</button></div>
               <div class="crm-row-meta" id="account-message-status" role="status"></div>
             </form>
         </section>
@@ -1087,6 +1087,17 @@
     const telegramForm = document.getElementById("telegram-message-form");
     const messageField = document.getElementById("telegram-message");
     const messageStatus = document.getElementById("account-message-status");
+    document.getElementById("send-account-email").addEventListener("click", async (event) => {
+      const text = messageField.value;
+      if (!text.trim()) { messageStatus.textContent = "Сначала подготовьте или напишите сообщение."; return; }
+      const button = event.currentTarget;
+      button.disabled = true;
+      try {
+        const result = await api(`/admin/api/users/${id}/messages/email`, {method:"POST",body:JSON.stringify({text})});
+        messageStatus.textContent = `Письмо поставлено в очередь отправки на ${result.email}.`;
+      } catch (error) { messageStatus.textContent = error.message; }
+      finally { button.disabled = false; }
+    });
     document.getElementById("prepare-account-message").addEventListener("click", async (event) => {
       const button = event.currentTarget;
       button.disabled = true;

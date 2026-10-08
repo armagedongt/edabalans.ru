@@ -21,7 +21,7 @@ from app.app_service import EMAIL_RE, normalize_email
 from app.config import Settings
 from app.service_email_templates import render_section
 from app.database import SessionLocal
-from app.models import AccountCredential, AccountOnboarding, MessengerLinkToken, Payment, User, UserEmail
+from app.models import AccountCredential, AccountOnboarding, AdminAppEdit, MessengerLinkToken, Payment, User, UserEmail
 
 
 logger = logging.getLogger(__name__)
@@ -221,6 +221,7 @@ def ensure_free_account_onboarding(
         .where(
             AccountOnboarding.user_id == user.id,
             AccountOnboarding.status == "ready",
+            AccountOnboarding.delivery_mode != "admin_message",
             AccountOnboarding.expires_at > now,
         )
         .order_by(AccountOnboarding.created_at.desc())
@@ -262,6 +263,28 @@ def queue_direct_credential_email(
     db.add(row)
     db.flush()
     return row
+
+
+def queue_admin_message_email(db: Session, *, user_id, message_text: str, settings: Settings, admin: str) -> tuple[AccountOnboarding, str]:
+    user = db.get(User, user_id)
+    if user is None or user.merged_into_user_id is not None or user.status != "active":
+        raise ValueError("user_not_found")
+    email = db.scalar(select(UserEmail.email_normalized).where(UserEmail.user_id == user_id)
+                      .order_by(UserEmail.is_primary.desc(), UserEmail.created_at).limit(1))
+    if not email:
+        raise ValueError("email_missing")
+    if not message_text.strip():
+        raise ValueError("empty_message")
+    now = datetime.now(UTC)
+    row = AccountOnboarding(user_id=user_id, delivery_mode="admin_message",
+                            claim_bundle_encrypted=_encrypt_bundle({"message_text": message_text, "email": email}, settings),
+                            expires_at=now + CLAIM_TTL, next_email_attempt_at=now)
+    db.add(row)
+    db.flush()
+    db.add(AdminAppEdit(admin_username=admin, target_user_id=user_id, app_code="crm",
+                        action="queue_email_message", details={"delivery_id": str(row.id)}))
+    db.commit()
+    return row, email
 
 
 def issue_initial_direct_password(
@@ -319,6 +342,7 @@ def account_access_email(
     settings: Settings,
     payment_completed: bool,
     password: str | None = None,
+    message_text: str | None = None,
 ) -> EmailMessage:
     message = EmailMessage()
     variant = "paid" if payment_completed else "free"
@@ -328,6 +352,10 @@ def account_access_email(
     message["To"] = email
     if settings.smtp_reply_to:
         message["Reply-To"] = settings.smtp_reply_to
+    if message_text is not None:
+        message.replace_header("Subject", "Сообщение от Сергея Воронцова")
+        message.set_content(message_text)
+        return message
     intro = render_section("account-onboarding", "intro_" + variant)
     if password:
         account_url = settings.account_public_url
@@ -401,6 +429,10 @@ def process_due_account_email(settings: Settings) -> bool:
         try:
             bundle = _decrypt_bundle(row.claim_bundle_encrypted, settings)
             direct_password = None
+            message_text = None
+            if row.delivery_mode == "admin_message":
+                message_text = bundle["message_text"]
+                email = bundle["email"]
             if row.delivery_mode == "direct_password":
                 credential = db.get(AccountCredential, row.user_id)
                 if (
@@ -419,11 +451,12 @@ def process_due_account_email(settings: Settings) -> bool:
                 direct_password = str(bundle.get("password") or "")
             message = account_access_email(
                 email=email,
-                links={} if direct_password else onboarding_links(row, settings),
+                links={} if direct_password or message_text is not None else onboarding_links(row, settings),
                 expires_at=row.expires_at,
                 settings=settings,
                 payment_completed=row.payment_id is not None,
                 password=direct_password,
+                message_text=message_text,
             )
             _send_message(message, settings)
             row.email_status = "sent"

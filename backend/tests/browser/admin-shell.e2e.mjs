@@ -559,6 +559,11 @@ for (const [name, route] of Object.entries(integratedPages)) {
   let failSending = true;
   let connected = false;
   let changedRights = false;
+  let emailedText = null;
+  await page.route("**/admin/api/users/u1/messages/email", route => {
+    emailedText = route.request().postDataJSON().text;
+    return route.fulfill({json:{status:"queued",email:"anna@example.com"}});
+  });
   await page.route("**/admin/api/users/u1/course-accesses", route => route.fulfill({json:{courses:changedRights
     ? [{resource_code:"ACCESS_RECIPES",name:"Система рецептов",entitled:true,start_open:true,all_lessons_open:true,available:true}, {resource_code:"ACCESS_CALORIES",name:"Курс о калориях",entitled:false,start_open:false,all_lessons_open:false,available:true}]
     : [{resource_code:"ACCESS_MASTERCLASS",name:"Мастер-класс",entitled:true,start_open:true,all_lessons_open:false,available:true}, {resource_code:"ACCESS_CALORIES",name:"Курс о калориях",entitled:false,start_open:false,all_lessons_open:false,available:true}]}}));
@@ -600,6 +605,10 @@ for (const [name, route] of Object.entries(integratedPages)) {
   });
   await page.locator("#copy-account-message").click();
   await page.locator("#account-message-status",{hasText:"Не удалось скопировать"}).waitFor();
+  assert.equal(await page.locator("#telegram-message").inputValue(),edited);
+  await page.locator("#send-account-email").click();
+  await page.locator("#account-message-status",{hasText:"Письмо поставлено в очередь"}).waitFor();
+  assert.equal(emailedText,edited);
   assert.equal(await page.locator("#telegram-message").inputValue(),edited);
   connected = true;
   await page.reload();

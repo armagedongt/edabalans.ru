@@ -122,6 +122,72 @@ def seed_credential(factory: sessionmaker[Session]) -> None:
         db.commit()
 
 
+def test_admin_email_message_uses_existing_queue_and_preserves_edited_text(monkeypatch):
+    client, factory = setup()
+    seed_credential(factory)
+    with factory() as db:
+        user_id = db.scalar(select(UserEmail.user_id).where(UserEmail.email_normalized == "member@example.test"))
+    text = "Мой личный текст.\nЛогин: member@example.test\nПароль: SamplePassword123\n"
+    url = f"/admin/api/users/{user_id}/messages/email"
+    assert client.post(url, json={"text": text}).status_code == 401
+    assert client.post("/admin/api/login", json={"username":"admin@example.com","password":"test-admin-password"}).status_code == 200
+    assert client.post(url, json={"text":"  "}).status_code == 422
+    response = client.post(url, json={"text":text})
+    assert response.status_code == 200
+    assert response.json()["status"] == "queued"
+    assert response.json()["email"] == "member@example.test"
+    with factory() as db:
+        row = db.scalar(select(AccountOnboarding).where(AccountOnboarding.user_id == user_id))
+        assert row.delivery_mode == "admin_message"
+        assert "SamplePassword123" not in row.claim_bundle_encrypted
+        assert row.email_status == "pending"
+        assert db.get(AccountCredential,user_id).password_version == 1
+    delivered = []
+    monkeypatch.setattr(onboarding_service,"SessionLocal",factory)
+    monkeypatch.setattr(onboarding_service,"_send_message",lambda message,_settings:delivered.append(message))
+    assert onboarding_service.process_due_account_email(settings()) is True
+    assert len(delivered) == 1
+    assert delivered[0]["To"] == "member@example.test"
+    assert delivered[0].get_body(preferencelist=("plain",)).get_content() == text
+    with factory() as db:
+        row = db.scalar(select(AccountOnboarding).where(AccountOnboarding.user_id == user_id))
+        assert row.email_status == "sent"
+        assert db.get(AccountCredential,user_id).password_version == 1
+    app.dependency_overrides.clear()
+
+
+def test_admin_message_does_not_replace_registration_and_retries_smtp(monkeypatch):
+    _, factory = setup()
+    with factory() as db:
+        user = User(status="active")
+        db.add(user)
+        db.flush()
+        db.add(UserEmail(user_id=user.id,email_original="empty@example.test",email_normalized="empty@example.test",is_primary=True,source="test"))
+        db.flush()
+        row, _ = onboarding_service.queue_admin_message_email(db,user_id=user.id,message_text="Личный текст",settings=settings(),admin="test")
+        onboarding = ensure_free_account_onboarding(db,"empty@example.test",settings())
+        assert onboarding.id != row.id
+        assert onboarding.delivery_mode == "messenger_claim"
+        delivery_id = row.id
+        db.rollback()
+    monkeypatch.setattr(onboarding_service,"SessionLocal",factory)
+    def fail_smtp(*_args):
+        raise OSError("temporary SMTP failure")
+    monkeypatch.setattr(onboarding_service,"_send_message",fail_smtp)
+    assert onboarding_service.process_due_account_email(settings()) is True
+    with factory() as db:
+        item = db.get(AccountOnboarding,delivery_id)
+        assert item.email_status == "retry"
+        assert item.email_attempt_count == 1
+        item.next_email_attempt_at = datetime.now(UTC)-timedelta(seconds=1)
+        db.commit()
+    delivered = []
+    monkeypatch.setattr(onboarding_service,"_send_message",lambda message,_settings:delivered.append(message))
+    assert onboarding_service.process_due_account_email(settings()) is True
+    assert delivered[0].get_body(preferencelist=("plain",)).get_content().strip() == "Личный текст"
+    app.dependency_overrides.clear()
+
+
 def test_password_encryption_round_trip_uses_secret_and_rejects_wrong_secret() -> None:
     encrypted = encrypt_password("Visible-Password-7", "test-account-secret")
     assert encrypted != "Visible-Password-7"
