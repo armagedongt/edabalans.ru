@@ -58,6 +58,7 @@ owns_files = [
   "backend/app/application_access_service.py",
   "backend/app/course_access_service.py",
   "backend/app/legacy_course_access.py", "backend/app/legacy_upgrade_service.py",
+  "backend/app/importers/prepare_tilda_accounts.py", "backend/tests/test_prepare_tilda_accounts.py",
   "backend/scripts/publish_legacy_upgrade_prices.py", "backend/tests/test_legacy_courses.py",
   "backend/app/static/account-legacy-offer.js", "backend/tests/browser/legacy-course-offer.e2e.mjs",
   "backend/app/checkout_reference.py",
