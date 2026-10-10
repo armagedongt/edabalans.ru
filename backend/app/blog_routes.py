@@ -318,12 +318,12 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
     breadcrumbs, breadcrumb_data = _breadcrumbs(article)
     dates = []
     article_dates = {}
-    publication_label = "Исходная публикация" if article.original_published_at else "Опубликовано в блоге"
+    publication_label = "Опубликовано" if article.original_published_at else "В блоге с"
     for label, key, value in ((publication_label, "datePublished", article.original_published_at or article.blog_published_at),
-                               ("Обновлено в блоге", "dateModified", published.get("published_updated_at") if published else None)):
+                               ("Обновлено", "dateModified", published.get("published_updated_at") if published else None)):
         if value:
             date = datetime.fromisoformat(value)
-            dates.append(f'{label}: <time datetime="{escape(value, quote=True)}">{date:%d.%m.%Y}</time>')
+            dates.append(f'<span>{label}: <time datetime="{escape(value, quote=True)}">{date:%d.%m.%Y}</time></span>')
             article_dates[key] = value
     hero_html = (
         f'<figure><img src="/blog/media/{escape(article.hero.file, quote=True)}" '
@@ -356,8 +356,8 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         ),
         "{{HERO}}": hero_html,
         "{{BREADCRUMBS}}": breadcrumbs,
-        "{{AUTHOR_BYLINE}}": f'<a class="author-byline" href="{escape(BLOG_PUBLIC_ORIGIN + author["path"], quote=True)}"><img src="{escape(author["image"], quote=True)}" alt="" width="32" height="32">{escape(author["name"])}, {escape(author["role"].lower())}</a>',
-        "{{ARTICLE_DATES}}": '<div class="article-dates">' + ' · '.join(dates) + '</div>' if dates else '',
+        "{{AUTHOR_BYLINE}}": f'<a class="author-byline" href="{escape(BLOG_PUBLIC_ORIGIN + author["path"], quote=True)}">{escape(author["name"])}, {escape(author["role"].lower())}</a>',
+        "{{ARTICLE_DATES}}": '<div class="article-dates">' + ''.join(dates) + '</div>' if dates else '',
         "{{ARTICLE_BODY}}": body,
         "{{SUBSCRIPTION_SLOT}}": (
             f' data-subscription-before-heading="{escape(article.subscription_before_heading, quote=True)}"'

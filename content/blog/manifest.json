@@ -3259,6 +3259,7 @@
       "hero": {
         "file": "11927800/tilda-01-v3-photo.webp",
         "alt": "Сергей Воронцов за столом",
+        "show": false,
         "provenance": "https://static.tildacdn.com/tild6332-3565-4530-a430-313862393165/_.jpg"
       },
       "card": {
