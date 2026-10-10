@@ -1,5 +1,6 @@
 import hashlib
 import json
+from dataclasses import replace
 from pathlib import Path
 import re
 import sys
@@ -160,10 +161,15 @@ def test_every_derivative_preserves_its_original_and_only_public_ones_are_served
                 assert rendered.size == (variant['width'], variant['height'])
 
 
-def test_temporarily_hidden_article_and_its_exclusive_media_are_not_public(media_client):
+def test_temporarily_hidden_article_and_its_exclusive_media_are_not_public(media_client, monkeypatch):
     client, _ = media_client
     catalog = load_blog_catalog()
-    hidden = next(article for article in catalog.articles if article.status == 'draft')
+    hidden = replace(catalog.published[0], status='draft')
+    catalog = replace(catalog, articles=tuple(
+        hidden if article.source_id == hidden.source_id else article
+        for article in catalog.articles
+    ))
+    monkeypatch.setattr('app.blog_routes.load_blog_catalog', lambda: catalog)
     assert (catalog.content_dir / 'articles' / hidden.body_file).is_file()
     assert client.get('/blog/articles/' + hidden.slug).status_code == 404
     assert hidden.slug not in client.get('/blog/sitemap.xml').text
