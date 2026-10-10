@@ -141,17 +141,43 @@ def test_api_published_body_gets_responsive_images_without_rewriting_markdown(me
     assert image is not None and 'srcset=' in image.group(0) and 'sizes=' in image.group(0)
 
 
-def test_every_derivative_has_a_real_image_and_a_public_original():
+def test_every_derivative_preserves_its_original_and_only_public_ones_are_served():
     catalog = load_blog_catalog()
     images = responsive_manifest(catalog.content_dir)
     registered = derivative_files(catalog.content_dir, catalog.allowed_media)
+    public_originals = {name for article in catalog.published for name in
+                        (article.hero.file, article.card.file, *article.media)}
+    expected_derivatives = {variant['file'] for name, image in images.items()
+                            if name in public_originals for variant in image['variants']}
+    assert registered == expected_derivatives
     assert registered
     for name, image in images.items():
-        assert name in catalog.allowed_media
         original = (catalog.content_dir / 'media' / name).read_bytes()
         assert hashlib.sha256(original).hexdigest() == image['sha256']
         for variant in image['variants']:
-            assert variant['file'] in registered
             assert (catalog.content_dir / 'media' / variant['file']).stat().st_size < len(original)
             with Image.open(catalog.content_dir / 'media' / variant['file']) as rendered:
                 assert rendered.size == (variant['width'], variant['height'])
+
+
+def test_temporarily_hidden_article_and_its_exclusive_media_are_not_public(media_client):
+    client, _ = media_client
+    catalog = load_blog_catalog()
+    hidden = next(article for article in catalog.articles if article.status == 'draft')
+    assert (catalog.content_dir / 'articles' / hidden.body_file).is_file()
+    assert client.get('/blog/articles/' + hidden.slug).status_code == 404
+    assert hidden.slug not in client.get('/blog/sitemap.xml').text
+    images = responsive_manifest(catalog.content_dir)
+    public_originals = {name for article in catalog.published for name in
+                        (article.hero.file, article.card.file, *article.media)}
+    public_derivatives = {variant['file'] for name, image in images.items()
+                          if name in public_originals for variant in image['variants']}
+    exclusive = [name for name in (hidden.hero.file, hidden.card.file, *hidden.media)
+                 if name not in public_originals]
+    assert exclusive
+    for name in exclusive:
+        assert (catalog.content_dir / 'media' / name).is_file()
+        assert client.get('/blog/media/' + name).status_code == 404
+        for variant in images.get(name, {}).get('variants', []):
+            if variant['file'] not in public_derivatives:
+                assert client.get('/blog/media/' + variant['file']).status_code == 404

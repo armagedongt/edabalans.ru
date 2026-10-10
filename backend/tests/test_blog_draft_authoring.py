@@ -734,7 +734,7 @@ def test_largest_existing_article_seeds_without_inline_media(authoring) -> None:
 
 def test_existing_seed_is_idempotent(authoring) -> None:
     client, factory = authoring
-    expected_count = len(load_blog_catalog().articles)
+    expected_count = len(load_blog_catalog().published)
     assert len(client.get("/admin/api/blog/articles").json()["articles"]) == expected_count
     assert len(client.get("/admin/api/blog/articles").json()["articles"]) == expected_count
     with factory() as db:
