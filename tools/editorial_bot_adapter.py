@@ -1,11 +1,11 @@
-"""Lossless Telegram HTML working files for existing editable bot slots.
+"""Lossless bot originals: stored Markdown or untouched legacy Telegram HTML.
 
-The .md extension lets Obsidian show the same working file. Its body is the
-original Telegram HTML, not site Markdown; publication performs no translation.
+Markdown is compiled by the existing publication API, never during delivery.
 """
 from __future__ import annotations
 
 import re
+import json
 from urllib.parse import quote
 
 
@@ -13,6 +13,15 @@ CODE = re.compile(r"[a-zA-Z0-9_-]+")
 PURPOSE = "ЦЕЛЬ СООБЩЕНИЯ"
 BRIEF = "ТЗ ПИСАТЕЛЮ"
 CONTEXT = "КОНТЕКСТ В ГРАФЕ"
+NURTURE_CODE = re.compile(r"tpl_nurture_(0[1-9]|[1-5][0-9]|60)_(tg_full|tg_channel|max_full)")
+
+
+def nurture_path(code):
+    match = NURTURE_CODE.fullmatch(code)
+    if not match:
+        return None
+    folder = {"tg_full": "Telegram — полный", "tg_channel": "Telegram — в канал", "max_full": "MAX"}[match[2]]
+    return f"Черновики/Рассылка — 60 постов/{folder}/Пост {match[1]}.md"
 
 
 def _path(code, suffix="authoring"):
@@ -35,11 +44,23 @@ def discover(api):
             "allowed_variables": item.get("allowed_variables", []),
             "media_kind": item.get("media_kind"), "media_path": item.get("media_path"),
         }
+        if nurture_path(code):
+            result["bot:" + code].update(
+                group="Рассылка — 60 постов", path=nurture_path(code),
+            )
     return result
 
 
 def render(item):
     _path(item["code"])
+    if item.get("source_markdown") is not None:
+        return (
+            "---\n"
+            f"code: {item['code']}\nversion: {item['content_version']}\n"
+            'source_format: telegram_markdown\n'
+            f"title: {json.dumps(item['title'], ensure_ascii=False)}\n"
+            "---\n\n" + item["source_markdown"]
+        )
     context = "\n".join(
         f"- {usage.get('module', 'модуль')} · {usage.get('previous', '—')} → {usage.get('step', 'сообщение')} → {usage.get('next', '—')}"
         for usage in item.get("usages", [])
@@ -71,12 +92,21 @@ def parse(text):
         if not separator or key in fields:
             raise ValueError("Повреждены поля служебной шапки")
         fields[key] = value.strip()
-    if not {"code", "version", "media_kind"} <= fields.keys():
+    if not {"code", "version"} <= fields.keys():
         raise ValueError("В шапке нужны code, version и media_kind")
     _path(fields["code"])
     if not fields["version"].isdigit() or int(fields["version"]) < 1:
         raise ValueError("Некорректная версия сообщения")
     remaining = text[header.end():]
+    if fields.get("source_format") == "telegram_markdown":
+        title = fields.get("title", "")
+        if title.startswith('"'):
+            title = json.loads(title)
+        if not isinstance(title, str) or not title.strip():
+            raise ValueError("У сообщения нужно название")
+        return {"code": fields["code"], "title": title, "source_markdown": remaining, "body_source": ""}
+    if "media_kind" not in fields:
+        raise ValueError("В шапке нужно media_kind")
     sections = {}
     for name in (PURPOSE, BRIEF, CONTEXT):
         section = re.match(r"\A<!-- " + re.escape(name) + r"\n(.*?)\n-->\n\n", remaining, re.S)
@@ -96,6 +126,8 @@ def parse(text):
 
 def normalize(text):
     parsed = parse(text)
+    if "source_markdown" in parsed:
+        return parsed["code"], parsed["title"], parsed["source_markdown"]
     parsed["purpose"] = parsed["purpose"].strip()
     parsed["writer_brief"] = parsed["writer_brief"].strip()
     return tuple(parsed[name] for name in ("code", "purpose", "writer_brief", "body_source"))
@@ -106,7 +138,8 @@ def read(api, item):
     if raw["code"] != item["code"]:
         raise ValueError("API вернул другое сообщение")
     return {"version": raw["content_version"], "text": render(raw), "title": raw["title"],
-            "format": "telegram_html", "usages": raw.get("usages", []),
+            "format": "telegram_markdown" if raw.get("source_markdown") is not None else "telegram_html",
+            "usages": raw.get("usages", []),
             "allowed_variables": raw.get("allowed_variables", [])}
 
 
@@ -117,6 +150,9 @@ def publish(api, item, text, expected_version):
     if not isinstance(expected_version, int) or isinstance(expected_version, bool) or expected_version < 1:
         raise ValueError("Для публикации нужна известная версия сообщения")
     payload = {key: value for key, value in parsed.items() if key != "code"}
+    if "source_markdown" in parsed:
+        raw = api.request("GET", _path(item["code"]))
+        payload.update(purpose=raw["purpose"], writer_brief=raw["writer_brief"])
     payload["expected_version"] = expected_version
     api.request("POST", _path(item["code"], "validate"), payload)
     api.request("PUT", _path(item["code"], "publish"), {**payload, "confirm": True})

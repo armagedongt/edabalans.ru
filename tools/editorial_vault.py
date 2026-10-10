@@ -363,6 +363,14 @@ class Vault:
 
     def catalog(self, state: dict) -> None:
         lines = ["# Материалы сайта", "", "Оригиналы рабочих правок лежат в этой папке. Ссылки открывают сами файлы.", ""]
+        for label, path in (
+            ("Рассылка — 60 постов по порядку", "Черновики/Рассылка — 60 постов/Порядок постов.md"),
+            ("Все посты прежних рассылок — банк", "Черновики/Рассылка — банк постов/Все посты.md"),
+            ("Welcome — вход и первые часы", "Черновики/Welcome/Порядок и правила.md"),
+        ):
+            if (self.root / path).is_file():
+                lines.append(f"- [{label}](<{path}>)")
+        lines.append("")
         for ident, item in state["items"].items():
             title = item["title"].replace("[", "\\[").replace("]", "\\]")
             lines.append(f"- [{title}](<{item['path']}>) — {item['group']} · `{ident}`")

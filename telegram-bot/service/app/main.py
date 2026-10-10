@@ -1621,28 +1621,40 @@ def _validate_content_publication(item: ContentItem, body: ContentValidateIn) ->
         raise HTTPException(409, {"message": "Content version conflict", "current_version": item.content_version})
     purpose = body.purpose.strip()
     writer_brief = body.writer_brief.strip()
+    html_source = body.body_source
+    if body.title is not None and not body.title.strip():
+        raise HTTPException(422, "Название не должно быть пустым")
+    if body.source_markdown is not None:
+        from app.message_markdown import compile_message_markdown
+        try:
+            compiled = compile_message_markdown(body.source_markdown)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+        if body.body_source and compiled != body.body_source:
+            raise HTTPException(422, "HTML не совпадает с Markdown-оригиналом")
+        html_source = compiled
     if not purpose or not writer_brief:
         raise HTTPException(422, "Для подтверждения обязательны непустые цель и ТЗ писателю")
     media_only = item.media_kind == "video_note" and bool(item.media_path or item.telegram_file_id)
-    if is_placeholder_text(body.body_source) and not media_only:
+    if is_placeholder_text(html_source) and not media_only:
         raise HTTPException(422, "Нельзя опубликовать пустой текст или техническую заглушку")
     unknown_variables = sorted(
         variable
-        for variable in set(template_variables(body.body_source))
+        for variable in set(template_variables(html_source))
         if not variable_is_allowed(item.code, variable)
     )
     if unknown_variables:
         raise HTTPException(422, f"Неизвестные переменные: {', '.join(unknown_variables)}")
     try:
-        validate_telegram_html(body.body_source)
+        validate_telegram_html(html_source)
     except ValueError as exc:
         raise HTTPException(422, f"Некорректный Telegram HTML: {exc}") from exc
-    if item.media_kind == "video_note" and body.body_source:
+    if item.media_kind == "video_note" and html_source:
         raise HTTPException(422, "Telegram-видеокружок не поддерживает подпись; оставьте текст пустым или отправляйте отдельным шагом")
     telegram_limit = 1024 if item.media_kind in {"photo", "video", "voice"} else 4096
-    if len(body.body_source) > telegram_limit:
+    if len(html_source) > telegram_limit:
         raise HTTPException(422, f"Сообщение длиннее лимита Telegram ({telegram_limit} символов)")
-    return purpose, writer_brief, body.body_source
+    return purpose, writer_brief, html_source
 
 
 @app.post("/bot-api/content/{content_code}/validate", dependencies=[Depends(require_admin)])
@@ -1661,8 +1673,11 @@ def publish_content(content_code: str, body: ContentPublishIn, session: Session 
         raise HTTPException(404, "Content not found")
     if not body.confirm:
         raise HTTPException(422, "Рабочий файл сохраняется локально; в БД публикуется только подтверждённый текст")
-    purpose, writer_brief, _ = _validate_content_publication(item, body)
-    item.body_source = body.body_source
+    purpose, writer_brief, html_source = _validate_content_publication(item, body)
+    item.body_source = html_source
+    item.source_markdown = body.source_markdown
+    if body.title is not None:
+        item.title = body.title
     item.source_format = "telegram_html"
     item.purpose = purpose
     item.writer_brief = writer_brief
@@ -1746,7 +1761,7 @@ def update_content(content_id: str, body: ContentUpdateIn, session: Session = De
     if values.get("source_format") not in {None, *SUPPORTED_SOURCE_FORMATS}:
         raise HTTPException(422, "Unknown source_format")
     _validate_media_reference(values.get("media_path"))
-    content_changed = bool({"body_source", "purpose", "writer_brief", "source_format"} & values.keys())
+    content_changed = bool({"body_source", "purpose", "writer_brief", "source_format", "title"} & values.keys())
     if content_changed and expected_version is None:
         raise HTTPException(409, "Для сохранения нужна актуальная content_version")
     if content_changed and "editorial_status" not in values:
@@ -1789,6 +1804,8 @@ def update_content(content_id: str, body: ContentUpdateIn, session: Session = De
             raise HTTPException(422, f"Сообщение длиннее лимита Telegram ({telegram_limit} символов)")
     for field, value in values.items():
         setattr(item, field, value)
+    if "body_source" in values:
+        item.source_markdown = None
     if content_changed:
         item.content_version += 1
         if item.editorial_status == "approved":

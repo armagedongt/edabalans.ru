@@ -168,6 +168,7 @@ owns_files = [
     "tools/editorial_course_structure.py", "tools/tests/test_editorial_course_structure.py",
     "tools/editorial_bot_adapter.py", "tools/editorial_git_adapter.py", "tools/editorial_email_adapter.py",
     "tools/editorial_catalog_adapter.py", "tools/editorial_graph_adapter.py", "tools/editorial_pricing_adapter.py",
+    "tools/register_nurture_vault.py", "tools/tests/test_nurture_vault.py",
     "tools/tests/test_editorial_bot_adapter.py", "tools/tests/test_editorial_git_adapter.py", "tools/tests/test_editorial_email_adapter.py",
     "tools/tests/test_editorial_catalog_adapter.py", "tools/tests/test_editorial_graph_adapter.py", "tools/tests/test_editorial_pricing_adapter.py",
     "backend/app/service_email_templates.py", "backend/app/service_email_editorial_routes.py",
@@ -884,7 +885,9 @@ telegram_code = "prepurchase_nurture"
 telegram_name = "Основная рассылка до покупки"
 telegram_status = "Исполняемый каркас · контент частичный"
 telegram_order = 30
-owns_files = ["docs/knowledge-base/modules/telegram/PREPURCHASE_NURTURE.md"]
+owns_files = ["docs/knowledge-base/modules/telegram/PREPURCHASE_NURTURE.md",
+  "backend/migrations/versions/20261010_0052_bot_markdown_originals.py",
+  "backend/tests/test_bot_markdown_migration.py"]
 
 [[modules]]
 id = "messaging.telegram.postpurchase"
@@ -949,6 +952,8 @@ owns_files = [
   "telegram-bot/service/app/__init__.py", "telegram-bot/service/app/config.py",
   "telegram-bot/service/app/content_authoring.py", "telegram-bot/service/app/content_authoring_cli.py",
   "telegram-bot/service/app/content_formatting.py",
+  "telegram-bot/service/app/message_markdown.py",
+  "telegram-bot/service/tests/test_message_markdown.py", "telegram-bot/service/tests/test_markdown_publication.py",
   "telegram-bot/service/app/account_credentials.py",
   "telegram-bot/service/app/customer_lifecycle.py", "telegram-bot/service/app/database.py",
   "telegram-bot/service/app/engine.py", "telegram-bot/service/app/formatting.py",

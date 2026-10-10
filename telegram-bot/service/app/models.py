@@ -58,6 +58,7 @@ class ContentItem(TimestampMixin, Base):
     code: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     body_source: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    source_markdown: Mapped[str | None] = mapped_column(Text)
     source_format: Mapped[str] = mapped_column(String(32), default="telegram_html", nullable=False)
     purpose: Mapped[str] = mapped_column(Text, default="", nullable=False)
     writer_brief: Mapped[str] = mapped_column(Text, default="", nullable=False)

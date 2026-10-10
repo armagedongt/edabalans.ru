@@ -118,6 +118,8 @@ class ContentUpdateIn(BaseModel):
 class ContentPublishIn(BaseModel):
     expected_version: int = Field(ge=1)
     body_source: str = Field(max_length=20000)
+    source_markdown: str | None = Field(default=None, max_length=20000)
+    title: str | None = Field(default=None, min_length=1, max_length=255)
     purpose: str = Field(min_length=1, max_length=2000)
     writer_brief: str = Field(min_length=1, max_length=10000)
     confirm: Literal[True]
@@ -126,6 +128,8 @@ class ContentPublishIn(BaseModel):
 class ContentValidateIn(BaseModel):
     expected_version: int = Field(ge=1)
     body_source: str = Field(max_length=20000)
+    source_markdown: str | None = Field(default=None, max_length=20000)
+    title: str | None = Field(default=None, min_length=1, max_length=255)
     purpose: str = Field(min_length=1, max_length=2000)
     writer_brief: str = Field(min_length=1, max_length=10000)
 

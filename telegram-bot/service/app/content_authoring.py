@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from collections import defaultdict
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from app.content_formatting import SUPPORTED_SOURCE_FORMATS, is_placeholder_text, validate_telegram_html
@@ -231,6 +231,7 @@ def authoring_payload(item: ContentItem, usages: list[dict]) -> dict:
         "purpose": item.purpose,
         "writer_brief": item.writer_brief,
         "body_source": item.body_source,
+        "source_markdown": item.source_markdown,
         "html_source": item.body_source,
         "source_format": item.source_format,
         "runtime_status": item.status,
@@ -252,10 +253,12 @@ def audit_content(session: Session) -> dict:
     content_codes = [code for code in usages if not code.startswith("__missing__:")]
     existing = {
         item.code: item
-        for item in session.scalars(select(ContentItem).where(ContentItem.code.in_(content_codes)))
+        for item in session.scalars(select(ContentItem).where(
+            or_(ContentItem.code.in_(content_codes), ContentItem.origin_system == "obsidian_nurture_60")
+        ))
     }
     items: list[dict] = []
-    for code in sorted(usages):
+    for code in sorted(set(usages) | set(existing)):
         item = existing.get(code)
         if not item:
             items.append(
@@ -268,7 +271,7 @@ def audit_content(session: Session) -> dict:
                 }
             )
         else:
-            items.append(authoring_payload(item, usages[code]))
+            items.append(authoring_payload(item, usages.get(code, [])))
     counts: dict[str, int] = defaultdict(int)
     for item in items:
         counts[item["editorial_status"]] += 1
