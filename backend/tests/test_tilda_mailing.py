@@ -196,3 +196,11 @@ def test_access_description_matches_actual_course_policy(store, start, unlock, e
         assert "Система рецептов" not in text
         assert "— DQS" in text
         assert "по условиям открытия соответствующих материалов" in text
+
+
+def test_main_routes_mailing_before_generic_admin_section(monkeypatch):
+    from app.main import app
+    monkeypatch.setattr("app.auth.admin_identity", lambda request: "owner")
+    response = TestClient(app).get("/admin/tilda-mailing")
+    assert response.status_code == 200
+    assert 'id="letter-form"' in response.text
