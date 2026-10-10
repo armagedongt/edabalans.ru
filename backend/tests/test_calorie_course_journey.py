@@ -727,6 +727,34 @@ def test_material_filter_does_not_expose_locked_modules_or_hidden_articles():
     assert client.get(endpoint, params=params).json()["materials"] == {}
 
 
+def test_editorial_photo_obeys_the_actual_calories_stage_access():
+    import base64
+    import hashlib
+    from io import BytesIO
+    from PIL import Image
+    from app.editorial_media import ingest
+    client, factory = setup()
+    output = BytesIO()
+    Image.new("RGB", (3, 2), "blue").save(output, format="PNG")
+    raw = output.getvalue()
+    urls = {}
+    for step_id in ("calories-stage-01-app", "calories-stage-03-expenditure"):
+        with factory() as db:
+            urls[step_id] = ingest(db, scope="course:calories:" + step_id, admin="test",
+                source={"name": hashlib.sha256(raw).hexdigest() + ".png",
+                        "content_base64": base64.b64encode(raw).decode(),
+                        "alt": "Фото", "provenance": "owner-upload"})["url"]
+        current = client.get(f"/admin/api/courses/calories/materials/{step_id}").json()
+        response = client.put(f"/admin/api/courses/calories/materials/{step_id}", json={
+            "expected_version": current["version"], "format": "markdown",
+            "content": current["source_content"] + f"\n![Фото]({urls[step_id]})\n"})
+        assert response.status_code == 200, response.text
+    assert client.get(urls["calories-stage-01-app"]).content == raw
+    assert client.get(urls["calories-stage-03-expenditure"]).status_code == 404
+    client.cookies.clear()
+    assert client.get(urls["calories-stage-01-app"]).status_code == 401
+
+
 def test_hidden_article_does_not_block_launch_when_visible_articles_are_published():
     client, _ = setup(course_ready=False)
     email = "calories@example.test"

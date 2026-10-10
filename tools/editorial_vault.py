@@ -187,7 +187,16 @@ class Vault:
         return {"version": raw["version"], "text": raw.get("source_content", raw["html"]),
                 "title": raw["title"], "format": raw.get("source_format", "html"),
                 "source_hash": raw.get("source_hash") if source_current else None,
-                "unsupported": ((raw.get("source_provenance") == "git_markdown" or raw.get("source") == "git_markdown") and not source_current) or ("recipe" in item["id"] and raw.get("recipe_authoring", {}).get("status") != "ready")}
+                "unsupported": ((raw.get("source_provenance") == "git_markdown" or raw.get("source") == "git_markdown") and not source_current) or (item["id"].startswith("course:masterclass-21:day-15-recipe-") and raw.get("recipe_authoring", {}).get("status") != "ready")}
+
+    def media_source(self, item: dict, ident: str, text: str):
+        from tools.editorial_media import local_images, rendered_source
+        supported = item["kind"] in {"public", "homepage", "blog", "course", "git"}
+        supported = supported and (item["kind"] != "course" or item.get("format") == "markdown")
+        supported = supported and (item["kind"] != "git" or ident == "intensive" or ident.startswith("course:"))
+        server_prefixes = ("assets/", "../assets/") if item["kind"] == "git" and ident.startswith("course:") else ()
+        images = local_images(self.root, self.file(item), text, server_prefixes=server_prefixes) if supported else []
+        return rendered_source(text, images, ident), images
 
     def status(self) -> list[dict]:
         rows = []
@@ -196,7 +205,8 @@ class Vault:
             text = path.read_text(encoding="utf-8") if path.exists() else ""
             error = None
             try:
-                changed = digest(comparable(text, item["kind"])) != item["base_hash"]
+                wire, _ = self.media_source(item, ident, text)
+                changed = digest(comparable(wire, item["kind"])) != item["base_hash"]
             except ValueError as exc:
                 changed, error = True, str(exc)
             status = "conflict" if item.get("conflict") else "changed" if changed or item.get("pending_draft") or item.get("pending_runtime") else "clean"
@@ -303,7 +313,8 @@ class Vault:
                         atomic_json(self.state_path, state)
                         results.append({"id": ident, "status": "clean"})
                         continue
-                    local_hash = digest(comparable(local, item["kind"])) if local is not None else None
+                    wire, images = self.media_source(item, ident, local) if local is not None else (None, [])
+                    local_hash = digest(comparable(wire, item["kind"])) if wire is not None else None
                     if type(remote["version"]) is int and item.get("pending_hash") == remote_hash and remote["version"] == item.get("pending_base_version", -2) + 1:
                         item.update(base_version=remote["version"], base_hash=remote_hash)
                         if item["kind"] == "blog":
@@ -318,7 +329,9 @@ class Vault:
                         results.append({"id": ident, "status": "conflict" if item["conflict"] else "draft", "message": "Локальные правки сохранены"})
                     else:
                         path.parent.mkdir(parents=True, exist_ok=True)
-                        if not update_if_unchanged(path, local, remote["text"]):
+                        from tools.editorial_media import working_source
+                        replacement = working_source(remote["text"], local or "", images, ident)
+                        if not update_if_unchanged(path, local, replacement):
                             raise VaultError("Файл изменён или занят редактором; локальные правки сохранены, повторите обновление")
                         item.update(base_version=remote["version"], base_hash=remote_hash, conflict=False)
                         if item["kind"] == "blog" and remote.get("editorial_status") == "moderation":
@@ -381,7 +394,8 @@ class Vault:
                         raise VaultError("Особый материал: требуется его действующий маршрут через Codex")
                     path = self.file(item)
                     text = path.read_text(encoding="utf-8")
-                    content_hash = digest(comparable(text, item["kind"]))
+                    wire, images = self.media_source(item, ident, text)
+                    content_hash = digest(comparable(wire, item["kind"]))
                     remote = self.read({**item, "id": ident})
                     remote_hash = digest(comparable(remote["text"], item["kind"]))
                     if type(remote["version"]) is int and item.get("pending_hash") == remote_hash and remote["version"] == item.get("pending_base_version", -2) + 1:
@@ -422,17 +436,21 @@ class Vault:
                             verify_publish_gate(path, gate.with_suffix(".pack.json"), gate.with_suffix(".report.json"))
                         if path.read_text(encoding="utf-8") != text:
                             raise VaultError("Материал изменён во время проверки; отправка отменена")
+                    from tools.editorial_media import upload, unchanged, working_source
+                    upload(self.api, ident, images)
+                    if path.read_text(encoding="utf-8") != text or not unchanged(images):
+                        raise VaultError("Текст или картинка изменены во время загрузки; публикация отменена")
                     if item["kind"] == "course":
                         item.update(pending_hash=content_hash, pending_base_version=remote["version"])
                         atomic_json(self.state_path, state)
-                        payload = {"expected_version": remote["version"], "content": text, "format": item["format"]}
+                        payload = {"expected_version": remote["version"], "content": wire, "format": item["format"]}
                         if remote["version"] == 0 and remote.get("source_hash"):
                             payload["expected_source_hash"] = remote["source_hash"]
                         self.api.request("PUT", item["api_path"], payload)
                     elif item["kind"] in ("public", "homepage"):
                         item.update(pending_hash=content_hash, pending_base_version=remote["version"])
                         atomic_json(self.state_path, state)
-                        self.api.request("PUT", item["api_path"], {"expected_version": remote["version"], "markdown": text})
+                        self.api.request("PUT", item["api_path"], {"expected_version": remote["version"], "markdown": wire})
                     elif item["kind"] == "bot":
                         from tools.editorial_bot_adapter import publish
                         item.update(pending_hash=content_hash, pending_base_version=remote["version"])
@@ -440,7 +458,7 @@ class Vault:
                         publish(self.api, item, text, remote["version"])
                     elif item["kind"] == "git":
                         from tools.editorial_git_adapter import publish
-                        publish(self.api, item, text, remote)
+                        publish(self.api, item, wire, remote)
                     elif item["kind"] == "graph":
                         from tools.editorial_graph_adapter import publish
                         publish(self.api, item, text, remote)
@@ -456,7 +474,7 @@ class Vault:
                         if remote_hash != content_hash:
                             item.update(pending_hash=content_hash, pending_base_version=remote["version"])
                             atomic_json(self.state_path, state)
-                            saved = self.api.request("PATCH", item["api_path"] + "/text", {"expected_version": remote["version"], "markdown": text})
+                            saved = self.api.request("PATCH", item["api_path"] + "/text", {"expected_version": remote["version"], "markdown": wire})
                             item["pending_draft"] = saved["article"]["version"]
                             item.update(base_version=saved["article"]["version"], base_hash=content_hash)
                             atomic_json(self.state_path, state)
@@ -469,7 +487,7 @@ class Vault:
                     if item["kind"] == "blog" and verified.get("editorial_status") != "published":
                         raise VaultError("Черновик сохранён, но публичная версия ещё не подтверждена")
                     # A simultaneous Obsidian edit is left intact and remains changed.
-                    update_if_unchanged(path, text, verified["text"])
+                    update_if_unchanged(path, text, working_source(verified["text"], text, images, ident))
                     item.update(base_version=verified["version"], base_hash=content_hash, conflict=False)
                     item.pop("pending_draft", None)
                     item.pop("pending_hash", None)

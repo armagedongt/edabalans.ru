@@ -1,4 +1,9 @@
 from copy import deepcopy
+import base64
+import hashlib
+from io import BytesIO
+from PIL import Image
+from datetime import datetime, timezone
 
 import pytest
 from sqlalchemy import func, select
@@ -11,6 +16,63 @@ from app.models import ContentItemVersion
 from app.recipe_originals import METADATA_KEY, original_records
 from app.recipe_material_authoring import publication_markdown, source_hash
 from scripts.publish_recipe_originals import publish as publish_originals
+
+
+def test_recipe_photo_publication_keeps_exact_calculator_and_material_access(recipe_source):
+    from app.editorial_media import ingest
+    from app.models import User, Resource, UserAccess, UserCoursePolicy
+    from fastapi.testclient import TestClient
+    from app.main import app
+    client, factory = recipe_source
+    adopt(client)
+    buffer = BytesIO()
+    Image.new("RGB", (3, 2), (30, 70, 90)).save(buffer, format="PNG")
+    raw = buffer.getvalue()
+    with factory() as db:
+        asset = ingest(db, scope="course:masterclass-21:" + STEP, admin="test", source={
+            "name": hashlib.sha256(raw).hexdigest() + ".png", "content_base64": base64.b64encode(raw).decode(),
+            "alt": "Фото", "provenance": "owner-upload; attachment: photo.png"})
+    url = asset["url"]
+    assert client.get(url).status_code == 404
+    changed = CONTENT.replace("![Фото](media/caesar.webp)", f"![Фото]({url})")
+    saved = client.put(ENDPOINT, json={"expected_version": 2, "content": changed})
+    assert saved.status_code == 200, saved.text
+    assert saved.json()["source_content"] == changed
+    assert f'src="{url}"' in saved.json()["html"]
+    with factory() as db:
+        original = original_records(db)[0]
+        assert original["version"] == 3 and original["source_hash"] == source_hash(changed)
+        assert original["rows"] == CARDS[0]["rows"]
+        assert material_item(db, STEP).metadata_json["other_owner"] == {"preserved": True}
+    assert client.get(url).status_code == 404  # Day15 is still closed and no recipe access.
+    with factory() as db:
+        user = db.scalar(select(User))
+        resource = db.scalar(select(Resource).where(Resource.code == "ACCESS_RECIPES"))
+        db.add(UserAccess(user_id=user.id, resource_id=resource.id, source="test", granted_at=datetime.now(timezone.utc)))
+        db.add(UserCoursePolicy(user_id=user.id, resource_id=resource.id, start_mode="auto", source="test"))
+        context = course_context(db)
+        structure = deepcopy(context.revision.payload)
+        catalog = next(step for day in structure["days"] for step in day["steps"] if step["id"] == "day-15-recipes-part-2")
+        catalog.update(kind="article", contentKind="text", code="recipes-part-2", locked=False, placeholder=False, hidden=False)
+        publish_document(db, document_type=DOCUMENT_TYPE, document_key=DOCUMENT_KEY,
+                         schema_version=MANAGED_SCHEMA_VERSION, payload=structure,
+                         expected_version=context.revision.version_no, admin="test")
+        publish_material(db, step_id="day-15-recipes-part-2", content="## Каталог\n\nРецепты",
+                         content_format="markdown", expected_version=0, admin="test")
+        db.commit()
+    assert client.get(url).status_code == 200 and client.get(url).content == raw
+    # Recipes-only rights still grant the same original and attachment.
+    with factory() as db:
+        mk = db.scalar(select(Resource).where(Resource.code == "ACCESS_MASTERCLASS"))
+        db.query(UserAccess).filter(UserAccess.resource_id == mk.id).delete()
+        db.commit()
+    assert client.get(url).status_code == 200
+    restored = client.post(ENDPOINT + "/versions/2/restore", json={"expected_version": 3})
+    assert restored.status_code == 200, restored.text
+    assert restored.json()["source_content"] == CONTENT
+    assert client.get(url).status_code == 404
+    anonymous = TestClient(app, base_url="https://edabalans.ru")
+    assert anonymous.get(url).status_code == 401
 
 
 STEP = "day-15-recipe-caesar"

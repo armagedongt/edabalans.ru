@@ -33,11 +33,88 @@ class FakeAPI:
             self.version += 1
             self.text = payload.get("markdown", payload.get("content"))
             if self.kind == "public":
-                self.text = "<!-- public-site-version: " + str(self.version) + " -->\n\n" + self.text.strip()
+                self.text = "<!-- public-site-version: " + str(self.version) + " -->\n\n" + comparable(self.text, "public").strip()
             self.published = self.kind == "public"
             if self.edit_while_publishing:
                 self.edit_while_publishing()
         return {"active" if self.kind == "public" else "article": {"version": self.version}}
+
+
+def image_vault(tmp_path):
+    vault, api, file = vault_fixture(tmp_path)
+    state = vault.load()
+    state["items"]["public:program"] = state["items"].pop("one")
+    atomic_json(vault.state_path, state)
+    vault.discover = lambda: state["items"]
+    image = tmp_path / "photo.png"
+    image.write_bytes(b"picture version 1")
+    file.write_text("Оригинальный текст\n\n![[photo.png|Фото]]\n", encoding="utf-8")
+    original_request = api.request
+    def request(method, path, payload=None):
+        if path == "/admin/api/editorial/media":
+            api.calls.append((method, path, payload))
+            return {}
+        return original_request(method, path, payload)
+    api.request = request
+    return vault, api, file, image
+
+
+def test_selected_image_publishes_and_byte_replacement_is_detected(tmp_path):
+    vault, api, file, image = image_vault(tmp_path)
+    original = file.read_text(encoding="utf-8")
+    assert vault.status()[0]["status"] == "changed"
+    assert vault.publish(["public:program"])[0]["status"] == "published"
+    assert "https://edabalans.ru/editorial-media/" in api.text
+    assert "![[photo.png|Фото]]" in file.read_text(encoding="utf-8")
+    assert vault.status()[0]["status"] == "clean"
+    first_remote = api.text
+    image.write_bytes(b"replacement picture")
+    assert vault.status()[0]["status"] == "changed"
+    assert vault.publish(["public:program"])[0]["status"] == "published"
+    assert api.text != first_remote
+    vault.refresh()
+    assert "![[photo.png|Фото]]" in file.read_text(encoding="utf-8")
+    assert vault.status()[0]["status"] == "clean"
+    uploads = [call for call in api.calls if call[1] == "/admin/api/editorial/media"]
+    assert len(uploads) == 2 and uploads[0][2]["name"] != uploads[1][2]["name"]
+
+
+def test_remote_conflict_is_detected_before_uploading_any_image(tmp_path):
+    vault, api, file, image = image_vault(tmp_path)
+    api.version += 1
+    api.text = "Серверный другой оригинал"
+    original = file.read_bytes()
+    assert vault.publish(["public:program"])[0]["status"] == "error"
+    assert all(call[0] == "GET" for call in api.calls)
+    assert file.read_bytes() == original
+
+
+def test_image_changed_during_upload_does_not_publish_material(tmp_path):
+    vault, api, file, image = image_vault(tmp_path)
+    request = api.request
+    def mutate_image(method, path, payload=None):
+        result = request(method, path, payload)
+        if path == "/admin/api/editorial/media": image.write_bytes(b"new concurrent picture")
+        return result
+    api.request = mutate_image
+    result = vault.publish(["public:program"])[0]
+    assert result["status"] == "error" and "изменены" in result["message"]
+    assert api.text == "Оригинальный текст\n" and api.version == 1
+
+
+def test_image_lost_text_response_recovers_without_overwriting_local_link(tmp_path):
+    vault, api, file, image = image_vault(tmp_path)
+    request = api.request
+    def lose_response(method, path, payload=None):
+        result = request(method, path, payload)
+        if method == "PUT": raise TimeoutError("Ответ потерян")
+        return result
+    api.request = lose_response
+    assert vault.publish(["public:program"])[0]["status"] == "error"
+    api.request = request
+    assert vault.publish(["public:program"])[0]["status"] == "clean"
+    assert "![[photo.png|Фото]]" in file.read_text(encoding="utf-8")
+    assert api.version == 2 and vault.status()[0]["status"] == "clean"
 
 
 def vault_fixture(tmp_path, kind="public"):

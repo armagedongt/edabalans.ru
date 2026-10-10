@@ -138,6 +138,8 @@ def publish_public_site_document(
     admin: str,
 ) -> ManagedDocumentVersion:
     active_public_site_document(db, slug)
+    from app.editorial_media import markdown_media
+    markdown_media(db, "public:" + slug, markdown)
     markdown = VERSION_MARKER.sub("", markdown, count=1).lstrip()
     markdown = f"<!-- public-site-version: {expected_version + 1} -->\n\n{markdown}"
     return publish_document(

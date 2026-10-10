@@ -3,13 +3,14 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from html import escape
 from html.parser import HTMLParser
 from pathlib import Path
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.article_markup import inline_markdown, safe_href
+from app.article_markup import inline_markdown, safe_href, safe_image_src
 from app.managed_documents import active_document, ensure_seed_document, publish_document
 from app.models import ManagedDocumentVersion
 
@@ -21,6 +22,7 @@ DOCUMENT_KEY = "homepage"
 SCHEMA_VERSION = 1
 KEY = r"[a-z0-9][a-z0-9.-]*"
 SOURCE_SLOT = re.compile(rf"<!-- homepage:({KEY}) -->\n([\s\S]*?)\n<!-- /homepage:\1 -->")
+IMAGE_SLOT = re.compile(rf"<!-- homepage-image:({KEY}) -->\n([^\n]+)\n<!-- /homepage-image:\1 -->")
 TEMPLATE_SLOT = re.compile(rf"<!-- homepage-slot:({KEY}) -->")
 INLINE_COMPONENT = re.compile(r"homepage_inline\(([a-z0-9-]+)\)")
 RAW_TAG = re.compile(r"</?[a-zA-Z][^>]*>")
@@ -32,6 +34,23 @@ def definitions() -> tuple[list[dict], str]:
     slots = mapping["textSlots"]
     digest = hashlib.sha256(json.dumps(slots, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
     return slots, digest
+
+
+def image_definitions() -> list[dict]:
+    return json.loads((CONTENT_ROOT / "block-map.json").read_text(encoding="utf-8")).get("imageSlots", [])
+
+
+def source_with_images(markdown: str) -> str:
+    if IMAGE_SLOT.search(markdown):
+        return markdown
+    lines = [markdown.rstrip(), "", "## Фотографии существующих блоков", ""]
+    for slot in image_definitions():
+        src = slot["originalSrc"]
+        if src.startswith("/"):
+            src = "https://edabalans.ru" + src
+        lines.extend([f"<!-- homepage-image:{slot['key']} -->",
+                      f"![{slot['alt']}]({src})", f"<!-- /homepage-image:{slot['key']} -->", ""])
+    return "\n".join(lines)
 
 
 class InlineValidator(HTMLParser):
@@ -115,12 +134,26 @@ def compile_homepage(markdown: str) -> dict:
             raise HTTPException(422, "Неизвестное, повторяющееся или пустое поле главной")
         fragments[key] = compile_inline(source, known[key])
     remainder = SOURCE_SLOT.sub("", markdown.replace("\r", ""))
+    images = {}
+    image_slots = {slot["key"]: slot for slot in image_definitions()}
+    for match in IMAGE_SLOT.finditer(remainder):
+        key, content = match.groups()
+        image = re.fullmatch(r"!\[(.*?)\]\((https://[^\s)]+|/(?!/)[^\s)]+)\)", content)
+        if key not in image_slots or key in images or image is None or not safe_image_src(image[2], allow_relative=True):
+            raise HTTPException(422, "Некорректное поле фотографии главной")
+        src = image[2]
+        if src == "https://edabalans.ru" + image_slots[key]["originalSrc"]:
+            src = image_slots[key]["originalSrc"]
+        images[key] = {"src": src, "alt": image[1]}
+    if images and set(images) != set(image_slots):
+        raise HTTPException(422, "Сохраните все поля фотографий главной")
+    remainder = IMAGE_SLOT.sub("", remainder)
     if any(line.strip() and not re.fullmatch(r"#{1,2} [^<>]+", line) for line in remainder.splitlines()):
         raise HTTPException(422, "Текст главной должен находиться внутри служебных полей")
     if set(fragments) != set(known):
         raise HTTPException(422, "В Markdown главной отсутствуют обязательные поля")
     return {"schemaVersion": SCHEMA_VERSION, "schema_hash": schema_hash,
-            "markdown": markdown.replace("\r", ""), "fragments": fragments}
+            "markdown": markdown.replace("\r", ""), "fragments": fragments, "images": images}
 
 
 def active_homepage(db: Session) -> ManagedDocumentVersion:
@@ -133,13 +166,15 @@ def active_homepage(db: Session) -> ManagedDocumentVersion:
 
 
 def serialize_homepage(version: ManagedDocumentVersion) -> dict:
-    return {"markdown": version.payload["markdown"], "version": version.version_no,
+    return {"markdown": source_with_images(version.payload["markdown"]), "version": version.version_no,
             "updated_at": version.created_at.isoformat(), "updated_by": version.created_by,
             "schema_hash": version.payload["schema_hash"]}
 
 
 def publish_homepage(db: Session, *, markdown: str, expected_version: int, admin: str) -> ManagedDocumentVersion:
     active_homepage(db)
+    from app.editorial_media import markdown_media
+    markdown_media(db, "homepage", markdown)
     return publish_document(db, document_type=DOCUMENT_TYPE, document_key=DOCUMENT_KEY,
                             schema_version=SCHEMA_VERSION, payload=compile_homepage(markdown),
                             expected_version=expected_version, admin=admin)
@@ -152,4 +187,18 @@ def render_homepage(db: Session, template: str) -> str:
     if (document.payload["schema_hash"] != schema_hash or len(keys) != len(set(keys))
             or set(keys) != {slot["key"] for slot in slots}):
         raise HTTPException(503, "Редакционная карта главной не соответствует шаблону")
-    return TEMPLATE_SLOT.sub(lambda match: document.payload["fragments"][match.group(1)], template)
+    template = TEMPLATE_SLOT.sub(lambda match: document.payload["fragments"][match.group(1)], template)
+    slots = {slot["originalSrc"]: slot for slot in image_definitions()}
+    images = document.payload.get("images", {})
+    def replace_image(match):
+        tag = match[0]
+        src = re.search(r'\bsrc="([^"]+)"', tag)
+        if src is None or src[1] not in slots:
+            return tag
+        slot = slots[src[1]]
+        value = images.get(slot["key"], {"src": slot["originalSrc"], "alt": slot["alt"]})
+        if value == {"src": slot["originalSrc"], "alt": slot["alt"]}:
+            return tag
+        tag = re.sub(r'\bsrc="[^"]*"', lambda _: 'src="'+escape(value["src"], quote=True)+'"', tag, count=1)
+        return re.sub(r'\balt="[^"]*"', lambda _: 'alt="'+escape(value["alt"], quote=True)+'"', tag, count=1)
+    return re.sub(r"<img\b[^>]*>", replace_image, template)

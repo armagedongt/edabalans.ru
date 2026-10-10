@@ -2,7 +2,9 @@
 
 Проверено: 10.10.2026. База: owned checkout `article-style-unification`, HEAD
 `660e812` при старте. Только исследование: материалы, metadata, сервер и публикации
-не изменялись. Runtime читался защищёнными GET через `tools.editorial_vault.API`.
+не изменялись. Runtime сначала читался защищёнными GET через `tools.editorial_vault.API`;
+уточнение пяти оригиналов ниже использовало отдельно разрешённую READ ONLY
+транзакцию DB, ограниченную этими ContentItems.
 Локальные курсовые оригиналы прочитаны из постоянной папки; исследовательский файл
 не создаёт второго владельца редакционного текста.
 
@@ -182,3 +184,59 @@ format HTML→MD. Не выполнять массовый импорт перс
 публичную оболочку как побочный результат. API/auth существуют; secrets не входят
 в каталог/MD. Новых внешних библиотек не требуется для проведённого исследования;
 Context7 не применялся, production settings/пароли не выводились.
+
+## Updated: 2026-10-10 — точные оригиналы пяти рецептов подтверждены
+
+Дополнительное разрешение исследования ограничено metadata.source_hash/cards/version
+пяти текущих recipes. Через существующий SSH/docker выполнены две транзакции
+`SET TRANSACTION READ ONLY`, завершённые rollback; ни один SELECT не затрагивал
+пользовательские данные, соседние источники или `/srv/edabalans-private`.
+
+**Все пять LF SHA из таблицы выше совпадают с действующим calculator source_hash.**
+Во второй транзакции одновременная сверка также доказала точное равенство rendered
+HTML принятому current.text_content, metadata_version=current version,
+`validated_cards(cards)` проходит, retained editorial_source/Markdown отсутствует.
+Отсутствие recipe-card-data комментария в этих принятых MD не повод дописывать
+его и менять hash: калькуляторные оригиналы уже зарегистрированы в действующей
+metadata. Они сохраняются готовой транзакцией adoption.
+
+| Step slug | Version / metadata_version | Cards | SHA256 нынешнего HTML |
+|---|---|---|---|
+| farro-salad | 4 / 4 | farro-salad active, 9 rows | `d00ad828da80b5a64905d702532c3b4b02a7c9f5719a42c99b0b6273bb129a81` |
+| alfredo-sauce | 4 / 4 | alfredo-sauce active, 4 rows | `9182c31e73a1de263a3966e49da5a7e3cbb03c1103946e304184d3d01919dc97` |
+| pasta-alfredo | 4 / 4 | pasta-alfredo active, 5 rows | `b800a7e3932b6b0b64c01c1bf0f43e4c397b16be246c722409d089b31b592a0b` |
+| chicken-cabbage-bowl | 5 / 5 | chicken-cabbage-bowl + beef-cabbage-bowl active, 9 rows each | `a0fb4b24958b1b8a459642971b428195fc79d505673d5bb58940bcd46db32abd` |
+| yogurt-bark | 3 / 3 | yogurt-bark active, 3 rows | `2ce71ab28b271dbd2e040d414ab56ca044ec225819bf4e71eef3ed05246c76a2` |
+
+### Процедура существующего adoption для root
+
+Новый production helper или изменения backend для этих пяти не нужны.
+
+1. Выбрать только эти пять стабильных IDs в существующем state. Проверить hashes
+   фактических локальных Obsidian файлов против base_hash. Не заменять пользовательский
+   dirty HTML/MD черновик источником из приватного пакета.
+2. Читать exact MD по пути таблицы выше через `Path.read_text(encoding="utf-8")`:
+   universal-newline даст доказанное LF представление. SHA обязан равняться таблице;
+   не strip, не добавлять комментарии, шапки, нормализацию пунктуации или расчёты.
+3. Перед операцией получить защищённый GET текущего material; потребовать ожидаемую
+   версию из таблицы и `recipe_authoring.status=adoption_required`. Локально сравнить
+   rendered HTML с свежим GET html, а не с историческим vault-файлом. При drift
+   остановить выбранный материал с конфликтом, не заменять expected_version новым
+   значением автоматически. Если уже ready, сверить exact source и считать no-op.
+4. Вызвать существующий POST
+   `/admin/api/courses/masterclass-21/materials/day-15-recipe-<slug>/recipe-source`
+   с `{expected_version: проверенная_версия, format:"markdown", content: полный_MD}`.
+   Сервер внутри lock повторно проверит source hash, HTML, cards и version, создаст
+   retained source и синхронизирует metadata без изменения точных rows.
+   Нормальное продвижение версий — 5,5,5,6,4; тело читательского HTML неизменно.
+5. При timeout сначала GET: ready+exact source+same HTML доказывает завершённую
+   операцию; не повторять POST со старой версией и не инициировать пересборку карточек.
+6. Обновить именно эти five entries существующим Vault.refresh с ограниченным
+   discovery (сохраняет state остальных items), используя normal locks и
+   update_if_unchanged; не копировать текст вручную поверх state/base. Проверить
+   format=markdown, unsupported=False, source hash и выбранный clean/no-op status.
+7. Записать санитарное evidence: IDs, before/after versions, source/HTML hashes,
+   cards unchanged proof. Не сохранять служебные пароли, ключи или полный DB dump.
+
+Пункт training исключён владельцем из текущей реализации; исходная проверка
+planned/no runtime выше остаётся фактологическим контекстом, не заданием создавать курс.

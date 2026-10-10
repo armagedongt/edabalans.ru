@@ -309,6 +309,9 @@ def publish_material(
 ) -> dict:
     context = course_context(db)
     day_number, step = article_step(context, step_id)
+    if content_format == "markdown":
+        from app.editorial_media import markdown_media
+        markdown_media(db, "course:masterclass-21:" + step_id, content)
     try:
         source = material_source(db, create=True)
         item = material_item(db, step_id, for_update=True)

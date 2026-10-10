@@ -37,6 +37,7 @@ from app.masterclass_article_components import component_styles
 from app.calorie_course_service import DOCUMENT_KEY as CALORIE_COURSE_CODE
 from app.course_structure_service import COURSE_CONTENT_ROOT
 from app.database import get_db
+from app.editorial_media_routes import router as editorial_media_router
 from app.recipe_originals import STEP_PREFIX as RECIPE_STEP_PREFIX
 from app.recipe_material_authoring import authoring_status, publish_recipe_source, restore_recipe_source
 
@@ -49,6 +50,7 @@ def material_service(course_code: str):
 
 
 router = APIRouter(tags=["course-material-publisher"])
+router.include_router(editorial_media_router)
 DIRECT_RECIPE_PAGES = {
     "mackerel-pasta-salad": "Паста-салат со скумбрией и лимоном",
     "chickpea-spinach-shakshuka": "Шакшука с нутом и шпинатом",

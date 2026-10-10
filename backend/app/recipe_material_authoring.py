@@ -60,7 +60,6 @@ def protected_parts(content: str) -> tuple:
     return (
         re.findall(r"<!--.*?-->", content, flags=re.S),
         re.findall(r"^[a-z][\w-]*\([ \t]*\r?\n.*?^\)[ \t]*\r?$", content, flags=re.M | re.S),
-        re.findall(r"!\[[^]]*\]\([^\n]+\)", content),
         re.findall(r"(?<!!)\[[^]]*\]\(([^\n)]+)\)", content),
         re.findall(r"^# .*$", content, flags=re.M),
     )
@@ -69,6 +68,7 @@ def protected_parts(content: str) -> tuple:
 def publish_recipe_source(
     db: Session, *, step_id: str, content: str,
     expected_version: int, admin: str, adopt: bool = False,
+    _restored_photo_sources: set[str] | None = None,
 ) -> dict:
     if not step_id.startswith(STEP_PREFIX):
         raise HTTPException(404, "Рецепт не найден")
@@ -96,7 +96,18 @@ def publish_recipe_source(
             if previous is None or source_hash(previous) != metadata.get("source_hash"):
                 raise HTTPException(409, "Сначала подключите точный оригинал Markdown через recipe-source")
             if protected_parts(content) != protected_parts(previous):
-                raise HTTPException(409, "Данные карточки, изображения и вставки меняются через workflow рецептов")
+                raise HTTPException(409, "Данные карточки, вставки, заголовок и ссылки меняются через workflow рецептов")
+            from app.editorial_media import markdown_media
+            approved = {item["url"] for item in markdown_media(db, "course:masterclass-21:" + step_id, content)}
+            approved.update(re.findall(r"!\[[^]]*\]\(([^\s)]+)", previous))
+            approved.update(_restored_photo_sources or set())
+            previous_photos = set(re.findall(r"!\[[^]]*\]\([^\n]+\)", previous))
+            for token in re.findall(r"!\[[^]]*\]\([^\n]+\)", content):
+                if token in previous_photos:
+                    continue
+                target = re.search(r"\]\(([^\s)]+)", token)
+                if target is None or target[1] not in approved:
+                    raise HTTPException(409, "Новую фотографию загрузите публикатором этого рецепта")
         if previous == content and current.text_content == html:
             return get_material(db, step_id)
         result = publish_material(
@@ -132,4 +143,5 @@ def restore_recipe_source(db: Session, *, step_id: str, version_no: int, expecte
     content = retained_source(version)
     if content is None:
         raise HTTPException(409, "Старая редакция не содержит полный Markdown. Восстановите через workflow рецептов")
-    return publish_recipe_source(db, step_id=step_id, content=content, expected_version=expected_version, admin=admin)
+    return publish_recipe_source(db, step_id=step_id, content=content, expected_version=expected_version, admin=admin,
+                                 _restored_photo_sources=set(re.findall(r"!\[[^]]*\]\(([^\s)]+)", content)))

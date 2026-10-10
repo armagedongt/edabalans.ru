@@ -181,6 +181,9 @@ def publish_material(
 ) -> dict:
     context = course_context(db)
     stage_number, step = article_step(context, step_id)
+    if content_format == "markdown":
+        from app.editorial_media import markdown_media
+        markdown_media(db, "course:calories:" + step_id, content)
     clean_html = _restore_version.text_content if _restore_version else render_material(content, content_format)
     source_payload = editorial_source_payload(_restore_version) if _restore_version else {
         "source_content": content,

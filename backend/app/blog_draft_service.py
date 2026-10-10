@@ -74,6 +74,8 @@ def _valid_source(value: str) -> bool:
 
 
 def _media_source(item: dict) -> str:
+    if item.get("storage") == "editorial":
+        return item["url"]
     if item.get("storage") == "git":
         return f"/blog/media/{item['name']}"
     return f"/media/{item['name']}"
@@ -374,6 +376,13 @@ def _manifest_managed(payload: dict) -> bool:
     return payload.get("metadata", {}).get("seed_source") == "content/blog/manifest.json"
 
 
+def markdown_media_from_saved(slug: str, payload: dict) -> list[dict]:
+    from app.editorial_media import image_url
+    return [deepcopy(item) for item in payload.get("media", [])
+            if item.get("storage") == "editorial"
+            and item.get("url") == image_url("blog:" + slug, item["name"])]
+
+
 def effective_article_payload(version: ManagedDocumentVersion) -> dict:
     """Refresh manifest-owned fields without discarding a saved body revision."""
     if not _manifest_managed(version.payload):
@@ -382,6 +391,7 @@ def effective_article_payload(version: ManagedDocumentVersion) -> dict:
     if version.version_no == 1 and version.created_by == "system-seed":
         return seed
     seed["markdown"] = version.payload["markdown"]
+    seed["media"] += markdown_media_from_saved(version.document_key, version.payload)
     seed["markdown_sha256"] = version.payload["markdown_sha256"]
     seed["excerpt"] = blog_description(seed["markdown"])
     seed["visibility"] = version.payload.get("visibility", "public")
@@ -484,6 +494,9 @@ def update_text(
 ) -> ManagedDocumentVersion:
     current = active_article(db, slug)
     payload = deepcopy(effective_article_payload(current))
+    from app.editorial_media import markdown_media
+    payload["media"] = [item for item in payload["media"] if item.get("storage") != "editorial"]
+    payload["media"] += markdown_media(db, "blog:" + slug, markdown)
     payload["markdown_sha256"] = _validate_markdown(markdown, payload["media"])
     payload["markdown"] = markdown
     if card is not None or card_fit is not None:
@@ -532,6 +545,7 @@ def serialize_article(version: ManagedDocumentVersion, *, source: bool, db: Sess
         {
             **{key: item[key] for key in ("name", "sha256", "mime", "provenance", "alt", "width", "height")},
             "url": (
+                item["url"].replace("https://edabalans.ru/editorial-media/", "/admin/api/editorial/media/") if item.get("storage") == "editorial" else
                 f"/blog/media/{item['name']}" if item.get("storage") == "git" else
                 f"/blog/drafts/{version.document_key}/media/{item['name']}"
             ),
@@ -574,6 +588,10 @@ def media_bytes(version: ManagedDocumentVersion, name: str) -> tuple[bytes, str,
         raise HTTPException(404, "Изображение не найдено")
     if item.get("storage") == "git":
         raw = (default_content_dir() / "media" / item["name"]).read_bytes()
+    elif item.get("storage") == "editorial":
+        from app.editorial_media import stored_bytes
+        from sqlalchemy.orm import object_session
+        return (*stored_bytes(object_session(version), "blog:" + version.document_key, name), item["sha256"])
     else:
         raw = base64.b64decode(item["content_base64"], validate=True)
     if hashlib.sha256(raw).hexdigest() != item["sha256"]:
@@ -592,6 +610,11 @@ def render_article(
     _validate_markdown(value, payload["media"])
     metadata, value = parse_blog_metadata(value)
     for item in payload["media"]:
+        if item.get("storage") == "editorial":
+            if not public:
+                value = value.replace(item["url"], item["url"].replace(
+                    "https://edabalans.ru/editorial-media/", "/admin/api/editorial/media/"))
+            continue
         if item.get("storage") == "git":
             continue
         value = re.sub(
@@ -619,6 +642,8 @@ def publish_article(
     if draft_payload.get("visibility") != "public":
         raise _invalid("Служебный материал нельзя опубликовать")
     public_payload = _git_seed_payload(slug)
+    from app.editorial_media import markdown_media
+    public_payload["media"] += markdown_media(db, "blog:" + slug, draft_payload["markdown"])
     if not _manifest_managed(draft.payload) and not _matches_manifest_contract(
         draft.payload, public_payload
     ):
@@ -672,6 +697,8 @@ def public_payload(db: Session, slug: str) -> dict | None:
         _existing_catalog_article(slug)
         return None
     payload = _git_seed_payload(slug)
+    from app.editorial_media import markdown_media
+    payload["media"] += markdown_media(db, "blog:" + slug, published.payload["markdown"])
     payload["markdown"] = published.payload["markdown"]
     payload["markdown_sha256"] = published.payload["markdown_sha256"]
     payload["excerpt"] = blog_description(payload["markdown"])

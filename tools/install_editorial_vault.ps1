@@ -7,7 +7,7 @@ $pythonPath = (Get-Command python).Source
 $toolsRoot = Join-Path $InstallRoot 'tools'
 [IO.Directory]::CreateDirectory($toolsRoot) | Out-Null
 [IO.Directory]::CreateDirectory($VaultRoot) | Out-Null
-foreach ($name in @('editorial_vault.py', 'editorial_vault_desktop.py', 'publish_course_material.py', 'editorial_bot_adapter.py', 'editorial_git_adapter.py', 'editorial_email_adapter.py', 'editorial_catalog_adapter.py', 'editorial_graph_adapter.py', 'editorial_pricing_adapter.py', 'connect_editorial_github.py')) {
+foreach ($name in @('editorial_vault.py', 'editorial_media.py', 'editorial_vault_desktop.py', 'publish_course_material.py', 'editorial_bot_adapter.py', 'editorial_git_adapter.py', 'editorial_email_adapter.py', 'editorial_catalog_adapter.py', 'editorial_graph_adapter.py', 'editorial_pricing_adapter.py', 'connect_editorial_github.py')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination (Join-Path $toolsRoot $name)
 }
 $utf8 = New-Object System.Text.UTF8Encoding($false)
@@ -32,7 +32,11 @@ Codex редактирует эти же файлы: достаточно наз
 «Опубликуй» запускает тот же публикатор. Остальные черновики не отправляются.
 Обновление с сервера сохраняет твои правки; конфликт поможет объединить Codex.
 Материалы со статусом «Публикация через Codex» требуют своего специального маршрута.
-Новые картинки и изменение структуры курса пока выполняются через Codex.
+Картинку PNG, JPG или WebP положи внутри этой папки и вставь в Markdown
+обычной ссылкой или через Obsidian. При публикации выбранного материала она
+тоже загрузится. До 1 MiB на картинку, до восьми картинок и 4 MiB на материал.
+В главной заменяй фото только в существующих полях «homepage-image».
+Перестановку и добавление материалов выполняет Codex по договору структуры.
 
 Технические подробности и границы — [Правила публикации](<Правила публикации.md>).
 '@

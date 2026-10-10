@@ -40,6 +40,54 @@ def source(client):
     return client.get("/admin/api/public-site/homepage").json()["active"]
 
 
+def test_replacing_fixed_homepage_photo_preserves_the_entire_rest_of_layout(client):
+    from app.homepage_content_service import image_definitions
+    initial = client.get("/preview/homepage-release-candidate").text
+    current = source(client)
+    slot = image_definitions()[0]
+    assert f"<!-- homepage-image:{slot['key']} -->" in current["markdown"]
+    old_src = slot["originalSrc"]
+    new_src = "https://example.test/replacement.png"
+    changed = current["markdown"].replace("https://edabalans.ru" + old_src, new_src, 1)
+    saved = client.put("/admin/api/public-site/homepage", json={
+        "expected_version": current["version"], "markdown": changed})
+    assert saved.status_code == 200, saved.text
+    after = client.get("/preview/homepage-release-candidate").text
+    assert after == initial.replace(f'src="{old_src}"', f'src="{new_src}"')
+    assert source(client)["markdown"] == changed
+
+
+def test_homepage_attachment_is_hidden_until_its_fixed_slot_is_published(client, monkeypatch):
+    import base64
+    from io import BytesIO
+    from PIL import Image
+    from app.blog_draft_routes import require_blog_admin, require_blog_mutation
+    from app.homepage_content_service import image_definitions
+    app.dependency_overrides[require_blog_admin] = lambda: "homepage-test"
+    app.dependency_overrides[require_blog_mutation] = lambda: "homepage-test"
+    monkeypatch.setattr("app.blog_draft_routes.admin_identity", lambda *_: "homepage-test")
+    out = BytesIO()
+    Image.new("RGB", (3, 2), "blue").save(out, format="PNG")
+    raw = out.getvalue()
+    uploaded = client.post("/admin/api/editorial/media", json={
+        "scope": "homepage", "name": hashlib.sha256(raw).hexdigest() + ".png",
+        "content_base64": base64.b64encode(raw).decode(), "alt": "Фото",
+        "provenance": "owner-upload"})
+    assert uploaded.status_code == 200, uploaded.text
+    url = uploaded.json()["url"]
+    assert client.get(url).status_code == 404
+    initial = client.get("/preview/homepage-release-candidate").text
+    current = source(client)
+    old_src = image_definitions()[0]["originalSrc"]
+    edited = current["markdown"].replace("https://edabalans.ru" + old_src, url, 1)
+    result = client.put("/admin/api/public-site/homepage", json={
+        "expected_version": current["version"], "markdown": edited})
+    assert result.status_code == 200, result.text
+    assert client.get(url).content == raw
+    assert client.get("/preview/homepage-release-candidate").text == initial.replace(
+        f'src="{old_src}"', f'src="{url}"')
+
+
 def test_initial_homepage_keeps_the_accepted_html_without_client_content_fetch(client):
     response = client.get("/preview/homepage-release-candidate")
     assert response.status_code == 200

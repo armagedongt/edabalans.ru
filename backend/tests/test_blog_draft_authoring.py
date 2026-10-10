@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from io import BytesIO
@@ -42,6 +43,88 @@ from scripts.publish_blog_draft import build_package, upload
 FIXTURE = Path(__file__).parent / "fixtures" / "blog-draft-real"
 FIXTURE_SLUG = "vse-znayut-nikto-ne-delaet"
 SLUG = "skolko-vremeni-nuzhno-na-pohudenie"
+
+
+def _attachment(scope):
+    buffer = BytesIO()
+    Image.new("RGB", (3, 2), (120, 80, 60)).save(buffer, format="PNG")
+    raw = buffer.getvalue()
+    return raw, {"scope": scope, "name": hashlib.sha256(raw).hexdigest() + ".png",
+                 "content_base64": base64.b64encode(raw).decode(), "alt": "Фото",
+                 "provenance": "owner-upload; attachment: Фото.png"}
+
+
+def test_editorial_attachment_is_private_until_blog_publication_and_survives_retry(authoring):
+    client, factory = authoring
+    original = client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]
+    raw, body = _attachment("blog:" + SLUG)
+    uploaded = client.post("/admin/api/editorial/media", json=body)
+    assert uploaded.status_code == 200, uploaded.text
+    url = uploaded.json()["url"]
+    assert client.get(url).status_code == 404
+    preview_url = url.replace("https://edabalans.ru/editorial-media/", "/admin/api/editorial/media/")
+    assert client.get(preview_url).content == raw
+    assert client.post("/admin/api/editorial/media", json=body).json() == uploaded.json()
+    with factory() as db:
+        assert db.scalar(select(func.count()).select_from(ManagedDocumentVersion).where(
+            ManagedDocumentVersion.document_type == "editorial-image")) == 1
+    markdown = original["markdown"] + f"\n![Фото]({url})\n"
+    saved = client.patch(f"/admin/api/blog/articles/{SLUG}/text", json={
+        "expected_version": original["version"], "markdown": markdown})
+    assert saved.status_code == 200, saved.text
+    assert client.get(url).status_code == 404
+    published = client.post(f"/admin/api/blog/articles/{SLUG}/publish", json={
+        "expected_version": saved.json()["article"]["version"], "confirm": True})
+    assert published.status_code == 200, published.text
+    delivered = client.get(url)
+    assert delivered.status_code == 200 and delivered.content == raw
+    assert delivered.headers["content-type"] == "image/png"
+    assert delivered.headers["cache-control"] == "private, no-store"
+    page = client.get(f"/blog/articles/{SLUG}")
+    assert page.status_code == 200 and f'src="{url}"' in page.text
+    reopened = client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]
+    assert reopened["markdown"] == markdown and reopened["editorial_status"] == "published"
+    for key in ("title", "category", "cta", "visibility", "hero"):
+        assert reopened[key] == original[key]
+
+
+def test_editorial_upload_and_owner_preview_require_admin_before_receiving_bytes(authoring, monkeypatch):
+    client, _ = authoring
+    _, body = _attachment("blog:" + SLUG)
+    result = client.post("/admin/api/editorial/media", json=body)
+    assert result.status_code == 200
+    preview_url = result.json()["url"].replace("https://edabalans.ru/editorial-media/", "/admin/api/editorial/media/")
+    app.dependency_overrides.pop(require_blog_admin)
+    app.dependency_overrides.pop(optional_blog_admin)
+    monkeypatch.setattr("app.blog_draft_routes.admin_identity", lambda *_: None)
+    assert client.get(preview_url).status_code == 401
+    denied = client.post("/admin/api/editorial/media", json=body)
+    assert denied.status_code == 401
+
+
+def test_editorial_attachment_cannot_be_reused_by_other_blog_article(authoring):
+    client, _ = authoring
+    _, body = _attachment("blog:" + SLUG)
+    url = client.post("/admin/api/editorial/media", json=body).json()["url"]
+    article = client.get(f"/admin/api/blog/articles/{FIXTURE_SLUG}").json()["article"]
+    result = client.patch(f"/admin/api/blog/articles/{FIXTURE_SLUG}/text", json={
+        "expected_version": article["version"], "markdown": article["markdown"] + f"\n![Фото]({url})"})
+    assert result.status_code == 422
+    assert client.get(f"/admin/api/blog/articles/{FIXTURE_SLUG}").json()["article"]["version"] == article["version"]
+
+
+@pytest.mark.parametrize("alter", ["wrong_hash", "fake_png", "unknown_scope"])
+def test_invalid_editorial_attachment_leaves_no_binary_record(authoring, alter):
+    client, factory = authoring
+    _, body = _attachment("blog:" + SLUG)
+    if alter == "wrong_hash": body["name"] = "0" * 64 + ".png"
+    elif alter == "fake_png": body["content_base64"] = base64.b64encode(b"<script>bad</script>").decode()
+    else: body["scope"] = "course:training:any"
+    result = client.post("/admin/api/editorial/media", json=body)
+    assert result.status_code == 422, result.text
+    with factory() as db:
+        assert db.scalar(select(func.count()).select_from(ManagedDocumentVersion).where(
+            ManagedDocumentVersion.document_type == "editorial-image")) == 0
 
 
 def _real_package(*, expected_version: int = 0, visibility: str = "public") -> dict:
@@ -926,6 +1009,16 @@ def test_chunked_oversized_body_is_stopped_by_stream_limit(authoring) -> None:
         content=(b"x" * (1024 * 1024) for _ in range(9)),
         headers={"Content-Type": "application/json"},
     )
+    assert response.status_code == 413
+    with factory() as db:
+        assert db.scalar(select(func.count()).select_from(ManagedDocumentVersion)) == 0
+
+
+def test_editorial_upload_stream_is_bounded_before_binary_storage(authoring):
+    client, factory = authoring
+    response = client.post("/admin/api/editorial/media",
+        content=(b"x" * (1024 * 1024) for _ in range(9)),
+        headers={"Content-Type": "application/json"})
     assert response.status_code == 413
     with factory() as db:
         assert db.scalar(select(func.count()).select_from(ManagedDocumentVersion)) == 0

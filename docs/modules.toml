@@ -250,7 +250,7 @@ owns_tables = [
   "content_links", "content_metric_snapshots", "content_comments", "content_import_runs",
   "content_families", "content_family_memberships", "content_family_candidates",
 ]
-owns_routes = ["*/admin/api/content*", "*/admin/api/editorial/service-emails*", "*/admin/api/editorial/media", "*/editorial-media/*"]
+owns_routes = ["*/admin/api/content*", "*/admin/api/editorial/service-emails*", "*/admin/api/editorial/media*", "*/editorial-media/*"]
 sources = [
   { path = "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md", role = "rule", shared = true, consumers = ["platform.knowledge", "operations.imports"] },
     { path = "docs/knowledge-base/EDITORIAL_VAULT.md", role = "rule", shared = true, consumers = ["products.catalog", "platform.commerce", "products.masterclass.course", "products.calories", "messaging.telegram.engine"] },

@@ -1607,5 +1607,267 @@
         "</a>"
       ]
     }
+  ],
+  "imageSlots": [
+    {
+      "key": "photo-01",
+      "originalSrc": "/preview/homepage-mobile/familiar-advice-less-eat-more-move.png",
+      "alt": "Меньше ешь и больше двигайся"
+    },
+    {
+      "key": "photo-02",
+      "originalSrc": "/preview/homepage-mobile/masterclass-inside-04.webp",
+      "alt": "Примеры дневника питания и домашних заданий"
+    },
+    {
+      "key": "photo-03",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/masterclass-balanced-nutrition-score-table.webp",
+      "alt": "Таблица оценки сбалансированности питания"
+    },
+    {
+      "key": "photo-04",
+      "originalSrc": "/preview/homepage-mobile/masterclass-inside-01.webp",
+      "alt": "Объяснение системы оценки состава питания"
+    },
+    {
+      "key": "photo-05",
+      "originalSrc": "/preview/homepage-mobile/masterclass-inside-02.webp",
+      "alt": "Примеры дополнительных материалов Мастер-класса"
+    },
+    {
+      "key": "photo-06",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/masterclass-consultation-review-card.png",
+      "alt": "Фрагмент разбора дневника питания на консультации"
+    },
+    {
+      "key": "photo-07",
+      "originalSrc": "/preview/homepage-mobile/weight-loss-before-masterclass.svg",
+      "alt": "Похудение до мастер-класса: запутанный путь"
+    },
+    {
+      "key": "photo-08",
+      "originalSrc": "/preview/homepage-mobile/weight-loss-after-masterclass.svg",
+      "alt": "Похудение после мастер-класса: прямой путь"
+    },
+    {
+      "key": "photo-09",
+      "originalSrc": "https://optim.tildacdn.com/tild3462-3461-4633-b639-613964313736/-/format/webp/Frame_492445363_1.jpg.webp",
+      "alt": "Анна — отзыв о результате Мастер-класса"
+    },
+    {
+      "key": "photo-10",
+      "originalSrc": "/preview/homepage-mobile/anya-before-after.webp?v=1",
+      "alt": "Аня до и после похудения"
+    },
+    {
+      "key": "photo-11",
+      "originalSrc": "https://optim.tildacdn.com/tild6238-3062-4138-b234-336662303539/-/contain/758x1058/center/center/-/format/webp/Frame_492445364_2.jpg.webp",
+      "alt": "Анна Вальковская — отзыв 64,1 кг"
+    },
+    {
+      "key": "photo-12",
+      "originalSrc": "https://optim.tildacdn.com/tild6336-3032-4033-b434-613563326139/-/format/webp/Frame_492445372_1.jpg.webp",
+      "alt": "Наталья — фото до и после"
+    },
+    {
+      "key": "photo-13",
+      "originalSrc": "https://static.tildacdn.com/tild3835-3864-4366-b261-386161373536/Frame_492445360_1.jpg",
+      "alt": "Виктор — результат через семь месяцев после Мастер-класса"
+    },
+    {
+      "key": "photo-14",
+      "originalSrc": "https://optim.tildacdn.com/tild6634-6636-4463-b361-663039303138/-/format/webp/__29_1.jpg.webp",
+      "alt": "Григорий Малышкин — отзыв"
+    },
+    {
+      "key": "photo-15",
+      "originalSrc": "/public-site-assets/education-documents.webp",
+      "alt": "Документы об образовании Сергея Воронцова"
+    },
+    {
+      "key": "photo-16",
+      "originalSrc": "/blog/assets/sergey-author.png",
+      "alt": "Сергей Воронцов: изменение веса и занятия спортом"
+    },
+    {
+      "key": "photo-17",
+      "originalSrc": "/preview/homepage-mobile/reviews-promo-before-after-transparent.png?v=1",
+      "alt": "Схема: до, после и после после"
+    },
+    {
+      "key": "photo-18",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v2/r008-victor-dqs-products.jpg",
+      "alt": "Отзыв Виктора"
+    },
+    {
+      "key": "photo-19",
+      "originalSrc": "/preview/homepage-mobile/final-cta-cat-clock.webp?v=2",
+      "alt": "Кот смотрит на часы: не до этого, не сейчас, ой — прошло 10 лет"
+    },
+    {
+      "key": "photo-20",
+      "originalSrc": "/preview/homepage-mobile/max-full-colored-official.png",
+      "alt": "MAX"
+    },
+    {
+      "key": "photo-21",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r020-svetlana-podogova.webp",
+      "alt": "Светлана Подогова — отзыв участницы"
+    },
+    {
+      "key": "photo-22",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r021-mikhail-mandrik.webp",
+      "alt": "Михаил Мандрик — отзыв участника"
+    },
+    {
+      "key": "photo-23",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r038-anna-marathon-59.webp",
+      "alt": "Анна — вес 59 кг, полумарафон и марафон"
+    },
+    {
+      "key": "photo-24",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r022-grigoriy-mirror-78-9.webp",
+      "alt": "Григорий — 78,9 кг и отражение в зеркале"
+    },
+    {
+      "key": "photo-25",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r023-elena-petrovskaja.webp",
+      "alt": "Елена Петровская — отзыв участницы"
+    },
+    {
+      "key": "photo-26",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r024-lyubov-minus-4.webp",
+      "alt": "Любовь — отзыв участницы"
+    },
+    {
+      "key": "photo-27",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r025-yulia-nesterova-dqs.webp",
+      "alt": "Юлия Нестерова — дневник DQS"
+    },
+    {
+      "key": "photo-28",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r026-svetlana-vechernova.webp",
+      "alt": "Светлана Вечернова — просто живу свою лучшую жизнь"
+    },
+    {
+      "key": "photo-29",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r027-marihen-ekaterina-live.webp",
+      "alt": "Марихен и Екатерина Лапаник — эфир и 127 комментариев"
+    },
+    {
+      "key": "photo-30",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/promo-02-can-dont-want.webp",
+      "alt": "Кот говорит: Я тоже так могу, просто не хочу"
+    },
+    {
+      "key": "photo-31",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r040-aleksandra-dqs.webp",
+      "alt": "Александра — дневник DQS и комфортные ограничения"
+    },
+    {
+      "key": "photo-32",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r011-anna-minus-8-2.webp",
+      "alt": "Анна — минус 8,2 кг"
+    },
+    {
+      "key": "photo-33",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r013-unknown-41-days.webp",
+      "alt": "Отзыв участницы — 41 день питания"
+    },
+    {
+      "key": "photo-34",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r009-imseventh-products-snoring.webp",
+      "alt": "ImSeventh — новые продукты и уменьшение сахара"
+    },
+    {
+      "key": "photo-35",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r010-alena-minus-4.webp",
+      "alt": "Алёна — комфортно минус 4 кг"
+    },
+    {
+      "key": "photo-36",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r012-anna-118-to-110.webp",
+      "alt": "Анна — динамика от 118,4 до 110,2"
+    },
+    {
+      "key": "photo-37",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r019-anna-valkovskaya-ozon.webp",
+      "alt": "Анна Вальковская — покупки на Ozon"
+    },
+    {
+      "key": "photo-38",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r001-barbara-minus-4.webp",
+      "alt": "Барбара — советы и минус почти 4 кг"
+    },
+    {
+      "key": "photo-39",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r002-yana-content.webp",
+      "alt": "Яна — полезный адекватный контент"
+    },
+    {
+      "key": "photo-40",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r028-dasha-better-marathons.webp",
+      "alt": "Даша — отзыв участницы"
+    },
+    {
+      "key": "photo-41",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r004-sofia-minus-15.webp",
+      "alt": "Софья — благодаря советам минус 15 кг"
+    },
+    {
+      "key": "photo-42",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r003-eva-pikabu-posts.webp",
+      "alt": "Ева Святненко — Пикабу и реалистичные посты"
+    },
+    {
+      "key": "photo-43",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r029-syeta-photo-diary.webp",
+      "alt": "Syeta — фото дневника"
+    },
+    {
+      "key": "photo-44",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r030-unknown-support.webp",
+      "alt": "Отзыв участницы — поддержка и возможность задавать вопросы"
+    },
+    {
+      "key": "photo-45",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r031-anastasia-no-hangups.webp",
+      "alt": "Анастасия — отзыв участницы"
+    },
+    {
+      "key": "photo-46",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r032-unknown-homa-insulin.webp",
+      "alt": "Отзыв участницы — снижение HOMA и инсулина"
+    },
+    {
+      "key": "photo-47",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r033-aleksandra-kolesnikova.webp",
+      "alt": "Александра Колесникова — отзыв участницы"
+    },
+    {
+      "key": "photo-48",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r034-anna-valkovskaya-73-75.webp",
+      "alt": "Анна Вальковская — 73,75 кг"
+    },
+    {
+      "key": "photo-49",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r035-unknown-best-course.webp",
+      "alt": "Отзыв участницы — лучший курс за годы"
+    },
+    {
+      "key": "photo-50",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r036-unknown-best-investment.webp",
+      "alt": "Отзыв участницы — самое крутое из вложений"
+    },
+    {
+      "key": "photo-51",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r037-unknown-heartfelt-talk.webp",
+      "alt": "Отзыв участницы — душевный разговор"
+    },
+    {
+      "key": "photo-52",
+      "originalSrc": "https://app.edabalans.ru/media/reviews/v1/r043-stream-collage.webp",
+      "alt": "Коллаж отзывов участников со стрима"
+    }
   ]
 }
