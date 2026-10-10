@@ -18,6 +18,18 @@ def test_catalog_links_real_originals_and_shared_git_publisher():
     api.request.assert_called_once_with("GET", "/admin/api/editorial/service-emails")
 
 
+def test_catalog_accepts_all_current_server_templates():
+    from app.service_email_templates import SCHEMAS, source_path
+    api = Mock()
+    api.request.return_value = {"templates": [{"code": code, "path": source_path(code),
+        "sections": {name: sorted(variables) for name, variables in sections.items()}}
+        for code, sections in SCHEMAS.items()]}
+    items = email.discover(api)
+    assert set(items) == {"email:" + code for code in SCHEMAS}
+    assert items["email:tilda-transfer"]["source_path"] == "content/service-messages/email/tilda-transfer.md"
+    assert items["email:tilda-transfer"]["sections"]["text"] == sorted(SCHEMAS["tilda-transfer"]["text"])
+
+
 @pytest.mark.parametrize("code,path", [("unknown", "content/service-messages/email/unknown.md"),
                                       ("login-code", "../../other.md")])
 def test_discovery_rejects_unknown_or_misrouted_originals(code, path):

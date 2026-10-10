@@ -3,6 +3,7 @@ from __future__ import annotations
 
 
 TITLES = {
+    "tilda-transfer": "Перенос личного кабинета",
     "account-onboarding": "Темы и вступления писем с доступом",
     "account-direct": "Доступ с логином и паролем",
     "account-messenger": "Получение доступа через мессенджер",
