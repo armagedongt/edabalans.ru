@@ -57,6 +57,17 @@ class DesktopSelectionTests(unittest.TestCase):
         self.assertIn("a — published — Версия 4", output)
         self.assertIn("e — error — Конфликт версии", output)
 
+    def test_campaign_preview_requests_all_batches_with_same_test_id(self):
+        self.vault.status.return_value=[]
+        self.vault.api.request.side_effect=[{"sent":["a"],"total":12,"next_offset":5},
+                                            {"sent":["b"],"total":12,"next_offset":10},
+                                            {"sent":["c"],"total":12,"next_offset":12}]
+        self.controller.test_campaign()
+        calls=self.vault.api.request.call_args_list
+        self.assertEqual([call.args[2]["offset"] for call in calls],[0,5,10])
+        self.assertEqual(len({call.args[2]["test_id"] for call in calls}),1)
+        self.vault.publish.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

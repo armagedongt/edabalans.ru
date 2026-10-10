@@ -57,6 +57,11 @@ def pause_marketing(session: Session) -> int:
         Sequence.code.in_(MARKETING_CODES), SequenceRun.status.in_(("active", "waiting", "error")),
     )))
     for run in runs:
+        from app.onepage_campaign import CAMPAIGN, live
+        from app.models import SequenceStep
+        first = session.scalar(select(SequenceStep).where(SequenceStep.sequence_version_id == run.sequence_version_id).order_by(SequenceStep.position))
+        if first and first.configuration.get("campaign") == CAMPAIGN and live(session):
+            continue
         run.status = "paused"
         run.context = {**(run.context or {}), "paused_reason": "temporary_intensive_entry"}
     for broadcast in session.scalars(select(Broadcast).where(Broadcast.status.in_(("scheduled", "sending")))):
@@ -182,7 +187,16 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
         session.add(CrmUserTag(user_id=contact.user_id, tag_id=navigation_tag.id,
                                source="temporary_navigation_history", created_at=first_navigation.occurred_at))
     repeat_offer = None
-    if repeat:
+    from app.onepage_campaign import ENTRY_CODES
+    group = ENTRY_CODES["max" if platform == "max" else "tg"]
+    independent = session.scalar(select(ContentItem).where(ContentItem.code == group["repeat_video" if repeat else "first_video"]))
+    independent_navigation = session.scalar(select(ContentItem).where(ContentItem.code == group["navigation"]))
+    independent_ready = independent and content_is_runtime_ready(independent) and (independent.body_source or "").strip() != "[[SKIP]]"
+    if independent_ready:
+        item = independent
+    if independent_navigation and content_is_runtime_ready(independent_navigation) and (independent_navigation.body_source or "").strip() != "[[SKIP]]":
+        navigation = independent_navigation
+    if repeat and not independent_ready:
         repeat_offer = session.scalar(select(ContentItem).where(ContentItem.code == REPEAT_OFFER_CODE))
         if not repeat_offer or repeat_offer.status != "published" or not content_is_runtime_ready(repeat_offer):
             raise RuntimeError("Repeat entry offer is not approved and ready")
@@ -202,10 +216,13 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
         # Keep the user lock until the one-time navigation delivery is recorded.
         session.scalar(select(CrmUser).where(CrmUser.id == contact.user_id).with_for_update())
         if not _has_content_tag(session, contact, navigation_tag.id):
+            from app.onepage_campaign import before_direct,record_direct
+            before_direct(session,contact,navigation.code,sender)
             nav_content, nav_config = personalized_delivery(session, contact, navigation, {
                 "buttons": [{"text": "Перейти в канал", "url": "https://t.me/Fitness_Talks"}], "link_preview": False,
             })
             navigation_id = sender.send_content(contact.chat_id, nav_content, nav_config)
+            record_direct(session,contact,"entry_navigation",navigation_id)
             event.metadata_json = {**event.metadata_json, "navigation_message_id": str(navigation_id)}
             _assign_content_tag(session, contact, navigation_tag.id)
             session.commit()
@@ -214,13 +231,17 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
         else:
             session.commit()
         video_content = SimpleNamespace(
-            code=item.code, source_format="telegram_html",
+            code=item.code, title=item.title, source_format="telegram_html",
             body_source=replace_template_values(item.body_source, {"personal_intensive_url": url})
-            + ("\n\n" + repeat_offer.body_source if repeat_offer else ""),
+            + ("\n\n" + repeat_offer.body_source if repeat_offer and not independent_ready else ""),
             media_kind=item.media_kind, media_path=item.media_path, telegram_file_id=item.telegram_file_id,
         )
-        message_id = sender.send_content(contact.chat_id, video_content,
-            {"buttons": [] if repeat else [{"text": BUTTON_TEXT, "url": url}], "link_preview": False})
+        video_content, video_config = personalized_delivery(session, contact, video_content,
+            {"buttons": [] if repeat else [{"text": BUTTON_TEXT, "url": url}], "link_preview": False, "media_separate": True})
+        from app.onepage_campaign import before_direct,record_direct
+        before_direct(session,contact,item.code,sender)
+        message_id = sender.send_content(contact.chat_id, video_content, video_config)
+        record_direct(session,contact,"entry_video",message_id)
         if platform == "telegram" and video_content.telegram_file_id:
             item.telegram_file_id = video_content.telegram_file_id
     except Exception:
@@ -230,4 +251,11 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
     event.metadata_json = {**event.metadata_json, "delivery_status": "sent", "message_id": str(message_id),
                            "video_message_id": str(message_id)}
     session.commit()
+    if not repeat:
+        from app.onepage_campaign import live
+        from app.engine import start_run
+        if live(session):
+            run = start_run(session, contact.id, "welcome_intensive")
+            run.context={**run.context,"last_family":"entry_video"}
+            session.commit()
     return {"ok": True, "temporary_entry": True}

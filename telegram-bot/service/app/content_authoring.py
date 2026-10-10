@@ -114,7 +114,8 @@ def allowed_variables(content_code: str) -> list[str]:
 
 
 def variable_is_allowed(content_code: str, variable: str) -> bool:
-    return variable in allowed_variables(content_code)
+    from app.onepage_campaign import is_campaign_content
+    return variable in allowed_variables(content_code) or (is_campaign_content(content_code) and bool(re.fullmatch(r"personal_channel_post_[1-9][0-9]{0,6}_url",variable)))
 
 
 def content_usages(session: Session) -> dict[str, list[dict]]:
@@ -240,6 +241,7 @@ def authoring_payload(item: ContentItem, usages: list[dict]) -> dict:
         "media_kind": item.media_kind,
         "media_path": item.media_path,
         "labels": item.labels,
+        "family_id": next((label.split(":",1)[1] for label in (item.labels or []) if label.startswith("campaign_family:")), None),
         "variables": template_variables(item.body_source),
         "allowed_variables": allowed_variables(item.code),
         "usages": usages,
@@ -254,7 +256,7 @@ def audit_content(session: Session) -> dict:
     existing = {
         item.code: item
         for item in session.scalars(select(ContentItem).where(
-            or_(ContentItem.code.in_(content_codes), ContentItem.origin_system == "obsidian_nurture_60")
+            or_(ContentItem.code.in_(content_codes), ContentItem.origin_system.in_(("obsidian_nurture_60", "obsidian_onepage_campaign")))
         ))
     }
     items: list[dict] = []

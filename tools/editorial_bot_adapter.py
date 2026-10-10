@@ -51,7 +51,7 @@ def discover(api):
     return result
 
 
-def render(item):
+def _render_header(item):
     _path(item["code"])
     if item.get("source_markdown") is not None:
         return (
@@ -81,8 +81,51 @@ def render(item):
     )
 
 
+def render(item):
+    """Reader text first; old frontmatter files remain accepted."""
+    parsed = parse(_render_header(item))
+    body = parsed.get("source_markdown", parsed.get("body_source", ""))
+    fields = {"code": item["code"], "version": item["content_version"], "title":item["title"],
+              "source_format": "telegram_markdown" if "source_markdown" in parsed else "telegram_html",
+              "media_kind": item.get("media_kind"),
+              "purpose": item.get("purpose", ""), "writer_brief":item.get("writer_brief", "")}
+    if item.get("family_id"):
+        fields["family_id"] = item["family_id"]
+    encoded = json.dumps(fields, ensure_ascii=False, indent=2)
+    if "-->" in encoded:
+        raise ValueError("Метаданные содержат закрытие комментария")
+    return body + "\n\n<!-- bot-publisher\n" + encoded + "\n-->\n"
+
+
 def parse(text):
     text = text.replace("\r\n", "\n")
+    footer = re.fullmatch(r"(.*)\n\n<!-- bot-publisher\n(.*?)\n-->\n?", text, re.S)
+    if footer:
+        def unique(pairs):
+            result = {}
+            for key, value in pairs:
+                if key in result:
+                    raise ValueError("Повтор служебного поля")
+                result[key] = value
+            return result
+        fields = json.loads(footer[2], object_pairs_hook=unique)
+        _path(fields.get("code"))
+        if type(fields.get("version")) is not int or fields["version"] < 1:
+            raise ValueError("Некорректная версия сообщения")
+        if fields.get("source_format") == "telegram_markdown":
+            if not isinstance(fields.get("title"), str) or not fields["title"].strip():
+                raise ValueError("У сообщения нужно название")
+            result = {"code":fields["code"], "title":fields["title"], "source_markdown":footer[1], "body_source":""}
+            if fields.get("family_id"):
+                if not re.fullmatch(r"[a-zA-Z0-9_-]{1,80}", fields["family_id"]):
+                    raise ValueError("Некорректный ID семейства")
+                result["family_id"] = fields["family_id"]
+            return result
+        if fields.get("source_format") != "telegram_html" or not all(isinstance(fields.get(key), str) for key in ("purpose", "writer_brief")):
+            raise ValueError("Некорректный формат метаданных")
+        if not footer[1].strip() and fields.get("media_kind") not in {"photo", "video", "video_note", "voice"}:
+            raise ValueError("Пустой текст допустим только у сообщения с медиа")
+        return {"code":fields["code"], "purpose":fields["purpose"], "writer_brief":fields["writer_brief"], "body_source":footer[1]}
     header = re.match(r"\A---\n(.*?)\n---\n\n", text, re.S)
     if not header:
         raise ValueError("Повреждена служебная шапка сообщения")
@@ -127,7 +170,8 @@ def parse(text):
 def normalize(text):
     parsed = parse(text)
     if "source_markdown" in parsed:
-        return parsed["code"], parsed["title"], parsed["source_markdown"]
+        base = (parsed["code"], parsed["title"], parsed["source_markdown"])
+        return base + (parsed["family_id"],) if parsed.get("family_id") else base
     parsed["purpose"] = parsed["purpose"].strip()
     parsed["writer_brief"] = parsed["writer_brief"].strip()
     return tuple(parsed[name] for name in ("code", "purpose", "writer_brief", "body_source"))

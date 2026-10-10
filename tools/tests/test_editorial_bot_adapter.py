@@ -94,7 +94,7 @@ def test_swapped_code_rejected_before_api_mutation():
 def test_malformed_file_rejected_before_api_mutation(damage):
     api = API()
     with pytest.raises(ValueError):
-        bot.publish(api, {"code": "tpl_day1"}, damage(bot.render(api.item)), 3)
+        bot.publish(api, {"code": "tpl_day1"}, damage(bot._render_header(api.item)), 3)
     assert api.calls == []
 
 
@@ -195,5 +195,5 @@ def test_actual_photo_only_publication_rejection_preserves_original_and_never_ca
                                   lambda text: text.replace("media_kind: photo\n", "")])
 def test_photo_only_malformed_header_is_rejected_before_any_request(damage):
     api = API(); api.item.update(media_kind="photo", body_source="")
-    with pytest.raises(ValueError): bot.publish(api, {"code": api.item["code"]}, damage(bot.render(api.item)), 3)
+    with pytest.raises(ValueError): bot.publish(api, {"code": api.item["code"]}, damage(bot._render_header(api.item)), 3)
     assert api.calls == []

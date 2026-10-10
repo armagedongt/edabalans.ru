@@ -53,6 +53,14 @@ def test_publish_retains_original_compiles_html_and_does_not_create_queue(public
     assert "tpl_nurture_01_max_full" in {item["code"] for item in audit["items"]}
 
 
+def test_campaign_personal_channel_post_link_can_be_published(publication):
+    client,_=publication
+    source="[Пост]({{personal_channel_post_732_url}})"
+    response=client.put("/bot-api/content/tpl_nurture_01_max_full/publish",json=payload(source))
+    assert response.status_code==200,response.text
+    assert '{{personal_channel_post_732_url}}' in response.json()["body_source"]
+
+
 @pytest.mark.parametrize("source", ["", "[жми](javascript:alert)", "![Картинка](../asset.jpg)", "{{unknown_variable}}"])
 def test_invalid_publication_preserves_original_and_version(publication, source):
     client, engine = publication
@@ -110,7 +118,7 @@ def test_title_edit_is_versioned_and_preserves_markdown_original(publication):
         assert item.source_markdown == payload()["source_markdown"]
 
 
-@pytest.mark.parametrize("media_kind,limit", [(None, 4096), ("photo", 1024), ("video", 1024), ("voice", 1024)])
+@pytest.mark.parametrize("media_kind,limit", [(None, 4096), ("photo", 4096), ("video", 4096), ("voice", 4096)])
 def test_compiled_markdown_over_message_or_caption_limit_cannot_be_published(publication, media_kind, limit):
     client, engine = publication
     with Session(engine) as session:

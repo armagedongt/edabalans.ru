@@ -93,6 +93,15 @@ class TelegramClient:
 
     def send_content(self, chat_id: str, content: Any, configuration: dict[str, Any]) -> str:
         rendered_body = content_body_for_telegram(content)
+        if configuration.get("media_separate") and content.media_kind in {"photo", "video", "voice"} and len(rendered_body) > 1024:
+            from types import SimpleNamespace
+            media = SimpleNamespace(**vars(content))
+            media.body_source = ""
+            if not configuration.get("media_message_id"):
+                configuration["media_message_id"] = self.send_content(chat_id, media, {"buttons": []})
+            content.telegram_file_id = media.telegram_file_id
+            return self.send_html_message(chat_id, rendered_body) if not configuration.get("buttons") else self.send_content(
+                chat_id, SimpleNamespace(title=getattr(content,"title","Сообщение"), body_source=rendered_body, media_kind=None, media_path=None, telegram_file_id=None), configuration)
         reply_markup = self._reply_markup(configuration)
         common: dict[str, Any] = {"chat_id": chat_id}
         if reply_markup:

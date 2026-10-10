@@ -78,7 +78,12 @@ class TelegramRenderer(HTMLParser):
         raise ValueError("Служебные комментарии не должны находиться в тексте сообщения")
 
 
-def compile_message_markdown(source: str) -> str:
+def compile_message_markdown(source: str, *, allow_image: bool = False) -> str:
+    if allow_image:
+        import re
+        source, count = re.subn(r"(?m)^!\[[^\]\n]*\]\((?:<[^>\n]+>|[^)\n]+)\)\s*\n?", "", source)
+        if count > 1:
+            raise ValueError("У поста бота только одно вложение")
     renderer = TelegramRenderer()
     renderer.feed(markdown.markdown(source, extensions=["sane_lists", MessageInlineExtension()]))
     renderer.close()

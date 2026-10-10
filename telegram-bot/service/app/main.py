@@ -1616,7 +1616,39 @@ def get_content_authoring(content_code: str, session: Session = Depends(get_db))
     return authoring_payload(item, content_usages(session).get(item.code, []))
 
 
+from app.onepage_campaign import PrepareIn, TestIn, LiveIn
+
+
+@app.post("/bot-api/onepage-campaign/prepare", dependencies=[Depends(require_admin)])
+def prepare_onepage_campaign(body: PrepareIn, session: Session = Depends(get_db)) -> dict:
+    from app.onepage_campaign import prepare
+    return prepare(session, body)
+
+
+@app.get("/bot-api/onepage-campaign", dependencies=[Depends(require_admin)])
+def onepage_campaign_status(session: Session = Depends(get_db)) -> dict:
+    from app.onepage_campaign import live, campaign_version, test_messages
+    prepared = all(campaign_version(session, code) for code in ("welcome_intensive", "prepurchase_nurture"))
+    return {"ok":True, "prepared":prepared, "live":live(session),
+            "test_count":len(test_messages(session, "tg")) if prepared else 0}
+
+
+@app.post("/bot-api/onepage-campaign/test", dependencies=[Depends(require_admin)])
+def test_onepage_campaign(body: TestIn, session: Session = Depends(get_db)) -> dict:
+    from app.onepage_campaign import send_test
+    return send_test(session, body, client())
+
+
+@app.post("/bot-api/onepage-campaign/live", dependencies=[Depends(require_admin)])
+def live_onepage_campaign(body: LiveIn, session: Session = Depends(get_db)) -> dict:
+    from app.onepage_campaign import set_live
+    return set_live(session, body)
+
+
 def _validate_content_publication(item: ContentItem, body: ContentValidateIn) -> tuple[str, str, str]:
+    from app.onepage_campaign import is_campaign_content
+    if body.family_id is not None and not is_campaign_content(item.code):
+        raise HTTPException(422, "Семейство не редактируется у этого сообщения")
     if item.content_version != body.expected_version:
         raise HTTPException(409, {"message": "Content version conflict", "current_version": item.content_version})
     purpose = body.purpose.strip()
@@ -1626,8 +1658,9 @@ def _validate_content_publication(item: ContentItem, body: ContentValidateIn) ->
         raise HTTPException(422, "Название не должно быть пустым")
     if body.source_markdown is not None:
         from app.message_markdown import compile_message_markdown
+        from app.onepage_campaign import is_campaign_content
         try:
-            compiled = compile_message_markdown(body.source_markdown)
+            compiled = compile_message_markdown(body.source_markdown, allow_image=is_campaign_content(item.code) and bool(item.media_path or item.telegram_file_id))
         except ValueError as exc:
             raise HTTPException(422, str(exc)) from exc
         if body.body_source and compiled != body.body_source:
@@ -1651,7 +1684,8 @@ def _validate_content_publication(item: ContentItem, body: ContentValidateIn) ->
         raise HTTPException(422, f"Некорректный Telegram HTML: {exc}") from exc
     if item.media_kind == "video_note" and html_source:
         raise HTTPException(422, "Telegram-видеокружок не поддерживает подпись; оставьте текст пустым или отправляйте отдельным шагом")
-    telegram_limit = 1024 if item.media_kind in {"photo", "video", "voice"} else 4096
+    from app.onepage_campaign import is_campaign_content
+    telegram_limit = 1024 if item.media_kind in {"photo", "video", "voice"} and not is_campaign_content(item.code) else 4096
     if len(html_source) > telegram_limit:
         raise HTTPException(422, f"Сообщение длиннее лимита Telegram ({telegram_limit} символов)")
     return purpose, writer_brief, html_source
@@ -1676,6 +1710,8 @@ def publish_content(content_code: str, body: ContentPublishIn, session: Session 
     purpose, writer_brief, html_source = _validate_content_publication(item, body)
     item.body_source = html_source
     item.source_markdown = body.source_markdown
+    if body.family_id is not None:
+        item.labels = [label for label in (item.labels or []) if not label.startswith("campaign_family:")] + ["campaign_family:"+body.family_id]
     if body.title is not None:
         item.title = body.title
     item.source_format = "telegram_html"
@@ -1684,6 +1720,8 @@ def publish_content(content_code: str, body: ContentPublishIn, session: Session 
     item.editorial_status = "approved"
     item.status = "published"
     item.content_version += 1
+    from app.onepage_campaign import queue_added_family
+    queue_added_family(session,item)
     session.commit()
     return authoring_payload(item, content_usages(session).get(item.code, []))
 

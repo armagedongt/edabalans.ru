@@ -148,6 +148,13 @@ def send_system_content(
     values: dict[str, str] | None = None,
     configuration: dict | None = None,
 ) -> str:
+    if content_code == "tpl_start_masterclass_owned":
+        from app.onepage_campaign import ENTRY_CODES
+        from app.engine import _contact_platform
+        alternative = ENTRY_CODES["max" if _contact_platform(session, contact) == "max" else "tg"]["owned"]
+        alternative_item=session.scalar(select(ContentItem).where(ContentItem.code == alternative))
+        if alternative_item and content_is_runtime_ready(alternative_item) and (alternative_item.body_source or "").strip() != "[[SKIP]]":
+            content_code = alternative
     item = session.scalar(select(ContentItem).where(ContentItem.code == content_code))
     if not item:
         raise RuntimeError(f"Missing start content: {content_code}")
@@ -158,6 +165,9 @@ def send_system_content(
     log = ManualMessage(contact_id=contact.id, direction="out", body_source=rendered.body_source, status="pending", operator_email="system:start_router")
     session.add(log)
     try:
+        if content_code.startswith("tpl_onepage_owned_") or content_code=="tpl_start_masterclass_owned":
+            from app.onepage_campaign import before_direct
+            before_direct(session,contact,content_code,sender)
         log.platform_message_id = sender.send_content(contact.chat_id, rendered, configuration)
         log.status = "sent"
     except Exception:

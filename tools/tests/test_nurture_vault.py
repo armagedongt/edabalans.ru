@@ -87,8 +87,8 @@ def test_owner_publishes_one_selected_markdown_slot_without_rule_or_other_slot_m
     ident = "bot:tpl_nurture_03_max_full"
     item = vault.load()["items"][ident]
     path = vault.file(item)
-    text = path.read_text(encoding="utf-8").replace('title: "Название не выбрано"', 'title: "Название"')
-    path.write_text(text + "**Полный пост**", encoding="utf-8")
+    text = path.read_text(encoding="utf-8").replace('"title": "Название не выбрано"', '"title": "Название"')
+    path.write_text(text.replace("\n\n<!-- bot-publisher", "**Полный пост**\n\n<!-- bot-publisher"), encoding="utf-8")
     untouched = copy.deepcopy(api.items["tpl_nurture_03_tg_full"])
     result = vault.publish([ident], owner_edited=True)
     assert result[0]["status"] == "published", result
@@ -103,7 +103,7 @@ def test_markdown_roundtrip_and_comparison_ignore_generated_version_but_not_titl
     data = original(); data.update(title='Название "с кавычками"', source_markdown="> Цитата\n\n**Текст**\n")
     text = bot.render(data)
     assert bot.parse(text)["source_markdown"] == data["source_markdown"]
-    assert bot.normalize(text) == bot.normalize(text.replace("version: 1", "version: 44"))
+    assert bot.normalize(text) == bot.normalize(text.replace('"version": 1', '"version": 44'))
     data["title"] = "Другое название"
     assert bot.normalize(bot.render(data)) != bot.normalize(text)
 
@@ -113,7 +113,7 @@ def test_refresh_preserves_dirty_file_and_marks_concurrent_server_edit_as_confli
     register(vault)
     ident = "bot:tpl_nurture_02_tg_full"
     path = vault.file(vault.load()["items"][ident])
-    before = path.read_text(encoding="utf-8") + "Правка Сергея"
+    before = path.read_text(encoding="utf-8").replace("\n\n<!-- bot-publisher", "Правка Сергея\n\n<!-- bot-publisher")
     path.write_text(before, encoding="utf-8")
     api.items["tpl_nurture_02_tg_full"].update(source_markdown="Правка на сервере", content_version=2)
     seeds = bot.discover(api)

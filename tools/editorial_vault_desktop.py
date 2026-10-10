@@ -50,6 +50,24 @@ class SelectionController:
         ids = [item["id"] for item in self.items if item["id"] in selected]
         return self.vault.publish(ids, owner_edited=True)
 
+    def test_campaign(self):
+        import uuid
+        self.reload()
+        dirty = [item for item in self.items if item.get("group") == "Рассылка бота" and item["status"] != "clean"]
+        if dirty:
+            raise ValueError("Сначала опубликуйте изменённые сообщения рассылки. Тест показывает серверные оригиналы.")
+        test_id, offset, results = uuid.uuid4().hex, 0, []
+        while True:
+            result = self.vault.api.request("POST", "/bot-api/onepage-campaign/test", {
+                "platform":"tg", "test_id":test_id, "offset":offset, "count":5, "confirm":True})
+            results.append({"status":"sent", "message":", ".join(result["sent"])})
+            offset = result["next_offset"]
+            if offset >= result["total"]:
+                return results
+
+    def campaign_live(self, enabled):
+        return self.vault.api.request("POST", "/bot-api/onepage-campaign/live", {"enabled":enabled,"confirm":True})
+
 
 def format_results(results):
     if results is None:
@@ -101,6 +119,13 @@ class DesktopApp:
         checkbox = ttk.Checkbutton(panel, text="Показать также материалы без изменений", variable=self.include_clean, command=self.render)
         checkbox.pack(anchor="w", pady=(0, 6))
         self.controls.append(checkbox)
+        campaign_bar = ttk.Frame(panel)
+        campaign_bar.pack(fill="x", pady=(0, 8))
+        for label, command in (("Проверить первые 5 дней", self.test_campaign),
+                               ("Включить новые входы", self.enable_campaign),
+                               ("Остановить рассылку", self.pause_campaign)):
+            button=ttk.Button(campaign_bar,text=label,command=command)
+            button.pack(side="left",padx=(0,6)); self.controls.append(button)
         table = ttk.Frame(panel)
         table.pack(fill="both", expand=True)
         self.tree = ttk.Treeview(table, columns=("title", "group", "status", "path"), show="headings", selectmode="extended")
@@ -179,6 +204,19 @@ class DesktopApp:
 
     def refresh(self):
         self.run("Получаю версии с сервера; локальные правки сохраняются…", self.controller.vault.refresh)
+
+    def test_campaign(self):
+        from tkinter import messagebox
+        if messagebox.askyesno("Проверка", "Отправить все заполненные варианты первых пяти дней в основной Telegram-бот только вашему личному аккаунту? Без задержек, без запуска подписчиков."):
+            self.run("Отправляю проверочные сообщения владельцу…",self.controller.test_campaign)
+
+    def enable_campaign(self):
+        from tkinter import messagebox
+        if messagebox.askyesno("Новые входы", "Включить рассылку только для новых входящих? Накопленный пул и старые paused-запуски не возобновляются."):
+            self.run("Включаю новые входы…",lambda:self.controller.campaign_live(True))
+
+    def pause_campaign(self):
+        self.run("Останавливаю рассылку…",lambda:self.controller.campaign_live(False))
 
     def open_folder(self):
         try:

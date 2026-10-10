@@ -179,6 +179,14 @@ def _edge(session: Session, run: SequenceRun, step: SequenceStep, branch_key: st
 
 
 def _set_next(session: Session, run: SequenceRun, step: SequenceStep, branch_key: str = "default") -> bool:
+    resume=(run.context or {}).get("campaign_resume")
+    if resume and step.kind in {"MESSAGE","PHOTO","VIDEO","VOICE"}:
+        run.current_step_key=resume["step_key"]
+        run.next_action_at=datetime.fromisoformat(resume["next_action_at"]) if resume.get("next_action_at") else None
+        context={**run.context,"campaign_pending":run.context.get("campaign_pending",[])[1:],"campaign_catchup_done":True}
+        context.pop("campaign_resume",None)
+        run.context=context
+        return False
     edge = _edge(session, run, step, branch_key)
     if edge and edge.target_sequence_code:
         target = published_version(session, edge.target_sequence_code)
@@ -189,7 +197,10 @@ def _set_next(session: Session, run: SequenceRun, step: SequenceStep, branch_key
             # SessionLocal disables autoflush. Persist the completed source run
             # before start_run checks for another active run on this contact.
             session.flush()
-            start_run(session, run.contact_id, edge.target_sequence_code, run.time_scale)
+            next_run = start_run(session, run.contact_id, edge.target_sequence_code, run.time_scale)
+            if (step.configuration or {}).get("carry_campaign_start"):
+                next_run.started_at = run.started_at
+                next_run.context = {**next_run.context, **run.context}
         else:
             run.context = {**run.context, "pending_sequence": edge.target_sequence_code}
         return True
@@ -482,16 +493,34 @@ def advance_run(
     *,
     delivery_contact: Contact | None = None,
 ) -> SequenceRun:
+    # Publication may append pending families concurrently with the scheduler.
+    # Serialize context updates and reload it after acquiring the run lock.
+    session.flush()
+    session.refresh(run,with_for_update=True)
     contact = delivery_contact or session.get(Contact, run.contact_id)
+    from app.onepage_campaign import CAMPAIGN, SKIP, family_received, record_family, before_message, live
+    first = session.scalar(select(SequenceStep).where(SequenceStep.sequence_version_id == run.sequence_version_id).order_by(SequenceStep.position))
+    campaign_run = bool(first and first.configuration.get("campaign") == CAMPAIGN)
+    if campaign_run and not live(session):
+        run.status = "paused"
+        session.commit()
+        return run
     if get_settings().temporary_intensive_entry_enabled:
         from app.temporary_entry import MARKETING_CODES
         code = session.scalar(select(Sequence.code).join(SequenceVersion, SequenceVersion.sequence_id == Sequence.id).where(SequenceVersion.id == run.sequence_version_id))
-        if code in MARKETING_CODES:
+        if code in MARKETING_CODES and not campaign_run:
             run.status = "paused"
             run.context = {**(run.context or {}), "paused_reason": "temporary_intensive_entry"}
             session.commit()
             return run
+    if campaign_run and run.context.get("campaign_pending") and not run.context.get("campaign_resume"):
+        pending=run.context["campaign_pending"][0]
+        run.context={**run.context,"campaign_resume":{"step_key":run.current_step_key,"next_action_at":run.next_action_at.isoformat() if run.next_action_at else None}}
+        run.current_step_key=pending["step_key"]
     for _ in range(max_steps):
+        if run.context.get("campaign_catchup_done"):
+            context=dict(run.context); context.pop("campaign_catchup_done",None); run.context=context
+            break
         if run.status != "active":
             break
         step = _step(session, run)
@@ -499,9 +528,26 @@ def advance_run(
             run.status = "completed"; run.finished_at = utcnow(); break
         config = step.configuration or {}
         if step.kind in {"MESSAGE", "PHOTO", "VIDEO", "VIDEO_NOTE", "VOICE"}:
-            key = f"{run.id}:{step.step_key}"
+            family = config.get("family_id") if campaign_run else None
+            if campaign_run:
+                family_item = session.get(ContentItem, step.content_item_id)
+                family = next((label.split(":",1)[1] for label in (family_item.labels or []) if label.startswith("campaign_family:")), family) if family_item else family
+            if campaign_run:
+                from app.models import CrmUser
+                from app.temporary_entry import entry_decision
+                session.scalar(select(CrmUser).where(CrmUser.id == contact.user_id).with_for_update())
+                if entry_decision(session, contact) != "article":
+                    run.status = "stopped"; run.finished_at = utcnow(); break
+                content = session.get(ContentItem, step.content_item_id)
+                if (content and (content.source_markdown or content.body_source or "").strip() == SKIP) or (family and family_received(session, contact, family)):
+                    _set_next(session, run, step)
+                    continue
+                before_message(session, run, contact, step, sender)
+            key = f"{run.id}:{step.step_key}" + (":"+family if family else "")
             delivery = session.scalar(select(StepDelivery).where(StepDelivery.idempotency_key == key))
             if delivery and delivery.status == "sent":
+                if family:
+                    record_family(session, contact, family, (delivery.payload_snapshot or {}).get("content_code"), delivery.platform_message_id)
                 try:
                     _assign_content_tag(session, contact, str(config.get("assign_content_tag_id") or ""))
                 except RuntimeError as exc:
@@ -523,6 +569,7 @@ def advance_run(
                 run.status = "error"
                 run.last_error = message
                 break
+            rendered_config = None
             try:
                 delivery.attempt_count += 1
                 delivery.payload_snapshot = {
@@ -547,6 +594,8 @@ def advance_run(
                 )
                 if "{{" in (rendered_content.body_source or "") or "{{" in str(rendered_config):
                     raise RuntimeError(f"Unresolved delivery template: {rendered_content.code}")
+                if delivery.payload_snapshot.get("media_message_id"):
+                    rendered_config = {**rendered_config,"media_message_id":delivery.payload_snapshot["media_message_id"]}
                 validate_body("sequence_message", rendered_content.body_source)
                 delivery.platform_message_id = sender.send_content(
                     contact.chat_id, rendered_content, rendered_config
@@ -559,7 +608,12 @@ def advance_run(
                     except Exception as pin_error:
                         delivery.payload_snapshot = {**(delivery.payload_snapshot or {}), "pin_error": str(pin_error)}
                 delivery.status = "sent"; delivery.sent_at = utcnow(); delivery.error_message = None
+                if family:
+                    record_family(session, contact, family, content.code, delivery.platform_message_id)
+                    run.context = {**run.context, "last_family": family}
             except Exception as exc:
+                if rendered_config and rendered_config.get("media_message_id"):
+                    delivery.payload_snapshot = {**delivery.payload_snapshot,"media_message_id":rendered_config["media_message_id"]}
                 message = str(exc)
                 delivery.error_message = message
                 delivery.error_code = str(_delivery_http_status(exc) or type(exc).__name__)[:80]
@@ -647,7 +701,18 @@ def advance_run(
             run.status = "waiting"; run.context = context; break
         elif step.kind in {"CONDITION", "DB_READ"}:
             condition = config.get("condition") or config.get("key")
-            if condition == "subscription_check" and not config.get("enabled", False):
+            if condition == "campaign_telegram":
+                result = _contact_platform(session, contact) == "telegram"
+            elif condition in {"campaign_unopened", "campaign_needs_percent", "campaign_read"}:
+                facts, subscribed = before_message(session, run, contact, step, sender)
+                if condition == "campaign_unopened":
+                    result = not facts["opened"]
+                elif condition == "campaign_read":
+                    result = facts["read_percent"] >= 75
+                else:
+                    result = not family_received(session, contact, "one_percent") and (
+                        _contact_platform(session, contact) == "max" or subscribed is False)
+            elif condition == "subscription_check" and not config.get("enabled", False):
                 result = True
                 _record_subscription_check(session, run, contact, step, None)
             elif condition == "subscription_check":

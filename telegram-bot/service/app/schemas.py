@@ -116,6 +116,7 @@ class ContentUpdateIn(BaseModel):
 
 
 class ContentPublishIn(BaseModel):
+    family_id: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,80}$")
     expected_version: int = Field(ge=1)
     body_source: str = Field(max_length=20000)
     source_markdown: str | None = Field(default=None, max_length=20000)
@@ -126,6 +127,7 @@ class ContentPublishIn(BaseModel):
 
 
 class ContentValidateIn(BaseModel):
+    family_id: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,80}$")
     expected_version: int = Field(ge=1)
     body_source: str = Field(max_length=20000)
     source_markdown: str | None = Field(default=None, max_length=20000)

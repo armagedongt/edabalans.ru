@@ -55,6 +55,27 @@ def test_http_error_does_not_expose_bot_token():
     assert "very-secret-token" not in str(exc.value)
 
 
+def test_long_media_text_is_complete_and_media_not_repeated_after_text_failure():
+    seen=[]; fail_text=True
+    def handler(request):
+        nonlocal fail_text
+        data=json.loads(request.content); seen.append((request.url.path,data))
+        if request.url.path.endswith("sendMessage") and fail_text:
+            fail_text=False
+            return httpx.Response(500,text="retry")
+        return httpx.Response(200,json={"ok":True,"result":{"message_id":len(seen),"photo":[{"file_id":"cached"}]}})
+    client=TelegramClient("secret",httpx.MockTransport(handler))
+    body="Полный авторский текст "*70
+    content=SimpleNamespace(title="Пост",body_source=body,media_kind="photo",media_path=None,telegram_file_id="photo")
+    config={"media_separate":True,"link_preview":False,"buttons":[{"text":"Читать","url":"https://example.test"}]}
+    with pytest.raises(TelegramError): client.send_content("42",content,config)
+    assert config["media_message_id"]=="1"
+    client.send_content("42",content,config)
+    assert [path.rsplit("/",1)[1] for path,_ in seen]==["sendPhoto","sendMessage","sendMessage"]
+    assert seen[-1][1]["text"]==body
+    assert seen[-1][1]["reply_markup"]["inline_keyboard"][0][0]["text"]=="Читать"
+
+
 def test_relay_uses_gateway_headers_without_bot_token_in_url():
     seen = []
 
