@@ -227,9 +227,9 @@ html[data-theme="dark"] .card-tag { background: var(--cloud); color: #fff; }
 .article-category { display: block; }
 .breadcrumbs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; color: var(--muted); font-size: 13px; }
 .breadcrumbs a { text-decoration: none; }
-.article-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin-top: 14px; }
+.article-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; margin-top: 14px; }
 .article-meta:empty { display: none; }
-.author-byline { max-width: 100%; color: var(--muted); font-size: 14px; text-decoration: none; }
+.author-byline { display: inline-flex; align-items: center; gap: 9px; max-width: 100%; color: var(--muted); font-size: 14px; text-decoration: none; }
 .author-byline img { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
 .article-dates { display: flex; flex-wrap: wrap; gap: 4px 12px; color: var(--muted); font-size: 12px; }
 .article-dates > span { white-space: nowrap; }

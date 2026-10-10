@@ -77,7 +77,7 @@ def test_confirmed_source_date_is_shown_and_missing_date_is_not_invented(authori
     confirmed = load_blog_catalog().by_slug('kak-na-menya-napali-sobaki-v-lesu')
     page = client.get('/blog/articles/' + confirmed.slug)
     assert structured(page.text)[0]['datePublished'] == confirmed.original_published_at
-    assert 'Опубликовано: <time datetime="2023-06-17T13:18:08+03:00">17.06.2023</time>' in page.text
+    assert 'Опубликовано <time datetime="2023-06-17T13:18:08+03:00">17.06.2023</time>' in page.text
     catalog = load_blog_catalog()
     missing = replace(catalog.published[0], original_published_at=None, blog_published_at=None)
     catalog = replace(catalog, articles=tuple(missing if article.slug == missing.slug else article for article in catalog.articles))
@@ -95,7 +95,7 @@ def test_blog_release_fallback_is_not_claimed_as_historical_source_date(authorin
     assert article.original_published_at is None
     page = client.get('/blog/articles/' + slug)
     assert structured(page.text)[0]['datePublished'] == article.blog_published_at
-    assert 'В блоге с:' in page.text
+    assert 'Опубликовано <time' in page.text
     assert 'Исходная публикация:' not in page.text
 
 
@@ -107,7 +107,7 @@ def test_source_date_takes_priority_when_blog_release_is_also_known(authoring, m
     monkeypatch.setattr('app.blog_routes._public_catalog', lambda db: catalog)
     page = client.get('/blog/articles/' + first.slug)
     assert structured(page.text)[0]['datePublished'] == first.original_published_at
-    assert 'Опубликовано:' in page.text
+    assert 'Опубликовано <time' in page.text
     assert '02.01.2023</time>' in page.text
     assert 'Опубликовано в блоге:' not in page.text
 
@@ -126,7 +126,7 @@ def test_new_moderation_draft_cannot_change_public_revision_date(authoring):
     assert structured(before)[0]['dateModified'] == '2026-09-30T12:00:00+00:00'
     assert structured(after)[0]['dateModified'] == structured(before)[0]['dateModified']
     assert 'Новый черновик.' not in after
-    assert 'Обновлено:' in after
+    assert 'Обновлено <time' in after
 
 
 @pytest.mark.parametrize('field', ['original_published_at', 'blog_published_at'])
