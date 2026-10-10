@@ -51,6 +51,8 @@ def material_service(course_code: str):
 
 router = APIRouter(tags=["course-material-publisher"])
 router.include_router(editorial_media_router)
+from app.course_markdown_routes import router as markdown_conversion_router
+router.include_router(markdown_conversion_router)
 DIRECT_RECIPE_PAGES = {
     "mackerel-pasta-salad": "Паста-салат со скумбрией и лимоном",
     "chickpea-spinach-shakshuka": "Шакшука с нутом и шпинатом",

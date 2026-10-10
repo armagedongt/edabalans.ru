@@ -178,6 +178,7 @@ def publish_material(
     expected_version: int,
     admin: str,
     _restore_version: ContentItemVersion | None = None,
+    _markdown_adoption: dict | None = None,
 ) -> dict:
     context = course_context(db)
     stage_number, step = article_step(context, step_id)
@@ -203,6 +204,11 @@ def publish_material(
             raise HTTPException(
                 409, "Материал уже изменён. Получите актуальную версию перед публикацией"
             )
+        if _markdown_adoption is not None:
+            from app.article_markdown_conversion import preserved_html
+            clean_html = preserved_html(current.text_content if current else "", clean_html,
+                                        _markdown_adoption["html_hash"])
+            source_block["adopted_from_html_sha256"] = _markdown_adoption["html_hash"]
         if (current and current.text_content == clean_html
                 and any(block == source_block for block in (current.blocks or []))):
             return version_payload(step_id, stage_number, step, current)

@@ -209,7 +209,7 @@ class Vault:
                 changed = digest(comparable(wire, item["kind"])) != item["base_hash"]
             except ValueError as exc:
                 changed, error = True, str(exc)
-            status = "conflict" if item.get("conflict") else "changed" if changed or item.get("pending_draft") or item.get("pending_runtime") else "clean"
+            status = "conflict" if item.get("conflict") else "changed" if changed or item.get("pending_draft") or item.get("pending_runtime") or item.get("pending_conversion") else "clean"
             if error:
                 status = "invalid"
             if item.get("unsupported"):
@@ -259,15 +259,19 @@ class Vault:
         items.update(discover_graphs(self.api))
         return items
 
-    def refresh(self) -> list[dict]:
+    def refresh(self, ids: list[str] | None = None) -> list[dict]:
         self.state_path.parent.mkdir(parents=True, exist_ok=True)
         with self.lock():
             state = self.load()
             discovered = self.discover()
             results = []
             for ident, seed in discovered.items():
+                if ids is not None and ident not in ids:
+                    continue
                 item = state["items"].get(ident, seed)
                 try:
+                    if item.get("pending_conversion"):
+                        raise VaultError("Сначала завершите convert-markdown --apply для этого материала")
                     if item["kind"] == "course" and seed["kind"] == "git":
                         if any(item.get(key) for key in ("pending_hash", "pending_draft", "pending_runtime")):
                             raise VaultError("Сначала разрешите незавершённую публикацию материала через Codex")
@@ -390,6 +394,8 @@ class Vault:
             for ident in dict.fromkeys(ids):
                 try:
                     item = state["items"][ident]
+                    if item.get("pending_conversion"):
+                        raise VaultError("Сначала завершите convert-markdown --apply для этого материала")
                     if item.get("unsupported"):
                         raise VaultError("Особый материал: требуется его действующий маршрут через Codex")
                     path = self.file(item)
@@ -505,18 +511,82 @@ class Vault:
         return results
 
 
+    def convert_markdown(self, ids: list[str], *, apply: bool = False) -> list[dict]:
+        results = []
+        with self.lock():
+            state = self.load()
+            for ident in ids:
+                try:
+                    item = state["items"].get(ident)
+                    if not item or item["kind"] != "course" or item.get("unsupported"):
+                        raise VaultError("Конверсия доступна обычному материалу курса")
+                    path = self.file(item)
+                    local = path.read_text(encoding="utf-8")
+                    if digest(local) != item["base_hash"] or any(item.get(key) for key in (
+                            "conflict", "pending_hash", "pending_draft", "pending_runtime")):
+                        raise VaultError("Сначала разрешите локальный черновик или незавершённую публикацию")
+                    pending = item.get("pending_conversion")
+                    prepared = self.api.request("GET", item["api_path"] + "/markdown")
+                    if prepared["already_markdown"]:
+                        remote = self.read({**item, "id": ident})
+                        if item.get("format") == "markdown" and digest(remote["text"]) == item["base_hash"]:
+                            results.append({"id": ident, "status": "clean"})
+                            continue
+                        if not pending or digest(remote["text"]) != pending["markdown_hash"]:
+                            raise VaultError("Серверный оригинал изменён; сначала обновите файл с сервера")
+                    else:
+                        remote = self.read({**item, "id": ident})
+                        if remote["version"] != item["base_version"] or digest(remote["text"]) != item["base_hash"]:
+                            raise VaultError("Серверный оригинал изменён; конверсия отменена")
+                        if not apply:
+                            results.append({"id": ident, "status": "preview", **prepared})
+                            continue
+                        item["pending_conversion"] = {"markdown_hash": digest(prepared["markdown"])}
+                        atomic_json(self.state_path, state)
+                        self.api.request("POST", item["api_path"] + "/markdown", {
+                            "expected_version": prepared["expected_version"],
+                            "expected_html_sha256": prepared["html_sha256"],
+                        })
+                        remote = self.read({**item, "id": ident})
+                    if not apply:
+                        results.append({"id": ident, "status": "pending", "message": "Повторите с --apply для восстановления локального файла"})
+                        continue
+                    if remote["format"] != "markdown" or digest(remote["text"]) != item["pending_conversion"]["markdown_hash"]:
+                        raise VaultError("Серверный Markdown не совпал с проверенной конверсией")
+                    if not update_if_unchanged(path, local, remote["text"]):
+                        raise VaultError("Файл изменён во время конверсии; локальные правки сохранены")
+                    item.update(base_version=remote["version"], base_hash=digest(remote["text"]), format="markdown")
+                    item.pop("pending_conversion", None)
+                    atomic_json(self.state_path, state)
+                    results.append({"id": ident, "status": "converted"})
+                except Exception as exc:
+                    results.append({"id": ident, "status": "error", "message": str(exc)})
+        return results
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Единая рабочая папка Obsidian и Codex")
     parser.add_argument("--root", type=Path, default=DEFAULT_ROOT)
     commands = parser.add_subparsers(dest="command", required=True)
-    commands.add_parser("refresh")
+    refresh = commands.add_parser("refresh")
+    refresh.add_argument("ids", nargs="*")
     commands.add_parser("status")
     publish = commands.add_parser("publish")
     publish.add_argument("--owner-edited", action="store_true", help="Опубликовать готовые правки Сергея из Obsidian без ИИ-редактуры")
     publish.add_argument("ids", nargs="+")
+    conversion = commands.add_parser("convert-markdown")
+    conversion.add_argument("ids", nargs="+")
+    conversion.add_argument("--apply", action="store_true")
     args = parser.parse_args()
     vault = Vault(args.root)
-    result = vault.publish(args.ids, owner_edited=args.owner_edited) if args.command == "publish" else getattr(vault, args.command)()
+    if args.command == "publish":
+        result = vault.publish(args.ids, owner_edited=args.owner_edited)
+    elif args.command == "convert-markdown":
+        result = vault.convert_markdown(args.ids, apply=args.apply)
+    elif args.command == "refresh":
+        result = vault.refresh(args.ids or None)
+    else:
+        result = vault.status()
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return int(any(row.get("status") == "error" for row in result))
 

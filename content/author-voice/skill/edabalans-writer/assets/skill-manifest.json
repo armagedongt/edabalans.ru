@@ -1,5 +1,5 @@
 {
-  "package_version": "2.10.23-20261010",
+  "package_version": "2.10.24-20261010",
   "files": [
     {
       "path": "content/author-voice/skill/edabalans-neuroslop-auditor/SKILL.md",
@@ -87,7 +87,7 @@
     },
     {
       "path": "docs/knowledge-base/EDITORIAL_VAULT.md",
-      "sha256": "32182a07423b1c067507d035721918fd3522e9bc08089457bdb1424079db8138"
+      "sha256": "98bcbb3735856f6bc73cafc79f30960001023786e1e7e5c55f60c4bed7cc7718"
     }
   ]
 }

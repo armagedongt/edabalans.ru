@@ -147,7 +147,10 @@ card = "docs/knowledge-base/modules/catalog/platform.content.md"
 owns_files = [
   "backend/app/content_routes.py", "backend/app/content_service.py",
   "backend/app/content_authoring_service.py",
-  "backend/app/article_markup.py",
+    "backend/app/article_markup.py",
+    "backend/app/article_markdown_conversion.py", "backend/tests/test_article_markdown_conversion.py",
+    "backend/app/course_markdown_routes.py", "backend/tests/test_course_markdown_adoption.py",
+    "tools/tests/test_editorial_markdown_adoption.py",
   "content/article-components/**",
   "backend/app/static/content-catalog.css", "backend/app/static/content-catalog.html",
   "backend/app/static/content-catalog.js",

@@ -306,6 +306,7 @@ def publish_material(
     commit: bool = True,
     _restore_version: ContentItemVersion | None = None,
     expected_source_hash: str | None = None,
+    _markdown_adoption: dict | None = None,
 ) -> dict:
     context = course_context(db)
     day_number, step = article_step(context, step_id)
@@ -327,6 +328,8 @@ def publish_material(
             "source_format": "html" if content_format == "trusted_component_html" else content_format,
         }
         render_profile = editorial_source_payload(_restore_version or current).get("source_render_profile")
+        if _markdown_adoption is not None:
+            render_profile = _markdown_adoption.get("render_profile")
         if _restore_version is None and current is None:
             fallback = source_current_markdown(step)
             if fallback is not None:
@@ -338,10 +341,15 @@ def publish_material(
         clean_html = _restore_version.text_content if _restore_version else render_material(
             content, content_format, render_profile=render_profile,
         )
+        if _markdown_adoption is not None:
+            from app.article_markdown_conversion import preserved_html
+            clean_html = preserved_html(current.text_content if current else legacy_material_html(step),
+                                        clean_html, _markdown_adoption["html_hash"])
         source_block = {
             "type": "editorial_source", "content": source_payload["source_content"],
             "format": source_payload["source_format"],
             **({"render_profile": SOURCE_CURRENT_PROFILE} if render_profile == SOURCE_CURRENT_PROFILE else {}),
+            **({"adopted_from_html_sha256": _markdown_adoption["html_hash"]} if _markdown_adoption else {}),
         }
         if (current and current.text_content == clean_html
                 and any(block == source_block for block in (current.blocks or []))):
