@@ -186,7 +186,7 @@
       "related_source_ids": [
         "11401696",
         "14021584",
-        "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11"
+        "12296286"
       ],
       "cta": "masterclass",
       "status": "published",
@@ -249,7 +249,8 @@
         "693339"
       ],
       "cta": "masterclass",
-      "status": "published",
+      "status": "draft",
+      "editorial_hold": "Временно скрыто по решению Сергея от 10.10.2026: пересечение с интенсивом и другими статьями. Исходник сохранён; готовится отдельная адаптация для канала — 12 советов в трёх направлениях.",
       "media": [
         "12-changes/01.webp",
         "12-changes/02.webp",

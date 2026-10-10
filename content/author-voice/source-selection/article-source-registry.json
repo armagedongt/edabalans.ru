@@ -204,12 +204,17 @@
       "family_id": "blog:12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
       "title": "12 простых изменений в питании и образе жизни",
       "disposition": "canonical_blog",
+      "publication_hold": {
+        "status": "temporarily_hidden",
+        "decided_at": "2026-10-10",
+        "basis": "Прямое решение Сергея: временно скрыть из блога из-за пересечения с интенсивом и другими статьями. Не удалять текст, медиа и семью. Подготовить отдельный пост канала: 12 советов по трём направлениям; правило 30 растений допустимо, правило 1% исключено."
+      },
       "canonical": {
         "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
         "slug": "12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
         "url": "https://blog.похудение-это-есть.рф/articles/12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
         "body_file": "content/blog/articles/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11.md",
-        "status": "published"
+        "status": "temporarily_hidden"
       },
       "members": [
         {
