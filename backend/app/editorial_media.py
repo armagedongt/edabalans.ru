@@ -137,13 +137,14 @@ def stored_bytes(db: Session, scope: str, name: str) -> tuple[bytes, str]:
 
 def markdown_media(db: Session, scope: str, markdown: str) -> list[dict]:
     """Only stored attachments for this article may join its publication contract."""
-    prefix = f"{ORIGIN}/editorial-media/{scope_token(scope)}/"
     urls = re.findall(r"!\[[^\]]*\]\(([^\s)]+)", markdown)
+    urls = [url for url in urls if "/editorial-media/" in url]
+    if not urls:
+        return []
+    prefix = f"{ORIGIN}/editorial-media/{scope_token(scope)}/"
     result = []
     total = 0
     for url in dict.fromkeys(urls):
-        if "/editorial-media/" not in url:
-            continue
         if not url.startswith(prefix):
             raise HTTPException(422, "Картинка принадлежит другому материалу")
         name = url.removeprefix(prefix)

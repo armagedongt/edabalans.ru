@@ -87,7 +87,14 @@ recipes-part-2, но открываются по прямой ссылке не�
 
 ## Источник карточки в комментарии MD
 
-Внизу каждого MD располагается `<!-- recipe-card-data:start ... recipe-card-data:end -->`.
+В стандартной полной authoring-сборке внизу MD располагается
+`<!-- recipe-card-data:start ... recipe-card-data:end -->`.
+Пять принятых оригиналов — farro-salad, alfredo-sauce, pasta-alfredo,
+chicken-cabbage-bowl и yogurt-bark — сохранены без этого комментария. Их точные
+вычислительные карточки уже зарегистрированы в `metadata.recipe_calculator.cards`,
+а `source_hash` принадлежит полному принятому MD. Не дописывать комментарий ради
+формального соответствия: подключение и обычная редактура сохраняют существующие
+карточки, hash и фактический набор защищённых комментариев атомарно.
 В семействе отдельный блок для каждой карточки. В начале поля schema_version,
 recipe_id, title, yield_g, yield_basis, portion_g, nutrition_available, photos
 (JSON-массив локальных путей), photo_layout и card.

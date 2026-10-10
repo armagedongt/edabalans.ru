@@ -41,6 +41,11 @@ def test_standard_markdown_space_path_and_fenced_examples(tmp_path):
     assert "https://example.org/a.png" in rendered
 
 
+@pytest.mark.parametrize("fence", ["~~~md\n![[missing.png]]\n~~~~\n", "```md\n![[missing.png]]\n````\n", "~~~md\n![[missing.png]]"])
+def test_longer_closing_or_unclosed_code_fences_keep_attachment_examples_literal(tmp_path, fence):
+    assert local_images(tmp_path, tmp_path / "Lesson.md", fence) == []
+
+
 @pytest.mark.parametrize("target", ["../outside.png", "C:/secret.png", "//server/share.png", "file:///private.png"])
 def test_paths_outside_vault_cannot_be_uploaded(tmp_path, target):
     with pytest.raises(ValueError):

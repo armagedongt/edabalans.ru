@@ -82,7 +82,7 @@ def _media_source(item: dict) -> str:
 
 
 def _validate_card(card: str | None, card_fit: str, media: list[dict]) -> tuple[str | None, str]:
-    if card is not None and card not in {item["name"] for item in media}:
+    if card is not None and card not in {item["name"] for item in media if item.get("storage") != "editorial"}:
         raise _invalid("Обложка должна ссылаться на изображение этой статьи")
     if card_fit not in CARD_FITS:
         raise _invalid("Режим обложки должен быть cover или contain")
@@ -544,6 +544,7 @@ def serialize_article(version: ManagedDocumentVersion, *, source: bool, db: Sess
     media = [
         {
             **{key: item[key] for key in ("name", "sha256", "mime", "provenance", "alt", "width", "height")},
+            "card_eligible": item.get("storage") != "editorial",
             "url": (
                 item["url"].replace("https://edabalans.ru/editorial-media/", "/admin/api/editorial/media/") if item.get("storage") == "editorial" else
                 f"/blog/media/{item['name']}" if item.get("storage") == "git" else

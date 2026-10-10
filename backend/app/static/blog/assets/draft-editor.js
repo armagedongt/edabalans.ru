@@ -59,6 +59,7 @@
     draftCardFit = article.card_fit || 'cover';
     coverOptions.replaceChildren();
     article.media.forEach(function (item) {
+      if (item.card_eligible === false) return;
       var button = document.createElement('button');
       var image = document.createElement('img');
       var label = document.createElement('span');

@@ -11,7 +11,23 @@ from urllib.parse import unquote, urlsplit
 
 IMAGE_SUFFIXES = {".png": "png", ".jpg": "jpg", ".jpeg": "jpg", ".webp": "webp"}
 IMAGE = re.compile(r'!\[\[(?P<wiki>[^\]\n]+)\]\]|!\[(?P<alt>[^\]\n]*)\]\((?P<target><[^>\n]+>|[^\s)]+)(?P<title>\s+"[^"\n]*")?\)')
-CODE = re.compile(r'(?ms)^\s{0,3}(?P<fence>`{3,}|~{3,})[^\n]*\n.*?^\s{0,3}(?P=fence)\s*$|`+[^`\n]*`+')
+INLINE_CODE = re.compile(r'`+[^`\n]*`+')
+
+
+def code_ranges(markdown: str) -> list[tuple[int, int]]:
+    ranges = [(match.start(), match.end()) for match in INLINE_CODE.finditer(markdown)]
+    opening = None
+    for match in re.finditer(r'(?m)^[ \t]{0,3}(`{3,}|~{3,})([^\n]*)(?:\n|$)', markdown):
+        fence, tail = match.groups()
+        if opening is None:
+            if fence[0] != '`' or '`' not in tail:
+                opening = (match.start(), fence)
+        elif fence[0] == opening[1][0] and len(fence) >= len(opening[1]) and not tail.strip():
+            ranges.append((opening[0], match.end()))
+            opening = None
+    if opening is not None:
+        ranges.append((opening[0], len(markdown)))
+    return ranges
 
 
 @dataclass(frozen=True)
@@ -31,7 +47,7 @@ def local_images(root: Path, file: Path, markdown: str, *, server_prefixes: tupl
     root, file = root.resolve(), file.resolve()
     if not file.is_relative_to(root):
         raise ValueError("Материал находится вне папки Obsidian")
-    code = [(m.start(), m.end()) for m in CODE.finditer(markdown)]
+    code = code_ranges(markdown)
     images = []
     for match in IMAGE.finditer(markdown):
         if any(start <= match.start() < end for start, end in code):

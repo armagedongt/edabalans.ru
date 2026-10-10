@@ -113,6 +113,46 @@ def test_editorial_attachment_cannot_be_reused_by_other_blog_article(authoring):
     assert client.get(f"/admin/api/blog/articles/{FIXTURE_SLUG}").json()["article"]["version"] == article["version"]
 
 
+def test_editorial_body_photo_does_not_become_an_unsupported_cover(authoring):
+    client, _ = authoring
+    _, body = _attachment("blog:" + SLUG)
+    url = client.post("/admin/api/editorial/media", json=body).json()["url"]
+    original = client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]
+    markdown = original["markdown"] + f"\n![Фото]({url})\n"
+    rejected = client.patch(f"/admin/api/blog/articles/{SLUG}/text", json={
+        "expected_version": original["version"], "markdown": markdown, "card": body["name"]})
+    assert rejected.status_code == 422
+    assert client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]["version"] == original["version"]
+    saved = client.patch(f"/admin/api/blog/articles/{SLUG}/text", json={
+        "expected_version": original["version"], "markdown": markdown, "card": original["card"]})
+    assert saved.status_code == 200
+    article = saved.json()["article"]
+    assert next(item for item in article["media"] if item["name"] == body["name"])["card_eligible"] is False
+    assert all(item["card_eligible"] for item in article["media"] if item["name"] != body["name"])
+    published = client.post(f"/admin/api/blog/articles/{SLUG}/publish", json={
+        "expected_version": article["version"], "confirm": True})
+    assert published.status_code == 200 and published.json()["article"]["editorial_status"] == "published"
+
+
+def test_intensive_editorial_photo_waits_for_the_deployed_source(authoring, tmp_path, monkeypatch):
+    client, _ = authoring
+    runtime = tmp_path / "deployed.md"
+    runtime.write_text("# Интенсив\n\nПрежний текст.\n", encoding="utf-8")
+    monkeypatch.setattr("app.intensive_onepage.SOURCE", runtime)
+    raw, body = _attachment("intensive")
+    result = client.post("/admin/api/editorial/media", json=body)
+    assert result.status_code == 200
+    url = result.json()["url"]
+    accepted = runtime.read_text(encoding="utf-8") + f"\n![Фото]({url})\n"
+    monkeypatch.setattr("app.intensive_editorial_routes.IntensiveContentEditor.load",
+                        lambda *_: {"main": {"content": accepted}})
+    assert client.get(url).status_code == 404
+    runtime.write_text(accepted, encoding="utf-8")
+    assert client.get(url).content == raw
+    runtime.write_text("# Интенсив\n\nСледующая редакция без фото.\n", encoding="utf-8")
+    assert client.get(url).status_code == 404
+
+
 @pytest.mark.parametrize("alter", ["wrong_hash", "fake_png", "unknown_scope"])
 def test_invalid_editorial_attachment_leaves_no_binary_record(authoring, alter):
     client, factory = authoring
