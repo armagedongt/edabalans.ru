@@ -744,9 +744,13 @@ def published_card_overrides(db: Session) -> dict[str, tuple[str, str]]:
     return result
 
 
-def published_description_overrides(db: Session) -> dict[str, str]:
+def published_markdown_overrides(db: Session) -> dict[str, str]:
     rows = db.scalars(select(ManagedDocumentVersion).where(
         ManagedDocumentVersion.document_type == PUBLISHED_DOCUMENT_TYPE,
         ManagedDocumentVersion.is_active.is_(True),
     ))
-    return {row.document_key: blog_description(row.payload["markdown"]) for row in rows}
+    return {row.document_key: row.payload["markdown"] for row in rows}
+
+
+def published_description_overrides(db: Session) -> dict[str, str]:
+    return {slug: blog_description(markdown) for slug, markdown in published_markdown_overrides(db).items()}

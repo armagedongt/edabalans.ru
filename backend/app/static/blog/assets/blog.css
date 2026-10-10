@@ -93,6 +93,7 @@ img { max-width: 100%; }
   backdrop-filter: blur(16px);
 }
 .header-inner {
+  position: relative;
   min-height: 58px;
   display: grid;
   grid-template-columns: minmax(215px, 1fr) auto minmax(215px, 1fr);
@@ -130,6 +131,18 @@ img { max-width: 100%; }
 .nav-contact-panel a { display: flex; min-height: 41px; align-items: center; padding: 9px 12px; border-radius: 10px; color: var(--text); font-size: 13px; font-weight: 700; line-height: 1.25; text-decoration: none; }
 .nav-contact-panel a:hover, .nav-contact-panel a:focus-visible { background: var(--cloud); color: var(--blue); }
 .mobile-nav-toggle { display: none; }
+.header-actions { display: flex; align-items: center; gap: 8px; justify-self: end; }
+.blog-search { position: static; }
+.blog-search summary { display: flex; align-items: center; min-height: 38px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; list-style: none; }
+.blog-search summary::-webkit-details-marker { display: none; }
+.blog-search summary:focus-visible, .blog-search input:focus-visible { outline: 3px solid var(--cloud-strong); outline-offset: 3px; }
+.blog-search[open] summary, .blog-search summary:hover { border-color: var(--blue); }
+.blog-search form { position: absolute; z-index: 46; right: 0; top: calc(100% + 12px); width: min(380px, calc(100vw - 32px)); padding: 18px; border: 1px solid var(--border); border-radius: 15px; background: var(--surface); box-shadow: var(--shadow); }
+.blog-search label { display: block; margin-bottom: 10px; font-size: 14px; font-weight: 700; }
+.blog-search-fields { display: flex; gap: 8px; }
+.blog-search input { min-width: 0; width: 100%; min-height: 44px; padding: 9px 11px; border: 1px solid var(--border); border-radius: 9px; font: inherit; font-size: 16px; background: var(--page); color: var(--text); }
+.blog-search button { border: 0; border-radius: 9px; padding: 9px 12px; background: var(--blue); color: white; cursor: pointer; }
+.search-results { margin: 0 0 24px; overflow-wrap: anywhere; }
 .theme-toggle {
   width: 38px;
   height: 38px;

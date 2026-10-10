@@ -9,7 +9,8 @@ import re
 from pathlib import Path
 from urllib.parse import urlencode
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from app.article_markup import article_plain_text, markdown_to_article_html
 from pydantic import BaseModel, Field, model_validator
 from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Response
 
@@ -23,9 +24,10 @@ from app.blog_content import (
     related_cards_html,
     render_article_body,
     toc_html,
+    split_blog_metadata,
 )
 from app.blog_draft_routes import optional_blog_admin, owner_cards_html, PRIVATE_HEADERS
-from app.blog_draft_service import public_payload, published_card_overrides, published_description_overrides, render_article
+from app.blog_draft_service import public_payload, published_card_overrides, published_description_overrides, published_markdown_overrides, render_article
 from app.database import get_db
 from app.blog_responsive_media import apply_responsive_images, derivative_files
 from app.blog_reader_context import recognize_reader, reader_context
@@ -95,8 +97,14 @@ FAVICON_TEST_PAGES = {
     "face": ("Главная — фотография", "favicon-test-face.png"),
 }
 FAVICON_TEST_VERSION = "20260831a"
-def _template(name: str) -> str:
-    return (BLOG_DIR / name).read_text(encoding="utf-8")
+def _template(name: str, search_query: str = "") -> str:
+    template = (BLOG_DIR / name).read_text(encoding="utf-8")
+    if "<!-- BLOG_HEADER_SEARCH -->" in template:
+        search = (BLOG_DIR / "header-search.html").read_text(encoding="utf-8")
+        search = search.replace("{{SEARCH_ACTION}}", escape(BLOG_PUBLIC_ORIGIN + "/", quote=True))
+        search = search.replace("{{SEARCH_QUERY}}", escape(search_query, quote=True))
+        template = template.replace("<!-- BLOG_HEADER_SEARCH -->", search)
+    return template
 
 
 def _html_response(value: str) -> HTMLResponse:
@@ -172,6 +180,7 @@ def blog_author() -> HTMLResponse:
 def blog_home(
     page: str = "1",
     category: str = "all",
+    q: str = Query(default="", max_length=200),
     identity: str | None = Depends(optional_blog_admin),
     db: Session = Depends(get_db),
 ) -> HTMLResponse:
@@ -179,6 +188,22 @@ def blog_home(
     card_overrides = published_card_overrides(db)
     category = category if category in BLOG_CATEGORIES else "all"
     selected = tuple(article for article in catalog.published if category == "all" or article.category == category)
+    q = " ".join(q.split())
+    if q:
+        terms = q.casefold().replace("ё", "е").split()
+        published_markdown = published_markdown_overrides(db)
+        matches = []
+        for article in selected:
+            # Search the public revision, never the editable draft.
+            markdown = published_markdown.get(article.slug)
+            if markdown is None:
+                markdown = (catalog.content_dir / "articles" / article.body_file).read_text(encoding="utf-8")
+            _, markdown = split_blog_metadata(markdown)
+            body = markdown_to_article_html(markdown, component_renderer=lambda *_: "")
+            text = (article.title + " " + article.excerpt + " " + article_plain_text(body)).casefold().replace("ё", "е")
+            if all(term in text for term in terms):
+                matches.append(article)
+        selected = tuple(matches)
     page_count = max(1, (len(selected) + BLOG_PAGE_SIZE - 1) // BLOG_PAGE_SIZE)
     try:
         active_page = min(max(int(page), 1), page_count)
@@ -191,6 +216,8 @@ def blog_home(
             params["category"] = target_category
         if target_page > 1:
             params["page"] = str(target_page)
+        if q:
+            params["q"] = q
         return urlencode(params)
 
     categories = "".join(
@@ -208,17 +235,20 @@ def blog_home(
     ) if page_count > 1 else ""
     if active_page < page_count:
         pagination += f'<a class="page-link next" rel="next" href="?{escape(query(active_page + 1), quote=True)}#articles">Следующая</a>'
-    canonical = f"{BLOG_PUBLIC_ORIGIN}/" + (f"?{query(active_page)}" if query(active_page) else "")
+    canonical = (f"{BLOG_PUBLIC_ORIGIN}/" if q else
+                 f"{BLOG_PUBLIC_ORIGIN}/" + (f"?{query(active_page)}" if query(active_page) else ""))
     title = "Похудение — это есть · Авторский блог Сергея Воронцова"
     if category != "all":
         title += f" · {category}"
     if active_page > 1:
         title += f" · Страница {active_page}"
     rendered = (
-        _template("index.html")
+        _template("index.html", q)
         .replace("{{CATALOG_CANONICAL}}", escape(canonical, quote=True))
         .replace("{{CATALOG_TITLE}}", escape(title))
         .replace("{{EMPTY_HIDDEN}}", "hidden" if selected else "")
+        .replace("{{EMPTY_MESSAGE}}", "Ничего не найдено. Попробуйте другой запрос." if q else "В этой рубрике пока нет опубликованных статей.")
+        .replace("<!-- BLOG_SEARCH_RESULTS -->", (f'<p class="search-results" role="status">Поиск: «{escape(q)}» · Найдено: {len(selected)}</p>' if q else ""))
         .replace("<!-- BLOG_PAGINATION -->", pagination)
         .replace("<!-- BLOG_CATEGORIES -->", categories)
         .replace(
@@ -235,6 +265,8 @@ def blog_home(
         .replace("<!-- BLOG_OWNER_PANEL -->", owner_cards_html(db) if identity else "")
     )
     response = _html_response(apply_responsive_images(rendered, catalog.content_dir, catalog.allowed_media))
+    if q:
+        response.headers["X-Robots-Tag"] = "noindex, follow"
     if identity:
         response.headers.update(PRIVATE_HEADERS)
     return response
