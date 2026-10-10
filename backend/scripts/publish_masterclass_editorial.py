@@ -381,6 +381,8 @@ def main() -> None:
         and not item.get("placeholder")
     }
     with SessionLocal() as db:
+        from app.course_structure_lock import lock_course
+        lock_course(db, "masterclass-21", exclusive=True)
         current = active_course_version(db)
         manifest, changes = compile_manifest(
             current.payload, next_version=current.version_no + 1,

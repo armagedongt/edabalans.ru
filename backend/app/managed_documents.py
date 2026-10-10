@@ -95,6 +95,9 @@ def publish_document(
     admin: str,
     commit: bool = True,
 ) -> ManagedDocumentVersion:
+    if document_type == "course-structure" and document_key in {"masterclass-21", "calories"}:
+        from app.course_structure_lock import lock_course
+        lock_course(db, document_key, exclusive=True)
     current = db.scalar(
         select(ManagedDocumentVersion)
         .where(
@@ -174,6 +177,9 @@ def restore_document(
     admin: str,
     prepare_payload,
 ) -> ManagedDocumentVersion:
+    if document_type == "course-structure" and document_key in {"masterclass-21", "calories"}:
+        from app.course_structure_lock import lock_course
+        lock_course(db, document_key, exclusive=True)
     source = db.scalar(
         select(ManagedDocumentVersion).where(
             ManagedDocumentVersion.document_type == document_type,

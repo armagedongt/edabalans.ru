@@ -49,6 +49,7 @@ class BlogDraftBodyLimitMiddleware:
         method = scope.get("method", "")
         protected = method in {"PUT", "PATCH", "POST"} and (
             path.startswith("/admin/api/blog/articles/") or path == "/admin/api/editorial/media"
+            or path.startswith("/admin/api/courses/") and "/structure/operations/" in path
         )
         if not protected:
             await self.app(scope, receive, send)

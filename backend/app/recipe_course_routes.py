@@ -11,18 +11,21 @@ from app.account_auth_routes import require_native_user
 from app.access_service import course_start_is_open
 from app.app_service import AppAccessError, require_user_resource
 from app.database import get_db
+from app.course_structure_lock import StructureAction, check_structure
 from app.models import CourseStepProgress, User
 from app.recipe_course_service import COURSE_CODE, RESOURCE_CODE, course_manifest, course_material
 
 router = APIRouter(prefix="/api/recipes/course", tags=["recipe-course"])
 
 
-class CourseAction(BaseModel):
+class CourseAction(StructureAction):
     email: str = ""
     timezone_name: str | None = None
 
 
 def resolve_course_user(request: Request, db: Session) -> User:
+    from app.course_structure_lock import lock_course
+    lock_course(db, "masterclass-21")
     try:
         user = require_user_resource(db, require_native_user(request, db), RESOURCE_CODE)
     except AppAccessError as exc:
@@ -52,7 +55,7 @@ def course_payload(db: Session, user: User, manifest: dict) -> dict:
             "completed": bool(readable) and len(done) == len(readable), "completed_at": None,
             "offer": None, "app": None,
         })
-    return {"ok": True, "course_version": manifest["courseVersion"],
+    return {"ok": True, "course_version": manifest["courseVersion"], "structure_version": manifest["structureVersion"],
             "server_now": datetime.now(timezone.utc).isoformat(), "fully_unlocked": True,
             "current_day": 1, "days": groups}
 
@@ -82,6 +85,7 @@ def state(request: Request, db: Session = Depends(get_db)) -> dict:
 def open_group(group: int, body: CourseAction, request: Request, db: Session = Depends(get_db)) -> dict:
     user = resolve_course_user(request, db)
     manifest = course_manifest(db)
+    check_structure(manifest, manifest["structureVersion"], body)
     if not 1 <= group <= len(manifest["days"]):
         raise HTTPException(404, "Раздел не найден")
     return course_payload(db, user, manifest)
@@ -93,9 +97,11 @@ def complete_step(group: int, index: int, body: CourseAction, request: Request,
     user = resolve_course_user(request, db)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     manifest = course_manifest(db)
+    check_structure(manifest, manifest["structureVersion"], body)
     steps = manifest["days"][group - 1]["steps"] if 1 <= group <= len(manifest["days"]) else []
     if not 0 <= index < len(steps) or steps[index]["locked"]:
         raise HTTPException(404, "Материал курса пока недоступен")
+    check_structure(manifest, manifest["structureVersion"], body, step=steps[index])
     if steps[index].get("nested"):
         return course_payload(db, user, manifest)
     progress_number = manifest["days"][group - 1]["progressNumber"]

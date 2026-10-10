@@ -7,7 +7,7 @@ $pythonPath = (Get-Command python).Source
 $toolsRoot = Join-Path $InstallRoot 'tools'
 [IO.Directory]::CreateDirectory($toolsRoot) | Out-Null
 [IO.Directory]::CreateDirectory($VaultRoot) | Out-Null
-foreach ($name in @('editorial_vault.py', 'editorial_media.py', 'editorial_vault_desktop.py', 'publish_course_material.py', 'editorial_bot_adapter.py', 'editorial_git_adapter.py', 'editorial_email_adapter.py', 'editorial_catalog_adapter.py', 'editorial_graph_adapter.py', 'editorial_pricing_adapter.py', 'connect_editorial_github.py')) {
+foreach ($name in @('editorial_vault.py', 'editorial_media.py', 'editorial_course_structure.py', 'editorial_vault_desktop.py', 'publish_course_material.py', 'editorial_bot_adapter.py', 'editorial_git_adapter.py', 'editorial_email_adapter.py', 'editorial_catalog_adapter.py', 'editorial_graph_adapter.py', 'editorial_pricing_adapter.py', 'connect_editorial_github.py')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination (Join-Path $toolsRoot $name)
 }
 $utf8 = New-Object System.Text.UTF8Encoding($false)

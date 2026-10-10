@@ -165,6 +165,7 @@ owns_files = [
   "backend/app/editorial_media.py", "backend/app/editorial_media_routes.py",
   "tools/editorial_media.py", "tools/tests/test_editorial_media.py",
     "tools/editorial_vault.py", "tools/editorial_vault_desktop.py",
+    "tools/editorial_course_structure.py", "tools/tests/test_editorial_course_structure.py",
     "tools/editorial_bot_adapter.py", "tools/editorial_git_adapter.py", "tools/editorial_email_adapter.py",
     "tools/editorial_catalog_adapter.py", "tools/editorial_graph_adapter.py", "tools/editorial_pricing_adapter.py",
     "tools/tests/test_editorial_bot_adapter.py", "tools/tests/test_editorial_git_adapter.py", "tools/tests/test_editorial_email_adapter.py",
@@ -630,6 +631,10 @@ reads_from = ["platform", "platform.content", "products.recipes"]
 writes_to = ["products.recipes"]
 owns_files = [
   "backend/app/course_structure_routes.py", "backend/app/course_structure_service.py",
+  "backend/app/course_operation_routes.py", "backend/app/course_structure_operations.py",
+  "backend/app/course_structure_lock.py", "backend/tests/test_course_structure_operations.py",
+  "backend/tests/test_course_structure_postgres.py",
+  "backend/tests/browser/course-structure-actions.mjs",
     "backend/app/course_material_routes.py", "backend/app/course_material_service.py",
     "backend/tests/test_course_source_current_authoring.py",
     "backend/app/recipe_material_authoring.py", "backend/tests/test_recipe_material_authoring.py",

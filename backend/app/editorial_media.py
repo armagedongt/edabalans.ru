@@ -97,7 +97,7 @@ def references(source, url: str) -> bool:
     return False
 
 
-def ingest(db: Session, *, scope: str, source: dict, admin: str) -> dict:
+def ingest(db: Session, *, scope: str, source: dict, admin: str, commit: bool = True) -> dict:
     current_source(db, scope)
     from app.blog_draft_service import _decode_media
     item, _ = _decode_media(source)
@@ -111,8 +111,13 @@ def ingest(db: Session, *, scope: str, source: dict, admin: str) -> dict:
             schema_version=1, version_no=1, payload=payload, content_hash=document_hash(payload),
             created_by=admin, is_active=True))
         try:
-            db.commit()
+            if commit:
+                db.commit()
+            else:
+                db.flush()
         except IntegrityError:
+            if not commit:
+                raise
             db.rollback()
             if active_document(db, DOCUMENT_TYPE, key) is None:
                 raise

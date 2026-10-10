@@ -22,6 +22,7 @@ from app.calorie_course_service import (
     effective_required_step_ids,
 )
 from app.database import get_db
+from app.course_structure_lock import StructureAction, check_structure
 from app.course_access_service import course_entry_unlocked, course_fully_unlocked
 from app.masterclass_routes import course_timezone, next_local_unlock_at
 from app.models import CourseEvent, CourseStageProgress, CourseStepProgress, User
@@ -31,12 +32,12 @@ router = APIRouter(prefix="/api/calories", tags=["calorie-course"])
 RESOURCE_CODE = "ACCESS_CALORIES"
 
 
-class RunActionIn(BaseModel):
+class RunActionIn(StructureAction):
     email: str
     timezone_name: str | None = None
 
 
-class CourseCheckIn(BaseModel):
+class CourseCheckIn(StructureAction):
     email: str
     checked: bool
 
@@ -46,6 +47,8 @@ def aware_utc(value: datetime) -> datetime:
 
 
 def resolve_course_user(request: Request, db: Session, email: str) -> User:
+    from app.course_structure_lock import lock_course
+    lock_course(db, DOCUMENT_KEY)
     try:
         user = require_user_resource(db, require_native_user(request, db), (RESOURCE_CODE, "ACCESS_CALORIES_LEGACY"))
     except AppAccessError as exc:
@@ -56,6 +59,7 @@ def resolve_course_user(request: Request, db: Session, email: str) -> User:
         raise HTTPException(403, "Курс откроется после завершения Мастер-класса")
     if not publication_status(db)["ready"]:
         raise HTTPException(409, detail={"reason": "course_preparing"})
+    lock_course(db, DOCUMENT_KEY)
     return user
 
 
@@ -394,6 +398,7 @@ def course_open_stage(
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
     context = course_context(db)
+    check_structure(context.manifest, context.revision.version_no, body)
     open_stage(db, user, context, stage, now, body.timezone_name)
     db.commit()
     return course_payload(db, user, now, context)
@@ -411,12 +416,14 @@ def course_complete_step(
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
     context = course_context(db)
+    check_structure(context.manifest, context.revision.version_no, body)
     progress = stage_progress(db, user.id, stage)
     if progress is None:
         raise HTTPException(409, detail={"reason": "stage_not_opened"})
     steps = context.stages.get(stage, {}).get("steps", [])
     if index < 0 or index >= len(steps) or steps[index].get("hidden", False):
         raise HTTPException(404, "Материал курса не найден")
+    check_structure(context.manifest, context.revision.version_no, body, step=steps[index])
     completed = completed_step_indexes(db, user.id, stage)
     if index in completed:
         return course_payload(db, user, now, context)
@@ -470,6 +477,7 @@ def course_open_task(
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
     context = course_context(db)
+    check_structure(context.manifest, context.revision.version_no, body)
     progress = stage_progress(db, user.id, stage)
     if progress is None:
         raise HTTPException(409, detail={"reason": "stage_not_opened"})
@@ -504,6 +512,7 @@ def course_update_check(
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
     context = course_context(db)
+    check_structure(context.manifest, context.revision.version_no, body)
     progress = stage_progress(db, user.id, stage)
     if progress is None or progress.task_opened_at is None:
         raise HTTPException(409, detail={"reason": "task_not_opened"})

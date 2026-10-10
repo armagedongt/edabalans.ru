@@ -14,6 +14,8 @@ from app.models import CourseEvent, CourseStageProgress, CourseStepProgress
 
 
 def publish_seed(db, *, expected_version: int, apply: bool) -> dict:
+    from app.course_structure_lock import lock_course
+    lock_course(db, DOCUMENT_KEY, exclusive=apply)
     current = active_document(db, DOCUMENT_TYPE, DOCUMENT_KEY)
     if current is None or current.version_no != expected_version:
         raise ValueError("Active structure differs from the reviewed version")

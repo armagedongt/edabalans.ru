@@ -137,6 +137,8 @@ def normalize_editor_payload(proposed: dict, current: dict, next_version: int) -
         raise HTTPException(413, "Структура превышает допустимый размер")
     result = normalize_seed(proposed)
     current = normalize_seed(current)
+    if current.get("minimum_required_structure_revision"):
+        result["minimum_required_structure_revision"] = current["minimum_required_structure_revision"]
     if result.get("courseCode") != current.get("courseCode"):
         raise HTTPException(422, "Технический код курса нельзя менять")
     stages = result.get("stages")
@@ -250,6 +252,8 @@ def normalize_editor_payload(proposed: dict, current: dict, next_version: int) -
 def publish_course_structure(
     db: Session, *, manifest: dict, expected_version: int, admin: str
 ) -> ManagedDocumentVersion:
+    from app.course_structure_lock import lock_course
+    lock_course(db, DOCUMENT_KEY, exclusive=True)
     current = active_course_version(db)
     prepared = normalize_editor_payload(manifest, current.payload, expected_version + 1)
     return publish_document(

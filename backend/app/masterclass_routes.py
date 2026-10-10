@@ -25,6 +25,7 @@ from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.checkout_reference import tilda_order_command
 from app.database import get_db
+from app.course_structure_lock import StructureAction, check_structure
 from app.course_access_service import active_resource_codes, course_fully_unlocked
 from app.questionnaire_person_service import PERSON_FIELDS, normalize_person_answer, person_parameters
 from app.course_material_service import published_materials
@@ -153,24 +154,24 @@ class AnswerIn(BaseModel):
     answer_text: str = Field(default="", max_length=30000)
 
 
-class RunActionIn(BaseModel):
+class RunActionIn(StructureAction):
     email: str
     timezone_name: str = Field(default=DEFAULT_COURSE_TIMEZONE, min_length=1, max_length=64)
 
 
-class AppRevealIn(BaseModel):
+class AppRevealIn(StructureAction):
     email: str
     day: int = Field(ge=1, le=365)
     step_index: int = Field(ge=0, le=999)
     placement: str | None = Field(default=None, max_length=80)
 
 
-class CourseCheckIn(BaseModel):
+class CourseCheckIn(StructureAction):
     email: str
     checked: bool
 
 
-class FeedbackPulseIn(BaseModel):
+class FeedbackPulseIn(StructureAction):
     email: str
     answers: dict
 
@@ -309,6 +310,8 @@ def resolve_masterclass_user(
     email: str,
     settings: Settings,
 ) -> User:
+    from app.course_structure_lock import lock_course
+    lock_course(db, "masterclass-21")
     try:
         user = require_user_resource(
             db,
@@ -1094,6 +1097,7 @@ def course_open_day(
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
     context = course_context_for_member(db, user.id)
+    check_structure(context.manifest, context.revision.version_no, body)
     open_course_day(db, user, context, day, now, body.timezone_name)
     db.commit()
     return course_payload(db, user, settings, now, context)
@@ -1112,6 +1116,7 @@ def course_complete_step(
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
     context = course_context_for_member(db, user.id)
+    check_structure(context.manifest, context.revision.version_no, body)
     progress = day_progress(db, user.id, day)
     if not progress:
         raise HTTPException(409, detail={"reason": "day_not_opened"})
@@ -1119,6 +1124,7 @@ def course_complete_step(
     if index < 0 or index >= len(steps):
         raise HTTPException(404, "masterclass step not found")
     step = steps[index]
+    check_structure(context.manifest, context.revision.version_no, body, step=step)
     if step.get("hidden", False):
         raise HTTPException(404, "masterclass step not found")
     if step.get("locked", False):
@@ -1189,6 +1195,7 @@ def course_open_task(
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
     context = course_context_for_member(db, user.id)
+    check_structure(context.manifest, context.revision.version_no, body)
     progress = day_progress(db, user.id, day)
     if not progress:
         raise HTTPException(409, detail={"reason": "day_not_opened"})
@@ -1224,6 +1231,7 @@ def course_update_check(
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
     context = course_context_for_member(db, user.id)
+    check_structure(context.manifest, context.revision.version_no, body)
     progress = day_progress(db, user.id, day)
     if not progress or not progress.task_opened_at:
         raise HTTPException(409, detail={"reason": "task_not_opened"})
@@ -1264,6 +1272,7 @@ def course_submit_feedback(
         raise HTTPException(403, "Feedback checkpoint is unavailable")
     now = datetime.now(timezone.utc)
     context = course_context_for_member(db, user.id)
+    check_structure(context.manifest, context.revision.version_no, body)
     progress = day_progress(db, user.id, day)
     if progress is None or progress.completed_at or not progress.task_opened_at:
         raise HTTPException(409, "Feedback checkpoint is not pending")
@@ -1846,6 +1855,7 @@ def reveal_course_application(
     user = resolve_masterclass_user(request, db, body.email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     context = course_context_for_member(db, user.id)
+    check_structure(context.manifest, context.revision.version_no, body)
     progress = day_progress(db, user.id, body.day)
     steps = context.days.get(body.day, {}).get("steps", [])
     if progress is None:
@@ -1853,6 +1863,7 @@ def reveal_course_application(
     if body.step_index >= len(steps):
         raise HTTPException(404, "masterclass step not found")
     step = steps[body.step_index]
+    check_structure(context.manifest, context.revision.version_no, body, step=step)
     if step.get("hidden", False) or step.get("locked", False):
         raise HTTPException(409, detail={"reason": "step_locked"})
     step_code = str(step.get("code") or step.get("kind") or "")

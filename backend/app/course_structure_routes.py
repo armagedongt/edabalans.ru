@@ -16,10 +16,12 @@ from app.course_structure_service import (
 )
 from app import calorie_course_material_service, calorie_course_service
 from app.database import get_db
+from app.course_operation_routes import router as operations_router
 from app.managed_documents import restore_document, version_history
 
 
 router = APIRouter(tags=["course-structure-editor"])
+router.include_router(operations_router)
 
 
 class CourseStructureUpdate(BaseModel):

@@ -308,6 +308,8 @@ def publish_material(
     expected_source_hash: str | None = None,
     _markdown_adoption: dict | None = None,
 ) -> dict:
+    from app.course_structure_lock import lock_course
+    lock_course(db, DOCUMENT_KEY)
     context = course_context(db)
     day_number, step = article_step(context, step_id)
     if content_format == "markdown":

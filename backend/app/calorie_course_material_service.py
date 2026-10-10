@@ -179,7 +179,10 @@ def publish_material(
     admin: str,
     _restore_version: ContentItemVersion | None = None,
     _markdown_adoption: dict | None = None,
+    commit: bool = True,
 ) -> dict:
+    from app.course_structure_lock import lock_course
+    lock_course(db, DOCUMENT_KEY)
     context = course_context(db)
     stage_number, step = article_step(context, step_id)
     if content_format == "markdown":
@@ -246,7 +249,10 @@ def publish_material(
         db.add(version)
         db.flush()
         item.latest_version_id = version.id
-        db.commit()
+        if commit:
+            db.commit()
+        else:
+            db.flush()
     except HTTPException:
         db.rollback()
         raise
@@ -255,7 +261,8 @@ def publish_material(
         raise HTTPException(
             409, "Материал уже изменён. Получите актуальную версию перед публикацией"
         ) from exc
-    db.refresh(version)
+    if commit:
+        db.refresh(version)
     return version_payload(step_id, stage_number, step, version)
 
 

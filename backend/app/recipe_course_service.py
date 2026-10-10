@@ -75,6 +75,8 @@ def course_manifest(db: Session) -> dict:
                        "title": title, "steps": steps, "checks": []})
     return {
         "courseVersion": f"recipes-2-mc-{context.revision.version_no}",
+        "structureVersion": context.revision.version_no,
+        "minimum_required_structure_revision": context.manifest.get("minimum_required_structure_revision", 0),
         "title": "Система рецептов", "navigation": "materials", "linearNavigation": True,
         "sourceCourse": "masterclass-21", "days": groups,
     }
