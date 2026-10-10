@@ -87,7 +87,8 @@ def send_login_code(email: str, code: str, settings: Settings) -> None:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "email delivery is not configured")
     message = EmailMessage()
     message["Subject"] = render_section("login-code", "subject")
-    message["From"] = settings.smtp_from_email
+    sender = settings.smtp_from_email
+    message["From"] = f"{settings.smtp_from_name} <{sender}>" if settings.smtp_from_name else sender
     message["To"] = email
     message.set_content(render_section("login-code", "text", code=code))
     context = ssl.create_default_context()
