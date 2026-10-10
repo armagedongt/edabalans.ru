@@ -11,6 +11,7 @@ depends_on = None
 
 
 def upgrade():
+    # No existing source is reconstructed and no graph/run is created here.
     op.add_column("tg_content_items", sa.Column("source_markdown", sa.Text(), nullable=True))
     table = sa.table(
         "tg_content_items",

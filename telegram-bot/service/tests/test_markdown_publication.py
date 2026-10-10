@@ -92,3 +92,19 @@ def test_legacy_html_edit_clears_stale_markdown_without_changing_media(publicati
         assert item.source_markdown is None and item.body_source == "<b>Новый HTML</b>"
         assert item.media_path == "original.jpg" and item.media_kind == "photo"
         assert item.content_version == 3
+
+
+def test_title_edit_is_versioned_and_preserves_markdown_original(publication):
+    client, engine = publication
+    response = client.put("/bot-api/content/tpl_nurture_01_max_full/publish", json=payload())
+    assert response.status_code == 200
+    with Session(engine) as session:
+        item_id = session.scalar(select(ContentItem)).id
+    assert client.patch(f"/bot-api/content/{item_id}", json={"title": "Другое название"}).status_code == 409
+    assert client.patch(f"/bot-api/content/{item_id}", json={"title": "Другое название", "expected_version": 1}).status_code == 409
+    response = client.patch(f"/bot-api/content/{item_id}", json={"title": "Другое название", "expected_version": 2})
+    assert response.status_code == 200, response.text
+    with Session(engine) as session:
+        item = session.scalar(select(ContentItem))
+        assert item.content_version == 3 and item.title == "Другое название"
+        assert item.source_markdown == payload()["source_markdown"]
