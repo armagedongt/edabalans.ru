@@ -918,7 +918,7 @@ def test_account_access_email_contains_claim_links_but_not_a_password():
     assert "https://max.ru/test_max_bot?start=Mmax" in plain
     assert "Пароль:" not in plain
     assert "Mtelegram" in html and "Mmax" in html
-    assert message["From"] == "Похудение — это есть! · Сергей Воронцов <cabinet@example.test>"
+    assert message["From"] == "Сергей Воронцов <cabinet@example.test>"
     assert "Оплата прошла успешно." in plain
     assert "Ссылки действуют до 27.09.2026 15:00 (мск)." in plain
     assert "Ссылки действуют до 27.09.2026 15:00 (мск)." in html
