@@ -221,7 +221,7 @@
     },
     {
       "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
-      "subscription_before_heading": "9-меньше-ешь-и-больше-двигайся",
+      "subscription_before_heading": "физическая-активность",
       "inline_related": {
         "source_id": "12296286",
         "before_heading": "2-единственное-ограничение-в-питании"
@@ -244,13 +244,20 @@
         "fit": "contain"
       },
       "related_source_ids": [
-        "11401696",
-        "Sahar-09-18",
-        "693339"
+        "14183275",
+        "11665295",
+        "11857250"
       ],
       "cta": "masterclass",
-      "status": "draft",
-      "editorial_hold": "Временно скрыто по решению Сергея от 10.10.2026: пересечение с интенсивом и другими статьями. Исходник сохранён; готовится отдельная адаптация для канала — 12 советов в трёх направлениях.",
+      "status": "published",
+      "editorial_revision": {
+        "approved_at": "2026-10-10",
+        "decision": "12 практических изменений в трёх направлениях; четыре практических блока из блица перенесены или соединены с существующими. Длинные отступления и учебные скриншоты сняты; отдельный пост для канала готовится после публикации.",
+        "reused_source_ids": ["tilda-49734795", "telegram:1878297271:135"],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      },
       "media": [
         "12-changes/01.webp",
         "12-changes/02.webp",
@@ -289,7 +296,7 @@
         "source_basis": "full_source",
         "validation_status": "pass",
         "review_status": "pass",
-        "adaptation": "minimal_proofread_original_claims_and_22_images_preserved",
+        "adaptation": "owner_approved_practical_block_assembly_original_voice_and_selected_media_preserved",
         "original_published_at": "2024-08-11T17:23:41+00:00",
         "original_date_evidence": {
           "source": "https://telegra.ph/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
@@ -3546,8 +3553,8 @@
       "blog_publication_evidence": {"precision": "day", "introduced_commit": "9ca8baa0dbd08ee0be4d3d87b74ab8ba2e312932", "confirmed_deployed_commit": "7c7f434d3708c5bd54320887985a2553652f186b", "confirmed_deployed_at": "2026-09-17T17:45:54+00:00", "source": "production journal edabalans-deploy-poll.service", "historical_source_date_unknown": true},
       "subscription_before_heading": "уровень-любитель",
       "slug": "15-sovetov-tem-kto-hudeet",
-      "title": "15 советов тем, кто худеет — по одному на килограмм лишнего веса",
-      "excerpt": "Лучшее время для похудения — ВЧЕРА! Второе лучшее время — СЕГОДНЯ!! Не похудели к лету — тогда похудейте просто так. Почему нет?",
+      "title": "11 советов тем, кто худеет: заблуждения и принципы",
+      "excerpt": "Лучшее время для похудения — ВЧЕРА! Второе лучшее время — СЕГОДНЯ!! Начнем с базы и будем повышать сложность.",
       "category": "Похудение",
       "body_file": "tilda-49734795.md",
       "inline_related": {
@@ -3557,7 +3564,8 @@
       "hero": {
         "file": "tilda-49734795/tilda-01-v3-body.webp",
         "alt": "Кот и календарь: когда начинать похудение",
-        "provenance": "https://static.tildacdn.com/tild3562-6361-4337-a534-363064646437/image.png"
+        "provenance": "https://static.tildacdn.com/tild3562-6361-4337-a534-363064646437/image.png",
+        "show": false
       },
       "card": {
         "file": "tilda-49734795/tilda-06-v2-card.webp",
@@ -3565,13 +3573,22 @@
         "provenance": "https://static.tildacdn.com/tild3736-3861-4534-b031-303862356638/image.png"
       },
       "related_source_ids": [
-        "11401696",
+        "13436070",
         "11927800",
         "11875492"
       ],
       "cta": "masterclass",
       "status": "published",
+      "editorial_revision": {
+        "approved_at": "2026-10-10",
+        "decision": "Оставлены исходные советы 2,3,4,5,6,9,10,11,12,13,14: одиннадцать принципов. Остальные практические блоки перенесены в 12 изменений. Пример ошибочной оценки тренировок перенесён сюда; действующий slug сохранён.",
+        "reused_source_ids": ["Prostejshie-12-izmenenij-v-vashej-zhizni-08-11"],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      },
       "media": [
+        "12-changes/15.webp",
         "tilda-49734795/tilda-01-v3-body.webp",
         "tilda-49734795/tilda-03-v3-body.webp",
         "tilda-49734795/tilda-04-v3-body.webp",

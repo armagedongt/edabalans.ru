@@ -204,7 +204,7 @@
       "family_id": "blog:12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
       "title": "12 простых изменений в питании и образе жизни",
       "disposition": "canonical_blog",
-      "publication_hold": {
+      "previous_publication_hold": {
         "status": "temporarily_hidden",
         "decided_at": "2026-10-10",
         "basis": "Прямое решение Сергея: временно скрыть из блога из-за пересечения с интенсивом и другими статьями. Не удалять текст, медиа и семью. Подготовить отдельный пост канала: 12 советов по трём направлениям; правило 30 растений допустимо, правило 1% исключено."
@@ -214,7 +214,13 @@
         "slug": "12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
         "url": "https://blog.похудение-это-есть.рф/articles/12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
         "body_file": "content/blog/articles/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11.md",
-        "status": "temporarily_hidden"
+        "status": "published"
+      },
+      "owner_assembly_decision": {
+        "decided_at": "2026-10-10",
+        "decision": "Вернуть в блог после согласованной сборки: 12 практических действий в трёх направлениях. Блоки 1,7,8,15 бывших 15 советов перенесены либо соединены с уже существующими; длинные повторяющиеся объяснения и учебные скриншоты сняты. 30 растений допустимо, 1% исключено. После статьи — сокращённая версия для канала.",
+        "related_family": "blog:15-sovetov-tem-kto-hudeet",
+        "relation": "owner_approved_block_transfer_not_previous_version"
       },
       "members": [
         {
@@ -305,7 +311,14 @@
     },
     {
       "family_id": "blog:15-sovetov-tem-kto-hudeet",
-      "title": "15 советов тем, кто худеет — по одному на килограмм лишнего веса",
+      "title": "11 советов тем, кто худеет: заблуждения и принципы",
+      "title_aliases": ["15 советов тем, кто худеет — по одному на килограмм лишнего веса"],
+      "owner_assembly_decision": {
+        "decided_at": "2026-10-10",
+        "decision": "Оставить 11 самостоятельных принципов (старые 2,3,4,5,6,9,10,11,12,13,14), действующий URL не менять. Практические блоки переданы в 12 изменений, предупреждение о завышении расхода калорий перенесено из 12 сюда.",
+        "related_family": "blog:12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
+        "relation": "owner_approved_block_transfer_not_previous_version"
+      },
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "tilda-49734795",
