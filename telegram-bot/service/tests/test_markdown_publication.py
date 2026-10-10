@@ -108,3 +108,21 @@ def test_title_edit_is_versioned_and_preserves_markdown_original(publication):
         item = session.scalar(select(ContentItem))
         assert item.content_version == 3 and item.title == "Другое название"
         assert item.source_markdown == payload()["source_markdown"]
+
+
+@pytest.mark.parametrize("media_kind,limit", [(None, 4096), ("photo", 1024), ("video", 1024), ("voice", 1024)])
+def test_compiled_markdown_over_message_or_caption_limit_cannot_be_published(publication, media_kind, limit):
+    client, engine = publication
+    with Session(engine) as session:
+        item = session.scalar(select(ContentItem))
+        item.media_kind = media_kind
+        session.commit()
+    # The Markdown itself fits; its generated HTML exceeds the existing limit.
+    source = "**" + "x" * (limit - 5) + "**"
+    assert len(source) < limit
+    response = client.put("/bot-api/content/tpl_nurture_01_max_full/publish", json=payload(source))
+    assert response.status_code == 422, response.text
+    with Session(engine) as session:
+        item = session.scalar(select(ContentItem))
+        assert item.content_version == 1 and item.status == "draft"
+        assert item.source_markdown == item.body_source == ""
