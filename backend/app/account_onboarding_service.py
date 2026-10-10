@@ -343,6 +343,7 @@ def account_access_email(
     payment_completed: bool,
     password: str | None = None,
     message_text: str | None = None,
+    message_subject: str | None = None,
 ) -> EmailMessage:
     message = EmailMessage()
     variant = "paid" if payment_completed else "free"
@@ -353,7 +354,7 @@ def account_access_email(
     if settings.smtp_reply_to:
         message["Reply-To"] = settings.smtp_reply_to
     if message_text is not None:
-        message.replace_header("Subject", "Сообщение от Сергея Воронцова")
+        message.replace_header("Subject", message_subject or "Сообщение от Сергея Воронцова")
         message.set_content(message_text)
         return message
     intro = render_section("account-onboarding", "intro_" + variant)
@@ -430,9 +431,20 @@ def process_due_account_email(settings: Settings) -> bool:
             bundle = _decrypt_bundle(row.claim_bundle_encrypted, settings)
             direct_password = None
             message_text = None
-            if row.delivery_mode == "admin_message":
+            message_subject = None
+            if row.delivery_mode in {"admin_message", "tilda_transfer"}:
                 message_text = bundle["message_text"]
                 email = bundle["email"]
+            if row.delivery_mode == "tilda_transfer":
+                credential = db.get(AccountCredential, row.user_id)
+                user = db.get(User, row.user_id)
+                linked = db.scalar(select(UserEmail.id).where(UserEmail.user_id == row.user_id, UserEmail.email_normalized == email))
+                if not user or user.status != "active" or user.merged_into_user_id or not linked or not credential or credential.password_version != bundle.get("password_version"):
+                    row.email_status = "superseded"
+                    row.email_error = "Аккаунт, почта или пароль изменились после подготовки письма"
+                    db.commit()
+                    return True
+                message_subject = bundle["subject"]
             if row.delivery_mode == "direct_password":
                 credential = db.get(AccountCredential, row.user_id)
                 if (
@@ -457,6 +469,7 @@ def process_due_account_email(settings: Settings) -> bool:
                 payment_completed=row.payment_id is not None,
                 password=direct_password,
                 message_text=message_text,
+                message_subject=message_subject,
             )
             _send_message(message, settings)
             row.email_status = "sent"

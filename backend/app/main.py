@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.crm_routes import router as crm_router
+from app.tilda_mailing_routes import router as tilda_mailing_router
 from app.content_routes import router as content_router
 from app.app_routes import router as app_router
 from app.tilda_routes import router as tilda_router
@@ -206,6 +207,7 @@ async def protect_native_account_host(request: Request, call_next):
 app.include_router(marketing_router)
 app.include_router(personal_tracking_router)
 app.include_router(crm_router)
+app.include_router(tilda_mailing_router)
 app.include_router(content_router)
 app.include_router(app_router)
 app.include_router(tilda_router)

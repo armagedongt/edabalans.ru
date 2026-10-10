@@ -8,6 +8,7 @@ from string import Template
 
 ROOT = Path(__file__).resolve().parents[2] / "content/service-messages/email"
 SCHEMAS = {
+    "tilda-transfer": {"subject": set(), "text": {"name", "account_url", "email", "password", "access_text", "upgrade_text"}, "unconfirmed": set(), "upgrade": set()},
     "account-onboarding": {"subject_paid": set(), "subject_free": set(), "intro_paid": set(), "intro_free": set()},
     "account-direct": {
         "text": {"intro", "email", "password", "account_url"},
