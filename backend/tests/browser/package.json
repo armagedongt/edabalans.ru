@@ -6,7 +6,7 @@
     "test:browser-journey": "node browser-journey.e2e.mjs",
     "test:recipe-calculator": "node recipe-calculator.e2e.mjs",
     "test:video-player": "node video-player.e2e.mjs",
-    "test:embed-loading": "node embed-loading.e2e.mjs",
+    "test:embed-loading": "node course-structure-actions.mjs && node embed-loading.e2e.mjs",
     "test:direct-intensive": "node direct-intensive.e2e.mjs",
     "test:homepage-anya-player": "node homepage-anya-player.e2e.mjs",
     "test:homepage-checkout": "node homepage-checkout.e2e.mjs",
