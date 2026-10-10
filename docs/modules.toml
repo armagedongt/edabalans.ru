@@ -153,6 +153,9 @@ owns_files = [
   "docs/CONTENT_CATALOG.md", "tools/pikabu_collect.py",
   "docs/knowledge-base/ARTICLE_STANDARD.md",
   "docs/knowledge-base/EDITORIAL_VAULT.md",
+  "work/editorial-vault-completion/**",
+  "backend/app/editorial_media.py", "backend/app/editorial_media_routes.py",
+  "tools/editorial_media.py", "tools/tests/test_editorial_media.py",
     "tools/editorial_vault.py", "tools/editorial_vault_desktop.py",
     "tools/editorial_bot_adapter.py", "tools/editorial_git_adapter.py", "tools/editorial_email_adapter.py",
     "tools/editorial_catalog_adapter.py", "tools/editorial_graph_adapter.py", "tools/editorial_pricing_adapter.py",
@@ -247,7 +250,7 @@ owns_tables = [
   "content_links", "content_metric_snapshots", "content_comments", "content_import_runs",
   "content_families", "content_family_memberships", "content_family_candidates",
 ]
-owns_routes = ["*/admin/api/content*", "*/admin/api/editorial/service-emails*"]
+owns_routes = ["*/admin/api/content*", "*/admin/api/editorial/service-emails*", "*/admin/api/editorial/media", "*/editorial-media/*"]
 sources = [
   { path = "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md", role = "rule", shared = true, consumers = ["platform.knowledge", "operations.imports"] },
     { path = "docs/knowledge-base/EDITORIAL_VAULT.md", role = "rule", shared = true, consumers = ["products.catalog", "platform.commerce", "products.masterclass.course", "products.calories", "messaging.telegram.engine"] },

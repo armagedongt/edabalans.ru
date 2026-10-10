@@ -1,0 +1,223 @@
+interview_metadata:
+  started: '2026-10-10'
+  last_updated: '2026-10-10'
+  status: in_progress
+  can_resume: true
+conversation_history:
+- asked_at: '2026-10-10'
+  topic_keys:
+  - feature_description
+  - user_problem
+  - constraints
+  agent_questions: 'Незавершённое: тренировочный курс, 15 исключений рецептов/архивов,
+    HTML→Markdown, картинки, быстрые структурные операции, полный охват бота/уведомлений.'
+  user_answer: Что значит перевод оставшихся старых HTML в полноценный Markdown? Это
+    что, блядь, такое? Загрузка картинок через Obsidian. Сейчас это что, не работает?
+    То есть через Obsidian мы... То есть то, что в Obsidian я закидываю картинку,
+    она потом на сайт не закидывается разве? Она же должна... Ну это только текст
+    с текстом работает, а картинки — это как происходит? Что с ними происходит? Решай,
+    делай. Быстрый пятый пункт тоже бери, делай. Шестое — полный охват логики бота
+    и уведомлений. Получается... это вот сейчас я сначала логику эту сделаю, мы шаблоны
+    напишем, а потом уже это самое будешь делать. Пока всё остальное бери.
+- asked_at: '2026-10-10'
+  topic_keys:
+  - constraints
+  - feature_description
+  agent_questions: 'Курс по тренировкам ещё не запущен: для него сейчас нет страницы
+    курса и API публикации. Подключить его материалы к Obsidian как редактируемые
+    серверные черновики, а запуск самого курса оставить отдельной задачей? Остальные
+    пункты продолжаю.'
+  user_answer: пока этот курс не трогай
+- asked_at: '2026-10-10'
+  topic_keys:
+  - constraints
+  - feature_description
+  agent_questions: 'Курс по тренировкам ещё не запущен: для него сейчас нет страницы
+    курса и API публикации. Подключить его материалы к Obsidian как редактируемые
+    серверные черновики, а запуск самого курса оставить отдельной задачей? Остальные
+    пункты продолжаю.'
+  user_answer: пока этот курс не трогай
+general_understanding:
+  feature_name:
+    score: 3
+    value: Доведение общей редакционной папки до самостоятельной публикации текста
+      и изображений.
+    gaps: []
+    required: true
+  feature_description:
+    score: 3
+    value: 'Только пункты 2–5: действующие рецептурные исключения, HTML→Markdown с
+      сохранением вставок, локальные картинки и адресный API/CLI добавления/перестановки/переноса
+      статей. Курс тренировок исключён владельцем; полный охват бота отложен.'
+    gaps: []
+    required: true
+  work_type:
+    score: 3
+    value: feature + исправление недоделанного workflow
+    gaps: []
+    required: true
+  user_problem:
+    score: 3
+    value: Сергей вставляет картинку в Obsidian и ожидает её на сайте; сейчас отправляется
+      только текст. Нужен полный понятный оригинал и быстрые операции без повторного
+      исследования и потери прогресса.
+    gaps: []
+    required: true
+  target_users:
+    score: 3
+    value: Сергей как редактор и Codex как исполнитель структуры; читатели получают
+      прежнее содержание и доступы.
+    gaps: []
+    required: false
+  success_criteria:
+    score: 3
+    value: Выбранный материал с локальным изображением публикуется с работающей серверной
+      картинкой; остальные черновики сохранены. Подключённые оригиналы редактируются
+      в одной постоянной папке. Операции структуры имеют точный diff, проверку версии
+      и сохраняют историю прохождения.
+    gaps: []
+    required: true
+  constraints:
+    score: 3
+    value: D:/Codex/work/edabalans-materials единственная рабочая папка. Не переписывать
+      авторский текст. Сохранять уникальные вставки/макеты. Не создавать второй кабинет/движок/библиотеку.
+      Не публиковать новые продукты/рассылки/персональные данные. Шестой пункт отложен
+      владельцем.
+    gaps: []
+    required: true
+  testing_strategy:
+    score: 3
+    value: 'Filesystem unit/integration: локальные ссылки, замена байтов, границы
+      пути, кодовые примеры, selective publish, lost response, сохранение одновременной
+      правки. Backend integration: проверка raster, idempotent upload, draft/public/private
+      access, публикация блоговых media. Конверсия: текст+ссылки+изображения+таблицы+компоненты
+      до/после. Structure: atomic rollback, stable-ID remap, stale revision; concurrent
+      PostgreSQL proof без живых участников.'
+    gaps: []
+    required: true
+user_experience:
+  user_stories:
+    score: 3
+    value: Редактор сохраняет MD+картинку, выбирает материал и публикует. Codex находит
+      тот же файл и ID, выполняет адресное добавление/перестановку по поручению, обновляет
+      тот же каталог и проверяет прогресс.
+    gaps: []
+    required: true
+  acceptance_criteria:
+    score: 3
+    value: Новая картинка и смена байтов старой отображаются после публикации только
+      выбранного материала; локальные ссылки остаются рабочими. Выдача наследует фактический
+      доступ к материалу, включая разрешённые прямые ссылки рецептов ACCESS_RECIPES
+      до дня15. Действующие HTML превращены в Markdown без изменения текста/компонентов;
+      архив сохранён. Пять рецептов подключаются только по подтверждённому оригиналу
+      и вычислительному hash. Structure CLI preview/apply добавляет, переставляет
+      и переносит обычные статьи с явной обязательностью и защитой прогресса. Клиент/инструкция
+      C обновлены.
+    gaps: []
+    required: true
+  edge_cases:
+    score: 3
+    value: Неоднозначный basename и выход из vault запрещены; HTTPS ссылки не скачиваются;
+      кодовые примеры не преобразуются; body/media limits действующего Pillow validator.
+      Архивы не становятся активными. Спецшаги продаж/анкет/приложений не перемещаются
+      между днями универсальной операцией. Existing participants requiredness задаётся
+      явно, completed_at не сбрасывается.
+    gaps: []
+    required: true
+  error_scenarios:
+    score: 3
+    value: Конфликт серверной основы отклоняется до upload; ошибка upload не меняет
+      материал; изменившиеся при upload локальные байты отменяют text publication.
+      Retry того же scoped digest не создаёт копий. Lost response проверяется readback;
+      локальная правка сохраняется. Structure ошибка откатывает материал/manifest/progress/events;
+      старый клиент после structural marker получает 409 без записей.
+    gaps: []
+    required: true
+  verification_strategy:
+    score: 3
+    value: Агент выполняет целевые API/filesystem/renderer проверки, свежие code/security/test
+      review, CI и runtime smoke; фиксирует хэши принятого содержания и сохранение
+      unrelated drafts. Владелец не обязан повторно доказывать работу; инструкция
+      содержит простой сценарий выбранного материала с PNG.
+    gaps: []
+    required: true
+  ui_ux_requirements:
+    score: 3
+    value: Использовать существующее окно и кнопки; без отдельной админки структуры.
+      Шпаргалка/инструкция в C обновляются по фактическому результату.
+    gaps: []
+    required: false
+  risks:
+    score: 3
+    value: 'Утечка private image: reuse actual course day/step authorization. Потеря
+      локальных вложений: mapping accepted rendered source, не необратимая замена
+      ссылок. Потеря содержания HTML: сохранённая основа и deterministic equality.
+      Progress race: shared/exclusive course transaction guard и revision/ID validation.
+      Реальные structural действия production требуют существующий backup договор.'
+    gaps: []
+    required: true
+  technical_decisions:
+    score: 3
+    value: 'Существующие API, Pillow и ManagedDocumentVersion; scoped immutable image
+      records без DDL/нового volume/хоста/SaaS. Серверный оригинал содержит канонические
+      URL, локальный MD сохраняет Obsidian ссылки через publisher state mapping. Главная:
+      только замена src существующих фото через стабильные asset slots; макет прежний.
+      Structure IDs и точная транзакция без нового GUI.'
+    gaps: []
+    required: false
+  deploy_approach:
+    score: 3
+    value: Штатные ревью и release поверх свежего main, проверка CI/production, установка
+      клиента с сохранением всех локальных правок. Изменение данных отдельными существующими
+      версионными операциями с проверкой основы.
+    gaps: []
+    required: false
+  manual_user_actions:
+    score: 3
+    value: Ручная правка и выбор материала. Новые ключи/аккаунты/расходы не предполагаются;
+      обязательные системные подтверждения только если фактически нужны.
+    gaps: []
+    required: false
+integration:
+  integration_points:
+    score: 3
+    value: tools/editorial_vault.py и desktop installer; blog draft/publish/render,
+      course materials/readers, public-site/homepage/intensive; существующие structure
+      routes и learning progression callers. docs modules owner platform.content +
+      product contracts.
+    gaps: []
+    required: true
+  dependencies:
+    score: 3
+    value: Pillow, FastAPI/Pydantic, SQLAlchemy, managed documents, existing native
+      sessions/access, writer gate. Новых внешних услуг нет.
+    gaps: []
+    required: false
+  technical_constraints:
+    score: 3
+    value: PNG/JPEG/WebP 1 MiB each/4 MiB per selected material, 6000px/25MP; paths
+      resolved inside vault. Не менять Tilda/payment hooks/цену/права/продуктовый
+      runtime. Training не трогать. Public image delivery только по фактически опубликованной
+      ссылке, Git runtime readiness сохраняется.
+    gaps: []
+    required: false
+  data_requirements:
+    score: 3
+    value: Оригиналы материалов и картинки в постоянной папке; принятый source/media
+      digest baseline в .publisher; bounded raster bytes+provenance в существующей
+      document table. Сохранённые версии/источники для MD conversion. История прогресса
+      остаётся в существующих таблицах.
+    gaps: []
+    required: false
+  migration_needs:
+    score: 3
+    value: DDL не требуется. Адресное принятие новых MD-редакций существующим versioned
+      API после equality; исходные HTML сохранены в истории. Runtime clients передают
+      structure revision/step ID; legacy допускается до первой structural operation,
+      затем запрещён. Новые тексты/курсы не создавать.
+    gaps: []
+    required: false
+notes: Авторизация пользователя на пункты 2–5 действует; тренировочный курс исключён
+  прямым ответом. Полная логика бота отложена. Три research artifacts завершены; конкретные
+  operations на production course progress не являются тестовой площадкой. Planning
+  completeness wave 1 pending.
