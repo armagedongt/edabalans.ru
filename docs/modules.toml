@@ -48,7 +48,7 @@ owns_tables = [
 [[modules]]
 id = "platform.commerce"
 reads_from = ["messaging.telegram.attribution", "platform.content"]
-admin_catalog = [{ category = "commerce", order = 20, url = "/admin/pricing", label = "Цены и тарифы", icon = "🏷️", description = "Цены продуктов, тарифы и дополнительные предложения." }, { category = "commerce", order = 40, url = "/finance", label = "Финансовая модель", icon = "📊", description = "Расчёт потока, выручки, рекламы, нагрузки и маржи." }]
+admin_catalog = [{ category = "commerce", order = 20, url = "/admin/pricing", label = "Цены и тарифы", icon = "🏷️", description = "Цены продуктов, тарифы и дополнительные предложения." }, { category = "commerce", order = 40, url = "/finance", label = "Финансовая модель", icon = "📊", description = "Расчёт потока, выручки, рекламы, нагрузки и маржи." }, { category = "commerce", order = 50, url = "/admin/tilda-mailing", label = "Перенос кабинетов — письма", icon = "✉️", description = "Подготовленные письма, правки, исключения и отдельный запуск отправки." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.commerce.md"
 depends_on = ["platform.auth", "platform.crm", "messaging.telegram"]
@@ -59,6 +59,9 @@ owns_files = [
   "backend/app/course_access_service.py",
   "backend/app/legacy_course_access.py", "backend/app/legacy_upgrade_service.py",
   "backend/app/importers/prepare_tilda_accounts.py", "backend/tests/test_prepare_tilda_accounts.py",
+  "backend/app/tilda_mailing_service.py", "backend/app/tilda_mailing_routes.py",
+  "backend/app/importers/prepare_tilda_mailing.py", "backend/app/static/tilda-mailing.*",
+  "backend/tests/test_tilda_mailing.py",
   "backend/scripts/publish_legacy_upgrade_prices.py", "backend/tests/test_legacy_courses.py",
   "backend/app/static/account-legacy-offer.js", "backend/tests/browser/legacy-course-offer.e2e.mjs",
   "backend/app/checkout_reference.py",
@@ -113,6 +116,7 @@ owns_tables = [
 owns_routes = [
   "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/robokassa*", "*/tilda/*", "*/personal-access*", "*/pay", "*/subscription*",
   "*/admin/api/payments", "*/admin/api/payment-products", "*/admin/api/resources",
+  "*/admin/tilda-mailing*", "*/admin/api/tilda-mailing*",
 ]
 
 [[modules]]
