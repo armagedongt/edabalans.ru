@@ -376,6 +376,8 @@ def test_partial_publish_writes_only_selected_day_articles(monkeypatch, frozen) 
             pass
         def commit(self):
             pass
+        def get_bind(self):
+            return SimpleNamespace(dialect=SimpleNamespace(name="sqlite"))
     monkeypatch.setattr(publisher, "SessionLocal", Database)
     monkeypatch.setattr(publisher, "active_course_version", lambda db:
                         SimpleNamespace(payload=manifest, version_no=11))
