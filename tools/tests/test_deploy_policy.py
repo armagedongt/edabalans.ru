@@ -275,9 +275,15 @@ class DeployPolicyTests(unittest.TestCase):
             editorial_sha = self.commit(repo, "masterclass editorial content")
             self.assertEqual((False, False, True, False, False, False), self.classify(repo, blog_sha, editorial_sha))
 
+            service_email = repo / "content" / "service-messages" / "email" / "tilda-transfer.md"
+            service_email.parent.mkdir(parents=True)
+            service_email.write_text("Updated subject\n", encoding="utf-8")
+            email_sha = self.commit(repo, "service email template")
+            self.assertEqual((False, False, True, False, False, False), self.classify(repo, editorial_sha, email_sha))
+
             migration.write_text("migration\n", encoding="utf-8")
             migration_sha = self.commit(repo, "migration")
-            self.assertEqual((True, False, True, False, False, False), self.classify(repo, editorial_sha, migration_sha))
+            self.assertEqual((True, False, True, False, False, False), self.classify(repo, email_sha, migration_sha))
 
             seed.write_text("DEFAULT = 2\n", encoding="utf-8")
             seed_sha = self.commit(repo, "seed")

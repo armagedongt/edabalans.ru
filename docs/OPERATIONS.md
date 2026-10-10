@@ -509,6 +509,10 @@ Telegram, Caddy, Compose, migration, `seed.py` и изменения точно�
 impact; чистые правила агента и deploy-control без runtime-зависимости не требуют
 пересборки приложения.
 
+Шаблоны `content/service-messages/**` входят в backend image: правка темы или
+текста письма требует пересборки и перезапуска backend. Классификатор включает
+этот путь; редакционная публикация подтверждается runtime hash шаблона.
+
 `content/masterclass/editorial/**` входит в backend Docker image и всегда считается
 backend impact. Поэтому публикация материала из Git-backed админ-редактора создаёт
 content-only commit в `main`, после которого CI собирает и проверяет backend, а VM
