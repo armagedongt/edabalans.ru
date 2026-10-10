@@ -1,7 +1,7 @@
 interview_metadata:
   started: '2026-10-10'
   last_updated: '2026-10-10'
-  status: in_progress
+  status: completed
   can_resume: true
 conversation_history:
 - asked_at: '2026-10-10'
@@ -19,15 +19,6 @@ conversation_history:
     делай. Быстрый пятый пункт тоже бери, делай. Шестое — полный охват логики бота
     и уведомлений. Получается... это вот сейчас я сначала логику эту сделаю, мы шаблоны
     напишем, а потом уже это самое будешь делать. Пока всё остальное бери.
-- asked_at: '2026-10-10'
-  topic_keys:
-  - constraints
-  - feature_description
-  agent_questions: 'Курс по тренировкам ещё не запущен: для него сейчас нет страницы
-    курса и API публикации. Подключить его материалы к Obsidian как редактируемые
-    серверные черновики, а запуск самого курса оставить отдельной задачей? Остальные
-    пункты продолжаю.'
-  user_answer: пока этот курс не трогай
 - asked_at: '2026-10-10'
   topic_keys:
   - constraints
@@ -162,7 +153,9 @@ user_experience:
       records без DDL/нового volume/хоста/SaaS. Серверный оригинал содержит канонические
       URL, локальный MD сохраняет Obsidian ссылки через publisher state mapping. Главная:
       только замена src существующих фото через стабильные asset slots; макет прежний.
-      Structure IDs и точная транзакция без нового GUI.'
+      Structure IDs и точная транзакция без нового GUI. Обычные фотографии рецепта
+      публикуются со scoped proof и полным source; calculator cards/comments и runtime
+      components защищены, namespace hash/version обновляются атомарно.'
     gaps: []
     required: false
   deploy_approach:
@@ -217,7 +210,7 @@ integration:
       затем запрещён. Новые тексты/курсы не создавать.
     gaps: []
     required: false
-notes: Авторизация пользователя на пункты 2–5 действует; тренировочный курс исключён
-  прямым ответом. Полная логика бота отложена. Три research artifacts завершены; конкретные
-  operations на production course progress не являются тестовой площадкой. Planning
-  completeness wave 1 pending.
+notes: Пользователь уже авторизовал реализацию пунктов2–5; training исключён, botdeferred.
+  Completeness wave1 local recipe-access alignment исправлен и прямо проверен по reader
+  API. Planning validation wave2 quality/adequacy/skeptic ALL CLEAN revision4b5ba45;
+  лимит2 завершён. Повторного разрешения на ранее порученную работу не требуется.
