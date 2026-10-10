@@ -89,6 +89,29 @@ def test_remote_conflict_is_detected_before_uploading_any_image(tmp_path):
     assert file.read_bytes() == original
 
 
+def test_duplicate_picture_files_keep_their_links_through_publish_and_refresh(tmp_path):
+    vault, api, file, image = image_vault(tmp_path)
+    second = image.parent / "second.png"
+    second.write_bytes(image.read_bytes())
+    original = file.read_text(encoding="utf-8") + '\n![[second.png|Фото]]\n'
+    file.write_text(original, encoding="utf-8")
+    assert vault.publish(["public:program"])[0]["status"] == "published"
+    assert "![[second.png|Фото]]" in file.read_text(encoding="utf-8")
+    vault.refresh()
+    assert "![[photo.png|Фото]]" in file.read_text(encoding="utf-8")
+    assert "![[second.png|Фото]]" in file.read_text(encoding="utf-8")
+    uploads = [call for call in api.calls if call[1] == "/admin/api/editorial/media"]
+    assert len(uploads) == 1
+    second.write_bytes(b"second replacement")
+    assert vault.status()[0]["status"] == "changed"
+    assert vault.publish(["public:program"])[0]["status"] == "published"
+    uploads = [call for call in api.calls if call[1] == "/admin/api/editorial/media"]
+    assert len(uploads) == 2
+    file.write_text(file.read_text(encoding="utf-8") + '\nНовая строка.\n', encoding="utf-8")
+    assert vault.publish(["public:program"])[0]["status"] == "published"
+    assert len([call for call in api.calls if call[1] == "/admin/api/editorial/media"]) == 2
+
+
 def test_image_changed_during_upload_does_not_publish_material(tmp_path):
     vault, api, file, image = image_vault(tmp_path)
     request = api.request

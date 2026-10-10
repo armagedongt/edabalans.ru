@@ -437,7 +437,7 @@ class Vault:
                         if path.read_text(encoding="utf-8") != text:
                             raise VaultError("Материал изменён во время проверки; отправка отменена")
                     from tools.editorial_media import upload, unchanged, working_source
-                    upload(self.api, ident, images)
+                    upload(self.api, ident, images, existing_source=remote["text"])
                     if path.read_text(encoding="utf-8") != text or not unchanged(images):
                         raise VaultError("Текст или картинка изменены во время загрузки; публикация отменена")
                     if item["kind"] == "course":

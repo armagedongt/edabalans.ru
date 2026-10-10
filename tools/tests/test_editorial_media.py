@@ -30,6 +30,16 @@ def test_obsidian_attachment_and_byte_replacement_keep_local_original(tmp_path):
     assert rendered_source(source, local_images(tmp_path, file, source), "course:masterclass-21:day-01-article-01") != first
 
 
+def test_identical_bytes_keep_distinct_local_originals(tmp_path):
+    file = tmp_path / "Lesson.md"
+    (tmp_path / "first.png").write_bytes(b"same picture")
+    (tmp_path / "second.png").write_bytes(b"same picture")
+    source = '![[first.png|Фото]]\n\n![[second.png|Фото]]\n'
+    images = local_images(tmp_path, file, source)
+    remote = rendered_source(source, images, "public:program")
+    assert working_source(remote, source, images, "public:program") == source
+
+
 def test_standard_markdown_space_path_and_fenced_examples(tmp_path):
     file = tmp_path / "Lesson.md"
     (tmp_path / "Фото.png").write_bytes(b"image")

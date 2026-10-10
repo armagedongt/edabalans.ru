@@ -114,14 +114,21 @@ def working_source(remote: str, local: str, images: list[LocalImage], scope: str
         wire = rendered_source(local[image.start:image.end], [LocalImage(
             0, image.end-image.start, image.path, image.relative, image.raw, image.sha256,
             image.extension, image.alt, image.title)], scope)
-        remote = remote.replace(wire, local[image.start:image.end])
+        remote = remote.replace(wire, local[image.start:image.end], 1)
     return remote
 
 
-def upload(api, scope: str, images: list[LocalImage]) -> None:
+def upload(api, scope: str, images: list[LocalImage], *, existing_source: str = "") -> None:
+    token = base64.urlsafe_b64encode(scope.encode()).decode().rstrip("=")
+    existing_urls = {match.group("target").strip("<>") for match in IMAGE.finditer(existing_source)
+                     if match.group("wiki") is None}
     seen = set()
     for image in images:
         if image.sha256 in seen:
+            continue
+        url = f"https://edabalans.ru/editorial-media/{token}/{image.sha256}.{image.extension}"
+        if url in existing_urls:
+            seen.add(image.sha256)
             continue
         api.request("POST", "/admin/api/editorial/media", {
             "scope": scope, "name": f"{image.sha256}.{image.extension}",
