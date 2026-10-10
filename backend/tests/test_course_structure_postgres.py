@@ -4,6 +4,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
+from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace
 import pytest
 from fastapi import HTTPException
@@ -16,6 +17,9 @@ from app import course_structure_service as native
 from app.course_structure_lock import KEYS, check_structure, lock_course
 from app.course_structure_operations import apply
 from app.managed_documents import document_hash
+from app.models import AccountCredential, AccountSession
+from app.account_security import token_hash
+from starlette.requests import Request
 
 URL = os.environ.get("EDABALANS_STRUCTURE_TEST_DATABASE_URL", "")
 pytestmark = pytest.mark.skipif(not URL, reason="Requires a disposable PostgreSQL structure database")
@@ -146,3 +150,63 @@ def test_two_concurrent_structural_writers_accept_exactly_one_revision(database)
         assert sorted(future.result(timeout=15) for future in futures) == [200, 409]
     with factory() as db:
         assert native.active_course_version(db).version_no == 2
+
+
+@pytest.mark.parametrize("course", ["masterclass-21", "recipes", "calories"])
+def test_actual_resolver_retains_lock_after_hourly_native_session_commit(database, monkeypatch, course):
+    factory,user_id=database
+    from app import masterclass_routes as mk, recipe_course_routes as recipes, calorie_course_routes as calorie
+    from app.config import Settings
+    module={"masterclass-21":mk,"recipes":recipes,"calories":calorie}[course]
+    # Product rights are covered by native journeys; preserve actual cookie-session read/commit.
+    monkeypatch.setattr(module,"require_user_resource",lambda db,user,*args:user)
+    if course=="masterclass-21":
+        monkeypatch.setattr(mk,"course_start_is_open",lambda *args:True)
+        monkeypatch.setattr(mk,"access_codes",lambda *args:{"ACCESS_MASTERCLASS"})
+    elif course=="recipes":
+        monkeypatch.setattr(recipes,"course_start_is_open",lambda *args:True)
+    else:
+        monkeypatch.setattr(calorie,"course_waits_for_consultation",lambda *args:False)
+        monkeypatch.setattr(calorie,"course_entry_unlocked",lambda *args:True)
+        monkeypatch.setattr(calorie,"publication_status",lambda *args:{"ready":True})
+    now=datetime.now(timezone.utc)
+    with factory() as db:
+        db.add(AccountCredential(user_id=user_id,password_hash="unused",password_version=1,issued_via="test"))
+        db.add(AccountSession(user_id=user_id,token_hash=token_hash("isolated-cookie"),password_version=1,
+                              expires_at=now+timedelta(days=1),last_seen_at=now-timedelta(hours=2)))
+        db.commit()
+    request=Request({"type":"http","method":"POST","path":"/","headers":[
+                     (b"cookie",b"edabalans_account_session=isolated-cookie")]})
+    held=threading.Event();release=threading.Event()
+    code="calories" if course=="calories" else "masterclass-21"
+    def learner():
+        with factory() as db:
+            if course=="masterclass-21": mk.resolve_masterclass_user(request,db,"",Settings(database_url=URL))
+            elif course=="recipes": recipes.resolve_course_user(request,db)
+            else: calorie.resolve_course_user(request,db,"")
+            db.execute(select(User.id).where(User.id==user_id).with_for_update())
+            held.set()
+            assert release.wait(10)
+            db.commit()
+    def writer():
+        with factory() as db:
+            lock_course(db,code,exclusive=True)
+            db.commit()
+    with ThreadPoolExecutor(2) as pool:
+        learning=pool.submit(learner)
+        assert held.wait(10)
+        publishing=pool.submit(writer)
+        try:
+            deadline=time.monotonic()+5
+            blocked=0
+            while time.monotonic()<deadline:
+                with factory() as db:
+                    blocked=db.scalar(text("SELECT count(*) FROM pg_locks WHERE locktype='advisory' AND objid=:key AND NOT granted"),{"key":KEYS[code]})
+                if blocked: break
+                time.sleep(.05)
+            assert blocked and not publishing.done(),"Actual resolver released the course transaction guard"
+        finally: release.set()
+        learning.result(timeout=10);publishing.result(timeout=10)
+    with factory() as db:
+        session=db.scalar(select(AccountSession))
+        assert session.last_seen_at>now-timedelta(minutes=1),"Real native-session hourly commit was not exercised"

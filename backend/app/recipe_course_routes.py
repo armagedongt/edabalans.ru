@@ -32,6 +32,7 @@ def resolve_course_user(request: Request, db: Session) -> User:
         raise HTTPException(403, str(exc)) from exc
     if not course_start_is_open(db, user.id, RESOURCE_CODE):
         raise HTTPException(403, "Курс пока закрыт по условиям доступа")
+    lock_course(db, "masterclass-21")
     return user
 
 

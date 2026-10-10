@@ -80,6 +80,7 @@ def test_reorder_preview_apply_noop_and_stale_client_preserve_material_and_progr
     path = "/api/masterclass/course/days/1/steps/0/complete"
     assert client.post(path, json={"email": "member@example.test"}).status_code == 409
     assert client.post(path, json={"email": "member@example.test", "structure_version": 1, "step_id": "a"}).status_code == 409
+    assert client.post(path, json={"email": "member@example.test", "structure_version": 1, "step_id": "b"}).status_code == 409
     assert client.post(path, json={"email": "member@example.test", "structure_version": 2, "step_id": "a"}).status_code == 409
     accepted = client.post(path, json={"email": "member@example.test", "structure_version": 2, "step_id": "b"})
     assert accepted.status_code == 200, accepted.text
@@ -246,3 +247,42 @@ def test_recipe_nested_positions_follow_reorder_without_reset(course):
         row=db.scalar(select(CourseStepProgress).where(CourseStepProgress.course_code=="recipes"))
         assert (row.stage_number,row.step_index)==new[children[0]["id"]]
         assert row.completed_at.replace(tzinfo=timezone.utc)==NOW
+
+
+def test_move_preserves_effective_obligation_added_after_snapshot(course):
+    _,factory=course
+    with factory() as db:
+        revision=native.active_course_version(db)
+        payload=deepcopy(revision.payload)
+        payload["days"][0]["steps"][0]["requiredForAllAfterRevision"]=2
+        revision.payload=payload
+        revision.version_no=2
+        source=db.scalar(select(MasterclassDayProgress).where(MasterclassDayProgress.day_number==1))
+        source.required_step_ids=["b"]
+        db.commit()
+        assert "a" in native.effective_required_step_ids(native.course_context(db),source,1)
+        operations.apply(db,"masterclass-21",2,{"type":"move","id":"a","unit":2,"required_for_existing":False},"test")
+        target=db.scalar(select(MasterclassDayProgress).where(MasterclassDayProgress.day_number==2))
+        assert "a" in native.effective_required_step_ids(native.course_context(db),target,2)
+        assert target.completed_at is not None
+
+
+def test_calorie_add_requires_summary_and_allows_subsequent_names_edit(course):
+    _,factory=course
+    from app import calorie_course_service as calorie
+    with factory() as db:
+        calorie.course_context(db)
+        operation={"type":"add_article","unit":1,"id":"new-normal-article","title":"Новая","content":"Текст.",
+                   "required":False,"required_for_existing":False}
+        with pytest.raises(Exception) as error:
+            operations.apply(db,"calories",1,operation,"test")
+        assert error.value.status_code==422
+        assert calorie.active_course_version(db).version_no==1
+        operation["summary"]="Описание новой статьи"
+        assert operations.apply(db,"calories",1,operation,"test")["version"]==2
+        current=calorie.active_course_version(db).payload
+        proposed=deepcopy(current)
+        proposed["stages"][0]["title"]="Изменённое название"
+        normalized=calorie.normalize_editor_payload(proposed,current,3)
+        assert normalized["stages"][0]["title"]=="Изменённое название"
+        assert normalized["minimum_required_structure_revision"]==2

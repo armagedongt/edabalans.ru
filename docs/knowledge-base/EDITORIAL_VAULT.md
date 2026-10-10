@@ -463,6 +463,7 @@ HTTP Basic исключительно через HTTPS.
 - `add_article`: новый устойчивый `id`, `unit`, `title`, `summary`, `required`,
   `required_for_existing`, Markdown `content`, необязательные `before_id` и `media`.
   Структура, текст и фотографии принимаются целиком либо откатываются целиком.
+  Для Калорийного курса `summary` обязателен, как в прежнем редакторе названий.
 
 Codex сохраняет маленький JSON операции во временном рабочем каталоге и запускает
 `python -m tools.editorial_course_structure <operation.json>` из установленного

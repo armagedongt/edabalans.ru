@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from types import SimpleNamespace
 import difflib
 import json
 import re
@@ -74,6 +75,8 @@ def build(current, operation, next_version):
         article["title"] = article["title"].strip()
         if not article["title"]:
             raise HTTPException(422, "Название статьи не должно быть пустым")
+        if current.get("courseCode") == "calories" and not article["summary"].strip():
+            raise HTTPException(422, "Для статьи Калорийного курса заполните summary")
         if operation["required"] and operation["required_for_existing"]:
             article["requiredForAllAfterRevision"] = next_version
         moved = [article]
@@ -194,7 +197,7 @@ def remap_rows(db, course_code, before, after, *, coordinate_maps=None):
     return len(rows)
 
 
-def move_obligations(db, course_code, source, target, moved_ids):
+def move_obligations(db, course_code, source, target, moved_ids, before):
     if source is None:
         return
     model = MasterclassDayProgress if course_code == "masterclass-21" else CourseStageProgress
@@ -204,10 +207,13 @@ def move_obligations(db, course_code, source, target, moved_ids):
     unit_field = "day_number" if model is MasterclassDayProgress else "stage_number"
     rows = list(db.scalars(statement.where(getattr(model, unit_field).in_({source, target})).with_for_update()))
     targets = {row.user_id: row for row in rows if getattr(row, unit_field) == target}
+    native = service(course_code)
+    units = {int(unit["number"]): unit for unit in before["days"]}
+    context = SimpleNamespace(days=units, stages=units)
     for row in rows:
         if getattr(row, unit_field) != source:
             continue
-        owned = [ident for ident in row.required_step_ids if ident in moved_ids]
+        owned = [ident for ident in native.effective_required_step_ids(context, row, source) if ident in moved_ids]
         row.required_step_ids = [ident for ident in row.required_step_ids if ident not in moved_ids]
         destination = targets.get(row.user_id)
         if destination is not None:
@@ -232,7 +238,7 @@ def apply(db, course_code, expected_version, operation, admin):
         if course_code == "masterclass-21":
             count += remap_rows(db, "recipes", before, after,
                                 coordinate_maps=(recipe_positions(before), recipe_positions(after)))
-        move_obligations(db, course_code, source, operation["unit"], moved_ids)
+        move_obligations(db, course_code, source, operation["unit"], moved_ids, before)
         revision = publish_document(db, document_type=native.DOCUMENT_TYPE, document_key=course_code,
             schema_version=native.MANAGED_SCHEMA_VERSION, payload=after, expected_version=expected_version,
             admin=admin, commit=False)

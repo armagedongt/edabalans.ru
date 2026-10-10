@@ -627,8 +627,8 @@ id = "products.masterclass.course"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.course.md"
 depends_on = ["platform.content"]
-reads_from = ["platform", "platform.content", "products.recipes"]
-writes_to = ["products.recipes"]
+reads_from = ["platform", "platform.content", "products.recipes", "products.calories"]
+writes_to = ["products.recipes", "products.calories"]
 owns_files = [
   "backend/app/course_structure_routes.py", "backend/app/course_structure_service.py",
   "backend/app/course_operation_routes.py", "backend/app/course_structure_operations.py",

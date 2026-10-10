@@ -321,6 +321,8 @@ def resolve_masterclass_user(
         from app.legacy_course_access import course_resource
         if not course_start_is_open(db, user.id, course_resource(access_codes(db, user.id), "ACCESS_MASTERCLASS")):
             raise AppAccessError("Мастер-класс пока закрыт по условиям доступа")
+        # Updating the native session may commit and release the first transaction lock.
+        lock_course(db, "masterclass-21")
         return user
     except AppAccessError as exc:
         raise HTTPException(403, str(exc)) from exc
