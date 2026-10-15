@@ -1,20 +1,20 @@
 import {calculate,clone,rub,itemCost,changeStart,changeEnd,shift,drawPNG} from './calc.mjs';
 const root=document.querySelector('#app');
-let model,revision,dirty=false,article=null,saving=false;
+let model,revision,dirty=false,article=null,saving=false,canEdit=false;
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeURL=u=>{try{const x=new URL(u);return x.protocol==='https:'||x.protocol==='http:'?x.href:'';}catch{return '';}};
-const api='/admin/api/travel';
+const api='/api/travel';
 const phaseId=location.pathname.includes('/phases/')?location.pathname.split('/').at(-1):null;
 function msg(message,error=false){const n=document.querySelector('#message');if(n){n.textContent=message;n.className=error?'error':'success';}}
 async function request(path,options={}){
-  const r=await fetch(api+path,{credentials:'same-origin',...options});
+  const r=await fetch((options.method&&options.method!=='GET'?'/admin/api/travel':api)+path,{credentials:'same-origin',...options});
   if(r.status===401){location.href='/admin?next='+encodeURIComponent(location.pathname);throw new Error('Нужен вход');}
   const data=await r.json();
   if(!r.ok)throw new Error(typeof data.detail==='string'?data.detail:'Не удалось выполнить запрос');
   return data;
 }
 function current(){return calculate(model);}
-function edit(fn){const previous=clone(model);try{fn();current();dirty=true;render();msg('Есть несохранённые изменения');}catch(e){model=previous;render();msg(e.message,true);}}
+function edit(fn){if(!canEdit||phaseId)return;const previous=clone(model);try{fn();current();dirty=true;render();msg('Есть несохранённые изменения');}catch(e){model=previous;render();msg(e.message,true);}}
 const categories={fixed:'Отдельная программа',leisure:'Из городского бюджета',sport:'Соревнования и велосипед',restaurant:'Ресторанный план',included:'Уже включено в пакет'};
 
 function render(){
@@ -36,6 +36,14 @@ function render(){
   <h2>Отдельные статьи — уже внутри общего итога</h2><table class="expenses"><tbody>${[['Рестораны · '+result.restaurantCount+' выходов',result.restaurants],['Соревнования и велосипед',result.sport],['Связь, страховка, обмен и мелкие непредвиденные',model.settings.common],['Шопинг',model.settings.shopping]].map(([a,b])=>`<tr><td>${a}</td><td class="number"><b>${rub(b)}</b></td></tr>`).join('')}</tbody></table>
   <div class="legend"><b>Как разделены расходы</b><br>Еда включает кофе и простую готовую еду на все дни поездки. Ресторанные вечера — отдельный план.<br>Быт — порошок, паста и другие повседневные покупки.<br>Недельный транспорт — только незапланированные городские поездки и доставка как услуга.<br>Все уже известные такси, переезды, входы и экскурсии находятся в пунктах фаз. Если транспорт включён в тур, второй оплаты нет.<br>Суммы с неподтверждёнными ценами — оценки; изменение дат не подтверждает тарифы заново.</div>
   ${result.warnings.length?`<h2>Что ещё проверить</h2><ul class="muted">${result.warnings.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}<canvas id="export-canvas"></canvas>`;
+  root.querySelectorAll('[data-open]').forEach(n=>n.onclick=async()=>{if(dirty){await save();if(dirty)return;}location.href='/travel/phases/'+n.dataset.open;});
+  root.querySelector('#png').onclick=()=>{const canvas=document.querySelector('#export-canvas');drawPNG(canvas,model,current());canvas.toBlob(b=>download(b,'План зимовки.png'));};
+  if(!canEdit){
+    root.querySelectorAll('#save,#json,#import,#add,[data-remove]').forEach(n=>n.remove());
+    root.querySelectorAll('input').forEach(n=>{if(n.type==='range'){n.remove();return;}const value=document.createElement('span');value.textContent=n.value;n.replaceWith(value);});
+    const login=root.querySelector('a[href="/admin"]');login.href='/admin?next=/travel';login.textContent='Войти для редактирования';
+    return;
+  }
   bindCommon();
   root.querySelector('#start').onchange=e=>edit(()=>changeStart(model,0,e.target.value));
   root.querySelector('#end').onchange=e=>edit(()=>changeEnd(model,model.phases.length-1,e.target.value));
@@ -45,18 +53,16 @@ function render(){
   root.querySelectorAll('[data-night]').forEach(n=>n.onchange=()=>edit(()=>model.phases[+n.dataset.night].nightRate=+n.value));
   root.querySelector('#return').onchange=e=>edit(()=>model.returnFlight.amount=+e.target.value);
   root.querySelectorAll('[data-setting],[data-slider]').forEach(n=>n.onchange=()=>edit(()=>model.settings[n.dataset.setting||n.dataset.slider]=+n.value));
-  root.querySelectorAll('[data-open]').forEach(n=>n.onclick=async()=>{if(dirty){await save();if(dirty)return;}location.href='/admin/travel/phases/'+n.dataset.open;});
   root.querySelectorAll('[data-remove]').forEach(n=>n.onclick=()=>edit(()=>{const i=+n.dataset.remove;if(model.phases.length===1)throw new Error('Нужна хотя бы одна фаза');const removed=model.phases[i];model.phases.splice(i,1);if(i>0&&i<model.phases.length)model.phases[i].start=removed.start;else if(i===0)model.phases[0].start=removed.start;}));
   root.querySelector('#add').onclick=()=>{
     const title=prompt('Город новой фазы');if(!title)return;const country=prompt('Страна');if(!country)return;
     edit(()=>{const start=model.phases.at(-1).end;model.phases.push({id:'phase-'+Date.now().toString(36),title,country,start,end:shift(start,3),base:false,nightRate:3000,flight:{from:'Из предыдущей фазы',amount:0,unknown:true},items:[]});});
   };
-  root.querySelector('#png').onclick=()=>{const canvas=document.querySelector('#export-canvas');drawPNG(canvas,model,current());canvas.toBlob(b=>download(b,'План зимовки.png'));};
   root.querySelector('#import').onclick=()=>{const input=document.createElement('input');input.type='file';input.accept='.json';input.onchange=async()=>{try{const value=JSON.parse(await input.files[0].text());edit(()=>model=value.model||value);}catch(e){msg('Некорректный JSON: '+e.message,true);}};input.click();};
 }
 
 async function save(){
-  if(saving)return;
+  if(!canEdit||phaseId||saving)return;
   const submitted=JSON.stringify(model);saving=true;
   try{current();msg('Сохраняем…');const answer=await request('/plan',{method:'PUT',headers:{'Content-Type':'application/json','X-Travel-Write':'1'},body:JSON.stringify({model,revision})});revision=answer.revision;dirty=JSON.stringify(model)!==submitted;msg(dirty?'Сохранена предыдущая версия; новые изменения ещё не сохранены':'Сохранено на сервере');}
   catch(e){msg(e.message+' Изменения остались в форме; можно скачать JSON.',true);}
@@ -69,23 +75,18 @@ function renderPhase(result){
   const index=model.phases.findIndex(p=>p.id===phaseId);
   if(index<0)throw new Error('Фаза не найдена');
   const p=model.phases[index],r=result.rows[index];
-  const sections=article.sections;
-  const all=[...sections];
+  const all=[...article.sections];
   p.items.filter(i=>!all.some(s=>s.id===i.id)).forEach(i=>all.push({id:i.id,title:i.title,html:'<p>Подробности ещё не заполнены.</p>'}));
-  root.innerHTML=`<div class="toolbar"><button id="back">← Калькулятор</button><button class="primary" id="save">Сохранить</button><button id="json">Скачать JSON</button></div><h1>${esc(p.title)}, ${esc(p.country)}</h1><p class="lead">${esc(p.start)} — ${esc(p.end)} · ${r.nights} ночей · ${rub(r.local)} на месте</p><div id="message" role="status"></div><div class="phase-list">${all.map(section=>{
+  root.innerHTML=`<div class="toolbar"><a class="button" href="/travel">← Калькулятор</a></div><h1>${esc(p.title)}, ${esc(p.country)}</h1><p class="lead">${esc(p.start)} — ${esc(p.end)} · ${r.nights} ночей · ${rub(r.local)} на месте</p><div class="phase-list">${all.map(section=>{
     const item=p.items.find(i=>i.id===section.id);
     const price=section.id==='housing'?r.housing:section.id==='flight'?p.flight.amount:item?itemCost(item):null;
-    return `<details id="item-${esc(section.id)}"><summary><span class="title">${esc(section.title)}${item?`<small>${categories[item.bucket]}</small>`:''}</span><b>${price===null?'':rub(price)}</b>${item?.unknown?'<span class="badge warn">Оценка</span>':''}</summary><div class="detail-body">${item?`<div class="cost-edit"><label><input type="checkbox" data-selected="${esc(item.id)}" ${item.selected?'checked':''}> Включить в план</label><label>Группа <select data-bucket="${esc(item.id)}">${Object.entries(categories).map(([k,v])=>`<option value="${k}" ${k===item.bucket?'selected':''}>${v}</option>`).join('')}</select></label><label>Стоимость, ₽ <input type="number" min="0" value="${itemCost(item)}" data-cost="${esc(item.id)}"></label><label>Дней вне городского бюджета <input type="number" min="0" max="${r.days}" value="${item.excludedDays||0}" data-exclude="${esc(item.id)}"></label></div>${item.parts?.length?`<ul class="breakdown">${item.parts.map(x=>`<li>${esc(x.label)} — ${rub(x.amount)}</li>`).join('')}</ul>`:''}`:''}${section.html}${item?.image&&safeURL(item.image.url)?`<figure><img class="place-photo" src="${esc(safeURL(item.image.url))}" alt="${esc(item.image.alt)}" loading="lazy" referrerpolicy="no-referrer"><figcaption><a href="${esc(safeURL(item.image.source))}" target="_blank" rel="noopener">${esc(item.image.credit||'Источник фотографии')}</a></figcaption></figure>`:''}${item?.source?`<p class="source muted">Источник: <a href="${esc(safeURL(item.source))}" target="_blank" rel="noopener">${esc(item.source)}</a></p>`:''}</div></details>`;
-  }).join('')}</div><p><button id="add-item">+ Добавить расход</button></p>`;
-  bindCommon();document.querySelector('#back').onclick=async()=>{if(dirty){await save();if(dirty)return;}location.href='/admin/travel';};
-  const itemFor=n=>p.items.find(i=>i.id===n);
-  root.querySelectorAll('[data-selected]').forEach(n=>n.onchange=()=>edit(()=>itemFor(n.dataset.selected).selected=n.checked));
-  root.querySelectorAll('[data-bucket]').forEach(n=>n.onchange=()=>edit(()=>itemFor(n.dataset.bucket).bucket=n.value));
-  root.querySelectorAll('[data-cost]').forEach(n=>n.onchange=()=>edit(()=>{const i=itemFor(n.dataset.cost);i.amount=+n.value;i.parts=[];}));
-  root.querySelectorAll('[data-exclude]').forEach(n=>n.onchange=()=>edit(()=>itemFor(n.dataset.exclude).excludedDays=+n.value));
-  document.querySelector('#add-item').onclick=()=>{const title=prompt('Название расхода');if(!title)return;edit(()=>p.items.push({id:'item-'+Date.now().toString(36),title,bucket:p.base?'leisure':'fixed',selected:true,amount:0,parts:[],unknown:true,excludedDays:0}));};
+    const breakdown=item?.parts?.length?`<ul class="breakdown">${item.parts.map(x=>`<li>${esc(x.label)} — ${rub(x.amount)}</li>`).join('')}</ul>`:'';
+    const photo=item?.image&&safeURL(item.image.url)?`<figure><img class="place-photo" src="${esc(safeURL(item.image.url))}" alt="${esc(item.image.alt)}" loading="lazy" referrerpolicy="no-referrer"><figcaption><a href="${esc(safeURL(item.image.source))}" target="_blank" rel="noopener">${esc(item.image.credit||'Источник фотографии')}</a></figcaption></figure>`:'';
+    const source=item?.source?`<p class="source muted">Источник: <a href="${esc(safeURL(item.source))}" target="_blank" rel="noopener">${esc(item.source)}</a></p>`:'';
+    return `<details id="item-${esc(section.id)}"><summary><span class="title">${esc(section.title)}${item?`<small>${categories[item.bucket]}</small>`:''}</span><b>${price===null?'':rub(price)}</b>${item?.unknown?'<span class="badge warn">Оценка</span>':''}</summary><div class="detail-body">${breakdown}${section.html}${photo}${source}</div></details>`;
+  }).join('')}</div>`;
 }
 
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
-try{const data=await request('/plan');model=data.model;revision=data.revision;if(phaseId)article=await request('/phases/'+phaseId);render();}
-catch(e){root.innerHTML='<h1>План путешествия</h1><p class="error">'+esc(e.message)+'</p><a href="/admin/travel">Открыть калькулятор</a>';}
+try{const data=await request('/plan');model=data.model;revision=data.revision;canEdit=data.canEdit===true;if(phaseId)article=await request('/phases/'+phaseId);render();}
+catch(e){root.innerHTML='<h1>План путешествия</h1><p class="error">'+esc(e.message)+'</p><a href="/travel">Открыть калькулятор</a>';}

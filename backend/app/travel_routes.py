@@ -54,9 +54,18 @@ def write_guard(request: Request):
 
 @router.get("/admin/travel", include_in_schema=False)
 @router.get("/admin/travel/phases/{phase_id}", include_in_schema=False)
-def page(request: Request, phase_id: str = "", credentials: HTTPBasicCredentials | None = Depends(security)):
-    if not admin_identity(request, credentials):
-        return RedirectResponse("/admin?next=" + request.url.path, status_code=303, headers={"Cache-Control": "no-store"})
+def legacy_page(phase_id: str = ""):
+    if phase_id:
+        try:
+            service.identifier(phase_id)
+        except service.TravelError as exc:
+            raise HTTPException(404, str(exc)) from exc
+    return RedirectResponse("/travel" + ("/phases/" + phase_id if phase_id else ""), status_code=303, headers={"Cache-Control": "no-store"})
+
+
+@router.get("/travel", include_in_schema=False)
+@router.get("/travel/phases/{phase_id}", include_in_schema=False)
+def page(phase_id: str = ""):
     if phase_id:
         try:
             service.identifier(phase_id)
@@ -66,6 +75,7 @@ def page(request: Request, phase_id: str = "", credentials: HTTPBasicCredentials
 
 
 @router.get("/admin/travel/assets/{name}", dependencies=[Depends(require_admin)], include_in_schema=False)
+@router.get("/travel/assets/{name}", include_in_schema=False)
 def asset(name: str):
     if name not in {"app.mjs", "calc.mjs", "style.css"}:
         raise HTTPException(404)
@@ -82,6 +92,13 @@ def get_plan():
         raise HTTPException(503, str(exc)) from exc
 
 
+@router.get("/api/travel/plan")
+def public_plan(request: Request, credentials: HTTPBasicCredentials | None = Depends(security)):
+    result = get_plan()
+    result["canEdit"] = bool(admin_identity(request, credentials))
+    return result
+
+
 @router.get("/admin/api/travel/export", dependencies=[Depends(require_admin)])
 def export_markdown():
     try:
@@ -92,6 +109,7 @@ def export_markdown():
 
 
 @router.get("/admin/api/travel/phases/{phase_id}", dependencies=[Depends(require_admin)])
+@router.get("/api/travel/phases/{phase_id}")
 def phase(phase_id: str):
     try:
         return service.article(phase_id)

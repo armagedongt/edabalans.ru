@@ -1189,7 +1189,7 @@ telegram_order = 90
 id = "admin.travel"
 parent = "admin"
 card = "docs/knowledge-base/modules/catalog/admin.travel.md"
-admin_catalog = [{ category = "applications", order = 80, url = "/admin/travel", label = "Путешествие", icon = "✈️", description = "Личный маршрут, программа и калькулятор расходов." }]
+admin_catalog = [{ category = "applications", order = 80, url = "/travel", label = "Путешествие", icon = "✈️", description = "Личный маршрут, программа и калькулятор расходов." }]
 owns_files = ["backend/app/travel_service.py", "backend/app/travel_routes.py", "backend/app/static/travel/**", "backend/scripts/publish_travel_plan.py", "backend/tests/test_travel.py", "backend/tests/travel-calc.test.mjs"]
-owns_routes = ["*/admin/travel", "*/admin/travel/*", "*/admin/api/travel/*"]
+owns_routes = ["*/travel", "*/travel/*", "*/api/travel/*", "*/admin/travel", "*/admin/travel/*", "*/admin/api/travel/*"]
 depends_on = ["platform.auth", "admin.control", "operations.delivery"]

@@ -257,7 +257,14 @@ def publish(files, expected):
 
 def save_model(model, expected):
     validate(model)
-    files, _ = snapshot()
+    files, actual = snapshot()
+    if actual != expected:
+        raise Conflict("План изменился. Обновите страницу или сохраните отдельную копию JSON")
+    previous = {phase["id"]: phase for phase in compile_files(files)["phases"]}
+    for phase in model["phases"]:
+        old = previous.get(phase["id"])
+        if phase.get("items", []) != (old.get("items", []) if old else []) or phase.get("includedHousingNights", 0) != (old.get("includedHousingNights", 0) if old else 0):
+            raise TravelError("Программа этапа формируется из Markdown. Меняйте её публикацией MD, а не в калькуляторе")
     old_plan, body = parse(files["plan.md"])
     plan = {key: model[key] for key in ("title", "settings", "returnFlight")}
     plan["phaseIds"] = [p["id"] for p in model["phases"]]

@@ -40,13 +40,49 @@ AUTH = ("admin@example.com", "test-admin-password")
 HEADERS = {"X-Travel-Write": "1"}
 
 
-def test_data_and_assets_are_private(client):
+def test_public_view_and_private_admin_operations(client):
+    for path in ["/travel", "/travel/phases/one", "/travel/assets/app.mjs", "/api/travel/phases/one"]:
+        assert client.get(path).status_code == 200
+    public = client.get("/api/travel/plan")
+    assert public.status_code == 200
+    assert public.json()["canEdit"] is False
+    assert public.headers["cache-control"] == "no-store"
+    assert public.headers["x-robots-tag"] == "noindex, nofollow"
+    assert "files" not in public.json()
+    assert client.get("/api/travel/plan", auth=AUTH).json()["canEdit"] is True
     assert client.get("/admin/api/travel/plan").status_code == 401
-    assert client.get("/admin/travel/assets/app.mjs").status_code == 401
-    assert client.get("/admin/travel", follow_redirects=False).status_code == 303
-    r = client.get("/admin/api/travel/plan", auth=AUTH)
-    assert r.status_code == 200
-    assert r.headers["cache-control"] == "no-store"
+    assert client.get("/admin/api/travel/export").status_code == 401
+    assert client.get("/admin/travel", follow_redirects=False).headers["location"] == "/travel"
+    assert client.get("/admin/travel/phases/one", follow_redirects=False).headers["location"] == "/travel/phases/one"
+
+
+def test_admin_cookie_enables_main_editor(client):
+    from app.auth import admin_session_token, ADMIN_COOKIE
+    import time
+    client.cookies.set(ADMIN_COOKIE, admin_session_token(AUTH[0], int(time.time()) + 60))
+    assert client.get("/api/travel/plan").json()["canEdit"] is True
+
+
+def test_public_cannot_write_even_with_forged_editor_flag(client):
+    before = s.snapshot()[1]
+    data = client.get("/api/travel/plan").json()
+    data["canEdit"] = True
+    data["model"]["settings"]["shopping"] = 999
+    assert client.put("/admin/api/travel/plan", headers=HEADERS, json=data).status_code == 401
+    assert client.post("/admin/api/travel/publish", headers=HEADERS, json={"files": files(), "revision": before}).status_code == 401
+    assert client.put("/api/travel/plan", headers=HEADERS, json=data).status_code == 405
+    assert s.snapshot()[1] == before
+
+
+def test_phase_program_is_changed_by_markdown_not_main_editor(client):
+    data = client.get("/api/travel/plan", auth=AUTH).json()
+    item = {"id": "ticket", "title": "A ticket", "bucket": "fixed", "amount": 100, "selected": True}
+    data["model"]["phases"][0]["items"] = [item]
+    assert client.put("/admin/api/travel/plan", auth=AUTH, headers=HEADERS, json=data).status_code == 422
+    assert s.snapshot()[1] == data["revision"]
+    published = client.post("/admin/api/travel/publish", auth=AUTH, headers=HEADERS, json={"files": files(data["model"]), "revision": data["revision"]})
+    assert published.status_code == 200
+    assert client.get("/api/travel/plan").json()["model"]["phases"][0]["items"][0]["amount"] == 100
 
 
 def test_edit_persists_to_markdown_and_stale_revision_cannot_overwrite(client):
