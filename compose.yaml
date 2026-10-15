@@ -103,6 +103,8 @@ services:
       ROBOKASSA_RECEIPT_PAYMENT_OBJECT: "${ROBOKASSA_RECEIPT_PAYMENT_OBJECT:-service}"
     expose:
       - "8000"
+    volumes:
+      - /srv/sergey-travel/calculator:/srv/sergey-travel/calculator
     depends_on:
       postgres:
         condition: service_healthy

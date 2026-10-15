@@ -58,6 +58,7 @@ jobs:
 
       - name: Test production watchdog
         run: |
+          node --test backend/tests/travel-calc.test.mjs
           node --test infra/monitoring/cloudflare-watchdog/test/*.test.mjs
           node --test infra/monitoring/cloudflare-telegram-relay/test/*.test.mjs
           bash infra/monitoring/test-telegram-watchdog.sh

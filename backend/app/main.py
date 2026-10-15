@@ -60,6 +60,7 @@ from app.public_homepage_analytics_routes import router as public_homepage_analy
 from app.public_site_routes import router as public_site_router
 from app.public_not_found import router as public_not_found_router, public_http_exception
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from app.travel_routes import router as travel_router, TravelBodyLimit
 from app.marketing_routes import router as marketing_router
 from app.personal_tracking_routes import router as personal_tracking_router
 from app.browser_journey_routes import router as browser_journey_router
@@ -124,6 +125,7 @@ app.add_middleware(
     allow_headers=["Content-Type", "Authorization"],
 )
 app.add_middleware(BlogDraftBodyLimitMiddleware)
+app.add_middleware(TravelBodyLimit)
 
 
 @app.middleware("http")
@@ -204,6 +206,7 @@ async def protect_native_account_host(request: Request, call_next):
                     status_code=status.HTTP_403_FORBIDDEN,
                 )
     return await call_next(request)
+app.include_router(travel_router)
 app.include_router(marketing_router)
 app.include_router(personal_tracking_router)
 app.include_router(tilda_mailing_router)
