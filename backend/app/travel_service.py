@@ -50,6 +50,84 @@ def text(value, limit=1000):
     return value
 
 
+def guide_url(value):
+    text(value, 2000)
+    parsed = urlsplit(value)
+    if parsed.scheme != "https" or not parsed.netloc or parsed.username:
+        raise TravelError("Ссылка путеводителя должна использовать HTTPS")
+
+
+def coordinate(value, limit):
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not -limit <= value <= limit:
+        raise TravelError("Некорректные координаты карты")
+
+
+def validate_guide(guide):
+    if not isinstance(guide, dict):
+        raise TravelError("Некорректный путеводитель")
+    places, routes, hotels = (guide.get(k) for k in ("places", "routes", "hotels"))
+    if not isinstance(places, list) or len(places) > 100 or not isinstance(routes, list) or len(routes) > 30 or not isinstance(hotels, list) or len(hotels) > 20:
+        raise TravelError("Слишком много объектов путеводителя")
+    ids = set()
+    kinds = {"hotel", "food", "restaurant", "interest", "walk", "boat", "metro"}
+    for place in places:
+        if not isinstance(place, dict):
+            raise TravelError("Некорректное место")
+        pid = identifier(place.get("id"))
+        if pid in ids:
+            raise TravelError("Повтор места")
+        ids.add(pid)
+        text(place.get("name"), 200)
+        if place.get("category") not in kinds:
+            raise TravelError("Неизвестная группа карты")
+        coordinate(place.get("latitude"), 90)
+        coordinate(place.get("longitude"), 180)
+        identifier(place.get("section"))
+        if place.get("url"):
+            guide_url(place["url"])
+        if "number" in place and (isinstance(place["number"], bool) or not isinstance(place["number"], int) or not 1 <= place["number"] <= 100):
+            raise TravelError("Некорректный номер отеля")
+    for route in routes:
+        if not isinstance(route, dict) or route.get("category") not in {"walk", "boat", "metro"} or not isinstance(route.get("approximate"), bool):
+            raise TravelError("Некорректный маршрут карты")
+        identifier(route.get("id"))
+        identifier(route.get("section"))
+        text(route.get("name"), 200)
+        guide_url(route.get("source"))
+        points = route.get("points")
+        if not isinstance(points, list) or not 2 <= len(points) <= 200:
+            raise TravelError("Нужно от 2 до 200 точек маршрута")
+        for point in points:
+            if not isinstance(point, list) or len(point) != 2:
+                raise TravelError("Некорректная геометрия маршрута")
+            coordinate(point[0], 90)
+            coordinate(point[1], 180)
+    for hotel in hotels:
+        if not isinstance(hotel, dict) or hotel.get("placeId") not in ids:
+            raise TravelError("У отеля нет точки карты")
+        if not any(p["id"] == hotel["placeId"] and p["category"] == "hotel" for p in places):
+            raise TravelError("Карточка отеля требует гостиничную точку")
+        if hotel.get("half") not in {"first", "second"} or hotel.get("breakfast") not in {"included", "unknown"}:
+            raise TravelError("Некорректный период или завтрак отеля")
+        text(hotel.get("role"), 100)
+        text(hotel.get("note", ""), 1500)
+        guide_url(hotel.get("bookingURL"))
+        if hotel.get("photoURL"):
+            guide_url(hotel["photoURL"])
+        if hotel.get("quotedTotal") is not None:
+            number(hotel["quotedTotal"])
+            text(hotel.get("quoteSource"), 200)
+            try:
+                if any(not isinstance(hotel.get(k), str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", hotel[k]) for k in ("quotedStart", "quotedEnd")):
+                    raise ValueError()
+                a, b = (date.fromisoformat(hotel[k]) for k in ("quotedStart", "quotedEnd"))
+                if b <= a:
+                    raise ValueError()
+            except (ValueError, TypeError, KeyError) as exc:
+                raise TravelError("Неверные даты сохранённой цены отеля") from exc
+    return guide
+
+
 def document(meta, body):
     return "---\n" + json.dumps(meta, ensure_ascii=False, indent=2, allow_nan=False) + "\n---\n" + body.strip() + "\n"
 
@@ -106,6 +184,8 @@ def validate(model):
         if not isinstance(phase.get("base"), bool):
             raise TravelError("Укажите, является ли фаза базовой остановкой")
         number(phase.get("nightRate"), "Цена ночи")
+        if "guide" in phase:
+            validate_guide(phase["guide"])
         if number(phase.get("includedHousingNights", 0), "Включённые ночи") > (end - start).days:
             raise TravelError("Включённых ночей больше длительности фазы")
         flight = phase.get("flight", {})
@@ -263,6 +343,8 @@ def save_model(model, expected):
     previous = {phase["id"]: phase for phase in compile_files(files)["phases"]}
     for phase in model["phases"]:
         old = previous.get(phase["id"])
+        if phase.get("guide") != (old.get("guide") if old else None):
+            raise TravelError("Путеводитель формируется из Markdown, а не редактируется на главной")
         if phase.get("items", []) != (old.get("items", []) if old else []) or phase.get("includedHousingNights", 0) != (old.get("includedHousingNights", 0) if old else 0):
             raise TravelError("Программа этапа формируется из Markdown. Меняйте её публикацией MD, а не в калькуляторе")
     old_plan, body = parse(files["plan.md"])

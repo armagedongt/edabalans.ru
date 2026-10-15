@@ -1,6 +1,9 @@
-import {calculate,clone,rub,itemCost,changeStart,changeEnd,shift,drawPNG} from './calc.mjs';
+import {calculate,clone,rub,itemCost,changeStart,changeEnd,shift,drawPNG,ModelHistory} from './calc.mjs';
+import {mountGuide} from './maps.mjs';
 const root=document.querySelector('#app');
 let model,revision,dirty=false,article=null,saving=false,canEdit=false;
+const history=new ModelHistory();
+let savedModel='';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeURL=u=>{try{const x=new URL(u);return x.protocol==='https:'||x.protocol==='http:'?x.href:'';}catch{return '';}};
 const api='/api/travel';
@@ -14,18 +17,19 @@ async function request(path,options={}){
   return data;
 }
 function current(){return calculate(model);}
-function edit(fn){if(!canEdit||phaseId)return;const previous=clone(model);try{fn();current();dirty=true;render();msg('Есть несохранённые изменения');}catch(e){model=previous;render();msg(e.message,true);}}
+function edit(fn){if(!canEdit||phaseId)return;const previous=clone(model);try{fn();current();history.record(previous,model);dirty=JSON.stringify(model)!==savedModel;render();msg(dirty?'Есть несохранённые изменения':'Все изменения сохранены');}catch(e){model=previous;render();msg(e.message,true);}}
+function restore(direction){if(!canEdit||phaseId)return;const next=history[direction](model);if(!next)return;model=next;dirty=JSON.stringify(model)!==savedModel;render();msg(direction==='undo'?'Изменение отменено':'Изменение повторено');}
 const categories={fixed:'Отдельная программа',leisure:'Из городского бюджета',sport:'Соревнования и велосипед',restaurant:'Ресторанный план',included:'Уже включено в пакет'};
 
 function render(){
   const result=current();
   if(phaseId){renderPhase(result);return;}
-  root.innerHTML=`<div class="toolbar"><a class="button" href="/admin">← Админка</a><button class="primary" id="save">Сохранить</button><button id="png">Картинка для Сони</button><button id="json">Скачать JSON</button><button id="import">Открыть JSON</button></div>
+  root.innerHTML=`<div class="toolbar"><a class="button" href="/admin">← Админка</a><button class="primary" id="save">Сохранить</button><button id="undo" ${history.past.length?'':'disabled'} title="Ctrl+Z">↶ Отменить</button><button id="redo" ${history.future.length?'':'disabled'} title="Ctrl+Y">↷ Повторить</button><button id="png">Картинка для Сони</button><button id="json">Скачать JSON</button><button id="import">Открыть JSON</button></div>
   <h1>План на зимовку</h1><div class="toolbar"><label>Начало <input id="start" type="date" value="${esc(model.phases[0].start)}"></label><label>Окончание <input id="end" type="date" value="${esc(model.phases.at(-1).end)}"></label><span>${result.days} дней / ${result.nights} ночей · двое</span></div>
   <div class="total">Весь план: <span id="total">${rub(result.total)}</span> на двоих</div><div id="message" role="status"></div>
-  <div class="table-wrap"><table><thead><tr><th>Фаза</th><th>Заезд</th><th>Выезд</th><th>Дней</th><th>Перелёт сюда, ₽</th><th>Жильё / ночь, ₽</th><th>На месте</th><th>₽ / день</th><th>Итого</th><th>План</th></tr></thead><tbody>
-  ${model.phases.map((p,i)=>{const r=result.rows[i];return `<tr><td class="stage"><strong>${esc(p.title)}, ${esc(p.country)}</strong><small>${esc(p.flight.from)}</small><button class="remove" data-remove="${i}">Убрать фазу</button></td><td><input aria-label="Заезд ${esc(p.title)}" type="date" value="${p.start}" data-start="${i}"></td><td><input aria-label="Выезд ${esc(p.title)}" type="date" value="${p.end}" data-end="${i}"></td><td>${r.days}</td><td><input aria-label="Перелёт ${esc(p.title)}" type="number" min="0" value="${p.flight.amount}" data-flight="${i}"></td><td><input aria-label="Ночь ${esc(p.title)}" type="number" min="0" value="${p.nightRate}" data-night="${i}"></td><td class="number">${rub(r.local)}</td><td class="number">${rub(r.local/r.days)}</td><td class="number"><b>${rub(r.total)}</b></td><td><button data-open="${esc(p.id)}">Посмотреть план →</button></td></tr>`;}).join('')}
-  <tr><td colspan="4"><b>Обратные билеты в Петербург</b><small class="muted"> · ${esc(model.returnFlight.from)}</small></td><td><input id="return" aria-label="Обратные билеты" type="number" min="0" value="${model.returnFlight.amount}"></td><td colspan="4"></td><td><b>${rub(model.returnFlight.amount)}</b></td></tr></tbody></table></div>
+  <div class="table-wrap route-wrap"><table class="route-table"><thead><tr><th>Этап / перелёт сюда</th><th>Заезд → выезд</th><th>Дней</th><th>Билеты, ₽</th><th>Ночь, ₽</th><th>На месте / в день</th><th>Итого этап</th><th>Подробно</th></tr></thead><tbody>
+  ${model.phases.map((p,i)=>{const r=result.rows[i];return `<tr><td class="stage"><strong>${esc(p.title)}, ${esc(p.country)}</strong><small>${esc(p.flight.from)}</small><button class="remove" data-remove="${i}">Убрать фазу</button></td><td class="dates" data-label="Заезд → выезд"><input aria-label="Заезд ${esc(p.title)}" type="date" value="${p.start}" data-start="${i}"><span class="date-arrow">↓</span><input aria-label="Выезд ${esc(p.title)}" type="date" value="${p.end}" data-end="${i}"></td><td data-label="Дней">${r.days}</td><td data-label="Перелёт сюда"><input aria-label="Перелёт ${esc(p.title)}" type="number" min="0" value="${p.flight.amount}" data-flight="${i}"></td><td data-label="Жильё / ночь"><input aria-label="Ночь ${esc(p.title)}" type="number" min="0" value="${p.nightRate}" data-night="${i}"></td><td class="number" data-label="На месте"><b>${rub(r.local)}</b><small>${rub(r.local/r.days)} / день</small></td><td class="number" data-label="Итого этап"><b>${rub(r.total)}</b></td><td class="plan-cell"><button data-open="${esc(p.id)}">План →</button></td></tr>`;}).join('')}
+  <tr class="return-row"><td colspan="3"><b>Обратные билеты в Петербург</b><small class="muted"> · ${esc(model.returnFlight.from)}</small></td><td data-label="Обратные билеты"><input id="return" aria-label="Обратные билеты" type="number" min="0" value="${model.returnFlight.amount}"></td><td colspan="2"></td><td class="number"><b>${rub(model.returnFlight.amount)}</b></td><td></td></tr></tbody></table></div>
   <p><button id="add">+ Добавить фазу</button></p>
   <h2>Городской досуг</h2><p class="muted">Только дни жизни в Бангкоке, на Пхукете и в Нячанге. Выбранные spa, лодки и входы расходуют этот же бюджет. Большие поездки посчитаны отдельно.</p>
   <div class="leisure"><div>Бюджет<b>${rub(result.leisure.budget)}</b></div><div>Уже запланировано<b>${rub(result.leisure.planned)}</b></div><div>Пока свободно<b>${rub(result.leisure.free)}</b></div><div class="over">Превышение<b>${rub(result.leisure.overflow)}</b></div></div>
@@ -39,12 +43,14 @@ function render(){
   root.querySelectorAll('[data-open]').forEach(n=>n.onclick=async()=>{if(dirty){await save();if(dirty)return;}location.href='/travel/phases/'+n.dataset.open;});
   root.querySelector('#png').onclick=()=>{const canvas=document.querySelector('#export-canvas');drawPNG(canvas,model,current());canvas.toBlob(b=>download(b,'План зимовки.png'));};
   if(!canEdit){
-    root.querySelectorAll('#save,#json,#import,#add,[data-remove]').forEach(n=>n.remove());
+    root.querySelectorAll('#save,#undo,#redo,#json,#import,#add,[data-remove]').forEach(n=>n.remove());
     root.querySelectorAll('input').forEach(n=>{if(n.type==='range'){n.remove();return;}const value=document.createElement('span');value.textContent=n.value;n.replaceWith(value);});
     const login=root.querySelector('a[href="/admin"]');login.href='/admin?next=/travel';login.textContent='Войти для редактирования';
     return;
   }
   bindCommon();
+  root.querySelector('#undo').onclick=()=>restore('undo');
+  root.querySelector('#redo').onclick=()=>restore('redo');
   root.querySelector('#start').onchange=e=>edit(()=>changeStart(model,0,e.target.value));
   root.querySelector('#end').onchange=e=>edit(()=>changeEnd(model,model.phases.length-1,e.target.value));
   root.querySelectorAll('[data-start]').forEach(n=>n.onchange=()=>edit(()=>changeStart(model,+n.dataset.start,n.value)));
@@ -64,7 +70,7 @@ function render(){
 async function save(){
   if(!canEdit||phaseId||saving)return;
   const submitted=JSON.stringify(model);saving=true;
-  try{current();msg('Сохраняем…');const answer=await request('/plan',{method:'PUT',headers:{'Content-Type':'application/json','X-Travel-Write':'1'},body:JSON.stringify({model,revision})});revision=answer.revision;dirty=JSON.stringify(model)!==submitted;msg(dirty?'Сохранена предыдущая версия; новые изменения ещё не сохранены':'Сохранено на сервере');}
+  try{current();msg('Сохраняем…');const answer=await request('/plan',{method:'PUT',headers:{'Content-Type':'application/json','X-Travel-Write':'1'},body:JSON.stringify({model,revision})});revision=answer.revision;savedModel=submitted;dirty=JSON.stringify(model)!==submitted;msg(dirty?'Сохранена предыдущая версия; новые изменения ещё не сохранены':'Сохранено на сервере');}
   catch(e){msg(e.message+' Изменения остались в форме; можно скачать JSON.',true);}
   finally{saving=false;}
 }
@@ -85,8 +91,18 @@ function renderPhase(result){
     const source=item?.source?`<p class="source muted">Источник: <a href="${esc(safeURL(item.source))}" target="_blank" rel="noopener">${esc(item.source)}</a></p>`:'';
     return `<details id="item-${esc(section.id)}"><summary><span class="title">${esc(section.title)}${item?`<small>${categories[item.bucket]}</small>`:''}</span><b>${price===null?'':rub(price)}</b>${item?.unknown?'<span class="badge warn">Оценка</span>':''}</summary><div class="detail-body">${breakdown}${section.html}${photo}${source}</div></details>`;
   }).join('')}</div>`;
+  mountGuide(root,p);
 }
 
+window.addEventListener('keydown',e=>{
+  if(!canEdit||phaseId||!(e.ctrlKey||e.metaKey)||e.altKey)return;
+  const key=e.code==='KeyZ'?'z':e.code==='KeyY'?'y':e.key.toLowerCase(),direction=key==='z'?(e.shiftKey?'redo':'undo'):key==='y'?'redo':null;
+  if(!direction)return;
+  e.preventDefault();
+  const active=document.activeElement;
+  if(active?.matches('input')&&active.value!==active.defaultValue)active.dispatchEvent(new Event('change',{bubbles:true}));
+  restore(direction);
+});
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
-try{const data=await request('/plan');model=data.model;revision=data.revision;canEdit=data.canEdit===true;if(phaseId)article=await request('/phases/'+phaseId);render();}
+try{const data=await request('/plan');model=data.model;savedModel=JSON.stringify(model);revision=data.revision;canEdit=data.canEdit===true;if(phaseId)article=await request('/phases/'+phaseId);render();}
 catch(e){root.innerHTML='<h1>План путешествия</h1><p class="error">'+esc(e.message)+'</p><a href="/travel">Открыть калькулятор</a>';}

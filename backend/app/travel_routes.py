@@ -77,7 +77,7 @@ def page(phase_id: str = ""):
 @router.get("/admin/travel/assets/{name}", dependencies=[Depends(require_admin)], include_in_schema=False)
 @router.get("/travel/assets/{name}", include_in_schema=False)
 def asset(name: str):
-    if name not in {"app.mjs", "calc.mjs", "style.css"}:
+    if name not in {"app.mjs", "calc.mjs", "maps.mjs", "style.css", "layout.css"}:
         raise HTTPException(404)
     media = "text/javascript" if name.endswith(".mjs") else "text/css"
     return FileResponse(STATIC / name, media_type=media, headers={"Cache-Control": "no-store"})

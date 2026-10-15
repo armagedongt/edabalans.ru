@@ -112,6 +112,48 @@ def test_markdown_html_and_dangerous_links_cannot_execute(client):
     assert 'href="https://example.org/"' in body
 
 
+def guide():
+    return {"places": [{"id": "hotel", "name": "Synthetic hotel", "category": "hotel", "latitude": 13.7,
+                        "longitude": 100.6, "section": "housing", "number": 1}], "routes": [],
+            "hotels": [{"placeId": "hotel", "half": "first", "role": "First", "breakfast": "unknown",
+                        "bookingURL": "https://www.booking.com/hotel/test.html", "quotedTotal": 1200,
+                        "quotedStart": "2027-01-01", "quotedEnd": "2027-01-03", "quoteSource": "Owner"}]}
+
+
+def test_guide_is_public_readable_but_immutable_from_main_editor(client):
+    m = model()
+    m["phases"][0]["guide"] = guide()
+    s.publish(files(m), s.snapshot()[1])
+    response = client.get("/api/travel/phases/one")
+    assert response.status_code == 200
+    assert response.json()["phase"]["guide"]["places"][0]["latitude"] == 13.7
+    data = client.get("/api/travel/plan", auth=AUTH).json()
+    data["model"]["phases"][0]["guide"]["places"][0]["latitude"] = 14
+    assert client.put("/admin/api/travel/plan", auth=AUTH, headers=HEADERS, json=data).status_code == 422
+    assert s.snapshot()[1] == data["revision"]
+
+
+@pytest.mark.parametrize("change", [
+    lambda g: g.pop("routes"),
+    lambda g: g["places"][0].update(latitude=91),
+    lambda g: g["places"][0].update(longitude=True),
+    lambda g: g["places"][0].update(url="javascript:alert(1)"),
+    lambda g: g["hotels"][0].update(photoURL="http://example.test/image.jpg"),
+    lambda g: g["hotels"][0].update(quotedEnd="20270103"),
+    lambda g: g.update(routes=[{"id": "walk", "name": "Walk", "section": "overview", "category": "walk", "approximate": True,
+                               "source": "https://example.test/", "points": [[13, 100], [14, 200]]}]),
+])
+def test_invalid_guide_rejected_without_mutating_plan(client, change):
+    m = model()
+    g = guide()
+    change(g)
+    m["phases"][0]["guide"] = g
+    before = s.snapshot()[1]
+    r = client.post("/admin/api/travel/publish", auth=AUTH, headers=HEADERS, json={"revision": before, "files": files(m)})
+    assert r.status_code == 422
+    assert s.snapshot()[1] == before
+
+
 @pytest.mark.parametrize("change", [lambda m: m["phases"][0].update(nightRate=-1), lambda m: m["phases"][0].update(end="2026-01-01"), lambda m: m["phases"][0].update(items=[1])])
 def test_invalid_edits_do_not_mutate_current(client, change):
     data = client.get("/admin/api/travel/plan", auth=AUTH).json()

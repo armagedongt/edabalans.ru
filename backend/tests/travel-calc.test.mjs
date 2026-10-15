@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {calculate,clone,changeEnd,changeStart} from '../app/static/travel/calc.mjs';
+import {calculate,clone,changeEnd,changeStart,ModelHistory} from '../app/static/travel/calc.mjs';
 const base=()=>({title:'Test',settings:{foodWeek:7000,householdWeek:700,transportWeek:700,leisureWeek:7000,restaurantFrequency:2,restaurantPrice:4000,common:50000,shopping:40000},returnFlight:{amount:100},phases:[{id:'test',title:'Test',country:'Test',start:'2027-01-01',end:'2027-01-07',base:true,nightRate:1000,flight:{amount:50,from:'A'},items:[]}]});
 test('calendar days include final date, nights do not',()=>{const r=calculate(base());assert.equal(r.days,7);assert.equal(r.nights,6);assert.equal(r.rows[0].housing,6000);assert.equal(r.rows[0].food,7000);});
 test('chosen spa consumes allowance, not added to full allowance',()=>{const m=base();m.phases[0].items=[{id:'spa',bucket:'leisure',selected:true,amount:4000}];const r=calculate(m);assert.equal(r.rows[0].localLeisure,7000);assert.equal(r.leisure.free,3000);});
@@ -17,3 +17,21 @@ test('item breakdown and sport are charged once',()=>{const m=base();const befor
 test('short phase has exact transport and no weekly city allowance',()=>{const m=base();m.phases[0].base=false;m.phases[0].items=[{id:'taxi',selected:true,bucket:'fixed',amount:350}];const r=calculate(m);assert.equal(r.rows[0].transport,0);assert.equal(r.rows[0].allowance,0);assert.equal(r.rows[0].fixed,350);});
 test('untrusted identifiers cannot enter rendered model',()=>{const m=base();m.phases[0].id='x"><img src=x onerror=alert(1)>';assert.throws(()=>calculate(m));});
 test('cruise dinner replaces one paid restaurant outing',()=>{const m=base();const before=calculate(m);m.phases[0].items=[{id:'cruise-meals',selected:true,bucket:'included',amount:0,includedRestaurantVisits:1}];const r=calculate(m);assert.equal(r.restaurantCount,before.restaurantCount-1);assert.equal(r.total,before.total-m.settings.restaurantPrice);});
+
+test('undo and redo restore the complete date-dependent budget',()=>{
+  const h=new ModelHistory(),m=base(),before=clone(m);
+  changeEnd(m,0,'2027-01-10');m.settings.foodWeek=14000;h.record(before,m);
+  const undo=h.undo(m);assert.deepEqual(undo,before);assert.equal(calculate(undo).total,calculate(before).total);
+  assert.deepEqual(h.redo(undo),m);
+});
+
+test('a new edit after undo clears redo and snapshots stay independent',()=>{
+  const h=new ModelHistory(),m=base(),before=clone(m);m.settings.shopping=500;h.record(before,m);
+  before.settings.shopping=999;const restored=h.undo(m);assert.equal(restored.settings.shopping,40000);
+  const next=clone(restored);next.settings.shopping=600;h.record(restored,next);
+  assert.equal(h.redo(next),null);assert.equal(h.undo(next).settings.shopping,40000);
+});
+
+test('unchanged edits create no history and empty undo/redo leave the model intact',()=>{
+  const h=new ModelHistory(),m=base();h.record(m,clone(m));assert.equal(h.undo(m),null);assert.equal(h.redo(m),null);assert.equal(m.settings.shopping,40000);
+});

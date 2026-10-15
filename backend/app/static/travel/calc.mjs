@@ -1,5 +1,11 @@
 export const rub = n => new Intl.NumberFormat('ru-RU', {maximumFractionDigits:0}).format(n) + ' ₽';
 export const clone = x => JSON.parse(JSON.stringify(x));
+export class ModelHistory {
+  constructor(){this.past=[];this.future=[];}
+  record(before,after){if(JSON.stringify(before)===JSON.stringify(after))return;this.past.push(clone(before));this.future=[];}
+  undo(current){if(!this.past.length)return null;this.future.push(clone(current));return this.past.pop();}
+  redo(current){if(!this.future.length)return null;this.past.push(clone(current));return this.future.pop();}
+}
 const day = 86400000;
 export function dateValue(s) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(s || '')) throw new Error('Укажите дату');
