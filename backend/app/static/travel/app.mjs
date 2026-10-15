@@ -84,6 +84,7 @@ function renderPhase(result){
   const all=[...article.sections];
   p.items.filter(i=>!all.some(s=>s.id===i.id)).forEach(i=>all.push({id:i.id,title:i.title,html:'<p>Подробности ещё не заполнены.</p>'}));
   root.innerHTML=`<div class="toolbar"><a class="button" href="/travel">← Калькулятор</a></div><h1>${esc(p.title)}, ${esc(p.country)}</h1><p class="lead">${esc(p.start)} — ${esc(p.end)} · ${r.nights} ночей · ${rub(r.local)} на месте</p><div class="phase-list">${all.map(section=>{
+    if(section.id.startsWith('group-')&&!section.html.trim()&&!p.items.some(i=>i.id===section.id))return `<h2 id="item-${esc(section.id)}" class="phase-group">${esc(section.title)}</h2>`;
     const item=p.items.find(i=>i.id===section.id);
     const price=section.id==='housing'?r.housing:section.id==='flight'?p.flight.amount:item?itemCost(item):null;
     const breakdown=item?.parts?.length?`<ul class="breakdown">${item.parts.map(x=>`<li>${esc(x.label)} — ${rub(x.amount)}</li>`).join('')}</ul>`:'';
