@@ -84,36 +84,73 @@ export function changeEnd(model,index,value) {
 export function shortDate(s){return new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short',timeZone:'UTC'}).format(new Date(dateValue(s)));}
 
 export function drawPNG(canvas,model,result) {
-  const width=1840,height=600+(result.rows.length+1)*93+340;
-  canvas.width=width;canvas.height=height;
-  const c=canvas.getContext('2d');c.fillStyle='#f5f3ef';c.fillRect(0,0,width,height);
-  const text=(x,y,s,size=25,bold=false)=>{c.fillStyle='#243238';c.font=`${bold?'600':'400'} ${size}px Arial`;c.fillText(s,x,y);};
+  const width=900,pad=40,right=width-pad;
+  canvas.width=width;
+  const measure=canvas.getContext('2d'),ops=[];
+  let y=54;
+  const font=(size,bold)=>`${bold?'600':'400'} ${size}px Arial`;
+  function lines(value,size,bold,maxWidth){
+    measure.font=font(size,bold);
+    const out=[];let line='';
+    for(const word of String(value).split(' ')){
+      const next=line?line+' '+word:word;
+      if(line&&measure.measureText(next).width>maxWidth){out.push(line);line=word;}else line=next;
+    }
+    if(line)out.push(line);
+    return out;
+  }
+  function full(value,size=32,bold=false,color='#243238'){
+    for(const line of lines(value,size,bold,right-pad)){
+      ops.push({type:'text',x:pad,y,value:line,size,bold,color});y+=Math.ceil(size*1.25);
+    }
+  }
+  function pair(label,value,size=32,bold=false){
+    measure.font=font(size,bold);
+    const valueWidth=measure.measureText(value).width;
+    const wrapped=lines(label,size,bold,right-pad-valueWidth-28);
+    ops.push({type:'text',x:right-valueWidth,y,value,size,bold,color:'#243238'});
+    for(const line of wrapped){ops.push({type:'text',x:pad,y,value:line,size,bold,color:'#243238'});y+=Math.ceil(size*1.25);}
+  }
+  full('План на зимовку',42,true);
   const first=model.phases[0],last=model.phases.at(-1);
-  text(60,65,'План на зимовку · '+shortDate(first.start)+' — '+shortDate(last.end)+' '+last.end.slice(0,4),43,true);
-  text(60,125,'Весь план: '+rub(result.total)+' на двоих',41,true);
-  text(60,200,'Где живём и сколько это стоит',31,true);
-  const xs=[60,540,810,915,1135,1350,1580];
-  ['Этап','Даты','Дней','Перелёт сюда','На месте','₽/день','Итого'].forEach((v,i)=>text(xs[i],255,v,23,true));
-  let y=300;
-  for(const [i,r] of result.rows.entries()){
-    if(i%2===0){c.fillStyle='#e7ece9';c.fillRect(45,y-30,1750,85);}
-    const label=r.title+', '+r.country;
-    let size=24;c.font='600 '+size+'px Arial';while(c.measureText(label).width>460&&size>16){size--;c.font='600 '+size+'px Arial';}text(60,y,label,size,true);
-    text(60,y+31,r.from.length>48?r.from.slice(0,47)+'…':r.from,17);
-    const vals=[shortDate(r.start)+' – '+shortDate(r.end),r.days,r.flight?rub(r.flight):'—',rub(r.local),rub(r.local/r.days),rub(r.total)];
-    vals.forEach((v,i)=>text(xs[i+1],y+8,String(v),23,i===5));y+=93;
+  full(shortDate(first.start)+' — '+shortDate(last.end)+' '+last.end.slice(0,4),34);
+  y+=18;
+  ops.push({type:'rect',x:0,y:y-33,w:width,h:143,color:'#28666c'});
+  full('Весь план на двоих',34,true,'#ffffff');
+  full(rub(result.total),50,true,'#ffffff');
+  y+=35;
+  for(const [index,r] of result.rows.entries()){
+    const begin=y-35,bg=ops.length;
+    full(r.title+' · '+r.country,36,true);
+    full(shortDate(r.start)+' — '+shortDate(r.end)+' · '+r.days+' дн.',32);
+    if(r.flight)pair(r.from,rub(r.flight));
+    else if(model.phases[index].flight.from.startsWith('Автобус '))full(model.phases[index].flight.from,32);
+    pair('На месте',rub(r.local));
+    pair(rub(r.local/r.days)+'/день','Всего '+rub(r.total),32,true);
+    y+=28;
+    ops.splice(bg,0,{type:'rect',x:0,y:begin,w:width,h:y-begin-12,color:index%2===0?'#e7ece9':'#f5f3ef'});
   }
-  text(60,y,'Обратные билеты в Петербург',25,true);text(60,y+31,model.returnFlight.from,17);
-  text(540,y+8,shortDate(last.end),24);text(915,y+8,rub(model.returnFlight.amount),24);text(1580,y+8,rub(model.returnFlight.amount),24,true);y+=100;
-  text(60,y,'Отдельные статьи — уже входят в общий итог',30,true);y+=55;
-  for(const [label,value] of [['Рестораны',result.restaurants],['Соревнования и велосипед',result.sport],['Связь, страховка, обменные комиссии и мелкие непредвиденные',model.settings.common],['Шопинг',model.settings.shopping]]){
-    text(70,y,label,25);text(1580,y,rub(value),25,true);y+=46;
+  y+=5;
+  full('Обратно в Петербург',36,true);
+  pair(shortDate(last.end),rub(model.returnFlight.amount),34,true);
+  y+=30;
+  full('Отдельные статьи',36,true);
+  for(const [label,value] of [['Рестораны',result.restaurants],['Соревнования и велосипед',result.sport],['Связь, страховка, комиссии и прочее',model.settings.common],['Шопинг',model.settings.shopping]])pair(label,rub(value));
+  y+=28;
+  full('Ставки на двоих',36,true);
+  full('Жильё за ночь',32,true);
+  const rates=[...new Map(model.phases.map(p=>[p.title,p.nightRate])).entries()].map(([k,v])=>k+' '+rub(v));
+  for(let i=0;i<rates.length;i+=2)full(rates.slice(i,i+2).join(' · '));
+  y+=12;
+  full('Еда и кофе '+rub(model.settings.foodWeek)+'/нед.');
+  full('Быт '+rub(model.settings.householdWeek)+' · Транспорт '+rub(model.settings.transportWeek)+'/нед.');
+  full('Досуг '+rub(model.settings.leisureWeek)+'/нед.');
+  full('Рестораны '+model.settings.restaurantFrequency+' раза/нед. · чек '+rub(model.settings.restaurantPrice));
+  canvas.height=y+28;
+  const c=canvas.getContext('2d');c.fillStyle='#f5f3ef';c.fillRect(0,0,width,canvas.height);
+  for(const op of ops){
+    c.fillStyle=op.color;
+    if(op.type==='rect')c.fillRect(op.x,op.y,op.w,op.h);
+    else{c.font=font(op.size,op.bold);c.fillText(op.value,op.x,op.y);}
   }
-  y+=20;c.strokeStyle='#bdc9c6';c.beginPath();c.moveTo(60,y);c.lineTo(1790,y);c.stroke();y+=50;
-  text(60,y,'Ставки расчёта · на двоих',28,true);y+=43;
-  const rates=[...new Map(model.phases.filter(p=>p.base).map(p=>[p.title,p.nightRate])).entries()].map(([k,v])=>k+' '+rub(v)).join(' · ');
-  text(60,y,'Жильё за ночь: '+rates,23);y+=36;
-  text(60,y,'Еда и кофе '+rub(model.settings.foodWeek)+'/нед. · Быт '+rub(model.settings.householdWeek)+'/нед.',23);y+=36;
-  text(60,y,'Городской транспорт '+rub(model.settings.transportWeek)+'/нед. · Городской досуг '+rub(model.settings.leisureWeek)+'/нед.',23);y+=36;
-  text(60,y,'Рестораны: '+model.settings.restaurantFrequency+' раза в неделю · '+rub(model.settings.restaurantPrice)+' за выход.',23);
 }
