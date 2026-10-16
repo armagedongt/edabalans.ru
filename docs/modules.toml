@@ -837,7 +837,7 @@ owns_tables = [
   "attribution_events", "tg_tracking_links", "tg_tracking_link_aliases",
   "tg_tracking_link_tags", "tg_utm_tag_rules", "tg_tracking_sessions", "tg_tracking_events",
 ]
-  owns_routes = ["*/apps/channel-bridge*", "*/browser-journey.js", "*/api/public/browser-journey",
+  owns_routes = ["*/c", "*/c/", "*/apps/channel-bridge*", "*/browser-journey.js", "*/api/public/browser-journey",
   "*/telegram/webhook", "*/bot-api/*tracking*", "*/bot-api/*link*", "*/bot-api/*utm*",
   "*/bot/public/start-link", "*/bot/public/start-link/click", "*/q/*",
   "*/go/*", "*/r/*", "*/m/*", "*/p/*",

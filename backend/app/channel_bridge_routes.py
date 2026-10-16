@@ -28,6 +28,8 @@ class BridgeVerificationIn(BaseModel):
 
 @router.get("/apps/channel-bridge", include_in_schema=False)
 @router.get("/apps/channel-bridge/", include_in_schema=False)
+@router.get("/c", include_in_schema=False)
+@router.get("/c/", include_in_schema=False)
 def channel_bridge_preview() -> HTMLResponse:
     template = (STATIC_DIR / "index.html").read_text(encoding="utf-8")
     return HTMLResponse(

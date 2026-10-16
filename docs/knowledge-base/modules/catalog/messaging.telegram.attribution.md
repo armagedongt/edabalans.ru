@@ -40,7 +40,7 @@ implementation_status: implemented
 ## Граница
 
 Изолированная проба перехода Mini App → закреп доступна по
-`/apps/channel-bridge`; контракт и регистрация — раздел «Проба Mini App» в
+`https://edabalans.ru/c` (совместимость: `/apps/channel-bridge`); контракт и регистрация — раздел «Проба Mini App» в
 `LINKS_AND_ATTRIBUTION.md`. Она не является запуском бота или готовой рекламной
 атрибуцией и не меняет текущую воронку.
 

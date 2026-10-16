@@ -39,15 +39,17 @@ def signed_data(*, timestamp=None, token=TOKEN):
 
 
 def test_preview_is_public_without_login_and_ignores_external_destination():
-    response = make_client().get("/apps/channel-bridge?url=https://example.com")
-    assert response.status_code == 200
-    assert f'href="{PREVIEW_POST_URL}"' in response.text
-    assert "example.com" not in response.text
-    assert "{{DESTINATION" not in response.text
-    assert response.headers["cache-control"] == "no-store"
-    assert response.headers["x-robots-tag"] == "noindex, nofollow"
-    assert "set-cookie" not in response.headers
-    assert make_client().get("/apps/channel-bridge/bridge.js").status_code == 200
+    client = make_client()
+    for path in ("/c", "/c/", "/apps/channel-bridge", "/apps/channel-bridge/"):
+        response = client.get(path + "?url=https://example.com")
+        assert response.status_code == 200
+        assert f'href="{PREVIEW_POST_URL}"' in response.text
+        assert "example.com" not in response.text
+        assert "{{DESTINATION" not in response.text
+        assert response.headers["cache-control"] == "no-store"
+        assert response.headers["x-robots-tag"] == "noindex, nofollow"
+        assert "set-cookie" not in response.headers
+    assert client.get("/apps/channel-bridge/bridge.js").status_code == 200
 
 
 def test_verified_telegram_input_only_returns_the_post_and_no_session():
