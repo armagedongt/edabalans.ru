@@ -821,6 +821,8 @@ telegram_order = 10
 owns_files = [
   "backend/app/browser_journey_service.py", "backend/app/browser_journey_routes.py", "backend/app/static/browser-journey.js", "backend/tests/test_browser_journey.py", "backend/tests/browser/browser-journey.e2e.mjs",
   "backend/app/telegram_public_cta.py",
+    "backend/app/channel_bridge_routes.py", "backend/app/static/channel-bridge/*",
+    "backend/tests/test_channel_bridge.py", "backend/tests/browser/channel-bridge.test.cjs",
   "backend/app/personal_tracking_routes.py", "backend/tests/test_personal_tracking_routes.py",
   "telegram-bot/service/app/start_router.py", "telegram-bot/service/app/tracking.py",
   "telegram-bot/service/app/temporary_entry.py", "telegram-bot/service/tests/test_temporary_entry.py",
@@ -835,7 +837,7 @@ owns_tables = [
   "attribution_events", "tg_tracking_links", "tg_tracking_link_aliases",
   "tg_tracking_link_tags", "tg_utm_tag_rules", "tg_tracking_sessions", "tg_tracking_events",
 ]
-owns_routes = ["*/browser-journey.js", "*/api/public/browser-journey",
+  owns_routes = ["*/apps/channel-bridge*", "*/browser-journey.js", "*/api/public/browser-journey",
   "*/telegram/webhook", "*/bot-api/*tracking*", "*/bot-api/*link*", "*/bot-api/*utm*",
   "*/bot/public/start-link", "*/bot/public/start-link/click", "*/q/*",
   "*/go/*", "*/r/*", "*/m/*", "*/p/*",

@@ -64,6 +64,7 @@ from app.travel_routes import router as travel_router, TravelBodyLimit
 from app.marketing_routes import router as marketing_router
 from app.personal_tracking_routes import router as personal_tracking_router
 from app.browser_journey_routes import router as browser_journey_router
+from app.channel_bridge_routes import router as channel_bridge_router
 from app.database import SessionLocal, get_db
 from app.browser_journey_service import public_host
 from urllib.parse import urlsplit
@@ -209,6 +210,7 @@ async def protect_native_account_host(request: Request, call_next):
 app.include_router(travel_router)
 app.include_router(marketing_router)
 app.include_router(personal_tracking_router)
+app.include_router(channel_bridge_router)
 app.include_router(tilda_mailing_router)
 app.include_router(crm_router)
 app.include_router(content_router)

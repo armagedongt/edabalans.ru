@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Открыть канал</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin: 0; padding: 28px 24px; background: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #18212b); font: 17px/1.5 system-ui, sans-serif; }
+    main { max-width: 420px; margin: 10vh auto 0; }
+    p { margin: 0 0 22px; }
+    a { display: block; padding: 13px 18px; border-radius: 12px; text-align: center; text-decoration: none; background: var(--tg-theme-button-color, #229ed9); color: var(--tg-theme-button-text-color, #fff); font-weight: 600; }
+  </style>
+  <script id="destination" type="application/json">{{DESTINATION_JSON}}</script>
+  <script defer src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script defer src="/apps/channel-bridge/bridge.js"></script>
+</head>
+<body>
+  <main>
+    <p id="status" role="status" aria-live="polite">Открываем канал…</p>
+    <a id="open-post" href="{{DESTINATION_URL}}">Открыть закреп</a>
+  </main>
+</body>
+</html>
