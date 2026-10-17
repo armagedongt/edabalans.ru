@@ -59,6 +59,11 @@ implementation_status: implemented
 
 ## Источники истины
 
+Явно отложенное владельцем развитие: [ТЗ ссылок через Mini App и сквозной
+аналитики](../../../plans/CHANNEL_FIRST_ATTRIBUTION_20261018.md). Сначала перенос
+публичного сайта с Tilda и согласованного домена в отдельном потоке, затем
+реализация по новой команде. Прежний экран пока не архивирован и не изменён.
+
 `START_WELCOME_ROUTING.md`, `LEAD_ENTRY_OWNER_REQUIREMENTS.md`,
 `LEAD_ENTRY_TECHNICAL_SPEC.md`, runtime tracking data;
 [`LINKS_AND_ATTRIBUTION.md`](../telegram/LINKS_AND_ATTRIBUTION.md) для правил
