@@ -41,7 +41,7 @@ def test_browser_404_is_safe_not_indexable_and_uses_canonical_cta(monkeypatch):
     assert "secret-token-marker" not in response.text
     nav = Navigation()
     nav.feed(response.text)
-    assert nav.links == ["https://похудение-это-есть.рф/", "https://похудение-это-есть.рф/lk", destination, "#ed404-contacts"]
+    assert nav.links == ["https://похудение-это-есть.рф/", "https://похудение-это-есть.рф/lk", destination, "https://похудение-это-есть.рф/blog", "https://t.me/FitnessSergey", "https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw"]
     assert "data-edabalans-site-header" in response.text
     assert 'id="ed404-contacts" data-edabalans-site-footer' in response.text
 
