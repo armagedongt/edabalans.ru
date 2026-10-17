@@ -5,30 +5,36 @@
   const status = document.getElementById('status');
   const button = document.getElementById('open-post');
   const app = window.Telegram && window.Telegram.WebApp;
-  let opened = false;
+  let navigationRequested = false;
   button.href = target;
 
   function openPost(event) {
     if (!app || !app.initData || typeof app.openTelegramLink !== 'function') return;
     if (event) event.preventDefault();
-    if (opened) return;
     try {
-      app.openTelegramLink(target);
+      // Android guards SDK link commands without a recent in-app tap. Its
+      // WebView handles ordinary t.me navigation through the native client.
+      if (!event && (app.platform === 'android' || app.platform === 'android_x')) {
+        window.location.replace(target);
+      } else {
+        app.openTelegramLink(target);
+      }
     } catch (_) {
-      status.textContent = 'Нажмите кнопку, чтобы открыть закреп.';
+      status.textContent = 'Если канал не открылся, нажмите «Открыть канал».';
       // Keep a normal link when this client cannot handle the SDK command.
       button.removeEventListener('click', openPost);
       return;
     }
-    opened = true;
-    // Since Bot API 7.0 openTelegramLink leaves the Mini App alive. Explicitly
-    // close it after submitting the navigation command so no panel remains.
-    try { app.close(); } catch (_) { /* The post navigation already succeeded. */ }
+    navigationRequested = true;
+    // Desktop was verified by the owner. On mobile, let Telegram finish the
+    // navigation; an immediate close can discard it or hide the fallback card.
+    if (app.platform === 'tdesktop' || app.platform === 'macos') {
+      try { app.close(); } catch (_) { /* Keep the channel link usable. */ }
+    }
   }
 
   button.addEventListener('click', openPost);
   if (!app || !app.initData) {
-    status.textContent = 'Откройте закреп канала по кнопке ниже.';
     return;
   }
   app.ready();
@@ -48,8 +54,8 @@
     return response.json();
   }).then(function (data) {
     if (data.destination !== target) throw new Error('Unexpected destination');
-    if (!opened) openPost();
+    if (!navigationRequested) openPost();
   }).catch(function () {
-    if (!opened) status.textContent = 'Нажмите кнопку, чтобы открыть закреп.';
+    if (!navigationRequested) status.textContent = 'Если канал не открылся, нажмите «Открыть канал».';
   }).finally(function () { clearTimeout(timer); });
 }());
