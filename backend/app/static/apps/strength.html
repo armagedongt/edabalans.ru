@@ -1498,6 +1498,10 @@
 .st-group-fact{gap:4px}
 .st-plan-copy-label.st-copy-icon{display:inline-grid}
 @media(max-width:700px){.st-copy-icon{width:26px;height:26px;min-height:26px!important;margin:0}}
+.st-session-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin:12px 0}.st-session-date{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:14px;color:var(--st-muted)}.st-session-date input{min-height:42px;max-width:100%;padding:8px;border:1px solid var(--st-line);border-radius:8px;background:var(--st-card);color:var(--st-text);font:inherit}
+/* Keep both exercise copy actions available in the card layout. */
+.st-modern-labels .st-plan-copy-label,.st-modern-labels .st-fact-copy-label{display:inline-flex;align-items:center;justify-content:center;gap:3px;min-height:32px;margin:0 0 4px;padding:3px;border:0;background:transparent;color:inherit;font-size:11px;cursor:pointer}.st-copy-caption{font-size:11px;white-space:nowrap}.st-modern-labels .st-copy-icon:disabled{opacity:.4;cursor:default}.st-modern-labels .st-plan-label,.st-modern-labels .st-fact-label{display:flex;flex-direction:column;align-items:center}.st-modern-labels .st-plan-label br,.st-modern-labels .st-fact-label br{display:none}.st-group-plan .st-copy-caption,.st-group-fact .st-copy-caption{display:none}
+.st-session-controls .st-action,.st-empty-history .st-action{font-size:13px;min-height:42px}.st-empty-history{display:flex;gap:8px;margin-top:10px}.st-modern-labels .st-copy-icon{width:auto;height:auto;min-height:36px!important;padding:4px!important}
 </style>
 
 <script>
@@ -3468,19 +3472,37 @@ function renderJournalHeader(){
   var sessions = currentWorkout().sessions;
 
   if(!templateSessionIndices().length){
-    return '<div class="st-empty">'+(activeCatalog().length ? 'В этом шаблоне пока нет тренировок.' : 'В этом шаблоне пока нет упражнений. Нажмите значок редактирования у шаблона и добавьте нужные.')+'</div>'+(activeCatalog().length ? '<button class="st-new-session" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Создать первую тренировку')+'</button>' : '');
+    return '<div class="st-empty">'+(activeCatalog().length ? 'В этом шаблоне пока нет тренировок.' : 'В этом шаблоне пока нет упражнений. Нажмите значок редактирования у шаблона и добавьте нужные.')+'</div>'+(activeCatalog().length ? '<button class="st-new-session" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Создать первую тренировку')+'</button>' : '')+renderEmptySessionHistory()+renderSessionSaveState();
   }
 
   var session = sessions[app.selectedIndex];
-  var canCreate = app.entryMode === 'edit' && isLatest();
+  var canCreate = activeCatalog().length > 0;
 
   return '<div class="st-nav">'+
     '<button class="st-arrow" onclick="ST.prevSession()" '+(adjacentTemplateSession(-1)>=0?'':'disabled')+' aria-label="Предыдущая тренировка">‹</button>'+
     '<div class="st-nav-center"><div class="st-nav-title">Тренировка №'+session.number+'</div><div class="st-nav-sub"><span class="st-nav-template">Шаблон '+Number(session.workoutType || app.workoutType)+'</span><span class="st-nav-status"> · '+(isFilled(session)?'заполнена':'не заполнена')+'</span></div></div>'+
-    '<div class="st-nav-end"><button class="st-arrow" onclick="ST.nextSession()" '+(adjacentTemplateSession(1)>=0?'':'disabled')+' aria-label="Следующая тренировка">›</button><div class="st-undo-controls st-header-undo"><button onclick="ST.undo()" '+(app.undoStack.length?'':'disabled')+' aria-label="Отменить действие">↶</button><button onclick="ST.redo()" '+(app.redoStack.length?'':'disabled')+' aria-label="Повторить действие">↷</button></div>'+(canCreate ? '<button class="st-new-session st-new-session-inline" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Новая тренировка')+'</button>' : '')+'</div>'+
+    '<div class="st-nav-end"><button class="st-arrow" onclick="ST.nextSession()" '+(adjacentTemplateSession(1)>=0?'':'disabled')+' aria-label="Следующая тренировка">›</button><div class="st-undo-controls st-header-undo"><button onclick="ST.undo()" '+(app.undoStack.length?'':'disabled')+' aria-label="Отменить действие">↶</button><button onclick="ST.redo()" '+(app.redoStack.length?'':'disabled')+' aria-label="Повторить действие">↷</button></div>'+(canCreate ? '<button class="st-new-session st-new-session-inline" aria-label="Новая тренировка" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Новая тренировка')+'</button>' : '')+'</div>'+
     '</div>'+
-    '<div id="st-save-state" class="st-saving'+(app.saveError?' error':'')+'">'+(app.saveError ? 'Ошибка сохранения: '+esc(saveErrorText()) : app.saving ? 'Сохраняю…' : '')+'</div>';
+    renderSessionControls(session)+
+    renderSessionSaveState();
 
+}
+
+
+function renderSessionSaveState(){
+  return '<div id="st-save-state" class="st-saving'+(app.saveError?' error':'')+'">'+(app.saveError ? 'Ошибка сохранения: '+esc(saveErrorText()) : app.saving ? 'Сохраняю…' : '')+'</div>';
+}
+
+function renderEmptySessionHistory(){
+  return '<div class="st-empty-history"><button class="st-action" onclick="ST.undo()" '+(app.undoStack.length?'':'disabled')+'>↶ Отменить</button><button class="st-action" onclick="ST.redo()" '+(app.redoStack.length?'':'disabled')+'>↷ Повторить</button></div>';
+}
+
+
+function renderSessionControls(session){
+  return '<div class="st-session-controls">'+
+    '<label class="st-session-date">Дата тренировки <input type="date" aria-label="Дата тренировки" value="'+esc(session.date || '')+'" onchange="ST.setDate('+app.selectedIndex+',this.value)"></label>'+
+    '<button class="st-action" onclick="ST.deleteSession()" '+(app.creatingSession?'disabled':'')+'>Удалить тренировку</button>'+
+    '</div>';
 }
 
 
@@ -3888,7 +3910,7 @@ function analysisExercises(){
 
 function renderCopyButton(id,index,fromFact,className,empty){
   var label = 'Скопировать '+(fromFact ? 'факт в план' : 'план')+' последней незаполненной тренировки';
-  return '<button class="st-copy-icon '+className+'" '+(!templateIncludesExercise(id) || empty ? 'disabled ' : '')+'data-exercise-id="'+esc(id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId,'+index+','+(fromFact ? 'true' : 'false')+')" aria-label="'+label+'" title="'+label+'">⧉</button>';
+  return '<button class="st-copy-icon '+className+'" '+(!templateIncludesExercise(id) || empty ? 'disabled ' : '')+'data-exercise-id="'+esc(id)+'" onclick="ST.copyExerciseToNext(this.dataset.exerciseId,'+index+','+(fromFact ? 'true' : 'false')+')" aria-label="'+label+'" title="'+label+'">⧉<span class="st-copy-caption"> В план</span></button>';
 }
 
 function renderExerciseDay(
@@ -5903,6 +5925,21 @@ window.ST = {
     app.entryMode = 'edit';
     render();
 
+  },
+
+
+  deleteSession:function(){
+    if(app.creatingSession){ return; }
+    var sessions = currentWorkout().sessions;
+    var session = sessions[app.selectedIndex];
+    if(!session || !window.confirm('Удалить тренировку №'+session.number+' вместе с её планом и фактом?')){ return; }
+    rememberUndo();
+    cancelPendingSaveForSession(session);
+    sessions.splice(app.selectedIndex,1);
+    selectLatestTemplateSession();
+    deleteSessionNow(session);
+    app.entryMode = 'edit';
+    render();
   },
 
 
