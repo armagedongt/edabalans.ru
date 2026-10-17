@@ -232,7 +232,7 @@ def _bot(session: Session) -> BotInstance:
     return bot
 
 
-def _upsert_contact(session: Session, bot: BotInstance, user: dict, chat: dict) -> Contact:
+def _upsert_contact(session: Session, bot: BotInstance, user: dict, chat: dict, *, update_status: bool = True) -> Contact:
     telegram_id = str(user["id"])
     contact = session.scalar(select(Contact).where(Contact.bot_instance_id == bot.id, Contact.telegram_user_id == telegram_id))
     if not contact:
@@ -244,7 +244,7 @@ def _upsert_contact(session: Session, bot: BotInstance, user: dict, chat: dict) 
     contact.last_name = user.get("last_name")
     contact.language_code = user.get("language_code")
     contact.last_seen_at = datetime.now(UTC)
-    if not settings.temporary_intensive_entry_enabled or contact.status not in BLOCKED_STATUSES:
+    if update_status and (not settings.temporary_intensive_entry_enabled or contact.status not in BLOCKED_STATUSES):
         contact.status = "active"
     session.flush()
     ensure_crm_identity(session, contact, user)
@@ -1170,7 +1170,12 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
             event_kind = "channel_join_request" if join_request else "channel_join"
             session.add(TrackingEvent(tracking_link_id=link.id, alias_id=alias.id, telegram_user_id=str(person["id"]), event_type=event_kind, deduplication_key=f"telegram:{update_id}:{event_kind}", metadata_json={"invite_url": invite_url}))
     elif message:
-        contact = _upsert_contact(session, bot, message["from"], message["chat"])
+        write_access = "write_access_allowed" in message
+        contact = _upsert_contact(session, bot, message["from"], message["chat"], update_status=not write_access)
+        if write_access:
+            # Permission is not /start: keep the contact without sending the welcome.
+            session.commit()
+            return {"ok": True, "write_access_allowed": True}
         text = message.get("text", "")
         command = text.strip().casefold().split(maxsplit=1)
         if command and command[0].split("@", 1)[0] == "/stop":

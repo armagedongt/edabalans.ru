@@ -59,6 +59,39 @@ def tg(n, text="/start"):
     return {"update_id": n, "message": {"message_id": n, "from": {"id": 4101}, "chat": {"id": 4101, "type": "private"}, "text": text}}
 
 
+def test_mini_app_permission_records_contact_without_starting_welcome(setup):
+    session, sender = setup
+    event = tg(900)
+    event["message"].pop("text")
+    event["message"]["write_access_allowed"] = {"web_app_name": "channel"}
+    assert main.process_update(event, session)["write_access_allowed"]
+    contact = session.scalar(select(Contact).where(Contact.telegram_user_id == "4101"))
+    assert contact is not None
+    assert sender.sent == []
+    assert session.scalar(select(func.count()).select_from(SequenceRun)) == 0
+    assert main.process_update(event, session)["duplicate"]
+    # A later explicit Start still opens the normal welcome.
+    assert main.process_update(tg(901), session)["temporary_entry"]
+    assert sender.sent
+
+
+@pytest.mark.parametrize("temporary", [True, False])
+def test_mini_app_permission_preserves_stopped_contact(setup, monkeypatch, temporary):
+    session, sender = setup
+    main.process_update(tg(910), session)
+    contact = session.scalar(select(Contact).where(Contact.telegram_user_id == "4101"))
+    contact.status = "stopped"
+    session.commit()
+    sender.sent.clear()
+    monkeypatch.setattr(main.settings, "temporary_intensive_entry_enabled", temporary)
+    event = tg(911)
+    event["message"].pop("text")
+    event["message"]["write_access_allowed"] = {"web_app_name": "channel"}
+    assert main.process_update(event, session)["write_access_allowed"]
+    assert contact.status == "stopped"
+    assert sender.sent == []
+
+
 def max_event(n, kind="bot_started"):
     event = {"update_type": kind, "timestamp": n, "user": {"user_id": 5101, "name": "Тест"}}
     if kind == "message_created":

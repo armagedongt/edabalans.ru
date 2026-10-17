@@ -6,7 +6,7 @@ const vm = require('node:vm');
 const source = readFileSync(join(__dirname, '../../app/static/channel-bridge/bridge.js'), 'utf8');
 const target = 'https://t.me/Fitness_Talks/260';
 
-async function run({ inTelegram = true, verify = 'ok', navigationError = false, platform = 'tdesktop' } = {}) {
+async function run({ inTelegram = true, verify = 'ok', navigationError = false, platform = 'tdesktop', startParam = '', permissionApi = true, supportsPermission = true } = {}) {
   const calls = [];
   const status = {};
   const listeners = {};
@@ -17,6 +17,8 @@ async function run({ inTelegram = true, verify = 'ok', navigationError = false, 
   const elements = { destination: { textContent: JSON.stringify(target) }, status, 'open-post': button };
   const app = {
     platform,
+    initDataUnsafe: { start_param: startParam },
+    isVersionAtLeast: version => { assert.equal(version, '6.9'); return supportsPermission; },
     initData: inTelegram ? 'signed-input' : '',
     ready: () => calls.push('ready'),
     openTelegramLink: (url) => {
@@ -24,6 +26,12 @@ async function run({ inTelegram = true, verify = 'ok', navigationError = false, 
       if (navigationError) throw new Error('Unsupported client');
     },
     close: () => calls.push('close')
+  };
+  let permissionCallback;
+  if (permissionApi) app.requestWriteAccess = callback => {
+    if (!supportsPermission) throw new Error('WebAppMethodUnsupported');
+    calls.push('permission');
+    permissionCallback = callback;
   };
   const context = {
     document: { getElementById: id => elements[id] },
@@ -39,8 +47,28 @@ async function run({ inTelegram = true, verify = 'ok', navigationError = false, 
   };
   vm.runInNewContext(source, context);
   await new Promise(resolve => setImmediate(resolve));
-  return { calls, status, button, listeners };
+  return { calls, status, button, listeners, answerPermission: allowed => permissionCallback(allowed) };
 }
+
+for (const allowed of [true, false]) {
+  test(`permission preview waits for the answer (${allowed}) before automatically opening Android channel`, async () => {
+    const result = await run({ platform: 'android', startParam: 'writepreview' });
+    assert.deepEqual(result.calls.map(x => Array.isArray(x) ? x[0] : x), ['ready', 'verify', 'permission']);
+    result.answerPermission(allowed);
+    assert.deepEqual(result.calls.at(-1), ['navigate', target]);
+    assert.equal(result.calls.includes('close'), false);
+  });
+}
+
+test('permission preview does not request permission after failed verification', async () => {
+  const result = await run({ startParam: 'writepreview', verify: 'unauthorized' });
+  assert.equal(result.calls.includes('permission'), false);
+});
+
+test('older SDK retains automatic channel navigation for permission preview', async () => {
+  const result = await run({ startParam: 'writepreview', supportsPermission: false });
+  assert.equal(result.calls.at(-1), 'close');
+});
 
 test('verifies before opening the fixed post, then closes the Mini App', async () => {
   const result = await run();

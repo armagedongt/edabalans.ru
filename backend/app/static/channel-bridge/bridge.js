@@ -8,6 +8,17 @@
   let navigationRequested = false;
   button.href = target;
 
+  function continueToChannel() {
+    if (navigationRequested) return;
+    if (app.initDataUnsafe && app.initDataUnsafe.start_param === 'writepreview' &&
+        typeof app.requestWriteAccess === 'function' && app.isVersionAtLeast('6.9')) {
+      // Both answers lead to the channel; permission is never required to read it.
+      app.requestWriteAccess(function () { if (!navigationRequested) openPost(); });
+    } else {
+      openPost();
+    }
+  }
+
   function openPost(event) {
     if (!app || !app.initData || typeof app.openTelegramLink !== 'function') return;
     if (event) event.preventDefault();
@@ -54,7 +65,7 @@
     return response.json();
   }).then(function (data) {
     if (data.destination !== target) throw new Error('Unexpected destination');
-    if (!navigationRequested) openPost();
+    continueToChannel();
   }).catch(function () {
     if (!navigationRequested) status.textContent = 'Если канал не открылся, нажмите «Открыть канал».';
   }).finally(function () { clearTimeout(timer); });

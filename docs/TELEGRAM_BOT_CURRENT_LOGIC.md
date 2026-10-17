@@ -2,6 +2,12 @@
 
 Статус: `current`
 
+С 17.10.2026 служебное сообщение Telegram `write_access_allowed` сохраняет контакт
+и квитанцию update без запуска приветствия, рассылки или снятия остановки.
+Сравнительная Mini App-проба описана в
+`knowledge-base/modules/telegram/LINKS_AND_ATTRIBUTION.md`; отложенных отправок
+после разрешения в ней нет.
+
 ## Telegram-first вход бесплатного интенсива
 
 Test-only production-контур принимает HMAC-подписанный `/start I…` от страницы
