@@ -943,3 +943,31 @@ def test_managed_app_runtime_on_public_host_still_requires_admin_session():
     )
     assert saved.status_code == 404
     assert saved.json()["detail"] == "application state not found"
+
+
+def test_strength_restore_keeps_number_and_rejects_collision():
+    client, factory = make_client()
+    original = {"session_id": "restore-first", "session_number": 1, "workout_type": 1,
+                "date": "2026-10-16", "exercises": [{"exercise_id": "bench", "note": "Сохранить",
+                "sets": [{"set_number": 1, "plan_weight": 40, "plan_reps": 10, "fact_weight": 35, "fact_reps": 9, "rpe": 8}]}]}
+    later = {"session_id": "keep-second", "session_number": 2, "workout_type": 2, "date": "2026-10-17", "exercises": []}
+    with factory() as db:
+        user = add_user(db, "strength-restore@example.test", "Восстановление")
+        db.add(StrengthState(user_id=user.id, workout_types=[], hidden_exercises=[], workouts=[original, later]))
+        db.commit()
+        user_id = user.id
+    login(client)
+    base = {"action": "saveSession", "target_user_id": str(user_id), "workout_type": 1}
+    removed = client.post("/api/apps/strength", json={**base, "version": 1, "session": {"session_id": original["session_id"], "deleted": True}}).json()
+    restored = client.post("/api/apps/strength", json={**base, "version": removed["version"], "restore_session_number": True, "session": original}).json()
+    assert restored["ok"] is True
+    for key in ("session_id", "session_number", "date", "exercises"):
+        assert restored["session"][key] == original[key]
+    collision = client.post("/api/apps/strength", json={**base, "version": restored["version"], "restore_session_number": True,
+        "session": {**original, "session_id": "different-id", "session_number": 2}}).json()
+    assert collision["ok"] is False
+    assert "STRENGTH_STATE_CONFLICT" in collision["error"]
+    with factory() as db:
+        state = db.scalar(select(StrengthState).where(StrengthState.user_id == user_id))
+        assert state.version == restored["version"]
+        assert sorted((item["session_number"], item["session_id"]) for item in state.workouts) == [(1, "restore-first"), (2, "keep-second")]

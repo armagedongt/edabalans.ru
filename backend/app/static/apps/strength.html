@@ -1502,6 +1502,7 @@
 /* Keep both exercise copy actions available in the card layout. */
 .st-modern-labels .st-plan-copy-label,.st-modern-labels .st-fact-copy-label{display:inline-flex;align-items:center;justify-content:center;gap:3px;min-height:32px;margin:0 0 4px;padding:3px;border:0;background:transparent;color:inherit;font-size:11px;cursor:pointer}.st-copy-caption{font-size:11px;white-space:nowrap}.st-modern-labels .st-copy-icon:disabled{opacity:.4;cursor:default}.st-modern-labels .st-plan-label,.st-modern-labels .st-fact-label{display:flex;flex-direction:column;align-items:center}.st-modern-labels .st-plan-label br,.st-modern-labels .st-fact-label br{display:none}.st-group-plan .st-copy-caption,.st-group-fact .st-copy-caption{display:none}
 .st-session-controls .st-action,.st-empty-history .st-action{font-size:13px;min-height:42px}.st-empty-history{display:flex;gap:8px;margin-top:10px}.st-modern-labels .st-copy-icon{width:auto;height:auto;min-height:36px!important;padding:4px!important}
+@media(max-width:700px){.st-modern-list,.st-nav{touch-action:pan-y pinch-zoom}}
 </style>
 
 <script>
@@ -2061,7 +2062,7 @@ function persistUndoDelta(beforeSessions){
     var before = session.session_id ? beforeById[String(session.session_id)] : null;
     if(!before || sessionChanged(before,session)){
       cancelPendingSaveForSession(before || session);
-      saveSessionNow(index);
+      saveSessionNow(index,!before);
     }
   });
 }
@@ -2696,7 +2697,8 @@ function scheduleSave(
 
 
 function saveSessionNow(
-  sessionIndex
+  sessionIndex,
+  restoreNumber
 ){
 
   var body =
@@ -2705,6 +2707,7 @@ function saveSessionNow(
     );
 
   if(body){
+    if(restoreNumber){ body.restore_session_number = true; }
     persistSessionBody(body);
   }
 
@@ -2783,7 +2786,10 @@ function persistSessionBody(body){
   var pendingIndex = queue.pending.findIndex(function(item){
     return String(item.session.session_id || item.session.session_number) === String(body.session.session_id || body.session.session_number) && Number(item.workout_type) === Number(body.workout_type);
   });
-  if(pendingIndex >= 0){ queue.pending[pendingIndex] = body; }
+  if(pendingIndex >= 0){
+    if(queue.pending[pendingIndex].restore_session_number){ body.restore_session_number = true; }
+    queue.pending[pendingIndex] = body;
+  }
   else{ queue.pending.push(body); }
   queue.retryCount = 0;
   app.sessionSaveQueues[timerKey] = queue;
@@ -2885,6 +2891,11 @@ function flushSessionSave(timerKey){
         Math.max(0,app.saveRequests-1);
 
       queue.running = false;
+      if(body.restore_session_number){
+        queue.pending.forEach(function(item){
+          if(String(item.session.session_id) === String(body.session.session_id) && Number(item.workout_type) === Number(body.workout_type) && !item.session.deleted){ item.restore_session_number = true; }
+        });
+      }
       if(!queue.pending.some(function(item){
         return String(item.session.session_id || item.session.session_number) === String(body.session.session_id || body.session.session_number) && Number(item.workout_type) === Number(body.workout_type);
       })){
@@ -6988,6 +6999,31 @@ document.addEventListener(
 
   }
 );
+
+
+var sessionSwipe = null;
+root.addEventListener('pointerdown',function(event){
+  sessionSwipe = null;
+  if(event.pointerType !== 'touch' || !event.isPrimary || window.innerWidth > 700 || app.modal || app.mode !== 'client' || app.mainTab !== 'training'){ return; }
+  if(!event.target.closest('.st-modern-list,.st-nav') || event.target.closest('input,textarea,select,button,a,[contenteditable="true"]')){ return; }
+  sessionSwipe = {id:event.pointerId,x:event.clientX,y:event.clientY,index:app.selectedIndex};
+});
+root.addEventListener('pointermove',function(event){
+  if(!sessionSwipe || sessionSwipe.id !== event.pointerId){ return; }
+  var dx=Math.abs(event.clientX-sessionSwipe.x);
+  var dy=Math.abs(event.clientY-sessionSwipe.y);
+  if(dy > 12 && dy > dx){ sessionSwipe=null; }
+});
+root.addEventListener('pointercancel',function(){ sessionSwipe=null; });
+root.addEventListener('pointerup',function(event){
+  var swipe=sessionSwipe;
+  sessionSwipe=null;
+  if(!swipe || swipe.id !== event.pointerId || swipe.index !== app.selectedIndex || app.modal){ return; }
+  var dx=event.clientX-swipe.x;
+  var dy=event.clientY-swipe.y;
+  if(Math.abs(dx)<50 || Math.abs(dx)<Math.abs(dy)*1.4){ return; }
+  if(dx<0){ ST.nextSession(); }else{ ST.prevSession(); }
+});
 
 
 document.addEventListener('keydown',function(event){

@@ -1650,7 +1650,12 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
                 else:
                     session_id = str(uuid.uuid4())
                 if existing is None:
-                    number = max(all_numbers, default=0) + 1
+                    if body.get("restore_session_number") is True:
+                        number = int(session.get("session_number") or 0)
+                        if not requested_session_id or number < 1 or number in all_numbers:
+                            raise ValueError("STRENGTH_STATE_CONFLICT")
+                    else:
+                        number = max(all_numbers, default=0) + 1
                 now = datetime.now(timezone.utc).isoformat()
                 item = {**(existing or {}), **session, "session_id": session_id, "workout_type": workout_type, "session_number": number, "updated_at": now, "created_at": (existing or {}).get("created_at") or now, "source": (existing or {}).get("source") or "app"}
                 item["status"] = "filled" if any(

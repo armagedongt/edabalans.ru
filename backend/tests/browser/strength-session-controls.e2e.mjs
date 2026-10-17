@@ -24,7 +24,7 @@ function fixture(type) {
 
 try {
 for (const width of [360,430,700,701,768,1440]) {
-const page=await browser.newPage({viewport:{width,height:900}});
+const page=await browser.newPage({viewport:{width,height:900},hasTouch:true});
     await page.addInitScript(({ workouts }) => {
       window.EdabalansAppContext = { mode: 'admin', targetUserId: 'synthetic-profile' };
       window.__saveBodies = [];
@@ -37,12 +37,45 @@ const page=await browser.newPage({viewport:{width,height:900}});
         if (action === 'getWorkout') response.workout = workouts[Number(parsed.searchParams.get('type') || 1)];
         if (body) window.__saveBodies.push(structuredClone(body));
         if (action === 'saveSession') response.session = body.session;
+        if(body?.session?.deleted && window.__holdDelete){
+          await new Promise(resolve=>{window.__deleteRelease=resolve;});
+          window.__holdDelete=false;
+        }
+        if(body?.restore_session_number && window.__holdRestore){
+          await new Promise(resolve=>{window.__restoreRelease=resolve;});
+          window.__holdRestore=false;
+          return new Response(JSON.stringify({ok:false,error:'TEMPORARY_TEST_ERROR'}),{headers:{'Content-Type':'application/json'}});
+        }
         return new Response(JSON.stringify(response), { headers: { 'Content-Type': 'application/json' } });
       };
     }, { workouts: { 1: fixture(1), 2: fixture(2), 3: fixture(3) } });
     await page.goto(pathToFileURL(path.resolve('app/static/apps/strength.html')).href);
     await page.getByText('Тренировка №5', { exact: true }).waitFor();
 
+if(width<=700){
+  const cdp=await page.context().newCDPSession(page);
+  async function swipe(selector,dx,dy=0){
+    const node=page.locator(selector).first();
+    await node.scrollIntoViewIfNeeded();
+    const box=await node.boundingBox();
+    const x=box.x+box.width/2, y=box.y+box.height/2;
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
+    for(let step=1;step<=5;step++){
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+dx*step/5,y:y+dy*step/5}]});
+    }
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  }
+  await swipe('.st-modern-head',90);
+  await page.getByText('Тренировка №3',{exact:true}).waitFor();
+  await swipe('.st-modern-head',-90);
+  await page.getByText('Тренировка №5',{exact:true}).waitFor();
+  await swipe('.st-modern-head',10,100);
+  assert.ok(await page.getByText('Тренировка №5',{exact:true}).isVisible(),'Vertical scroll does not navigate');
+  await swipe('.st-modern-head',-90);
+  assert.ok(await page.getByText('Тренировка №5',{exact:true}).isVisible(),'Last session does not create a new one');
+  await swipe('.st-plan-inputs input',90);
+  assert.ok(await page.getByText('Тренировка №5',{exact:true}).isVisible(),'Input gestures do not navigate');
+}
 const date=page.locator('.st-session-date input');
 assert.ok(await date.isVisible());
 await date.fill('2026-10-17'); await date.dispatchEvent('change');
@@ -78,12 +111,34 @@ await page.locator('.st-session-date input').fill('2026-10-16');
 await page.locator('.st-session-date input').dispatchEvent('change');
 await page.waitForFunction(()=>window.__saveBodies.some(b=>b.action==='saveSession' && b.session.session_id==='s1'));
 const original=await page.evaluate(()=>window.__saveBodies.filter(b=>b.action==='saveSession' && b.session.session_id==='s1').at(-1).session);
+if(width===430) await page.evaluate(()=>{window.__holdDelete=true;});
 page.once('dialog',d=>d.accept());
 await page.getByRole('button',{name:'Удалить тренировку',exact:true}).click();
 await page.waitForFunction(()=>window.__saveBodies.some(b=>b.session?.session_id==='s1' && b.session.deleted));
+if(width===360) await page.evaluate(()=>{window.__holdRestore=true;});
 await page.keyboard.press('Control+z');
 await page.getByText('Тренировка №1',{exact:true}).waitFor();
+if(width===430){
+  await page.waitForFunction(()=>Boolean(window.__deleteRelease));
+  const weight=page.locator('.st-modern-exercise').first().locator('.st-plan-inputs input').first();
+  await weight.fill('42');await weight.dispatchEvent('change');
+  await page.waitForTimeout(550); // Queue the edit while restoration still waits behind deletion.
+  await page.evaluate(()=>window.__deleteRelease());
+  await page.waitForFunction(()=>window.__saveBodies.filter(b=>b.action==='saveSession').at(-1)?.session.exercises?.find(e=>e.exercise_id==='triceps')?.sets[0]?.plan_weight===42);
+  original.exercises.find(e=>e.exercise_id==='triceps').sets[0].plan_weight=42;
+}
+if(width===360){
+  await page.waitForFunction(()=>Boolean(window.__restoreRelease));
+  const weight=page.locator('.st-modern-exercise').first().locator('.st-plan-inputs input').first();
+  await weight.fill('42');await weight.dispatchEvent('change');
+  await page.waitForTimeout(550); // Let the 450ms save debounce queue the edit behind the held request.
+  await page.evaluate(()=>window.__restoreRelease());
+  await page.waitForFunction(()=>window.__saveBodies.filter(b=>b.action==='saveSession').at(-1)?.session.exercises?.find(e=>e.exercise_id==='triceps')?.sets[0]?.plan_weight===42);
+  original.exercises.find(e=>e.exercise_id==='triceps').sets[0].plan_weight=42;
+}
+
 await page.waitForFunction(()=>window.__saveBodies.filter(b=>b.action==='saveSession').at(-1)?.session.session_id==='s1' && !window.__saveBodies.filter(b=>b.action==='saveSession').at(-1)?.session.deleted);
+assert.equal(await page.evaluate(()=>window.__saveBodies.filter(b=>b.action==='saveSession').at(-1).restore_session_number),true);
 assert.deepEqual(await page.evaluate(()=>window.__saveBodies.filter(b=>b.action==='saveSession').at(-1).session),original,'Undo restores date, exercises, plan and fact');
 assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
 for(let remaining=4;remaining>0;remaining--){
