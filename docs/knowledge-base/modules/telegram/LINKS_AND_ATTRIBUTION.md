@@ -86,6 +86,35 @@ Telegram на телефоне. Код перехода не равен дока
 `web_app_open_tg_link`, `onOpenUri`, `shouldOverrideUrlLoading` в репозитории
 `DrKLO/Telegram`. Исследование кода и браузерные моки не заменяют тест владельца.
 
+### Короткие ссылки по источникам
+
+По поручению Сергея от 17.10.2026 short name `channel` сохраняется. Публичный
+формат — `https://t.me/Fitness_Talks_bot/channel?startapp=<код>`, ровно один
+query-параметр, без `mode=compact` и промежуточного сайта/редиректа.
+
+| Код | Источник | Готовая ссылка |
+|---|---|---|
+| `ig` | Instagram | `https://t.me/Fitness_Talks_bot/channel?startapp=ig` |
+| `yt` | YouTube | `https://t.me/Fitness_Talks_bot/channel?startapp=yt` |
+| `th` | Threads | `https://t.me/Fitness_Talks_bot/channel?startapp=th` |
+| `pk` | Pikabu | `https://t.me/Fitness_Talks_bot/channel?startapp=pk` |
+| `dz` | Дзен | `https://t.me/Fitness_Talks_bot/channel?startapp=dz` |
+| `vk` | ВКонтакте | `https://t.me/Fitness_Talks_bot/channel?startapp=vk` |
+| `tt` | TikTok | `https://t.me/Fitness_Talks_bot/channel?startapp=tt` |
+
+Единственный машинный владелец соответствий — `ENTRY_SOURCES` в
+`backend/app/channel_bridge_routes.py`. Сервер после проверки подписи извлекает
+`start_param` и возвращает источник и режим запроса права писать. Все перечисленные
+коды включают штатный запрос и ведут на один проверенный закреп при любом ответе.
+JS исполняет режим из ответа сервера, а не из `initDataUnsafe`.
+
+Старые `preview` и `writepreview` работают как прежде: первый без запроса,
+второй с запросом. Неизвестный/пустой код открывает закреп без запроса и без
+определённого источника. Это не новая система атрибуции: распознанный источник
+пока не сохраняется, статистика и рекламные конверсии не включены.
+Для Директа остаётся договор существующей посадки с Telegram/MAX-кнопками:
+персональный рекламный journey нельзя заменять общим кодом площадки.
+
 ## 0.1. Обязательная политика длины и прямых переходов
 
 Новые публичные tracking/progress-коды делаются максимально короткими. Для

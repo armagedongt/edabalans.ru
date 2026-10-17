@@ -6,7 +6,7 @@ const vm = require('node:vm');
 const source = readFileSync(join(__dirname, '../../app/static/channel-bridge/bridge.js'), 'utf8');
 const target = 'https://t.me/Fitness_Talks/260';
 
-async function run({ inTelegram = true, verify = 'ok', navigationError = false, platform = 'tdesktop', startParam = '', permissionApi = true, supportsPermission = true } = {}) {
+async function run({ inTelegram = true, verify = 'ok', navigationError = false, platform = 'tdesktop', startParam = '', permissionApi = true, supportsPermission = true, requestWriteAccess = startParam === 'writepreview' } = {}) {
   const calls = [];
   const status = {};
   const listeners = {};
@@ -42,13 +42,23 @@ async function run({ inTelegram = true, verify = 'ok', navigationError = false, 
     fetch: async (url, options) => {
       calls.push(['verify', url, options]);
       if (verify === 'network') throw new Error('Offline');
-      return { ok: verify !== 'unauthorized', json: async () => ({ destination: verify === 'wrong-target' ? 'https://example.com' : target }) };
+      return { ok: verify !== 'unauthorized', json: async () => ({ destination: verify === 'wrong-target' ? 'https://example.com' : target, request_write_access: requestWriteAccess }) };
     }
   };
   vm.runInNewContext(source, context);
   await new Promise(resolve => setImmediate(resolve));
   return { calls, status, button, listeners, answerPermission: allowed => permissionCallback(allowed) };
 }
+
+test('short entry uses verified server mode rather than the untrusted client start parameter', async () => {
+  const shortEntry = await run({ startParam: 'ig', requestWriteAccess: true, platform: 'android' });
+  assert.equal(shortEntry.calls.at(-1), 'permission');
+  shortEntry.answerPermission(true);
+  assert.deepEqual(shortEntry.calls.at(-1), ['navigate', target]);
+  const untrusted = await run({ startParam: 'writepreview', requestWriteAccess: false });
+  assert.equal(untrusted.calls.includes('permission'), false);
+  assert.equal(untrusted.calls.at(-1), 'close');
+});
 
 for (const allowed of [true, false]) {
   test(`permission preview waits for the answer (${allowed}) before automatically opening Android channel`, async () => {

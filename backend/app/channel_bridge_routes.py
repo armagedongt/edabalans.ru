@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+from urllib.parse import parse_qsl
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
@@ -15,6 +16,15 @@ STATIC_DIR = Path(__file__).resolve().parent / "static" / "channel-bridge"
 # Public pinned post checked with getChat on 2026-10-17. This preview is fixed
 # deliberately: arbitrary destinations are not accepted from URL parameters.
 PREVIEW_POST_URL = "https://t.me/Fitness_Talks/260"
+ENTRY_SOURCES = {
+    "ig": "instagram",
+    "yt": "youtube",
+    "th": "threads",
+    "pk": "pikabu",
+    "dz": "dzen",
+    "vk": "vk",
+    "tt": "tiktok",
+}
 PRIVATE_HEADERS = {
     "Cache-Control": "no-store",
     "X-Robots-Tag": "noindex, nofollow",
@@ -56,4 +66,12 @@ def verify_channel_bridge(
         raise HTTPException(status_code=401, detail="Invalid Telegram data")
     # Verify only. Opening the preview must not create an account, session,
     # attribution event, sequence run, or permission to send messages.
-    return JSONResponse({"destination": PREVIEW_POST_URL}, headers=PRIVATE_HEADERS)
+    entry_code = dict(parse_qsl(body.init_data)).get("start_param", "")
+    return JSONResponse(
+        {
+            "destination": PREVIEW_POST_URL,
+            "source": ENTRY_SOURCES.get(entry_code),
+            "request_write_access": entry_code in ENTRY_SOURCES or entry_code == "writepreview",
+        },
+        headers=PRIVATE_HEADERS,
+    )

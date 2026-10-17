@@ -8,9 +8,9 @@
   let navigationRequested = false;
   button.href = target;
 
-  function continueToChannel() {
+  function continueToChannel(requestWriteAccess) {
     if (navigationRequested) return;
-    if (app.initDataUnsafe && app.initDataUnsafe.start_param === 'writepreview' &&
+    if (requestWriteAccess === true &&
         typeof app.requestWriteAccess === 'function' && app.isVersionAtLeast('6.9')) {
       // Both answers lead to the channel; permission is never required to read it.
       app.requestWriteAccess(function () { if (!navigationRequested) openPost(); });
@@ -65,7 +65,7 @@
     return response.json();
   }).then(function (data) {
     if (data.destination !== target) throw new Error('Unexpected destination');
-    continueToChannel();
+    continueToChannel(data.request_write_access);
   }).catch(function () {
     if (!navigationRequested) status.textContent = 'Если канал не открылся, нажмите «Открыть канал».';
   }).finally(function () { clearTimeout(timer); });
