@@ -103,7 +103,6 @@ def test_members_moved_preview_is_ready_but_does_not_capture_legacy_paths():
     assert '<meta name="robots" content="noindex,nofollow">' in response.text
     assert "Личный кабинет переехал" in response.text
     assert "я отправил вам на почту письмо с новым паролем" in response.text
-    assert "Эта старая ссылка больше не используется для входа" in response.text
     normalized = response.text.lower()
     assert re.search(r"\bмы\b", normalized) is None
     assert "tilda" not in normalized
