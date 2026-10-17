@@ -8,9 +8,13 @@
   <title>Открыть канал</title>
   <style>
     :root { color-scheme: light dark; }
-    body { margin: 0; padding: 28px 24px; background: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #18212b); font: 17px/1.5 system-ui, sans-serif; }
-    main { max-width: 420px; margin: 3vh auto 0; }
-    h1 { margin: 0 0 16px; font-size: 25px; line-height: 1.25; font-weight: 650; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px 16px; background: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #18212b); font: 16px/1.5 system-ui, sans-serif; }
+    main { max-width: 460px; margin: 0 auto; padding: 24px; border: 1px solid var(--tg-theme-section-separator-color, #e0e4e8); border-radius: 14px; }
+    header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+    .avatar { width: 64px; height: 64px; flex: 0 0 64px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 4px var(--tg-theme-bg-color, #fff), 0 4px 20px #18212b20; }
+    h1 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 600; }
+    .role { margin: 3px 0 0; font-size: 15px; color: var(--tg-theme-hint-color, #66717d); }
     p { margin: 0 0 24px; }
     #status { margin: 16px 0 0; font-size: 14px; color: var(--tg-theme-hint-color, #5d6b78); }
     #status:empty { display: none; }
@@ -22,8 +26,15 @@
 </head>
 <body>
   <main>
-    <h1>Сергей Воронцов 🥖 Похудение — это есть!</h1>
-    <p>Пишу об адекватном отношении к питанию и похудению так, чтобы вы менялись!</p>
+    <header>
+      <img class="avatar" src="/blog/assets/sergey-author-channel.webp" width="64" height="64" alt="Сергей Воронцов">
+      <div>
+        <h1>Сергей Воронцов</h1>
+        <p class="role">Тренер по питанию</p>
+      </div>
+    </header>
+    <p>Пишу о питании и похудении так, чтобы вы менялись.</p>
+    <p>Познакомьтесь с моим подходом поближе — читайте статью-инструкцию в моем канале <strong>«Как сделать похудение проще»</strong> и не забудьте подписаться, чтобы не пропускать новые посты.</p>
     <a id="open-post" href="{{DESTINATION_URL}}">Открыть канал</a>
     <p id="status" role="status" aria-live="polite"></p>
   </main>
