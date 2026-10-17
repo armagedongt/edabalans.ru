@@ -12,6 +12,7 @@ from app.models import BotRoute, ContentItem, Sequence, SequenceEdge, SequenceSt
 from app.masterclass_triggers import TRIGGERS
 from app.content_formatting import is_placeholder_text
 from app.content_authoring import authoring_payload, content_usages
+from app.public_menu import COMMAND_CONTENT
 
 
 SYSTEM_COMPONENTS: dict[str, dict[str, str]] = {
@@ -214,6 +215,10 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         {"id": "temporary_repeat_stop", "source": "temporary_repeat_article", "target": "temporary_exit", "label": "Отправлено", "branch": "default"},
         {"id": "temporary_stop", "source": "temporary_article", "target": "temporary_exit", "label": "Отправлено", "branch": "default"},
     ])
+    for command, row in COMMAND_CONTENT.items():
+        nodes.append(node(f"menu_{command[1:]}", "message", command, row[3], len(nodes) + 1, row[0]))
+    nodes.append(node("menu_guide", "entry", "/guide", "Тот же сценарий, что /start", len(nodes) + 1))
+    edges.append({"id": "menu_guide_start", "source": "menu_guide", "target": "telegram_start", "label": "Общий Start", "branch": "default"})
     return {"level": "module", "module_code": "start_attribution", "title": "1. Старт и атрибуция", "status": "Временный вход — единая статья" if enabled else "Обычный вход", "description": "Временный маршрут использует общие правила Telegram/MAX; покупатели сохраняют служебный вход, блокировки и стоп-метки исключают приглашение. Старые маркетинговые доставки при включённом режиме на паузе.", "nodes": nodes, "edges": edges, "issues": []}
 
 

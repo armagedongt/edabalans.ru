@@ -33,6 +33,7 @@ from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.graph_authoring import GraphDraftIn, GraphPublishIn, load_source, publish_draft, save_draft
 from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_CODE, allowed_telegram_ids, maintenance_allows, record_maintenance_contact
 from app.temporary_entry import BLOCKED_STATUSES, pause_marketing, temporary_response
+from app.public_menu import COMMAND_CONTENT, send_command_message
 from app.metrika import MetrikaOfflineClient, sync_offline_conversions
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, MessengerLinkToken, OwnerPaymentAlertDelivery, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
@@ -1171,16 +1172,25 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
             session.add(TrackingEvent(tracking_link_id=link.id, alias_id=alias.id, telegram_user_id=str(person["id"]), event_type=event_kind, deduplication_key=f"telegram:{update_id}:{event_kind}", metadata_json={"invite_url": invite_url}))
     elif message:
         write_access = "write_access_allowed" in message
-        contact = _upsert_contact(session, bot, message["from"], message["chat"], update_status=not write_access)
+        text = message.get("text", "")
+        command = text.strip().casefold().split(maxsplit=1)
+        command_name = command[0].split("@", 1)[0] if command else ""
+        if (command_name in COMMAND_CONTENT or command_name == "/guide") and (
+            message["chat"].get("type", "private") != "private" or message["from"].get("is_bot")
+        ):
+            session.commit()
+            return {"ok": True, "ignored": True}
+        contact = _upsert_contact(session, bot, message["from"], message["chat"], update_status=not write_access and command_name not in COMMAND_CONTENT)
         if write_access:
             # Permission is not /start: keep the contact without sending the welcome.
             session.commit()
             return {"ok": True, "write_access_allowed": True}
-        text = message.get("text", "")
-        command = text.strip().casefold().split(maxsplit=1)
-        if command and command[0].split("@", 1)[0] == "/stop":
+        if command_name == "/guide":
+            text = "/start"
+        if command_name == "/stop":
             _record_incoming_message(session, contact, message)
-            contact.status = "stopped"
+            if contact.status != "blocked":
+                contact.status = "stopped"
             stopped_runs = stop_runs_for_contact(session, contact.id, reason="telegram_stop_command")
             session.add(TrackingEvent(
                 contact_id=contact.id,
@@ -1192,20 +1202,28 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
             ))
             session.commit()
             try:
-                client().send_content(
-                    contact.chat_id,
-                    SimpleNamespace(
-                        code="system_stop_confirmation",
-                        body_source="Сообщения остановлены. Чтобы запустить их снова, нажмите Start.",
-                        media_kind=None,
-                        media_path=None,
-                        telegram_file_id=None,
-                    ),
-                    {},
-                )
+                send_command_message(session, contact, client(), "/stop", settings)
             except TelegramError:
                 logger.warning("Telegram stop confirmation failed", exc_info=True)
             return {"ok": True, "stopped": True, "stopped_runs": stopped_runs}
+        if command_name in COMMAND_CONTENT:
+            _record_incoming_message(session, contact, message)
+            if command_name == "/resume":
+                from app.models import CrmUser
+                user = session.get(CrmUser, contact.user_id) if contact.user_id else None
+                if contact.status == "blocked" or (user and user.status == "blocked"):
+                    session.commit()
+                    return {"ok": True, "excluded": True}
+                contact.status = "active"
+                session.add(TrackingEvent(
+                    contact_id=contact.id, user_id=contact.user_id,
+                    telegram_user_id=contact.telegram_user_id, event_type="bot_restarted",
+                    deduplication_key=f"telegram:{update_id}:bot_restarted",
+                    metadata_json={"messenger": "telegram", "reason": "resume_command"},
+                ))
+            send_command_message(session, contact, client(), command_name, settings)
+            session.commit()
+            return {"ok": True, "menu_command": command_name}
         requested_app = app_request(text)
         if requested_app is not None:
             if settings.temporary_intensive_entry_enabled:

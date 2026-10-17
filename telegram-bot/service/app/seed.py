@@ -619,8 +619,10 @@ def seed_defaults(
 ) -> dict[str, int]:
     resolved_username = (username or "TetrisgfgfgfBot").lstrip("@")
     from app.temporary_entry import seed_temporary_entry
+    from app.public_menu import seed_public_menu
     # Startup data: seed navigation, approved video and the owner-approved repeat suffix.
     seed_temporary_entry(session)
+    seed_public_menu(session)
     is_main_bot = resolved_username.casefold() == "fitness_talks_bot"
     bot = session.scalar(select(BotInstance).where(BotInstance.code == "test"))
     if not bot:

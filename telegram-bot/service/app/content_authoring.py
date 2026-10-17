@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.content_formatting import SUPPORTED_SOURCE_FORMATS, is_placeholder_text, validate_telegram_html
 from app.masterclass_triggers import TRIGGERS
 from app.models import ContentItem, Sequence, SequenceStep, SequenceVersion
+from app.public_menu import COMMAND_CONTENT
 
 
 START_ONLY_CONTENT_CODES = {
@@ -65,11 +66,20 @@ DIRECT_TRIGGER_CONTEXT = {
         "next": "Кнопка открывает защищённую мобильную админку тренировок",
     },
 }
+DIRECT_TRIGGER_CONTEXT.update({
+    row[0]: {
+        "kind": "direct_trigger", "module": "start_attribution", "step": f"menu_{command[1:]}",
+        "previous": f"Личная команда {command}", "next": row[3],
+    }
+    for command, row in COMMAND_CONTENT.items()
+})
 SILENT_EVENTS = {
     "owner_closing_review": "Архивное событие: итоговое саморевью сохраняется в CRM, а копия отправляется участнику.",
     "dqs_support": "Архивное событие без автоматической клиентской отправки.",
 }
 ALLOWED_VARIABLES_BY_CONTENT_CODE = {
+    "tpl_menu_channel": {"channel_url"},
+    "tpl_menu_contacts": {"max_contact_url"},
     "tpl_start_intensive_waiting": {"next_message_at", "wait_interval", "channel_link"},
     "tpl_intensive_entry_continue": {"next_message_at"},
     "tpl_intensive_mid1_subscribed": {"wait_interval"},

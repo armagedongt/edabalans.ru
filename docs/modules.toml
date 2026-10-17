@@ -826,6 +826,8 @@ owns_files = [
     "backend/tests/test_channel_bridge.py", "backend/tests/browser/channel-bridge.test.cjs",
   "backend/app/personal_tracking_routes.py", "backend/tests/test_personal_tracking_routes.py",
   "telegram-bot/service/app/start_router.py", "telegram-bot/service/app/tracking.py",
+  "telegram-bot/service/app/public_menu.py", "telegram-bot/service/tests/test_public_menu.py",
+  "docs/knowledge-base/modules/telegram/PUBLIC_COMMAND_MENU.md",
   "telegram-bot/service/app/temporary_entry.py", "telegram-bot/service/tests/test_temporary_entry.py",
   "telegram-bot/service/tests/test_start_router.py", "telegram-bot/service/tests/test_tracking.py",
   "docs/knowledge-base/modules/telegram/LEAD_ENTRY_OWNER_REQUIREMENTS.md",

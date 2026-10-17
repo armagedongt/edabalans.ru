@@ -317,7 +317,7 @@ def test_telegram_stop_and_block_events_stop_only_that_contacts_schedule(tmp_pat
         },
     })
     assert response.json() == {"ok": True, "stopped": True, "stopped_runs": 1}
-    assert fake.sent[-1][1] == "system_stop_confirmation"
+    assert fake.sent[-1][1] == "tpl_menu_stop"
 
     response = client.post("/telegram/webhook", json={
         "update_id": 901,
