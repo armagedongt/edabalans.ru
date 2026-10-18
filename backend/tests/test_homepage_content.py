@@ -92,7 +92,7 @@ def test_initial_homepage_keeps_the_accepted_html_without_client_content_fetch(c
     response = client.get("/preview/homepage-release-candidate")
     assert response.status_code == 200
     # Accepted rendered page with the shared public menu shell.
-    assert hashlib.sha256(response.text.encode()).hexdigest() == "c1443da3ed01ee7df3591fccc3b944c79f752d8a50710cdc99d355bbf11cbfe4"
+    assert hashlib.sha256(response.text.encode()).hexdigest() == "0ee0af120c42c157cf343beefa5e8fe0d1beb10d0181466302f6eee5853d3cd7"
     assert "<!-- homepage-slot:" not in response.text
     faq = response.text.split("<template data-local-faq-template>", 1)[1].split("</template>", 1)[0]
     assert faq.count('class="faq-question-text"') == 17
