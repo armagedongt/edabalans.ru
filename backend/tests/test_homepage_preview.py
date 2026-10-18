@@ -1900,7 +1900,7 @@ def test_main_site_serves_the_accepted_homepage_directly_with_public_pricing():
     assert "location" not in response.headers
     assert "x-robots-tag" not in response.headers
     assert '<meta name="robots" content="noindex,nofollow">' not in response.text
-    assert 'rel="canonical" href="https://похудение-это-есть.рф/"' in response.text
+    assert 'rel="canonical" href="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/"' in response.text
     assert 'data-pricing-endpoint="/api/pricing/site"' in response.text
     assert 'data-pricing-endpoint="/api/pricing/site/preview"' not in response.text
     assert 'https://app.edabalans.ru/' not in response.text
