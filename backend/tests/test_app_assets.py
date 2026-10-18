@@ -287,9 +287,9 @@ def test_stable_site_footer_loader_is_public() -> None:
     assert "https://t.me/Fitness_Talks" in response.text
     assert "https://t.me/FitnessSergey" in response.text
     assert "https://max.ru/u/" in response.text
-    assert "https://похудение-это-есть.рф/legal/offer" in response.text
-    assert "https://похудение-это-есть.рф/legal/privacy" in response.text
-    assert "https://похудение-это-есть.рф/legal/disclaimer" in response.text
+    assert "publicRoot + '/legal/offer'" in response.text
+    assert "publicRoot + '/legal/privacy'" in response.text
+    assert "publicRoot + '/legal/disclaimer'" in response.text
     assert "link(LINKS.offer, 'Оферта')" in response.text
     assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in response.text
     assert "link(LINKS.disclaimer, 'Образовательный дисклеймер')" in response.text
@@ -799,7 +799,7 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "№ 273-ФЗ" in disclaimer
     assert "Пользователь отвечает за достоверность" not in disclaimer
     footer_renderer = client.get("/site-footer.js").text
-    assert "https://похудение-это-есть.рф/legal/disclaimer" in footer_renderer
+    assert "publicRoot + '/legal/disclaimer'" in footer_renderer
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
     assert "placement_token" in masterclass
@@ -1267,7 +1267,7 @@ def test_checkout_and_cookie_legal_links_use_permanent_public_domain() -> None:
     for path in ("/embed.js", "/cookie-notice.js"):
         response = client.get(path)
         assert response.status_code == 200
-        assert "https://похудение-это-есть.рф/legal/privacy" in response.text
+        assert "publicRoot + '/legal/privacy'" in response.text
         assert "APP_HOST + '/legal/privacy.html'" not in response.text
     embed = client.get("/embed.js").text
     account = (Path(__file__).parents[1] / "app/static/apps/account.html").read_text(encoding="utf-8")

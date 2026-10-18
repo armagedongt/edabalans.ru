@@ -1048,7 +1048,7 @@ def test_release_candidate_mounts_the_existing_account_offers_module_for_buyers(
     assert 'data-edabalans-app="masterclass-offers"' in response.text
     assert 'data-edabalans-account-offer="true"' in response.text
     assert 'data-edabalans-manual="true"' in response.text
-    assert 'data-production-href="https://похудение-это-есть.рф/lk"' in response.text
+    assert 'data-production-href="/lk"' in response.text
     assert "У вас уже есть доступ к мастер-классу" in response.text
     assert 'напишите мне: <a href="https://t.me/FitnessSergey"' in response.text
     assert 'https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw' in response.text
@@ -1655,13 +1655,13 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert "Не медицинская услуга" in response.text
     assert "business:'ИП Воронцов'" in response.text
     assert "Политика ПД" in response.text
-    assert "privacyUrl:'https://похудение-это-есть.рф/legal/privacy'" in response.text
+    assert "privacyUrl:appOrigin+'/legal/privacy'" in response.text
     assert "telegramNote:'Только с VPN'" in response.text
     assert 'class="edb-di-legal-line"' in response.text
     assert "edb-di-mobile-vpn-note" not in response.text
     assert "© 2026 Сергей Воронцов" not in response.text
     assert "https://go.похудение-это-есть.рф/legal/privacy" not in response.text
-    assert "apiUrl:'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/api/messaging/start-link'" in response.text
+    assert "apiUrl:appOrigin+'/api/messaging/start-link'" in response.text
     assert "telegramUrl:'https://t.me/Fitness_Talks_bot?start=BMB6Y'" in response.text
     assert "maxUrl:'https://max.ru/id230409966750_bot?start=BMB6Y'" in response.text
     assert "landing_variant:ACTIVE_VARIANT" in response.text
@@ -1671,7 +1671,7 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert source.status_code == 200
     assert source.headers["content-type"].startswith("text/plain")
     assert source.headers["x-robots-tag"] == "noindex, nofollow"
-    assert source.text == response.text
+    assert source.text == re.sub(r' data-qr-origin="[^"]+"', "", response.text)
 
 
 def test_direct_intensive_loader_is_stable_cross_origin_tilda_embed() -> None:
@@ -1747,10 +1747,10 @@ def test_direct_intensive_a1_preserves_previous_t123_source() -> None:
 
     assert response.status_code == 200
     assert source.status_code == 200
-    assert source.text == response.text
+    assert source.text == re.sub(r' data-qr-origin="[^"]+"', "", response.text)
     assert "© 2026 Сергей Воронцов" in response.text
     assert "Политика обработки персональных данных" in response.text
-    assert "https://go.похудение-это-есть.рф/legal/privacy" in response.text
+    assert "appOrigin+'/legal/privacy'" in response.text
     assert "edb-di-sticky-actions" not in response.text
 
 
