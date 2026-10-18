@@ -8,6 +8,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 import re
 
+from app.site_menu import render_site_menu
 from app.article_markup import markdown_to_article_html, safe_href, sanitize_article_html
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -195,32 +196,23 @@ def page(*, identified: bool = False):
         f'<a href="#{key}" data-section="{key}"><span>{escape(label).replace(" ", "<br class=\"reading-label-break\"> ", 1)}</span></a>'
         for key, label, _ in GROUPS
     )
+    menu = render_site_menu('<a href="https://похудение-это-есть.рф/#masterclass-title">Мастер-класс</a>', toc, article=True)
     return f'''<!doctype html><html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
 <title>{escape(title)} — Бесплатный интенсив</title>
 <link rel="icon" type="image/png" href="/favicon.png?v=20260910a">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260910a">
 <link rel="stylesheet" href="/intensive/onepage-components.css?v=20261005">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="/intensive/onepage.css?v=20261007-fullwidth"><script defer src="/intensive/onepage.js?v=20261007-neutral-nav"></script>
-<script defer src="/intensive/onepage-tracking.js?v=20261007-reading"></script></head><body>
+<link rel="preload" href="/public-site-assets/unbounded-800-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/public-site-assets/unbounded-800-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/intensive/assets/roadmap/manrope-800.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="/intensive/onepage.css?v=20261018">
+<link rel="stylesheet" href="/public-site-assets/site-menu.css?v=20261018"><script defer src="/public-site-assets/site-menu.js?v=20261018"></script><script defer src="/intensive/onepage.js?v=20261018"></script>
+<script defer src="/intensive/onepage-tracking.js?v=20261018-menu"></script></head><body>
 <header class="reading-header"><nav aria-label="Разделы интенсива">{tabs}</nav>
 <div class="reading-track" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="reading-fill"></div></div></header>
 <main id="article" data-intensive-onepage data-intensive-revision="{revision}" data-intensive-identified="{str(identified).lower()}"><h1 class="intensive-title">{hero_title(title)}</h1>{body}</main>
-<button class="toc-trigger" type="button" aria-label="Открыть содержание" aria-haspopup="dialog" aria-controls="contents"><span class="toc-trigger__icon" aria-hidden="true"><span></span><span></span><span></span></span><span class="toc-trigger__label">Содержание</span></button>
-<dialog id="contents" aria-labelledby="contents-title"><div class="toc-top">
-<a class="toc-brand" href="https://похудение-это-есть.рф/" aria-label="Похудение — это есть.рф, главная"><img src="/preview/homepage-mobile/favicon-no-outline.png" alt=""><span>ПОХУДЕНИЕ — ЭТО ЕСТЬ.РФ</span></a>
-<button type="button" class="toc-close" aria-label="Закрыть содержание">×</button></div>
-<nav class="toc-quick-links" aria-label="Навигация сайта">
-<a href="https://похудение-это-есть.рф/#masterclass-title">Мастер-класс</a>
-<details class="toc-contacts"><summary>Контакты</summary><div class="toc-contact-links">
-<a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">Написать в ЛС в Telegram</a>
-<a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener">Написать в ЛС в MAX</a>
-<a href="https://t.me/Fitness_Talks" target="_blank" rel="noopener">Telegram-канал</a>
-<a href="https://max.ru/id230409966750_biz" target="_blank" rel="noopener">Канал в MAX</a>
-</div></details></nav>
-<h2 id="contents-title">В этом материале:</h2><nav aria-label="Все темы интенсива">{toc}</nav></dialog>
+{menu}
 <div data-edabalans-site-footer></div><script defer src="/site-footer.js"></script>
 <script src="/cookie-notice.js" defer></script></body></html>'''.encode('utf-8')
 

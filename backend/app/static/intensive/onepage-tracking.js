@@ -107,15 +107,18 @@
       else block.ranges.push(range);
     }
   }
+  function contentsOpen() {
+    return contents?.getAttribute("aria-hidden") === "false";
+  }
   function accountTime() {
     const now = performance.now();
-    if (foreground && !suspended && !contents?.open) activeMs += Math.max(0, Math.min(now, lastActivity + 60000) - lastTick);
+    if (foreground && !suspended && !contentsOpen()) activeMs += Math.max(0, Math.min(now, lastActivity + 60000) - lastTick);
     lastTick = now;
     if (activeMs >= 60000) track("intensive_onepage_active_60", {}, "active60");
   }
   function sample() {
     frame = 0;
-    if (document.hidden || !document.hasFocus() || suspended || contents?.open) return;
+    if (document.hidden || !document.hasFocus() || suspended || contentsOpen()) return;
     const top = Math.max(0, header ? header.getBoundingClientRect().bottom : 0);
     const bottom = window.innerHeight;
     for (const block of blocks) {
@@ -192,7 +195,7 @@
     if (link && link.closest(".reading-header, #contents")) track("intensive_onepage_navigation", {
       target: link.getAttribute("href").slice(1, 80), source: link.closest(".reading-header") ? "header" : "contents"
     });
-    if (event.target.closest(".toc-trigger")) track("intensive_onepage_contents_open");
+    if (event.target.closest(".toc-trigger")?.getAttribute("aria-expanded") === "true") track("intensive_onepage_contents_open");
   });
   ["pointerdown", "keydown", "wheel", "touchstart"].forEach(type => document.addEventListener(type, activity, {passive: true}));
   window.addEventListener("scroll", () => { activity(); schedule(); }, {passive: true});

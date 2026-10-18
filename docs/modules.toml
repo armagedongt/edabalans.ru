@@ -392,7 +392,7 @@ owns_files = [
   "backend/app/static/public-site-assets/**",
   "backend/app/static/homepage.js", "backend/app/static/homepage-tilda-shell.html",
   "backend/app/static/public-program-card.css", "backend/app/static/public-program-card.js",
-  "backend/app/static/site-header.js",
+  "backend/app/static/site-header.js", "backend/app/site_menu.py",
   "backend/app/public_video_analytics_routes.py",
   "backend/app/public_homepage_analytics_routes.py",
   "backend/tests/test_homepage_preview.py", "backend/tests/browser/**",

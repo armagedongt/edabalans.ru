@@ -460,71 +460,6 @@
     @media (prefers-reduced-motion: reduce) { .cookie-notice__accept { transition: none; } }
 
     .desktop-header { display: none; }
-    .mobile-toggle {
-      position: fixed;
-      z-index: 90;
-      top: 14px;
-      right: 14px;
-      display: grid;
-      width: 38px;
-      height: 38px;
-      place-items: center;
-      padding: 0;
-      border: 1px solid rgba(18,24,31,.08);
-      border-radius: 13px;
-      background: rgba(255,255,255,.94);
-      box-shadow: 0 11px 28px -12px rgba(18,24,31,.35), 0 2px 8px rgba(18,24,31,.08);
-      color: #17191e;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-      transition: transform .18s ease, background .18s ease;
-    }
-    .mobile-toggle:hover, .mobile-toggle:focus-visible { background: #fff; transform: translateY(-2px); }
-    .mobile-bars { display: grid; gap: 5px; }
-    .mobile-bars span { display: block; width: 21px; height: 2px; border-radius: 5px; background: currentColor; transition: transform .2s ease, opacity .2s ease; }
-    .mobile-toggle[aria-expanded="true"] .mobile-bars span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .mobile-toggle[aria-expanded="true"] .mobile-bars span:nth-child(2) { opacity: 0; }
-    .mobile-toggle[aria-expanded="true"] .mobile-bars span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    .mobile-sheet {
-      position: fixed;
-      z-index: 80;
-      inset: 0;
-      display: grid;
-      align-content: start;
-      overflow-y: auto;
-      padding: 0 18px 28px;
-      background: rgba(255,255,255,.96);
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(-10px);
-      transition: opacity .2s ease, transform .2s ease;
-      backdrop-filter: blur(14px);
-    }
-    .mobile-sheet.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
-    .mobile-sheet__brand{display:flex;min-height:58px;align-items:center;gap:9px;margin:0 -18px 16px;padding:0 18px;background:var(--site-blue);color:#fff;font-family:Unbounded,Manrope,sans-serif;font-size:14px;font-weight:800;letter-spacing:-.055em;line-height:1;text-decoration:none;white-space:nowrap}
-    .mobile-sheet__brand .desktop-brand-icon{width:24px;height:24px}
-    @media(max-width:360px){.mobile-sheet__brand{gap:7px;font-size:11.5px}.mobile-sheet__brand .desktop-brand-icon{width:21px;height:21px}}
-    .mobile-sheet__title { margin: 0 0 12px; color: var(--site-blue-deep); font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
-    .mobile-links { display: grid; gap: 8px; }
-    .mobile-links > a, .mobile-contact__trigger, .mobile-toc__trigger { display: flex; width: 100%; min-height: 50px; align-items: center; justify-content: space-between; padding: 13px 16px; border: 1px solid rgba(35,127,174,.24); border-radius: 13px; color: #237fae; font: 800 15px/1.25 Manrope,sans-serif; text-align: left; text-decoration: none; background: rgba(255,255,255,.58); }
-    .mobile-links > a::after { color: currentColor; content: "→"; }
-    .mobile-contact__trigger::after { color: currentColor; content: "+"; font-size: 20px; font-weight: 500; line-height: 1; }
-    .mobile-contact__trigger[aria-expanded="true"]::after { content: "−"; }
-    .mobile-contact__panel { display: grid; padding: 0 0 4px 13px; }
-    .mobile-contact__panel[hidden] { display: none; }
-    .mobile-contact__panel a, .mobile-contact__panel span { display: flex; min-height: 42px; align-items: center; padding: 8px 10px; border-radius: 10px; color: #303a42; font-size: 14px; font-weight: 700; line-height: 1.3; text-decoration: none; }
-    .mobile-contact__panel a::after { content: none; }
-    .mobile-contact__panel a:focus-visible, .mobile-contact__panel a:hover { color: #118ed8; background: #edf8ff; }
-    .mobile-contact__panel span[aria-disabled="true"] { color: #8a949b; }
-    .mobile-toc__trigger{cursor:pointer}.mobile-toc__trigger::after{color:currentColor;content:"+";font-size:20px;font-weight:500;line-height:1}.mobile-toc__trigger[aria-expanded="true"]::after{content:"−"}.mobile-toc__panel{display:grid;gap:2px;padding:2px 0 4px 13px}.mobile-toc__panel[hidden]{display:none}.mobile-toc__panel a{display:block;padding:8px 10px;border-radius:10px;color:#435667;font:700 14px/1.35 Manrope,sans-serif;text-decoration:none}.mobile-toc__panel a:hover,.mobile-toc__panel a:focus-visible{color:#118ed8;background:#edf8ff}.mobile-nav-divider{display:none}
-    .mobile-account{margin-top:16px}.mobile-account__trigger{display:flex;width:100%;justify-content:space-between;padding:14px 16px;border:0;border-radius:13px;background:#e9f7fe;color:#237fae;font:800 15px/1.25 Manrope,sans-serif;text-align:left;cursor:pointer}.mobile-account__trigger::after{content:"+";font-size:20px;font-weight:500;line-height:1}.mobile-account__trigger[aria-expanded="true"]::after{content:"−"}.mobile-account__panel{display:grid;padding:7px 0 10px 13px}.mobile-account__panel[hidden]{display:none}.mobile-account__panel a{display:flex;min-height:42px;align-items:center;padding:8px 10px;border-radius:10px;color:#303a42;font-size:14px;font-weight:700;line-height:1.3;text-decoration:none}.mobile-account__panel a:hover,.mobile-account__panel a:focus-visible{color:#118ed8;background:#edf8ff}
-
-    .mobile-quick-links { display: grid; gap: 0; padding-bottom: 10px; border-bottom: 1px solid #e5e9ec; }
-    .mobile-quick-links > a, .mobile-quick-links .mobile-contact__trigger, .mobile-quick-links .mobile-account__trigger { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 40px; margin: 0; padding: 9px 10px; border: 0; border-radius: 9px; background: transparent; color: #237fae; font: 700 14px/1.35 Manrope,sans-serif; text-align: left; text-decoration: none; }
-    .mobile-quick-links .mobile-account { margin: 0; }
-    .mobile-toc__trigger { min-height: 40px; padding: 9px 10px; font: 700 14px/1.35 Manrope,sans-serif; }
-    .mobile-quick-links > a:hover, .mobile-quick-links > a:focus-visible, .mobile-quick-links button:hover, .mobile-quick-links button:focus-visible { background: #edf8ff; color: #118ed8; }
-
     .site-hero { padding: 28px var(--page-gutter) 0; background: radial-gradient(circle at 48% 11%, rgba(39,175,245,.14), transparent 34%), #fff; }
     .site-hero__inner { width: min(100%, var(--content-copy)); margin: 0 auto; }
     .site-eyebrow { display: flex; width: max-content; max-width: 100%; min-height: 38px; align-items: center; margin: 0 auto; padding: 8px 12px; border: 1px solid rgba(33,85,121,.14); border-radius: 12px; background: rgba(255,255,255,.92); box-shadow: 0 7px 18px -13px rgba(28,67,94,.48); color: #168fe3; font-family: Manrope, sans-serif; font-size: clamp(12px,3.3vw,16px); font-weight: 800; line-height: 1.2; letter-spacing: .02em; text-transform: uppercase; backdrop-filter: blur(10px); }
@@ -658,8 +593,6 @@
       .method-transition { padding-top: 104px; padding-bottom: 130px; }
       .method-list li { font-size: var(--type-body); }
       .desktop-header { display: none; }
-      .mobile-toggle { top: 22px; right: clamp(24px,4vw,56px); display: grid; width: 44px; height: 44px; }
-      .mobile-sheet { inset: 0 0 0 auto; display: grid; width: min(400px,100%); box-shadow: -22px 0 48px -34px rgba(18,55,86,.48); }
     }
 
     @media (min-width: 900px) and (max-width: 1179px) {
@@ -671,7 +604,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .mobile-toggle, .mobile-bars span, .mobile-sheet, .desktop-nav a, .desktop-contact__trigger, .desktop-contact__chevron { transition: none; }
+      .desktop-nav a, .desktop-contact__trigger, .desktop-contact__chevron { transition: none; }
     }
 
 
@@ -1305,6 +1238,7 @@
   </style>
   <link rel="stylesheet" href="/assets/public-program-card.css?v=20261008-unified">
   <script src="/assets/public-program-card.js?v=20261008-unified"></script>
+  <link rel="stylesheet" href="/public-site-assets/site-menu.css?v=20261018">
 </head>
 <body data-page-theme="blue-mist">
   <script>
@@ -1369,28 +1303,9 @@
     </div>
   </header>
 
-  <button class="mobile-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobile-menu">
-    <span class="mobile-bars" aria-hidden="true"><span></span><span></span><span></span></span>
-  </button>
-  <aside class="mobile-sheet" id="mobile-menu" aria-hidden="true" inert>
-    <a class="mobile-sheet__brand" href="https://похудение-это-есть.рф/" aria-label="Похудение — это есть.рф, главная"><img class="desktop-brand-icon" src="/preview/homepage-mobile/favicon-no-outline.png" alt=""><span>ПОХУДЕНИЕ — ЭТО ЕСТЬ.РФ</span></a>
-    <nav class="mobile-links" aria-label="Навигация">
-      <div class="mobile-quick-links">
-      <a href="#pricing" data-analytics-cta="pricing_nav_menu">Выбрать тариф</a><a href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>
-      <div class="mobile-contact">
-        <button class="mobile-contact__trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="mobile-contact-panel">Контакты</button>
-        <div class="mobile-contact__panel" id="mobile-contact-panel" hidden>
-          <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">Написать в ЛС в Telegram</a>
-          <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener">Написать в ЛС в MAX</a>
-          <a href="https://t.me/Fitness_Talks" target="_blank" rel="noopener">Telegram-канал</a>
-          <a href="https://max.ru/id230409966750_biz" target="_blank" rel="noopener">Канал в MAX</a>
-        </div>
-      </div>
-      <div class="mobile-account"><button class="mobile-account__trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="mobile-account-panel">Личный кабинет</button><div class="mobile-account__panel" id="mobile-account-panel" hidden><a href="https://похудение-это-есть.рф/lk">Войти</a><a href="https://похудение-это-есть.рф/lk?mode=register">Зарегистрироваться</a></div></div>
-      </div>
-      <div class="mobile-toc">
-        <button class="mobile-toc__trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="mobile-toc-panel">Содержание</button>
-        <div class="mobile-toc__panel" id="mobile-toc-panel" hidden>
+<!-- site-menu:start -->
+<a href="#pricing" data-analytics-cta="pricing_nav_menu">Выбрать тариф</a><a href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>
+<!-- site-menu:outline -->
           <a href="#masterclass-title">01. О Мастер-классе</a>
           <a href="#familiar-advice-title">02. Знакомый совет?</a>
           <a href="#approach-title">03. Пора менять подход</a>
@@ -1405,10 +1320,7 @@
           <a href="#final-title">12. Финальный выбор</a>
           <a href="#reviews-more-title">13. Больше отзывов</a>
           <a href="#free-intensive-title">14. Есть сомнения?</a>
-        </div>
-      </div>
-    </nav>
-  </aside>
+<!-- site-menu:end -->
 
 
   <main class="homepage-chain">
@@ -4152,54 +4064,10 @@
       });
     })();
 
-    (() => {
-      const toggle = document.querySelector('.mobile-toggle');
-      const sheet = document.querySelector('.mobile-sheet');
-      if (!toggle || !sheet) return;
-      const contactTrigger = sheet.querySelector('.mobile-contact__trigger');
-      const contactPanel = sheet.querySelector('.mobile-contact__panel');
-      const tocTrigger = sheet.querySelector('.mobile-toc__trigger');
-      const tocPanel = sheet.querySelector('.mobile-toc__panel');
-      const accountTrigger = sheet.querySelector('.mobile-account__trigger');
-      const accountPanel = sheet.querySelector('.mobile-account__panel');
-      const setContactOpen = (open) => {
-        contactTrigger.setAttribute('aria-expanded', String(open));
-        contactPanel.hidden = !open;
-      };
-      const setAccountOpen = (open) => {
-        accountTrigger.setAttribute('aria-expanded', String(open));
-        accountPanel.hidden = !open;
-      };
-      const setTocOpen = (open) => {
-        tocTrigger.setAttribute('aria-expanded', String(open));
-        tocPanel.hidden = !open;
-      };
-      const setOpen = (open) => {
-        toggle.setAttribute('aria-expanded', String(open));
-        toggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
-        sheet.classList.toggle('open', open);
-        sheet.setAttribute('aria-hidden', String(!open));
-        sheet.inert = !open;
-        document.body.classList.toggle('menu-open', open);
-        if (open) {
-          setTocOpen(true);
-          sheet.scrollTop = 0;
-        } else {
-          setContactOpen(false);
-          setTocOpen(false);
-          setAccountOpen(false);
-          if (sheet.contains(document.activeElement)) toggle.focus();
-        }
-      };
-      toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
-      contactTrigger.addEventListener('click', () => setContactOpen(contactTrigger.getAttribute('aria-expanded') !== 'true'));
-      tocTrigger.addEventListener('click', () => setTocOpen(tocTrigger.getAttribute('aria-expanded') !== 'true'));
-      accountTrigger.addEventListener('click', () => setAccountOpen(accountTrigger.getAttribute('aria-expanded') !== 'true'));
-      sheet.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
-      document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setOpen(false); });
-    })();
+
 
     </script>
+    <script src="/public-site-assets/site-menu.js?v=20261018" defer></script>
     <script src="/cookie-notice.js" defer></script>
   <!-- library:recognition-script:start -->
   <script>

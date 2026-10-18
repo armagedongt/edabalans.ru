@@ -868,7 +868,8 @@ def test_release_candidate_gives_a_hero_route_to_pricing_and_opens_mobile_outlin
     assert "или читайте подробнее о моём подходе 👇" in response.text
     assert '<h1 id="faq-title" data-analytics-section="faq">Важные вопросы</h1>' in response.text
     assert "Полную программу по дням читайте после описания тарифов" in response.text
-    assert "if (open) {\n          setTocOpen(true);" in response.text
+    assert 'data-site-menu-contents aria-controls="mobile-toc-panel"' in response.text
+    assert 'src="/public-site-assets/site-menu.js?v=20261018"' in response.text
 
 
 def test_release_candidate_copy_uses_the_full_content_frame() -> None:

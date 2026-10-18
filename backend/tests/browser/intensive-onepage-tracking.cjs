@@ -5,7 +5,7 @@ const {chromium} = require("playwright");
 const tracker = fs.readFileSync(path.resolve(__dirname, "../../app/static/intensive/onepage-tracking.js"), "utf8");
 const prefix = "intensive_onepage_";
 const fixture = '<style>body{margin:0}header{position:fixed;top:0;height:60px;background:white;width:100%}main{width:600px;margin:120px auto}p{height:240px;margin:0}span[id]{scroll-margin-top:80px}footer{height:500px}</style>' +
-  '<header class="reading-header"><a href="#block-3">Third section</a></header><button class="toc-trigger">Contents</button><dialog id="contents">Menu</dialog>' +
+  '<header class="reading-header"><a href="#block-3">Third section</a></header><button class="toc-trigger" aria-expanded="false">Contents</button><aside id="contents" aria-hidden="true">Menu</aside>' +
   '<main data-intensive-onepage data-intensive-revision="test-revision">' +
   Array.from({length:20},(_,i) => (i%5 === 0 ? '<span id="'+["block-1","block-2","block-3","actions"][i/5]+'" data-intensive-section="'+["block-1","block-2","block-3","actions"][i/5]+'"></span>' : "") +
     (i%5 === 0 ? '<h3 id="section-'+(i/5+1)+'">Topic '+(i/5+1)+'</h3>' : '') + '<p>'+("Text "+i+" ").repeat(100)+'</p>').join("") +
@@ -102,16 +102,27 @@ const fixture = '<style>body{margin:0}header{position:fixed;top:0;height:60px;ba
     }
     {
       const {page,context}=await setup();
-      await page.evaluate(()=>document.querySelector("#contents").showModal());
+      await page.evaluate(()=>document.querySelector("#contents").setAttribute("aria-hidden","false"));
       await page.evaluate(()=>document.querySelector("#block-3").scrollIntoView());
       await page.clock.runFor(30000);
       let list = await events(page);
       assert(!list.some(e=>e.event_type===prefix+"reading_start"),"Time in content menu is not article reading");
       assert(!list.some(e=>e.heading_id==="section-3"),"Covered headings are not viewed");
-      await page.evaluate(()=>document.querySelector("#contents").close());
+      await page.evaluate(()=>document.querySelector("#contents").setAttribute("aria-hidden","true"));
       await page.clock.runFor(11000);
       list = await events(page);
       assert(list.some(e=>e.event_type===prefix+"reading_start"),"Reading resumes after closing contents");
+      await context.close();passed++;
+    }
+    {
+      const {page,context}=await setup();
+      await page.evaluate(() => document.querySelector('.toc-trigger').addEventListener('click', function () {
+        this.setAttribute('aria-expanded', String(this.getAttribute('aria-expanded') !== 'true'));
+      }));
+      await page.locator('.toc-trigger').evaluate(el=>el.click());
+      await page.locator('.toc-trigger').evaluate(el=>el.click());
+      const list = await events(page);
+      assert.equal(list.filter(e=>e.event_type===prefix+'contents_open').length,1,'Closing toggle is not another contents opening');
       await context.close();passed++;
     }
     {
