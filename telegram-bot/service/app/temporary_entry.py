@@ -48,7 +48,7 @@ NAVIGATION_BODY = (
     'Обязательно к прочтению: <a href="{{personal_intensive_url}}">«Что надо сделать, чтобы похудение стало проще, а силы воли надо было меньше!»</a>\n\n'
     "Нравится мой подход?👇\n\n"
     'Залетайте на Мастер-класс по изменению питания и пищевых привычек: <a href="{{personal_masterclass_url}}">похудение-это-есть.рф</a>\n\n'
-    'По любым вопросам: <a href="https://t.me/Fitness_Talks">Telegram</a> /<a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw"> MAX</a>'
+    'По любым вопросам: <a href="https://t.me/FitnessSergey">Telegram</a> /<a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw"> MAX</a>'
 )
 
 
