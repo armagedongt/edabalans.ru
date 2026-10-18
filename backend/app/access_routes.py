@@ -907,7 +907,7 @@ def create_paid_personal_link(
         if body.standard_amount is not None and body.standard_amount > body.final_amount
         else ""
     )
-    url = f"https://edabalans.ru/access-links/{token}"
+    url = f"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/access-links/{token}"
     message_template = (
         f"Для вас подготовлено персональное предложение: {names}.{discount} "
         f"Итоговая стоимость — {price} ₽. Оплатить: {{personal_link}}"

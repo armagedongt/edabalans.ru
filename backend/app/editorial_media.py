@@ -11,9 +11,11 @@ from sqlalchemy.orm import Session
 
 from app.managed_documents import active_document, document_hash
 from app.models import ManagedDocumentVersion
+from app.article_markup import PUBLIC_IMAGE_ORIGIN
 
 DOCUMENT_TYPE = "editorial-image"
-ORIGIN = "https://edabalans.ru"
+ORIGIN = PUBLIC_IMAGE_ORIGIN
+LEGACY_ORIGIN = "https://edabalans.ru"
 NAME = re.compile(r"([a-f0-9]{64})\.(png|jpg|webp)")
 SCOPE = re.compile(r"homepage|intensive|public:(?:program|recipes|consultation|calories|training)|blog:[a-z0-9-]+|course:(?:masterclass-21|calories):[a-z0-9-]+")
 
@@ -28,6 +30,11 @@ def image_url(scope: str, name: str) -> str:
     if not NAME.fullmatch(name):
         raise HTTPException(422, "Некорректное имя картинки")
     return f"{ORIGIN}/editorial-media/{scope_token(scope)}/{name}"
+
+
+def image_aliases(scope: str, name: str) -> tuple[str, str]:
+    current = image_url(scope, name)
+    return current, LEGACY_ORIGIN + current[len(ORIGIN):]
 
 
 def image_key(scope: str, name: str) -> str:
@@ -146,11 +153,12 @@ def markdown_media(db: Session, scope: str, markdown: str) -> list[dict]:
     urls = [url for url in urls if "/editorial-media/" in url]
     if not urls:
         return []
-    prefix = f"{ORIGIN}/editorial-media/{scope_token(scope)}/"
+    prefixes = tuple(f"{origin}/editorial-media/{scope_token(scope)}/" for origin in (ORIGIN, LEGACY_ORIGIN))
     result = []
     total = 0
     for url in dict.fromkeys(urls):
-        if not url.startswith(prefix):
+        prefix = next((prefix for prefix in prefixes if url.startswith(prefix)), None)
+        if prefix is None:
             raise HTTPException(422, "Картинка принадлежит другому материалу")
         name = url.removeprefix(prefix)
         item = stored_image(db, scope, name)
@@ -178,6 +186,6 @@ def delivered_bytes(db: Session, *, token: str, name: str, request: Request) -> 
     scope = decode_scope(token)
     stored_image(db, scope, name)
     source = current_source(db, scope, request=request)
-    if not references(source, image_url(scope, name)):
+    if not any(references(source, url) for url in image_aliases(scope, name)):
         raise HTTPException(404, "Картинка не опубликована в материале")
     return stored_bytes(db, scope, name)

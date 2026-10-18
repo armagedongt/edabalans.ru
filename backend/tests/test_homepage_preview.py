@@ -1661,7 +1661,7 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert "edb-di-mobile-vpn-note" not in response.text
     assert "© 2026 Сергей Воронцов" not in response.text
     assert "https://go.похудение-это-есть.рф/legal/privacy" not in response.text
-    assert "apiUrl:'https://edabalans.ru/api/messaging/start-link'" in response.text
+    assert "apiUrl:'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/api/messaging/start-link'" in response.text
     assert "telegramUrl:'https://t.me/Fitness_Talks_bot?start=BMB6Y'" in response.text
     assert "maxUrl:'https://max.ru/id230409966750_bot?start=BMB6Y'" in response.text
     assert "landing_variant:ACTIVE_VARIANT" in response.text

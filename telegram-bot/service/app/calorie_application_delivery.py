@@ -8,10 +8,10 @@ from app.models import ContentItem, Sequence, SequenceStep, SequenceVersion
 SEQUENCE_CODE = "calories_service_delivery"
 STEP_KEY = "calories_metabolism_link"
 CONTENT_CODE = "tpl_postpurchase_metabolism_app_link"
-APP_URL = "https://edabalans.ru/metabolism"
+APP_URL = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/metabolism"
 APPROVED_TEXT = (
-    'Ваш калькулятор метаболизма: <a href="https://edabalans.ru/metabolism">'
-    'https://edabalans.ru/metabolism</a>. '
+    'Ваш калькулятор метаболизма: <a href="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/metabolism">'
+    'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/metabolism</a>. '
     'Закрепите это сообщение, чтобы ссылка была под рукой'
 )
 

@@ -8,6 +8,16 @@ from urllib.parse import parse_qs, unquote, urlparse
 
 from fastapi import HTTPException
 
+PUBLIC_IMAGE_ORIGIN = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
+
+
+def canonical_image_src(src: str) -> str:
+    for origin in ("https://edabalans.ru", "https://app.edabalans.ru"):
+        for path in ("/media/reviews/", "/preview/homepage-mobile/", "/editorial-media/"):
+            if src.startswith(origin + path):
+                return PUBLIC_IMAGE_ORIGIN + src[len(origin):]
+    return src
+
 
 ALLOWED_TAGS = {
     "h1", "h2", "h3", "p", "div", "ul", "ol", "li", "strong", "em",
@@ -229,7 +239,7 @@ class ArticleSanitizer(HTMLParser):
                 return
             alt = next((value for name, value in attrs if name.lower() == "alt"), "") or ""
             rendered_attrs = (
-                f' src="{escape(src.strip(), quote=True)}"'
+                f' src="{escape(canonical_image_src(src.strip()), quote=True)}"'
                 f' alt="{escape(alt[:500], quote=True)}"'
                 ' loading="lazy" decoding="async"'
             )
@@ -498,7 +508,7 @@ def markdown_to_article_html(
         if image:
             alt, src, caption = image.groups()
             figure = (
-                f'<figure><img src="{escape(src, quote=True)}" '
+                f'<figure><img src="{escape(canonical_image_src(src), quote=True)}" '
                 f'alt="{escape(alt, quote=True)}" loading="lazy" decoding="async">'
             )
             if caption:

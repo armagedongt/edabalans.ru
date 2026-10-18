@@ -46,10 +46,10 @@ class Settings(BaseSettings):
     masterclass_offers_url: str = "https://похудение-это-есть.рф/lk"
     masterclass_course_url: str = "https://похудение-это-есть.рф/lk"
     masterclass_account_url: str = "https://похудение-это-есть.рф/lk"
-    intensive_public_url: str = "https://edabalans.ru/intensive"
+    intensive_public_url: str = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive"
     public_link_allowed_origins: str = (
         "https://edabalans.ru,https://www.edabalans.ru,"
-        "https://похудение-это-есть.рф,https://www.похудение-это-есть.рф"
+        "https://похудение-это-есть.рф,https://www.похудение-это-есть.рф,https://old.похудение-это-есть.рф"
     )
     @property
     def public_link_allowed_origins_list(self) -> list[str]:

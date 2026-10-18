@@ -6,7 +6,7 @@
   var host = document.getElementById('edb-direct-intensive-host');
   var appHost = script && script.src
     ? new URL(script.src, window.location.href).origin
-    : 'https://edabalans.ru';
+    : 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai';
 
   if (!host || host.dataset.edabalansLoaded === 'true') return;
   host.dataset.edabalansLoaded = 'true';

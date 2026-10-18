@@ -129,7 +129,7 @@ def test_members_moved_background_is_a_reusable_public_asset():
     assert "radial-gradient" in response.text
 
 
-@pytest.mark.parametrize("path", ["/members", "/members/login", "/members/signup/group/unseen-group", "/members/courses/unseen-course/nested/material.html"])
+@pytest.mark.parametrize("path", ["/members", "/members/login", "/members/signup/group/unseen-group", "/members/courses/unseen-course/nested/material.html", "/upgrade", "/hello", "/page118942576.html", "/period"])
 def test_all_legacy_member_paths_show_the_same_card_without_redirect(path):
     response = TestClient(app).get(path + "?token=private-marker", headers={"Accept": "text/html"}, follow_redirects=False)
     assert response.status_code == 404

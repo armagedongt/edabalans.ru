@@ -4,7 +4,7 @@
   var script = document.currentScript;
   var appHost = script && script.src
     ? new URL(script.src, window.location.href).origin
-    : 'https://edabalans.ru';
+    : 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai';
   var mount = document.querySelector('[data-edabalans-homepage]');
   var offerStorageKey = 'edabalans_intensive_offer_v1';
   var sourceContextStorageKey = 'edabalans_checkout_source_v1';

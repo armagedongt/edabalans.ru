@@ -4,7 +4,7 @@
   var script = document.currentScript;
   var appHost = script && script.src
     ? new URL(script.src, window.location.href).origin
-    : 'https://edabalans.ru';
+    : 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai';
   var mount = document.querySelector('[data-edabalans-intensive]');
   var attributionKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid', 'alias'];
   var currentParams = new URLSearchParams(window.location.search);

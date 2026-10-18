@@ -52,9 +52,9 @@ class Settings(BaseSettings):
     payment_owner_alerts_enabled: bool = False
     payment_owner_alerts_poll_seconds: float = 15.0
     payment_owner_alerts_endpoint: str = "http://telegram-bot:8001/internal/owner-payment-alert"
-    robokassa_result_url_2: str = "https://edabalans.ru/integrations/robokassa/result2"
-    robokassa_success_url_2: str = "https://edabalans.ru/payments/robokassa/success"
-    robokassa_fail_url_2: str = "https://edabalans.ru/payments/robokassa/fail"
+    robokassa_result_url_2: str = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/integrations/robokassa/result2"
+    robokassa_success_url_2: str = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/payments/robokassa/success"
+    robokassa_fail_url_2: str = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/payments/robokassa/fail"
     robokassa_jws_certificate_base64: str = ""
     robokassa_receipt_sno: str = ""
     robokassa_receipt_tax: str = ""

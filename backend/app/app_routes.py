@@ -407,6 +407,7 @@ def homepage_mobile_preview(embed: str | None = Query(default=None)) -> HTMLResp
 
 @router.get("/preview/direct-intensive", include_in_schema=False)
 @router.get("/preview/direct-intensive/", include_in_schema=False)
+@router.get("/podgotovka", include_in_schema=False)
 def direct_intensive_preview() -> HTMLResponse:
     fragment = (
         STATIC_DIR / "homepage-preview" / "direct-intensive.html"

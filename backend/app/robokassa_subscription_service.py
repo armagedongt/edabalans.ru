@@ -643,7 +643,7 @@ def _failed_charge_email(subscription: RecurringSubscription, settings: Settings
     if settings.smtp_reply_to:
         message["Reply-To"] = settings.smtp_reply_to
     amount = _amount_text(subscription.amount).replace(".00", "")
-    page = "https://edabalans.ru/subscription"
+    page = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/subscription"
     message.set_content(render_section("renewal-failed", "text", amount=amount, page=page))
     message.add_alternative(render_section("renewal-failed", "html", amount=amount, page=page), subtype="html")
     return message

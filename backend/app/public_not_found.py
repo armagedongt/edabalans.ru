@@ -13,6 +13,11 @@ router = APIRouter(tags=["public-site"])
 ASSET_DIR = Path(__file__).parent / "static" / "public-site-errors"
 ORIGIN = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
 HEADERS = {"X-Robots-Tag": "noindex, nofollow", "Cache-Control": "no-store"}
+LEGACY_MEMBER_PAGES = {
+    "/upgrade", "/hello", "/page118942576.html", "/page118954026.html",
+    "/page118954046.html", "/page118954066.html", "/page118954396.html",
+    "/page118954456.html", "/page118976756.html", "/d3", "/period",
+}
 
 
 def fragment() -> str:
@@ -73,7 +78,8 @@ def browser_navigation(request: Request) -> bool:
 
 async def public_http_exception(request: Request, exc: HTTPException):
     if exc.status_code == 404 and browser_navigation(request):
-        if request.url.path == "/members" or request.url.path.startswith("/members/"):
+        if (request.url.path == "/members" or request.url.path.startswith("/members/")
+                or request.url.path.rstrip("/") in LEGACY_MEMBER_PAGES):
             return HTMLResponse(members_moved_page(), status_code=404, headers=HEADERS)
         return HTMLResponse(page(), status_code=404, headers=HEADERS)
     return await http_exception_handler(request, exc)

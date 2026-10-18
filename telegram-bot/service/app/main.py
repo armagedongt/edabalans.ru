@@ -911,8 +911,8 @@ def public_messenger_start_link(
         "deep_link": f"{base}{payload}",
         "fallback_url": f"{base}{alias.token}",
         "payload": payload,
-        "click_url": f"{settings.telegram_public_base_url.rstrip('/') or 'https://edabalans.ru'}/api/messaging/start-link/click",
-        "qr_url": f"{settings.telegram_public_base_url.rstrip('/') or 'https://edabalans.ru'}/q/{payload}",
+        "click_url": f"{settings.telegram_public_base_url.rstrip('/') or 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai'}/api/messaging/start-link/click",
+        "qr_url": f"{settings.telegram_public_base_url.rstrip('/') or 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai'}/q/{payload}",
         "expires_in_seconds": 7 * 24 * 60 * 60,
     }
 

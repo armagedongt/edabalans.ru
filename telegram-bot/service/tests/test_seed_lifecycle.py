@@ -54,7 +54,7 @@ def test_postpurchase_has_one_closing_review_copy_and_postmasterclass_is_disable
         )
         expected_button = [{
             "text": "Открыть DQS",
-            "url": "https://edabalans.ru/dqs",
+            "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/dqs",
         }]
         assert dqs_step.configuration["buttons"] == expected_button
 
@@ -72,7 +72,7 @@ def test_postpurchase_has_one_closing_review_copy_and_postmasterclass_is_disable
             **dqs_step.configuration,
             "buttons": [{
                 "text": "Открыть DQS",
-                "url": "https://edabalans.ru/dqs",
+                "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/dqs",
             }],
         }
         session.commit()

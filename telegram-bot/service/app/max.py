@@ -1123,7 +1123,7 @@ def process_max_update(
     intensive_public_url: str,
     sender: MaxClient,
     app_auth_secret: str = "",
-    account_url: str = "https://edabalans.ru/lk",
+    account_url: str = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk",
 ) -> dict[str, Any]:
     """Persist a MAX bot start and send a platform-bound intensive link."""
     update_type = str(update.get("update_type") or "")

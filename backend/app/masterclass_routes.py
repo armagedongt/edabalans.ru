@@ -1949,7 +1949,7 @@ def reveal_course_application(
         "ok": True,
         "created": created,
         "app_code": app_code,
-        "app_url": "https://edabalans.ru/dqs" if app_code == "dqs" else "",
+        "app_url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/dqs" if app_code == "dqs" else "",
         "telegram_link_status": telegram_link_status,
         "telegram_url": f"https://t.me/{telegram_username}?start={payload}" if telegram_username else "",
         "max_url": f"https://max.ru/{max_username}?start={payload}" if max_username else "",

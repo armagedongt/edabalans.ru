@@ -25,8 +25,18 @@ from app.knowledge_library_service import (
 
 knowledge_mcp_transport_security = TransportSecuritySettings(
     enable_dns_rebinding_protection=True,
-    allowed_hosts=["edabalans.ru", "edabalans.ru:443"],
-    allowed_origins=["https://edabalans.ru"],
+    allowed_hosts=[
+        "edabalans.ru", "edabalans.ru:443",
+        "xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        "xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai:443",
+        "admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        "admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai:443",
+    ],
+    allowed_origins=[
+        "https://edabalans.ru",
+        "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+    ],
 )
 
 

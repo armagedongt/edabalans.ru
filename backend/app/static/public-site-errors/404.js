@@ -3,7 +3,7 @@
   var host = document.querySelector('[data-edabalans-404]');
   if (!host || host.dataset.loading || host.dataset.mounted) return;
   host.dataset.loading = 'true';
-  var origin = 'https://edabalans.ru';
+  var origin = 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai';
   fetch(origin + '/public-site-errors/404-fragment.html', {credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer'})
     .then(function (response) {
       if (!response.ok) throw new Error('404 fragment unavailable');

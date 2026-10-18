@@ -18,7 +18,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.article_markup import markdown_to_article_html
+from app.article_markup import markdown_to_article_html, canonical_image_src, PUBLIC_IMAGE_ORIGIN
 from app.blog_content import (
     BLOG_CATEGORIES,
     SLUG_RE,
@@ -377,10 +377,10 @@ def _manifest_managed(payload: dict) -> bool:
 
 
 def markdown_media_from_saved(slug: str, payload: dict) -> list[dict]:
-    from app.editorial_media import image_url
+    from app.editorial_media import image_aliases
     return [deepcopy(item) for item in payload.get("media", [])
             if item.get("storage") == "editorial"
-            and item.get("url") == image_url("blog:" + slug, item["name"])]
+            and item.get("url") in image_aliases("blog:" + slug, item["name"])]
 
 
 def effective_article_payload(version: ManagedDocumentVersion) -> dict:
@@ -546,7 +546,7 @@ def serialize_article(version: ManagedDocumentVersion, *, source: bool, db: Sess
             **{key: item[key] for key in ("name", "sha256", "mime", "provenance", "alt", "width", "height")},
             "card_eligible": item.get("storage") != "editorial",
             "url": (
-                item["url"].replace("https://edabalans.ru/editorial-media/", "/admin/api/editorial/media/") if item.get("storage") == "editorial" else
+                canonical_image_src(item["url"]).replace(PUBLIC_IMAGE_ORIGIN + "/editorial-media/", "/admin/api/editorial/media/") if item.get("storage") == "editorial" else
                 f"/blog/media/{item['name']}" if item.get("storage") == "git" else
                 f"/blog/drafts/{version.document_key}/media/{item['name']}"
             ),
@@ -613,8 +613,8 @@ def render_article(
     for item in payload["media"]:
         if item.get("storage") == "editorial":
             if not public:
-                value = value.replace(item["url"], item["url"].replace(
-                    "https://edabalans.ru/editorial-media/", "/admin/api/editorial/media/"))
+                value = value.replace(item["url"], canonical_image_src(item["url"]).replace(
+                    PUBLIC_IMAGE_ORIGIN + "/editorial-media/", "/admin/api/editorial/media/"))
             continue
         if item.get("storage") == "git":
             continue

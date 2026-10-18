@@ -2265,7 +2265,7 @@ def test_course_app_trigger_reveals_only_an_owned_application_once():
     first = client.post("/api/masterclass/apps/dqs/reveal", json=payload)
     assert first.status_code == 200
     assert first.json()["created"] is True
-    assert first.json()["app_url"] == "https://edabalans.ru/dqs"
+    assert first.json()["app_url"] == "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/dqs"
     assert first.json()["telegram_link_status"] == "not_linked"
     assert first.json()["telegram_url"].endswith("?start=dqs")
     assert first.json()["max_url"].endswith("?start=dqs")

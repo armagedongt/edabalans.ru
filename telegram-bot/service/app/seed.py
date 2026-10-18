@@ -507,7 +507,7 @@ def _postpurchase_messages() -> list[dict]:
             "DQS — ссылка на приложение",
             "Ваш DQS открыт. Здесь вы будете отмечать питание каждый день.\n\n"
             "Закрепите это сообщение, чтобы дневник всегда был под рукой.\n\n"
-            "<a href=\"https://edabalans.ru/dqs\">Открыть DQS</a>",
+            "<a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/dqs\">Открыть DQS</a>",
             None,
             ["после покупки", "DQS", "ссылка на приложение"],
         ),
@@ -1038,7 +1038,7 @@ def seed_defaults(
             ("pp_identity", "MESSAGE", "postpurchase_identity", None, {"trigger": "onboarding_questionnaire_completed", "state": "service_delivery"}),
             ("pp_questionnaire", "MESSAGE", "postpurchase_questionnaire", None, {"trigger": "onboarding_questionnaire_completed", "state": "service_delivery"}),
             ("pp_current_diet_questionnaire", "MESSAGE", "postpurchase_current_diet", None, {"trigger": "current_diet_questionnaire_completed", "condition": "telegram_linked=true", "state": "editorial_slot"}),
-            ("pp_dqs_app_link", "MESSAGE", "postpurchase_dqs_app_link", None, {"trigger": "app_revealed_dqs", "condition": "telegram_linked=true AND masterclass_access=true", "state": "service_delivery", "buttons": [{"text": "Открыть DQS", "url": "https://edabalans.ru/dqs"}]}),
+            ("pp_dqs_app_link", "MESSAGE", "postpurchase_dqs_app_link", None, {"trigger": "app_revealed_dqs", "condition": "telegram_linked=true AND masterclass_access=true", "state": "service_delivery", "buttons": [{"text": "Открыть DQS", "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/dqs"}]}),
             ("pp_day_unopened_18h", "MESSAGE", "postpurchase_day_unopened", None, {"trigger": "course_day_unopened_18h", "condition": "local_time=18:00 AND day_available=true AND day_opened=false", "state": "editorial_slot"}),
             ("pp_course_stalled_72h", "MESSAGE", "postpurchase_tempo_late", None, {"trigger": "course_stalled_72h", "condition": "masterclass_access=true AND later_course_activity=false AND course_completed=false", "state": "editorial_slot"}),
             ("pp_sales_early_missing", "MESSAGE", "postpurchase_recipes_missing", None, {"trigger": "sales_last_chance_due", "condition": "stage IN (early,second) AND recipes_access=false", "state": "editorial_slot"}),
@@ -1088,7 +1088,7 @@ def seed_defaults(
                 "state": "service_delivery",
                 "buttons": [{
                     "text": button_text,
-                    "url": "https://edabalans.ru/dqs",
+                    "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/dqs",
                 }],
             }
 

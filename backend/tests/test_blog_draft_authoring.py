@@ -54,15 +54,17 @@ def _attachment(scope):
                  "provenance": "owner-upload; attachment: Фото.png"}
 
 
-def test_editorial_attachment_is_private_until_blog_publication_and_survives_retry(authoring):
+@pytest.mark.parametrize("legacy_source", [False, True])
+def test_editorial_attachment_is_private_until_blog_publication_and_survives_retry(authoring, legacy_source):
     client, factory = authoring
     original = client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]
     raw, body = _attachment("blog:" + SLUG)
     uploaded = client.post("/admin/api/editorial/media", json=body)
     assert uploaded.status_code == 200, uploaded.text
-    url = uploaded.json()["url"]
+    canonical_url = uploaded.json()["url"]
+    url = canonical_url.replace("https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai", "https://edabalans.ru") if legacy_source else canonical_url
     assert client.get(url).status_code == 404
-    preview_url = url.replace("https://edabalans.ru/editorial-media/", "/admin/api/editorial/media/")
+    preview_url = canonical_url.replace("https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/editorial-media/", "/admin/api/editorial/media/")
     assert client.get(preview_url).content == raw
     assert client.post("/admin/api/editorial/media", json=body).json() == uploaded.json()
     with factory() as db:
@@ -81,7 +83,7 @@ def test_editorial_attachment_is_private_until_blog_publication_and_survives_ret
     assert delivered.headers["content-type"] == "image/png"
     assert delivered.headers["cache-control"] == "private, no-store"
     page = client.get(f"/blog/articles/{SLUG}")
-    assert page.status_code == 200 and f'src="{url}"' in page.text
+    assert page.status_code == 200 and f'src="{canonical_url}"' in page.text
     reopened = client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]
     assert reopened["markdown"] == markdown and reopened["editorial_status"] == "published"
     for key in ("title", "category", "cta", "visibility", "hero"):
@@ -93,7 +95,7 @@ def test_editorial_upload_and_owner_preview_require_admin_before_receiving_bytes
     _, body = _attachment("blog:" + SLUG)
     result = client.post("/admin/api/editorial/media", json=body)
     assert result.status_code == 200
-    preview_url = result.json()["url"].replace("https://edabalans.ru/editorial-media/", "/admin/api/editorial/media/")
+    preview_url = result.json()["url"].replace("https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/editorial-media/", "/admin/api/editorial/media/")
     app.dependency_overrides.pop(require_blog_admin)
     app.dependency_overrides.pop(optional_blog_admin)
     monkeypatch.setattr("app.blog_draft_routes.admin_identity", lambda *_: None)

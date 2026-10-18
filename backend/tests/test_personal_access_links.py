@@ -186,7 +186,7 @@ def test_paid_personal_offer_keeps_email_until_payment_and_uses_direct_url():
 
     assert created.status_code == 200, created.text
     payload = created.json()
-    assert payload["url"].startswith("https://edabalans.ru/access-links/")
+    assert payload["url"].startswith("https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/access-links/")
     assert "new-client@example.test" not in payload["telegram_text"]
     with factory() as db:
         assert db.scalar(select(func.count(User.id))) == 2

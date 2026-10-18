@@ -248,3 +248,16 @@ class ArticleMarkupTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_project_image_migration_preserves_external_and_neighbor_images():
+    origin = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
+    cases = [
+        ("https://app.edabalans.ru/media/reviews/v1/picture.webp", origin + "/media/reviews/v1/picture.webp"),
+        ("https://edabalans.ru/editorial-media/scope/picture.png", origin + "/editorial-media/scope/picture.png"),
+        ("https://app.edabalans.ru/sherbakova/picture.webp", "https://app.edabalans.ru/sherbakova/picture.webp"),
+        ("https://app.edabalans.ru.example.org/media/reviews/picture.webp", "https://app.edabalans.ru.example.org/media/reviews/picture.webp"),
+    ]
+    for source, expected in cases:
+        rendered = markdown_to_article_html(f"![Фото]({source})")
+        assert f'src="{expected}"' in rendered, source

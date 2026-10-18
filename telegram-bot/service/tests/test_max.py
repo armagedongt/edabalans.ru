@@ -518,7 +518,7 @@ def test_max_start_saves_identity_and_sends_intensive_link(tmp_path, monkeypatch
     assert fake.sent[0][1] == ""
     assert "Бесплатный интенсив" in fake.sent[1][1]
     assert fake.sent[1][2]["buttons"][0]["text"] == "Открыть часть #1"
-    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive/day-1?i=E")
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive/day-1?i=E")
     assert "&from=max&entry=bot" in fake.sent[1][2]["buttons"][0]["url"]
 
     with Session(engine) as session:
@@ -1307,7 +1307,7 @@ def test_max_delivery_failure_persists_same_link_for_webhook_retry(tmp_path, mon
     response = client.post("/bot/max/webhook", json=max_start(), headers=headers)
     assert response.json() == {"ok": True, "retried": True}
     assert len(fake.sent) == 2
-    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive/day-1?i=E")
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive/day-1?i=E")
     assert "&from=max&entry=bot" in fake.sent[1][2]["buttons"][0]["url"]
     assert client.post("/bot/max/webhook", json=max_start(), headers=headers).json() == {
         "ok": True,
@@ -1352,7 +1352,7 @@ def test_unknown_max_payload_keeps_identity_without_inventing_attribution(tmp_pa
 
     response = client.post("/bot/max/webhook", json=max_start(payload="obsolete-link"), headers=headers)
     assert response.json() == {"ok": True, "intensive": True, "first_start": True}
-    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive/day-1?i=E")
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive/day-1?i=E")
     assert "&from=max&entry=bot" in fake.sent[1][2]["buttons"][0]["url"]
 
     with Session(engine) as session:
@@ -1395,6 +1395,6 @@ def test_distinct_later_max_start_is_recorded_as_repeat(tmp_path, monkeypatch):
         assert events == ["start_first", "start_repeat"]
     assert len(fake.sent) == 3
     assert fake.sent[1][2]["buttons"][0]["text"] == "Открыть часть #1"
-    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive/day-1?i=E")
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive/day-1?i=E")
     assert "&from=max&entry=bot" in fake.sent[1][2]["buttons"][0]["url"]
     app.dependency_overrides.clear()

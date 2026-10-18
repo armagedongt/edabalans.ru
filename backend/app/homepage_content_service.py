@@ -10,7 +10,7 @@ from pathlib import Path
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.article_markup import inline_markdown, safe_href, safe_image_src
+from app.article_markup import inline_markdown, safe_href, safe_image_src, canonical_image_src, PUBLIC_IMAGE_ORIGIN
 from app.managed_documents import active_document, ensure_seed_document, publish_document
 from app.models import ManagedDocumentVersion
 
@@ -47,7 +47,7 @@ def source_with_images(markdown: str) -> str:
     for slot in image_definitions():
         src = slot["originalSrc"]
         if src.startswith("/"):
-            src = "https://edabalans.ru" + src
+            src = PUBLIC_IMAGE_ORIGIN + src
         lines.extend([f"<!-- homepage-image:{slot['key']} -->",
                       f"![{slot['alt']}]({src})", f"<!-- /homepage-image:{slot['key']} -->", ""])
     return "\n".join(lines)
@@ -142,8 +142,10 @@ def compile_homepage(markdown: str) -> dict:
         if key not in image_slots or key in images or image is None or not safe_image_src(image[2], allow_relative=True):
             raise HTTPException(422, "Некорректное поле фотографии главной")
         src = image[2]
-        if src == "https://edabalans.ru" + image_slots[key]["originalSrc"]:
+        if src in {"https://edabalans.ru" + image_slots[key]["originalSrc"],
+                   PUBLIC_IMAGE_ORIGIN + image_slots[key]["originalSrc"]}:
             src = image_slots[key]["originalSrc"]
+        src = canonical_image_src(src)
         images[key] = {"src": src, "alt": image[1]}
     if images and set(images) != set(image_slots):
         raise HTTPException(422, "Сохраните все поля фотографий главной")
@@ -197,6 +199,7 @@ def render_homepage(db: Session, template: str) -> str:
             return tag
         slot = slots[src[1]]
         value = images.get(slot["key"], {"src": slot["originalSrc"], "alt": slot["alt"]})
+        value = {**value, "src": canonical_image_src(value["src"])}
         if value == {"src": slot["originalSrc"], "alt": slot["alt"]}:
             return tag
         tag = re.sub(r'\bsrc="[^"]*"', lambda _: 'src="'+escape(value["src"], quote=True)+'"', tag, count=1)

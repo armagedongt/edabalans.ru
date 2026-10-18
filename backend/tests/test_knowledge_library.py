@@ -58,8 +58,12 @@ def test_mcp_transport_security_has_an_exact_production_allowlist() -> None:
     assert knowledge_mcp_transport_security.allowed_hosts == [
         "edabalans.ru",
         "edabalans.ru:443",
+        "xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        "xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai:443",
+        "admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        "admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai:443",
     ]
-    assert knowledge_mcp_transport_security.allowed_origins == ["https://edabalans.ru"]
+    assert knowledge_mcp_transport_security.allowed_origins == ["https://edabalans.ru", "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai", "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"]
 
 
 def test_librarian_review_tools_are_registered_in_mcp() -> None:

@@ -40,7 +40,8 @@ def source(client):
     return client.get("/admin/api/public-site/homepage").json()["active"]
 
 
-def test_replacing_fixed_homepage_photo_preserves_the_entire_rest_of_layout(client):
+@pytest.mark.parametrize("slot_index", [0, 2])
+def test_replacing_fixed_homepage_photo_preserves_the_entire_rest_of_layout(client, slot_index):
     from app.homepage_content_service import image_definitions
     initial = client.get("/preview/homepage-release-candidate").text
     current = source(client)
@@ -48,7 +49,8 @@ def test_replacing_fixed_homepage_photo_preserves_the_entire_rest_of_layout(clie
     assert f"<!-- homepage-image:{slot['key']} -->" in current["markdown"]
     old_src = slot["originalSrc"]
     new_src = "https://example.test/replacement.png"
-    changed = current["markdown"].replace("https://edabalans.ru" + old_src, new_src, 1)
+    source_url = old_src if old_src.startswith("https://") else "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai" + old_src
+    changed = current["markdown"].replace(source_url, new_src, 1)
     saved = client.put("/admin/api/public-site/homepage", json={
         "expected_version": current["version"], "markdown": changed})
     assert saved.status_code == 200, saved.text
@@ -79,7 +81,7 @@ def test_homepage_attachment_is_hidden_until_its_fixed_slot_is_published(client,
     initial = client.get("/preview/homepage-release-candidate").text
     current = source(client)
     old_src = image_definitions()[0]["originalSrc"]
-    edited = current["markdown"].replace("https://edabalans.ru" + old_src, url, 1)
+    edited = current["markdown"].replace("https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai" + old_src, url, 1)
     result = client.put("/admin/api/public-site/homepage", json={
         "expected_version": current["version"], "markdown": edited})
     assert result.status_code == 200, result.text

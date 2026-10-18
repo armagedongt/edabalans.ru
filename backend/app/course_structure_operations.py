@@ -269,7 +269,7 @@ def apply(db, course_code, expected_version, operation, admin):
                     prefix = "day" if course_code == "masterclass-21" else "stage"
                     app = "masterclass" if course_code == "masterclass-21" else "calories"
                     query = "course" if course_code == "masterclass-21" else "calories"
-                    item.canonical_url = f"https://edabalans.ru/apps/{app}-course.html?{query}_{prefix}={unit}&{query}_material={ident}"
+                    item.canonical_url = f"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/apps/{app}-course.html?{query}_{prefix}={unit}&{query}_material={ident}"
                     item.source_tags = [tag for tag in item.source_tags if not re.fullmatch(prefix + r"-\d+", tag)] + [f"{prefix}-{unit}"]
         db.commit()
         return {"ok": True, "version": revision.version_no, "changed": True, "remapped_rows": count,
