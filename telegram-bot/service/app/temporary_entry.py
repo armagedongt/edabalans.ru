@@ -152,12 +152,22 @@ def entry_decision(session: Session, contact: Contact) -> str:
     return "article"
 
 
+def navigation_content(session: Session, platform: str) -> ContentItem | None:
+    from app.content_formatting import content_is_runtime_ready
+    from app.onepage_campaign import ENTRY_CODES, SKIP
+    group = ENTRY_CODES["max" if platform == "max" else "tg"]
+    independent = session.scalar(select(ContentItem).where(ContentItem.code == group["navigation"]))
+    if independent and content_is_runtime_ready(independent) and (independent.body_source or "").strip() != SKIP:
+        return independent
+    return session.scalar(select(ContentItem).where(ContentItem.code == NAVIGATION_CODE))
+
+
 def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id: str, platform: str, public_url: str) -> dict:
     from app.content_formatting import content_is_runtime_ready, replace_template_values
     from app.engine import personalized_delivery, _has_content_tag, _assign_content_tag
     from app.intensive_access import get_or_create_intensive_access_link
     item = session.scalar(select(ContentItem).where(ContentItem.code == CONTENT_CODE))
-    navigation = session.scalar(select(ContentItem).where(ContentItem.code == NAVIGATION_CODE))
+    navigation = navigation_content(session, platform)
     tag = session.scalar(select(CrmTag).where(CrmTag.code == POOL_CODE, CrmTag.status == "active"))
     navigation_tag = session.scalar(select(CrmTag).where(CrmTag.code == NAVIGATION_TAG_CODE))
     visited = set()
@@ -190,12 +200,9 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
     from app.onepage_campaign import ENTRY_CODES
     group = ENTRY_CODES["max" if platform == "max" else "tg"]
     independent = session.scalar(select(ContentItem).where(ContentItem.code == group["repeat_video" if repeat else "first_video"]))
-    independent_navigation = session.scalar(select(ContentItem).where(ContentItem.code == group["navigation"]))
     independent_ready = independent and content_is_runtime_ready(independent) and (independent.body_source or "").strip() != "[[SKIP]]"
     if independent_ready:
         item = independent
-    if independent_navigation and content_is_runtime_ready(independent_navigation) and (independent_navigation.body_source or "").strip() != "[[SKIP]]":
-        navigation = independent_navigation
     if repeat and not independent_ready:
         repeat_offer = session.scalar(select(ContentItem).where(ContentItem.code == REPEAT_OFFER_CODE))
         if not repeat_offer or repeat_offer.status != "published" or not content_is_runtime_ready(repeat_offer):

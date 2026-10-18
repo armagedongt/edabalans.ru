@@ -55,8 +55,8 @@ DIRECT_TRIGGER_CONTEXT = {
         "kind": "direct_trigger",
         "module": "start_attribution",
         "step": "temporary_navigation",
-        "previous": "Отмечен участник общей временной группы",
-        "next": "Закрепить навигацию в Telegram, затем отправить видео",
+        "previous": "Вход во временную группу или личная команда /channel либо /contact",
+        "next": "При первом входе закрепить и отправить видео; по команде — только навигация",
     },
     "tpl_apps_strength_admin": {
         "kind": "direct_trigger",
@@ -71,7 +71,7 @@ DIRECT_TRIGGER_CONTEXT.update({
         "kind": "direct_trigger", "module": "start_attribution", "step": f"menu_{command[1:]}",
         "previous": f"Личная команда {command}", "next": row[3],
     }
-    for command, row in COMMAND_CONTENT.items()
+    for command, row in COMMAND_CONTENT.items() if row[0] != "tpl_onepage_entry_navigation"
 })
 SILENT_EVENTS = {
     "owner_closing_review": "Архивное событие: итоговое саморевью сохраняется в CRM, а копия отправляется участнику.",

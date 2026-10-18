@@ -33,7 +33,7 @@ from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.graph_authoring import GraphDraftIn, GraphPublishIn, load_source, publish_draft, save_draft
 from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_CODE, allowed_telegram_ids, maintenance_allows, record_maintenance_contact
 from app.temporary_entry import BLOCKED_STATUSES, pause_marketing, temporary_response
-from app.public_menu import COMMAND_CONTENT, send_command_message
+from app.public_menu import COMMAND_ALIASES, COMMAND_CONTENT, send_command_message
 from app.metrika import MetrikaOfflineClient, sync_offline_conversions
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, MessengerLinkToken, OwnerPaymentAlertDelivery, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
@@ -1175,6 +1175,7 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
         text = message.get("text", "")
         command = text.strip().casefold().split(maxsplit=1)
         command_name = command[0].split("@", 1)[0] if command else ""
+        command_name = COMMAND_ALIASES.get(command_name, command_name)
         if (command_name in COMMAND_CONTENT or command_name == "/guide") and (
             message["chat"].get("type", "private") != "private" or message["from"].get("is_bot")
         ):
