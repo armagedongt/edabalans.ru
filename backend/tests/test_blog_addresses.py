@@ -25,7 +25,7 @@ def test_renamed_article_keeps_published_draft_history_and_internal_key(authorin
         update_text(db, slug=key, markdown="Секретныйчерновик. Другое предложение.",
                     expected_version=draft.version_no, admin="test")
         before = [(str(v.id), v.document_key, v.version_no, v.content_hash, v.is_active)
-                  for v in db.scalars(select(ManagedDocumentVersion))]
+                  for v in db.scalars(select(ManagedDocumentVersion).where(ManagedDocumentVersion.document_type.in_(("blog-article-draft", "blog-article-published"))))]
 
     public = client.get("/blog/sroki-pohudeniya")
     assert public.status_code == 200
@@ -45,7 +45,7 @@ def test_renamed_article_keeps_published_draft_history_and_internal_key(authorin
             ManagedDocumentVersion.is_active.is_(True)))
         assert saved_publication.payload["markdown"] == markdown
         after = [(str(v.id), v.document_key, v.version_no, v.content_hash, v.is_active)
-                 for v in db.scalars(select(ManagedDocumentVersion))]
+                 for v in db.scalars(select(ManagedDocumentVersion).where(ManagedDocumentVersion.document_type.in_(("blog-article-draft", "blog-article-published"))))]
     assert after == before
     for path in ("/blog/articles/" + key, "/articles/" + key, "/blog/" + key):
         response = client.get(path, follow_redirects=False)

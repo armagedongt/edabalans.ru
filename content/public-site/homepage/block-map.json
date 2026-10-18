@@ -482,7 +482,6 @@
       "label": "Сомнения и бесплатный интенсив",
       "selector": "[data-homepage-block=\"free-intensive\"]",
       "fields": [
-        "paragraph-1",
         "title"
       ],
       "width": "content",
