@@ -1891,3 +1891,15 @@ def test_direct_intensive_preview_has_one_accepted_visual_variant() -> None:
     assert "DESIGN_VARIANTS" not in response.text
     assert "data-font-variant" not in response.text
     assert "data-design-variant" not in response.text
+
+
+def test_main_site_serves_the_accepted_homepage_directly_with_public_pricing():
+    response = client.get("/", follow_redirects=False)
+    assert response.status_code == 200
+    assert "location" not in response.headers
+    assert "x-robots-tag" not in response.headers
+    assert '<meta name="robots" content="noindex,nofollow">' not in response.text
+    assert 'rel="canonical" href="https://похудение-это-есть.рф/"' in response.text
+    assert 'data-pricing-endpoint="/api/pricing/site"' in response.text
+    assert 'data-pricing-endpoint="/api/pricing/site/preview"' not in response.text
+    assert 'https://app.edabalans.ru/' not in response.text

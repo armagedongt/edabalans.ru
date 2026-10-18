@@ -17,6 +17,7 @@ from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Res
 from app.blog_content import (
     BLOG_CATEGORIES,
     BLOG_PUBLIC_ORIGIN,
+    BLOG_PUBLIC_URL,
     blog_seo_title,
     card_html,
     load_blog_catalog,
@@ -101,7 +102,7 @@ def _template(name: str, search_query: str = "") -> str:
     template = (BLOG_DIR / name).read_text(encoding="utf-8")
     if "<!-- BLOG_HEADER_SEARCH -->" in template:
         search = (BLOG_DIR / "header-search.html").read_text(encoding="utf-8")
-        search = search.replace("{{SEARCH_ACTION}}", escape(BLOG_PUBLIC_ORIGIN + "/", quote=True))
+        search = search.replace("{{SEARCH_ACTION}}", escape(BLOG_PUBLIC_URL, quote=True))
         search = search.replace("{{SEARCH_QUERY}}", escape(search_query, quote=True))
         template = template.replace("<!-- BLOG_HEADER_SEARCH -->", search)
     return template
@@ -127,19 +128,19 @@ def _author() -> dict:
 
 
 def _person(author: dict) -> dict:
-    url = BLOG_PUBLIC_ORIGIN + author["path"]
+    url = BLOG_PUBLIC_URL + author["path"]
     return {"@type": "Person", "@id": url + "#person", "url": url,
             "name": author["name"], "jobTitle": author["role"], "description": author["description"],
             "image": BLOG_PUBLIC_ORIGIN + author["image"], "sameAs": author["same_as"]}
 
 
 def _breadcrumbs(article=None) -> tuple[str, dict]:
-    items = [("Блог", BLOG_PUBLIC_ORIGIN + "/")]
+    items = [("Блог", BLOG_PUBLIC_URL)]
     if article is not None:
-        items += [(article.category, BLOG_PUBLIC_ORIGIN + "/?" + urlencode({"category": article.category})),
-                  (article.title, BLOG_PUBLIC_ORIGIN + "/articles/" + article.slug)]
+        items += [(article.category, BLOG_PUBLIC_URL + "?" + urlencode({"category": article.category})),
+                  (article.title, BLOG_PUBLIC_URL + "/articles/" + article.slug)]
     else:
-        items.append(("Сергей Воронцов", BLOG_PUBLIC_ORIGIN + _author()["path"]))
+        items.append(("Сергей Воронцов", BLOG_PUBLIC_URL + _author()["path"]))
     links = ' <span aria-hidden="true">/</span> '.join(
         f'<a href="{escape(url, quote=True)}">{escape(label)}</a>' if index < len(items) - 1
         else f'<span aria-current="page">{escape(label)}</span>'
@@ -235,8 +236,8 @@ def blog_home(
     ) if page_count > 1 else ""
     if active_page < page_count:
         pagination += f'<a class="page-link next" rel="next" href="?{escape(query(active_page + 1), quote=True)}#articles">Следующая</a>'
-    canonical = (f"{BLOG_PUBLIC_ORIGIN}/" if q else
-                 f"{BLOG_PUBLIC_ORIGIN}/" + (f"?{query(active_page)}" if query(active_page) else ""))
+    canonical = (f"{BLOG_PUBLIC_URL}" if q else
+                 f"{BLOG_PUBLIC_URL}" + (f"?{query(active_page)}" if query(active_page) else ""))
     title = "Похудение — это есть · Авторский блог Сергея Воронцова"
     if category != "all":
         title += f" · {category}"
@@ -294,6 +295,7 @@ def favicon_test_page(variant: str) -> HTMLResponse:
     return response
 
 
+@router.get("/articles/{slug}", include_in_schema=False)
 @router.get("/blog/articles/{slug}", include_in_schema=False)
 def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
     catalog = _public_catalog(db)
@@ -312,7 +314,7 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         else render_article_body(catalog, article)
     )
     body = insert_inline_related(catalog, article, body)
-    canonical = f"{BLOG_PUBLIC_ORIGIN}/articles/{article.slug}"
+    canonical = f"{BLOG_PUBLIC_URL}/articles/{article.slug}"
     social_image = article.card.file
     author = _author()
     breadcrumbs, breadcrumb_data = _breadcrumbs(article)
@@ -356,7 +358,7 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         ),
         "{{HERO}}": hero_html,
         "{{BREADCRUMBS}}": breadcrumbs,
-        "{{AUTHOR_BYLINE}}": f'<a class="author-byline" href="{escape(BLOG_PUBLIC_ORIGIN + author["path"], quote=True)}"><img src="{escape(author["image"], quote=True)}" alt="" width="32" height="32">{escape(author["name"])}, {escape(author["role"].lower())}</a>',
+        "{{AUTHOR_BYLINE}}": f'<a class="author-byline" href="{escape(BLOG_PUBLIC_URL + author["path"], quote=True)}"><img src="{escape(author["image"], quote=True)}" alt="" width="32" height="32">{escape(author["name"])}, {escape(author["role"].lower())}</a>',
         "{{ARTICLE_DATES}}": '<div class="article-dates">' + ''.join(dates) + '</div>' if dates else '',
         "{{ARTICLE_BODY}}": body,
         "{{SUBSCRIPTION_SLOT}}": (
@@ -388,10 +390,11 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
     return _html_response(apply_responsive_images(rendered, catalog.content_dir, catalog.allowed_media))
 
 
+@router.get("/sitemap.xml", include_in_schema=False)
 @router.get("/blog/sitemap.xml", include_in_schema=False)
 def blog_sitemap() -> Response:
     catalog = load_blog_catalog()
-    locations = [BLOG_PUBLIC_ORIGIN, BLOG_PUBLIC_ORIGIN + _author()["path"], *(f"{BLOG_PUBLIC_ORIGIN}/articles/{article.slug}" for article in catalog.published)]
+    locations = [BLOG_PUBLIC_URL, BLOG_PUBLIC_URL + _author()["path"], *(f"{BLOG_PUBLIC_URL}/articles/{article.slug}" for article in catalog.published)]
     items = "".join(f"<url><loc>{escape(location)}</loc></url>" for location in locations)
     xml = f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{items}</urlset>'
     response = Response(xml, media_type="application/xml")
@@ -399,9 +402,10 @@ def blog_sitemap() -> Response:
     return response
 
 
+@router.get("/robots.txt", include_in_schema=False)
 @router.get("/blog/robots.txt", include_in_schema=False)
 def blog_robots() -> PlainTextResponse:
-    value = f"User-agent: *\nAllow: /\nSitemap: {BLOG_PUBLIC_ORIGIN}/sitemap.xml\n"
+    value = f"User-agent: *\nAllow: /\nSitemap: {BLOG_PUBLIC_URL}/sitemap.xml\n"
     response = PlainTextResponse(value)
     response.headers["Cache-Control"] = "public, max-age=3600"
     return response
@@ -443,3 +447,8 @@ def blog_media(media_name: str) -> FileResponse:
     response = FileResponse(media_path, media_type=media_type)
     response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
     return response
+
+
+@router.get("/jpn", include_in_schema=False)
+def japanese_article_alias(db: Session = Depends(get_db)) -> HTMLResponse:
+    return blog_article("pochemu-yapontsy-hudye-a-ty-net", db)

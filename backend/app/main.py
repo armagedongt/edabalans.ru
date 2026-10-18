@@ -175,7 +175,12 @@ async def protect_native_account_host(request: Request, call_next):
             managed_app_request = bool(
                 isinstance(body, dict) and body.get("target_user_id")
             )
-    native_account_host = host in {"edabalans.ru", "www.edabalans.ru"} or host.startswith("go.")
+    native_account_host = host in {
+        "edabalans.ru", "www.edabalans.ru",
+        "xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        "www.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        "admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+    } or host.startswith("go.")
     if (
         native_account_host
         and protected

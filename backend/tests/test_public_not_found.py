@@ -80,7 +80,7 @@ def test_404_on_legacy_host_loads_shared_assets_from_public_origin():
     response = TestClient(app, base_url="https://blog.example.com").get("/unknown-page", headers={"Accept": "text/html"})
     assert response.status_code == 404
     for path in ["site-header.js", "site-footer.js", "public-site-errors/shrug-character-v1.svg"]:
-        assert f'src="https://edabalans.ru/{path}"' in response.text
+        assert f'src="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/{path}"' in response.text
 
 
 @pytest.mark.parametrize("path,mime", [("404-fragment.html", "text/html"), ("404.js", "application/javascript"), ("shrug-character-v1.svg", "image/svg+xml")])
@@ -94,7 +94,7 @@ def test_tilda_assets_are_public_and_cors_enabled(path, mime):
         assert "<iframe" not in response.text
 
 
-def test_members_moved_preview_is_ready_but_does_not_capture_legacy_paths():
+def test_members_moved_preview_and_legacy_paths_use_approved_card():
     client = TestClient(app)
     response = client.get("/preview/members-moved", headers={"Accept": "text/html"})
     assert response.status_code == 200
@@ -116,8 +116,8 @@ def test_members_moved_preview_is_ready_but_does_not_capture_legacy_paths():
 
     legacy = client.get("/members/courses/old-course-code/material", headers={"Accept": "text/html"})
     assert legacy.status_code == 404
-    assert "Страница не найдена" in legacy.text
-    assert "Личный кабинет переехал" not in legacy.text
+    assert "Личный кабинет переехал" in legacy.text
+    assert "я отправил вам на почту письмо с новым паролем" in legacy.text
 
 
 def test_members_moved_background_is_a_reusable_public_asset():
@@ -127,3 +127,22 @@ def test_members_moved_background_is_a_reusable_public_asset():
     assert response.headers["access-control-allow-origin"] == "*"
     assert ".ed-soft-sky-sunrise-background" in response.text
     assert "radial-gradient" in response.text
+
+
+@pytest.mark.parametrize("path", ["/members", "/members/login", "/members/signup/group/unseen-group", "/members/courses/unseen-course/nested/material.html"])
+def test_all_legacy_member_paths_show_the_same_card_without_redirect(path):
+    response = TestClient(app).get(path + "?token=private-marker", headers={"Accept": "text/html"}, follow_redirects=False)
+    assert response.status_code == 404
+    assert "location" not in response.headers
+    assert "Личный кабинет переехал" in response.text
+    assert "private-marker" not in response.text
+    assert response.headers["cache-control"] == "no-store"
+
+
+@pytest.mark.parametrize("path", ["/payment", "/payment_5900", "/payment_7900", "/payment_9800", "/payment_all"])
+def test_legacy_manual_payment_links_serve_existing_form_directly(path):
+    client = TestClient(app)
+    response = client.get(path, follow_redirects=False)
+    assert response.status_code == 200
+    assert "location" not in response.headers
+    assert response.content == client.get("/pay").content

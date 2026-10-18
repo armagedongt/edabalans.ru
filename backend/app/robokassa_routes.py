@@ -188,6 +188,11 @@ def _go_live_probe_settings(request: Request, settings: Settings) -> Settings:
     )
 
 
+@router.get("/payment", include_in_schema=False)
+@router.get("/payment_5900", include_in_schema=False)
+@router.get("/payment_7900", include_in_schema=False)
+@router.get("/payment_9800", include_in_schema=False)
+@router.get("/payment_all", include_in_schema=False)
 @router.get("/pay", include_in_schema=False)
 def manual_payment_page() -> FileResponse:
     return FileResponse(

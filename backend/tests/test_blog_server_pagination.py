@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.blog_content import BLOG_CATEGORIES, BLOG_PUBLIC_ORIGIN, load_blog_catalog
+from app.blog_content import BLOG_CATEGORIES, BLOG_PUBLIC_URL, load_blog_catalog
 from app.blog_routes import router
 from app.database import Base, get_db
 
@@ -34,7 +34,7 @@ def client():
 
 
 def slugs(html):
-    return re.findall(r'<a class="card-link" href="/articles/([^"]+)"', html)
+    return re.findall(r'<a class="card-link" href="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blog/articles/([^"]+)"', html)
 
 
 def canonical(html):
@@ -50,7 +50,7 @@ def test_all_public_articles_are_reachable_once_without_javascript(client):
         current = slugs(response.text)
         assert current == expected[(page - 1) * 15:page * 15]
         assert len(current) <= 15
-        assert canonical(response.text) == BLOG_PUBLIC_ORIGIN + "/" + (f"?page={page}" if page > 1 else "")
+        assert canonical(response.text) == BLOG_PUBLIC_URL + (f"?page={page}" if page > 1 else "")
         assert 'data-blog-server-catalog' in response.text
         assert 'owner-panel' not in response.text
         found.extend(current)
@@ -65,7 +65,7 @@ def test_category_pages_and_links_preserve_filter(client):
     assert response.status_code == 200
     assert slugs(response.text) == expected[15:30]
     query = urlencode({"category": category, "page": "2"})
-    assert canonical(response.text) == f"{BLOG_PUBLIC_ORIGIN}/?{query}"
+    assert canonical(response.text) == f"{BLOG_PUBLIC_URL}?{query}"
     assert f'href="?{unescape(urlencode({"category": category}))}#articles"' in response.text
     assert 'aria-current="page">2</a>' in response.text
 
@@ -75,7 +75,7 @@ def test_invalid_selection_retains_first_page_compatibility(client, query):
     response = client.get("/blog" + query)
     assert response.status_code == 200
     assert slugs(response.text) == [article.slug for article in load_blog_catalog().published[:15]]
-    assert canonical(response.text) == BLOG_PUBLIC_ORIGIN + "/"
+    assert canonical(response.text) == BLOG_PUBLIC_URL
 
 
 def test_large_page_is_clamped_and_last_page_has_no_next_link(client):
@@ -83,14 +83,14 @@ def test_large_page_is_clamped_and_last_page_has_no_next_link(client):
     last = (len(expected) + 14) // 15
     response = client.get("/blog/?page=999999")
     assert slugs(response.text) == [article.slug for article in expected[(last - 1) * 15:]]
-    assert canonical(response.text) == f"{BLOG_PUBLIC_ORIGIN}/?page={last}"
+    assert canonical(response.text) == f"{BLOG_PUBLIC_URL}?page={last}"
     assert 'rel="next"' not in response.text
 
 
 def test_unknown_category_keeps_valid_page_number(client):
     response = client.get("/blog?category=unknown&page=2")
     assert slugs(response.text) == [article.slug for article in load_blog_catalog().published[15:30]]
-    assert canonical(response.text) == BLOG_PUBLIC_ORIGIN + "/?page=2"
+    assert canonical(response.text) == BLOG_PUBLIC_URL + "?page=2"
 
 
 def test_empty_catalogue_has_visible_message_and_no_pagination(client, monkeypatch):
@@ -99,4 +99,4 @@ def test_empty_catalogue_has_visible_message_and_no_pagination(client, monkeypat
     assert slugs(response.text) == []
     assert '<p class="empty-state" >' in response.text
     assert '<nav class="pagination" aria-label="Навигация по страницам блога"></nav>' in response.text
-    assert canonical(response.text) == BLOG_PUBLIC_ORIGIN + "/"
+    assert canonical(response.text) == BLOG_PUBLIC_URL

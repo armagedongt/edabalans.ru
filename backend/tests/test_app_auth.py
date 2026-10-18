@@ -1,3 +1,4 @@
+import pytest
 import os
 from datetime import datetime, timezone
 
@@ -277,3 +278,17 @@ def test_pending_owner_review_blocks_existing_resource_access():
     assert response.status_code == 403
     assert "проверки" in response.json()["detail"]
     app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize("host", ["xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai", "www.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai", "admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"])
+def test_branded_hosts_require_native_session_and_reject_other_email(host):
+    _, factory = setup()
+    client = TestClient(app, base_url="https://" + host)
+    try:
+        response = client.get("/api/account", params={"email": "member@example.test"})
+        assert response.status_code == 401
+        login_native(client)
+        response = client.get("/api/account", params={"email": "other@example.test"})
+        assert response.status_code == 403
+    finally:
+        app.dependency_overrides.clear()

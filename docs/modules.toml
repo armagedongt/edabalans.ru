@@ -114,7 +114,7 @@ owns_tables = [
   "user_application_policies",
 ]
 owns_routes = [
-  "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/robokassa*", "*/tilda/*", "*/personal-access*", "*/pay", "*/subscription*",
+  "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/robokassa*", "*/tilda/*", "*/personal-access*", "*/pay", "*/payment", "*/payment_*", "*/subscription*",
   "*/admin/api/payments", "*/admin/api/payment-products", "*/admin/api/resources",
   "*/admin/tilda-mailing*", "*/admin/api/tilda-mailing*",
 ]
@@ -306,7 +306,7 @@ owns_files = [
   "work/blog-seo-workbench-20261004/**",
   "work/blog-canonical-library/**",
 ]
-owns_routes = ["*/blog", "*/blog/*", "*/admin/api/blog/articles*"]
+owns_routes = ["*/blog", "*/blog/*", "*/articles/*", "*/jpn", "*/robots.txt", "*/sitemap.xml", "*/admin/api/blog/articles*"]
 
 [[modules]]
 id = "platform.knowledge"
@@ -408,7 +408,7 @@ owns_files = [
   "work/public-homepage-redesign/**",
 ]
 owns_routes = [
-  "*/homepage.js", "*/preview/homepage-recognition*", "*/preview/homepage-mobile*",
+  "*/", "*/members", "*/members/*", "*/homepage.js", "*/preview/homepage-recognition*", "*/preview/homepage-mobile*",
   "*/public-site-errors/*",
   "*/preview/members-moved",
   "*/preview/homepage-release-candidate*",

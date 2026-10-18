@@ -90,7 +90,7 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert 'loading="eager" decoding="async" fetchpriority="high"' in hero
     assert response.text.count('loading="lazy" decoding="async"') >= 6
     assert "site-footer.js" in response.text
-    assert "https://edabalans.ru/cookie-notice.js" in response.text
+    assert "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/cookie-notice.js" in response.text
     assert "/blog/assets/blog.css" in response.text
     assert 'href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>' in response.text
     assert 'href="https://похудение-это-есть.рф/">Мастер-класс</a>' in response.text
@@ -138,7 +138,7 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
     assert "Сколько времени нужно на похудение?" in response.text
     assert (
         '<link rel="canonical" '
-        'href="https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/'
+        'href="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blog/'
         'articles/skolko-vremeni-nuzhno-na-pohudenie">'
     ) in response.text
     assert 'class="toc-mobile"' in response.text
@@ -151,7 +151,7 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
     assert "Как сделать похудение проще" in response.text
     assert "Читать бесплатно" in response.text
     assert '<header class="article-hero">' in response.text
-    assert "https://edabalans.ru/cookie-notice.js" in response.text
+    assert "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/cookie-notice.js" in response.text
     article_hero = response.text.split('<header class="article-hero">', 1)[1].split("</header>", 1)[0]
     assert "<p>" not in article_hero
     assert "blog_cta(" not in response.text
@@ -277,7 +277,7 @@ def test_blog_is_indexable_and_sitemap_lists_all_articles() -> None:
     assert robots.status_code == 200
     assert "Allow: /" in robots.text
     assert "Disallow" not in robots.text
-    assert "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/sitemap.xml" in robots.text
+    assert "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blog/sitemap.xml" in robots.text
     assert sitemap.status_code == 200
     assert sitemap.headers["content-type"].startswith("application/xml")
     assert sitemap.text.count("<url>") == len(load_blog_catalog().published) + 2
@@ -459,7 +459,7 @@ def test_semaglutide_article_preserves_reviewed_text_and_source_structure() -> N
     header = page.text.split('<header class="article-hero">', 1)[1].split("</header>", 1)[0]
     assert "13327360/01.webp" not in header
     assert '<img src="/blog/media/13327360/01.webp"' in page.text
-    assert 'property="og:image" content="https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blog/media/13327360/01.webp"' in page.text
+    assert 'property="og:image" content="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blog/media/13327360/01.webp"' in page.text
 
     catalog_page = client.get("/blog", params={"page": catalog.published.index(article) // 15 + 1})
     assert (

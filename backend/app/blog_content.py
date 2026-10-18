@@ -29,8 +29,9 @@ BLOG_CATEGORIES = (
 SLUG_RE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 BLOG_PUBLIC_ORIGIN: str = os.getenv(
     "BLOG_PUBLIC_ORIGIN",
-    "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+    "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
 ).rstrip("/")
+BLOG_PUBLIC_URL = BLOG_PUBLIC_ORIGIN + "/blog"
 
 
 @dataclass(frozen=True)
@@ -450,7 +451,7 @@ def card_html(
     )
     return (
         f'<article class="article-card" data-category="{escape(article.category, quote=True)}">'
-        f'<a class="card-link" href="/articles/{escape(article.slug, quote=True)}">'
+        f'<a class="card-link" href="{BLOG_PUBLIC_URL}/articles/{escape(article.slug, quote=True)}">'
         '<div class="card-visual">'
         f'<img class="card-image{fit_class}" src="/blog/media/{escape(selected_file, quote=True)}" '
         f'alt="{escape(selected_alt, quote=True)}" loading="lazy" decoding="async"></div>'
@@ -492,7 +493,7 @@ def insert_inline_related(catalog: BlogCatalog, article: BlogArticle, body: str)
         return body
     # A changed API heading invalidates placement; never relocate by scroll percentage.
     offset = body.index(heading)
-    card = (f'<aside class="reader-related"><a href="/articles/{escape(target.slug, quote=True)}">'
+    card = (f'<aside class="reader-related"><a href="{BLOG_PUBLIC_URL}/articles/{escape(target.slug, quote=True)}">'
             '<small><span class="reader-related-arrow" aria-hidden="true">↗</span> Читайте также</small>'
             f'<strong>{escape(target.title)}</strong><span>{escape(target.excerpt)}</span></a></aside>')
     return body[:offset] + card + body[offset:]

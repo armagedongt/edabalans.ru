@@ -12,7 +12,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
-from app.blog_content import BLOG_PUBLIC_ORIGIN, load_blog_catalog, validate_blog_catalog
+from app.blog_content import BLOG_PUBLIC_URL, load_blog_catalog, validate_blog_catalog
 from app.blog_draft_service import ensure_existing_article, publish_article, update_text
 from app.blog_routes import router
 from app.database import Base, get_db
@@ -65,9 +65,9 @@ def test_breadcrumbs_are_clickable_and_match_structured_data(authoring):
     page = client.get('/blog/articles/' + article.slug)
     breadcrumbs = structured(page.text)[1]['itemListElement']
     assert [item['position'] for item in breadcrumbs] == [1, 2, 3]
-    assert breadcrumbs[0]['item'] == BLOG_PUBLIC_ORIGIN + '/'
-    assert breadcrumbs[1]['item'] == BLOG_PUBLIC_ORIGIN + '/?' + urlencode({'category': article.category})
-    assert breadcrumbs[2]['item'] == BLOG_PUBLIC_ORIGIN + '/articles/' + article.slug
+    assert breadcrumbs[0]['item'] == BLOG_PUBLIC_URL
+    assert breadcrumbs[1]['item'] == BLOG_PUBLIC_URL + '?' + urlencode({'category': article.category})
+    assert breadcrumbs[2]['item'] == BLOG_PUBLIC_URL + '/articles/' + article.slug
     assert f'href="{breadcrumbs[1]["item"]}"' in page.text
     assert f'<span aria-current="page">{article.title}</span>' in page.text
 
@@ -146,3 +146,12 @@ def test_public_proxy_exposes_only_exact_author_path():
     assert 'handle /author/*' not in blog
     assert 'handle /blog/drafts/*' not in blog
     assert 'handle /admin/api/blog/articles*' not in blog
+
+
+def test_japanese_article_legacy_link_uses_same_published_article_without_redirect(authoring):
+    client, _ = authoring
+    response = client.get('/jpn', follow_redirects=False)
+    article = client.get('/blog/articles/pochemu-yapontsy-hudye-a-ty-net')
+    assert response.status_code == 200
+    assert 'location' not in response.headers
+    assert response.text == article.text

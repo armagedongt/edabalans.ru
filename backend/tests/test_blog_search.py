@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from test_blog_author_dates import authoring
 from test_blog_server_pagination import slugs, canonical
-from app.blog_content import BLOG_PUBLIC_ORIGIN, load_blog_catalog
+from app.blog_content import BLOG_PUBLIC_URL, load_blog_catalog
 from app.blog_draft_service import ensure_existing_article, update_text, publish_article
 
 
@@ -18,7 +18,7 @@ def test_title_search_normalizes_case_spaces_and_yo(authoring):
     expected = load_blog_catalog().by_source_id('11875492')
     assert slugs(result.text) == [expected.slug]
     assert result.headers['X-Robots-Tag'] == 'noindex, follow'
-    assert canonical(result.text) == BLOG_PUBLIC_ORIGIN + '/'
+    assert canonical(result.text) == BLOG_PUBLIC_URL
     assert 'value="НЕПРИЯТНАЯ МЕД"' in result.text
 
 
@@ -79,7 +79,7 @@ def test_search_is_available_on_catalog_article_and_profile(authoring):
         result = client.get(route)
         assert result.status_code == 200
         assert 'role="search"' in result.text
-        assert f'action="{BLOG_PUBLIC_ORIGIN}/"' in result.text
+        assert f'action="{BLOG_PUBLIC_URL}"' in result.text
         form = re.search(r'<form\b[^>]*role="search"[^>]*>(.*?)</form>', result.text, re.S)
         assert form is not None
         assert 'method="get"' in form.group(0)

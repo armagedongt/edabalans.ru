@@ -423,6 +423,22 @@ def homepage_release_candidate_preview(embed: str | None = Query(default=None),
     )
 
 
+@router.get("/", include_in_schema=False)
+def public_homepage(db: Session = Depends(get_db)) -> HTMLResponse:
+    response = homepage_preview_response(
+        STATIC_DIR / "homepage-preview" / "release-candidate.html", None, db,
+    )
+    html = response.body.decode("utf-8").replace(
+        '<meta name="robots" content="noindex,nofollow">',
+        '<link rel="canonical" href="https://похудение-это-есть.рф/">',
+        1,
+    ).replace(
+        'data-pricing-endpoint="/api/pricing/site/preview"',
+        'data-pricing-endpoint="/api/pricing/site"',
+    )
+    return HTMLResponse(html, headers={"Cache-Control": "no-cache"})
+
+
 @router.get("/preview/homepage-version/{version_id}", include_in_schema=False)
 @router.get("/preview/homepage-version/{version_id}/", include_in_schema=False)
 def homepage_version_preview(
