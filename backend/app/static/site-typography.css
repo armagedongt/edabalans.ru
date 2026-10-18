@@ -1,16 +1,34 @@
 /* Typography owner: platform.web_design. Contract: docs/knowledge-base/SITE_TYPOGRAPHY.md. */
-@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:optional;src:url('/assets/fonts/manrope-cyrillic-v1.woff2') format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:optional;src:url('/assets/fonts/manrope-latin-v1.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:Unbounded;font-style:normal;font-weight:800;font-display:optional;src:url('/assets/fonts/unbounded-800-cyrillic-v1.woff2') format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:Unbounded;font-style:normal;font-weight:800;font-display:optional;src:url('/assets/fonts/unbounded-800-latin-v1.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:block;src:url('/assets/fonts/manrope-cyrillic-v1.woff2') format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:block;src:url('/assets/fonts/manrope-latin-v1.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:Unbounded;font-style:normal;font-weight:800;font-display:block;src:url('/assets/fonts/unbounded-800-cyrillic-v1.woff2') format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Unbounded;font-style:normal;font-weight:800;font-display:block;src:url('/assets/fonts/unbounded-800-latin-v1.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 :root{
   --ed-font-body:Manrope,Arial,sans-serif;
   --ed-font-hero:Unbounded,Manrope,Arial,sans-serif;
+  --ed-font-brand:Unbounded,Manrope,Arial,sans-serif;
+  --ed-brand-weight:800;
+  --ed-brand-tracking:-.055em;
+  --ed-hero-size:clamp(25px,7.6vw,58px);
+  --ed-hero-accent-size:clamp(17px,5.45vw,58px);
+  --ed-hero-weight:800;
+  --ed-public-body-size:clamp(17px,1.4vw,20px);
+  --ed-public-body-weight:500;
+  --ed-public-section-size:clamp(28px,4.6vw,48px);
   --ed-font-code:ui-monospace,Consolas,monospace;
   --ed-text-size:16px;
   --ed-text-leading:1.55;
   --ed-text-weight:400;
   --ed-control-weight:800;
+  --ed-control-height:48px;
+  --ed-control-radius:12px;
+  --ed-cta-height:54px;
+  --ed-cta-size:16px;
+  --ed-cta-radius:16px;
+  --ed-color-ink:#17191e;
+  --ed-color-text:#3f4b55;
+  --ed-color-action:#27aff5;
+  --ed-color-action-hover:#118ed8;
   --ed-label-size:14px;
   --ed-label-leading:1.35;
   --ed-toc-size:14px;
@@ -24,7 +42,7 @@
   --ed-article-h2:29px;
   --ed-article-h3:23px;
 }
-html,body{font-family:var(--ed-font-body);font-size:var(--ed-text-size);line-height:var(--ed-text-leading)}
+html,body{font-family:var(--ed-font-body);font-size:var(--ed-text-size);font-weight:var(--ed-text-weight);line-height:var(--ed-text-leading)}
 button,input,select,textarea{font-family:var(--ed-font-body)}
 code,kbd,samp,pre{font-family:var(--ed-font-code)}
 @media(max-width:620px){

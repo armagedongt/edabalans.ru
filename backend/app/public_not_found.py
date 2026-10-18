@@ -31,6 +31,8 @@ def page() -> str:
         '<!doctype html><html lang="ru"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
         '<meta name="robots" content="noindex,nofollow">'
+        '<link rel="preload" href="/assets/fonts/unbounded-800-cyrillic-v1.woff2" as="font" type="font/woff2" crossorigin>'
+        '<link rel="preload" href="/assets/fonts/unbounded-800-latin-v1.woff2" as="font" type="font/woff2" crossorigin>'
         '<title>Страница не найдена — 404</title></head><body style="margin:0">'
         + fragment()
         + f'<script src="{ORIGIN}/site-header.js" defer></script>'

@@ -21,6 +21,7 @@ module_id: platform.blog
 | Читательские вставки, popup, происхождение и новое содержание | [READER_INSERTIONS](READER_INSERTIONS.md) |
 | Голос, разрешения правки, writer pass | [Писарь](../../../../content/author-voice/README.md), `platform.content` |
 | Размеры и оформление материалов | [ARTICLE_STANDARD](../../ARTICLE_STANDARD.md) |
+| Семейства, hero, логотип, кнопки и общие текстовые роли | [Единый гайдбук](../../SITE_TYPOGRAPHY.md), общий `site-typography.css` |
 | Публичные metadata, robots, sitemap | `backend/app/blog_routes.py` |
 | Черновые и опубликованные версии Markdown существующих статей | `backend/app/blog_draft_service.py`, `managed_document_versions` |
 | API и owner-only редактор | [BLOG_API_AUTHORING](../../BLOG_API_AUTHORING.md) |
@@ -30,6 +31,13 @@ module_id: platform.blog
 | Общий footer и cookie-уведомление | общие `site-footer.js`, `site-cookie-notice.js` |
 
 ## Действующие правила
+
+Шапка публичного блога сохраняет существующую фирменную надпись с Unbounded 800
+через `--ed-font-brand`; навигация, текст и заголовки статей — Manrope.
+До 900 px надпись может переноситься внутри своей колонки без обрезки и
+наложения на меню; компактные размеры 12/13 px сохраняются, на 901–1120 px
+используется 12 px, чтобы надпись помещалась рядом с навигацией. Владелец геометрии —
+`backend/app/static/blog/assets/blog.css`, общие семейства не копируются в него.
 
 - Фактуру, медицинские утверждения и авторские формулировки не исправлять
   «ради SEO» без отдельного разрешённого задания. Рекомендации отделять от текста.

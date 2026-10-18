@@ -5,7 +5,7 @@ html{background:#fff;color:#17191e}
 body{margin:0;font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
 #article{width:min(700px,calc(100% - 40px));margin:120px auto 100px;font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
 #article p,#article li{font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
-#article .intensive-title{margin:0 0 30px;font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-size:var(--ed-article-h1,44px);font-weight:800;line-height:1.06;letter-spacing:-.05em;text-transform:uppercase}
+#article .intensive-title{margin:0 0 30px;font-family:var(--ed-font-hero, Unbounded, Manrope, Arial, sans-serif);font-size:clamp(23px,6.25vw,52px);font-weight:var(--ed-hero-weight,800);line-height:1.06;letter-spacing:-.05em;text-transform:uppercase}
 #article .intensive-title span{display:block}
 #article .intensive-title__accent{width:max-content;max-width:100%;margin-top:10px;padding:clamp(5px,1.8vw,8px) clamp(7px,2.2vw,11px) clamp(7px,2.2vw,11px);border-radius:clamp(8px,2.7vw,12px);background:#ff6b36;color:#fff;font-size:.86em;line-height:1.05;letter-spacing:-.025em;white-space:nowrap;transform:rotate(-.8deg)}
 #article h2{scroll-margin-top:var(--header-offset)}
@@ -47,8 +47,8 @@ button:focus-visible,a:focus-visible{outline:3px solid #278ddc;outline-offset:4p
 @media(max-width:620px){
  :root{--header-offset:82px}
  #article{width:calc(100% - 32px);margin-top:104px;margin-bottom:110px}
- #article .intensive-title{font-size:var(--ed-article-h1,32px);margin-bottom:24px}
- #article .intensive-title__accent{font-size:.86em}
+ #article .intensive-title{font-size:clamp(21px,6.2vw,28px);margin-bottom:24px}
+ #article .intensive-title__accent{font-size:clamp(17px,5.15vw,23px)}
  #article h2{margin-top:44px}
  #article h3{font-size:21px}
  .reading-header{top:8px;width:calc(100% - 24px);padding:7px 8px;border-radius:15px}

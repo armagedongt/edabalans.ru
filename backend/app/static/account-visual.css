@@ -120,7 +120,7 @@ html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app
 .account-messengers p { margin: 10px 0; color: #596574; font-size: 13px; }
 #account-app .account-kicker { display: flex; align-items: center; gap: 5px; margin: 0px 0px 12px; color: transparent; font-size: 0px; letter-spacing: 0px; text-transform: none; }
 #account-app .account-kicker::before { width: 22px; height: 22px; flex: 0 0 22px; background: url("/assets/brain-logo.png") center center / 20px 20px no-repeat transparent; content: ""; filter: none; }
-#account-app .account-kicker::after { content: "ПОХУДЕНИЕ — ЭТО ЕСТЬ.РФ"; color: rgb(17, 142, 216); font: 800 11px / 1 var(--ed-font-body, Manrope, Arial, sans-serif); letter-spacing: -0.055em; }
+#account-app .account-kicker::after { content: "ПОХУДЕНИЕ — ЭТО ЕСТЬ.РФ"; color: rgb(17, 142, 216); font:var(--ed-brand-weight,800) 11px / 1 var(--ed-font-brand, Unbounded, Manrope, Arial, sans-serif); letter-spacing:var(--ed-brand-tracking,-.055em); }
 #account-app .account-head h1, #account-app .account-section h2 { font-family: var(--ed-font-body, Manrope, Arial, sans-serif); color: rgb(23, 25, 30); }
 #account-app .account-head h1 { font-size: clamp(38px, 6vw, 58px); font-weight: 800; line-height: 1; letter-spacing: -0.065em; }
 #account-app .account-section { margin-top: 36px; }

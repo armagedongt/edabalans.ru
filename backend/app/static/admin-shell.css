@@ -1,4 +1,4 @@
-@import url("/assets/site-typography.css?v=20261018-typography");
+@import url("/assets/site-typography.css?v=20261018-brand-hero");
 :root{--admin-shell-width:270px;--admin-shell-compact:74px;--admin-shell-dark:#18332a;--admin-shell-green:#d8edbf;--admin-shell-line:#ffffff1a;--admin-brand-blue:#27aff5;--admin-brand-blue-deep:#118ed8;--admin-brand-orange:#f46a35;--admin-brand-ink:#17191e;--admin-brand-text:#4f555e;--admin-brand-mist:#f4fbff;--admin-brand-line:rgba(17,142,216,.18)}
 body.ed-admin-shell{display:block!important;padding-left:var(--admin-shell-width);transition:padding-left .18s ease}
 body.ed-admin-shell{--bg:#f4fbff;--card:#fff;--paper:#fff;--ink:#17191e;--text:#17191e;--muted:#4f555e;--line:rgba(17,142,216,.18);--green:#118ed8;--blue:#27aff5;--link:#118ed8;--soft:#eef9ff;--purple:#27aff5;--purple-dark:#118ed8;--purple2:#eef9ff;--shadow:0 15px 34px -27px rgba(12,91,136,.5);background:radial-gradient(circle at 86% 7%,rgba(39,175,245,.14),transparent 28%),radial-gradient(circle at 16% 88%,rgba(17,142,216,.08),transparent 32%),#f4fbff;color:#17191e;font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}

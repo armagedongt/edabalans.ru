@@ -349,3 +349,8 @@ html[data-theme="dark"] #article {
 #article .reader-source-actions a { color: #2aabee; font-weight: 500; text-decoration: none; }
 #article .reader-source-actions a:hover { text-decoration: underline; }
 @media (prefers-reduced-motion: reduce) { .reader-telegram-source { transition: none; } }
+
+/* Site wordmark is distinct from article and navigation text. */
+.site-header--public .brand strong{font-family:var(--ed-font-brand, Unbounded, Manrope, Arial, sans-serif);font-weight:var(--ed-brand-weight,800);letter-spacing:var(--ed-brand-tracking,-.055em);text-transform:uppercase}
+@media(max-width:900px){.site-header--public .brand{max-width:100%}.site-header--public .brand strong{min-width:0;max-width:100%;white-space:normal;text-wrap:balance;line-height:1.15;overflow:visible;text-overflow:clip}}
+@media(min-width:901px) and (max-width:1120px){.site-header--public .brand strong{font-size:12px}}

@@ -29,12 +29,12 @@ const evidence = process.env.MENU_EVIDENCE_DIR;
         if (evidence) await page.screenshot({path:path.join(evidence,`${name}-${width}-closed.png`)});
         await toggle.click();
         await page.waitForFunction(()=>document.querySelector('[data-site-menu-toggle]').getAttribute('aria-expanded')==='true');
-        await page.waitForFunction(width => {
+        await page.waitForFunction(({width,name}) => {
           const panel = document.querySelector('[data-site-menu]');
           const button = document.querySelector('[data-site-menu-toggle]');
           return getComputedStyle(panel).visibility === 'visible' &&
-            Math.round(button.getBoundingClientRect().width) === (width >= 900 ? 44 : 38);
-        }, width);
+            Math.round(button.getBoundingClientRect().width) === (width >= 900 ? 44 : name === 'homepage' ? 42 : 38);
+        }, {width,name});
         assert(await panel.isVisible());
         assert.equal(await panel.getAttribute('aria-hidden'),'false');
         const expanded=page.locator('[data-site-menu-contents]');
@@ -43,7 +43,8 @@ const evidence = process.env.MENU_EVIDENCE_DIR;
         assert.equal(Math.round(box.width),width>=900?400:width);
         const button=await toggle.boundingBox();
         assert(button.y>=0 && button.y+button.height<=58,'cross stays in blue band');
-        assert.equal(Math.round(button.width),width>=900?44:38);
+        assert.equal(Math.round(button.width),width>=900?44:name==='homepage'?42:38);
+        assert.equal(Math.round(width-button.x-button.width),24,'cross has an inset from the viewport edge');
         const position=await page.evaluate(()=>window.scrollY);
         await page.mouse.move(50,500);
         await page.mouse.wheel(0,500);

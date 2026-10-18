@@ -205,10 +205,12 @@ def page(*, identified: bool = False):
 <link rel="stylesheet" href="/intensive/onepage-components.css?v=20261018-typography">
 <link rel="preload" href="/assets/fonts/manrope-cyrillic-v1.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/manrope-latin-v1.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/site-typography.css?v=20261018-typography">
+<link rel="preload" href="/assets/fonts/unbounded-800-cyrillic-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/unbounded-800-latin-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site-typography.css?v=20261018-brand-hero">
 <link rel="stylesheet" href="/assets/article-typography.css?v=20261018-typography">
-<link rel="stylesheet" href="/intensive/onepage.css?v=20261018-typography">
-<link rel="stylesheet" href="/public-site-assets/site-menu.css?v=20261018-menu-icons"><script defer src="/public-site-assets/site-menu.js?v=20261018"></script><script defer src="/intensive/onepage.js?v=20261018"></script>
+<link rel="stylesheet" href="/intensive/onepage.css?v=20261018-brand-hero">
+<link rel="stylesheet" href="/public-site-assets/site-menu.css?v=20261018-brand-hero"><script defer src="/public-site-assets/site-menu.js?v=20261018"></script><script defer src="/intensive/onepage.js?v=20261018"></script>
 <script defer src="/intensive/onepage-tracking.js?v=20261018-menu"></script></head><body>
 <header class="reading-header"><nav aria-label="Разделы интенсива">{tabs}</nav>
 <div class="reading-track" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="reading-fill"></div></div></header>

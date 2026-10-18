@@ -1,6 +1,6 @@
 ---
 title: "Веб-дизайн и дизайн-взаимодействие"
-summary: "Владеет переносимыми визуальными предпочтениями Сергея, протоколом поблочного согласования и журналами коррекций."
+summary: "Владеет единым визуальным гайдбуком сайта, переносимыми предпочтениями Сергея и журналами дизайн-коррекций."
 document_status: current
 implementation_status: implemented
 ---
@@ -12,6 +12,10 @@ implementation_status: implemented
 начинал интервью заново.
 
 ## Функции
+
+- задавать обязательные для новых страниц семейства и текстовые роли, параметры
+  hero, фирменной надписи, кнопок и меню; фиксировать согласованные профили
+  отдельных страниц через единый `SITE_TYPOGRAPHY.md`, без копий гайдбука;
 
 - вести единый межзадачный маршрут генерации изображений и сохранение шаблонов
   по `content/design-workflow/image-generation-protocol.md`;
@@ -42,7 +46,8 @@ implementation_status: implemented
 
 - [Единая типографика](../../SITE_TYPOGRAPHY.md) и
   `backend/app/static/site-typography.css` — семейства, загрузка и переменные
-  текстовых ролей всех действующих страниц; Unbounded только в публичном hero.
+  текстовых ролей всех действующих страниц; Manrope для текста и интерфейсов,
+  Unbounded для публичного hero и существующих фирменных надписей.
 
 - `content/design-workflow/skill/sergey-web-design/SKILL.md` — обязательный маршрут;
 - `content/design-workflow/skill/sergey-web-design/references/design-preferences.md` —

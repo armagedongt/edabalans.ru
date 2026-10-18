@@ -633,7 +633,7 @@ def app_fragment(app_code: str) -> Response:
     )
     if PRODUCT_CONNECTIONS.get(product_code, {}).get("maintenance"):
         return HTMLResponse(
-            '<link rel="stylesheet" href="/assets/app-shell.css?v=20261018-typography">'
+            '<link rel="stylesheet" href="/assets/app-shell.css?v=20261018-brand-hero">'
             f'<section id="{escape(app_code)}-app"><div class="ed-app-maintenance">'
             '<h1>На ремонте</h1>'
             '<a class="ed-app-account-link ed-app-maintenance-account" href="/lk">Личный кабинет</a>'
