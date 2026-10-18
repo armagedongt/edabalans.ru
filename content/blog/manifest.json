@@ -1137,7 +1137,7 @@
       },
       "related_source_ids": [
         "11401696",
-        "13785403",
+        "d1baceb9e2b6b72013b6",
         "training-combined-2023"
       ],
       "cta": "masterclass",
@@ -1253,7 +1253,7 @@
       "related_source_ids": [
         "11401696",
         "11339712",
-        "13785403"
+        "d1baceb9e2b6b72013b6"
       ],
       "cta": "masterclass",
       "status": "published",
@@ -1373,7 +1373,7 @@
       },
       "related_source_ids": [
         "13277231",
-        "13785403",
+        "d1baceb9e2b6b72013b6",
         "693339"
       ],
       "cta": "masterclass",
@@ -1550,7 +1550,7 @@
       "related_source_ids": [
         "13277231",
         "11401696",
-        "13785403"
+        "d1baceb9e2b6b72013b6"
       ],
       "cta": "masterclass",
       "status": "published",
@@ -1885,8 +1885,8 @@
         "fit": "cover"
       },
       "related_source_ids": [
-        "13785403",
         "11401696",
+        "tilda-49734795",
         "14021584"
       ],
       "cta": "masterclass",
@@ -1923,6 +1923,16 @@
           "page_sha256": "e7b8a139252fca741ff3011211ee0e61e50501399c7f5de2bb973cd747b3261e",
           "field": "header.time[datetime]",
           "checked_at": "2026-10-04T22:03:21.655450+03:00"
+        },
+        "editorial_assembly": {
+          "decided_at": "2026-10-19",
+          "basis": "Прямое решение Сергея 19.10.2026: из трёх статей собрать две. Подробная подготовка — Похудение начинается не с похудения; остальные ошибки — Главные ошибки. Три ошибки сохранить как архивный источник, отдельную публичную публикацию снять. Самостоятельную Сделать похудение проще не объединять, изменить только название.",
+          "source_ids": [
+            "11401696",
+            "d1baceb9e2b6b72013b6",
+            "13785403"
+          ],
+          "relation": "owner_approved_block_transfer_not_exact_duplicate"
         }
       },
       "document_key": "glavnye-oshibki-v-pohudenii-do-goloda"
@@ -2251,7 +2261,7 @@
         "provenance": "Редакционная обложка из утверждённого заголовка; в exact source изображений нет."
       },
       "related_source_ids": [
-        "13785403",
+        "d1baceb9e2b6b72013b6",
         "14021584",
         "12296286"
       ],
@@ -2417,7 +2427,7 @@
       },
       "related_source_ids": [
         "14021584",
-        "13785403",
+        "d1baceb9e2b6b72013b6",
         "13436070"
       ],
       "cta": "masterclass",
@@ -2545,7 +2555,7 @@
         "14102926"
       ],
       "cta": "masterclass",
-      "status": "published",
+      "status": "draft",
       "media": [
         "13785403/01.webp",
         "13785403/02.webp",
@@ -2577,6 +2587,13 @@
           "page_sha256": "c65788f89830935f1dcde678561c1f79ed0fa212a4e5aa1546d6b1802706e5f4",
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        },
+        "editorial_archive": {
+          "decided_at": "2026-10-19",
+          "reason": "Прямое решение Сергея 19.10.2026: из трёх статей собрать две. Подробная подготовка — Похудение начинается не с похудения; остальные ошибки — Главные ошибки. Три ошибки сохранить как архивный источник, отдельную публичную публикацию снять. Самостоятельную Сделать похудение проще не объединять, изменить только название.",
+          "primary_successor_source_id": "d1baceb9e2b6b72013b6",
+          "preparation_successor_source_id": "11401696",
+          "source_preservation": "Original Git seed, unchanged source/media and managed_document_versions remain available; no physical deletion."
         }
       },
       "document_key": "tri-oshibki-v-nachale-pohudeniya"
@@ -2588,7 +2605,7 @@
         "before_heading": "3-не-спорьте-о-диетах"
       },
       "slug": "sdelat-pohudenie-proshche",
-      "title": "Сделать похудение проще",
+      "title": "Что вы зря делаете ради похудения",
       "excerpt": "Похудение не обязано состоять из бесконечного списка запретов. Разбираемся, какие действия действительно дают основную часть результата.",
       "category": "Похудение",
       "body_file": "14021584.md",
@@ -2604,7 +2621,7 @@
         "fit": "contain"
       },
       "related_source_ids": [
-        "13785403",
+        "d1baceb9e2b6b72013b6",
         "12296286",
         "14102926"
       ],
@@ -3242,7 +3259,7 @@
     },
     {
       "source_id": "11401696",
-      "subscription_before_heading": "активность",
+      "subscription_before_heading": "пищевые-привычки",
       "slug": "plan-pohudeniya",
       "title": "Похудение начинается не с похудения",
       "excerpt": "Для начала у похудения должен быть план! Особенно если есть желание сделать его действительно последним, а не лишь ещё одним.",
@@ -3255,7 +3272,8 @@
       "hero": {
         "file": "11401696/tilda-01.jpg",
         "alt": "Мем о цикле похудения и обвинении обмена веществ",
-        "provenance": "https://static.tildacdn.com/tild3131-3165-4165-b238-353862333766/Frame_492445251.jpg"
+        "provenance": "https://static.tildacdn.com/tild3131-3165-4165-b238-353862333766/Frame_492445251.jpg",
+        "show": false
       },
       "card": {
         "file": "11401696/tilda-09-v2-card.webp",
@@ -3299,7 +3317,8 @@
         "11401696/tilda-13-v2-body.webp",
         "11401696/tilda-13.png",
         "11401696/tilda-14.jpg",
-        "11401696/tilda-14-v2-body.webp"
+        "11401696/tilda-14-v2-body.webp",
+        "d1baceb9e2b6b72013b6/09-source.webp"
       ],
       "source_provenance": {
         "urls": [
@@ -3325,6 +3344,16 @@
         "original_date_evidence": {
           "source": "https://pikabu.ru/story/pokhudenie_nachinaetsya_ne_s_pokhudeniya_11401696",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
+        },
+        "editorial_assembly": {
+          "decided_at": "2026-10-19",
+          "basis": "Прямое решение Сергея 19.10.2026: из трёх статей собрать две. Подробная подготовка — Похудение начинается не с похудения; остальные ошибки — Главные ошибки. Три ошибки сохранить как архивный источник, отдельную публичную публикацию снять. Самостоятельную Сделать похудение проще не объединять, изменить только название.",
+          "source_ids": [
+            "11401696",
+            "d1baceb9e2b6b72013b6",
+            "13785403"
+          ],
+          "relation": "owner_approved_block_transfer_not_exact_duplicate"
         }
       },
       "document_key": "pohudenie-nachinaetsya-ne-s-pohudeniya"

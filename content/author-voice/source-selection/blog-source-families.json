@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-10-04",
+  "updated_at": "2026-10-19",
   "module_id": "platform.content",
   "purpose": "Канонический редакционный выбор исходной основы и правило перехода семьи под опубликованную статью собственного блога без удаления истории проявлений.",
   "rules": {
@@ -327,6 +327,34 @@
           "role": "previous_version",
           "provenance": "knowledge://resource/tilda-intensive-hbfozma3y1",
           "source_version": 1
+        }
+      ]
+    },
+    {
+      "family_id": "blog:tri-oshibki-v-nachale-pohudeniya",
+      "title": "Три ошибки в начале похудения",
+      "owner_decision": "archived_source_after_owner_approved_assembly",
+      "blog_canon": {
+        "source_id": "13785403",
+        "slug": "tri-oshibki-pohudeniya",
+        "status": "draft"
+      },
+      "preferred_basis": "A099",
+      "rationale": "Прямое решение Сергея 19.10.2026: из трёх статей собрать две. Подробная подготовка — Похудение начинается не с похудения; остальные ошибки — Главные ошибки. Три ошибки сохранить как архивный источник, отдельную публичную публикацию снять. Самостоятельную Сделать похудение проще не объединять, изменить только название.",
+      "successor_families": [
+        "blog:glavnye-oshibki-v-pohudenii-do-goloda",
+        "blog:pohudenie-nachinaetsya-ne-s-pohudeniya"
+      ],
+      "members": [
+        {
+          "catalog_id": "A099",
+          "source": "pikabu",
+          "external_id": "13785403",
+          "title": "Три ошибки в начале похудения",
+          "url": "https://pikabu.ru/story/tri_oshibki_v_nachale_pokhudeniya_13785403",
+          "role": "archived_source_of_approved_block_transfer",
+          "content_item": "content://item/e245115f-948f-4407-af58-c4d0d21d759b",
+          "text_sha256": "457f4c8a48924fd3109cd16966d0579e45d8e615052efd03b62f1a0f87a0ce2e"
         }
       ]
     }

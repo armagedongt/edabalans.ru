@@ -69,14 +69,14 @@
 | Резинки для тренировок! | [blog:rezinki-dlya-trenirovok](https://похудение-это-есть.рф/blog/rezinki-dlya-trenirovok) | 2 | 0 |
 | Самый здоровый человек на планете | [blog:samyy-zdorovyy-chelovek-na-planete](https://похудение-это-есть.рф/blog/rezhim-brayana-dzhonsona) | 1 | 0 |
 | Сахарозаменитель в диетических напитках вызывает рак? Нет | [blog:saharozamenitel-vyzyvaet-rak-net](https://похудение-это-есть.рф/blog/saharozameniteli-i-rak) | 1 | 1 |
-| Сделать похудение проще | [blog:sdelat-pohudenie-proshche](https://похудение-это-есть.рф/blog/sdelat-pohudenie-proshche) | 1 | 0 |
+| Что вы зря делаете ради похудения | [blog:sdelat-pohudenie-proshche](https://похудение-это-есть.рф/blog/sdelat-pohudenie-proshche) | 1 | 0 |
 | Сколько времени нужно на похудение? | [blog:skolko-vremeni-nuzhno-na-pohudenie](https://похудение-это-есть.рф/blog/sroki-pohudeniya) | 1 | 0 |
 | Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!? | [blog:skolko-polzy-ostaetsya-v-moloke](https://похудение-это-есть.рф/blog/polza-moloka) | 2 | 0 |
 | Скрытые запоры и банальный сюжет | [blog:skrytye-zapory-i-banalnyy-syuzhet](https://похудение-это-есть.рф/blog/skrytye-zapory) | 1 | 0 |
 | Средиземноморская диета — это вообще что?!?! | [blog:sredizemnomorskaya-dieta-eto-voobshche-chto](https://похудение-это-есть.рф/blog/sredizemnomorskaya-dieta) | 1 | 0 |
 | Температура воды для приёма внутрь | [blog:temperatura-vody-dlya-priema-vnutr](https://похудение-это-есть.рф/blog/temperatura-vody) | 1 | 1 |
 | Техника безопасности питания за новогодним столом | [blog:tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom](https://похудение-это-есть.рф/blog/novogodniy-stol-bez-pereedaniya) | 1 | 0 |
-| Три ошибки в начале похудения | [blog:tri-oshibki-v-nachale-pohudeniya](https://похудение-это-есть.рф/blog/tri-oshibki-pohudeniya) | 1 | 0 |
+| Три ошибки в начале похудения — архив источника | [Главные ошибки в похудении](https://похудение-это-есть.рф/blog/glavnye-oshibki-pohudeniya); подготовка — [Похудение начинается не с похудения](https://похудение-это-есть.рф/blog/plan-pohudeniya) | 1 | 0 |
 | У взрослой женщины не должно быть перекусов | [blog:u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov](https://похудение-это-есть.рф/blog/perekusy-i-pohudenie) | 2 | 0 |
 | Уколол и похудел: Оземпик, Семавик и нюансы | [blog:ukolol-i-pohudel-ozempik-semavik-nyuansy](https://похудение-это-есть.рф/blog/ozempik-i-semavik) | 2 | 0 |
 | Ходить, чтобы худеть | [blog:hodit-chtoby-hudet](https://похудение-это-есть.рф/blog/hodit-chtoby-hudet) | 1 | 0 |

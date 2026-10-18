@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-04",
+  "updated_at": "2026-10-19",
   "owner_review": {
     "schema_version": 1,
     "module_id": "platform.content",
@@ -168,7 +168,8 @@
       "short_reserve": 34,
       "technical_or_service": 25
     },
-    "candidate_duplicate_pairs": 75
+    "candidate_duplicate_pairs": 75,
+    "public_blog_articles": 61
   },
   "canonical_blog": [
     {
@@ -645,7 +646,13 @@
       ],
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
-      "owner_source_decisions": {}
+      "owner_source_decisions": {},
+      "owner_assembly_decision": {
+        "decided_at": "2026-10-19",
+        "decision": "Прямое решение Сергея 19.10.2026: из трёх статей собрать две. Подробная подготовка — Похудение начинается не с похудения; остальные ошибки — Главные ошибки. Три ошибки сохранить как архивный источник, отдельную публичную публикацию снять. Самостоятельную Сделать похудение проще не объединять, изменить только название.",
+        "related_family": "blog:tri-oshibki-v-nachale-pohudeniya",
+        "relation": "owner_approved_block_transfer_not_previous_version"
+      }
     },
     {
       "family_id": "blog:glikemicheskiy-indeks-eto-lishnee",
@@ -1639,6 +1646,12 @@
       "owner_source_decisions": {
         "A256": "family_review",
         "A272": "family_review"
+      },
+      "owner_assembly_decision": {
+        "decided_at": "2026-10-19",
+        "decision": "Прямое решение Сергея 19.10.2026: из трёх статей собрать две. Подробная подготовка — Похудение начинается не с похудения; остальные ошибки — Главные ошибки. Три ошибки сохранить как архивный источник, отдельную публичную публикацию снять. Самостоятельную Сделать похудение проще не объединять, изменить только название.",
+        "related_family": "blog:tri-oshibki-v-nachale-pohudeniya",
+        "relation": "owner_approved_block_transfer_not_previous_version"
       }
     },
     {
@@ -2047,7 +2060,7 @@
     },
     {
       "family_id": "blog:sdelat-pohudenie-proshche",
-      "title": "Сделать похудение проще",
+      "title": "Что вы зря делаете ради похудения",
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "14021584",
@@ -2072,7 +2085,10 @@
       ],
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
-      "owner_source_decisions": {}
+      "owner_source_decisions": {},
+      "title_aliases": [
+        "Сделать похудение проще"
+      ]
     },
     {
       "family_id": "blog:skolko-vremeni-nuzhno-na-pohudenie",
@@ -2291,7 +2307,7 @@
         "slug": "tri-oshibki-pohudeniya",
         "url": "https://похудение-это-есть.рф/blog/tri-oshibki-pohudeniya",
         "body_file": "content/blog/articles/13785403.md",
-        "status": "published"
+        "status": "draft"
       },
       "members": [
         {
@@ -2309,7 +2325,19 @@
       ],
       "possible_duplicate_catalog_ids": [],
       "family_evidence": "direct_provenance",
-      "owner_source_decisions": {}
+      "owner_source_decisions": {},
+      "publication_hold": {
+        "status": "archived_merged",
+        "decided_at": "2026-10-19",
+        "basis": "Прямое решение Сергея 19.10.2026: из трёх статей собрать две. Подробная подготовка — Похудение начинается не с похудения; остальные ошибки — Главные ошибки. Три ошибки сохранить как архивный источник, отдельную публичную публикацию снять. Самостоятельную Сделать похудение проще не объединять, изменить только название."
+      },
+      "owner_assembly_decision": {
+        "decided_at": "2026-10-19",
+        "decision": "Прямое решение Сергея 19.10.2026: из трёх статей собрать две. Подробная подготовка — Похудение начинается не с похудения; остальные ошибки — Главные ошибки. Три ошибки сохранить как архивный источник, отдельную публичную публикацию снять. Самостоятельную Сделать похудение проще не объединять, изменить только название.",
+        "primary_successor_family": "blog:glavnye-oshibki-v-pohudenii-do-goloda",
+        "preparation_successor_family": "blog:pohudenie-nachinaetsya-ne-s-pohudeniya",
+        "relation": "archived_source_split_between_two_canonical_articles"
+      }
     },
     {
       "family_id": "blog:u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov",
