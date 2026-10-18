@@ -468,7 +468,7 @@ def test_app_deep_link_and_refresh_work_during_maintenance(tmp_path, monkeypatch
     assert client.post("/telegram/webhook", json=opened).json() == {"ok": True, "apps_menu": True}
     assert {
         "text": "Оценка качества питания",
-        "url": "https://edabalans.ru/dqs",
+        "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/dqs",
         "max_app_payload": "dqs",
     } in fake.configurations[-1]["buttons"]
 
