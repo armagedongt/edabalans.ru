@@ -24,3 +24,71 @@ assert.equal(subscriptionAnchor(article('missing')),undefined);
 assert.equal(subscriptionAnchor(article('fir')),undefined,'A prefix must not relocate the insertion');
 assert.equal(subscriptionAnchor(article(undefined)),undefined);
 console.log('reader subscription timing, domain, progress and curated anchor assertions passed');
+const {test} = require('node:test');
+const vm = require('node:vm');
+const fs = require('node:fs');
+const path = require('node:path');
+const source = fs.readFileSync(path.join(__dirname, '../app/static/blog/assets/reader-subscription.js'), 'utf8');
+
+async function entry(search, context, fail = false) {
+  const result = { inline: null, opened: false, request: null };
+  const popup = {
+    showModal() { result.opened = true; }, close() {}, addEventListener() {},
+    querySelector(selector) {
+      if (selector === '.reader-channel') return {cloneNode: () => ({addEventListener() {}})};
+      return {addEventListener() {}};
+    }
+  };
+  const heading = {id: 'section', before(node) { result.inline = node; }};
+  const article = {
+    dataset: {subscriptionBeforeHeading: 'section'},
+    querySelector: () => null,
+    querySelectorAll: selector => selector === ':scope > h2' ? [heading] : [],
+    getBoundingClientRect: () => ({top: 0, bottom: 1000})
+  };
+  const document = {
+    cookie: '', visibilityState: 'visible', addEventListener() {}, querySelector: () => null,
+    getElementById: id => id === 'reader-popup' ? popup : article
+  };
+  vm.runInNewContext(source, {
+    URLSearchParams, document, location: {search, hostname:'edabalans.ru', protocol:'https:'},
+    window: {addEventListener() {}}, scrollY: 0, innerHeight: 800,
+    fetch: async url => {
+      result.request = url;
+      if (fail) throw new Error('offline');
+      return {ok:true, json:async () => context};
+    }
+  });
+  await new Promise(resolve => setImmediate(resolve));
+  result.cookie = document.cookie;
+  return result;
+}
+
+for (const channel of ['tg', 'max']) {
+  test(`channel ${channel} reaches context and hides both invitations for unknown visitor`, async () => {
+    const state = await entry('?utm_source=post&from_channel='+channel, {show_subscription:false});
+    assert.equal(state.request, '/blog/reader/context?from_channel='+channel);
+    assert.equal(state.inline, null);
+    assert.equal(state.opened, false);
+    assert.equal(state.cookie, '');
+  });
+  test(`confirmed non-member can see both invitations even from ${channel}`, async () => {
+    const state = await entry('?from_channel='+channel, {show_subscription:true});
+    assert.equal(state.inline.id, 'reader-channel-inline');
+    assert.equal(state.opened, true);
+  });
+}
+test('context failure hides only marked entry, and does not persist suppression', async () => {
+  for (const search of ['?from_channel=tg','?from_channel=max']) {
+    const state = await entry(search, null, true);
+    assert.equal(state.inline, null);
+    assert.equal(state.opened, false);
+    assert.equal(state.cookie, '');
+  }
+  for (const search of ['', '?from_channel=other']) {
+    const state = await entry(search, null, true);
+    assert.equal(state.request, '/blog/reader/context');
+    assert.equal(state.inline.id, 'reader-channel-inline');
+    assert.equal(state.opened, true);
+  }
+});

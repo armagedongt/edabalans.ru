@@ -69,6 +69,15 @@ def reader_user(db: Session, request: Request, secret: str) -> User | None:
     return _active_user(db, row)
 
 
+def _subscription(account: MessengerAccount | None) -> bool | None:
+    # A stale observation is unknown, not proof of current membership.
+    if account and account.subscription_checked_at:
+        age = datetime.now(timezone.utc) - aware_utc(account.subscription_checked_at)
+        if timedelta(0) <= age <= timedelta(hours=24):
+            return {"subscribed": True, "not_subscribed": False}.get(account.subscription_status)
+    return None
+
+
 def reader_context(db: Session, request: Request, secret: str) -> dict:
     user = reader_user(db, request, secret)
     account = db.scalar(select(MessengerAccount).where(
@@ -77,15 +86,23 @@ def reader_context(db: Session, request: Request, secret: str) -> dict:
         MessengerAccount.is_deliverable.is_(True),
     )) if user else None
     entered = bool(account and account.main_scenario_seen_at)
-    subscribed = None
-    # A stale observation is unknown, not proof of current membership.
-    if account and account.subscription_checked_at:
-        age = datetime.now(timezone.utc) - aware_utc(account.subscription_checked_at)
-        if timedelta(0) <= age <= timedelta(hours=24):
-            subscribed = {"subscribed": True, "not_subscribed": False}.get(account.subscription_status)
+    subscribed = _subscription(account)
+    channel = {"tg": "telegram", "max": "max"}.get(request.query_params.get("from_channel"))
+    show_subscription = subscribed is not True
+    if channel:
+        source_account = account if channel == "telegram" else (
+            db.scalar(select(MessengerAccount).where(
+                MessengerAccount.user_id == user.id,
+                MessengerAccount.platform == channel,
+                MessengerAccount.is_deliverable.is_(True),
+            )) if user else None
+        )
+        source_subscription = _subscription(source_account)
+        # The entry hint suppresses promotion, but never proves membership or identity.
+        show_subscription = source_subscription is False
     return {
         "recognized": user is not None,
-        "show_subscription": subscribed is not True,
+        "show_subscription": show_subscription,
         "telegram": {"url": TELEGRAM_PIN if entered else TELEGRAM_BOT, "subscribed": subscribed},
         # MAX pin integration remains explicitly deferred by the owner.
         "max": {"url": MAX_BOT},
