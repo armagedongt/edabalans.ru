@@ -79,7 +79,7 @@ def test_search_is_available_on_catalog_article_and_profile(authoring):
         result = client.get(route)
         assert result.status_code == 200
         assert 'role="search"' in result.text
-        assert f'action="{BLOG_PUBLIC_URL}"' in result.text
+        assert 'action="/blog"' in result.text
         form = re.search(r'<form\b[^>]*role="search"[^>]*>(.*?)</form>', result.text, re.S)
         assert form is not None
         assert 'method="get"' in form.group(0)

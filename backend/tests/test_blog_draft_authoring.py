@@ -296,7 +296,7 @@ def _catalog_page(client: TestClient, slug: str):
     index = next(index for index, article in enumerate(published) if article.slug == slug)
     response = client.get("/blog", params={"page": index // BLOG_PAGE_SIZE + 1})
     assert response.status_code == 200
-    assert f'href="{BLOG_PUBLIC_URL}/articles/{slug}"' in response.text
+    assert f'href="/blog/articles/{slug}"' in response.text
     return response
 
 

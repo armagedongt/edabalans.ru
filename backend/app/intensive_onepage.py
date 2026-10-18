@@ -196,7 +196,7 @@ def page(*, identified: bool = False):
         f'<a href="#{key}" data-section="{key}"><span>{escape(label).replace(" ", "<br class=\"reading-label-break\"> ", 1)}</span></a>'
         for key, label, _ in GROUPS
     )
-    menu = render_site_menu('<a href="https://похудение-это-есть.рф/#masterclass-title">Мастер-класс</a>', toc, article=True)
+    menu = render_site_menu('<a href="/#masterclass-title">Мастер-класс</a>', toc, article=True)
     return f'''<!doctype html><html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
 <title>{escape(title)} — Бесплатный интенсив</title>

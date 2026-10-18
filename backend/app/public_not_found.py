@@ -1,5 +1,7 @@
 from pathlib import Path
 from html import escape
+from urllib.parse import urlsplit, urlunsplit
+from app.config import get_settings
 
 from fastapi import APIRouter, Request
 from fastapi.exception_handlers import http_exception_handler
@@ -11,7 +13,6 @@ from app.intensive_public_cta import INTENSIVE_PUBLIC_CTA
 
 router = APIRouter(tags=["public-site"])
 ASSET_DIR = Path(__file__).parent / "static" / "public-site-errors"
-ORIGIN = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
 HEADERS = {"X-Robots-Tag": "noindex, nofollow", "Cache-Control": "no-store"}
 LEGACY_MEMBER_PAGES = {
     "/upgrade", "/hello", "/page118942576.html", "/page118954026.html",
@@ -20,10 +21,23 @@ LEGACY_MEMBER_PAGES = {
 }
 
 
-def fragment() -> str:
+def public_origin() -> str:
+    value = urlsplit(get_settings().account_public_url)
+    return urlunsplit((value.scheme, value.netloc, "", "", ""))
+
+
+def fragment(origin: str = "") -> str:
+    destination = INTENSIVE_PUBLIC_CTA["destination"]
+    own_origin = public_origin()
+    if destination.startswith(own_origin + "/"):
+        destination = origin + destination[len(own_origin):]
     return (ASSET_DIR / "404-fragment.html").read_text(encoding="utf-8").replace(
-        "{{intensive_url}}", escape(INTENSIVE_PUBLIC_CTA["destination"], quote=True)
-    ).replace("{{origin}}", ORIGIN)
+        "{{intensive_url}}", escape(destination, quote=True)
+    ).replace("{{origin}}", escape(origin, quote=True)).replace(
+        'href="/', 'href="' + escape(origin, quote=True) + '/'
+    ).replace('"href":"/', '"href":"' + escape(origin, quote=True) + '/').replace(
+        'data-account-url="/', 'data-account-url="' + escape(origin, quote=True) + '/'
+    )
 
 
 def page() -> str:
@@ -35,14 +49,14 @@ def page() -> str:
         '<link rel="preload" href="/assets/fonts/unbounded-800-latin-v1.woff2" as="font" type="font/woff2" crossorigin>'
         '<title>Страница не найдена — 404</title></head><body style="margin:0">'
         + fragment()
-        + f'<script src="{ORIGIN}/site-header.js" defer></script>'
-        f'<script src="{ORIGIN}/site-footer.js" defer></script></body></html>'
+        + '<script src="/site-header.js" defer></script>'
+        '<script src="/site-footer.js" defer></script></body></html>'
     )
 
 
 def members_moved_fragment() -> str:
     return (ASSET_DIR / "members-moved.html").read_text(encoding="utf-8").replace(
-        "{{origin}}", ORIGIN
+        "{{origin}}", ""
     )
 
 
@@ -89,7 +103,7 @@ async def public_http_exception(request: Request, exc: HTTPException):
 
 @router.get("/public-site-errors/404-fragment.html", include_in_schema=False)
 def not_found_fragment():
-    return HTMLResponse(fragment(), headers={**HEADERS, "Access-Control-Allow-Origin": "*"})
+    return HTMLResponse(fragment(public_origin()), headers={**HEADERS, "Access-Control-Allow-Origin": "*"})
 
 
 @router.get("/public-site-errors/404.js", include_in_schema=False)

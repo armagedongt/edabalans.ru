@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import re
 import unicodedata
+from urllib.parse import urlsplit, urlunsplit
 
 from fastapi import HTTPException
 
@@ -31,7 +32,8 @@ BLOG_PUBLIC_ORIGIN: str = os.getenv(
     "BLOG_PUBLIC_ORIGIN",
     "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
 ).rstrip("/")
-BLOG_PUBLIC_URL = BLOG_PUBLIC_ORIGIN + "/blog"
+BLOG_PUBLIC_PATH = "/blog"
+BLOG_PUBLIC_URL = BLOG_PUBLIC_ORIGIN + BLOG_PUBLIC_PATH
 
 
 @dataclass(frozen=True)
@@ -387,11 +389,16 @@ def render_blog_component(name: str, arguments: list[str]) -> str:
     cta = public_cta(arguments[0])
     if cta is None or not safe_href(cta.destination):
         raise HTTPException(422, "Неизвестный или небезопасный CTA блога")
+    destination = cta.destination
+    target, own = urlsplit(destination), urlsplit(BLOG_PUBLIC_ORIGIN)
+    if (target.scheme == own.scheme and target.port == own.port
+            and (target.hostname or "").encode("idna") == (own.hostname or "").encode("idna")):
+        destination = urlunsplit(("", "", target.path or "/", target.query, target.fragment))
     return (
         f'<section class="blog-cta blog-cta-{escape(cta.key)}" data-component="blog-cta">'
         f'<span class="blog-cta-eyebrow">{escape(cta.eyebrow)}</span>'
         f'<h3>{escape(cta.title)}</h3><p>{escape(cta.copy)}</p>'
-        f'<a href="{escape(cta.destination, quote=True)}" data-tracking-key="{escape(cta.tracking_key, quote=True)}">'
+        f'<a href="{escape(destination, quote=True)}" data-tracking-key="{escape(cta.tracking_key, quote=True)}">'
         f'{escape(cta.button_label)}</a></section>'
     )
 
@@ -451,7 +458,7 @@ def card_html(
     )
     return (
         f'<article class="article-card" data-category="{escape(article.category, quote=True)}">'
-        f'<a class="card-link" href="{BLOG_PUBLIC_URL}/articles/{escape(article.slug, quote=True)}">'
+        f'<a class="card-link" href="{BLOG_PUBLIC_PATH}/articles/{escape(article.slug, quote=True)}">'
         '<div class="card-visual">'
         f'<img class="card-image{fit_class}" src="/blog/media/{escape(selected_file, quote=True)}" '
         f'alt="{escape(selected_alt, quote=True)}" loading="lazy" decoding="async"></div>'
@@ -493,7 +500,7 @@ def insert_inline_related(catalog: BlogCatalog, article: BlogArticle, body: str)
         return body
     # A changed API heading invalidates placement; never relocate by scroll percentage.
     offset = body.index(heading)
-    card = (f'<aside class="reader-related"><a href="{BLOG_PUBLIC_URL}/articles/{escape(target.slug, quote=True)}">'
+    card = (f'<aside class="reader-related"><a href="{BLOG_PUBLIC_PATH}/articles/{escape(target.slug, quote=True)}">'
             '<small><span class="reader-related-arrow" aria-hidden="true">↗</span> Читайте также</small>'
             f'<strong>{escape(target.title)}</strong><span>{escape(target.excerpt)}</span></a></aside>')
     return body[:offset] + card + body[offset:]

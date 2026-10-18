@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE_URL || 'playwright')
 const base = process.env.PUBLIC_NOT_FOUND_BASE_URL || 'http://127.0.0.1:8775'
+const publicOrigin = 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai'
 const browser = await chromium.launch({ headless: true })
 
 try {
@@ -9,7 +10,8 @@ try {
     const context = await browser.newContext({ viewport: { width, height: 900 } })
     const page = await context.newPage()
     const fragmentRequests = []
-    await page.route('https://edabalans.ru/**', async route => {
+    await page.goto(base + '/health?E=private-marker')
+    const proxy = async route => {
       const request = route.request()
       const url = new URL(request.url())
       if (url.pathname.endsWith('.svg')) {
@@ -21,8 +23,9 @@ try {
       }
       const response = await context.request.get(base + url.pathname)
       await route.fulfill({ response })
-    })
-    await page.goto(base + '/public-site-errors/404-fragment.html?E=private-marker')
+    }
+    await page.route(base + '/**', proxy)
+    await page.route(publicOrigin + '/**', proxy)
     await page.setContent('<div data-edabalans-404><a href="https://похудение-это-есть.рф/">На главную</a></div>')
     await page.addScriptTag({ url: base + '/public-site-errors/404.js' })
     await page.locator('[data-edabalans-404][data-mounted="true"]').waitFor()
@@ -30,12 +33,12 @@ try {
     await page.addScriptTag({ url: base + '/public-site-errors/404.js' })
     assert.equal(await page.locator('.ed404').count(), 1)
     assert.equal(fragmentRequests.length, 1)
-    assert.equal(fragmentRequests[0].url, 'https://edabalans.ru/public-site-errors/404-fragment.html')
+    assert.equal(fragmentRequests[0].url, base + '/public-site-errors/404-fragment.html')
     assert.equal(fragmentRequests[0].headers.referer, undefined)
     assert.equal(fragmentRequests[0].headers.cookie, undefined)
     assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'), 'noindex,nofollow')
     assert.equal(await page.getByRole('heading', { name: 'Страница не найдена' }).count(), 1)
-    assert.equal(await page.locator('.ed404__links a').count(), 4)
+    assert.equal(await page.locator('.ed404__links a').count(), 6)
     assert.equal(await page.locator('.ed404__links').isVisible(), true)
     assert.equal((await page.locator('.ed404').innerHTML()).includes('private-marker'), false)
     const headerNav = page.locator(width === 360 ? '.eb-site-header__mobile-links' : '.eb-site-header__nav')
@@ -47,8 +50,9 @@ try {
   }
   const context = await browser.newContext()
   const page = await context.newPage()
-  await page.route('https://edabalans.ru/**', route => route.abort())
-  await page.goto(base + '/public-site-errors/404-fragment.html')
+  await page.goto(base + '/health')
+  await page.route(base + '/public-site-errors/404-fragment.html', route => route.abort())
+  await page.route(publicOrigin + '/**', route => route.abort())
   await page.setContent('<div data-edabalans-404><a href="https://похудение-это-есть.рф/">На главную</a></div>')
   await page.addScriptTag({ url: base + '/public-site-errors/404.js' })
   await page.waitForFunction(() => !document.querySelector('[data-edabalans-404]').dataset.loading)

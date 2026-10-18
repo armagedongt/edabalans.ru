@@ -458,7 +458,7 @@ var accountUrl=String(appContext.accountUrl||'/lk');
 var adminMode=appContext.mode==='admin'&&appContext.targetUserId;
 var API_URL=adminMode
   ? '/admin/api/apps/metabolism/users/'+encodeURIComponent(appContext.targetUserId)+'/runtime'
-  : 'https://edabalans.ru/api/apps/metabolism';
+  : '/api/apps/metabolism';
 var memberEmail=String((window.EdabalansIdentity&&window.EdabalansIdentity.source==='native'&&window.EdabalansIdentity.email)||'').trim().toLowerCase();
 var serverVersion=null;
 var serverSaveTimer=null;

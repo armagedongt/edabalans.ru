@@ -202,13 +202,20 @@ def test_heading_anchors_are_deterministic_and_unique() -> None:
     assert toc == (("первый-шаг", "Первый шаг"), ("первый-шаг-2", "Первый шаг"))
 
 
-def test_blog_component_is_closed_and_preserves_tracking_key() -> None:
+def test_blog_component_is_closed_and_preserves_tracking_key(monkeypatch) -> None:
     rendered = render_blog_component("blog_cta", ["intensive"])
 
     assert 'data-component="blog-cta"' in rendered
     assert 'data-tracking-key="blog_intensive"' in rendered
-    assert 'href="https://похудение-это-есть.рф/intensive"' in rendered
+    assert 'href="/intensive"' in rendered
     assert "Читать бесплатно" in rendered
+
+    from dataclasses import replace
+    from app.public_cta_catalog import PUBLIC_CTAS
+    monkeypatch.setitem(PUBLIC_CTAS, "intensive", replace(
+        PUBLIC_CTAS["intensive"], destination="https://other.example/intensive?x=1&y=2"))
+    external = render_blog_component("blog_cta", ["intensive"])
+    assert 'href="https://other.example/intensive?x=1&amp;y=2"' in external
 
     with pytest.raises(HTTPException):
         render_blog_component("script", ["intensive"])

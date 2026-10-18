@@ -90,10 +90,10 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert 'loading="eager" decoding="async" fetchpriority="high"' in hero
     assert response.text.count('loading="lazy" decoding="async"') >= 6
     assert "site-footer.js" in response.text
-    assert "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/cookie-notice.js" in response.text
+    assert 'src="/cookie-notice.js"' in response.text
     assert "/blog/assets/blog.css" in response.text
-    assert 'href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>' in response.text
-    assert 'href="https://похудение-это-есть.рф/">Мастер-класс</a>' in response.text
+    assert 'href="/intensive">Бесплатный интенсив</a>' in response.text
+    assert 'href="/">Мастер-класс</a>' in response.text
     assert '>Главная</a>' not in response.text
     assert 'class="brand-icon"' not in response.text
     assert 'class="nav-intensive"' not in response.text
@@ -147,11 +147,11 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
     assert "В этом материале" in response.text
     assert 'data-component="blog-cta"' in response.text
     assert 'data-tracking-key="blog_intensive"' in response.text
-    assert 'href="https://похудение-это-есть.рф/intensive"' in response.text
+    assert 'href="/intensive"' in response.text
     assert "Как сделать похудение проще" in response.text
     assert "Читать бесплатно" in response.text
     assert '<header class="article-hero">' in response.text
-    assert "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/cookie-notice.js" in response.text
+    assert 'src="/cookie-notice.js"' in response.text
     article_hero = response.text.split('<header class="article-hero">', 1)[1].split("</header>", 1)[0]
     assert "<p>" not in article_hero
     assert "blog_cta(" not in response.text
@@ -159,8 +159,8 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
     assert '<meta property="og:type" content="article">' in response.text
     assert 'loading="eager" decoding="async" fetchpriority="high"' in article_hero
     assert 'loading="lazy" decoding="async"' in response.text
-    assert 'href="https://похудение-это-есть.рф/intensive">Бесплатный интенсив</a>' in response.text
-    assert 'href="https://похудение-это-есть.рф/">Мастер-класс</a>' in response.text
+    assert 'href="/intensive">Бесплатный интенсив</a>' in response.text
+    assert 'href="/">Мастер-класс</a>' in response.text
     assert '>Главная</a>' not in response.text
     assert 'class="brand-icon"' not in response.text
     assert 'class="nav-intensive"' not in response.text

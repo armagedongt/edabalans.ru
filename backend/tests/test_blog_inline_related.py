@@ -27,7 +27,7 @@ def test_single_slot_follows_completed_section_without_changing_body_or_toc():
     assert rendered.index('Короче, вы либо формируете обстоятельства') < block.start()
     assert rendered[block.end():].startswith('<h2 id="принцип-no5-достаточно-времени">')
     target = catalog.by_source_id(article.inline_related.source_id)
-    assert f'href="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blog/articles/{target.slug}"' in block.group(0)
+    assert f'href="/blog/articles/{target.slug}"' in block.group(0)
     assert target.title in unescape(block.group(0)) and target.excerpt in unescape(block.group(0))
     assert all(target.title != title for _, title in toc)
 

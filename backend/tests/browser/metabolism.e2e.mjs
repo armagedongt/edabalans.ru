@@ -62,7 +62,7 @@ try {
   assert.ok(Math.abs(state.variants['1'].deficit-207.026805)<0.001,'percentage saves current equivalent kcal after expenditure changes')
   const archived=await browser.newPage()
   await archived.addInitScript(()=>{window.EdabalansIdentity={source:'native',email:'client@example.test'}})
-  await archived.route('https://edabalans.ru/api/apps/metabolism',async route=>{
+  await archived.route(url.replace('/metabolism','/api/apps/metabolism'),async route=>{
     const response=await route.fetch({url:url.replace('/metabolism','/api/apps/metabolism')})
     await route.fulfill({response})
   })

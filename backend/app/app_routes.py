@@ -405,13 +405,22 @@ def homepage_mobile_preview(embed: str | None = Query(default=None)) -> HTMLResp
     return response
 
 
+def direct_intensive_html(name: str) -> str:
+    fragment = (STATIC_DIR / "homepage-preview" / name).read_text(encoding="utf-8")
+    public = urlsplit(get_settings().account_public_url)
+    qr_origin = urlunsplit((public.scheme, public.netloc, "", "", ""))
+    return fragment.replace(
+        'id="edb-direct-intensive-v1"',
+        'id="edb-direct-intensive-v1" data-qr-origin="' + escape(qr_origin, {'"': "&quot;"}) + '"',
+        1,
+    )
+
+
 @router.get("/preview/direct-intensive", include_in_schema=False)
 @router.get("/preview/direct-intensive/", include_in_schema=False)
 @router.get("/podgotovka", include_in_schema=False)
 def direct_intensive_preview() -> HTMLResponse:
-    fragment = (
-        STATIC_DIR / "homepage-preview" / "direct-intensive.html"
-    ).read_text(encoding="utf-8")
+    fragment = direct_intensive_html("direct-intensive.html")
     response = HTMLResponse(
         fragment,
         headers={
@@ -502,9 +511,7 @@ def direct_intensive_t123_source() -> PlainTextResponse:
 @router.get("/preview/direct-intensive-a1", include_in_schema=False)
 @router.get("/preview/direct-intensive-a1/", include_in_schema=False)
 def direct_intensive_a1_preview() -> HTMLResponse:
-    fragment = (
-        STATIC_DIR / "homepage-preview" / "direct-intensive-a1.html"
-    ).read_text(encoding="utf-8")
+    fragment = direct_intensive_html("direct-intensive-a1.html")
     response = HTMLResponse(fragment, headers={"Cache-Control": "no-cache"})
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
     return response

@@ -18,6 +18,7 @@ from app.blog_content import (
     BLOG_CATEGORIES,
     BLOG_PUBLIC_ORIGIN,
     BLOG_PUBLIC_URL,
+    BLOG_PUBLIC_PATH,
     blog_seo_title,
     card_html,
     load_blog_catalog,
@@ -102,7 +103,7 @@ def _template(name: str, search_query: str = "") -> str:
     template = (BLOG_DIR / name).read_text(encoding="utf-8")
     if "<!-- BLOG_HEADER_SEARCH -->" in template:
         search = (BLOG_DIR / "header-search.html").read_text(encoding="utf-8")
-        search = search.replace("{{SEARCH_ACTION}}", escape(BLOG_PUBLIC_URL, quote=True))
+        search = search.replace("{{SEARCH_ACTION}}", escape(BLOG_PUBLIC_PATH, quote=True))
         search = search.replace("{{SEARCH_QUERY}}", escape(search_query, quote=True))
         template = template.replace("<!-- BLOG_HEADER_SEARCH -->", search)
     return template
@@ -142,7 +143,7 @@ def _breadcrumbs(article=None) -> tuple[str, dict]:
     else:
         items.append(("Сергей Воронцов", BLOG_PUBLIC_URL + _author()["path"]))
     links = ' <span aria-hidden="true">/</span> '.join(
-        f'<a href="{escape(url, quote=True)}">{escape(label)}</a>' if index < len(items) - 1
+        f'<a href="{escape(url.removeprefix(BLOG_PUBLIC_ORIGIN), quote=True)}">{escape(label)}</a>' if index < len(items) - 1
         else f'<span aria-current="page">{escape(label)}</span>'
         for index, (label, url) in enumerate(items)
     )
@@ -358,7 +359,7 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         ),
         "{{HERO}}": hero_html,
         "{{BREADCRUMBS}}": breadcrumbs,
-        "{{AUTHOR_BYLINE}}": f'<a class="author-byline" href="{escape(BLOG_PUBLIC_URL + author["path"], quote=True)}"><img src="{escape(author["image"], quote=True)}" alt="" width="32" height="32">{escape(author["name"])}, {escape(author["role"].lower())}</a>',
+        "{{AUTHOR_BYLINE}}": f'<a class="author-byline" href="{escape(BLOG_PUBLIC_PATH + author["path"], quote=True)}"><img src="{escape(author["image"], quote=True)}" alt="" width="32" height="32">{escape(author["name"])}, {escape(author["role"].lower())}</a>',
         "{{ARTICLE_DATES}}": '<div class="article-dates">' + ''.join(dates) + '</div>' if dates else '',
         "{{ARTICLE_BODY}}": body,
         "{{SUBSCRIPTION_SLOT}}": (

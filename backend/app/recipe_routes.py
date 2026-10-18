@@ -3,6 +3,7 @@ from __future__ import annotations
 import uuid
 from pathlib import Path
 from typing import Any
+from urllib.parse import urljoin
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
@@ -12,6 +13,7 @@ from sqlalchemy.orm import Session
 from app.account_auth_routes import require_native_user
 from app.app_service import AppAccessError, require_user_resource
 from app.database import get_db
+from app.config import get_settings
 from app.models import MasterclassEvent, User
 from app.recipe_models import NutritionProduct, RecipeBook, RecipeIngredient
 from app.recipe_service import MAX_WEIGHT, assert_recipe_owner, catalog_search, integer, normalize_name, normalized_key, product_payload, product_values, quantity, recipe_payload, validate_ingredients
@@ -92,7 +94,7 @@ def original_get(key: str, request: Request, db: Session = Depends(get_db)) -> d
         card = original_record(db, key)
         if card is None:
             raise HTTPException(404, "Оригинальный рецепт недоступен")
-        return {"ok": True, "recipe": {"original": True, "title": card["title"], "yield": card["yield"], "portion": card["portion"], "notes": "Подробный рецепт: https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk?open=recipes:" + card["step_id"], "ingredients": [{"id": original_source(card, index)["id"], "source": original_source(card, index), "weight": int(row[1])} for index, row in enumerate(card["rows"])]}}
+        return {"ok": True, "recipe": {"original": True, "title": card["title"], "yield": card["yield"], "portion": card["portion"], "notes": "Подробный рецепт: " + urljoin(get_settings().account_public_url, "/lk?open=recipes:" + card["step_id"]), "ingredients": [{"id": original_source(card, index)["id"], "source": original_source(card, index), "weight": int(row[1])} for index, row in enumerate(card["rows"])]}}
     except AppAccessError as exc:
         return {"ok": False, "error": str(exc)}
 

@@ -6,7 +6,7 @@ MENU_TEMPLATE = r'''  <button class="site-menu-toggle{toggle_class}" data-site-m
     <span class="site-menu-toggle__label">{label}</span><span class="site-menu-bars" aria-hidden="true"><span></span><span></span><span></span></span>
   </button>
   <aside class="site-menu-panel" data-site-menu role="dialog" aria-modal="true" aria-label="Меню сайта" id="{menu_id}" aria-hidden="true" inert>
-    <a class="site-menu-brand" href="https://похудение-это-есть.рф/" aria-label="Похудение — это есть.рф, главная"><img class="desktop-brand-icon" src="/preview/homepage-mobile/favicon-no-outline.png" alt=""><span>ПОХУДЕНИЕ — ЭТО ЕСТЬ.РФ</span></a>
+    <a class="site-menu-brand" href="/" aria-label="Похудение — это есть.рф, главная"><img class="desktop-brand-icon" src="/preview/homepage-mobile/favicon-no-outline.png" alt=""><span>ПОХУДЕНИЕ — ЭТО ЕСТЬ.РФ</span></a>
     <nav class="site-menu-links" aria-label="Навигация">
       <div class="site-menu-quick-links">
       {quick_links}
@@ -19,7 +19,7 @@ MENU_TEMPLATE = r'''  <button class="site-menu-toggle{toggle_class}" data-site-m
           <a href="https://max.ru/id230409966750_biz" target="_blank" rel="noopener">Канал в MAX</a>
         </div>
       </div>
-      <div class="site-menu-disclosure"><button class="site-menu-disclosure-trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="mobile-account-panel">Личный кабинет</button><div class="site-menu-disclosure-panel" id="mobile-account-panel" hidden><a href="https://похудение-это-есть.рф/lk">Войти</a><a href="https://похудение-это-есть.рф/lk?mode=register">Зарегистрироваться</a></div></div>
+      <div class="site-menu-disclosure"><button class="site-menu-disclosure-trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="mobile-account-panel">Личный кабинет</button><div class="site-menu-disclosure-panel" id="mobile-account-panel" hidden><a href="/lk">Войти</a><a href="/lk?mode=register">Зарегистрироваться</a></div></div>
       </div>
       <div class="site-menu-disclosure">
         <button class="site-menu-disclosure-trigger" type="button" aria-expanded="false" aria-haspopup="true" data-site-menu-contents aria-controls="mobile-toc-panel">{outline_label}</button>

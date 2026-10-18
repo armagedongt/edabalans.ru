@@ -485,8 +485,8 @@ try {
   await page.locator('.recipe-library').waitFor({ state: 'hidden' })
   assert.equal(await page.locator('.recipe-title').inputValue(), original.title)
   assert.equal(await page.getByRole('textbox', { name: 'Вес готового блюда, г', exact: true }).inputValue(), '75.5')
-  assert.equal(await page.locator('.recipe-notes-view a').getAttribute('href'), 'https://edabalans.ru/lk?open=recipes:day-15-recipe-synthetic')
-  const originalLink = 'https://edabalans.ru/lk?open=recipes:day-15-recipe-synthetic'
+  assert.equal(await page.locator('.recipe-notes-view a').getAttribute('href'), 'https://похудение-это-есть.рф/lk?open=recipes:day-15-recipe-synthetic')
+  const originalLink = 'https://похудение-это-есть.рф/lk?open=recipes:day-15-recipe-synthetic'
   await context.route(originalLink, route => route.fulfill({ contentType: 'text/html', body: '<p>Detailed recipe</p>' }))
   const popupPromise = page.waitForEvent('popup')
   await page.locator('.recipe-notes-view a').click()

@@ -53,7 +53,7 @@ def test_profile_and_article_share_one_author_without_generated_copy(authoring):
     assert '/blog/assets/sergey-author-channel.webp' in profile.text
     article = client.get('/blog/articles/pochemu-yapontsy-hudye-a-ty-net')
     assert structured(article.text)[0]['author'] == person
-    assert f'href="{person["url"]}"' in article.text
+    assert 'href="/blog/author/sergey-vorontsov"' in article.text
     assert client.get('/blog/assets/sergey-author-channel.webp').status_code == 200
     assert person['url'] in client.get('/blog/sitemap.xml').text
 
@@ -67,7 +67,7 @@ def test_breadcrumbs_are_clickable_and_match_structured_data(authoring):
     assert breadcrumbs[0]['item'] == BLOG_PUBLIC_URL
     assert breadcrumbs[1]['item'] == BLOG_PUBLIC_URL + '?' + urlencode({'category': article.category})
     assert breadcrumbs[2]['item'] == BLOG_PUBLIC_URL + '/articles/' + article.slug
-    assert f'href="{breadcrumbs[1]["item"]}"' in page.text
+    assert f'href="/blog?{urlencode({"category": article.category})}"' in page.text
     assert f'<span aria-current="page">{article.title}</span>' in page.text
 
 

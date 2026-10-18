@@ -70,6 +70,7 @@
       if (!document.getElementById(style.id)) {
         document.head.appendChild(document.importNode(style, true));
       }
+      landing.dataset.appOrigin = appHost;
       landing.style.width = '100vw';
       landing.style.maxWidth = '100vw';
       landing.style.marginLeft = 'calc(50% - 50vw)';

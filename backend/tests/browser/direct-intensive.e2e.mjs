@@ -3,6 +3,7 @@ const { chromium } = await import(playwrightModule)
 
 const baseUrl = process.env.DIRECT_INTENSIVE_BASE_URL || 'http://127.0.0.1:8790'
 const landingUrl = `${baseUrl}/preview/direct-intensive?utm_source=yandex&utm_medium=cpc&utm_campaign=search&utm_content=cat&utm_term=start&utm_id=77&yclid=click-901&ignored=secret`
+const publicOrigin = 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai'
 const fallbacks = {
   telegram: 'https://t.me/Fitness_Talks_bot?start=BMB6Y',
   max: 'https://max.ru/id230409966750_bot?start=BMB6Y',
@@ -10,11 +11,11 @@ const fallbacks = {
 const prepared = {
   telegram: {
     button: { deep: 'https://t.me/Fitness_Talks_bot?start=UtgButton123', payload: 'UtgButton123' },
-    qr: { deep: 'https://t.me/Fitness_Talks_bot?start=UtgQr123', payload: 'UtgQr123', qr: 'https://edabalans.ru/q/UtgQr123' },
+    qr: { deep: 'https://t.me/Fitness_Talks_bot?start=UtgQr123', payload: 'UtgQr123', qr: `${publicOrigin}/q/UtgQr123` },
   },
   max: {
     button: { deep: 'https://max.ru/id230409966750_bot?start=UmaxButton123', payload: 'UmaxButton123' },
-    qr: { deep: 'https://max.ru/id230409966750_bot?start=UmaxQr123', payload: 'UmaxQr123', qr: 'https://edabalans.ru/q/UmaxQr123' },
+    qr: { deep: 'https://max.ru/id230409966750_bot?start=UmaxQr123', payload: 'UmaxQr123', qr: `${publicOrigin}/q/UmaxQr123` },
   },
 }
 const browser = await chromium.launch({ headless: true })
@@ -64,7 +65,7 @@ async function landing({ api = 'success', delay = 0, viewport = { width: 1200, h
       },
     })
   })
-  await page.route('https://edabalans.ru/api/messaging/start-link', async route => {
+  await page.route(`${baseUrl}/api/messaging/start-link`, async route => {
     const request = route.request()
     const origin = request.headers().origin || baseUrl
     if (request.method() === 'OPTIONS') {
@@ -88,10 +89,10 @@ async function landing({ api = 'success', delay = 0, viewport = { width: 1200, h
       status: 200,
       contentType: 'application/json',
       headers: { 'Access-Control-Allow-Origin': origin },
-      body: JSON.stringify({ messenger: body.messenger, entry: body.entry, deep_link: issued.deep, fallback_url: fallbacks[channel], payload: issued.payload, click_url: 'https://edabalans.ru/api/messaging/start-link/click', qr_url: issued.qr || `https://edabalans.ru/q/${issued.payload}`, expires_in_seconds: 604800 }),
+      body: JSON.stringify({ messenger: body.messenger, entry: body.entry, deep_link: issued.deep, fallback_url: fallbacks[channel], payload: issued.payload, click_url: `${baseUrl}/api/messaging/start-link/click`, qr_url: issued.qr || `${publicOrigin}/q/${issued.payload}`, expires_in_seconds: 604800 }),
     })
   })
-  await page.route('https://edabalans.ru/api/messaging/start-link/click', async route => {
+  await page.route(`${baseUrl}/api/messaging/start-link/click`, async route => {
     clickRequests.push(route.request().postDataJSON())
     await route.fulfill({ status: 204, headers: { 'Access-Control-Allow-Origin': baseUrl } })
   })

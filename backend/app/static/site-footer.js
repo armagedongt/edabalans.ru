@@ -1,15 +1,20 @@
 (function () {
   'use strict';
 
+  var componentOrigin = document.currentScript && document.currentScript.src
+    ? new URL(document.currentScript.src, location.href).origin : location.origin;
+  var publicOrigin = componentOrigin.replace('://admin.', '://');
+  var publicRoot = publicOrigin === location.origin ? '' : publicOrigin;
+
   var STYLE_ID = 'edabalans-footer-style';
   var MOUNT_SELECTOR = '[data-edabalans-site-footer],[data-edabalans-footer]';
   var LINKS = {
     telegram: 'https://t.me/FitnessSergey',
     max: 'https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw',
     telegramChannel: 'https://t.me/Fitness_Talks',
-    offer: 'https://похудение-это-есть.рф/legal/offer',
-    privacy: 'https://похудение-это-есть.рф/legal/privacy',
-    disclaimer: 'https://похудение-это-есть.рф/legal/disclaimer'
+    offer: publicRoot + '/legal/offer',
+    privacy: publicRoot + '/legal/privacy',
+    disclaimer: publicRoot + '/legal/disclaimer'
   };
 
   var CSS = [

@@ -41,7 +41,7 @@ def test_browser_404_is_safe_not_indexable_and_uses_canonical_cta(monkeypatch):
     assert "secret-token-marker" not in response.text
     nav = Navigation()
     nav.feed(response.text)
-    assert nav.links == ["https://похудение-это-есть.рф/", "https://похудение-это-есть.рф/lk", destination, "https://похудение-это-есть.рф/blog", "https://t.me/FitnessSergey", "https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw"]
+    assert nav.links == ["/", "/lk", destination, "/blog", "https://t.me/FitnessSergey", "https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw"]
     assert "data-edabalans-site-header" in response.text
     assert 'id="ed404-contacts" data-edabalans-site-footer' in response.text
 
@@ -76,11 +76,15 @@ def test_other_methods_and_non_404_responses_unchanged():
     assert response.headers["content-type"].startswith("text/html")
 
 
-def test_404_on_legacy_host_loads_shared_assets_from_public_origin():
-    response = TestClient(app, base_url="https://blog.example.com").get("/unknown-page", headers={"Accept": "text/html"})
+@pytest.mark.parametrize("origin", ["https://future.example", "https://www.future.example"])
+def test_404_keeps_internal_links_and_assets_on_a_replacement_domain(origin):
+    response = TestClient(app, base_url=origin).get("/unknown-page", headers={"Accept": "text/html"})
     assert response.status_code == 404
     for path in ["site-header.js", "site-footer.js", "public-site-errors/shrug-character-v1.svg"]:
-        assert f'src="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/{path}"' in response.text
+        assert f'src="/{path}"' in response.text
+    nav = Navigation()
+    nav.feed(response.text)
+    assert nav.links[:4] == ["/", "/lk", "/intensive", "/blog"]
 
 
 @pytest.mark.parametrize("path,mime", [("404-fragment.html", "text/html"), ("404.js", "application/javascript"), ("shrug-character-v1.svg", "image/svg+xml")])
@@ -109,7 +113,7 @@ def test_members_moved_preview_and_legacy_paths_use_approved_card():
     assert "тильд" not in normalized
     assert 'href="/public-site-assets/soft-sky-sunrise-background.css"' in response.text
     assert 'class="ed-moved ed-soft-sky-sunrise-background"' in response.text
-    assert 'href="https://похудение-это-есть.рф/lk"' in response.text
+    assert 'href="/lk"' in response.text
     assert 'href="https://t.me/FitnessSergey"' in response.text
     assert 'href="https://max.ru/u/' in response.text
     assert "{{" not in response.text
