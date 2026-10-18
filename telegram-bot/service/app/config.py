@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     temporary_intensive_entry_enabled: bool = False
     telegram_maintenance_allowed_user_ids: str = ""
     payment_owner_telegram_user_id: str = ""
+    finance_telegram_bot_token: str = ""
+    finance_telegram_recipient_ids: str = ""
     technical_telegram_bot_token: str = ""
     technical_telegram_recipient_ids: str = ""
     max_bot_username: str = ""

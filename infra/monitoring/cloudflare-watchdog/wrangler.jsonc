@@ -28,6 +28,7 @@
   ],
   "vars": {
     "TELEGRAM_ALERT_CHAT_IDS": "446056103,5677281049",
+    "MARKETING_TELEGRAM_CHAT_IDS": "446056103,5677281049",
     "PLATFORM_READY_URL": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/ready",
     "TELEGRAM_READY_URL": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/api/health/telegram",
     "MAX_READY_URL": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/api/health/max",

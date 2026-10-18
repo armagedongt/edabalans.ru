@@ -31,10 +31,11 @@ implementation_status: implemented
 `MARKETING_REPORT_TOKEN`. Cloudflare secrets: `TELEGRAM_BOT_TOKEN`,
 `YANDEX_DIRECT_TOKEN`, `YANDEX_CAMPAIGN_IDS`,
 `MARKETING_REPORT_TOKEN`, Timeweb credentials и `ACTIONS_ENABLED`. Значения
-никогда не выводить. Служебные отчёты отправляются техническим ботом обоим
-аккаунтам из [единой карты](PROJECT_IDENTITY.md). Список получателей задаётся
-несекретным `TELEGRAM_ALERT_CHAT_IDS`; прежний одиночный ID остаётся только
-fallback без списка. Основной лидовый бот используется для клиентских сообщений
+никогда не выводить. Рекламные отчёты отправляются через `@TetrisgfgfgfBot` обоим
+аккаунтам из [единой карты](PROJECT_IDENTITY.md). Для отчётов используются отдельные Cloudflare-настройки
+`MARKETING_TELEGRAM_BOT_TOKEN`, `MARKETING_TELEGRAM_CHAT_IDS`; аварии идут через
+`TELEGRAM_BOT_TOKEN` (`@Chat_GPT_4_SV_bot`) и `TELEGRAM_ALERT_CHAT_IDS`.
+Между ботами fallback отсутствует. Основной лидовый бот используется для клиентских сообщений
 и их тестов, а не для служебных отчётов.
 
 ## Текущие кампании

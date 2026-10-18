@@ -154,11 +154,11 @@ def _owner_payment_alert_digest(message_text: str) -> str:
     return hashlib.sha256(message_text.encode("utf-8")).hexdigest()
 
 
-def technical_client() -> TelegramClient:
-    if not settings.technical_telegram_bot_token:
-        raise HTTPException(503, "Technical Telegram token is not configured")
+def finance_client() -> TelegramClient:
+    if not settings.finance_telegram_bot_token:
+        raise HTTPException(503, "Finance Telegram token is not configured")
     return TelegramClient(
-        settings.technical_telegram_bot_token,
+        settings.finance_telegram_bot_token,
         proxy_url=settings.telegram_proxy_url,
         api_base_url=settings.telegram_api_base_url,
         gateway_token=settings.telegram_gateway_token,
@@ -1470,12 +1470,12 @@ async def owner_payment_alert(
     if not secrets.compare_digest(x_edabalans_payment_signature or "", expected):
         raise HTTPException(403, "Invalid payment alert signature")
     recipients = list(dict.fromkeys(
-        item.strip() for item in settings.technical_telegram_recipient_ids.split(",") if item.strip()
+        item.strip() for item in settings.finance_telegram_recipient_ids.split(",") if item.strip()
     ))
     if not recipients or any(not item.isdigit() for item in recipients):
-        raise HTTPException(503, "Technical Telegram recipients are not configured")
-    telegram = technical_client()
-    bot_id = settings.technical_telegram_bot_token.split(":", 1)[0]
+        raise HTTPException(503, "Finance Telegram recipients are not configured")
+    telegram = finance_client()
+    bot_id = settings.finance_telegram_bot_token.split(":", 1)[0]
     digest = _owner_payment_alert_digest(message_text)
     message_ids = []
     failures = []
@@ -1529,7 +1529,7 @@ async def owner_payment_alert(
         session.commit()
         message_ids.append(delivery.platform_message_id or "")
     if failures:
-        raise HTTPException(502, "Technical Telegram alert was not delivered to every recipient")
+        raise HTTPException(502, "Finance Telegram alert was not delivered to every recipient")
     return {"ok": True, "message_id": ",".join(message_ids)}
 
 

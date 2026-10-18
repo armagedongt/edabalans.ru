@@ -28,3 +28,7 @@ implementation_status: implemented
 
 [Единый README и порядок работы](../../../runtime-health/README.md).
 Исходники и конфигурация указаны там; технический inventory строится автоматически.
+
+
+Аварии и восстановление доставляет @Chat_GPT_4_SV_bot. Рекламные отчёты используют
+отдельный токен @TetrisgfgfgfBot, без fallback к техническому боту.

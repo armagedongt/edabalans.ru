@@ -85,10 +85,10 @@ def test_admin_can_upload_media(tmp_path, monkeypatch):
     assert (tmp_path / response.json()["media_path"].split("/")[-1]).read_bytes() == b"jpeg-data"
 
 
-def test_technical_client_uses_technical_token_without_changing_customer_client(monkeypatch):
+def test_finance_client_uses_finance_token_without_changing_customer_client(monkeypatch):
     monkeypatch.setattr(main_module.settings, "telegram_test_bot_token", "111:customer-token")
-    monkeypatch.setattr(main_module.settings, "technical_telegram_bot_token", "999:technical-token")
-    assert main_module.technical_client().token == "999:technical-token"
+    monkeypatch.setattr(main_module.settings, "finance_telegram_bot_token", "999:technical-token")
+    assert main_module.finance_client().token == "999:technical-token"
     assert main_module.client().token == "111:customer-token"
 
 
@@ -128,10 +128,10 @@ def test_internal_owner_payment_alert_fans_out_retries_and_edits_each_receipt(tm
 
     fake = PaymentAlertTelegram()
     app.dependency_overrides[get_db] = db_override
-    monkeypatch.setattr(main_module, "technical_client", lambda: fake)
+    monkeypatch.setattr(main_module, "finance_client", lambda: fake)
     monkeypatch.setattr(main_module.settings, "app_auth_secret", "owner-alert-tests")
-    monkeypatch.setattr(main_module.settings, "technical_telegram_bot_token", "999:test-token")
-    monkeypatch.setattr(main_module.settings, "technical_telegram_recipient_ids", "77,88,77")
+    monkeypatch.setattr(main_module.settings, "finance_telegram_bot_token", "999:test-token")
+    monkeypatch.setattr(main_module.settings, "finance_telegram_recipient_ids", "77,88,77")
     payload = {"notification_id": "a12", "message_text": "<b>$ Новая покупка · 9 900 ₽</b>\n\nМессенджер: не привязан"}
     signature = main_module._owner_payment_alert_signature(
         payload["notification_id"], payload["message_text"]

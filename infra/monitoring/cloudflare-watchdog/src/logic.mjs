@@ -483,6 +483,8 @@ async function sendTelegramRichMessage(item, env, fetchImpl) {
 }
 
 async function deliverDailyReport(report, env, fetchImpl, state, storage, reportDate) {
+  env = { ...env, TELEGRAM_BOT_TOKEN: env.MARKETING_TELEGRAM_BOT_TOKEN,
+    TELEGRAM_ALERT_CHAT_IDS: env.MARKETING_TELEGRAM_CHAT_IDS, TELEGRAM_ALERT_CHAT_ID: "" };
   const richMessages = report.payload?.telegram_rich_messages;
   const rich = Array.isArray(richMessages) && richMessages.length > 0;
   const messages = rich ? richMessages : (report.messages || []);
@@ -717,7 +719,9 @@ async function runDailyReport(state, env, fetchImpl, storage, now) {
       const usedRichMessages = await deliverDailyReport(report, env, fetchImpl, state, storage, reportDate);
       if (usedRichMessages) state.report.richPreviewSent = true;
       if (parseBoolean(env.SEND_REPORT_AI_DEMO_ONCE, false) && !state.report.demoSent && report.payload?.demo_ai_message) {
-        await sendTelegramAlert(report.payload.demo_ai_message, env, fetchImpl);
+        await sendTelegramAlert(report.payload.demo_ai_message, { ...env,
+          TELEGRAM_BOT_TOKEN: env.MARKETING_TELEGRAM_BOT_TOKEN,
+          TELEGRAM_ALERT_CHAT_IDS: env.MARKETING_TELEGRAM_CHAT_IDS, TELEGRAM_ALERT_CHAT_ID: "" }, fetchImpl);
         state.report.demoSent = true;
       }
       await reportRequest(`${env.MARKETING_REPORT_URL}/delivered?date=${reportDate}`, env.MARKETING_REPORT_TOKEN, "POST", fetchImpl);

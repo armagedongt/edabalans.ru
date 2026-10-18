@@ -621,6 +621,8 @@ test("daily report is generated, delivered as native rich tables after 03:30 Mos
     TELEGRAM_READY_URL: "https://api.example/telegram/ready",
     MARKETING_REPORT_URL: "https://api.example/daily-report",
     MARKETING_REPORT_TOKEN: "report-secret",
+    MARKETING_TELEGRAM_BOT_TOKEN: "marketing-token",
+    MARKETING_TELEGRAM_CHAT_IDS: "91",
     TELEGRAM_BOT_TOKEN: "telegram-secret",
     TELEGRAM_ALERT_CHAT_ID: "42",
     SEND_REPORT_AI_DEMO_ONCE: "true",
@@ -634,6 +636,7 @@ test("daily report is generated, delivered as native rich tables after 03:30 Mos
   assert.equal(calls.filter((call) => call.url.includes("/delivered?")).length, 1);
   const telegram = calls.filter((call) => call.url.includes("api.telegram.org"));
   assert.deepEqual(telegram.map((call) => call.url.split("/").at(-1)), ["sendRichMessage", "sendMessage"]);
+  assert.ok(telegram.every((call) => call.url.includes("/botmarketing-token/") && call.body.chat_id === "91"));
   assert.equal(telegram[0].body.rich_message.blocks[0].type, "table");
   assert.equal(telegram[1].body.text, "demo ai");
   assert.equal(storage.value.report.sentDate, "2026-09-07");
@@ -660,6 +663,7 @@ test("daily report retries only unsent parts for the second owner", async () => 
     return response(200, { status: "sent" });
   };
   const env = { MARKETING_REPORT_URL: "https://api.example/daily-report", MARKETING_REPORT_TOKEN: "test",
+    MARKETING_TELEGRAM_BOT_TOKEN: "marketing-token", MARKETING_TELEGRAM_CHAT_IDS: "77,88",
     TELEGRAM_BOT_TOKEN: "technical-token", TELEGRAM_ALERT_CHAT_IDS: "77,88" };
   const storage = new MemoryStorage();
   const now = Date.UTC(2026, 8, 8, 0, 30);
@@ -688,6 +692,8 @@ test("daily report snapshot waits for 03:00 Moscow and delivery waits for 03:30"
     TELEGRAM_READY_URL: "https://api.example/telegram/ready",
     MARKETING_REPORT_URL: "https://api.example/daily-report",
     MARKETING_REPORT_TOKEN: "report-secret",
+    MARKETING_TELEGRAM_BOT_TOKEN: "marketing-token",
+    MARKETING_TELEGRAM_CHAT_IDS: "42",
     TELEGRAM_BOT_TOKEN: "telegram-secret",
     TELEGRAM_ALERT_CHAT_ID: "42",
   };
@@ -743,6 +749,8 @@ test("rich report falls back to readable cards when Telegram rejects native tabl
     TELEGRAM_READY_URL: "https://api.example/telegram/ready",
     MARKETING_REPORT_URL: "https://api.example/daily-report",
     MARKETING_REPORT_TOKEN: "report-secret",
+    MARKETING_TELEGRAM_BOT_TOKEN: "marketing-token",
+    MARKETING_TELEGRAM_CHAT_IDS: "42",
     TELEGRAM_BOT_TOKEN: "telegram-secret",
     TELEGRAM_ALERT_CHAT_ID: "42",
     SEND_RICH_REPORT_PREVIEW_ONCE: "true",
@@ -996,6 +1004,8 @@ test("production coordinator honors the skip-report boundary", async () => {
       TELEGRAM_READY_URL: "https://api.example/telegram/ready",
       MARKETING_REPORT_URL: "https://api.example/report",
       MARKETING_REPORT_TOKEN: "report-secret",
+    MARKETING_TELEGRAM_BOT_TOKEN: "marketing-token",
+    MARKETING_TELEGRAM_CHAT_IDS: "42",
     });
     const result = await coordinator.fetch(new Request("https://watchdog.internal/run", {
       method: "POST",
@@ -1015,6 +1025,8 @@ test("a fresh report object seeds the production cutover state without duplicate
     REPORT_STATE_CUTOVER_DATE: "2026-09-08",
     MARKETING_REPORT_URL: "https://api.example/report",
     MARKETING_REPORT_TOKEN: "report-secret",
+    MARKETING_TELEGRAM_BOT_TOKEN: "marketing-token",
+    MARKETING_TELEGRAM_CHAT_IDS: "42",
     TELEGRAM_BOT_TOKEN: "telegram-secret",
     TELEGRAM_ALERT_CHAT_ID: "42",
     SEND_REPORT_AI_DEMO_ONCE: "true",
@@ -1183,3 +1195,27 @@ test("Durable Object queues overlapping runs instead of executing them together"
     globalThis.fetch = originalFetch;
   }
 });
+
+
+for (const route of [{}, { MARKETING_TELEGRAM_BOT_TOKEN: "marketing-token" }, { MARKETING_TELEGRAM_CHAT_IDS: "91" }]) {
+test(`incomplete marketing route ${JSON.stringify(route)} never sends the report through the technical bot`, async () => {
+  const storage = new MemoryStorage();
+  const messages = [];
+  const env = { MARKETING_REPORT_URL: "https://api.example/daily-report", MARKETING_REPORT_TOKEN: "test",
+    TELEGRAM_BOT_TOKEN: "technical-token", TELEGRAM_ALERT_CHAT_IDS: "77", ...route };
+  const fetchImpl = async (url, options = {}) => {
+    if (String(url).includes("api.telegram.org")) {
+      messages.push(JSON.parse(options.body).text);
+      return response(200, { ok: true });
+    }
+    if (String(url).includes("/daily-report?")) return response(200, { messages: ["report-only"], payload: {} });
+    return response(200, {});
+  };
+  await runDailyReportTask(env, storage, { fetchImpl, now: Date.UTC(2026, 8, 8, 0, 30) });
+  assert.equal(messages.includes("report-only"), false);
+  assert.equal(messages.length, 1);
+  assert.equal(storage.value.report.sentDate, null);
+  assert.match(storage.value.report.lastError, /route is not configured/);
+});
+
+}
