@@ -1,6 +1,7 @@
 """Keep browser links on their current site; external integrations use configured origins."""
 from __future__ import annotations
 
+from functools import lru_cache
 from html import escape, unescape
 from html.parser import HTMLParser
 import os
@@ -70,7 +71,12 @@ _ATTR = re.compile(r"(?P<name>[^\s\"'<>/=]+)\s*=\s*(?:(?P<quote>[\"'])(?P<value>
 
 
 def relative_site_html(value: str) -> str:
-    """Rewrite URL attributes in tags only, preserving copy, scripts and saved revisions."""
+    return _relative_site_html(value, public_site_origin())
+
+
+@lru_cache(maxsize=16)
+def _relative_site_html(value: str, origin: str) -> str:
+    """Cache content only, keyed by bytes and origin; authorization remains at the caller."""
     class Links(HTMLParser):
         def __init__(self):
             super().__init__(convert_charrefs=False)
@@ -109,6 +115,10 @@ def relative_site_html(value: str) -> str:
     parser = Links()
     parser.feed(value)
     parser.close()
-    for start, end, replacement in reversed(parser.edits):
-        value = value[:start] + replacement + value[end:]
-    return value
+    parts = []
+    previous = 0
+    for start, end, replacement in parser.edits:
+        parts.extend((value[previous:start], replacement))
+        previous = end
+    parts.append(value[previous:])
+    return "".join(parts)

@@ -104,3 +104,12 @@ def test_responsive_media_candidates_keep_descriptors_and_external_source(separa
     assert relative_site_html(source) == '<img srcset="/media/reviews/a.webp 1x, https://other.example/b.webp 2x">'.replace(", ", separator)
     own = source.replace("https://other.example/b.webp", "https://edabalans.ru/media/reviews/b.webp")
     assert "edabalans.ru" not in relative_site_html(own)
+
+
+def test_repeated_content_tracks_current_origin_and_content_changes(monkeypatch):
+    source = '<a href="https://future.example/lk">Войти</a>'
+    monkeypatch.setenv("ACCOUNT_PUBLIC_URL", "https://previous.example/lk")
+    assert relative_site_html(source) == source
+    monkeypatch.setenv("ACCOUNT_PUBLIC_URL", "https://future.example/lk")
+    assert relative_site_html(source) == '<a href="/lk">Войти</a>'
+    assert relative_site_html(source.replace('/lk', '/blog')) == '<a href="/blog">Войти</a>'
