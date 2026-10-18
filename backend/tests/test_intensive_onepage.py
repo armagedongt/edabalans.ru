@@ -242,3 +242,90 @@ def test_marketing_reading_details_show_heading_percent_and_active_time():
 
     event.details = {**event.details, 'furthest_heading_title':'Ошибка № 3'}
     assert _event_detail(event) == 'дошёл до: Ошибка № 3; просмотрено 47% текста; активно 60 с'
+
+
+def test_onepage_open_sections_end_and_buttons_are_scoped_to_each_visit():
+    client, factory = make_client()
+    user = create_user(factory)
+    revision, _ = reading_outline(SOURCE.read_text(encoding='utf-8'))
+    events = [
+        ('intensive_onepage_open', {}),
+        *[('intensive_onepage_section', {'section': section}) for section in ('block-1', 'block-2', 'block-3', 'actions')],
+        ('intensive_onepage_end', {}),
+        *[('intensive_onepage_messenger_click', {'messenger': messenger}) for messenger in ('telegram', 'max')],
+    ]
+    try:
+        with factory() as db:
+            token, _ = issue_access_token(db, user.id, 'telegram')
+            db.commit()
+        client.get(f'/intensive?i={token}')
+        visits = [str(uuid.uuid4()), str(uuid.uuid4())]
+        for visit in visits:
+            for kind, detail in events:
+                body = dict(event_type=kind, event_id=str(uuid.uuid4()), visit_id=visit,
+                            article_revision=revision, viewed_percent=37, active_seconds=42,
+                            max_depth_percent=100, user_id='forged', platform='max', **detail)
+                first = client.post('/api/intensive/events', json=body)
+                retry = client.post('/api/intensive/events', json={**body, 'event_id': str(uuid.uuid4())})
+                assert first.status_code == retry.status_code == 200, first.text
+                assert first.json()['event_id'] == retry.json()['event_id']
+        with factory() as db:
+            rows = list(db.scalars(select(CourseEvent)))
+            assert len(rows) == 16
+            for visit in visits:
+                own = [row for row in rows if row.details.get('visit_id') == visit]
+                assert len(own) == 8
+                assert all(row.details['article_revision'] == revision for row in own)
+                assert all(row.details['viewed_percent'] == 37 and row.details['active_seconds'] == 42 for row in own)
+                assert {row.details['section'] for row in own if row.event_type == 'intensive_onepage_section'} == {'block-1', 'block-2', 'block-3', 'actions'}
+                assert {row.details['messenger'] for row in own if row.event_type == 'intensive_onepage_messenger_click'} == {'telegram', 'max'}
+            assert all(row.user_id == user.id and row.details['platform'] == 'telegram' for row in rows)
+            assert db.scalar(select(CourseStageProgress)) is None
+            assert db.scalar(select(UserOffer)) is None
+    finally:
+        app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize('missing', ['visit_id', 'article_revision'])
+def test_partial_onepage_visit_metadata_cannot_fall_back_to_legacy(missing):
+    client, factory = make_client()
+    user = create_user(factory)
+    revision, _ = reading_outline(SOURCE.read_text(encoding='utf-8'))
+    try:
+        with factory() as db:
+            token, _ = issue_access_token(db, user.id, 'telegram')
+            db.commit()
+        client.get(f'/intensive?i={token}')
+        body = dict(event_type='intensive_onepage_open', event_id='partial',
+                    visit_id=str(uuid.uuid4()), article_revision=revision)
+        body.pop(missing)
+        assert client.post('/api/intensive/events', json=body).status_code == 422
+        with factory() as db:
+            assert db.scalar(select(CourseEvent)) is None
+    finally:
+        app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize('kind,changes', [
+    ('open', {'article_revision': 'stale'}),
+    ('open', {'visit_id': 'bad'}),
+    ('open', {'viewed_percent': 101}),
+    ('section', {'section': 'bad'}),
+    ('messenger_click', {'messenger': 'bad'}),
+])
+def test_modern_onepage_actions_validate_revision_visit_and_payload(kind, changes):
+    client, factory = make_client()
+    user = create_user(factory)
+    revision, _ = reading_outline(SOURCE.read_text(encoding='utf-8'))
+    try:
+        with factory() as db:
+            token, _ = issue_access_token(db, user.id, 'telegram')
+            db.commit()
+        client.get(f'/intensive?i={token}')
+        body = {**dict(event_type='intensive_onepage_' + kind, event_id='invalid',
+                       visit_id=str(uuid.uuid4()), article_revision=revision), **changes}
+        assert client.post('/api/intensive/events', json=body).status_code == 422
+        with factory() as db:
+            assert db.scalar(select(CourseEvent)) is None
+    finally:
+        app.dependency_overrides.clear()

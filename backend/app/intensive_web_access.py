@@ -338,7 +338,8 @@ def record_client_event(
             raise ValueError(f"invalid intensive {name}")
         return int(number)
 
-    if event_type in {"intensive_onepage_reading_start", "intensive_onepage_heading", "intensive_onepage_progress"}:
+    reading_event = event_type in {"intensive_onepage_reading_start", "intensive_onepage_heading", "intensive_onepage_progress"}
+    if event_type in ONEPAGE_EVENT_TYPES and (reading_event or "visit_id" in details or "article_revision" in details):
         from app.intensive_onepage import SOURCE, reading_outline
 
         revision, headings = reading_outline(SOURCE.read_text(encoding="utf-8"))
@@ -365,6 +366,18 @@ def record_client_event(
         if furthest_id is not None:
             safe_details.update(furthest_heading_id=furthest_id, furthest_heading_title=headings[furthest_id])
         key = f"onepage:{revision}:{visit_id}:{event_type}"
+        if event_type == "intensive_onepage_section":
+            section = details.get("section")
+            if section not in ONEPAGE_SECTIONS:
+                raise ValueError("invalid intensive onepage section")
+            safe_details["section"] = section
+            key += f":{section}"
+        elif event_type == "intensive_onepage_messenger_click":
+            messenger = details.get("messenger")
+            if messenger not in PLATFORMS:
+                raise ValueError("invalid intensive onepage messenger")
+            safe_details["messenger"] = messenger
+            key += f":{messenger}"
         if event_type == "intensive_onepage_heading":
             key += f":{heading_id}"
         event = course_event(db, user_id, key, event_type, details=safe_details)
