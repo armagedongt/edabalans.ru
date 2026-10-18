@@ -17,3 +17,15 @@
 @media(max-width:1400px){.marketing-filters{grid-template-columns:126px repeat(3,minmax(140px,1fr)) minmax(190px,1.1fr) 108px}.marketing-user-filter{grid-column:span 2}}
 @media(max-width:1000px){.marketing-sticky-head{top:68px}.marketing-filters{grid-template-columns:126px 1fr 1fr}.marketing-user-filter{grid-column:span 2}.marketing-filter-actions{grid-column:auto}.marketing-table-wrap{max-width:calc(100vw - 28px)}}
 @media(max-width:600px){.marketing-sticky-head{top:64px}.marketing-filters{grid-template-columns:1fr 1fr}.marketing-date-range{grid-column:1/-1;grid-template-columns:1fr 1fr}.marketing-user-filter{grid-column:1/-1}.marketing-filter-actions{grid-column:1/-1;grid-template-columns:1fr 1fr}.marketing-table-wrap{max-width:calc(100vw - 20px)}.marketing-horizontal-scroll{bottom:7px}.marketing-timeline-popover{font-size:12px}}
+
+.channel-link-form{grid-template-columns:minmax(0,1fr) minmax(0,.7fr) minmax(0,1.3fr);gap:12px}
+.channel-link-form .channel-permission{display:flex;align-items:center;grid-column:1/3;gap:8px;text-transform:none;letter-spacing:0;font-size:13px}
+.channel-link-form .channel-permission input{width:18px;height:18px;flex:0 0 18px;padding:0}
+.channel-link-form .marketing-filter-actions{grid-column:3}
+#channel-form-status{grid-column:1/-1;overflow-wrap:anywhere}
+#channel-report-form{grid-template-columns:repeat(5,minmax(0,1fr))}
+#channel-report-form label,#channel-report-form input,#channel-report-form select{min-width:0}
+@media(max-width:1000px){#channel-report-form{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){#channel-report-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1000px){.channel-link-form{grid-template-columns:1fr 1fr}.channel-link-form label:nth-child(3){grid-column:1/-1}.channel-link-form .channel-permission{grid-column:1/-1}.channel-link-form .marketing-filter-actions{grid-column:1/-1}}
+@media(max-width:600px){.channel-link-form{grid-template-columns:1fr}.channel-link-form .channel-permission,.channel-link-form .marketing-filter-actions{grid-column:1}}

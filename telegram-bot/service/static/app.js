@@ -197,9 +197,9 @@ async function broadcasts() {
 }
 
 async function links() {
-  busy(); const [rows, tags, unresolved] = await Promise.all([api('/admin/tracking-links'), api('/admin/tags'), api('/admin/utm/unresolved')]);
+  busy(); const [rows, tags, unresolved] = await Promise.all([api('/admin/tracking-links').then(rows=>rows.filter(row=>row.target_kind!=='channel_entry')), api('/admin/tags'), api('/admin/utm/unresolved')]);
   const clicks=rows.reduce((n,row)=>n+row.clicks,0), starts=rows.reduce((n,row)=>n+row.unique_starts,0);
-  root.innerHTML = `<div class="help-card"><b>Как это работает</b><span>Один набор источников и тегов хранится как правило. У правила может быть несколько опубликованных адресов: новый короткий код и старые LeadTeh-коды. Статистика объединяется по правилу, старые коды не переиспользуются.</span></div><div class="metrics"><article><span>Правил</span><b>${rows.length}</b></article><article><span>Переходов через go</span><b>${clicks}</b></article><article><span>Уникальных стартов</span><b>${starts}</b></article><article><span>Неразобранных UTM</span><b>${unresolved.length}</b></article></div><div class="link-tabs"><button class="active" data-link-tab="bot">Ссылки на бота</button><button data-link-tab="channel">Ссылки на канал</button><button data-link-tab="utm">Неразобранные UTM</button><button data-link-tab="events">События</button></div><section id="link-panel"></section>`;
+  root.innerHTML = `<div class="help-card"><b>Архивный конструктор</b><span><a href="/admin/channel-links">Открыть новый конструктор ссылок на канал</a></span></div><div class="help-card"><b>Как это работает</b><span>Один набор источников и тегов хранится как правило. У правила может быть несколько опубликованных адресов: новый короткий код и старые LeadTeh-коды. Статистика объединяется по правилу, старые коды не переиспользуются.</span></div><div class="metrics"><article><span>Правил</span><b>${rows.length}</b></article><article><span>Переходов через go</span><b>${clicks}</b></article><article><span>Уникальных стартов</span><b>${starts}</b></article><article><span>Неразобранных UTM</span><b>${unresolved.length}</b></article></div><div class="link-tabs"><button class="active" data-link-tab="bot">Ссылки на бота</button><button data-link-tab="channel">Ссылки на канал</button><button data-link-tab="utm">Неразобранные UTM</button><button data-link-tab="events">События</button></div><section id="link-panel"></section>`;
   const panel=document.querySelector('#link-panel'); let tab='bot';
   const bindTagPicker=form=>{
     const input=form.querySelector('#tag-search'), suggestions=form.querySelector('#tag-suggestions'), selectedHost=form.querySelector('#selected-tags'), createButton=form.querySelector('#create-tag');
@@ -235,11 +235,11 @@ async function links() {
 }
 
 const views = {modules:()=>modulesView(), sequences, library, contacts, broadcasts, links};
-async function show(view) { document.querySelectorAll('nav button').forEach(button => button.classList.toggle('active', button.dataset.view === view)); title.textContent = {modules:'Модули',sequences:'Цепочки',library:'Библиотека сообщений',contacts:'Пользователи и тестирование',broadcasts:'Разовые рассылки',links:'Ссылки и источники'}[view]; try { await views[view](); } catch (error) { fail(error); } }
+async function show(view) { document.querySelectorAll('nav button').forEach(button => button.classList.toggle('active', button.dataset.view === view)); title.textContent = {modules:'Модули',sequences:'Цепочки',library:'Библиотека сообщений',contacts:'Пользователи и тестирование',broadcasts:'Разовые рассылки',links:'Архивный конструктор'}[view]; try { await views[view](); } catch (error) { fail(error); } }
 document.querySelectorAll('nav button').forEach(button => button.onclick = () => show(button.dataset.view));
 document.querySelector('#logout').onclick = async () => { await fetch('/bot-api/logout', {method:'POST'}); location.replace('/bot'); };
 api('/health').then(value => {
   document.querySelector('#health').textContent = value.status !== 'ok' ? 'ошибка' : (value.maintenance ? '● ремонт' : '● работает');
   document.querySelector('#bot-name').textContent = `TELEGRAM · @${String(value.bot || 'не настроен').replace(/^@/, '')}`;
 });
-show('modules');
+show(location.hash === '#links' ? 'links' : 'modules');

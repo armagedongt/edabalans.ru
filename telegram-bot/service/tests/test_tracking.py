@@ -439,3 +439,31 @@ def test_generic_go_persists_unique_prepared_journey_with_autoflush_disabled(tmp
             assert context["journey_id"]==row.id
             assert context["browser_context"]=="encrypted-browser"
     app.dependency_overrides.clear()
+
+
+def test_channel_entry_landing_keeps_u_journey_and_qr_but_opens_miniapp(tmp_path,monkeypatch):
+    from app.models import TrackingLink,TrackingSession
+    client,engine=make_client(tmp_path,monkeypatch)
+    try:
+        with Session(engine) as session:
+            link=TrackingLink(token='pk1234',name='Пост',platform='pikabu',placement='Пост',target_kind='channel_entry')
+            session.add(link);session.flush()
+            session.add(TrackingLinkAlias(tracking_link_id=link.id,token='pk1234',alias_kind='channel_entry'))
+            session.commit()
+        result=client.post('/bot/public/start-link',json={'messenger':'tg','alias':'pk1234','entry':'qr',
+            'yclid':'click-test','browser_context':'encrypted-browser'})
+        assert result.status_code==200,result.text
+        value=result.json()
+        assert value['deep_link'].startswith('https://t.me/TetrisgfgfgfBot/channel?startapp=U')
+        assert value['fallback_url']=='https://t.me/TetrisgfgfgfBot/channel?startapp=pk1234'
+        redirect=client.get('/q/'+value['payload'],follow_redirects=False)
+        assert redirect.status_code==307
+        assert redirect.headers['location']==value['deep_link']
+        with Session(engine) as session:
+            journey=session.scalar(select(TrackingSession))
+            assert journey.raw_query['yclid']=='click-test'
+            prepared=session.scalar(select(TrackingEvent).where(TrackingEvent.event_type=='link_prepared'))
+            assert prepared.metadata_json['browser_context']=='encrypted-browser'
+            assert session.scalar(select(func.count()).select_from(SequenceRun))==0
+    finally:
+        app.dependency_overrides.clear();engine.dispose()

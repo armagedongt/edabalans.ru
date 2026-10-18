@@ -14,6 +14,11 @@ from fastapi.testclient import TestClient
 
 from app.channel_bridge_routes import PREVIEW_POST_URL, router
 from app.config import Settings, get_settings
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+from sqlalchemy.pool import StaticPool
+from app.database import Base, get_db
+from app import models
 
 
 TOKEN = "test-token-not-a-real-bot"
@@ -22,6 +27,12 @@ TOKEN = "test-token-not-a-real-bot"
 def make_client(token=TOKEN):
     app = FastAPI()
     app.include_router(router)
+    engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    Base.metadata.create_all(engine)
+    def database():
+        with Session(engine) as db:
+            yield db
+    app.dependency_overrides[get_db] = database
     app.dependency_overrides[get_settings] = lambda: Settings(
         database_url="sqlite://", telegram_test_bot_token=token
     )
@@ -54,7 +65,7 @@ def test_preview_is_public_without_login_and_ignores_external_destination():
     assert client.get("/apps/channel-bridge/bridge.js").status_code == 200
 
 
-def test_verified_telegram_input_only_returns_the_post_and_no_session():
+def test_verified_telegram_input_returns_post_without_login_session():
     response = make_client().post(
         "/apps/channel-bridge/verify", json={"init_data": signed_data()}
     )

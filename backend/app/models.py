@@ -584,7 +584,14 @@ class TelegramTrackingLink(Base):
 
     __tablename__ = "tg_tracking_links"
 
-    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    token: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, default=lambda: uuid.uuid4().hex)
+    target_sequence_code: Mapped[str] = mapped_column(String(100), default="prepurchase_masterclass", nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    route_kind: Mapped[str] = mapped_column(String(32), default="root", nullable=False)
+    target_step_key: Mapped[str | None] = mapped_column(String(120))
+    created_by: Mapped[str | None] = mapped_column(String(320))
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     platform: Mapped[str] = mapped_column(String(80), nullable=False)
     placement: Mapped[str] = mapped_column(String(255), nullable=False)
     campaign: Mapped[str | None] = mapped_column(String(255))
@@ -596,12 +603,44 @@ class TelegramTrackingLink(Base):
     )
 
 
+class TelegramTrackingLinkAlias(Base):
+    """Existing bot alias table, shared with the channel constructor."""
+    __tablename__ = "tg_tracking_link_aliases"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    tracking_link_id: Mapped[str] = mapped_column(ForeignKey("tg_tracking_links.id", ondelete="CASCADE"))
+    token: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    alias_kind: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+    telegram_invite_url: Mapped[str | None] = mapped_column(Text)
+    telegram_chat_id: Mapped[str | None] = mapped_column(String(64))
+    creates_join_request: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    created_by: Mapped[str | None] = mapped_column(String(320))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class TelegramTrackingSession(Base):
+    """Existing seven-day advertising journey; no new session or identity."""
+    __tablename__ = "tg_tracking_sessions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    start_token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    tracking_link_id: Mapped[str] = mapped_column(ForeignKey("tg_tracking_links.id"))
+    alias_id: Mapped[str] = mapped_column(ForeignKey("tg_tracking_link_aliases.id"))
+    raw_query: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    resolved_tag_ids: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
 class TelegramTrackingEvent(Base):
     """Read model for raw acquisition and bot journey events."""
 
     __tablename__ = "tg_tracking_events"
 
-    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     tracking_link_id: Mapped[str | None] = mapped_column(
         ForeignKey("tg_tracking_links.id", ondelete="SET NULL"), index=True
     )

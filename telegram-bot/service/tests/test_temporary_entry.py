@@ -479,3 +479,51 @@ def test_circle_delivered_by_overlapping_entry_is_rechecked_after_navigation(set
     sender.send_content = other_entry_finishes_circle
     main.process_update(tg(1302), session)
     assert [c.code for _, c, _ in sender.sent] == [NAVIGATION_CODE, CONTENT_CODE]
+
+
+def test_permission_confirmed_by_server_keeps_bridge_source_without_automatic_welcome(setup):
+    from app.models import TrackingLink
+    session, sender = setup
+    link=TrackingLink(token='pk1234',platform='pikabu',placement='Пост',name='Пост',target_kind='channel_entry')
+    session.add(link);session.flush()
+    session.add(TrackingEvent(tracking_link_id=link.id,telegram_user_id='4101',event_type='channel_entry_open',
+        metadata_json={'visit':'signed-visit','source':'pikabu','raw_query':{'yclid':'click-test'},
+                       'journey_context':{'browser_context':'encrypted-browser','journey_id':'journey-test'}}))
+    session.commit()
+    event=tg(1401);event['message'].pop('text');event['message']['write_access_allowed']={'web_app_name':'channel'}
+    main.process_update(event,session)
+    observed=session.scalar(select(TrackingEvent).where(TrackingEvent.event_type=='channel_write_allowed'))
+    assert observed.tracking_link_id==link.id
+    assert observed.metadata_json['visit']=='signed-visit'
+    assert observed.metadata_json['server_granted'] is True
+    assert observed.metadata_json['automatic_message_sent'] is False
+    assert sender.sent==[]
+    main.process_update(tg(1402),session)
+    start=session.scalar(select(TrackingEvent).where(TrackingEvent.event_type=='start_maintenance'))
+    assert start.tracking_link_id==link.id
+    assert start.metadata_json['raw_query']['yclid']=='click-test'
+    assert start.metadata_json['browser_context']=='encrypted-browser'
+
+
+def test_owned_channel_member_without_invite_is_observed_and_updates_known_account(setup,monkeypatch):
+    from app.models import CrmMessengerAccount
+    session,sender=setup
+    main.process_update(tg(1501),session)
+    sender.sent.clear()
+    monkeypatch.setattr(main.settings,'telegram_channel_id','-100123')
+    event={'update_id':1502,'chat_member':{'chat':{'id':-100123,'type':'channel'},
+        'old_chat_member':{'status':'left','user':{'id':4101}},
+        'new_chat_member':{'status':'member','user':{'id':4101}}}}
+    main.process_update(event,session)
+    observed=session.scalar(select(TrackingEvent).where(TrackingEvent.event_type=='channel_membership'))
+    assert observed.metadata_json['subscribed'] is True
+    assert observed.metadata_json['joined'] is True
+    account=session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id=='4101'))
+    assert account.subscription_status=='subscribed'
+    assert account.subscription_checked_at is not None
+    main.process_update(event,session)
+    assert session.scalar(select(func.count()).select_from(TrackingEvent).where(TrackingEvent.event_type=='channel_membership'))==1
+    event['update_id']=1503;event['chat_member']['chat']['id']=-100999
+    main.process_update(event,session)
+    assert session.scalar(select(func.count()).select_from(TrackingEvent).where(TrackingEvent.event_type=='channel_membership'))==1
+    assert sender.sent==[]

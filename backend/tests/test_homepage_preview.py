@@ -1662,7 +1662,7 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert "© 2026 Сергей Воронцов" not in response.text
     assert "https://go.похудение-это-есть.рф/legal/privacy" not in response.text
     assert "apiUrl:appOrigin+'/api/messaging/start-link'" in response.text
-    assert "telegramUrl:'https://t.me/Fitness_Talks_bot?start=BMB6Y'" in response.text
+    assert "telegramUrl:'https://t.me/Fitness_Talks_bot/channel?startapp=ya'" in response.text
     assert "maxUrl:'https://max.ru/id230409966750_bot?start=BMB6Y'" in response.text
     assert "landing_variant:ACTIVE_VARIANT" in response.text
     assert "root.dataset.landingVariant=ACTIVE_VARIANT" in response.text
@@ -1776,7 +1776,7 @@ def test_direct_intensive_prefetch_contract_is_allowlisted_and_fail_open() -> No
     response = client.get("/preview/direct-intensive")
 
     assert "new Set(['utm_source','utm_medium','utm_campaign','utm_content','utm_term','yclid'])" in response.text
-    assert "body:JSON.stringify({messenger:config.apiMessenger,entry,alias:CONTENT.links.alias,landing_variant:ACTIVE_VARIANT,...attribution,browser_context:window.EdabalansBrowserJourney?.context()||null})" in response.text
+    assert "body:JSON.stringify({messenger:config.apiMessenger,entry,alias:config.alias,landing_variant:ACTIVE_VARIANT,...attribution,browser_context:window.EdabalansBrowserJourney?.context()||null})" in response.text
     assert "if(!response.ok)throw new Error(`start-link ${response.status}`)" in response.text
     assert ".catch(()=>config.fallbackUrl)" in response.text
     assert "states[channel]={button:prepare(channel,'button'),qr:prepare(channel,'qr')}" in response.text

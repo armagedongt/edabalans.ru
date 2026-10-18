@@ -808,12 +808,14 @@ def _public_start_alias(
         )
         if not alias:
             raise HTTPException(409, "Campaign rule has no active alias")
-    if link.target_kind != "bot_start":
-        raise HTTPException(422, "Campaign must target bot start")
+    if link.target_kind not in {"bot_start", "channel_entry"}:
+        raise HTTPException(422, "Campaign must target bot start or channel entry")
     return link, alias
 
 
-def _messenger_start_base(messenger: str) -> str:
+def _messenger_start_base(messenger: str, *, channel_entry: bool = False) -> str:
+    if channel_entry and messenger == "max":
+        raise HTTPException(409, "Переход Mini App в MAX пока не настроен")
     if messenger == "max":
         username = settings.max_bot_username.lstrip("@")
         if not username:
@@ -822,7 +824,7 @@ def _messenger_start_base(messenger: str) -> str:
     username = settings.telegram_test_bot_username.lstrip("@")
     if not username:
         raise HTTPException(503, "Telegram bot is not configured")
-    return f"https://t.me/{username}?start="
+    return f"https://t.me/{username}/channel?startapp=" if channel_entry else f"https://t.me/{username}?start="
 
 
 def _record_landing_entry(
@@ -881,7 +883,7 @@ def public_messenger_start_link(
     }
     payload, tracking_row = create_tracking_session(session, link, alias, raw_query)
     session.flush()
-    base = _messenger_start_base(body.messenger)
+    base = _messenger_start_base(body.messenger, channel_entry=link.target_kind == "channel_entry")
     mobile_hint = request.headers.get("sec-ch-ua-mobile", "") == "?1"
     user_agent = request.headers.get("user-agent", "").casefold()
     device = "mobile" if mobile_hint or any(marker in user_agent for marker in ("android", "iphone", "ipad", "mobile")) else "desktop"
@@ -939,7 +941,7 @@ def public_messenger_qr_scan(
 ) -> Response:
     if len(payload) > 64:
         raise HTTPException(404, "Prepared messenger link not found")
-    _, messenger = _record_landing_entry(
+    event, messenger = _record_landing_entry(
         session,
         payload,
         expected_entry="qr",
@@ -947,7 +949,7 @@ def public_messenger_qr_scan(
     )
     session.commit()
     return RedirectResponse(
-        f"{_messenger_start_base(messenger)}{payload}",
+        f"{_messenger_start_base(messenger, channel_entry=session.get(TrackingLink, event.tracking_link_id).target_kind == 'channel_entry')}{payload}",
         status_code=307,
         headers={"Cache-Control": "no-store"},
     )
@@ -1167,6 +1169,14 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
         accepted = bool(join_request) or ((member or {}).get("new_chat_member") or {}).get("status") in {"member", "administrator", "creator"}
         alias = session.scalar(select(TrackingLinkAlias).where(TrackingLinkAlias.telegram_invite_url == invite_url)) if invite_url else None
         link = active_link(session, alias)
+        chat = payload.get("chat") or {}
+        configured = settings.telegram_channel_id.strip()
+        own_channel = bool(configured) and (str(chat.get("id")) == configured
+            or (configured.startswith("@") and str(chat.get("username", "")).casefold() == configured[1:].casefold()))
+        if member and own_channel and person.get("id"):
+            from app.channel_entry import server_observation
+            server_observation(session, telegram_id=str(person["id"]), kind="channel_membership",
+                key=f"telegram:{update_id}:channel_membership", details={"subscribed": accepted, "joined": accepted and (member.get("old_chat_member") or {}).get("status") not in {"member", "administrator", "creator"}})
         if accepted and person.get("id") and link and alias:
             event_kind = "channel_join_request" if join_request else "channel_join"
             session.add(TrackingEvent(tracking_link_id=link.id, alias_id=alias.id, telegram_user_id=str(person["id"]), event_type=event_kind, deduplication_key=f"telegram:{update_id}:{event_kind}", metadata_json={"invite_url": invite_url}))
@@ -1183,6 +1193,10 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
             return {"ok": True, "ignored": True}
         contact = _upsert_contact(session, bot, message["from"], message["chat"], update_status=not write_access and command_name not in COMMAND_CONTENT)
         if write_access:
+            from app.channel_entry import server_observation
+            server_observation(session, telegram_id=contact.telegram_user_id, contact=contact,
+                kind="channel_write_allowed", key=f"telegram:{update_id}:write_allowed",
+                details={"server_granted": True, "automatic_message_sent": False})
             # Permission is not /start: keep the contact without sending the welcome.
             session.commit()
             return {"ok": True, "write_access_allowed": True}
@@ -1332,6 +1346,17 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
                 pending_link, pending_alias, pending_query = resolve_pending_channel_touch(session, contact.telegram_user_id)
                 if pending_link:
                     link, alias, raw_query, payload_status = pending_link, pending_alias, pending_query, "known_channel_touch"
+            if not link:
+                from app.channel_entry import pending_entry
+                bridge_link, bridge_context = pending_entry(session, contact.telegram_user_id)
+                if bridge_link:
+                    link = bridge_link
+                    alias = session.scalar(select(TrackingLinkAlias).where(TrackingLinkAlias.tracking_link_id == link.id,
+                        TrackingLinkAlias.status == "active").order_by(TrackingLinkAlias.created_at))
+                    raw_query = dict(bridge_context.get("raw_query") or {})
+                    session_tag_ids = list(bridge_context.get("session_tag_ids") or [])
+                    journey_context = dict(bridge_context.get("journey_context") or {})
+                    payload_status = "known_channel_touch"
             account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform == "telegram", CrmMessengerAccount.platform_user_id == contact.telegram_user_id))
             maintenance_allowed = _maintenance_allows_contact(contact)
             is_first, _ = assign_first_touch(
@@ -2131,10 +2156,12 @@ def _link_payload(session: Session, link: TrackingLink) -> dict:
     go_base = settings.telegram_public_base_url.rstrip("/")
     alias_data = []
     for alias in aliases:
-        direct = alias.telegram_invite_url if link.target_kind == "channel_invite" else f"https://t.me/{username}?start={alias.token}"
+        direct = (alias.telegram_invite_url if link.target_kind == "channel_invite"
+                  else f"https://t.me/{username}/channel?startapp={alias.token}" if link.target_kind == "channel_entry"
+                  else f"https://t.me/{username}?start={alias.token}")
         alias_clicks = session.scalar(select(func.count(TrackingEvent.id)).where(TrackingEvent.alias_id == alias.id, TrackingEvent.event_type.in_(["click", "web_click"]))) or 0
         alias_starts = session.scalar(select(func.count(TrackingEvent.id)).where(TrackingEvent.alias_id == alias.id, or_(TrackingEvent.event_type == "start", TrackingEvent.event_type.like("start_%")))) or 0
-        alias_data.append({"id": alias.id, "token": alias.token, "kind": alias.alias_kind, "status": alias.status, "direct_url": direct, "go_url": f"{go_base}/{alias.token}" if go_base else None, "warning_url": f"{go_base}/{alias.token}V" if go_base and alias.alias_kind == "short" else None, "clicks": alias_clicks, "starts": alias_starts})
+        alias_data.append({"id": alias.id, "token": alias.token, "kind": alias.alias_kind, "status": alias.status, "direct_url": direct, "go_url": f"{go_base}/{alias.token}" if go_base and link.target_kind != "channel_entry" else None, "warning_url": f"{go_base}/{alias.token}V" if go_base and alias.alias_kind == "short" else None, "clicks": alias_clicks, "starts": alias_starts})
     # Messenger-to-messenger links are direct by default. ``go_url`` remains an
     # explicit legacy/advertising option, but the API must not promote it as the
     # canonical public URL for bot starts or channel invites.

@@ -6,7 +6,7 @@
       "module_id": "messaging.telegram.attribution",
       "name": "Старт и атрибуция",
       "order": 10,
-      "status": "Исполняемый модуль · временно включён режим ремонта"
+      "status": "Исполняемый модуль · временный вход в единую статью"
     },
     {
       "card": "docs/knowledge-base/modules/catalog/messaging.telegram.intensive.md",

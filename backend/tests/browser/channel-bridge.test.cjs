@@ -6,8 +6,9 @@ const vm = require('node:vm');
 const source = readFileSync(join(__dirname, '../../app/static/channel-bridge/bridge.js'), 'utf8');
 const target = 'https://t.me/Fitness_Talks/260';
 
-async function run({ inTelegram = true, verify = 'ok', navigationError = false, platform = 'tdesktop', startParam = '', permissionApi = true, supportsPermission = true, requestWriteAccess = startParam === 'writepreview' } = {}) {
+async function run({ inTelegram = true, verify = 'ok', navigationError = false, platform = 'tdesktop', startParam = '', permissionApi = true, supportsPermission = true, requestWriteAccess = startParam === 'writepreview', serverTarget = target, analyticsFailure = false } = {}) {
   const calls = [];
+  const observations = [];
   const status = {};
   const listeners = {};
   const button = {
@@ -40,14 +41,15 @@ async function run({ inTelegram = true, verify = 'ok', navigationError = false, 
     setTimeout,
     clearTimeout,
     fetch: async (url, options) => {
+      if (url.endsWith('/event')) {observations.push(JSON.parse(options.body)); if(analyticsFailure) throw new Error('Analytics offline'); return {ok:true};}
       calls.push(['verify', url, options]);
       if (verify === 'network') throw new Error('Offline');
-      return { ok: verify !== 'unauthorized', json: async () => ({ destination: verify === 'wrong-target' ? 'https://example.com' : target, request_write_access: requestWriteAccess }) };
+      return { ok: verify !== 'unauthorized', json: async () => ({ destination: verify === 'wrong-target' ? 'https://example.com' : serverTarget, request_write_access: requestWriteAccess }) };
     }
   };
   vm.runInNewContext(source, context);
   await new Promise(resolve => setImmediate(resolve));
-  return { calls, status, button, listeners, answerPermission: allowed => permissionCallback(allowed) };
+  return { calls, observations, status, button, listeners, answerPermission: allowed => permissionCallback(allowed) };
 }
 
 test('short entry uses verified server mode rather than the untrusted client start parameter', async () => {
@@ -136,4 +138,24 @@ test('SDK navigation failure keeps a usable ordinary link and does not close the
   assert.equal(result.calls.includes('close'), false);
   assert.equal(result.listeners.click, undefined);
   assert.equal(result.button.href, target);
+});
+
+
+for (const granted of [true, false]) {
+  test(`observes permission result ${granted} without making navigation wait for analytics`, async () => {
+    const result = await run({platform:'android',requestWriteAccess:true,analyticsFailure:true});
+    result.answerPermission(granted);
+    assert.deepEqual(result.calls.at(-1), ['navigate',target]);
+    assert.deepEqual(result.observations.map(e=>e.event), ['channel_permission_requested','channel_permission_result','channel_open_requested']);
+    assert.equal(result.observations[1].granted,granted);
+    await new Promise(resolve=>setImmediate(resolve));
+  });
+}
+
+test('verified constructor post replaces fallback and remains the manual destination', async()=>{
+  const post='https://t.me/Fitness_Talks/123';
+  const result=await run({platform:'android',serverTarget:post});
+  assert.deepEqual(result.calls.at(-1),['navigate',post]);
+  assert.equal(result.button.href,post);
+  assert.deepEqual(result.observations.map(e=>e.event),['channel_open_requested']);
 });

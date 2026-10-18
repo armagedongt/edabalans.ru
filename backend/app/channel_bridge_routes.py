@@ -1,8 +1,11 @@
-"""Isolated Mini App transition preview; no CRM writes or bot messages."""
+"""Verified Mini App entry to the channel; never starts a bot conversation."""
 
 import json
 from pathlib import Path
-from urllib.parse import parse_qsl
+from typing import Literal
+from sqlalchemy.orm import Session
+from app.database import get_db
+from app.channel_entry_service import DEFAULT_DESTINATION, record_observation
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
@@ -13,19 +16,9 @@ from app.config import Settings, get_settings
 
 router = APIRouter()
 STATIC_DIR = Path(__file__).resolve().parent / "static" / "channel-bridge"
-# Public pinned post checked with getChat on 2026-10-17. This preview is fixed
-# deliberately: arbitrary destinations are not accepted from URL parameters.
-PREVIEW_POST_URL = "https://t.me/Fitness_Talks/260"
-ENTRY_SOURCES = {
-    "site": "website",
-    "ig": "instagram",
-    "yt": "youtube",
-    "th": "threads",
-    "pk": "pikabu",
-    "dz": "dzen",
-    "vk": "vk",
-    "tt": "tiktok",
-}
+# Safe public fallback. A different owned-channel post can only come from verified settings.
+PREVIEW_POST_URL = DEFAULT_DESTINATION
+
 PRIVATE_HEADERS = {
     "Cache-Control": "no-store",
     "X-Robots-Tag": "noindex, nofollow",
@@ -60,19 +53,27 @@ def channel_bridge_script() -> FileResponse:
 def verify_channel_bridge(
     body: BridgeVerificationIn,
     settings: Settings = Depends(get_settings),
+    db: Session = Depends(get_db),
 ) -> JSONResponse:
     if not settings.telegram_test_bot_token:
         raise HTTPException(status_code=503, detail="Telegram verification unavailable")
-    if messenger_init_user_id(body.init_data, settings.telegram_test_bot_token) is None:
+    telegram_id = messenger_init_user_id(body.init_data, settings.telegram_test_bot_token)
+    if telegram_id is None:
         raise HTTPException(status_code=401, detail="Invalid Telegram data")
-    # Verify only. Opening the preview must not create an account, session,
-    # attribution event, sequence run, or permission to send messages.
-    entry_code = dict(parse_qsl(body.init_data)).get("start_param", "")
-    return JSONResponse(
-        {
-            "destination": PREVIEW_POST_URL,
-            "source": ENTRY_SOURCES.get(entry_code),
-            "request_write_access": entry_code in ENTRY_SOURCES or entry_code == "writepreview",
-        },
-        headers=PRIVATE_HEADERS,
-    )
+    result = record_observation(db, init_data=body.init_data, telegram_id=telegram_id, kind="channel_entry_open", username=settings.telegram_test_bot_username)
+    return JSONResponse(result, headers=PRIVATE_HEADERS)
+
+
+class BridgeEventIn(BridgeVerificationIn):
+    event: Literal["channel_permission_requested", "channel_permission_result", "channel_permission_unavailable", "channel_open_requested"]
+    granted: bool | None = None
+
+
+@router.post("/apps/channel-bridge/event", include_in_schema=False, status_code=204)
+def record_channel_bridge_event(body: BridgeEventIn, settings: Settings = Depends(get_settings), db: Session = Depends(get_db)):
+    telegram_id = messenger_init_user_id(body.init_data, settings.telegram_test_bot_token)
+    if telegram_id is None:
+        raise HTTPException(401, "Invalid Telegram data")
+    record_observation(db, init_data=body.init_data, telegram_id=telegram_id, kind=body.event, granted=body.granted, username=settings.telegram_test_bot_username)
+    from fastapi import Response
+    return Response(status_code=204, headers=PRIVATE_HEADERS)

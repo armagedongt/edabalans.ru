@@ -907,6 +907,63 @@
     bindMarketingTimelinePopover();
   }
 
+
+  async function channelLinks() {
+    setHeading("Ссылки на канал", "МАРКЕТИНГ И ВОРОНКА");
+    loading();
+    const data = await api('/admin/api/channel-links');
+    const query = new URLSearchParams(location.search);
+    const from = query.get('from') || moscowToday();
+    const to = query.get('to') || moscowToday();
+    const platform = query.get('platform') || '';
+    const linkId = query.get('link_id') || '';
+    const reportQuery = new URLSearchParams({from, to, platform, link_id:linkId});
+    const report = await api('/admin/api/channel-links/report?' + reportQuery);
+    const options = selected => Object.entries(data.platforms).map(([code,label]) => `<option value="${esc(code)}" ${selected===code?'selected':''}>${esc(label)}</option>`).join('');
+    const metricKeys = ['entries','unique_people','known','already_allowed','permission_yes','permission_no','permission_unknown','permission_not_requested','server_allowed','new_contacts_allowed','channel_requested','bot_starts','subscriptions_observed','article_opened','article_read','homepage_opened'];
+    const metricLabels = ['Входы','Люди','Уже были в боте','Уже разрешено писать','Клиент: разрешено','Не получено','Нет ответа','Без запроса','Telegram подтвердил','Новые контакты: разрешили','Переход запрошен','Старт бота','Подписка подтверждена','Статья открыта','Прочитано >75%','Главная открыта'];
+    const summary = rows => rows.map(r=>`<tr><td>${esc(data.platforms[r.platform]||r.platform||'Не определён')}</td><td>${esc(r.placement||'Все ссылки')}</td>${metricKeys.map(key=>`<td>${r[key]??'—'}</td>`).join('')}</tr>`).join('');
+    const orderLabels = {channel_then_bot:'Подписка → старт бота',bot_then_channel:'Старт бота → подписка',channel_only:'Подписка; старт не замечен',bot_only:'Старт; подписка не замечена',not_observed:'Пока не наблюдалось'};
+    root.innerHTML = `
+      <p>Выберите площадку и впишите название поста. Все настройки сохранятся за одним коротким кодом.</p>
+      <form id="channel-link-form" class="marketing-filters channel-link-form">
+        <label>Название поста или размещения<input name="name" required maxlength="255" placeholder="Например: Скорость похудения или Профиль YouTube"></label>
+        <label>Площадка<select name="platform">${options('pikabu')}</select></label>
+        <label>Пост канала<input name="destination" type="url" required value="https://t.me/Fitness_Talks/260"></label>
+        <label class="channel-permission"><input name="request_write_access" type="checkbox" checked><span>Запрашивать разрешение боту писать</span></label>
+        <div class="marketing-filter-actions"><button class="admin-action" id="channel-save">Создать ссылку</button><button type="reset" class="admin-action alt">Новая ссылка</button></div>
+        <p id="channel-form-status" role="status"></p>
+      </form>
+      <div class="marketing-table-wrap"><table class="marketing-table"><thead><tr><th>Площадка / пост</th><th>Ссылка</th><th>Разрешение</th><th></th></tr></thead><tbody>${data.links.map(r=>`<tr><td><b>${esc(r.name)}</b><small>${esc(data.platforms[r.platform])} · ${esc(r.placement)}</small></td><td><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url)}</a></td><td>${r.request_write_access?'Запрашивать':'Без запроса'}</td><td><button class="admin-action alt" data-copy="${esc(r.url)}">Скопировать</button> <button class="admin-action alt" data-edit="${esc(r.id)}">Настроить</button></td></tr>`).join('')}</tbody></table></div>
+      <h2>Статистика</h2>
+      <form id="channel-report-form" class="marketing-filters"><label>С<input type="date" name="from" value="${esc(from)}" required></label><label>По<input type="date" name="to" value="${esc(to)}" required></label><label>Площадка<select name="platform"><option value="">Все площадки</option>${options(platform)}</select></label><label>Ссылка<select name="link_id"><option value="">Все ссылки</option>${data.links.map(r=>`<option value="${esc(r.id)}" ${r.id===linkId?'selected':''}>${esc(r.name)}</option>`).join('')}</select></label><button class="admin-action">Показать</button></form>
+      <p>${esc(report.note)}</p>${report.truncated?'<p class="admin-error">Отчёт неполный: сузьте период.</p>':''}
+      ${[['По площадкам',report.platforms],['По ссылкам',report.links]].map(([title,rows])=>`<h3>${title}</h3><div class="marketing-table-wrap"><table class="marketing-table"><thead><tr><th>Площадка</th><th>Размещение</th>${metricLabels.map(label=>`<th>${label}</th>`).join('')}</tr></thead><tbody>${summary(rows)||`<tr><td colspan="${metricKeys.length+2}">Переходов пока нет</td></tr>`}</tbody></table></div>`).join('')}
+      <h3>Наблюдаемые пути после входа</h3>
+      <p>Действия показаны до следующего входа этого человека или конца выбранного периода. Это хронология, а не доказательство причины покупки. Персональное чтение главной ещё не подключено; отсутствие события не доказывает отсутствие действия.</p>
+      ${report.visits_truncated?'<p>Показаны первые500входов; сводные таблицы учитывают весь доступный срез.</p>':''}
+      <div class="marketing-table-wrap"><table class="marketing-table"><thead><tr><th>Вход</th><th>Площадка / пост</th><th>Пользователь</th><th>Порядок действий</th><th>Сообщение само</th><th>Материал выдан</th><th>Статья</th><th>Главная</th></tr></thead><tbody>${report.visits.map(v=>`<tr><td>${marketingDate(v.at)}</td><td>${esc(data.platforms[v.platform]||v.platform||'Не определён')}<small>${esc(v.placement||v.code)}</small></td><td>${v.user_id?`<a href="/admin/marketing?user=${encodeURIComponent(v.user_id)}">Открыть путь</a>`:esc(v.telegram_user_id)}</td><td>${esc(orderLabels[v.order]||'Неизвестно')}</td><td>${v.automatic_message_sent===false?'Нет':v.automatic_message_sent===true?'Да':'Неизвестно'}</td><td>${v.article_message_at?marketingDate(v.article_message_at):'Не замечено'}</td><td>${v.article_read_percent===null?'Неизвестно':v.article_read_percent+'%'}<small>${v.article_opened_at?marketingDate(v.article_opened_at):''}</small></td><td>${v.homepage_opened_at?marketingDate(v.homepage_opened_at):'Не замечено'}<small>Чтение: не подключено</small></td></tr>`).join('')||'<tr><td colspan="8">Входов пока нет</td></tr>'}</tbody></table></div>
+      <p><a href="/admin/marketing">Полная аналитика и пути людей</a> · <a href="/bot#links">Архивный конструктор</a></p>`;
+    root.querySelectorAll('[data-copy]').forEach(button=>button.onclick=async()=>{try{await navigator.clipboard.writeText(button.dataset.copy);button.textContent='Скопировано';}catch(_){root.querySelector('#channel-form-status').textContent='Скопируйте ссылку из строки рядом.';}});
+    const form = root.querySelector('#channel-link-form');
+    let editing = null;
+    root.querySelectorAll('[data-edit]').forEach(button=>button.onclick=()=>{
+      editing = data.links.find(r=>r.id===button.dataset.edit);
+      for(const key of ['name','platform','destination']) form.elements[key].value=editing[key];
+      form.elements.request_write_access.checked=editing.request_write_access;
+      root.querySelector('#channel-save').textContent='Сохранить';
+      form.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+    form.addEventListener('reset',()=>{editing=null;root.querySelector('#channel-save').textContent='Создать ссылку';});
+    form.onsubmit=async event=>{event.preventDefault();const status=root.querySelector('#channel-form-status');const button=root.querySelector('#channel-save');button.disabled=true;status.textContent='Сохраняю…';
+      try {const payload=Object.fromEntries(new FormData(form));payload.placement=editing&&editing.name===payload.name?editing.placement:payload.name;payload.request_write_access=form.elements.request_write_access.checked;if(editing)payload.expected_version=editing.version;
+        const saved=await api('/admin/api/channel-links'+(editing?'/'+editing.id:''),{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+        await channelLinks();root.querySelector('#channel-form-status').textContent='Сохранено: '+saved.url;
+      } catch(error){status.textContent=error.message;button.disabled=false;}
+    };
+    root.querySelector('#channel-report-form').onsubmit=event=>{event.preventDefault();location.href='/admin/channel-links?'+new URLSearchParams(new FormData(event.currentTarget));};
+  }
+
   async function run() {
     const active = section();
     selectNavigation(active);
@@ -915,6 +972,7 @@
     if (active === "content") return contentCatalog();
     if (active === "pricing") return pricingCatalog();
     if (active === "marketing") return marketingDashboard();
+    if (active === "channel-links") return channelLinks();
     return dashboard();
   }
 

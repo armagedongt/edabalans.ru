@@ -5,13 +5,13 @@ const baseUrl = process.env.DIRECT_INTENSIVE_BASE_URL || 'http://127.0.0.1:8790'
 const landingUrl = `${baseUrl}/preview/direct-intensive?utm_source=yandex&utm_medium=cpc&utm_campaign=search&utm_content=cat&utm_term=start&utm_id=77&yclid=click-901&ignored=secret`
 const publicOrigin = 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai'
 const fallbacks = {
-  telegram: 'https://t.me/Fitness_Talks_bot?start=BMB6Y',
+  telegram: 'https://t.me/Fitness_Talks_bot/channel?startapp=ya',
   max: 'https://max.ru/id230409966750_bot?start=BMB6Y',
 }
 const prepared = {
   telegram: {
-    button: { deep: 'https://t.me/Fitness_Talks_bot?start=UtgButton123', payload: 'UtgButton123' },
-    qr: { deep: 'https://t.me/Fitness_Talks_bot?start=UtgQr123', payload: 'UtgQr123', qr: `${publicOrigin}/q/UtgQr123` },
+    button: { deep: 'https://t.me/Fitness_Talks_bot/channel?startapp=UtgButton123', payload: 'UtgButton123' },
+    qr: { deep: 'https://t.me/Fitness_Talks_bot/channel?startapp=UtgQr123', payload: 'UtgQr123', qr: `${publicOrigin}/q/UtgQr123` },
   },
   max: {
     button: { deep: 'https://max.ru/id230409966750_bot?start=UmaxButton123', payload: 'UmaxButton123' },
@@ -113,11 +113,11 @@ try {
   {
     const { context, page, requests } = await landing()
     await waitForRequests(requests)
-    await page.waitForFunction(() => [...document.querySelectorAll('[data-edb-channel]')].every(link => link.href.includes('?start=U')))
-    const expectedAttribution = { alias: 'BMB6Y', landing_variant: 'instead', utm_source: 'yandex', utm_medium: 'cpc', utm_campaign: 'search', utm_content: 'cat', utm_term: 'start', yclid: 'click-901' }
+    await page.waitForFunction(() => [...document.querySelectorAll('[data-edb-channel]')].every(link => /[?](start|startapp)=U/.test(link.href)))
+    const expectedAttribution = { landing_variant: 'instead', utm_source: 'yandex', utm_medium: 'cpc', utm_campaign: 'search', utm_content: 'cat', utm_term: 'start', yclid: 'click-901' }
     const byKey = Object.fromEntries(requests.map(body => [`${body.messenger}:${body.entry}`, body]))
     for (const messenger of ['tg', 'max']) for (const entry of ['button', 'qr']) {
-      const expected = { messenger, entry, ...expectedAttribution, browser_context: null }
+      const expected = { messenger, entry, alias: messenger==='tg'?'ya':'BMB6Y', ...expectedAttribution, browser_context: null }
       if (JSON.stringify(byKey[`${messenger}:${entry}`]) !== JSON.stringify(expected)) throw new Error(`Bad ${messenger}:${entry} request: ${JSON.stringify(byKey[`${messenger}:${entry}`])}`)
     }
 
@@ -336,7 +336,7 @@ try {
 
   for (const channel of ['telegram', 'max']) {
     const { context, page } = await landing({ viewport: { width: 390, height: 844 } })
-    await page.waitForFunction(kind => document.querySelector(`[data-edb-channel="${kind}"]`).href.includes('?start=U'), channel)
+    await page.waitForFunction(kind => /[?](start|startapp)=U/.test(document.querySelector(`[data-edb-channel="${kind}"]`).href), channel)
     await page.locator(`[data-edb-channel=${channel}]:visible`).click()
     await page.waitForURL(prepared[channel].button.deep)
     await context.close()

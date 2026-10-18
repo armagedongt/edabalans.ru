@@ -178,7 +178,7 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
     maxLabel:'MAX',
     telegramNote:'Только с VPN',
     legal:{business:'ИП Воронцов',inn:'ИНН 230409966750',privacyLabel:'Политика ПД',privacyUrl:appOrigin+'/legal/privacy',disclaimer:'Не медицинская услуга'},
-    links:{alias:'BMB6Y',apiUrl:appOrigin+'/api/messaging/start-link',telegramUrl:'https://t.me/Fitness_Talks_bot?start=BMB6Y',maxUrl:'https://max.ru/id230409966750_bot?start=BMB6Y'},
+    links:{telegramAlias:'ya',maxAlias:'BMB6Y',apiUrl:appOrigin+'/api/messaging/start-link',telegramUrl:'https://t.me/Fitness_Talks_bot/channel?startapp=ya',maxUrl:'https://max.ru/id230409966750_bot?start=BMB6Y'},
     analytics:{counterId:97331502,viewEvent:'direct_intensive_view',telegramClickEvent:'intensive_telegram_click',maxClickEvent:'intensive_max_click',qrShownEvent:'direct_intensive_qr_shown',qrSelectedEvent:'direct_intensive_qr_selected'}
   };
 
@@ -238,8 +238,8 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
   try{if(Object.keys(attribution).length)sessionStorage.setItem(storageKey,JSON.stringify(attribution))}catch(_){}
 
   const channelConfig={
-    telegram:{apiMessenger:'tg',fallbackUrl:CONTENT.links.telegramUrl,allowedHost:'t.me',pathPrefix:'/Fitness_Talks_bot'},
-    max:{apiMessenger:'max',fallbackUrl:CONTENT.links.maxUrl,allowedHost:'max.ru',pathPrefix:'/id230409966750_bot'}
+    telegram:{apiMessenger:'tg',alias:CONTENT.links.telegramAlias,fallbackUrl:CONTENT.links.telegramUrl,allowedHost:'t.me',pathPrefix:'/Fitness_Talks_bot/channel',parameter:'startapp'},
+    max:{apiMessenger:'max',alias:CONTENT.links.maxAlias,fallbackUrl:CONTENT.links.maxUrl,allowedHost:'max.ru',pathPrefix:'/id230409966750_bot',parameter:'start'}
   };
   const qrImage=(channel,url)=>{
     const image=root.querySelector(`[data-edb-qr="${channel}"] .edb-di-qr-code`);
@@ -259,7 +259,7 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
     try{
       const url=new URL(value);
       const expected=channelConfig[channel];
-      return url.protocol==='https:'&&url.hostname===expected.allowedHost&&url.pathname===expected.pathPrefix&&/^U[A-Za-z0-9_-]+$/.test(url.searchParams.get('start')||'');
+      return url.protocol==='https:'&&url.host===expected.allowedHost&&url.pathname===expected.pathPrefix&&/^U[A-Za-z0-9_-]+$/.test(url.searchParams.get(expected.parameter)||'');
     }catch(_){return false}
   };
   const validQrLink=value=>{
@@ -279,7 +279,7 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
       mode:'cors',
       credentials:'omit',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messenger:config.apiMessenger,entry,alias:CONTENT.links.alias,landing_variant:ACTIVE_VARIANT,...attribution,browser_context:window.EdabalansBrowserJourney?.context()||null}),
+      body:JSON.stringify({messenger:config.apiMessenger,entry,alias:config.alias,landing_variant:ACTIVE_VARIANT,...attribution,browser_context:window.EdabalansBrowserJourney?.context()||null}),
       signal:controller.signal
     })).then(response=>{
       if(!response.ok)throw new Error(`start-link ${response.status}`);
@@ -330,7 +330,7 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
           headers:{'Content-Type':'application/json'},body:JSON.stringify({payload:state.payload})
         }).catch(()=>{});
       }
-      emit(channel==='telegram'?CONTENT.analytics.telegramClickEvent:CONTENT.analytics.maxClickEvent,{channel,cta_position:link.dataset.ctaPosition,destination_host:new URL(destination).host,link_kind:destination.includes('?start=U')?'prepared':'fallback'});
+      emit(channel==='telegram'?CONTENT.analytics.telegramClickEvent:CONTENT.analytics.maxClickEvent,{channel,cta_position:link.dataset.ctaPosition,destination_host:new URL(destination).host,link_kind:validDeepLink(channel,destination)?'prepared':'fallback'});
       location.assign(destination);
     });
   });
