@@ -294,8 +294,10 @@ def test_pending_owner_review_blocks_existing_resource_access():
     app.dependency_overrides.clear()
 
 
-@pytest.mark.parametrize("host", ["xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai", "www.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai", "admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"])
-def test_branded_hosts_require_native_session_and_reject_other_email(host):
+@pytest.mark.parametrize("host", ["xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai", "www.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai", "admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai", "future.example", "www.future.example", "admin.future.example"])
+def test_branded_hosts_require_native_session_and_reject_other_email(host, monkeypatch):
+    if host.endswith("future.example"):
+        monkeypatch.setenv("ACCOUNT_PUBLIC_URL", "https://future.example/lk")
     _, factory = setup()
     client = TestClient(app, base_url="https://" + host)
     try:

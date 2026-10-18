@@ -72,6 +72,9 @@ try {
     cta.click(),
   ])
   const href = page.url()
+  if (new URL(href).origin !== new URL(baseUrl).origin) {
+    throw new Error(`Day-four CTA escaped the current origin: ${href}`)
+  }
   if (offerRequests !== 1) {
     throw new Error(`Offer endpoint called an unexpected number of times: ${offerRequests}`)
   }

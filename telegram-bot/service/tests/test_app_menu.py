@@ -270,3 +270,21 @@ def test_paused_entitlement_is_hidden_from_application_menu(tmp_path):
         assert all(button.get("max_app_payload") != "dqs" for button in configuration["buttons"])
     finally:
         session.close()
+
+
+def test_application_and_admin_buttons_follow_configured_public_origin(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    from app import app_menu
+    monkeypatch.setattr(app_menu, "get_settings", lambda: SimpleNamespace(
+        telegram_public_base_url="https://future.example", masterclass_account_url="https://previous.example/lk"))
+    session, user, contact = prepared(tmp_path)
+    try:
+        grant(session, user, "dqs")
+        reveal(session, user, "app_revealed_dqs")
+        session.commit()
+        _, menu = menu_presentation(session, contact)
+        assert menu["buttons"][0]["url"] == "https://future.example/dqs"
+        _, admin = menu_presentation(session, contact, STRENGTH_ADMIN_PAYLOAD)
+        assert admin["buttons"][0]["web_app"]["url"] == f"https://admin.future.example/admin/strength?mobile=1&user={user.id}"
+    finally:
+        session.close()

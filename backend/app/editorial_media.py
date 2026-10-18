@@ -96,7 +96,8 @@ def current_source(db: Session, scope: str, *, request: Request | None = None):
 def references(source, url: str) -> bool:
     if isinstance(source, str):
         # Only an image source, never an incidental quoted URL in authoring metadata.
-        return bool(re.search(r"(?:\]\(|\bsrc=[\"'])" + re.escape(url) + r"(?=[\s)\"'])", source))
+        candidates = re.findall(r"(?:\]\(|\bsrc=[\"'])([^\s)\"']+)", source)
+        return any(relative_media_url(candidate) == relative_media_url(url) for candidate in candidates)
     if isinstance(source, dict):
         if isinstance(source.get("materials"), dict):
             return any(references(value, url) for value in source["materials"].values())

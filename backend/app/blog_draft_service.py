@@ -382,7 +382,7 @@ def markdown_media_from_saved(slug: str, payload: dict) -> list[dict]:
     from app.editorial_media import image_aliases
     return [deepcopy(item) for item in payload.get("media", [])
             if item.get("storage") == "editorial"
-            and item.get("url") in image_aliases("blog:" + slug, item["name"])]
+            and relative_media_url(item.get("url", "")) in image_aliases("blog:" + slug, item["name"])]
 
 
 def effective_article_payload(version: ManagedDocumentVersion) -> dict:

@@ -65,12 +65,38 @@ def test_saved_course_versions_render_portably_without_mutating_source():
         assert version.text_content == source
 
 
-def test_embedded_audio_uses_current_origin_for_both_media_files():
+@pytest.mark.parametrize("prefix", ["", "https://edabalans.ru", "https://похудение-это-есть.рф"])
+def test_embedded_audio_uses_current_origin_for_both_media_files(prefix):
     from app.article_markup import safe_audio_arguments
     source = '<iframe src="/course-assets/masterclass/audio-player?src=https%3A%2F%2Fapp.edabalans.ru%2Fmedia%2Freviews%2Fv1%2Fa.mp3&amp;avatar=https%3A%2F%2Fapp.edabalans.ru%2Fmedia%2Freviews%2Fv1%2Fa.webp&amp;author=Sergey&amp;duration=1%3A00"></iframe>'
+    source = source.replace('src="/course-assets/', 'src="' + prefix + '/course-assets/')
     rendered = relative_site_html(source)
     query = parse_qs(urlsplit(unescape(rendered.split('src="', 1)[1].split('"', 1)[0])).query)
     assert query["src"] == ["/media/reviews/v1/a.mp3"]
     assert query["avatar"] == ["/media/reviews/v1/a.webp"]
     assert safe_audio_arguments(query["src"][0], query["avatar"][0], "Sergey", "1:00")
     assert not safe_audio_arguments("//evil.test/a.mp3", query["avatar"][0], "Sergey", "1:00")
+
+
+@pytest.mark.parametrize("prefix", ["https://www.edabalans.ru", "http://edabalans.ru", "https://edabalans.ru:443"])
+def test_saved_editorial_aliases_match_same_scope_and_published_reference(prefix):
+    from app.editorial_media import image_url, references
+    from app.blog_draft_service import markdown_media_from_saved
+    name = "a" * 64 + ".png"
+    path = image_url("blog:example", name)
+    item = {"name": name, "storage": "editorial", "url": prefix + path}
+    assert markdown_media_from_saved("example", {"media": [item]}) == [item]
+    assert references(f"![Фото]({prefix}{path})", path)
+    assert references(f'<img src="{prefix}{path}">', path)
+    assert not references(f"![Фото](https://foreign.example{path})", path)
+    assert not markdown_media_from_saved("other", {"media": [item]})
+
+
+def test_html_attributes_do_not_rewrite_attribute_looking_alt_text():
+    source = """<img alt='src="https://edabalans.ru/media/reviews/a.jpg"' src=https://edabalans.ru/media/reviews/a.jpg>"""
+    assert relative_site_html(source) == source.replace(' src=https://edabalans.ru/media/reviews/a.jpg>', ' src="/media/reviews/a.jpg">')
+
+
+def test_responsive_media_candidates_keep_descriptors_and_external_source():
+    source = '<img srcset="https://edabalans.ru/media/reviews/a.webp 1x, https://other.example/b.webp 2x">'
+    assert relative_site_html(source) == '<img srcset="/media/reviews/a.webp 1x, https://other.example/b.webp 2x">'

@@ -405,7 +405,7 @@
           var documents = legal.documents || [];
           var cards = documents.map(function (item) {
             var policy = item.code === 'personal_data_consent'
-              ? ' · <a href="' + escapeHtml('/legal/privacy') + '" target="_blank" rel="noopener">Политика обработки данных ↗</a>'
+              ? ' · <a href="' + escapeHtml((APP_HOST === location.origin ? '' : APP_HOST) + '/legal/privacy') + '" target="_blank" rel="noopener">Политика обработки данных ↗</a>'
               : '';
             return '<label class="edabalans-dqs-legal-card">' +
               '<input type="checkbox" data-edabalans-dqs-legal="' + escapeHtml(item.code) + '"' + (item.accepted ? ' checked disabled' : '') + '>' +

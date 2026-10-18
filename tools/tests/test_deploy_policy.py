@@ -130,7 +130,7 @@ class DeployPolicyTests(unittest.TestCase):
             self.assertIn(domain, deploy)
         self.assertIn('"https://${favicon_domain}/favicon.ico"', deploy)
 
-    def test_go_robokassa_probe_does_not_publish_general_checkout(self) -> None:
+    def test_go_robokassa_probe_keeps_explicit_status_and_return_routes(self) -> None:
         source = (REPOSITORY_ROOT / "infra/caddy/Caddyfile").read_text(
             encoding="utf-8"
         )

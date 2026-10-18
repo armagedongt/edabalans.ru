@@ -65,7 +65,8 @@ def relative_media_url(value: str) -> str:
     return value
 
 
-_ATTR = re.compile(r"(?P<name>\b(?:href|src|poster|action|data-src))\s*=\s*(?P<quote>[\"'])(?P<value>.*?)(?P=quote)", re.I | re.S)
+_ATTR = re.compile(r"(?P<name>[^\s\"'<>/=]+)\s*=\s*(?:(?P<quote>[\"'])(?P<value>.*?)(?P=quote)|(?P<bare>[^\s\"'=<>`]+))", re.S)
+
 
 
 def relative_site_html(value: str) -> str:
@@ -82,16 +83,21 @@ def relative_site_html(value: str) -> str:
                 return
             original = self.get_starttag_text()
             def replace(match):
-                old = unescape(match["value"])
+                if match["name"].lower() not in {"href", "src", "poster", "action", "data-src", "data-voice-src", "srcset"}:
+                    return match[0]
+                old = unescape(match["value"] if match["quote"] else match["bare"])
                 new = relative_site_url(old) if tag.lower() in {"a", "form"} else relative_media_url(old)
-                if tag.lower() == "iframe" and old.startswith("/course-assets/masterclass/audio-player?"):
-                    parts = urlsplit(old)
+                if match["name"].lower() == "srcset":
+                    new = re.sub(r"(?<!\S)https?://[^\s,]+", lambda part: relative_media_url(part[0]), old)
+                if tag.lower() == "iframe" and new.startswith("/course-assets/masterclass/audio-player?"):
+                    parts = urlsplit(new)
                     query = [(key, relative_media_url(val) if key in {"src", "avatar"} else val)
                              for key, val in parse_qsl(parts.query, keep_blank_values=True)]
                     new = urlunsplit(("", "", parts.path, urlencode(query), parts.fragment)) if not parts.netloc else new
                 if old == new:
                     return match[0]
-                return match["name"] + "=" + match["quote"] + escape(new, quote=True) + match["quote"]
+                quote = match["quote"] or '"'
+                return match["name"] + "=" + quote + escape(new, quote=True) + quote
             replacement = _ATTR.sub(replace, original)
             if replacement != original:
                 line, column = self.getpos()
