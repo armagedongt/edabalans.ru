@@ -108,7 +108,7 @@ CARDS = [{"id": "caesar", "title": "Тестовый рецепт", "active": Tr
 
 @pytest.fixture
 def recipe_source():
-    client, factory = setup()
+    client, factory = setup(base_url="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai")
     with factory() as db:
         context = course_context(db)
         payload = deepcopy(context.revision.payload)

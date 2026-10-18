@@ -1092,7 +1092,7 @@ def test_site_short_migration_sets_each_approved_consultation_addon():
     assert 'down_revision = "20260825_0024"' in migration
 
 
-def setup():
+def setup(*, base_url="https://edabalans.ru"):
     engine = create_engine("sqlite+pysqlite:///:memory:", connect_args={"check_same_thread": False}, poolclass=StaticPool)
     Base.metadata.create_all(engine)
     factory = sessionmaker(engine, expire_on_commit=False)
@@ -1144,7 +1144,7 @@ def setup():
         ]
         for code, hours, pricing in stages: db.add(OfferStage(code=code, name=code, duration_hours=hours, pricing=pricing, status="active"))
         db.commit()
-    client = TestClient(app, base_url="https://edabalans.ru")
+    client = TestClient(app, base_url=base_url)
     assert client.post("/api/account-auth/login", json={"email": "member@example.test", "password": "Test-Password-9"}).status_code == 200
     return client, factory
 

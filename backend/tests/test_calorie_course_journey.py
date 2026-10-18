@@ -40,7 +40,7 @@ from app.models import (  # noqa: E402
 )
 
 
-def setup(*, course_ready: bool = True, masterclass_completed: bool = True, database_url: str = "sqlite+pysqlite:///:memory:"):
+def setup(*, course_ready: bool = True, masterclass_completed: bool = True, database_url: str = "sqlite+pysqlite:///:memory:", base_url: str = "https://edabalans.ru"):
     engine = create_engine(
         database_url,
         connect_args={"check_same_thread": False},
@@ -122,7 +122,7 @@ def setup(*, course_ready: bool = True, masterclass_completed: bool = True, data
                 ]
             )
         db.commit()
-    client = TestClient(app, base_url="https://edabalans.ru")
+    client = TestClient(app, base_url=base_url)
     if course_ready:
         materials = client.get("/admin/api/courses/calories/materials").json()["materials"]
         for material in materials:
@@ -733,7 +733,7 @@ def test_editorial_photo_obeys_the_actual_calories_stage_access():
     from io import BytesIO
     from PIL import Image
     from app.editorial_media import ingest
-    client, factory = setup()
+    client, factory = setup(base_url="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai")
     output = BytesIO()
     Image.new("RGB", (3, 2), "blue").save(output, format="PNG")
     raw = output.getvalue()
