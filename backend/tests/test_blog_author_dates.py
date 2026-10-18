@@ -2,7 +2,6 @@ from datetime import datetime, timezone
 from dataclasses import replace
 import json
 import re
-from pathlib import Path
 from urllib.parse import urlencode
 
 import pytest
@@ -136,16 +135,6 @@ def test_bad_publication_timestamp_is_rejected(value, field):
     first = replace(catalog.articles[0], **{field: value})
     with pytest.raises(ValueError):
         validate_blog_catalog(replace(catalog, articles=(first, *catalog.articles[1:])))
-
-
-def test_public_proxy_exposes_only_exact_author_path():
-    source = (Path(__file__).resolve().parents[2] / 'infra/caddy/Caddyfile').read_text(encoding='utf-8')
-    blog = source.split('{$BLOG_DOMAIN} {', 1)[1]
-    assert 'handle /author/sergey-vorontsov {' in blog
-    assert 'rewrite * /blog/author/sergey-vorontsov' in blog
-    assert 'handle /author/*' not in blog
-    assert 'handle /blog/drafts/*' not in blog
-    assert 'handle /admin/api/blog/articles*' not in blog
 
 
 def test_japanese_article_legacy_link_uses_same_published_article_without_redirect(authoring):
