@@ -391,6 +391,10 @@ def test_login_sets_remembered_http_only_session_and_logout_revokes_it():
     assert "HttpOnly" in cookie
     assert "Secure" in cookie
     assert "SameSite=lax" in cookie
+    from http.cookies import SimpleCookie
+    session_cookie = SimpleCookie(cookie)["edabalans_account_session"]
+    assert session_cookie["path"] == "/"
+    assert session_cookie["domain"] == ""
     assert client.get("/api/account-auth/session").json()["authenticated"] is True
 
     cross_account = client.get("/api/account?email=someone-else@example.test")

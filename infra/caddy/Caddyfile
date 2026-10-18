@@ -5,6 +5,9 @@
 
 {$PUBLIC_DOMAIN}, {$SITE_DOMAIN}, www.{$SITE_DOMAIN}, admin.{$SITE_DOMAIN} {
 	encode zstd gzip
+	# Compatibility pages stay usable, but only SITE_DOMAIN is promoted in search.
+	@compatibility_search host {$PUBLIC_DOMAIN}
+	header @compatibility_search >X-Robots-Tag "noindex"
 
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
@@ -117,6 +120,7 @@
 }
 
 www.{$PUBLIC_DOMAIN} {
+	header >X-Robots-Tag "noindex"
 	redir https://{$PUBLIC_DOMAIN}{uri} 308
 }
 

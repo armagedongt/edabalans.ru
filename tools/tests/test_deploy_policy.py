@@ -14,6 +14,17 @@ PUBLIC_SITE_PUBLISHER = REPOSITORY_ROOT / "tools" / "publish_public_site_content
 
 
 class DeployPolicyTests(unittest.TestCase):
+    def test_search_exclusion_is_scoped_to_the_compatibility_domain(self) -> None:
+        source = (REPOSITORY_ROOT / "infra/caddy/Caddyfile").read_text(encoding="utf-8")
+        shared = source.split("{$PUBLIC_DOMAIN}, {$SITE_DOMAIN}", 1)[1].split("www.{$PUBLIC_DOMAIN} {", 1)[0]
+        self.assertIn("@compatibility_search host {$PUBLIC_DOMAIN}", shared)
+        self.assertIn('header @compatibility_search >X-Robots-Tag "noindex"', shared)
+        default_headers = shared.split("\theader {", 1)[1].split("\t}", 1)[0]
+        self.assertNotIn("X-Robots-Tag", default_headers)
+        www = source.split("www.{$PUBLIC_DOMAIN} {", 1)[1].split("\n}", 1)[0]
+        self.assertIn('header >X-Robots-Tag "noindex"', www)
+        self.assertIn("redir https://{$PUBLIC_DOMAIN}{uri} 308", www)
+
     def test_public_site_markdown_is_published_as_utf8_without_bom(self) -> None:
         source = PUBLIC_SITE_PUBLISHER.read_text(encoding="utf-8")
 

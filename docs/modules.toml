@@ -17,6 +17,7 @@ owns_files = [
   "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md",
   "backend/app/brand_routes.py", "backend/app/static/brand/**",
   "backend/app/static/site-cookie-notice.js",
+  "backend/tests/browser/cookie-scope.e2e.mjs",
   "backend/tests/test_brand_assets.py", "backend/tests/embed-origin.test.cjs",
   "backend/app/site_links.py", "backend/tests/test_site_links.py",
 ]
