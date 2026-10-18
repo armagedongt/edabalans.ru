@@ -18,7 +18,8 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.article_markup import markdown_to_article_html, canonical_image_src, PUBLIC_IMAGE_ORIGIN
+from app.article_markup import markdown_to_article_html, canonical_image_src
+from app.site_links import relative_media_url
 from app.blog_content import (
     BLOG_CATEGORIES,
     SLUG_RE,
@@ -548,7 +549,7 @@ def serialize_article(version: ManagedDocumentVersion, *, source: bool, db: Sess
             **{key: item[key] for key in ("name", "sha256", "mime", "provenance", "alt", "width", "height")},
             "card_eligible": item.get("storage") != "editorial",
             "url": (
-                canonical_image_src(item["url"]).replace(PUBLIC_IMAGE_ORIGIN + "/editorial-media/", "/admin/api/editorial/media/") if item.get("storage") == "editorial" else
+                relative_media_url(canonical_image_src(item["url"])).replace("/editorial-media/", "/admin/api/editorial/media/") if item.get("storage") == "editorial" else
                 f"/blog/media/{item['name']}" if item.get("storage") == "git" else
                 f"/blog/drafts/{version.document_key}/media/{item['name']}"
             ),
@@ -617,8 +618,8 @@ def render_article(
     for item in payload["media"]:
         if item.get("storage") == "editorial":
             if not public:
-                value = value.replace(item["url"], canonical_image_src(item["url"]).replace(
-                    PUBLIC_IMAGE_ORIGIN + "/editorial-media/", "/admin/api/editorial/media/"))
+                value = value.replace(item["url"], relative_media_url(canonical_image_src(item["url"])).replace(
+                    "/editorial-media/", "/admin/api/editorial/media/"))
             continue
         if item.get("storage") == "git":
             continue

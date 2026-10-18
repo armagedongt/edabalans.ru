@@ -5,7 +5,7 @@
   const VERSION = "2026-09-08-depth";
   const LOCAL_KEY = "edabalans:intensive:client:v2";
   const ATTR_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "yclid", "alias"];
-  const MASTERCLASS_URL = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/mk1#masterclass";
+  const MASTERCLASS_URL = "/#pricing";
   const SERVER_EVENT_CODES = new Set([
     "intensive_main_open", "intensive_day_open", "intensive_home_open", "intensive_menu_open", "intensive_telegram_click",
     "intensive_max_click", "intensive_next_day_unlocked", "intensive_next_day_click",
@@ -366,7 +366,7 @@
         if (!response.ok) throw new Error(`offer ${response.status}`);
         const offer = await response.json();
         await window.EdabalansBrowserJourney?.ready;
-        const target = new URL(MASTERCLASS_URL);
+        const target = new URL(MASTERCLASS_URL, location.href);
         target.searchParams.set("intensive_offer", offer.token);
         const destination = addAttribution(target.href);
         offerTarget = window.EdabalansBrowserJourney?.decorate(destination) || destination;

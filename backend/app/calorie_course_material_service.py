@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from app.site_links import relative_site_html, public_site_origin
+
 from datetime import datetime, timezone
 import hashlib
 
@@ -43,7 +45,7 @@ def material_source(db: Session, *, create: bool = False) -> ContentSource | Non
             platform=SOURCE_PLATFORM,
             account_key=SOURCE_ACCOUNT_KEY,
             display_name="Материалы Калорийного курса",
-            canonical_url="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/apps/calories-course.html",
+            canonical_url=public_site_origin() + "/apps/calories-course.html",
         )
         db.add(source)
         db.flush()
@@ -92,7 +94,7 @@ def version_payload(
         "summary": step.get("summary") or "",
         "version": version.version_no if version else 0,
         "published": version is not None,
-        "html": html,
+        "html": relative_site_html(html),
         "word_count": word_count(html),
         "updated_at": version.imported_at.isoformat() if version else None,
         "format": "semantic_html",
@@ -220,7 +222,7 @@ def publish_material(
                 source_id=source.id,
                 external_id=step_id,
                 canonical_url=(
-                    "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/apps/calories-course.html"
+                    public_site_origin() + "/apps/calories-course.html"
                     f"?calories_stage={stage_number}&calories_material={step_id}"
                 ),
                 title=step.get("title") or step_id,

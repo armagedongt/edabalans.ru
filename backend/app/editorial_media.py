@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 from app.managed_documents import active_document, document_hash
 from app.models import ManagedDocumentVersion
 from app.article_markup import PUBLIC_IMAGE_ORIGIN
+from app.site_links import relative_media_url
 
 DOCUMENT_TYPE = "editorial-image"
 ORIGIN = PUBLIC_IMAGE_ORIGIN
@@ -29,12 +30,15 @@ def scope_token(scope: str) -> str:
 def image_url(scope: str, name: str) -> str:
     if not NAME.fullmatch(name):
         raise HTTPException(422, "Некорректное имя картинки")
-    return f"{ORIGIN}/editorial-media/{scope_token(scope)}/{name}"
+    return f"/editorial-media/{scope_token(scope)}/{name}"
 
 
-def image_aliases(scope: str, name: str) -> tuple[str, str]:
+def image_aliases(scope: str, name: str) -> tuple[str, ...]:
     current = image_url(scope, name)
-    return current, LEGACY_ORIGIN + current[len(ORIGIN):]
+    return (current, ORIGIN + current, LEGACY_ORIGIN + current,
+            "https://app.edabalans.ru" + current,
+            "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai" + current,
+            "https://похудение-это-есть.рф" + current)
 
 
 def image_key(scope: str, name: str) -> str:
@@ -153,14 +157,14 @@ def markdown_media(db: Session, scope: str, markdown: str) -> list[dict]:
     urls = [url for url in urls if "/editorial-media/" in url]
     if not urls:
         return []
-    prefixes = tuple(f"{origin}/editorial-media/{scope_token(scope)}/" for origin in (ORIGIN, LEGACY_ORIGIN))
+    prefix = f"/editorial-media/{scope_token(scope)}/"
     result = []
     total = 0
     for url in dict.fromkeys(urls):
-        prefix = next((prefix for prefix in prefixes if url.startswith(prefix)), None)
-        if prefix is None:
+        local_url = relative_media_url(url)
+        if not local_url.startswith(prefix):
             raise HTTPException(422, "Картинка принадлежит другому материалу")
-        name = url.removeprefix(prefix)
+        name = local_url.removeprefix(prefix)
         item = stored_image(db, scope, name)
         total += len(base64.b64decode(item["content_base64"], validate=True))
         result.append({key: item[key] for key in ("name", "sha256", "mime", "provenance", "alt", "width", "height")}

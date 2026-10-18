@@ -253,8 +253,8 @@ if __name__ == "__main__":
 def test_project_image_migration_preserves_external_and_neighbor_images():
     origin = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
     cases = [
-        ("https://app.edabalans.ru/media/reviews/v1/picture.webp", origin + "/media/reviews/v1/picture.webp"),
-        ("https://edabalans.ru/editorial-media/scope/picture.png", origin + "/editorial-media/scope/picture.png"),
+        ("https://app.edabalans.ru/media/reviews/v1/picture.webp", "/media/reviews/v1/picture.webp"),
+        ("https://edabalans.ru/editorial-media/scope/picture.png", "/editorial-media/scope/picture.png"),
         ("https://app.edabalans.ru/sherbakova/picture.webp", "https://app.edabalans.ru/sherbakova/picture.webp"),
         ("https://app.edabalans.ru.example.org/media/reviews/picture.webp", "https://app.edabalans.ru.example.org/media/reviews/picture.webp"),
     ]

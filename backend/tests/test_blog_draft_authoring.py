@@ -63,9 +63,9 @@ def test_editorial_attachment_is_private_until_blog_publication_and_survives_ret
     uploaded = client.post("/admin/api/editorial/media", json=body)
     assert uploaded.status_code == 200, uploaded.text
     canonical_url = uploaded.json()["url"]
-    url = canonical_url.replace("https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai", "https://edabalans.ru") if legacy_source else canonical_url
+    url = "https://edabalans.ru" + canonical_url if legacy_source else canonical_url
     assert client.get(url).status_code == 404
-    preview_url = canonical_url.replace("https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/editorial-media/", "/admin/api/editorial/media/")
+    preview_url = canonical_url.replace("/editorial-media/", "/admin/api/editorial/media/")
     assert client.get(preview_url).content == raw
     assert client.post("/admin/api/editorial/media", json=body).json() == uploaded.json()
     with factory() as db:
@@ -96,7 +96,7 @@ def test_editorial_upload_and_owner_preview_require_admin_before_receiving_bytes
     _, body = _attachment("blog:" + SLUG)
     result = client.post("/admin/api/editorial/media", json=body)
     assert result.status_code == 200
-    preview_url = result.json()["url"].replace("https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/editorial-media/", "/admin/api/editorial/media/")
+    preview_url = result.json()["url"].replace("/editorial-media/", "/admin/api/editorial/media/")
     app.dependency_overrides.pop(require_blog_admin)
     app.dependency_overrides.pop(optional_blog_admin)
     monkeypatch.setattr("app.blog_draft_routes.admin_identity", lambda *_: None)
@@ -534,7 +534,7 @@ def test_existing_article_seed_publish_and_later_draft_do_not_leak(authoring) ->
     public_page = client.get(f"/blog/{PUBLIC_SLUG}")
     assert marker in public_page.text
     assert public_page.text.count('data-component="blog-cta"') == 1
-    assert 'data-tracking-key="blog_intensive"' in public_page.text
+    assert f'data-tracking-key="blog_{load_blog_catalog().by_document_key(SLUG).cta}"' in public_page.text
     assert f'<link rel="canonical" href="{BLOG_PUBLIC_URL}/' in public_page.text
 
     repeated = client.post(
@@ -677,7 +677,7 @@ def test_manifest_managed_draft_refreshes_canonical_fields_before_publish(author
     assert published.status_code == 200, published.text
     public_page = client.get(f"/blog/{PUBLIC_SLUG}")
     assert marker in public_page.text
-    assert 'data-tracking-key="blog_intensive"' in public_page.text
+    assert f'data-tracking-key="blog_{load_blog_catalog().by_document_key(SLUG).cta}"' in public_page.text
 
 
 def test_unknown_slug_cannot_be_created(authoring) -> None:
@@ -714,7 +714,7 @@ def test_existing_publish_keeps_manifest_media_contract(authoring) -> None:
     assert "media" in response.text
     public_page = client.get(f"/blog/{PUBLIC_SLUG}")
     assert "Мне надолго запомнился звонок женщины" in public_page.text
-    assert 'data-tracking-key="blog_intensive"' in public_page.text
+    assert f'data-tracking-key="blog_{load_blog_catalog().by_document_key(SLUG).cta}"' in public_page.text
     with factory() as db:
         assert db.scalar(
             select(func.count()).select_from(ManagedDocumentVersion).where(

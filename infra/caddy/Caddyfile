@@ -3,19 +3,19 @@
 	email {$ACME_EMAIL}
 }
 
-{$PUBLIC_DOMAIN}, xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai, www.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai, admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai {
+{$PUBLIC_DOMAIN}, {$SITE_DOMAIN}, www.{$SITE_DOMAIN}, admin.{$SITE_DOMAIN} {
 	encode zstd gzip
 
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		X-Content-Type-Options "nosniff"
-		Content-Security-Policy "frame-ancestors 'self' https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
+		Content-Security-Policy "frame-ancestors 'self' https://{$SITE_DOMAIN}"
 		Referrer-Policy "strict-origin-when-cross-origin"
 		-Server
 	}
 
 	@brand_admin_root {
-		host admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai
+		host admin.{$SITE_DOMAIN}
 		path /
 	}
 	handle @brand_admin_root {
@@ -167,7 +167,7 @@ www.{$PUBLIC_DOMAIN} {
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		X-Content-Type-Options "nosniff"
-		Content-Security-Policy "frame-ancestors 'self' https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
+		Content-Security-Policy "frame-ancestors 'self' https://{$SITE_DOMAIN}"
 		Referrer-Policy "no-referrer"
 		-Server
 	}
@@ -191,7 +191,7 @@ www.{$PUBLIC_DOMAIN} {
 
 	@legacy_docs path /docs /docs/
 	handle @legacy_docs {
-		redir https://похудение-это-есть.рф/legal?{query} 302
+		redir /legal?{query} 302
 	}
 
 	handle {
@@ -268,12 +268,12 @@ www.{$PUBLIC_DOMAIN} {
 
 	@intensive_public path /intensiv /intensiv/
 	handle @intensive_public {
-		redir https://app.edabalans.ru/intensive{?query} 307
+		redir https://{$SITE_DOMAIN}/intensive{?query} 307
 	}
 
 	@intensive_entry path_regexp intensive_entry ^/i/([A-Za-z0-9_-]+)$
 	handle @intensive_entry {
-		redir https://app.edabalans.ru/intensive/start?i={re.intensive_entry.1}&{query} 307
+		redir https://{$SITE_DOMAIN}/intensive/start?i={re.intensive_entry.1}&{query} 307
 	}
 
 	@personal_outbound path_regexp personal_outbound ^/(m|p)/.*$

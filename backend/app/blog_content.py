@@ -1,6 +1,8 @@
 """Git-backed public blog catalogue, Markdown rendering and view helpers."""
 from __future__ import annotations
 
+from app.site_links import relative_site_html, public_site_origin
+
 from dataclasses import dataclass
 from datetime import datetime
 from functools import lru_cache
@@ -32,10 +34,7 @@ RESERVED_BLOG_SLUGS = frozenset({
     "author", "media", "assets", "reader", "sitemap.xml", "robots.txt",
     "fonts", "favicon-tests", "drafts", "articles", "admin", "api",
 })
-BLOG_PUBLIC_ORIGIN: str = os.getenv(
-    "BLOG_PUBLIC_ORIGIN",
-    "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
-).rstrip("/")
+BLOG_PUBLIC_ORIGIN: str = (os.getenv("BLOG_PUBLIC_ORIGIN") or public_site_origin()).rstrip("/")
 BLOG_PUBLIC_PATH = "/blog"
 BLOG_PUBLIC_URL = BLOG_PUBLIC_ORIGIN + BLOG_PUBLIC_PATH
 
@@ -472,7 +471,7 @@ def rewrite_blog_links(rendered: str, catalog: BlogCatalog) -> str:
         target = urlunsplit(("", "", path, value.query, value.fragment))
         return 'href="' + escape(target, quote=True) + '"'
 
-    return re.sub(r'href="([^"]*)"', replace_link, rendered)
+    return relative_site_html(re.sub(r'href="([^"]*)"', replace_link, rendered))
 
 
 def card_html(

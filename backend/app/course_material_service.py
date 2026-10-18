@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from app.site_links import relative_site_html, public_site_origin
+
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -63,7 +65,7 @@ def material_source(db: Session, *, create: bool = False) -> ContentSource | Non
             platform=SOURCE_PLATFORM,
             account_key=SOURCE_ACCOUNT_KEY,
             display_name="Материалы Мастер-класса",
-            canonical_url="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/apps/masterclass-course.html",
+            canonical_url=public_site_origin() + "/apps/masterclass-course.html",
         )
         db.add(source)
         db.flush()
@@ -138,7 +140,7 @@ def version_payload(
         "summary": step.get("summary") or "",
         "version": version.version_no if version else 0,
         "published": version is not None,
-        "html": html,
+        "html": relative_site_html(html),
         "word_count": word_count(html),
         "updated_at": version.imported_at.isoformat() if version else None,
         "format": "semantic_html",
@@ -208,7 +210,7 @@ def get_material(db: Session, step_id: str) -> dict:
     if step_id in EDITABLE_MATERIALS:
         html = render_material(editorial_body(local_editable_material(step_id)), "markdown")
         payload.update(
-            html=html,
+            html=relative_site_html(html),
             word_count=word_count(html),
             published=True,
             source="git_markdown",
@@ -361,7 +363,7 @@ def publish_material(
                 source_id=source.id,
                 external_id=step_id,
                 canonical_url=(
-                    "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/apps/masterclass-course.html"
+                    public_site_origin() + "/apps/masterclass-course.html"
                     f"?course_day={day_number}&course_material={step_id}"
                 ),
                 title=step.get("title") or step.get("label") or step_id,
@@ -521,7 +523,7 @@ def published_materials(
             fallback_html=html,
         )
         payload.update(
-            html=html,
+            html=relative_site_html(html),
             word_count=word_count(html),
             published=True,
             source="git_markdown",

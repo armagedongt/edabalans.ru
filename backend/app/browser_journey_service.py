@@ -12,6 +12,7 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
 
 from app.intensive_web_access import access_token_row, checkout_source_context_row
+from app.site_links import public_site_origin
 from app.models import MessengerAccount, TelegramTrackingEvent, User
 
 COOKIE_NAME = "edabalans_visitor"
@@ -19,6 +20,7 @@ RETENTION = timedelta(days=365)
 TRANSFER_TTL = timedelta(minutes=10)
 ROOTS = tuple(host.encode("idna").decode() for host in (
     "edabalans.ru", "похудение-это-есть.рф", "похудение.рф",
+    urlsplit(public_site_origin()).hostname,
 ))
 EVENT_TYPES = ("visitor_state", "browser_page", "browser_action", "browser_identified")
 

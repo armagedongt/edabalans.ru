@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from app.site_links import relative_site_html
+
 from copy import deepcopy
 from html import escape
 import json
@@ -194,8 +196,9 @@ def serialize_public_site_rendered_document(version: ManagedDocumentVersion) -> 
         "slug": payload["slug"],
         "title": payload["title"],
         "kind": payload["kind"],
-        "html": payload["html"],
-        "items": deepcopy(payload.get("items", [])),
+        "html": relative_site_html(payload["html"]),
+        "items": [{**item, "html": relative_site_html(item["html"])}
+                  for item in payload.get("items", [])],
         "version": version.version_no,
         "updated_at": version.created_at.isoformat(),
     }

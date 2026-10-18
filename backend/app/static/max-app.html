@@ -55,7 +55,7 @@
           '<h1>Похудение — это есть!</h1>',
           '<p class="max-app-home__intro">Выберите, куда перейти.</p>',
           '<div class="max-app-home__list">',
-          '<button class="max-app-home__button" type="button" data-max-link="https://похудение-это-есть.рф">Мастер-класс <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
+          '<button class="max-app-home__button" type="button" data-max-link="/">Мастер-класс <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
           '<button class="max-app-home__button" type="button" data-max-app="account">Личный кабинет <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
           '</div>',
           '<button class="max-app-home__button max-app-home__intensive" type="button" data-max-intense="true">Бесплатный интенсив <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
@@ -70,7 +70,7 @@
         });
         Array.prototype.forEach.call(root.querySelectorAll('[data-max-link]'), function (button) {
           button.addEventListener('click', function () {
-            var url = button.getAttribute('data-max-link');
+            var url = new URL(button.getAttribute('data-max-link'), location.href).href;
             if (bridge && typeof bridge.openLink === 'function') {
               bridge.openLink(url);
             } else {
@@ -79,7 +79,7 @@
           });
         });
         root.querySelector('[data-max-intense]').addEventListener('click', function () {
-          var intensiveUrl = 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive';
+          var intensiveUrl = new URL('/intensive', location.href).href;
           if (bridge && typeof bridge.openLink === 'function') {
             bridge.openLink(intensiveUrl);
           } else {

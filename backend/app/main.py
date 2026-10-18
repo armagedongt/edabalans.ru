@@ -67,6 +67,7 @@ from app.browser_journey_routes import router as browser_journey_router
 from app.channel_bridge_routes import router as channel_bridge_router
 from app.database import SessionLocal, get_db
 from app.browser_journey_service import public_host
+from app.site_links import site_hostnames
 from urllib.parse import urlsplit
 
 settings = get_settings()
@@ -175,7 +176,7 @@ async def protect_native_account_host(request: Request, call_next):
             managed_app_request = bool(
                 isinstance(body, dict) and body.get("target_user_id")
             )
-    native_account_host = host in {
+    native_account_host = host in site_hostnames() or host in {
         "edabalans.ru", "www.edabalans.ru",
         "xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
         "www.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",

@@ -54,7 +54,7 @@ try {
   await cta.waitFor({state: 'attached'})
   await page.waitForFunction(() => {
     const value = document.querySelector('.masterclass-cta')?.href
-    return value?.includes('/mk1') && !value.includes('intensive_offer=')
+    return value?.includes('/#pricing') && !value.includes('intensive_offer=')
   })
   await page.waitForTimeout(250)
   if (offerRequests !== 0) {
@@ -75,8 +75,8 @@ try {
   if (offerRequests !== 1) {
     throw new Error(`Offer endpoint called an unexpected number of times: ${offerRequests}`)
   }
-  if (!href?.includes('/mk1?intensive_offer=offer-scroll-test') || !href?.includes('visitor_transfer=day4-visitor-carrier#masterclass')) {
-    throw new Error(`Day-four CTA does not target discounted /mk1: ${href}`)
+  if (!href?.includes('/?intensive_offer=offer-scroll-test') || !href?.endsWith('#pricing')) {
+    throw new Error(`Day-four CTA does not target discounted same-origin homepage: ${href}`)
   }
 } finally {
   await browser.close()

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from app.site_links import relative_site_html
+
 import hashlib
 import json
 import re
@@ -215,4 +217,4 @@ def render_homepage(db: Session, template: str) -> str:
             return tag
         tag = re.sub(r'\bsrc="[^"]*"', lambda _: 'src="'+escape(value["src"], quote=True)+'"', tag, count=1)
         return re.sub(r'\balt="[^"]*"', lambda _: 'alt="'+escape(value["alt"], quote=True)+'"', tag, count=1)
-    return re.sub(r"<img\b[^>]*>", replace_image, template)
+    return relative_site_html(re.sub(r"<img\b[^>]*>", replace_image, template))

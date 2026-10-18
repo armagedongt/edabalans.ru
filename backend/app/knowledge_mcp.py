@@ -7,6 +7,7 @@ from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
 
 from app.config import get_settings
+from app.site_links import public_site_origin, admin_site_origin, site_hostnames
 from app.database import SessionLocal
 from app.knowledge_library_service import (
     decide_review,
@@ -25,14 +26,14 @@ from app.knowledge_library_service import (
 
 knowledge_mcp_transport_security = TransportSecuritySettings(
     enable_dns_rebinding_protection=True,
-    allowed_hosts=[
+    allowed_hosts=sorted(site_hostnames() | {host + ":443" for host in site_hostnames()}) + [
         "edabalans.ru", "edabalans.ru:443",
         "xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
         "xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai:443",
         "admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
         "admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai:443",
     ],
-    allowed_origins=[
+    allowed_origins=[public_site_origin(), admin_site_origin()] + [
         "https://edabalans.ru",
         "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
         "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",

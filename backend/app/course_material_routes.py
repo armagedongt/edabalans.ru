@@ -9,6 +9,7 @@ from typing import Literal
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse, Response, HTMLResponse
 from app.article_markup import safe_audio_arguments
+from app.site_links import relative_media_url
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -90,6 +91,7 @@ def direct_recipe_article(slug: str) -> HTMLResponse:
 
 @router.get("/course-assets/masterclass/audio-player", include_in_schema=False)
 def masterclass_audio_player(src: str, avatar: str, author: str, duration: str) -> HTMLResponse:
+    src, avatar = relative_media_url(src), relative_media_url(avatar)
     if not safe_audio_arguments(src, avatar, author, duration):
         raise HTTPException(422, "Некорректные параметры аудио")
     template = component_asset("article-audio", "player.html")

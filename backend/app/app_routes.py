@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from app.site_menu import render_homepage_menu
+from app.site_links import public_site_origin
 
 import json
 import math
@@ -451,7 +452,7 @@ def public_homepage(db: Session = Depends(get_db)) -> HTMLResponse:
     )
     html = response.body.decode("utf-8").replace(
         '<meta name="robots" content="noindex,nofollow">',
-        '<link rel="canonical" href="https://похудение-это-есть.рф/">',
+        '<link rel="canonical" href="' + public_site_origin() + '/">',
         1,
     ).replace(
         'data-pricing-endpoint="/api/pricing/site/preview"',

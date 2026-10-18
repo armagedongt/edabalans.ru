@@ -3,10 +3,9 @@
   if (window.EdabalansEmbed) return;
   var loaderOnly = document.currentScript && document.currentScript.getAttribute('data-edabalans-loader-only') === 'true';
 
-  var APP_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || location.hostname.indexOf('go.') === 0
-    || ['edabalans.ru', 'www.edabalans.ru', 'xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai', 'www.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai', 'admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai'].indexOf(location.hostname) !== -1
-    ? location.origin
-    : 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai';
+  var ownerScript = document.currentScript;
+  var APP_HOST = ownerScript && ownerScript.src
+    ? new URL(ownerScript.src, location.href).origin : location.origin;
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
   var PUBLIC_ACCOUNT_URL = APP_HOST + '/lk';
   var appHtmlCache = {};
@@ -406,13 +405,13 @@
           var documents = legal.documents || [];
           var cards = documents.map(function (item) {
             var policy = item.code === 'personal_data_consent'
-              ? ' · <a href="' + escapeHtml('https://похудение-это-есть.рф/legal/privacy') + '" target="_blank" rel="noopener">Политика обработки данных ↗</a>'
+              ? ' · <a href="' + escapeHtml('/legal/privacy') + '" target="_blank" rel="noopener">Политика обработки данных ↗</a>'
               : '';
             return '<label class="edabalans-dqs-legal-card">' +
               '<input type="checkbox" data-edabalans-dqs-legal="' + escapeHtml(item.code) + '"' + (item.accepted ? ' checked disabled' : '') + '>' +
               '<span><strong>' + escapeHtml(item.title) + '</strong>' +
               '<span>' + escapeHtml(item.summary) + '</span>' +
-              '<a href="' + escapeHtml('https://похудение-это-есть.рф' + item.url) + '" target="_blank" rel="noopener">Читать полностью ↗</a>' + policy + '</span></label>';
+              '<a href="' + escapeHtml(APP_HOST + item.url) + '" target="_blank" rel="noopener">Читать полностью ↗</a>' + policy + '</span></label>';
           }).join('');
           mount.innerHTML = '<style>' +
             '.edabalans-dqs-legal-shell{box-sizing:border-box;min-height:70vh;display:grid;place-items:center;padding:32px 18px;background:#f5f0e7;color:#25241f;font:16px/1.5 var(--ed-font-body, Manrope, Arial, sans-serif)}' +

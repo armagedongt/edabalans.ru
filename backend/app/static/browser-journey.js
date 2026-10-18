@@ -3,7 +3,7 @@
   if (window.EdabalansBrowserJourney || window.top !== window) return;
   const script = document.currentScript;
   const apiHost = script && script.src ? new URL(script.src).origin : location.origin;
-  const roots = ['edabalans.ru', 'xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai',
+  const roots = [new URL(apiHost).hostname, 'edabalans.ru', 'xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai',
     'xn--d1acalydg7ar.xn--p1ai'];
   const allowed = host => roots.some(root => host === root || host.endsWith('.' + root));
   if (!allowed(location.hostname) || /^(?:\/(?:admin|crm|api|auth|health|ready|weather))(?:\/|$)/.test(location.pathname)) return;

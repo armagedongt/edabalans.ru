@@ -114,7 +114,7 @@
     notice.setAttribute("aria-label", "Уведомление об использовании cookie");
     notice.innerHTML = [
       '<p class="cookie-notice__copy">Сайт использует cookie. Продолжая, вы принимаете ',
-      '<a href="https://похудение-это-есть.рф/legal/privacy" target="_blank" rel="noopener">',
+      '<a href="/legal/privacy" target="_blank" rel="noopener">',
       'политику обработки персональных данных</a>.</p>',
       '<button class="cookie-notice__accept" type="button" data-cookie-dismiss>Приемлемо</button>'
     ].join("");

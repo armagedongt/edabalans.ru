@@ -5,6 +5,7 @@ services:
     image: caddy:2.10.2-alpine
     restart: unless-stopped
     environment:
+      SITE_DOMAIN: "${SITE_DOMAIN:-xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai}"
       PUBLIC_DOMAIN: "${PUBLIC_DOMAIN:-edabalans.ru}"
       API_DOMAIN: "${API_DOMAIN}"
       APP_DOMAIN: "${APP_DOMAIN}"
@@ -60,6 +61,8 @@ services:
       MAX_BOT_TOKEN: "${MAX_BOT_TOKEN:-}"
       ACCOUNT_TELEGRAM_BOT_USERNAME: "${ACCOUNT_TELEGRAM_BOT_USERNAME:-Fitness_Talks_bot}"
       ACCOUNT_MAX_BOT_USERNAME: "${ACCOUNT_MAX_BOT_USERNAME:-id230409966750_bot}"
+      BLOG_PUBLIC_ORIGIN: "${BLOG_PUBLIC_ORIGIN:-}"
+      PERSONAL_ACCESS_PAGE_URL: "${PERSONAL_ACCESS_PAGE_URL:-https://похудение-это-есть.рф/personal-access}"
       ACCOUNT_PUBLIC_URL: "${ACCOUNT_PUBLIC_URL:-https://похудение-это-есть.рф/lk}"
       ACCOUNT_ONBOARDING_ENABLED: "${ACCOUNT_ONBOARDING_ENABLED:-false}"
       ACCOUNT_SESSION_DAYS: "${ACCOUNT_SESSION_DAYS:-45}"

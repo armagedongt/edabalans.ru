@@ -1,3 +1,4 @@
+from app.site_links import relative_site_url
 import hashlib
 import os
 import re
@@ -55,7 +56,7 @@ def test_replacing_fixed_homepage_photo_preserves_the_entire_rest_of_layout(clie
         "expected_version": current["version"], "markdown": changed})
     assert saved.status_code == 200, saved.text
     after = client.get("/preview/homepage-release-candidate").text
-    assert after == initial.replace(f'src="{old_src}"', f'src="{new_src}"')
+    assert after == initial.replace(f'src="{relative_site_url(old_src)}"', f'src="{new_src}"')
     assert source(client)["markdown"] == changed
 
 
@@ -87,7 +88,7 @@ def test_homepage_attachment_is_hidden_until_its_fixed_slot_is_published(client,
     assert result.status_code == 200, result.text
     assert client.get(url).content == raw
     assert client.get("/preview/homepage-release-candidate").text == initial.replace(
-        f'src="{old_src}"', f'src="{url}"')
+        f'src="{relative_site_url(old_src)}"', f'src="{relative_site_url(url)}"')
 
 
 def test_previously_saved_image_override_renders_without_republication(client, monkeypatch):
@@ -100,7 +101,7 @@ def test_previously_saved_image_override_renders_without_republication(client, m
     payload["images"][slot["key"]] = {"src": legacy, "alt": slot["alt"]}
     monkeypatch.setattr(service, "active_homepage", lambda _: SimpleNamespace(payload=payload))
     response = client.get("/preview/homepage-release-candidate")
-    canonical = legacy.replace("https://edabalans.ru", service.PUBLIC_IMAGE_ORIGIN)
+    canonical = relative_site_url(legacy)
     assert response.status_code == 200
     assert response.text == initial.replace(f'src="{slot["originalSrc"]}"', f'src="{canonical}"')
     assert payload["images"][slot["key"]]["src"] == legacy
@@ -110,7 +111,7 @@ def test_initial_homepage_keeps_the_accepted_html_without_client_content_fetch(c
     response = client.get("/preview/homepage-release-candidate")
     assert response.status_code == 200
     # Accepted shell with the shared reader invitation in the former free-intensive slot.
-    assert hashlib.sha256(response.text.encode()).hexdigest() == "fe9adc8f942738cea1af1571efaf5896b9f78e8f93e8c8ded4221f027cb0d74e"
+    assert hashlib.sha256(response.text.encode()).hexdigest() == "7ce3a0dde339ddc6246d76f29291651496d833352a2b87660b5e1a4f7af7a3d6"
     assert response.text.count('id="reader-channel-homepage"') == 1
     assert "<!-- homepage-slot:" not in response.text
     faq = response.text.split("<template data-local-faq-template>", 1)[1].split("</template>", 1)[0]

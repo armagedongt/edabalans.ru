@@ -4,6 +4,9 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 import json
 from types import SimpleNamespace
+from urllib.parse import urlsplit, urlunsplit
+
+from app.config import get_settings
 
 from sqlalchemy import inspect, select, text
 from sqlalchemy.orm import Session
@@ -29,10 +32,10 @@ class Application:
 
 
 APPLICATIONS = (
-    Application("dqs", "dqs", "Оценка качества питания", "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/dqs", ("dqs",)),
-    Application("strength", "training", "Силовые тренировки", "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/training", ("strength", "ACCESS_STRENGTH")),
-    Application("metabolism", "metabolism", "Калькулятор метаболизма", "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/metabolism", ("metabolism", "ACCESS_CALORIES")),
-    Application("recipes", "recipes", "Калькулятор рецептов", "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/recipes", ("recipes", "ACCESS_RECIPES")),
+    Application("dqs", "dqs", "Оценка качества питания", "/dqs", ("dqs",)),
+    Application("strength", "training", "Силовые тренировки", "/training", ("strength", "ACCESS_STRENGTH")),
+    Application("metabolism", "metabolism", "Калькулятор метаболизма", "/metabolism", ("metabolism", "ACCESS_CALORIES")),
+    Application("recipes", "recipes", "Калькулятор рецептов", "/recipes", ("recipes", "ACCESS_RECIPES")),
 )
 APPLICATION_BY_PAYLOAD = {item.payload: item for item in APPLICATIONS}
 REVEAL_EVENTS = {
@@ -138,15 +141,26 @@ def _editable_content(session: Session, code: str) -> ContentItem:
     return item
 
 
+def _public_origin(*, admin: bool = False) -> str:
+    settings = get_settings()
+    parts = urlsplit(settings.telegram_public_base_url or settings.masterclass_account_url)
+    host = (parts.hostname or "").encode("idna").decode("ascii")
+    authority = ("admin." if admin else "") + host
+    if parts.port:
+        authority += ":" + str(parts.port)
+    return urlunsplit((parts.scheme, authority, "", "", ""))
+
+
 def _app_button(item: Application) -> dict:
     button = {
         "text": item.title,
         "max_app_payload": item.payload,
     }
+    target = _public_origin() + item.url
     if item.code == "dqs":
-        button["url"] = item.url
+        button["url"] = target
     else:
-        button["web_app"] = {"url": item.url}
+        button["web_app"] = {"url": target}
     return button
 
 
@@ -167,7 +181,7 @@ def menu_presentation(
             {
                 "buttons": [{
                     "text": "Открыть админку тренировок",
-                    "web_app": {"url": f"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/strength?mobile=1{query}"},
+                    "web_app": {"url": f"{_public_origin(admin=True)}/admin/strength?mobile=1{query}"},
                 }]
             },
         )

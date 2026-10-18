@@ -168,7 +168,7 @@ class DeployPolicyTests(unittest.TestCase):
             compose,
         )
 
-    def test_go_public_intensive_redirect_preserves_attribution(self) -> None:
+    def test_go_public_intensive_redirect_uses_configured_host_and_attribution(self) -> None:
         source = (REPOSITORY_ROOT / "infra/caddy/Caddyfile").read_text(
             encoding="utf-8"
         )
@@ -178,7 +178,7 @@ class DeployPolicyTests(unittest.TestCase):
 
         self.assertIn("@intensive_public path /intensiv /intensiv/", source)
         self.assertIn(
-            "redir https://app.edabalans.ru/intensive{?query} 307",
+            "redir https://{$SITE_DOMAIN}/intensive{?query} 307",
             source,
         )
         self.assertLess(
@@ -190,7 +190,7 @@ class DeployPolicyTests(unittest.TestCase):
             deploy,
         )
         self.assertIn(
-            "location: https://app.edabalans.ru/intensive?utm_source=deploy-smoke&yclid=deploy-smoke",
+            "location: https://${site_domain}/intensive?utm_source=deploy-smoke&yclid=deploy-smoke",
             deploy,
         )
 

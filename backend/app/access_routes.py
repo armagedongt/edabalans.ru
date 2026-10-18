@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from app.site_links import public_site_origin
+
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 import uuid
@@ -907,7 +909,7 @@ def create_paid_personal_link(
         if body.standard_amount is not None and body.standard_amount > body.final_amount
         else ""
     )
-    url = f"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/access-links/{token}"
+    url = f"{public_site_origin()}/access-links/{token}"
     message_template = (
         f"Для вас подготовлено персональное предложение: {names}.{discount} "
         f"Итоговая стоимость — {price} ₽. Оплатить: {{personal_link}}"

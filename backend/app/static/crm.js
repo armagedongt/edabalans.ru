@@ -1102,7 +1102,7 @@
           .map(([code, name]) => `• ${name} — ${currentModules.modules[code].start_open ? "доступен" : "откроется по условиям программы"}.`);
         messageField.value = [
           `${user.display_name || "Здравствуйте"}, ваш личный кабинет готов.`,
-          "", "Вход: https://похудение-это-есть.рф/lk", `Логин: ${primaryEmail}`, `Пароль: ${credential.password}`,
+          "", `Вход: ${location.origin.replace("://admin.", "://")}/lk`, `Логин: ${primaryEmail}`, `Пароль: ${credential.password}`,
           "", "Ваши доступы:", ...(courses.length || applications.length ? [...courses, ...applications] : ["Доступы к программам пока не выданы."]),
           "", "Если возникнут проблемы со входом или доступами, напишите мне."
         ].join("\n");

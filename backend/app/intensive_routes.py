@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from app.site_links import public_site_origin
+
 import hashlib
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -119,14 +121,14 @@ def save_intensive_page(
                     platform=SOURCE_PLATFORM,
                     account_key=SOURCE_ACCOUNT_KEY,
                     display_name="Бесплатный интенсив «Последнее похудение»",
-                    canonical_url="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive/day-1",
+                    canonical_url=public_site_origin() + "/intensive/day-1",
                 )
                 db.add(source)
                 db.flush()
             item = ContentItem(
                 source_id=source.id,
                 external_id=day_code,
-                canonical_url=f"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive/{day_code}",
+                canonical_url=f"{public_site_origin()}/intensive/{day_code}",
                 title=DAY_TITLES[day_code],
                 author_name=admin_username,
                 status="published",

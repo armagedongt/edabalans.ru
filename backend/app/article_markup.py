@@ -8,7 +8,9 @@ from urllib.parse import parse_qs, unquote, urlparse
 
 from fastapi import HTTPException
 
-PUBLIC_IMAGE_ORIGIN = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
+from app.site_links import public_site_origin, relative_site_url, relative_site_html
+
+PUBLIC_IMAGE_ORIGIN = public_site_origin()
 
 
 def canonical_image_src(src: str) -> str:
@@ -66,7 +68,7 @@ def safe_recipe_card_asset(value: str) -> bool:
 
 def opens_in_new_tab(value: str) -> bool:
     """Keep same-site course navigation in place; separate external browsing."""
-    parsed = urlparse(value.strip())
+    parsed = urlparse(relative_site_url(value.strip()))
     return parsed.scheme in {"http", "https"} and bool(parsed.netloc) and not course_material_href(value)
 
 
@@ -128,6 +130,10 @@ def safe_audio_arguments(source: str, avatar: str, author: str, duration: str) -
             return False
         try:
             parsed = urlparse(value)
+            if (not parsed.scheme and not parsed.netloc
+                    and parsed.path.startswith(("/media/reviews/", "/course-assets/"))
+                    and not parsed.fragment):
+                return parsed.path.lower().endswith(suffixes)
             return (parsed.scheme == "https" and bool(parsed.hostname)
                     and not parsed.username and not parsed.password
                     and parsed.port in {None, 443} and not parsed.fragment
@@ -211,7 +217,7 @@ class ArticleSanitizer(HTMLParser):
         if tag == "a":
             href = next((value for name, value in attrs if name.lower() == "href"), None)
             if href and safe_href(href):
-                rendered_attrs = f' href="{escape(course_material_href(href) or href.strip(), quote=True)}"'
+                rendered_attrs = f' href="{escape(course_material_href(href) or relative_site_url(href.strip()), quote=True)}"'
                 attributes = dict(attrs)
                 recipe_class = attributes.get("class")
                 if (self.course_semantics and self.allow_product_components
@@ -316,7 +322,7 @@ def sanitize_article_html(
             status_code=422,
             detail="Главный заголовок хранится в карточке материала; удалите h1 из текста статьи",
         )
-    result = "".join(parser.parts).strip()
+    result = relative_site_html("".join(parser.parts).strip())
     if not result or (not article_plain_text(result).strip() and "<img " not in result
                       and "<iframe " not in result):
         raise HTTPException(status_code=422, detail="Текст страницы не может быть пустым")
@@ -333,7 +339,7 @@ def inline_markdown(value: str) -> str:
         label = match.group(1).replace(r"\[", "[").replace(r"\]", "]")
         href = match.group(2)
         external = ' target="_blank" rel="noopener"' if opens_in_new_tab(href) else ""
-        return f'<a href="{course_material_href(href) or href}"{external}>{label}</a>'
+        return f'<a href="{course_material_href(href) or relative_site_url(href)}"{external}>{label}</a>'
 
     rendered = re.sub(
         r"\[((?:\\[\[\]]|[^\]])+)\]\((https?://[^\s)]+|/(?!/)[^\s)]+)\)",
