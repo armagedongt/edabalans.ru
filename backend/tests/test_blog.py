@@ -381,7 +381,10 @@ def test_confirmed_static_batch_is_published_and_excluded_stories_are_not_public
         "a-mne-trener-posovetoval": ["https://pikabu.ru/story/a_mne_trener_posovetoval_12922345"],
     }
 
-    assert batch_sources.keys() <= slugs
+    # This source was merged into the accepted beginning-of-weight-loss article.
+    archived_sources = {"tri-oshibki-v-nachale-pohudeniya"}
+    assert batch_sources.keys() - archived_sources <= slugs
+    assert archived_sources.isdisjoint(slugs)
     excluded_slugs = {
         "kak-ya-100000-shagov-reshil-proyti",
         "kak-sdelat-celnozernovoy-ris-sedobnym",

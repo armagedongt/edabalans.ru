@@ -55,15 +55,17 @@ def test_sync_script_bootstraps_backend_path(tmp_path: Path) -> None:
 
 def test_mcp_transport_security_has_an_exact_production_allowlist() -> None:
     assert knowledge_mcp_transport_security.enable_dns_rebinding_protection is True
-    assert knowledge_mcp_transport_security.allowed_hosts == [
+    assert set(knowledge_mcp_transport_security.allowed_hosts) == {
         "edabalans.ru",
         "edabalans.ru:443",
         "xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
         "xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai:443",
         "admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
         "admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai:443",
-    ]
-    assert knowledge_mcp_transport_security.allowed_origins == ["https://edabalans.ru", "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai", "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"]
+        "www.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        "www.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai:443",
+    }
+    assert set(knowledge_mcp_transport_security.allowed_origins) == {"https://edabalans.ru", "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai", "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"}
 
 
 def test_librarian_review_tools_are_registered_in_mcp() -> None:

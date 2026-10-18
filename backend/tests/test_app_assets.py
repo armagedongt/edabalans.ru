@@ -776,7 +776,7 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "Согласие на получение информационных и рекламных сообщений" in privacy
     assert "«Старт» или «START»" in privacy
     assert "/stop прекращает все сообщения" in privacy
-    assert "https://похудение-это-есть.рф/lk" in privacy
+    assert 'href="/lk"' in privacy
     assert 'id="cookie-settings"' in privacy
     assert "платёжная система «Робокасса»" in privacy
     assert "Telegram, MAX, сервис электронной почты" not in privacy
@@ -1245,36 +1245,37 @@ def test_legal_friendly_routes_are_public() -> None:
         assert "data-year" not in page
 
 
-def test_legal_navigation_uses_permanent_public_domain() -> None:
+def test_legal_navigation_uses_current_origin_paths() -> None:
     for document in ("", "disclaimer", "privacy", "consent", "messages", "offer"):
         response = client.get("/legal" + ("/" + document if document else ""))
         assert response.status_code == 200
         links = re.findall(r'<a\b[^>]*\bhref="([^"]+)"', response.text)
         documents = [url for url in links if "/legal/" in url]
         assert len(documents) >= 4
-        assert all(url.startswith("https://похудение-это-есть.рф/legal/") for url in documents)
+        assert all(url.startswith("/legal/") for url in documents)
         assert re.search(r'href="/legal/legal\.css(?:\?[^\"]*)?"', response.text)
         assert '<script src="/site-footer.js" defer></script>' in response.text
 
 
-def test_checkout_and_cookie_legal_links_use_permanent_public_domain() -> None:
+def test_checkout_and_cookie_legal_links_use_current_origin_paths() -> None:
     from app.legal_service import LEGAL_DOCUMENTS
 
     checkout = client.get("/assets/masterclass.js").text
     for document in ("offer", "consent"):
-        assert f'href="https://похудение-это-есть.рф/legal/{document}"' in checkout
-        assert f'href="/legal/{document}"' not in checkout
+        assert f'href="/legal/{document}"' in checkout
+        assert "https://похудение-это-есть.рф/legal/" not in checkout
     for path in ("/embed.js", "/cookie-notice.js"):
         response = client.get(path)
         assert response.status_code == 200
-        assert "https://похудение-это-есть.рф/legal/privacy" in response.text
+        assert "/legal/privacy" in response.text
+        assert "https://похудение-это-есть.рф/legal/privacy" not in response.text
         assert "APP_HOST + '/legal/privacy.html'" not in response.text
     embed = client.get("/embed.js").text
     account = (Path(__file__).parents[1] / "app/static/apps/account.html").read_text(encoding="utf-8")
-    assert "escapeHtml('https://похудение-это-есть.рф' + item.url)" in embed
-    assert "esc('https://похудение-это-есть.рф'+item.url)" in account
-    assert "APP_HOST + item.url" not in embed
-    assert "host+item.url" not in account
+    assert "escapeHtml(APP_HOST + item.url)" in embed
+    assert "esc(host+item.url)" in account
+    assert "escapeHtml('https://похудение-это-есть.рф' + item.url)" not in embed
+    assert "esc('https://похудение-это-есть.рф'+item.url)" not in account
     for document in LEGAL_DOCUMENTS:
         assert document["url"] in {"/legal/disclaimer", "/legal/consent"}
         assert client.get(document["url"]).status_code == 200
@@ -1330,7 +1331,7 @@ def test_intensive_concept_pages_are_public() -> None:
     day_offer_runtime = script.text.split("async function setupDayOffer", 1)[1].split("function setupVideoAnalytics", 1)[0]
     assert "IntersectionObserver" not in day_offer_runtime
     assert "link.addEventListener(\"click\"" in day_offer_runtime
-    assert "/mk1#masterclass" in script.text
+    assert "/#pricing" in script.text
     assert "serverState.identified && !(serverState.assignment_days || []).includes(day)" in script.text
     assert 'block.hidden = false' in script.text
     assert "unlocked_days: [1, 2, 3, 4]" in script.text
