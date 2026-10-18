@@ -20,7 +20,7 @@ const context = await browser.newContext({
 });
 // Exercise this revision's shared scripts, not the live production revision or network.
 for (const script of ['site-footer.js', 'cookie-notice.js']) {
-  await context.route(`https://edabalans.ru/${script}`, async route => {
+  await context.route(`https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/${script}`, async route => {
     const response = await context.request.get(`${baseURL}/${script}`);
     assert.equal(response.status(), 200);
     await route.fulfill({ response });
@@ -130,7 +130,7 @@ try {
   assert.equal(publicResponse.status(), 200);
   assert.match(await publicResponse.text(), new RegExp(successfulMarker));
   await page.goto(`${baseURL}/blog`, { waitUntil: 'domcontentloaded' });
-  const articleCard = page.locator(`.article-card:has(a[href="/articles/${slug}"])`);
+  const articleCard = page.locator(`.article-card:has(a[href$="/blog/articles/${slug}"])`);
   const visitedPages = new Set();
   while (await articleCard.count() === 0) {
     const previousURL = page.url();
