@@ -54,7 +54,7 @@ implementation_status: implemented
 опубликованного приложения или новая методология расчётов.
 
 Отдельная демо-страница имеет адрес
-[/apps/metabolism-visual-v2.html](https://edabalans.ru/apps/metabolism-visual-v2.html).
+[/apps/metabolism-visual-v2.html](https://похудение-это-есть.рф/apps/metabolism-visual-v2.html).
 Её исходник находится в репозитории и описан в паспорте. Она использует
 демо-значения, не читает анкету и не сохраняет данные клиента на сервере.
 Действующие `/metabolism` и `/apps/metabolism.html` используют новый интерфейс,

@@ -59,7 +59,7 @@ Telegram-бот — на текущий MAX-бот с тем же payload, Teleg
    переходом `/go/{code}?to=max` либо публичным `POST /bot/public/start-link` с
    `messenger=max`.
 8. Создать access token со сроком предъявления два года и `platform=max`, затем
-   прямую персональную ссылку `https://edabalans.ru/intensive?i=...&from=max&entry=bot`. Web-runtime обменивает её на
+   прямую персональную ссылку `https://похудение-это-есть.рф/intensive?i=...&from=max&entry=bot`. Web-runtime обменивает её на
    HttpOnly session cookie, но не погашает: повторное открытие на другом устройстве
    восстанавливает тот же бесплатный путь и прогресс.
 9. Отметить `main_scenario_seen_at`, создать MAX-контакт и запустить общий

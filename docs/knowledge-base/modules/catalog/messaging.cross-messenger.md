@@ -37,7 +37,7 @@ implementation_status: in_development
 После одобрения MAX-бота в защищённый server `.env` добавляются только его токен
 и отдельный секрет webhook. Затем один раз запускается
 `telegram-bot/service/set_cross_messenger_max_webhook.py`: он сам задаёт MAX
-адрес `https://edabalans.ru/api/messaging/cross-messenger/max/webhook` и три
+адрес `https://похудение-это-есть.рф/api/messaging/cross-messenger/max/webhook` и три
 типа событий — создание, правка и удаление сообщения. Затем
 `telegram-bot/service/configure_cross_messenger_pair.py` принимает четыре ID
 площадок и переводит только эту пару в `test` или `active`. Реальные каналы не

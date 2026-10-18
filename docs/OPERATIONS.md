@@ -104,28 +104,30 @@ SHA-256 `b2197b927d7cebf8a7967ffa83a93e256ac02b572d02d9e118a1d08c647a9fa7`.
 ```bash
 cd /opt/edabalans
 docker compose ps
-curl -fsS https://edabalans.ru/health
-curl -fsS https://edabalans.ru/ready
-curl -fsS https://edabalans.ru/api/health/telegram
-curl -fsS https://edabalans.ru/apps/dqs.html
-curl -fsSI https://app.edabalans.ru/media/reviews/v1/r043-stream-collage.webp
-curl -fsS https://edabalans.ru/admin/messaging
-curl -fsS https://edabalans.ru/legal
-curl -fsS https://edabalans.ru/legal/disclaimer
-curl -fsS https://edabalans.ru/legal/privacy
-curl -fsS https://edabalans.ru/legal/consent
-curl -fsS https://edabalans.ru/legal/offer
+curl -fsS https://похудение-это-есть.рф/health
+curl -fsS https://похудение-это-есть.рф/ready
+curl -fsS https://похудение-это-есть.рф/api/health/telegram
+curl -fsS https://похудение-это-есть.рф/apps/dqs.html
+curl -fsSI https://похудение-это-есть.рф/media/reviews/v1/r043-stream-collage.webp
+curl -fsS https://admin.похудение-это-есть.рф/admin/messaging
+curl -fsS https://похудение-это-есть.рф/legal
+curl -fsS https://похудение-это-есть.рф/legal/disclaimer
+curl -fsS https://похудение-это-есть.рф/legal/privacy
+curl -fsS https://похудение-это-есть.рф/legal/consent
+curl -fsS https://похудение-это-есть.рф/legal/offer
 # Пока включён ROBOKASSA_TEST_MODE; после переключения в боевой режим эту
 # проверку пропустить, потому что ожидаемый ответ — 404:
 curl -fsS https://go.похудение-это-есть.рф/robokassa-test
-curl -fsS 'https://edabalans.ru/intensive?utm_source=operations-smoke&yclid=operations-smoke'
-curl -fsS https://edabalans.ru/intensive/day-1
-curl -fsS https://blog.похудение-это-есть.рф/
+curl -fsS 'https://похудение-это-есть.рф/intensive?utm_source=operations-smoke&yclid=operations-smoke'
+curl -fsS https://похудение-это-есть.рф/intensive/day-1
+curl -fsS https://похудение-это-есть.рф/blog
 ufw status
 systemctl status edabalans-backup.timer
 ```
 
-Ожидается: все пять контейнеров работают, перечисленные HTTP-проверки успешны,
+Для `/admin/messaging` нужна действующая admin-сессия; анонимный `401` —
+ожидаемая защита, а не ошибка домена. Остальные публичные HTTP-проверки должны
+быть успешны. Все пять контейнеров работают,
 firewall разрешает только 22/80/443, backup timer активен.
 
 Если включён `ACCOUNT_ONBOARDING_ENABLED`, общая `/ready` дополнительно проверяет,
@@ -469,7 +471,7 @@ docker compose run --rm --no-deps --user 0 \
 
 ```toml
 [mcp_servers.edabalans_knowledge]
-url = "https://edabalans.ru/mcp/"
+url = "https://admin.похудение-это-есть.рф/mcp/"
 bearer_token_env_var = "EDABALANS_KNOWLEDGE_TOKEN"
 ```
 
@@ -604,7 +606,7 @@ Production использует `TELEGRAM_API_BASE_URL` и `TELEGRAM_GATEWAY_TOK
 ```bash
 docker compose ps telegram-bot
 docker compose exec telegram-bot python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8001/health').read().decode())"
-curl -fsS https://edabalans.ru/api/health/telegram
+curl -fsS https://похудение-это-есть.рф/api/health/telegram
 ```
 
 Модуль после покупки Мастер-класса выпущен в безопасном тестовом режиме:
@@ -647,8 +649,8 @@ Migration `20260822_0015` добавляет только новые табли�
 обычный backup и настоящее тестовое восстановление. После выпуска проверить:
 
 ```bash
-curl -fsS https://edabalans.ru/health
-curl -fsS https://edabalans.ru/ready
+curl -fsS https://похудение-это-есть.рф/health
+curl -fsS https://похудение-это-есть.рф/ready
 docker compose exec backend alembic current
 docker compose exec telegram-bot python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8001/health').read().decode())"
 ```
@@ -686,8 +688,8 @@ Migration `20260824_0021` добавляет в прогресс дня толь
 После выпуска проверить:
 
 ```bash
-curl -fsS https://edabalans.ru/embed.js
-curl -fsS https://edabalans.ru/apps/masterclass-course.html
+curl -fsS https://похудение-это-есть.рф/embed.js
+curl -fsS https://похудение-это-есть.рф/apps/masterclass-course.html
 docker compose exec backend alembic current
 ```
 

@@ -1,4 +1,4 @@
-# Навигатор по документации edabalans.ru
+# Навигатор по документации «Похудение — это есть.рф»
 
 Статус: `current`  
 Проверено: 18.10.2026
@@ -45,6 +45,7 @@
 | Production, backup, restore, deploy | `OPERATIONS.md` | операционный документ и infra config |
 | Доступность, Telegram/MAX, аварии, DNS, уведомления и restart | `runtime-health/README.md` | модуль `operations.health` |
 | Перенос публичного домена | `DOMAIN_CUTOVER_RUNBOOK.md` | повторяемый cutover, ручные действия и приёмка |
+| Где старый домен ещё нужен и что осталось исправить | [Проверка остатков](DOMAIN_CUTOVER_RUNBOOK.md#остатки-старого-домена-проверка-19102026) | `operations.proxy`; совместимость, медиа, внешние настройки и отдельный preview |
 | Как выбирать глубину разработки и tests | `AI_DEVELOPMENT_WORKFLOW.md` | рабочий процесс |
 | Как создавать, менять и удалять модули | `knowledge-base/MODULE_DEVELOPMENT_STANDARD.md` | общий стандарт модулей |
 | Как разводить параллельные чаты | `CHAT_WORKSTREAMS.md` | правила потоков |
