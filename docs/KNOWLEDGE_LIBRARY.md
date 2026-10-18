@@ -13,7 +13,7 @@
 именно использовал.
 
 Владелец открывает `/admin/library`. Codex подключается к
-`https://edabalans.ru/mcp/` как к `edabalans_knowledge`.
+`https://admin.похудение-это-есть.рф/mcp/` как к `edabalans_knowledge`.
 
 ## Четыре слоя одной выдачи
 
@@ -192,7 +192,7 @@ python tools/install_edabalans_librarian_skill.py --check
 
 ```toml
 [mcp_servers.edabalans_knowledge]
-url = "https://edabalans.ru/mcp/"
+url = "https://admin.похудение-это-есть.рф/mcp/"
 bearer_token_env_var = "EDABALANS_KNOWLEDGE_TOKEN"
 ```
 

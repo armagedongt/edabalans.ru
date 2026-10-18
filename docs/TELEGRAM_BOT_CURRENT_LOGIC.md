@@ -155,10 +155,10 @@ https://go.похудение-это-есть.рф/B7K4PV
 `journey_id` затем записывается в настоящий `start_first`/`start_repeat`.
 
 Пока выдаются первые четыре части, персональная кнопка интенсива из бота ведёт
-прямо на `https://edabalans.ru/intensive/day-N?i=<code>&from=tg&entry=bot` либо с
+прямо на `https://похудение-это-есть.рф/intensive/day-N?i=<code>&from=tg&entry=bot` либо с
 `from=max`. Каждая часть и её напоминание имеют собственный номер дня; главная не
 используется как промежуточный экран. После доставки четвёртой части повторный
-Start даёт одну ссылку на `https://edabalans.ru/intensive?i=<code>`. Redirect в
+Start даёт одну ссылку на `https://похудение-это-есть.рф/intensive?i=<code>`. Redirect в
 новых ссылках отсутствует; персональный код и источник сохраняются в query string.
 
 Связь правила с существующими CRM-тегами хранится в `tg_tracking_link_tags`.
