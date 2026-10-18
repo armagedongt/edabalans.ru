@@ -25,7 +25,7 @@
 | 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://похудение-это-есть.рф/blog/mify-o-produktah) | 1 | 0 |
 | 12 простых изменений в питании и образе жизни | [blog:12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni](https://похудение-это-есть.рф/blog/12-prostyh-izmeneniy) | 1 | 0 |
 | 13 правил для организации домашних тренировок | [blog:13-pravil-domashnih-trenirovok](https://похудение-это-есть.рф/blog/domashnie-trenirovki) | 2 | 0 |
-| 15 советов тем, кто худеет — по одному на килограмм лишнего веса | [blog:15-sovetov-tem-kto-hudeet](https://похудение-это-есть.рф/blog/11-sovetov-hudeyushchim) | 1 | 0 |
+| 11 советов тем, кто худеет: заблуждения и принципы | [blog:15-sovetov-tem-kto-hudeet](https://похудение-это-есть.рф/blog/11-sovetov-hudeyushchim) | 1 | 0 |
 | «Сладкоежка — увеличьте дозу витаминов!» | [blog:sladkoezhka-uvelichte-dozu-vitaminov](https://похудение-это-есть.рф/blog/sahar-i-vitaminy) | 1 | 0 |
 | А мне тренер посоветовал… | [blog:a-mne-trener-posovetoval](https://похудение-это-есть.рф/blog/sovety-trenera) | 1 | 1 |
 | Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ? | [blog:belyy-ris-kury-i-vitamin-b1](https://похудение-это-есть.рф/blog/ris-i-vitamin-b1) | 1 | 0 |
