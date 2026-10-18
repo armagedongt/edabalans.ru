@@ -888,7 +888,7 @@ def test_release_candidate_meme_trims_transparent_vertical_padding_without_chang
 
     assert ".author-section__meme{display:block;overflow:hidden;width:min(100%,760px);aspect-ratio:1434/877;" in html
     assert ".author-section__meme img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 36%}" in html
-    assert 'src="/preview/homepage-mobile/reviews-promo-before-after-transparent.png?v=1"' in html
+    assert 'src="/media/reviews/site-images-v1/d10548e57849d90ce96bfbf5cd491839bd93a573e6858969615afa7b262d6686.webp"' in html
 
 
 def test_homepage_versions_preserve_snapshots_and_separate_current_runtime_and_next_draft() -> None:

@@ -42,6 +42,9 @@ def test_public_article_archive_and_assets():
         assert 'data-view="menu"' in archive.text
         for tag, attrs in Elements(page.text).tags:
             url = attrs.get('src') or attrs.get('href')
+            # Public media are served by Caddy's filesystem mount, outside ASGI.
+            if url and url.startswith('/media/reviews/'):
+                continue
             if url and url.startswith('/') and not url.startswith('//'):
                 assert client.get(url).status_code == 200, url
         assert client.get('/intensive/onepage-secret.txt').status_code == 404

@@ -41,6 +41,9 @@ MCP принимает точные host основного и админист�
 
 ## Источники истины
 
+Карточки `kind=image`, `metadata.catalog=site-images` принадлежат `platform.content`.
+Библиотека предоставляет их поиск и версии по [IMAGE_CATALOG](../../../IMAGE_CATALOG.md).
+
 Пользовательский и межмодульный контракт описан в
 `docs/knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md`. Канонические тексты, продуктовые
 правила и технические документы остаются у своих текущих module owners; серверный

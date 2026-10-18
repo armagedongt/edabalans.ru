@@ -141,7 +141,7 @@ reads_from = ["platform.web_design", "platform.commerce", "platform.content"]
 [[modules]]
 id = "platform.content"
 reads_from = ["platform.web_design", "products.masterclass.course", "platform.commerce"]
-writes_to = ["platform.commerce"]
+writes_to = ["platform.commerce", "platform.knowledge"]
 admin_catalog = [{ category = "marketing", order = 20, url = "/admin/content", label = "Каталог материалов", icon = "🗂️", description = "Материалы Telegram, Pikabu и рабочий каталог контента." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.content.md"
@@ -159,7 +159,7 @@ owns_files = [
   "backend/tests/test_content_authoring_catalog.py",
   "backend/tests/test_article_markup.py",
   "backend/tests/fixtures/telegram_channel_export.json",
-  "docs/CONTENT_CATALOG.md", "tools/pikabu_collect.py",
+  "docs/CONTENT_CATALOG.md", "docs/IMAGE_CATALOG.md", "tools/pikabu_collect.py",
   "docs/knowledge-base/ARTICLE_STANDARD.md",
   "docs/knowledge-base/EDITORIAL_VAULT.md",
   "work/editorial-vault-completion/**",
