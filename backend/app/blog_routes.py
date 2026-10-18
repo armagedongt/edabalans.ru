@@ -139,7 +139,7 @@ def _breadcrumbs(article=None) -> tuple[str, dict]:
     items = [("Блог", BLOG_PUBLIC_URL)]
     if article is not None:
         items += [(article.category, BLOG_PUBLIC_URL + "?" + urlencode({"category": article.category})),
-                  (article.title, BLOG_PUBLIC_URL + "/articles/" + article.slug)]
+                  (article.title, BLOG_PUBLIC_URL + "/" + article.slug)]
     else:
         items.append(("Сергей Воронцов", BLOG_PUBLIC_URL + _author()["path"]))
     links = ' <span aria-hidden="true">/</span> '.join(
@@ -296,26 +296,24 @@ def favicon_test_page(variant: str) -> HTMLResponse:
     return response
 
 
-@router.get("/articles/{slug}", include_in_schema=False)
-@router.get("/blog/articles/{slug}", include_in_schema=False)
 def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
     catalog = _public_catalog(db)
     card_overrides = published_card_overrides(db)
     article = catalog.by_slug(slug)
     if article is None:
         raise HTTPException(status_code=404, detail="article not found")
-    published = public_payload(db, slug)
+    published = public_payload(db, article.document_key)
     markdown = (
         published["markdown"] if published is not None
         else (catalog.content_dir / "articles" / article.body_file).read_text(encoding="utf-8")
     )
     body, toc = (
-        render_article(slug, published, public=True)
+        render_article(article.document_key, published, public=True)
         if published is not None
         else render_article_body(catalog, article)
     )
     body = insert_inline_related(catalog, article, body)
-    canonical = f"{BLOG_PUBLIC_URL}/articles/{article.slug}"
+    canonical = f"{BLOG_PUBLIC_URL}/{article.slug}"
     social_image = article.card.file
     author = _author()
     breadcrumbs, breadcrumb_data = _breadcrumbs(article)
@@ -395,7 +393,7 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
 @router.get("/blog/sitemap.xml", include_in_schema=False)
 def blog_sitemap() -> Response:
     catalog = load_blog_catalog()
-    locations = [BLOG_PUBLIC_URL, BLOG_PUBLIC_URL + _author()["path"], *(f"{BLOG_PUBLIC_URL}/articles/{article.slug}" for article in catalog.published)]
+    locations = [BLOG_PUBLIC_URL, BLOG_PUBLIC_URL + _author()["path"], *(f"{BLOG_PUBLIC_URL}/{article.slug}" for article in catalog.published)]
     items = "".join(f"<url><loc>{escape(location)}</loc></url>" for location in locations)
     xml = f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{items}</urlset>'
     response = Response(xml, media_type="application/xml")
@@ -450,6 +448,5 @@ def blog_media(media_name: str) -> FileResponse:
     return response
 
 
-@router.get("/jpn", include_in_schema=False)
-def japanese_article_alias(db: Session = Depends(get_db)) -> HTMLResponse:
-    return blog_article("pochemu-yapontsy-hudye-a-ty-net", db)
+# Register the article segment after sitemap/robots and the other service routes.
+router.add_api_route("/blog/{slug}", blog_article, methods=["GET"], include_in_schema=False)

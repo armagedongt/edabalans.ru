@@ -43,6 +43,7 @@ from scripts.publish_blog_draft import build_package, upload
 FIXTURE = Path(__file__).parent / "fixtures" / "blog-draft-real"
 FIXTURE_SLUG = "vse-znayut-nikto-ne-delaet"
 SLUG = "skolko-vremeni-nuzhno-na-pohudenie"
+PUBLIC_SLUG = "sroki-pohudeniya"
 
 
 def _attachment(scope):
@@ -82,7 +83,7 @@ def test_editorial_attachment_is_private_until_blog_publication_and_survives_ret
     assert delivered.status_code == 200 and delivered.content == raw
     assert delivered.headers["content-type"] == "image/png"
     assert delivered.headers["cache-control"] == "private, no-store"
-    page = client.get(f"/blog/articles/{SLUG}")
+    page = client.get(f"/blog/{PUBLIC_SLUG}")
     assert page.status_code == 200 and f'src="{canonical_url}"' in page.text
     reopened = client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]
     assert reopened["markdown"] == markdown and reopened["editorial_status"] == "published"
@@ -293,10 +294,10 @@ def _put(client: TestClient, package: dict | None = None):
 
 def _catalog_page(client: TestClient, slug: str):
     published = load_blog_catalog().published
-    index = next(index for index, article in enumerate(published) if article.slug == slug)
+    index = next(index for index, article in enumerate(published) if article.document_key == slug)
     response = client.get("/blog", params={"page": index // BLOG_PAGE_SIZE + 1})
     assert response.status_code == 200
-    assert f'href="/blog/articles/{slug}"' in response.text
+    assert f'href="/blog/{load_blog_catalog().by_document_key(slug).slug}"' in response.text
     return response
 
 
@@ -365,7 +366,7 @@ def test_legacy_full_put_inherits_manifest_card_and_fit_when_available(monkeypat
     )
     monkeypatch.setattr(
         "app.blog_draft_service.load_blog_catalog",
-        lambda: SimpleNamespace(by_slug=lambda _: manifest_article),
+        lambda: SimpleNamespace(by_document_key=lambda _: manifest_article),
     )
     payload = prepare_package(SLUG, legacy_body)
     assert payload["card"] == "02.webp"
@@ -463,10 +464,10 @@ def test_cover_selection_is_versioned_and_published_to_catalog(authoring) -> Non
 def test_legacy_published_snapshot_inherits_manifest_card_when_old_media_was_removed(authoring) -> None:
     client, factory = authoring
     catalog = load_blog_catalog()
-    manifest_article = catalog.by_slug("temperatura-vody-dlya-priema-vnutr")
+    manifest_article = catalog.by_document_key("temperatura-vody-dlya-priema-vnutr")
     assert manifest_article is not None
     assert manifest_article.card.fit == "contain"
-    slug = manifest_article.slug
+    slug = manifest_article.document_key
     seeded = client.get(f"/admin/api/blog/articles/{slug}").json()["article"]
     saved = client.patch(
         f"/admin/api/blog/articles/{slug}/text",
@@ -512,7 +513,7 @@ def test_existing_article_seed_publish_and_later_draft_do_not_leak(authoring) ->
 
     marker = "Проверка публикации существующей статьи."
     changed = article["markdown"] + f"\n\n## Проверка выпуска\n\n{marker}\n"
-    git_fallback = client.get(f"/blog/articles/{SLUG}")
+    git_fallback = client.get(f"/blog/{PUBLIC_SLUG}")
     assert "Мне надолго запомнился звонок женщины" in git_fallback.text
     saved = client.patch(
         f"/admin/api/blog/articles/{SLUG}/text",
@@ -520,7 +521,7 @@ def test_existing_article_seed_publish_and_later_draft_do_not_leak(authoring) ->
     )
     assert saved.status_code == 200
     assert saved.json()["article"]["editorial_status"] == "moderation"
-    assert marker not in client.get(f"/blog/articles/{SLUG}").text
+    assert marker not in client.get(f"/blog/{PUBLIC_SLUG}").text
 
     published = client.post(
         f"/admin/api/blog/articles/{SLUG}/publish",
@@ -528,13 +529,13 @@ def test_existing_article_seed_publish_and_later_draft_do_not_leak(authoring) ->
     )
     assert published.status_code == 200, published.text
     assert published.json()["article"]["editorial_status"] == "published"
-    assert published.json()["public_url"].startswith(BLOG_PUBLIC_URL + "/articles/")
-    assert published.json()["public_url"].endswith(f"/articles/{SLUG}")
-    public_page = client.get(f"/blog/articles/{SLUG}")
+    assert published.json()["public_url"].startswith(BLOG_PUBLIC_URL + "/")
+    assert published.json()["public_url"].endswith(f"/{PUBLIC_SLUG}")
+    public_page = client.get(f"/blog/{PUBLIC_SLUG}")
     assert marker in public_page.text
     assert public_page.text.count('data-component="blog-cta"') == 1
     assert 'data-tracking-key="blog_intensive"' in public_page.text
-    assert f'<link rel="canonical" href="{BLOG_PUBLIC_URL}/articles/' in public_page.text
+    assert f'<link rel="canonical" href="{BLOG_PUBLIC_URL}/' in public_page.text
 
     repeated = client.post(
         f"/admin/api/blog/articles/{SLUG}/publish",
@@ -577,7 +578,7 @@ def test_existing_article_seed_publish_and_later_draft_do_not_leak(authoring) ->
         stale_payload["cta"] = "telegram"
         stored.payload = stale_payload
         db.commit()
-    refreshed_public_page = client.get(f"/blog/articles/{SLUG}")
+    refreshed_public_page = client.get(f"/blog/{PUBLIC_SLUG}")
     assert marker in refreshed_public_page.text
     assert 'data-tracking-key="blog_intensive"' in refreshed_public_page.text
     assert 'data-tracking-key="blog_telegram"' not in refreshed_public_page.text
@@ -589,7 +590,7 @@ def test_existing_article_seed_publish_and_later_draft_do_not_leak(authoring) ->
     )
     assert next_saved.status_code == 200
     assert next_saved.json()["article"]["editorial_status"] == "moderation"
-    public_page = client.get(f"/blog/articles/{SLUG}")
+    public_page = client.get(f"/blog/{PUBLIC_SLUG}")
     assert marker in public_page.text
     assert next_marker not in public_page.text
     stale_publish = client.post(
@@ -597,7 +598,7 @@ def test_existing_article_seed_publish_and_later_draft_do_not_leak(authoring) ->
         json={"expected_version": 2, "confirm": True},
     )
     assert stale_publish.status_code == 409
-    after_conflict = client.get(f"/blog/articles/{SLUG}")
+    after_conflict = client.get(f"/blog/{PUBLIC_SLUG}")
     assert marker in after_conflict.text
     assert next_marker not in after_conflict.text
     with factory() as db:
@@ -655,7 +656,7 @@ def test_manifest_managed_draft_refreshes_canonical_fields_before_publish(author
         db.commit()
 
     reopened = client.get(f"/admin/api/blog/articles/{SLUG}").json()["article"]
-    canonical = load_blog_catalog().by_slug(SLUG)
+    canonical = load_blog_catalog().by_document_key(SLUG)
     assert reopened["title"] == canonical.title
     assert reopened["cta"] == canonical.cta
     assert reopened["media"]
@@ -674,7 +675,7 @@ def test_manifest_managed_draft_refreshes_canonical_fields_before_publish(author
         json={"expected_version": 2, "confirm": True},
     )
     assert published.status_code == 200, published.text
-    public_page = client.get(f"/blog/articles/{SLUG}")
+    public_page = client.get(f"/blog/{PUBLIC_SLUG}")
     assert marker in public_page.text
     assert 'data-tracking-key="blog_intensive"' in public_page.text
 
@@ -711,7 +712,7 @@ def test_existing_publish_keeps_manifest_media_contract(authoring) -> None:
     )
     assert response.status_code == 422
     assert "media" in response.text
-    public_page = client.get(f"/blog/articles/{SLUG}")
+    public_page = client.get(f"/blog/{PUBLIC_SLUG}")
     assert "Мне надолго запомнился звонок женщины" in public_page.text
     assert 'data-tracking-key="blog_intensive"' in public_page.text
     with factory() as db:
@@ -725,7 +726,7 @@ def test_existing_publish_keeps_manifest_media_contract(authoring) -> None:
 def test_largest_existing_article_seeds_without_inline_media(authoring) -> None:
     client, _ = authoring
     slug = "samyy-zdorovyy-chelovek-na-planete"
-    expected = load_blog_catalog().by_slug(slug)
+    expected = load_blog_catalog().by_document_key(slug)
     assert expected is not None
     response = client.get(f"/admin/api/blog/articles/{slug}")
     assert response.status_code == 200
@@ -967,13 +968,13 @@ def test_owner_catalog_is_private_and_public_catalog_stays_git_backed(authoring)
     assert internal["title"] in owner_page.text
     assert owner_page.headers["x-robots-tag"] == "noindex, nofollow"
     sitemap = client.get("/blog/sitemap.xml")
-    assert SLUG in sitemap.text
+    assert PUBLIC_SLUG in sitemap.text
 
     app.dependency_overrides[optional_blog_admin] = lambda: None
     public_page = _catalog_page(client, SLUG)
     assert "Редакция блога" not in public_page.text
     assert internal["title"] not in public_page.text
-    assert load_blog_catalog().by_slug(SLUG).title in public_page.text
+    assert load_blog_catalog().by_document_key(SLUG).title in public_page.text
     hidden = client.get(f"/blog/drafts/{SLUG}")
     assert hidden.status_code == 404
     assert hidden.headers["cache-control"] == "private, no-store"

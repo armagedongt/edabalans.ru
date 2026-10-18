@@ -109,7 +109,7 @@ def test_public_catalog_and_git_article_serve_only_registered_derivatives(media_
     client, _ = media_client
     catalogue = client.get('/blog')
     assert catalogue.status_code == 200 and 'srcset=' in catalogue.text
-    article = client.get('/blog/articles/pochemu-yapontsy-hudye-a-ty-net')
+    article = client.get('/blog/pochemu-yapontsy-hudye')
     assert article.status_code == 200
     body = re.split(r'<div class="article-body" id="article"[^>]*>', article.text, maxsplit=1)[1].split('</article>', 1)[0]
     assert re.search(r'<img[^>]*src="/blog/media/[^"]+"[^>]*srcset=', body)
@@ -126,16 +126,16 @@ def test_public_catalog_and_git_article_serve_only_registered_derivatives(media_
 def test_api_published_body_gets_responsive_images_without_rewriting_markdown(media_client):
     client, engine = media_client
     catalog = load_blog_catalog()
-    article = catalog.by_slug('pochemu-yapontsy-hudye-a-ty-net')
+    article = catalog.by_slug('pochemu-yapontsy-hudye')
     mapping = responsive_manifest(catalog.content_dir)
     name = next(name for name in article.media if name in mapping and mapping[name]['variants'])
     markdown = f'Мой исходный текст.\n\n![Моя подпись](/blog/media/{name})'
     with Session(engine) as db:
-        seed = ensure_existing_article(db, article.slug)
-        draft = update_text(db, slug=article.slug, markdown=markdown, expected_version=seed.version_no, admin='test')
-        published = publish_article(db, slug=article.slug, expected_version=draft.version_no, admin='test')
+        seed = ensure_existing_article(db, article.document_key)
+        draft = update_text(db, slug=article.document_key, markdown=markdown, expected_version=seed.version_no, admin='test')
+        published = publish_article(db, slug=article.document_key, expected_version=draft.version_no, admin='test')
         assert published.payload['markdown'] == markdown
-    html = client.get('/blog/articles/' + article.slug).text
+    html = client.get('/blog/' + article.slug).text
     body = re.split(r'<div class="article-body" id="article"[^>]*>', html, maxsplit=1)[1].split('</article>', 1)[0]
     assert 'Мой исходный текст.' in html and 'alt="Моя подпись"' in html
     image = re.search(r'<img[^>]*src="' + re.escape('/blog/media/' + name) + r'"[^>]*>', body)
@@ -171,7 +171,7 @@ def test_temporarily_hidden_article_and_its_exclusive_media_are_not_public(media
     ))
     monkeypatch.setattr('app.blog_routes.load_blog_catalog', lambda: catalog)
     assert (catalog.content_dir / 'articles' / hidden.body_file).is_file()
-    assert client.get('/blog/articles/' + hidden.slug).status_code == 404
+    assert client.get('/blog/' + hidden.slug).status_code == 404
     assert hidden.slug not in client.get('/blog/sitemap.xml').text
     images = responsive_manifest(catalog.content_dir)
     public_originals = {name for article in catalog.published for name in

@@ -177,8 +177,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11833079",
-        "slug": "10-debilnyh-faktov-o-vrednyh-produktah",
-        "url": "https://blog.похудение-это-есть.рф/articles/10-debilnyh-faktov-o-vrednyh-produktah",
+        "slug": "mify-o-produktah",
+        "url": "https://похудение-это-есть.рф/blog/mify-o-produktah",
         "body_file": "content/blog/articles/11833079.md",
         "status": "published"
       },
@@ -211,8 +211,8 @@
       },
       "canonical": {
         "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
-        "slug": "12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
-        "url": "https://blog.похудение-это-есть.рф/articles/12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
+        "slug": "12-prostyh-izmeneniy",
+        "url": "https://похудение-это-есть.рф/blog/12-prostyh-izmeneniy",
         "body_file": "content/blog/articles/Prostejshie-12-izmenenij-v-vashej-zhizni-08-11.md",
         "status": "published"
       },
@@ -268,8 +268,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "10425659",
-        "slug": "13-pravil-domashnih-trenirovok",
-        "url": "https://blog.похудение-это-есть.рф/articles/13-pravil-domashnih-trenirovok",
+        "slug": "domashnie-trenirovki",
+        "url": "https://похудение-это-есть.рф/blog/domashnie-trenirovki",
         "body_file": "content/blog/articles/10425659.md",
         "status": "published"
       },
@@ -312,7 +312,9 @@
     {
       "family_id": "blog:15-sovetov-tem-kto-hudeet",
       "title": "11 советов тем, кто худеет: заблуждения и принципы",
-      "title_aliases": ["15 советов тем, кто худеет — по одному на килограмм лишнего веса"],
+      "title_aliases": [
+        "15 советов тем, кто худеет — по одному на килограмм лишнего веса"
+      ],
       "owner_assembly_decision": {
         "decided_at": "2026-10-10",
         "decision": "Оставить 11 самостоятельных принципов (старые 2,3,4,5,6,9,10,11,12,13,14), действующий URL не менять. Практические блоки переданы в 12 изменений, предупреждение о завышении расхода калорий перенесено из 12 сюда.",
@@ -322,8 +324,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "tilda-49734795",
-        "slug": "15-sovetov-tem-kto-hudeet",
-        "url": "https://blog.похудение-это-есть.рф/articles/15-sovetov-tem-kto-hudeet",
+        "slug": "11-sovetov-hudeyushchim",
+        "url": "https://похудение-это-есть.рф/blog/11-sovetov-hudeyushchim",
         "body_file": "content/blog/articles/tilda-49734795.md",
         "status": "published"
       },
@@ -354,8 +356,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11534645",
-        "slug": "sladkoezhka-uvelichte-dozu-vitaminov",
-        "url": "https://blog.похудение-это-есть.рф/articles/sladkoezhka-uvelichte-dozu-vitaminov",
+        "slug": "sahar-i-vitaminy",
+        "url": "https://похудение-это-есть.рф/blog/sahar-i-vitaminy",
         "body_file": "content/blog/articles/11534645.md",
         "status": "published"
       },
@@ -383,8 +385,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "12922345",
-        "slug": "a-mne-trener-posovetoval",
-        "url": "https://blog.похудение-это-есть.рф/articles/a-mne-trener-posovetoval",
+        "slug": "sovety-trenera",
+        "url": "https://похудение-это-есть.рф/blog/sovety-trenera",
         "body_file": "content/blog/articles/12922345.md",
         "status": "published"
       },
@@ -414,8 +416,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11188875",
-        "slug": "belyy-ris-kury-i-vitamin-b1",
-        "url": "https://blog.похудение-это-есть.рф/articles/belyy-ris-kury-i-vitamin-b1",
+        "slug": "ris-i-vitamin-b1",
+        "url": "https://похудение-это-есть.рф/blog/ris-i-vitamin-b1",
         "body_file": "content/blog/articles/11188875.md",
         "status": "published"
       },
@@ -448,8 +450,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11857250",
-        "slug": "borba-s-lishnim-vesom-pochemu-shagov-nedostatochno",
-        "url": "https://blog.похудение-это-есть.рф/articles/borba-s-lishnim-vesom-pochemu-shagov-nedostatochno",
+        "slug": "pochemu-shagov-nedostatochno",
+        "url": "https://похудение-это-есть.рф/blog/pochemu-shagov-nedostatochno",
         "body_file": "content/blog/articles/11857250.md",
         "status": "published"
       },
@@ -477,8 +479,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "13762311",
-        "slug": "velikiy-post-pohudenie-i-zdorove",
-        "url": "https://blog.похудение-это-есть.рф/articles/velikiy-post-pohudenie-i-zdorove",
+        "slug": "velikiy-post-i-pitanie",
+        "url": "https://похудение-это-есть.рф/blog/velikiy-post-i-pitanie",
         "body_file": "content/blog/articles/13762311.md",
         "status": "published"
       },
@@ -526,7 +528,7 @@
       "canonical": {
         "source_id": "tilda-67280331",
         "slug": "vesy-instrukciya-po-primeneniyu",
-        "url": "https://blog.похудение-это-есть.рф/articles/vesy-instrukciya-po-primeneniyu",
+        "url": "https://похудение-это-есть.рф/blog/vesy-instrukciya-po-primeneniyu",
         "body_file": "content/blog/articles/tilda-67280331.md",
         "status": "published"
       },
@@ -557,8 +559,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "10978866",
-        "slug": "vot-vam-i-olive",
-        "url": "https://blog.похудение-это-есть.рф/articles/vot-vam-i-olive",
+        "slug": "5-sovetov-k-zastolyu",
+        "url": "https://похудение-это-есть.рф/blog/5-sovetov-k-zastolyu",
         "body_file": "content/blog/articles/10978866.md",
         "status": "published"
       },
@@ -591,8 +593,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "10123213",
-        "slug": "vse-znayut-nikto-ne-delaet",
-        "url": "https://blog.похудение-это-есть.рф/articles/vse-znayut-nikto-ne-delaet",
+        "slug": "kak-delat-zaryadku",
+        "url": "https://похудение-это-есть.рф/blog/kak-delat-zaryadku",
         "body_file": "content/blog/articles/10123213.md",
         "status": "published"
       },
@@ -622,8 +624,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "d1baceb9e2b6b72013b6",
-        "slug": "glavnye-oshibki-v-pohudenii-do-goloda",
-        "url": "https://blog.похудение-это-есть.рф/articles/glavnye-oshibki-v-pohudenii-do-goloda",
+        "slug": "glavnye-oshibki-pohudeniya",
+        "url": "https://похудение-это-есть.рф/blog/glavnye-oshibki-pohudeniya",
         "body_file": "content/blog/articles/d1baceb9e2b6b72013b6.md",
         "status": "published"
       },
@@ -651,8 +653,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11207593",
-        "slug": "glikemicheskiy-indeks-eto-lishnee",
-        "url": "https://blog.похудение-это-есть.рф/articles/glikemicheskiy-indeks-eto-lishnee",
+        "slug": "glikemicheskiy-indeks",
+        "url": "https://похудение-это-есть.рф/blog/glikemicheskiy-indeks",
         "body_file": "content/blog/articles/11207593.md",
         "status": "published"
       },
@@ -683,7 +685,7 @@
       "canonical": {
         "source_id": "11494317",
         "slug": "dieta-sryv-i-matematika",
-        "url": "https://blog.похудение-это-есть.рф/articles/dieta-sryv-i-matematika",
+        "url": "https://похудение-это-есть.рф/blog/dieta-sryv-i-matematika",
         "body_file": "content/blog/articles/11494317.md",
         "status": "published"
       },
@@ -711,8 +713,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11989790",
-        "slug": "dolbanaya-bednost",
-        "url": "https://blog.похудение-это-есть.рф/articles/dolbanaya-bednost",
+        "slug": "skidki-i-pereedanie",
+        "url": "https://похудение-это-есть.рф/blog/skidki-i-pereedanie",
         "body_file": "content/blog/articles/11989790.md",
         "status": "published"
       },
@@ -762,7 +764,7 @@
       "canonical": {
         "source_id": "10797468",
         "slug": "zhiroszhigayushchaya-zona-ne-rabotaet",
-        "url": "https://blog.похудение-это-есть.рф/articles/zhiroszhigayushchaya-zona-ne-rabotaet",
+        "url": "https://похудение-это-есть.рф/blog/zhiroszhigayushchaya-zona-ne-rabotaet",
         "body_file": "content/blog/articles/10797468.md",
         "status": "published"
       },
@@ -821,8 +823,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "12109482",
-        "slug": "zadacha-pohudet-uroven-slozhnosti-zima",
-        "url": "https://blog.похудение-это-есть.рф/articles/zadacha-pohudet-uroven-slozhnosti-zima",
+        "slug": "pohudenie-zimoy",
+        "url": "https://похудение-это-есть.рф/blog/pohudenie-zimoy",
         "body_file": "content/blog/articles/12109482.md",
         "status": "published"
       },
@@ -874,8 +876,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "amkbo7kgg1",
-        "slug": "zachem-nuzhny-trenirovki-krome-pohudeniya",
-        "url": "https://blog.похудение-это-есть.рф/articles/zachem-nuzhny-trenirovki-krome-pohudeniya",
+        "slug": "zachem-nuzhny-trenirovki",
+        "url": "https://похудение-это-есть.рф/blog/zachem-nuzhny-trenirovki",
         "body_file": "content/blog/articles/amkbo7kgg1.md",
         "status": "published"
       },
@@ -914,8 +916,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "13178972",
-        "slug": "izmeryaem-vashu-zhirnost",
-        "url": "https://blog.похудение-это-есть.рф/articles/izmeryaem-vashu-zhirnost",
+        "slug": "procent-zhira",
+        "url": "https://похудение-это-есть.рф/blog/procent-zhira",
         "body_file": "content/blog/articles/13178972.md",
         "status": "published"
       },
@@ -955,8 +957,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "intuitivnoe-pitanie-04-27-2",
-        "slug": "intuitivnoe-pitanie-vy-vse-nepravilno-ponyali",
-        "url": "https://blog.похудение-это-есть.рф/articles/intuitivnoe-pitanie-vy-vse-nepravilno-ponyali",
+        "slug": "intuitivnoe-pitanie",
+        "url": "https://похудение-это-есть.рф/blog/intuitivnoe-pitanie",
         "body_file": "content/blog/articles/intuitivnoe-pitanie-04-27-2.md",
         "status": "published"
       },
@@ -996,8 +998,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "training-combined-2023",
-        "slug": "kak-nachat-trenirovki-i-ne-brosit",
-        "url": "https://blog.похудение-это-есть.рф/articles/kak-nachat-trenirovki-i-ne-brosit",
+        "slug": "kak-nachat-trenirovki",
+        "url": "https://похудение-это-есть.рф/blog/kak-nachat-trenirovki",
         "body_file": "content/blog/articles/training-combined-2023.md",
         "status": "published"
       },
@@ -1053,8 +1055,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "2e269fdc52d600a64753",
-        "slug": "kak-ya-reshil-proyti-100000-shagov",
-        "url": "https://blog.похудение-это-есть.рф/articles/kak-ya-reshil-proyti-100000-shagov",
+        "slug": "100000-shagov",
+        "url": "https://похудение-это-есть.рф/blog/100000-shagov",
         "body_file": "content/blog/articles/2e269fdc52d600a64753.md",
         "status": "published"
       },
@@ -1112,7 +1114,7 @@
       "canonical": {
         "source_id": "11339712",
         "slug": "kakaya-samaya-vrednaya-dieta",
-        "url": "https://blog.похудение-это-есть.рф/articles/kakaya-samaya-vrednaya-dieta",
+        "url": "https://похудение-это-есть.рф/blog/kakaya-samaya-vrednaya-dieta",
         "body_file": "content/blog/articles/11339712.md",
         "status": "published"
       },
@@ -1152,8 +1154,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "12269678",
-        "slug": "zastrahoval-mamu-ot-onkologii",
-        "url": "https://blog.похудение-это-есть.рф/articles/zastrahoval-mamu-ot-onkologii",
+        "slug": "strahovka-ot-onkologii",
+        "url": "https://похудение-это-есть.рф/blog/strahovka-ot-onkologii",
         "body_file": "content/blog/articles/12269678.md",
         "status": "published"
       },
@@ -1189,7 +1191,7 @@
       "canonical": {
         "source_id": "11448583",
         "slug": "mama-s-dnyom-rozhdeniya",
-        "url": "https://blog.похудение-это-есть.рф/articles/mama-s-dnyom-rozhdeniya",
+        "url": "https://похудение-это-есть.рф/blog/mama-s-dnyom-rozhdeniya",
         "body_file": "content/blog/articles/11448583.md",
         "status": "published"
       },
@@ -1224,8 +1226,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
-        "slug": "minus-12-kilogrammov-za-2-mesyaca",
-        "url": "https://blog.похудение-это-есть.рф/articles/minus-12-kilogrammov-za-2-mesyaca",
+        "slug": "bystroe-pohudenie",
+        "url": "https://похудение-это-есть.рф/blog/bystroe-pohudenie",
         "body_file": "content/blog/articles/Minus-12-kilogramm-za-2-mesyaca-07-13.md",
         "status": "published"
       },
@@ -1254,7 +1256,7 @@
       "canonical": {
         "source_id": "693339",
         "slug": "mozhno-li-pit-vo-vremya-edy",
-        "url": "https://blog.похудение-это-есть.рф/articles/mozhno-li-pit-vo-vremya-edy",
+        "url": "https://похудение-это-есть.рф/blog/mozhno-li-pit-vo-vremya-edy",
         "body_file": "content/blog/articles/693339.md",
         "status": "published"
       },
@@ -1285,8 +1287,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11665295",
-        "slug": "musornaya-ryba-ili-musornye-nutriciologi",
-        "url": "https://blog.похудение-это-есть.рф/articles/musornaya-ryba-ili-musornye-nutriciologi",
+        "slug": "mify-o-tilapii",
+        "url": "https://похудение-это-есть.рф/blog/mify-o-tilapii",
         "body_file": "content/blog/articles/11665295.md",
         "status": "published"
       },
@@ -1326,8 +1328,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11875492",
-        "slug": "nepriyatnaya-pravda-pro-med",
-        "url": "https://blog.похудение-это-есть.рф/articles/nepriyatnaya-pravda-pro-med",
+        "slug": "med-polza-i-vred",
+        "url": "https://похудение-это-есть.рф/blog/med-polza-i-vred",
         "body_file": "content/blog/articles/11875492.md",
         "status": "published"
       },
@@ -1355,8 +1357,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "12296286",
-        "slug": "net-vremeni-obyasnyat-prosto-hudey",
-        "url": "https://blog.похудение-это-есть.рф/articles/net-vremeni-obyasnyat-prosto-hudey",
+        "slug": "osnovy-pohudeniya",
+        "url": "https://похудение-это-есть.рф/blog/osnovy-pohudeniya",
         "body_file": "content/blog/articles/12296286.md",
         "status": "published"
       },
@@ -1384,8 +1386,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11210930",
-        "slug": "nutriciolog-ili-dietolog-komu-verit",
-        "url": "https://blog.похудение-это-есть.рф/articles/nutriciolog-ili-dietolog-komu-verit",
+        "slug": "nutriciolog-ili-dietolog",
+        "url": "https://похудение-это-есть.рф/blog/nutriciolog-ili-dietolog",
         "body_file": "content/blog/articles/11210930.md",
         "status": "published"
       },
@@ -1413,8 +1415,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "13355824",
-        "slug": "o-yarlykah",
-        "url": "https://blog.похудение-это-есть.рф/articles/o-yarlykah",
+        "slug": "yarlyki-i-pohudenie",
+        "url": "https://похудение-это-есть.рф/blog/yarlyki-i-pohudenie",
         "body_file": "content/blog/articles/13355824.md",
         "status": "published"
       },
@@ -1442,8 +1444,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "0d583f6ad1cea0eef750",
-        "slug": "odin-nebolshoy-pryzhok-bolshie-peremeny",
-        "url": "https://blog.похудение-это-есть.рф/articles/odin-nebolshoy-pryzhok-bolshie-peremeny",
+        "slug": "travma-na-velosipede",
+        "url": "https://похудение-это-есть.рф/blog/travma-na-velosipede",
         "body_file": "content/blog/articles/0d583f6ad1cea0eef750.md",
         "status": "published"
       },
@@ -1485,8 +1487,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "10532723",
-        "slug": "posledniy-zhir-na-zhivote-plan-deystviy",
-        "url": "https://blog.похудение-это-есть.рф/articles/posledniy-zhir-na-zhivote-plan-deystviy",
+        "slug": "posledniy-zhir-na-zhivote",
+        "url": "https://похудение-это-есть.рф/blog/posledniy-zhir-na-zhivote",
         "body_file": "content/blog/articles/10532723.md",
         "status": "published"
       },
@@ -1546,7 +1548,7 @@
       "canonical": {
         "source_id": "13436070",
         "slug": "poterya-myshc-pri-pohudenii",
-        "url": "https://blog.похудение-это-есть.рф/articles/poterya-myshc-pri-pohudenii",
+        "url": "https://похудение-это-есть.рф/blog/poterya-myshc-pri-pohudenii",
         "body_file": "content/blog/articles/13436070.md",
         "status": "published"
       },
@@ -1574,8 +1576,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11401696",
-        "slug": "pohudenie-nachinaetsya-ne-s-pohudeniya",
-        "url": "https://blog.похудение-это-есть.рф/articles/pohudenie-nachinaetsya-ne-s-pohudeniya",
+        "slug": "plan-pohudeniya",
+        "url": "https://похудение-это-есть.рф/blog/plan-pohudeniya",
         "body_file": "content/blog/articles/11401696.md",
         "status": "published"
       },
@@ -1645,8 +1647,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "30e4d208f2cbd8e57201",
-        "slug": "pochemu-lyudi-hudeyut-i-snova-nabirayut-ves",
-        "url": "https://blog.похудение-это-есть.рф/articles/pochemu-lyudi-hudeyut-i-snova-nabirayut-ves",
+        "slug": "vozvrat-vesa",
+        "url": "https://похудение-это-есть.рф/blog/vozvrat-vesa",
         "body_file": "content/blog/articles/30e4d208f2cbd8e57201.md",
         "status": "published"
       },
@@ -1675,7 +1677,7 @@
       "canonical": {
         "source_id": "11801517",
         "slug": "pochemu-pitanie-vazhnee-trenirovok",
-        "url": "https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok",
+        "url": "https://похудение-это-есть.рф/blog/pochemu-pitanie-vazhnee-trenirovok",
         "body_file": "content/blog/articles/11801517.md",
         "status": "published"
       },
@@ -1708,8 +1710,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11927800",
-        "slug": "pochemu-yapontsy-hudye-a-ty-net",
-        "url": "https://blog.похудение-это-есть.рф/articles/pochemu-yapontsy-hudye-a-ty-net",
+        "slug": "pochemu-yapontsy-hudye",
+        "url": "https://похудение-это-есть.рф/blog/pochemu-yapontsy-hudye",
         "body_file": "content/blog/articles/11927800.md",
         "status": "published"
       },
@@ -1765,8 +1767,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "10999474",
-        "slug": "pp-recepty-eto-ploho",
-        "url": "https://blog.похудение-это-есть.рф/articles/pp-recepty-eto-ploho",
+        "slug": "pp-recepty-i-pohudenie",
+        "url": "https://похудение-это-есть.рф/blog/pp-recepty-i-pohudenie",
         "body_file": "content/blog/articles/10999474.md",
         "status": "published"
       },
@@ -1797,8 +1799,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "12857458",
-        "slug": "pravila-bezopasnosti-za-shvedskim-stolom",
-        "url": "https://blog.похудение-это-есть.рф/articles/pravila-bezopasnosti-za-shvedskim-stolom",
+        "slug": "pitanie-na-shvedskom-stole",
+        "url": "https://похудение-это-есть.рф/blog/pitanie-na-shvedskom-stole",
         "body_file": "content/blog/articles/12857458.md",
         "status": "published"
       },
@@ -1829,7 +1831,7 @@
       "canonical": {
         "source_id": "tilda-49745867",
         "slug": "pravilo-30-rasteniy",
-        "url": "https://blog.похудение-это-есть.рф/articles/pravilo-30-rasteniy",
+        "url": "https://похудение-это-есть.рф/blog/pravilo-30-rasteniy",
         "body_file": "content/blog/articles/tilda-49745867.md",
         "status": "published"
       },
@@ -1914,7 +1916,7 @@
       "canonical": {
         "source_id": "11762932",
         "slug": "professionalnyy-edok",
-        "url": "https://blog.похудение-это-есть.рф/articles/professionalnyy-edok",
+        "url": "https://похудение-это-есть.рф/blog/professionalnyy-edok",
         "body_file": "content/blog/articles/11762932.md",
         "status": "published"
       },
@@ -1943,7 +1945,7 @@
       "canonical": {
         "source_id": "10573917",
         "slug": "rezinki-dlya-trenirovok",
-        "url": "https://blog.похудение-это-есть.рф/articles/rezinki-dlya-trenirovok",
+        "url": "https://похудение-это-есть.рф/blog/rezinki-dlya-trenirovok",
         "body_file": "content/blog/articles/10573917.md",
         "status": "published"
       },
@@ -1989,8 +1991,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "12237133",
-        "slug": "samyy-zdorovyy-chelovek-na-planete",
-        "url": "https://blog.похудение-это-есть.рф/articles/samyy-zdorovyy-chelovek-na-planete",
+        "slug": "rezhim-brayana-dzhonsona",
+        "url": "https://похудение-это-есть.рф/blog/rezhim-brayana-dzhonsona",
         "body_file": "content/blog/articles/12237133.md",
         "status": "published"
       },
@@ -2018,8 +2020,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "Sahar-09-18",
-        "slug": "saharozamenitel-vyzyvaet-rak-net",
-        "url": "https://blog.похудение-это-есть.рф/articles/saharozamenitel-vyzyvaet-rak-net",
+        "slug": "saharozameniteli-i-rak",
+        "url": "https://похудение-это-есть.рф/blog/saharozameniteli-i-rak",
         "body_file": "content/blog/articles/Sahar-09-18.md",
         "status": "published"
       },
@@ -2050,7 +2052,7 @@
       "canonical": {
         "source_id": "14021584",
         "slug": "sdelat-pohudenie-proshche",
-        "url": "https://blog.похудение-это-есть.рф/articles/sdelat-pohudenie-proshche",
+        "url": "https://похудение-это-есть.рф/blog/sdelat-pohudenie-proshche",
         "body_file": "content/blog/articles/14021584.md",
         "status": "published"
       },
@@ -2078,8 +2080,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "13277231",
-        "slug": "skolko-vremeni-nuzhno-na-pohudenie",
-        "url": "https://blog.похудение-это-есть.рф/articles/skolko-vremeni-nuzhno-na-pohudenie",
+        "slug": "sroki-pohudeniya",
+        "url": "https://похудение-это-есть.рф/blog/sroki-pohudeniya",
         "body_file": "content/blog/articles/13277231.md",
         "status": "published"
       },
@@ -2107,8 +2109,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "10877887",
-        "slug": "skolko-polzy-ostaetsya-v-moloke",
-        "url": "https://blog.похудение-это-есть.рф/articles/skolko-polzy-ostaetsya-v-moloke",
+        "slug": "polza-moloka",
+        "url": "https://похудение-это-есть.рф/blog/polza-moloka",
         "body_file": "content/blog/articles/10877887.md",
         "status": "published"
       },
@@ -2154,8 +2156,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11277666",
-        "slug": "skrytye-zapory-i-banalnyy-syuzhet",
-        "url": "https://blog.похудение-это-есть.рф/articles/skrytye-zapory-i-banalnyy-syuzhet",
+        "slug": "skrytye-zapory",
+        "url": "https://похудение-это-есть.рф/blog/skrytye-zapory",
         "body_file": "content/blog/articles/11277666.md",
         "status": "published"
       },
@@ -2183,8 +2185,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "14062380",
-        "slug": "sredizemnomorskaya-dieta-eto-voobshche-chto",
-        "url": "https://blog.похудение-это-есть.рф/articles/sredizemnomorskaya-dieta-eto-voobshche-chto",
+        "slug": "sredizemnomorskaya-dieta",
+        "url": "https://похудение-это-есть.рф/blog/sredizemnomorskaya-dieta",
         "body_file": "content/blog/articles/14062380.md",
         "status": "published"
       },
@@ -2219,8 +2221,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11269472",
-        "slug": "temperatura-vody-dlya-priema-vnutr",
-        "url": "https://blog.похудение-это-есть.рф/articles/temperatura-vody-dlya-priema-vnutr",
+        "slug": "temperatura-vody",
+        "url": "https://похудение-это-есть.рф/blog/temperatura-vody",
         "body_file": "content/blog/articles/11269472.md",
         "status": "published"
       },
@@ -2250,8 +2252,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "12193581",
-        "slug": "tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom",
-        "url": "https://blog.похудение-это-есть.рф/articles/tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom",
+        "slug": "novogodniy-stol-bez-pereedaniya",
+        "url": "https://похудение-это-есть.рф/blog/novogodniy-stol-bez-pereedaniya",
         "body_file": "content/blog/articles/12193581.md",
         "status": "published"
       },
@@ -2286,8 +2288,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "13785403",
-        "slug": "tri-oshibki-v-nachale-pohudeniya",
-        "url": "https://blog.похудение-это-есть.рф/articles/tri-oshibki-v-nachale-pohudeniya",
+        "slug": "tri-oshibki-pohudeniya",
+        "url": "https://похудение-это-есть.рф/blog/tri-oshibki-pohudeniya",
         "body_file": "content/blog/articles/13785403.md",
         "status": "published"
       },
@@ -2315,8 +2317,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11906015",
-        "slug": "u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov",
-        "url": "https://blog.похудение-это-есть.рф/articles/u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov",
+        "slug": "perekusy-i-pohudenie",
+        "url": "https://похудение-это-есть.рф/blog/perekusy-i-pohudenie",
         "body_file": "content/blog/articles/11906015.md",
         "status": "published"
       },
@@ -2362,8 +2364,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "13327360",
-        "slug": "ukolol-i-pohudel-ozempik-semavik-nyuansy",
-        "url": "https://blog.похудение-это-есть.рф/articles/ukolol-i-pohudel-ozempik-semavik-nyuansy",
+        "slug": "ozempik-i-semavik",
+        "url": "https://похудение-это-есть.рф/blog/ozempik-i-semavik",
         "body_file": "content/blog/articles/13327360.md",
         "status": "published"
       },
@@ -2406,7 +2408,7 @@
       "canonical": {
         "source_id": "14102926",
         "slug": "hodit-chtoby-hudet",
-        "url": "https://blog.похудение-это-есть.рф/articles/hodit-chtoby-hudet",
+        "url": "https://похудение-это-есть.рф/blog/hodit-chtoby-hudet",
         "body_file": "content/blog/articles/14102926.md",
         "status": "published"
       },
@@ -2434,8 +2436,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "14183275",
-        "slug": "hochesh-hudet-esh-kartoshku",
-        "url": "https://blog.похудение-это-есть.рф/articles/hochesh-hudet-esh-kartoshku",
+        "slug": "kartoshka-i-pohudenie",
+        "url": "https://похудение-это-есть.рф/blog/kartoshka-i-pohudenie",
         "body_file": "content/blog/articles/14183275.md",
         "status": "published"
       },
@@ -2463,8 +2465,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "habits-formation-and-one-percent",
-        "slug": "chto-vy-ne-ponimaete-o-formirovanii-privychek",
-        "url": "https://blog.похудение-это-есть.рф/articles/chto-vy-ne-ponimaete-o-formirovanii-privychek",
+        "slug": "formirovanie-privychek",
+        "url": "https://похудение-это-есть.рф/blog/formirovanie-privychek",
         "body_file": "content/blog/articles/habits-formation-and-one-percent.md",
         "status": "published"
       },
@@ -2534,8 +2536,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "11522121",
-        "slug": "eti-dolbannye-10000-shagov",
-        "url": "https://blog.похудение-это-есть.рф/articles/eti-dolbannye-10000-shagov",
+        "slug": "10000-shagov",
+        "url": "https://похудение-это-есть.рф/blog/10000-shagov",
         "body_file": "content/blog/articles/11522121.md",
         "status": "published"
       },
@@ -2563,8 +2565,8 @@
       "disposition": "canonical_blog",
       "canonical": {
         "source_id": "10369434",
-        "slug": "kak-na-menya-napali-sobaki-v-lesu",
-        "url": "https://blog.похудение-это-есть.рф/articles/kak-na-menya-napali-sobaki-v-lesu",
+        "slug": "pokusali-sobaki",
+        "url": "https://похудение-это-есть.рф/blog/pokusali-sobaki",
         "body_file": "content/blog/articles/10369434.md",
         "status": "published"
       },

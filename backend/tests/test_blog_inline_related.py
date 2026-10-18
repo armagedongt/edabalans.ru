@@ -27,7 +27,7 @@ def test_single_slot_follows_completed_section_without_changing_body_or_toc():
     assert rendered.index('Короче, вы либо формируете обстоятельства') < block.start()
     assert rendered[block.end():].startswith('<h2 id="принцип-no5-достаточно-времени">')
     target = catalog.by_source_id(article.inline_related.source_id)
-    assert f'href="/blog/articles/{target.slug}"' in block.group(0)
+    assert f'href="/blog/{target.slug}"' in block.group(0)
     assert target.title in unescape(block.group(0)) and target.excerpt in unescape(block.group(0))
     assert all(target.title != title for _, title in toc)
 
@@ -147,11 +147,11 @@ def test_public_git_and_api_use_current_target_description_not_draft():
             yield db
     app.dependency_overrides[get_db] = database
     with TestClient(app) as client:
-        path = '/blog/articles/pochemu-yapontsy-hudye-a-ty-net'
+        path = '/blog/pochemu-yapontsy-hudye'
         baseline = client.get(path)
         assert baseline.status_code == 200 and baseline.text.count('class="reader-related"') == 1
         with Session(engine) as db:
-            slug = load_blog_catalog().by_source_id(load_blog_catalog().by_source_id('11927800').inline_related.source_id).slug
+            slug = load_blog_catalog().by_source_id(load_blog_catalog().by_source_id('11927800').inline_related.source_id).document_key
             seed = ensure_existing_article(db, slug)
             draft = update_text(db, slug=slug, markdown='---\ndescription: "Утверждённый анонс <img onerror=bad>"\n---\n\nМой текст.', expected_version=seed.version_no, admin='test')
             publish_article(db, slug=slug, expected_version=draft.version_no, admin='test')

@@ -9,6 +9,7 @@ const { chromium } = modulesRoot ? require(path.join(modulesRoot, 'playwright'))
 const baseURL = process.env.BLOG_QA_BASE_URL || 'http://127.0.0.1:8765';
 const output = process.env.QA_OUT;
 const slug = 'skolko-vremeni-nuzhno-na-pohudenie';
+const publicSlug = 'sroki-pohudeniya';
 
 const browser = await chromium.launch({ headless: true, channel: process.env.BROWSER_CHANNEL || undefined });
 const username = process.env.BLOG_QA_USER || 'qa-owner';
@@ -119,18 +120,18 @@ try {
   page.once('dialog', dialog => dialog.dismiss());
   await page.locator('#draft-publish').click();
   assert.match(await page.locator('#draft-meta').innerText(), /На модерации/);
-  const beforeConfirmation = await context.request.get(`${baseURL}/blog/articles/${slug}`);
+  const beforeConfirmation = await context.request.get(`${baseURL}/blog/${publicSlug}`);
   assert.doesNotMatch(await beforeConfirmation.text(), new RegExp(successfulMarker));
 
   page.once('dialog', dialog => dialog.accept());
   await page.locator('#draft-publish').click();
   await page.locator('#draft-notice').getByText('Статья опубликована. Публичная страница обновлена без deploy.', { exact: true }).waitFor();
   assert.match(await page.locator('#draft-meta').innerText(), /Опубликована/);
-  const publicResponse = await context.request.get(`${baseURL}/blog/articles/${slug}`);
+  const publicResponse = await context.request.get(`${baseURL}/blog/${publicSlug}`);
   assert.equal(publicResponse.status(), 200);
   assert.match(await publicResponse.text(), new RegExp(successfulMarker));
   await page.goto(`${baseURL}/blog`, { waitUntil: 'domcontentloaded' });
-  const articleCard = page.locator(`.article-card:has(a[href$="/blog/articles/${slug}"])`);
+  const articleCard = page.locator(`.article-card:has(a[href$="/blog/${publicSlug}"])`);
   const visitedPages = new Set();
   while (await articleCard.count() === 0) {
     const previousURL = page.url();

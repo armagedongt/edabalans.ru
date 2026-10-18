@@ -1,3 +1,4 @@
+from blog_test_helpers import public_slug
 from dataclasses import replace
 from html import unescape
 import re
@@ -30,7 +31,7 @@ def test_published_body_is_searchable_but_new_draft_is_not(authoring):
         version = update_text(db, slug=slug, markdown='Первое предложение. Второе предложение.\n\nВ глубине статьи уникальныйпубличныймаркер.', expected_version=seed.version_no, admin='test')
         publish_article(db, slug=slug, expected_version=version.version_no, admin='test')
         update_text(db, slug=slug, markdown='Новая ревизия секретныйчерновоймаркер.', expected_version=version.version_no, admin='test')
-    assert slugs(client.get('/blog', params={'q': 'уникальныйпубличныймаркер'}).text) == [slug]
+    assert slugs(client.get('/blog', params={'q': 'уникальныйпубличныймаркер'}).text) == [public_slug(slug)]
     assert slugs(client.get('/blog', params={'q': 'секретныйчерновоймаркер'}).text) == []
 
 
@@ -75,7 +76,7 @@ def test_empty_search_is_regular_catalog_and_query_is_escaped(authoring):
 
 def test_search_is_available_on_catalog_article_and_profile(authoring):
     client, _ = authoring
-    for route in ('/blog', '/blog/articles/pochemu-yapontsy-hudye-a-ty-net', '/blog/author/sergey-vorontsov'):
+    for route in ('/blog', '/blog/pochemu-yapontsy-hudye', '/blog/author/sergey-vorontsov'):
         result = client.get(route)
         assert result.status_code == 200
         assert 'role="search"' in result.text

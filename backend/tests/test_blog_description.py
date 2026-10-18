@@ -1,3 +1,4 @@
+from blog_test_helpers import public_slug
 import json
 
 import pytest
@@ -133,14 +134,14 @@ def test_description_stays_draft_until_publish_and_drives_catalog_and_page(descr
     client = TestClient(app)
     slug = 'pochemu-yapontsy-hudye-a-ty-net'
     catalog = load_blog_catalog()
-    catalog_page = catalog.published.index(catalog.by_slug(slug)) // 15 + 1
+    catalog_page = catalog.published.index(catalog.by_document_key(slug)) // 15 + 1
     with Session(engine) as db:
         seed = ensure_existing_article(db, slug)
         draft = update_text(db, slug=slug, markdown='---\ndescription: ' + json.dumps(description, ensure_ascii=False) + '\n---\n\nПервое предложение. Второе предложение.', expected_version=seed.version_no, admin='test')
-        before = client.get('/blog/articles/' + slug).text
+        before = client.get('/blog/' + public_slug(slug)).text
         assert escape(description, quote=True) not in before
         publish_article(db, slug=slug, expected_version=draft.version_no, admin='test')
-        page = client.get('/blog/articles/' + slug).text
+        page = client.get('/blog/' + public_slug(slug)).text
         assert '<meta name="description" content="' + escape(description, quote=True) + '">' in page
         class ImageParser(HTMLParser):
             def handle_starttag(self, tag, attrs):
@@ -150,7 +151,7 @@ def test_description_stays_draft_until_publish_and_drives_catalog_and_page(descr
         ImageParser().feed(page)
         assert 'description:' not in page
         assert escape(description, quote=True) in client.get('/blog', params={'page': catalog_page}).text
-        assert escape(description, quote=True) in client.get('/blog/articles/skolko-vremeni-nuzhno-na-pohudenie').text
+        assert escape(description, quote=True) in client.get('/blog/sroki-pohudeniya').text
         update_text(db, slug=slug, markdown='Новое начало. Вторая фраза. Третья.', expected_version=draft.version_no, admin='test')
         assert escape(description, quote=True) in client.get('/blog', params={'page': catalog_page}).text
     engine.dispose()

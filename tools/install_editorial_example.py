@@ -92,7 +92,7 @@ def install(root: Path) -> None:
     blog_css = (REPO / "backend/app/static/blog/assets/blog.css").read_text(encoding="utf-8")
     (folder / "Вставки блога.html").write_text(page("Вставки блога", blog_example(blog),
         blog_css + '\n' + css, article_class="article-body",
-        base_url="https://blog.похудение-это-есть.рф/"), encoding="utf-8")
+        base_url="https://похудение-это-есть.рф/"), encoding="utf-8")
 
 
 if __name__ == "__main__":

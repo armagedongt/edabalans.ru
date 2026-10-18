@@ -3,7 +3,7 @@
   "articles": [
     {
       "source_id": "10369434",
-      "slug": "kak-na-menya-napali-sobaki-v-lesu",
+      "slug": "pokusali-sobaki",
       "title": "Как на меня напали собаки в лесу",
       "excerpt": "Сегодня я должен был ехать на горный забег в 62 км, к которому долго готовился, а в итоге еду на вторую прививку от бешенства, к которой вообще не готовился. Собаки на меня напали впервые.",
       "category": "Личное",
@@ -49,7 +49,8 @@
         "owner_decision": "2026-10-04 keep author meaning unchanged including va-bank paragraph",
         "adaptation": "minimal_proofread_platform_tail_cleanup_original_image",
         "original_published_at": "2023-06-17T13:18:08+03:00"
-      }
+      },
+      "document_key": "kak-na-menya-napali-sobaki-v-lesu"
     },
     {
       "source_id": "amkbo7kgg1",
@@ -57,7 +58,7 @@
         "source_id": "11801517",
         "before_heading": "а-как-посчитать-расход-калорий-на-тренировках"
       },
-      "slug": "zachem-nuzhny-trenirovki-krome-pohudeniya",
+      "slug": "zachem-nuzhny-trenirovki",
       "title": "Зачем нужны тренировки (кроме похудения)",
       "excerpt": "Золотое правило любой тренировки — вы должны четко понимать, что и зачем вы делаете, иначе вы можете потратить время и силы, но лишь просто посотрясать воздух без осязаемой пользы для себя. Каждый вид тренировочной активности (бег, силовые, плавание, пилатес и пр.) имеет свою понятную конкретную…",
       "category": "Тренировки",
@@ -95,19 +96,24 @@
         ],
         "source_uri": "knowledge://resource/tilda-intensive-amkbo7kgg1",
         "original_published_at": "2026-04-03T00:00:00+03:00",
-        "original_date_evidence": {"basis": "owner_approved_tilda_date_candidate", "precision": "day", "owner_approved_at": "2026-10-05"},
+        "original_date_evidence": {
+          "basis": "owner_approved_tilda_date_candidate",
+          "precision": "day",
+          "owner_approved_at": "2026-10-05"
+        },
         "source_revision": 1,
         "sha256": "78f741f863fc124bac125c2cc685e702664438ecdce58552eb8d197ee45f6932",
         "source_basis": "full_source",
         "validation_status": "pass",
         "review_status": "pass",
         "adaptation": "minimal_proofread_intensive_navigation_cleanup_original_3_images"
-      }
+      },
+      "document_key": "zachem-nuzhny-trenirovki-krome-pohudeniya"
     },
     {
       "source_id": "12193581",
       "subscription_before_heading": "добавляем-а-не-исключаем",
-      "slug": "tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom",
+      "slug": "novogodniy-stol-bez-pereedaniya",
       "title": "Техника безопасности питания за новогодним столом",
       "excerpt": "Часто ТБ написана кровью, но те правила, о которых я расскажу сегодня, — выстраданы килограммами лишнего жира на боках и литрами пота в попытках от них потом избавиться. Время чтения = 4 минуты.",
       "category": "Качество питания",
@@ -162,11 +168,12 @@
           "source": "https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom"
     },
     {
       "source_id": "14062380",
-      "slug": "sredizemnomorskaya-dieta-eto-voobshche-chto",
+      "slug": "sredizemnomorskaya-dieta",
       "title": "Средиземноморская диета — это вообще что?!?!",
       "excerpt": "\"Диеты\" — это утрированное коверкание некоторых адекватных принципов питания в красивой обёртке. Например, средиземноморская диета — ешьте дофига овощей и фруктов и побольше цельнозерновых, да бобовых вместо булок и конфет.",
       "category": "Качество питания",
@@ -217,7 +224,8 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "sredizemnomorskaya-dieta-eto-voobshche-chto"
     },
     {
       "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
@@ -226,7 +234,7 @@
         "source_id": "12296286",
         "before_heading": "2-единственное-ограничение-в-питании"
       },
-      "slug": "12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni",
+      "slug": "12-prostyh-izmeneniy",
       "title": "12 простых изменений в питании и образе жизни",
       "excerpt": "Двигаться к своей цели маленькими шагами — не стыдно! Стыдно вообще никуда не двигаться.",
       "category": "Похудение",
@@ -253,7 +261,10 @@
       "editorial_revision": {
         "approved_at": "2026-10-10",
         "decision": "12 практических изменений в трёх направлениях; четыре практических блока из блица перенесены или соединены с существующими. Длинные отступления и учебные скриншоты сняты; отдельный пост для канала готовится после публикации.",
-        "reused_source_ids": ["tilda-49734795", "telegram:1878297271:135"],
+        "reused_source_ids": [
+          "tilda-49734795",
+          "telegram:1878297271:135"
+        ],
         "source_basis": "full_source",
         "validation_status": "pass",
         "review_status": "pass"
@@ -304,7 +315,8 @@
           "field": "header.time[datetime]",
           "checked_at": "2026-10-04T22:03:21.655450+03:00"
         }
-      }
+      },
+      "document_key": "12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni"
     },
     {
       "source_id": "11448583",
@@ -374,11 +386,12 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "mama-s-dnyom-rozhdeniya"
     },
     {
       "source_id": "12269678",
-      "slug": "zastrahoval-mamu-ot-onkologii",
+      "slug": "strahovka-ot-onkologii",
       "title": "Короче, я застраховал маму от онкологии",
       "excerpt": "Сейчас расскажу, нафига я это сделал. Рекламы не будет, расслабьтесь.",
       "category": "Личное",
@@ -427,12 +440,13 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "zastrahoval-mamu-ot-onkologii"
     },
     {
       "source_id": "11989790",
       "subscription_before_heading": "что-конкретно-выбрать-к-чаю",
-      "slug": "dolbanaya-bednost",
+      "slug": "skidki-i-pereedanie",
       "title": "Долбаная бедность",
       "excerpt": "Экономить — это как умение ездить на велосипеде. Стоит один раз научиться и его уже не пропить.",
       "category": "Похудение",
@@ -494,7 +508,8 @@
           "source": "https://pikabu.ru/story/dolbannaya_bednost_11989790",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "dolbanaya-bednost"
     },
     {
       "source_id": "10797468",
@@ -558,7 +573,8 @@
       "inline_related": {
         "source_id": "11801517",
         "before_heading": "но-пульсовые-зоны-все-равно-важны"
-      }
+      },
+      "document_key": "zhiroszhigayushchaya-zona-ne-rabotaet"
     },
     {
       "source_id": "10573917",
@@ -618,7 +634,8 @@
           "source": "https://pikabu.ru/story/rezinki_dlya_trenirovok_10573917",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "rezinki-dlya-trenirovok"
     },
     {
       "source_id": "10532723",
@@ -627,7 +644,7 @@
         "source_id": "11401696",
         "before_heading": "короче-выход-только-один-худеть-дальше"
       },
-      "slug": "posledniy-zhir-na-zhivote-plan-deystviy",
+      "slug": "posledniy-zhir-na-zhivote",
       "title": "Последний жир на животе. План действий",
       "excerpt": "Каждый день вижу посты про упрямый жир и выпирающий живот, но советы там, мягко скажем, однобокие, а иногда и совсем дебильные, написанные дешевыми копирайтерами. Неважно, ваш живот сейчас — это сдача с прошлого похудения, начало нового набора веса или вы живете с такой композицией тела, сколько себя помните, план действий от этого не зависит.",
       "category": "Похудение",
@@ -683,7 +700,8 @@
           "source": "https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "posledniy-zhir-na-zhivote-plan-deystviy"
     },
     {
       "source_id": "11906015",
@@ -692,7 +710,7 @@
         "source_id": "12296286",
         "before_heading": "5-иногда-перекусы-даже-помогают"
       },
-      "slug": "u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov",
+      "slug": "perekusy-i-pohudenie",
       "title": "У взрослой женщины не должно быть перекусов",
       "excerpt": "Скажите, вам когда-нибудь советовали отказаться от перекусов, полностью убрать сладкое, не есть после 18-00 или кушать кашку по утрам, а может, наоборот, ни в коем случае не кушать кашку? А вы задавались вопросом \"зачем?\"",
       "category": "Качество питания",
@@ -749,7 +767,8 @@
           "source": "https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov"
     },
     {
       "source_id": "10425659",
@@ -757,7 +776,7 @@
         "source_id": "11801517",
         "before_heading": "инвентарь"
       },
-      "slug": "13-pravil-domashnih-trenirovok",
+      "slug": "domashnie-trenirovki",
       "title": "13 правил для организации домашних тренировок",
       "excerpt": "От банального к неочевидному. Организовывал тренировки дома и себе, и другим.",
       "category": "Тренировки",
@@ -810,7 +829,8 @@
           "source": "https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "13-pravil-domashnih-trenirovok"
     },
     {
       "source_id": "11801517",
@@ -864,11 +884,12 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "pochemu-pitanie-vazhnee-trenirovok"
     },
     {
       "source_id": "10978866",
-      "slug": "vot-vam-i-olive",
+      "slug": "5-sovetov-k-zastolyu",
       "title": "Вот вам и ОЛИВЬЕ!",
       "excerpt": "Ниже 5 нормальных советов, а не такие как на скриншоте, которые вы ещё можете успеть сделать перед новогодним застольем! Нет, это не прикол, вот ссылка на публикацию.",
       "category": "Качество питания",
@@ -920,11 +941,12 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "vot-vam-i-olive"
     },
     {
       "source_id": "11188875",
-      "slug": "belyy-ris-kury-i-vitamin-b1",
+      "slug": "ris-i-vitamin-b1",
       "title": "Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ?",
       "excerpt": "Немного научпопа. Итак, Индонезия, остров Ява, 1886 год.",
       "category": "Качество питания",
@@ -973,12 +995,13 @@
           "source": "https://pikabu.ru/story/belyiy_ris_vorovstvo_kuryi_i_vitamin_b1_a_prichem_tut_zdorovoe_pitanie__11188875",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "belyy-ris-kury-i-vitamin-b1"
     },
     {
       "source_id": "10877887",
       "subscription_before_heading": "это-что-касается-фактов-а-теперь-давайте-обратимся-к-логике",
-      "slug": "skolko-polzy-ostaetsya-v-moloke",
+      "slug": "polza-moloka",
       "title": "Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!?",
       "excerpt": "Сотню раз слышал, что в магазинном молоке НЕ осталось никакой пользы, «не то что прямо из-под коровки». Но одно дело читать это на заборе, а другое — услышать от преподавателя в школе нутрициологии за 180 тысяч рублей!",
       "category": "Качество питания",
@@ -1035,11 +1058,12 @@
           "source": "https://pikabu.ru/story/skolko_polzyi_realno_ostaetsya_v_moloke_kotoroe_myi_pem_10877887",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "skolko-polzy-ostaetsya-v-moloke"
     },
     {
       "source_id": "10123213",
-      "slug": "vse-znayut-nikto-ne-delaet",
+      "slug": "kak-delat-zaryadku",
       "title": "Все знают, никто не делает",
       "excerpt": "Зарядка — забавная штука. Ни разу не встречал человека, кто бы не знал, что это такое. При этом знаю лишь единицы тех, кто ее реально делает, хотя бы от раза к разу.",
       "category": "Тренировки",
@@ -1089,11 +1113,12 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "vse-znayut-nikto-ne-delaet"
     },
     {
       "source_id": "habits-formation-and-one-percent",
-      "slug": "chto-vy-ne-ponimaete-o-formirovanii-privychek",
+      "slug": "formirovanie-privychek",
       "title": "Что вы не понимаете о формировании привычек?",
       "excerpt": "Почему правило «21 дня» мало помогает со сложными изменениями — и как заменить героическое терпение привычкой улучшать питание хотя бы на 1%.",
       "category": "Похудение",
@@ -1133,7 +1158,12 @@
           "c49868a9c9ac9c0231aef1b4066e17e5f45db3d815f270f0aadceac016ce7b0f"
         ],
         "original_published_at": "2026-02-03T00:00:00+03:00",
-        "original_date_evidence": {"basis": "owner_selected_full_version", "source": "knowledge://resource/tilda-intensive-fpvaefo9e1", "precision": "day", "owner_approved_at": "2026-10-05"},
+        "original_date_evidence": {
+          "basis": "owner_selected_full_version",
+          "source": "knowledge://resource/tilda-intensive-fpvaefo9e1",
+          "precision": "day",
+          "owner_approved_at": "2026-10-05"
+        },
         "source_basis": "full_source",
         "validation_status": "pass",
         "review_status": "pass"
@@ -1141,7 +1171,8 @@
       "inline_related": {
         "source_id": "30e4d208f2cbd8e57201",
         "before_heading": "я-называю-это-правило-1"
-      }
+      },
+      "document_key": "chto-vy-ne-ponimaete-o-formirovanii-privychek"
     },
     {
       "source_id": "11339712",
@@ -1196,12 +1227,13 @@
           "source": "https://pikabu.ru/story/kakaya_samaya_vrednaya_dieta_11339712",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "kakaya-samaya-vrednaya-dieta"
     },
     {
       "source_id": "intuitivnoe-pitanie-04-27-2",
       "subscription_before_heading": "10-принципов-интуитивного-питания",
-      "slug": "intuitivnoe-pitanie-vy-vse-nepravilno-ponyali",
+      "slug": "intuitivnoe-pitanie",
       "title": "Интуитивное питание — вы всё неправильно поняли",
       "excerpt": "Интуитивное питание не обязано само по себе снижать вес. Его задача — вернуть нормальные отношения с едой, чтобы дальше можно было выбирать подходящий способ похудения.",
       "category": "Похудение",
@@ -1254,12 +1286,13 @@
           "field": "header.time[datetime]",
           "checked_at": "2026-10-04T22:03:21.655450+03:00"
         }
-      }
+      },
+      "document_key": "intuitivnoe-pitanie-vy-vse-nepravilno-ponyali"
     },
     {
       "source_id": "11665295",
       "subscription_before_heading": "аргумент-no3",
-      "slug": "musornaya-ryba-ili-musornye-nutriciologi",
+      "slug": "mify-o-tilapii",
       "title": "Мусорная рыба или мусорные нутрициологи?",
       "excerpt": "Тилапию и пангасиуса регулярно называют «грязной рыбой». Разбираю три популярных претензии: условия выращивания, загрязнения и пищевую ценность.",
       "category": "Качество питания",
@@ -1311,12 +1344,13 @@
           "source": "https://pikabu.ru/story/musornaya_ryiba_ili_musornyie_nutritsiologi_11665295",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "musornaya-ryba-ili-musornye-nutriciologi"
     },
     {
       "source_id": "12109482",
       "subscription_before_heading": "продуктовая-корзина",
-      "slug": "zadacha-pohudet-uroven-slozhnosti-zima",
+      "slug": "pohudenie-zimoy",
       "title": "Задача — похудеть. Уровень сложности — ЗИМА",
       "excerpt": "Зимой мы меньше двигаемся, реже едим овощи и фрукты и легче проваливаемся в праздничное «дожиралово». Вот что можно сделать без героизма.",
       "category": "Похудение",
@@ -1371,12 +1405,13 @@
           "source": "https://pikabu.ru/story/zadacha__pokhudet_uroven_slozhnosti__zima_12109482",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "zadacha-pohudet-uroven-slozhnosti-zima"
     },
     {
       "source_id": "13178972",
       "subscription_before_heading": "а-теперь-давайте-измерим-вашу-жирность",
-      "slug": "izmeryaem-vashu-zhirnost",
+      "slug": "procent-zhira",
       "title": "Измеряем вашу жирность",
       "excerpt": "Как примерно оценить процент жира дома, зачем знать диапазон нормы и почему одна цифра не должна превращаться в приговор или стандарт красоты.",
       "category": "Ну, типа... ЗОЖ",
@@ -1432,12 +1467,13 @@
           "source": "https://pikabu.ru/story/izmeryaem_vashu_zhirnost_13178972",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "izmeryaem-vashu-zhirnost"
     },
     {
       "source_id": "13762311",
       "subscription_before_heading": "менее-очевидные-продукты",
-      "slug": "velikiy-post-pohudenie-i-zdorove",
+      "slug": "velikiy-post-i-pitanie",
       "title": "Великий пост, похудение и здоровье",
       "excerpt": "Пост может быть духовной практикой, но для питания это серьёзное ограничение. Разбираю белок, дефициты, похудение и разумные послабления.",
       "category": "Качество питания",
@@ -1489,11 +1525,12 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "velikiy-post-pohudenie-i-zdorove"
     },
     {
       "source_id": "Minus-12-kilogramm-za-2-mesyaca-07-13",
-      "slug": "minus-12-kilogrammov-za-2-mesyaca",
+      "slug": "bystroe-pohudenie",
       "title": "Минус 12 килограммов за 2 месяца",
       "excerpt": "Что на практике потребуется от обычного человека, чтобы сбросить 12 килограммов за два месяца, и почему сначала полезнее проверить реалистичность цели.",
       "category": "Похудение",
@@ -1540,11 +1577,12 @@
           "field": "header.time[datetime]",
           "checked_at": "2026-10-04T22:03:21.655450+03:00"
         }
-      }
+      },
+      "document_key": "minus-12-kilogrammov-za-2-mesyaca"
     },
     {
       "source_id": "11210930",
-      "slug": "nutriciolog-ili-dietolog-komu-verit",
+      "slug": "nutriciolog-ili-dietolog",
       "title": "Нутрициолог или диетолог — кому верить?",
       "excerpt": "Диплом сам по себе не защищает от глупостей. Разбираю, чем отличаются врач-диетолог и нутрициолог — и как выбирать специалиста по содержанию его работы.",
       "category": "Качество питания",
@@ -1591,12 +1629,13 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "nutriciolog-ili-dietolog-komu-verit"
     },
     {
       "source_id": "11534645",
       "subscription_before_heading": "это-не-решение-проблемы",
-      "slug": "sladkoezhka-uvelichte-dozu-vitaminov",
+      "slug": "sahar-i-vitaminy",
       "title": "«Сладкоежка — увеличьте дозу витаминов!»",
       "excerpt": "Почему избыток сахара нельзя исправить коробкой БАДов и что на самом деле стоит менять в рационе.",
       "category": "Качество питания",
@@ -1652,12 +1691,13 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "sladkoezhka-uvelichte-dozu-vitaminov"
     },
     {
       "source_id": "11833079",
       "subscription_before_heading": "майонез",
-      "slug": "10-debilnyh-faktov-o-vrednyh-produktah",
+      "slug": "mify-o-produktah",
       "title": "10 дебильных фактов о вредных продуктах для похудения",
       "excerpt": "Картофель, чипсы, майонез, колбаса и другие продукты, которым приписывают не тот вред — и не по тем причинам.",
       "category": "Качество питания",
@@ -1711,7 +1751,8 @@
           "source": "https://pikabu.ru/story/10_debilnyikh_faktov_o_vrednyikh_produktakh_dlya_pokhudeniya_11833079",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "10-debilnyh-faktov-o-vrednyh-produktah"
     },
     {
       "source_id": "11857250",
@@ -1719,7 +1760,7 @@
         "source_id": "11401696",
         "before_heading": "а-теперь-самое-интересное-и-грустное"
       },
-      "slug": "borba-s-lishnim-vesom-pochemu-shagov-nedostatochno",
+      "slug": "pochemu-shagov-nedostatochno",
       "title": "Борьба с лишним весом: почему одних шагов недостаточно",
       "excerpt": "Шаги полезны, но сами по себе не учат удерживать вес. Разбираю, где заканчивается польза активности и начинается попытка убежать от питания.",
       "category": "Похудение",
@@ -1766,7 +1807,8 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "borba-s-lishnim-vesom-pochemu-shagov-nedostatochno"
     },
     {
       "source_id": "13355824",
@@ -1774,7 +1816,7 @@
         "source_id": "12296286",
         "before_heading": "меняйте-фокус"
       },
-      "slug": "o-yarlykah",
+      "slug": "yarlyki-i-pohudenie",
       "title": "О ярлыках",
       "excerpt": "Как ярлык «я худею» делает еду чёрно-белой и почему добавление нормальной еды часто полезнее очередного запрета.",
       "category": "Похудение",
@@ -1819,12 +1861,13 @@
           "source": "https://pikabu.ru/story/o_yarlyikakh_13355824",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "o-yarlykah"
     },
     {
       "source_id": "d1baceb9e2b6b72013b6",
       "subscription_before_heading": "кстати-учет-калорий",
-      "slug": "glavnye-oshibki-v-pohudenii-do-goloda",
+      "slug": "glavnye-oshibki-pohudeniya",
       "title": "Главные ошибки в похудении: что нужно знать до того, как испытывать голод",
       "excerpt": "Восемь ошибок, которые превращают похудение в короткий приступ силы воли: от неправильного ПП до попытки решить всё тренировками.",
       "category": "Похудение",
@@ -1881,12 +1924,13 @@
           "field": "header.time[datetime]",
           "checked_at": "2026-10-04T22:03:21.655450+03:00"
         }
-      }
+      },
+      "document_key": "glavnye-oshibki-v-pohudenii-do-goloda"
     },
     {
       "source_id": "30e4d208f2cbd8e57201",
       "subscription_before_heading": "давайте-конкретные-примеры",
-      "slug": "pochemu-lyudi-hudeyut-i-snova-nabirayut-ves",
+      "slug": "vozvrat-vesa",
       "title": "Почему люди худеют и снова набирают вес",
       "excerpt": "Большинство людей умеют терпеть диету, но не умеют жить в новом весе. Разница — в навыках, которые остаются после похудения.",
       "category": "Похудение",
@@ -1937,12 +1981,13 @@
           "field": "header.time[datetime]",
           "checked_at": "2026-10-04T22:03:21.655450+03:00"
         }
-      }
+      },
+      "document_key": "pochemu-lyudi-hudeyut-i-snova-nabirayut-ves"
     },
     {
       "source_id": "2e269fdc52d600a64753",
       "subscription_before_heading": "маршрут",
-      "slug": "kak-ya-reshil-proyti-100000-shagov",
+      "slug": "100000-shagov",
       "title": "Как я решил пройти 100 000 шагов за один день",
       "excerpt": "Семьдесят пять километров, ночь в лесу, отсутствие воды и очень наглядная цена идеи пройти сто тысяч шагов за сутки.",
       "category": "Личное",
@@ -2006,7 +2051,12 @@
           "11553382"
         ],
         "original_published_at": "2024-06-28T18:53:57+03:00",
-        "original_date_evidence": {"basis": "owner_selected_main_report", "source": "https://pikabu.ru/story/kak_ya_100_000_shagov_reshil_proyti_11553382", "owner_approved_at": "2026-10-05", "not_first_release_of_combined_version": true},
+        "original_date_evidence": {
+          "basis": "owner_selected_main_report",
+          "source": "https://pikabu.ru/story/kak_ya_100_000_shagov_reshil_proyti_11553382",
+          "owner_approved_at": "2026-10-05",
+          "not_first_release_of_combined_version": true
+        },
         "sha256": [
           "0df360f45e4a42bcff438dc8126193dfe23bb7cacb977a87b97af1bf63c44106",
           "e1707e1647c43067a569bb24ab90a2d23e3a8f72fc3b97554c0c124aae98e466",
@@ -2015,11 +2065,12 @@
         "source_basis": "full_source",
         "validation_status": "pass",
         "review_status": "pass"
-      }
+      },
+      "document_key": "kak-ya-reshil-proyti-100000-shagov"
     },
     {
       "source_id": "0d583f6ad1cea0eef750",
-      "slug": "odin-nebolshoy-pryzhok-bolshie-peremeny",
+      "slug": "travma-na-velosipede",
       "title": "Один небольшой прыжок — большие перемены в жизни",
       "excerpt": "Один неудачный прыжок на велосипеде, травма колена и жизнь, которая после этого пошла совсем по другой дороге.",
       "category": "Личное",
@@ -2070,12 +2121,13 @@
           "field": "header.time[datetime]",
           "checked_at": "2026-10-04T22:03:21.655450+03:00"
         }
-      }
+      },
+      "document_key": "odin-nebolshoy-pryzhok-bolshie-peremeny"
     },
     {
       "source_id": "13327360",
       "subscription_before_heading": "что-нам-нужно-чтобы-поддерживать-вес",
-      "slug": "ukolol-i-pohudel-ozempik-semavik-nyuansy",
+      "slug": "ozempik-i-semavik",
       "title": "Уколол и похудел: Оземпик, Семавик и нюансы",
       "excerpt": "Препарат может стать полезным костылём или способом ничего не менять. Пять вопросов, которые стоит обсудить с врачом и самим собой.",
       "category": "Похудение",
@@ -2125,11 +2177,12 @@
           "source": "https://pikabu.ru/story/ukolol_i_pokhudel_ozempik_semavik_nyuansyi_13327360",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "ukolol-i-pohudel-ozempik-semavik-nyuansy"
     },
     {
       "source_id": "11277666",
-      "slug": "skrytye-zapory-i-banalnyy-syuzhet",
+      "slug": "skrytye-zapory",
       "title": "Скрытые запоры и банальный сюжет",
       "excerpt": "Почему попытка просто добавить побольше клетчатки иногда делает ситуацию только неприятнее — и что полезно проверить в питании сначала.",
       "category": "Ну, типа... ЗОЖ",
@@ -2176,7 +2229,8 @@
           "source": "https://pikabu.ru/story/skryityie_zaporyi_i_banalnyiy_syuzhet_vozmozhno_u_vas_tozhe_11277666",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "skrytye-zapory-i-banalnyy-syuzhet"
     },
     {
       "source_id": "11494317",
@@ -2225,11 +2279,12 @@
           "source": "https://pikabu.ru/story/dieta_sryiv_i_matematika_11494317",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "dieta-sryv-i-matematika"
     },
     {
       "source_id": "11522121",
-      "slug": "eti-dolbannye-10000-shagov",
+      "slug": "10000-shagov",
       "title": "Эти долбанные 10 000 шагов",
       "excerpt": "Откуда взялись 10 000 шагов, почему это не магическая норма и как подобрать полезный объём ходьбы под себя.",
       "category": "Тренировки",
@@ -2280,7 +2335,8 @@
       "inline_related": {
         "source_id": "11801517",
         "before_heading": "на-шагах-свет-клином-не-сошелся-вот-что-говорит-воз"
-      }
+      },
+      "document_key": "eti-dolbannye-10000-shagov"
     },
     {
       "source_id": "11762932",
@@ -2334,11 +2390,12 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "professionalnyy-edok"
     },
     {
       "source_id": "12296286",
-      "slug": "net-vremeni-obyasnyat-prosto-hudey",
+      "slug": "osnovy-pohudeniya",
       "title": "Нет времени объяснять. Просто худей!",
       "excerpt": "Четыре сферы жизни, которые определяют, будет похудение посильным процессом или очередной короткой диетой на силе воли.",
       "category": "Похудение",
@@ -2395,7 +2452,8 @@
           "source": "https://pikabu.ru/story/net_vremeni_obyasnyat_prosto_khudey_12296286",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "net-vremeni-obyasnyat-prosto-hudey"
     },
     {
       "source_id": "13436070",
@@ -2454,12 +2512,13 @@
           "source": "https://pikabu.ru/story/poterya_myishts_pri_pokhudenii_13436070",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "poterya-myshc-pri-pohudenii"
     },
     {
       "source_id": "13785403",
       "subscription_before_heading": "ошибка-3-неадекватные-тренировки",
-      "slug": "tri-oshibki-v-nachale-pohudeniya",
+      "slug": "tri-oshibki-pohudeniya",
       "title": "Три ошибки в начале похудения",
       "excerpt": "Три решения, которые выглядят логично в первый день похудения, но заметно повышают шанс быстро всё бросить.",
       "category": "Похудение",
@@ -2519,7 +2578,8 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "tri-oshibki-v-nachale-pohudeniya"
     },
     {
       "source_id": "14021584",
@@ -2577,7 +2637,8 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "sdelat-pohudenie-proshche"
     },
     {
       "source_id": "14102926",
@@ -2633,11 +2694,12 @@
       "inline_related": {
         "source_id": "11401696",
         "before_heading": "уровень-3-активная-фаза-похудения"
-      }
+      },
+      "document_key": "hodit-chtoby-hudet"
     },
     {
       "source_id": "14183275",
-      "slug": "hochesh-hudet-esh-kartoshku",
+      "slug": "kartoshka-i-pohudenie",
       "title": "Хочешь худеть? Заткнись и ешь картошку!",
       "excerpt": "Почему обычная картошка может оказаться удобным продуктом для похудения, если не путать её с фритюром и тазиком масла.",
       "category": "Качество питания",
@@ -2687,7 +2749,8 @@
           "source": "https://pikabu.ru/story/khochesh_khudet_zatknis_i_esh_kartoshku_14183275",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "hochesh-hudet-esh-kartoshku"
     },
     {
       "source_id": "12857458",
@@ -2696,7 +2759,7 @@
         "source_id": "14021584",
         "before_heading": "на-шведском-столе"
       },
-      "slug": "pravila-bezopasnosti-za-shvedskim-stolom",
+      "slug": "pitanie-na-shvedskom-stole",
       "title": "Правила безопасности за шведским столом",
       "excerpt": "Как отдохнуть в отеле со шведским столом, не превращая каждый приём пищи в соревнование и не привозя домой лишние килограммы.",
       "category": "Качество питания",
@@ -2753,7 +2816,8 @@
           "source": "https://pikabu.ru/story/pravila_bezopasnosti_za_shvedskim_stolom_12857458",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "pravila-bezopasnosti-za-shvedskim-stolom"
     },
     {
       "source_id": "693339",
@@ -2803,12 +2867,13 @@
           "field": "@graph.Article.datePublished",
           "checked_at": "2026-10-04T22:27:55.790243+03:00"
         }
-      }
+      },
+      "document_key": "mozhno-li-pit-vo-vremya-edy"
     },
     {
       "source_id": "Sahar-09-18",
       "subscription_before_heading": "а-какие-ещё-вещества-в-этом-списке",
-      "slug": "saharozamenitel-vyzyvaet-rak-net",
+      "slug": "saharozameniteli-i-rak",
       "title": "Сахарозаменитель в диетических напитках вызывает рак? Нет",
       "excerpt": "Что на самом деле означала классификация аспартама как возможного канцерогена и почему слово «возможно» нельзя читать отдельно от дозы.",
       "category": "Качество питания",
@@ -2856,11 +2921,12 @@
           "field": "header.time[datetime]",
           "checked_at": "2026-10-04T22:03:21.655450+03:00"
         }
-      }
+      },
+      "document_key": "saharozamenitel-vyzyvaet-rak-net"
     },
     {
       "source_id": "11207593",
-      "slug": "glikemicheskiy-indeks-eto-lishnee",
+      "slug": "glikemicheskiy-indeks",
       "title": "Гликемический индекс — это лишнее!",
       "excerpt": "Почему гликемический индекс отдельного продукта редко помогает принимать решения о реальном приёме пищи и похудении.",
       "category": "Качество питания",
@@ -2912,12 +2978,13 @@
           "source": "https://pikabu.ru/story/glikemicheskiy_indeks__yeto_lishnee_11207593",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "glikemicheskiy-indeks-eto-lishnee"
     },
     {
       "source_id": "10999474",
       "subscription_before_heading": "наш-девиз-всё-или-ничего",
-      "slug": "pp-recepty-eto-ploho",
+      "slug": "pp-recepty-i-pohudenie",
       "title": "ПП-рецепты — это плохо. И вот почему",
       "excerpt": "Как ярлык «ПП» заставляет переоценивать полезность блюда и почему рецепт лучше оценивать по задаче, составу и порции.",
       "category": "Качество питания",
@@ -2977,12 +3044,13 @@
           "source": "https://pikabu.ru/story/pp_retseptyi__yeto_plokho_i_vot_pochemu_10999474",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "pp-recepty-eto-ploho"
     },
     {
       "source_id": "training-combined-2023",
       "subscription_before_heading": "день-3-разминка-не-должна-быть-статической-а-заминка-вообще-не-нужна",
-      "slug": "kak-nachat-trenirovki-i-ne-brosit",
+      "slug": "kak-nachat-trenirovki",
       "title": "Как начать тренировки и не бросить",
       "excerpt": "История короткого бегового челленджа с Pikabu и практическая инструкция: как начать тренироваться, не перегореть и превратить активность в устойчивую привычку.",
       "category": "Тренировки",
@@ -3031,7 +3099,12 @@
           "752179"
         ],
         "original_published_at": "2023-10-29T10:12:40+03:00",
-        "original_date_evidence": {"basis": "owner_selected_later_instruction", "source": "https://pikabu.ru/story/kak_nachat_trenirovki_i_ne_brosit_chellendzhinstruktsiya_10779442", "owner_approved_at": "2026-10-05", "not_first_release_of_combined_version": true},
+        "original_date_evidence": {
+          "basis": "owner_selected_later_instruction",
+          "source": "https://pikabu.ru/story/kak_nachat_trenirovki_i_ne_brosit_chellendzhinstruktsiya_10779442",
+          "owner_approved_at": "2026-10-05",
+          "not_first_release_of_combined_version": true
+        },
         "sha256": [
           "d87212723d4f9bf04cb92867d4749d22341101c514f639f864604b5da0935d83",
           "da4d597d0b51a33ef928c9e795bb7bf948dfcacbb96efe06adbac03fdb3415e9",
@@ -3040,12 +3113,13 @@
         "source_basis": "full_source",
         "validation_status": "pass",
         "review_status": "pass"
-      }
+      },
+      "document_key": "kak-nachat-trenirovki-i-ne-brosit"
     },
     {
       "source_id": "12922345",
       "subscription_before_heading": "2-когда-тренер-вообще-не-понимает-что-несёт",
-      "slug": "a-mne-trener-posovetoval",
+      "slug": "sovety-trenera",
       "title": "А мне тренер посоветовал…",
       "excerpt": "Почему уверенный совет тренера по питанию ещё не становится правильным — и по каким признакам отличать опыт от компетентности.",
       "category": "Тренировки",
@@ -3105,7 +3179,8 @@
           "source": "https://pikabu.ru/story/a_mne_trener_posovetoval_12922345",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "a-mne-trener-posovetoval"
     },
     {
       "source_id": "13277231",
@@ -3113,7 +3188,7 @@
         "source_id": "11401696",
         "before_heading": "как-получить-адекватные-ожидания"
       },
-      "slug": "skolko-vremeni-nuzhno-na-pohudenie",
+      "slug": "sroki-pohudeniya",
       "title": "Сколько времени нужно на похудение?",
       "excerpt": "Ответ на вопрос о сроках либо поставит жирный крест на вашем похудении, либо заложит крепкий фундамент для изменений в жизни.",
       "category": "Похудение",
@@ -3162,12 +3237,13 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "skolko-vremeni-nuzhno-na-pohudenie"
     },
     {
       "source_id": "11401696",
       "subscription_before_heading": "активность",
-      "slug": "pohudenie-nachinaetsya-ne-s-pohudeniya",
+      "slug": "plan-pohudeniya",
       "title": "Похудение начинается не с похудения",
       "excerpt": "Для начала у похудения должен быть план! Особенно если есть желание сделать его действительно последним, а не лишь ещё одним.",
       "category": "Похудение",
@@ -3250,7 +3326,8 @@
           "source": "https://pikabu.ru/story/pokhudenie_nachinaetsya_ne_s_pokhudeniya_11401696",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "pohudenie-nachinaetsya-ne-s-pohudeniya"
     },
     {
       "source_id": "11927800",
@@ -3259,7 +3336,7 @@
         "source_id": "habits-formation-and-one-percent",
         "before_heading": "принцип-no5-достаточно-времени"
       },
-      "slug": "pochemu-yapontsy-hudye-a-ty-net",
+      "slug": "pochemu-yapontsy-hudye",
       "title": "Почему японцы худые, а ты нет?",
       "excerpt": "Давайте узнаем, а в чем причина-то? Они выиграли в генетическую лотерею или просто делают что-то, что мы не делаем? А вдруг мы тоже можем?",
       "category": "Качество питания",
@@ -3343,11 +3420,12 @@
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
-      }
+      },
+      "document_key": "pochemu-yapontsy-hudye-a-ty-net"
     },
     {
       "source_id": "11269472",
-      "slug": "temperatura-vody-dlya-priema-vnutr",
+      "slug": "temperatura-vody",
       "title": "Температура воды для приёма внутрь",
       "excerpt": "Это вообще-то важно. Короткая история и издевательски простой совет для сохранения здоровья.",
       "category": "Ну, типа... ЗОЖ",
@@ -3395,12 +3473,13 @@
           "source": "https://pikabu.ru/story/temperatura_vodyi_dlya_priema_vnutr_11269472",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "temperatura-vody-dlya-priema-vnutr"
     },
     {
       "source_id": "12237133",
       "subscription_before_heading": "7-40-сборы-и-работа",
-      "slug": "samyy-zdorovyy-chelovek-na-planete",
+      "slug": "rezhim-brayana-dzhonsona",
       "title": "Самый здоровый человек на планете",
       "excerpt": "На фотографии — Брайан Джонсон. В 47 лет предприниматель называл себя самым здоровым человеком на планете и тратил огромные деньги на проект Blueprint: анализы, режим, оборудование и попытку замедлить старение.",
       "category": "Ну, типа... ЗОЖ",
@@ -3486,12 +3565,13 @@
           "source": "https://pikabu.ru/story/samyiy_zdorovyiy_chelovek_na_planete_12237133",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "samyy-zdorovyy-chelovek-na-planete"
     },
     {
       "source_id": "11875492",
       "subscription_before_heading": "что-такое-умеренное-количество",
-      "slug": "nepriyatnaya-pravda-pro-med",
+      "slug": "med-polza-i-vred",
       "title": "Неприятная правда про мёд",
       "excerpt": "Стоит сказать, что мёд — в первую очередь сладость, как тут же начинаются возражения: «Зато в нём микроэлементы!» и «При умеренном употреблении от него только польза».",
       "category": "Качество питания",
@@ -3545,14 +3625,22 @@
           "source": "https://pikabu.ru/story/nepriyatnaya_pravda_pro_myod_11875492",
           "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
         }
-      }
+      },
+      "document_key": "nepriyatnaya-pravda-pro-med"
     },
     {
       "source_id": "tilda-49734795",
       "blog_published_at": "2026-09-17T00:00:00+03:00",
-      "blog_publication_evidence": {"precision": "day", "introduced_commit": "9ca8baa0dbd08ee0be4d3d87b74ab8ba2e312932", "confirmed_deployed_commit": "7c7f434d3708c5bd54320887985a2553652f186b", "confirmed_deployed_at": "2026-09-17T17:45:54+00:00", "source": "production journal edabalans-deploy-poll.service", "historical_source_date_unknown": true},
+      "blog_publication_evidence": {
+        "precision": "day",
+        "introduced_commit": "9ca8baa0dbd08ee0be4d3d87b74ab8ba2e312932",
+        "confirmed_deployed_commit": "7c7f434d3708c5bd54320887985a2553652f186b",
+        "confirmed_deployed_at": "2026-09-17T17:45:54+00:00",
+        "source": "production journal edabalans-deploy-poll.service",
+        "historical_source_date_unknown": true
+      },
       "subscription_before_heading": "уровень-любитель",
-      "slug": "15-sovetov-tem-kto-hudeet",
+      "slug": "11-sovetov-hudeyushchim",
       "title": "11 советов тем, кто худеет: заблуждения и принципы",
       "excerpt": "Лучшее время для похудения — ВЧЕРА! Второе лучшее время — СЕГОДНЯ!! Начнем с базы и будем повышать сложность.",
       "category": "Похудение",
@@ -3582,7 +3670,9 @@
       "editorial_revision": {
         "approved_at": "2026-10-10",
         "decision": "Оставлены исходные советы 2,3,4,5,6,9,10,11,12,13,14: одиннадцать принципов. Остальные практические блоки перенесены в 12 изменений. Пример ошибочной оценки тренировок перенесён сюда; действующий slug сохранён.",
-        "reused_source_ids": ["Prostejshie-12-izmenenij-v-vashej-zhizni-08-11"],
+        "reused_source_ids": [
+          "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11"
+        ],
         "source_basis": "full_source",
         "validation_status": "pass",
         "review_status": "pass"
@@ -3620,7 +3710,8 @@
         "html_sha256": "ec551a5fd092b5d29a603aae51c542a95299393ac96b5bda4700fea4880bc740",
         "retrieved_at": "2026-09-17",
         "source_basis": "full_source"
-      }
+      },
+      "document_key": "15-sovetov-tem-kto-hudeet"
     },
     {
       "source_id": "tilda-49745867",
@@ -3672,17 +3763,31 @@
         "project_id": "9532923",
         "page_id": "49745867",
         "original_published_at": "2023-08-08T00:00:00+03:00",
-        "original_date_evidence": {"basis": "owner_selected_family_origin", "source": "https://telegra.ph/CHast-2-08-08", "precision": "day", "owner_approved_at": "2026-10-05", "not_first_release_of_combined_version": true},
+        "original_date_evidence": {
+          "basis": "owner_selected_family_origin",
+          "source": "https://telegra.ph/CHast-2-08-08",
+          "precision": "day",
+          "owner_approved_at": "2026-10-05",
+          "not_first_release_of_combined_version": true
+        },
         "url": "https://похудение-это-есть.рф/30-rastenij",
         "html_sha256": "e76801cbf0f7bd1767d55cf87b32617755de45261818c0fdb3420aa56bd8c93a",
         "retrieved_at": "2026-09-17",
         "source_basis": "full_source"
-      }
+      },
+      "document_key": "pravilo-30-rasteniy"
     },
     {
       "source_id": "tilda-67280331",
       "blog_published_at": "2026-09-17T00:00:00+03:00",
-      "blog_publication_evidence": {"precision": "day", "introduced_commit": "9ca8baa0dbd08ee0be4d3d87b74ab8ba2e312932", "confirmed_deployed_commit": "7c7f434d3708c5bd54320887985a2553652f186b", "confirmed_deployed_at": "2026-09-17T17:45:54+00:00", "source": "production journal edabalans-deploy-poll.service", "historical_source_date_unknown": true},
+      "blog_publication_evidence": {
+        "precision": "day",
+        "introduced_commit": "9ca8baa0dbd08ee0be4d3d87b74ab8ba2e312932",
+        "confirmed_deployed_commit": "7c7f434d3708c5bd54320887985a2553652f186b",
+        "confirmed_deployed_at": "2026-09-17T17:45:54+00:00",
+        "source": "production journal edabalans-deploy-poll.service",
+        "historical_source_date_unknown": true
+      },
       "subscription_before_heading": "нужны-ли-вам-умные-весы",
       "slug": "vesy-instrukciya-po-primeneniyu",
       "title": "Весы — инструкция по применению",
@@ -3720,7 +3825,8 @@
         "html_sha256": "cdea3b9bddb8624af0c44df3e0904e818052a90f138217ddd4efaff30638c4d0",
         "retrieved_at": "2026-09-17",
         "source_basis": "full_source"
-      }
+      },
+      "document_key": "vesy-instrukciya-po-primeneniyu"
     }
   ],
   "inline_related_pool_source_ids": [

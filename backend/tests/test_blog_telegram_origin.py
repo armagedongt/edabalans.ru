@@ -67,7 +67,7 @@ def test_api_origin_publication_and_draft_boundary():
         app.dependency_overrides[dependency] = lambda: 'test-owner'
     slug = 'pochemu-yapontsy-hudye-a-ty-net'
     api = '/admin/api/blog/articles/' + slug
-    public = '/blog/articles/' + slug
+    public = '/blog/pochemu-yapontsy-hudye'
     markdown = '---\ntelegram_post_url: ' + POST + '\n---\n## Section\n\nFirst. Second.'
     try:
         with TestClient(app) as client:

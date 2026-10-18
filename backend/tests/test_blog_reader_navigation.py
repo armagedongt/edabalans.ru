@@ -1,3 +1,4 @@
+from blog_test_helpers import public_slug
 import re
 
 from fastapi import FastAPI
@@ -24,7 +25,7 @@ def test_contents_follow_public_api_revision_not_draft_and_keep_original_control
     app.dependency_overrides[get_db] = database
     slug = 'pochemu-yapontsy-hudye-a-ty-net'
     with TestClient(app) as client:
-        baseline = client.get('/blog/articles/' + slug)
+        baseline = client.get('/blog/' + public_slug(slug))
         assert baseline.status_code == 200
         assert 'class="toc-mobile"' in baseline.text and 'class="toc-dock"' in baseline.text
         assert 'id="reader-sheet"' in baseline.text and '{{READER_' not in baseline.text
@@ -35,7 +36,7 @@ def test_contents_follow_public_api_revision_not_draft_and_keep_original_control
             publish_article(db, slug=slug, expected_version=draft.version_no, admin='test')
             current = ensure_existing_article(db, slug)
             update_text(db, slug=slug, markdown='## Черновик\n\nНе выпускать.', expected_version=current.version_no, admin='test')
-        html = client.get('/blog/articles/' + slug).text
+        html = client.get('/blog/' + public_slug(slug)).text
         panel = re.search(r'<aside class="reader-sidebar".*?</aside>', html, re.S).group(0)
         anchors = re.findall(r'href="#([^"]+)"', panel)
         assert len(anchors) == 3
@@ -46,7 +47,7 @@ def test_contents_follow_public_api_revision_not_draft_and_keep_original_control
             current = ensure_existing_article(db, slug)
             short = update_text(db, slug=slug, markdown='## Короткий раздел\n\nТекст.', expected_version=current.version_no, admin='test')
             publish_article(db, slug=slug, expected_version=short.version_no, admin='test')
-        short_html = client.get('/blog/articles/' + slug).text
+        short_html = client.get('/blog/' + public_slug(slug)).text
         assert 'id="reader-sheet"' in short_html and 'class="reader-site-menu"' in short_html
         short_panel = re.search(r'<aside class="reader-sidebar".*?</aside>', short_html, re.S).group(0)
         assert '<ol>' not in short_panel and 'class="toc-mobile"' not in short_html

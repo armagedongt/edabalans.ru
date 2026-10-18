@@ -28,6 +28,10 @@ BLOG_CATEGORIES = (
     "Ну, типа... ЗОЖ",
 )
 SLUG_RE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+RESERVED_BLOG_SLUGS = frozenset({
+    "author", "media", "assets", "reader", "sitemap.xml", "robots.txt",
+    "fonts", "favicon-tests", "drafts", "articles", "admin", "api",
+})
 BLOG_PUBLIC_ORIGIN: str = os.getenv(
     "BLOG_PUBLIC_ORIGIN",
     "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
@@ -65,6 +69,7 @@ class BlogArticle:
     cta: str
     status: str
     media: tuple[str, ...]
+    document_key: str = ""
     original_published_at: str | None = None
     blog_published_at: str | None = None
     inline_related: BlogInlineRelated | None = None
@@ -83,6 +88,9 @@ class BlogCatalog:
 
     def by_slug(self, slug: str) -> BlogArticle | None:
         return next((article for article in self.published if article.slug == slug), None)
+
+    def by_document_key(self, key: str) -> BlogArticle | None:
+        return next((article for article in self.published if article.document_key == key), None)
 
     def by_source_id(self, source_id: str) -> BlogArticle | None:
         return next((article for article in self.published if article.source_id == source_id), None)
@@ -255,6 +263,7 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
         article = BlogArticle(
             source_id=source_id,
             slug=slug,
+            document_key=_required_text(raw, "document_key") if "document_key" in raw else slug,
             title=title,
             excerpt=blog_description((root / "articles" / body_file).read_text(encoding="utf-8")),
             category=category,
@@ -321,6 +330,9 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
         raise ValueError("blog source_id values must be unique")
     if len(slugs) != len(set(slugs)):
         raise ValueError("blog slugs must be unique")
+    document_keys = [article.document_key for article in catalog.articles]
+    if len(document_keys) != len(set(document_keys)):
+        raise ValueError("blog document keys must be unique")
     published_ids = {article.source_id for article in catalog.published}
     pool = catalog.inline_related_pool_source_ids
     if pool is not None:
@@ -333,8 +345,10 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
                 date = datetime.fromisoformat(timestamp)
                 if date.tzinfo is None:
                     raise ValueError(f"blog publication timestamp requires timezone: {article.source_id}")
-        if not SLUG_RE.fullmatch(article.slug):
+        if not SLUG_RE.fullmatch(article.slug) or article.slug in RESERVED_BLOG_SLUGS:
             raise ValueError(f"invalid blog slug: {article.slug}")
+        if not SLUG_RE.fullmatch(article.document_key):
+            raise ValueError(f"invalid blog document key: {article.document_key}")
         if article.category not in BLOG_CATEGORIES:
             raise ValueError(f"unknown blog category: {article.category}")
         if article.status not in {"draft", "published"}:
@@ -432,7 +446,33 @@ def render_article_body(catalog: BlogCatalog, article: BlogArticle) -> tuple[str
     metadata, source = parse_blog_metadata(source)
     rendered = markdown_to_article_html(source, component_renderer=render_blog_component)
     rendered = insert_telegram_origin(rendered, metadata)
-    return add_heading_anchors(rendered)
+    return add_heading_anchors(rewrite_blog_links(rendered, catalog))
+
+
+def rewrite_blog_links(rendered: str, catalog: BlogCatalog) -> str:
+    """Resolve links inside saved text without changing immutable body revisions."""
+    paths = {}
+    for article in catalog.published:
+        for key in {article.slug, article.document_key}:
+            for prefix in ("/articles/", "/blog/articles/", "/blog/"):
+                paths[prefix + key] = BLOG_PUBLIC_PATH + "/" + article.slug
+        if article.source_id == "11927800":
+            paths["/jpn"] = BLOG_PUBLIC_PATH + "/" + article.slug
+    public_host = urlsplit(BLOG_PUBLIC_ORIGIN).hostname
+    hosts = {public_host, "edabalans.ru", "blog." + public_host}
+
+    def replace_link(match):
+        value = urlsplit(unescape(match[1]))
+        host = value.hostname.encode("idna").decode() if value.hostname else None
+        if value.netloc and host not in hosts:
+            return match.group(0)
+        path = paths.get(value.path)
+        if path is None:
+            return match.group(0)
+        target = urlunsplit(("", "", path, value.query, value.fragment))
+        return 'href="' + escape(target, quote=True) + '"'
+
+    return re.sub(r'href="([^"]*)"', replace_link, rendered)
 
 
 def card_html(
@@ -458,7 +498,7 @@ def card_html(
     )
     return (
         f'<article class="article-card" data-category="{escape(article.category, quote=True)}">'
-        f'<a class="card-link" href="{BLOG_PUBLIC_PATH}/articles/{escape(article.slug, quote=True)}">'
+        f'<a class="card-link" href="{BLOG_PUBLIC_PATH}/{escape(article.slug, quote=True)}">'
         '<div class="card-visual">'
         f'<img class="card-image{fit_class}" src="/blog/media/{escape(selected_file, quote=True)}" '
         f'alt="{escape(selected_alt, quote=True)}" loading="lazy" decoding="async"></div>'
@@ -500,7 +540,7 @@ def insert_inline_related(catalog: BlogCatalog, article: BlogArticle, body: str)
         return body
     # A changed API heading invalidates placement; never relocate by scroll percentage.
     offset = body.index(heading)
-    card = (f'<aside class="reader-related"><a href="{BLOG_PUBLIC_PATH}/articles/{escape(target.slug, quote=True)}">'
+    card = (f'<aside class="reader-related"><a href="{BLOG_PUBLIC_PATH}/{escape(target.slug, quote=True)}">'
             '<small><span class="reader-related-arrow" aria-hidden="true">↗</span> Читайте также</small>'
             f'<strong>{escape(target.title)}</strong><span>{escape(target.excerpt)}</span></a></aside>')
     return body[:offset] + card + body[offset:]

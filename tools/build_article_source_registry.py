@@ -29,7 +29,7 @@ REPORT_PATH = (
     ROOT / "content/author-voice/source-selection/article-source-registry.md"
 )
 
-BLOG_BASE = "https://blog.похудение-это-есть.рф/articles/"
+BLOG_BASE = "https://похудение-это-есть.рф/blog/"
 
 
 # Explicit owner decisions from the article review. These are routing decisions,
@@ -166,7 +166,7 @@ def build() -> tuple[dict[str, Any], str]:
                 (
                     family
                     for family in confirmed.get("families", [])
-                    if (family.get("blog_canon") or {}).get("slug") == article["slug"]
+                    if (family.get("blog_canon") or {}).get("slug") == article.get("document_key", article["slug"])
                 ),
                 None,
             )
@@ -215,7 +215,7 @@ def build() -> tuple[dict[str, Any], str]:
         )
         published_families.append(
             {
-                "family_id": f"blog:{article['slug']}",
+                "family_id": f"blog:{article.get('document_key', article['slug'])}",
                 "title": article["title"],
                 "disposition": "canonical_blog",
                 "canonical": {

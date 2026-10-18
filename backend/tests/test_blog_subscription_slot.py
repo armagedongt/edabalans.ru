@@ -36,7 +36,7 @@ def client():
 def test_approved_japan_slot_is_manifest_backed_and_author_profile_has_no_slot(client):
     article = load_blog_catalog().by_source_id('11927800')
     assert article.subscription_before_heading == 'принцип-no4-контролировать-окружение'
-    html = client.get('/blog/articles/' + article.slug).text
+    html = client.get('/blog/' + article.slug).text
     assert f'data-subscription-before-heading="{article.subscription_before_heading}"' in html
     assert f'<h2 id="{article.subscription_before_heading}">' in html
     assert 'id="reader-popup"' in html
@@ -49,7 +49,7 @@ def test_approved_japan_slot_is_manifest_backed_and_author_profile_has_no_slot(c
 def test_other_article_receives_its_own_curated_slot_without_japan_path_dependency(client, monkeypatch):
     catalog = load_blog_catalog()
     article = catalog.by_source_id('13277231')
-    before = client.get('/blog/articles/' + article.slug).text
+    before = client.get('/blog/' + article.slug).text
     assert 'data-subscription-before-heading' not in before
     slot = 'как-прикинуть-срок-похудения'
     changed = replace(catalog, articles=tuple(
@@ -57,7 +57,7 @@ def test_other_article_receives_its_own_curated_slot_without_japan_path_dependen
         for item in catalog.articles
     ))
     monkeypatch.setattr('app.blog_routes._public_catalog', lambda _: changed)
-    after = client.get('/blog/articles/' + article.slug)
+    after = client.get('/blog/' + article.slug)
     assert after.status_code == 200
     attribute = f' data-subscription-before-heading="{slot}"'
     assert after.text.replace(attribute, '') == before
@@ -73,7 +73,7 @@ def test_curated_anchor_is_escaped_as_data_not_html(client, monkeypatch):
         for item in catalog.articles
     ))
     monkeypatch.setattr('app.blog_routes._public_catalog', lambda _: changed)
-    html = client.get('/blog/articles/' + article.slug).text
+    html = client.get('/blog/' + article.slug).text
     assert 'data-subscription-before-heading="&quot; onclick=&quot;alert(1)&lt;"' in html
     assert 'id="article" data-subscription-before-heading="" onclick=' not in html
     assert value in unescape(html)

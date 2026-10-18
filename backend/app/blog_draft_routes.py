@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.orm import Session
 
 from app.auth import admin_identity, security
-from app.blog_content import BLOG_PUBLIC_URL, blog_seo_title, toc_html
+from app.blog_content import BLOG_PUBLIC_URL, blog_seo_title, toc_html, load_blog_catalog
 from app.blog_draft_service import (
     active_article,
     active_articles,
@@ -293,7 +293,7 @@ def publish_draft(
         "ok": True,
         "article": serialize_article(draft, source=True, db=db),
         "published_version": published.version_no,
-        "public_url": f"{BLOG_PUBLIC_URL}/articles/{slug}",
+        "public_url": f"{BLOG_PUBLIC_URL}/{load_blog_catalog().by_document_key(slug).slug}",
     }
 
 

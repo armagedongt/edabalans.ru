@@ -34,7 +34,7 @@ def client():
 
 
 def slugs(html):
-    return re.findall(r'<a class="card-link" href="/blog/articles/([^"]+)"', html)
+    return re.findall(r'<a class="card-link" href="/blog/([^"]+)"', html)
 
 
 def canonical(html):

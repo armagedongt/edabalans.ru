@@ -1,3 +1,4 @@
+from blog_test_helpers import public_slug
 import hashlib
 import json
 import re
@@ -85,7 +86,7 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     )
     assert response.text.count('data-category="Ну, типа... ЗОЖ"') == expected_health_count
     assert 'id="articles-title"' not in response.text
-    assert f'/articles/{load_blog_catalog().published[0].slug}' in response.text
+    assert f'/blog/{load_blog_catalog().published[0].slug}' in response.text
     assert f'/blog/media/{load_blog_catalog().published[0].card.file}' in response.text
     assert 'loading="eager" decoding="async" fetchpriority="high"' in hero
     assert response.text.count('loading="lazy" decoding="async"') >= 6
@@ -132,14 +133,14 @@ def test_favicon_test_pages_are_isolated_and_noindex() -> None:
 
 
 def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
-    response = client.get("/blog/articles/skolko-vremeni-nuzhno-na-pohudenie")
+    response = client.get("/blog/sroki-pohudeniya")
 
     assert response.status_code == 200
     assert "Сколько времени нужно на похудение?" in response.text
     assert (
         '<link rel="canonical" '
         'href="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blog/'
-        'articles/skolko-vremeni-nuzhno-na-pohudenie">'
+        'sroki-pohudeniya">'
     ) in response.text
     assert 'class="toc-mobile"' in response.text
     assert '<details class="toc-mobile"><summary>Содержание</summary>' in response.text
@@ -243,7 +244,7 @@ def test_shared_article_styles_and_local_manrope_are_served() -> None:
     from pathlib import Path
 
     root = Path(__file__).resolve().parents[2]
-    article_page = client.get("/blog/articles/pohudenie-nachinaetsya-ne-s-pohudeniya")
+    article_page = client.get("/blog/plan-pohudeniya")
     assert article_page.status_code == 200
     assert 'id="article"' in article_page.text
     for shared_style in ("article-typography.css", "article-note.css"):
@@ -265,7 +266,7 @@ def test_shared_article_styles_and_local_manrope_are_served() -> None:
 
 
 def test_obsolete_bot_test_removed_but_author_banner_preserved() -> None:
-    page = client.get("/blog/articles/pohudenie-nachinaetsya-ne-s-pohudeniya")
+    page = client.get("/blog/plan-pohudeniya")
     assert "Тест о комфорте похудения в меню бота" not in page.text
     assert "Сергей Воронцов: похудеть быстро или навсегда" in page.text
 
@@ -281,7 +282,7 @@ def test_blog_is_indexable_and_sitemap_lists_all_articles() -> None:
     assert sitemap.status_code == 200
     assert sitemap.headers["content-type"].startswith("application/xml")
     assert sitemap.text.count("<url>") == len(load_blog_catalog().published) + 2
-    assert "/articles/nepriyatnaya-pravda-pro-med" in sitemap.text
+    assert "/blog/med-polza-i-vred" in sitemap.text
 
 
 def test_every_published_article_and_declared_media_is_served() -> None:
@@ -292,7 +293,7 @@ def test_every_published_article_and_declared_media_is_served() -> None:
         "tilda-49734795", "tilda-49745867", "tilda-67280331"
     }.issubset({article.source_id for article in catalog.published})
     for article in catalog.published:
-        page = client.get(f"/blog/articles/{article.slug}")
+        page = client.get(f"/blog/{article.slug}")
         assert page.status_code == 200
         assert page.text.count('data-component="blog-cta"') == 1
         assert page.text.count('class="article-card"') == 3
@@ -314,7 +315,7 @@ def test_every_published_article_and_declared_media_is_served() -> None:
 
 def test_confirmed_static_batch_is_published_and_excluded_stories_are_not_public() -> None:
     catalog = load_blog_catalog()
-    slugs = {article.slug for article in catalog.published}
+    slugs = {article.document_key for article in catalog.published}
     batch_sources = {
         "skrytye-zapory-i-banalnyy-syuzhet": "11277666",
         "dieta-sryv-i-matematika": "11494317",
@@ -389,7 +390,7 @@ def test_confirmed_static_batch_is_published_and_excluded_stories_are_not_public
     }
     assert excluded_slugs.isdisjoint(slugs)
     for slug in excluded_slugs:
-        assert client.get(f"/blog/articles/{slug}").status_code == 404
+        assert client.get(f"/blog/{public_slug(slug)}").status_code == 404
     excluded_source_ids = {
         "10197439",
         "11528528",
@@ -412,7 +413,7 @@ def test_confirmed_static_batch_is_published_and_excluded_stories_are_not_public
     assert (excluded_source_ids - merged_walk_ids).isdisjoint(published_provenance_ids)
     walk = next(
         article for article in manifest["articles"]
-        if article["slug"] == "kak-ya-reshil-proyti-100000-shagov"
+        if article["document_key"] == "kak-ya-reshil-proyti-100000-shagov"
     )
     assert walk["status"] == "published"
     assert walk["source_id"] == "2e269fdc52d600a64753"
@@ -422,7 +423,7 @@ def test_confirmed_static_batch_is_published_and_excluded_stories_are_not_public
             assert merged_walk_ids.isdisjoint(
                 article.get("source_provenance", {}).get("external_ids", [])
             )
-    manifest_by_slug = {article["slug"]: article for article in manifest["articles"]}
+    manifest_by_slug = {article["document_key"]: article for article in manifest["articles"]}
     for slug, source_id in batch_sources.items():
         article = manifest_by_slug[slug]
         assert article["source_id"] == source_id
@@ -445,7 +446,7 @@ def test_confirmed_static_batch_is_published_and_excluded_stories_are_not_public
 def test_semaglutide_article_preserves_reviewed_text_and_source_structure() -> None:
     catalog = load_blog_catalog()
     slug = "ukolol-i-pohudel-ozempik-semavik-nyuansy"
-    article = catalog.by_slug(slug)
+    article = catalog.by_document_key(slug)
     assert article is not None
     assert article in catalog.published
     assert article.source_id == "13327360"
@@ -455,7 +456,7 @@ def test_semaglutide_article_preserves_reviewed_text_and_source_structure() -> N
     assert article.card.file == "13327360/01.webp"
     assert article.card.fit == "contain"
 
-    page = client.get(f"/blog/articles/{slug}")
+    page = client.get(f"/blog/{public_slug(slug)}")
     header = page.text.split('<header class="article-hero">', 1)[1].split("</header>", 1)[0]
     assert "13327360/01.webp" not in header
     assert '<img src="/blog/media/13327360/01.webp"' in page.text
@@ -469,7 +470,7 @@ def test_semaglutide_article_preserves_reviewed_text_and_source_structure() -> N
 
     manifest_path = Path(__file__).resolve().parents[2] / "content" / "blog" / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    manifest_by_slug = {article["slug"]: article for article in manifest["articles"]}
+    manifest_by_slug = {article["document_key"]: article for article in manifest["articles"]}
     provenance = manifest_by_slug[slug]["source_provenance"]
     assert provenance["source_basis"] == "full_source"
     assert provenance["validation_status"] == "pass"
@@ -493,7 +494,7 @@ def test_semaglutide_article_preserves_reviewed_text_and_source_structure() -> N
 
 def test_manifest_card_fit_is_rendered_without_destructive_crop() -> None:
     catalog = load_blog_catalog()
-    article = catalog.by_slug("temperatura-vody-dlya-priema-vnutr")
+    article = catalog.by_slug("temperatura-vody")
     assert article is not None
     assert article.card.fit == "contain"
     page = client.get("/blog", params={"page": catalog.published.index(article) // 15 + 1})

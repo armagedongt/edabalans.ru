@@ -19,7 +19,7 @@ from app.models import User, MessengerAccount, MessengerLinkToken
 
 def test_public_article_prepares_single_shared_subscription_component(reader_client):
     client, _, _, _ = reader_client
-    response = client.get('/blog/articles/pochemu-yapontsy-hudye-a-ty-net')
+    response = client.get('/blog/pochemu-yapontsy-hudye')
     assert response.status_code == 200
     assert response.text.count('id="reader-popup"') == 1
     assert response.text.split('<dialog id="reader-popup"')[1].count('Пишу о питании и похудении так, чтобы вы менялись.') == 1

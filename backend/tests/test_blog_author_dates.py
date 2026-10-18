@@ -1,3 +1,4 @@
+from blog_test_helpers import public_slug
 from datetime import datetime, timezone
 from dataclasses import replace
 import json
@@ -51,7 +52,7 @@ def test_profile_and_article_share_one_author_without_generated_copy(authoring):
     assert 'blog-cta' not in profile.text
     assert '{{' not in profile.text
     assert '/blog/assets/sergey-author-channel.webp' in profile.text
-    article = client.get('/blog/articles/pochemu-yapontsy-hudye-a-ty-net')
+    article = client.get('/blog/pochemu-yapontsy-hudye')
     assert structured(article.text)[0]['author'] == person
     assert 'href="/blog/author/sergey-vorontsov"' in article.text
     assert client.get('/blog/assets/sergey-author-channel.webp').status_code == 200
@@ -60,28 +61,28 @@ def test_profile_and_article_share_one_author_without_generated_copy(authoring):
 
 def test_breadcrumbs_are_clickable_and_match_structured_data(authoring):
     client, _ = authoring
-    article = load_blog_catalog().by_slug('pochemu-yapontsy-hudye-a-ty-net')
-    page = client.get('/blog/articles/' + article.slug)
+    article = load_blog_catalog().by_slug('pochemu-yapontsy-hudye')
+    page = client.get('/blog/' + article.slug)
     breadcrumbs = structured(page.text)[1]['itemListElement']
     assert [item['position'] for item in breadcrumbs] == [1, 2, 3]
     assert breadcrumbs[0]['item'] == BLOG_PUBLIC_URL
     assert breadcrumbs[1]['item'] == BLOG_PUBLIC_URL + '?' + urlencode({'category': article.category})
-    assert breadcrumbs[2]['item'] == BLOG_PUBLIC_URL + '/articles/' + article.slug
+    assert breadcrumbs[2]['item'] == BLOG_PUBLIC_URL + '/' + article.slug
     assert f'href="/blog?{urlencode({"category": article.category})}"' in page.text
     assert f'<span aria-current="page">{article.title}</span>' in page.text
 
 
 def test_confirmed_source_date_is_shown_and_missing_date_is_not_invented(authoring, monkeypatch):
     client, _ = authoring
-    confirmed = load_blog_catalog().by_slug('kak-na-menya-napali-sobaki-v-lesu')
-    page = client.get('/blog/articles/' + confirmed.slug)
+    confirmed = load_blog_catalog().by_slug('pokusali-sobaki')
+    page = client.get('/blog/' + confirmed.slug)
     assert structured(page.text)[0]['datePublished'] == confirmed.original_published_at
     assert 'Опубликовано <time datetime="2023-06-17T13:18:08+03:00">17.06.2023</time>' in page.text
     catalog = load_blog_catalog()
     missing = replace(catalog.published[0], original_published_at=None, blog_published_at=None)
     catalog = replace(catalog, articles=tuple(missing if article.slug == missing.slug else article for article in catalog.articles))
     monkeypatch.setattr('app.blog_routes._public_catalog', lambda db: catalog)
-    page = client.get('/blog/articles/' + missing.slug)
+    page = client.get('/blog/' + missing.slug)
     assert 'datePublished' not in structured(page.text)[0]
     assert 'Исходная публикация:' not in page.text
     assert 'dateModified' not in structured(page.text)[0]
@@ -90,9 +91,9 @@ def test_confirmed_source_date_is_shown_and_missing_date_is_not_invented(authori
 @pytest.mark.parametrize('slug', ['15-sovetov-tem-kto-hudeet', 'vesy-instrukciya-po-primeneniyu'])
 def test_blog_release_fallback_is_not_claimed_as_historical_source_date(authoring, slug):
     client, _ = authoring
-    article = load_blog_catalog().by_slug(slug)
+    article = load_blog_catalog().by_document_key(slug)
     assert article.original_published_at is None
-    page = client.get('/blog/articles/' + slug)
+    page = client.get('/blog/' + public_slug(slug))
     assert structured(page.text)[0]['datePublished'] == article.blog_published_at
     assert 'Опубликовано <time' in page.text
     assert 'Исходная публикация:' not in page.text
@@ -104,7 +105,7 @@ def test_source_date_takes_priority_when_blog_release_is_also_known(authoring, m
     first = replace(catalog.published[0], original_published_at='2023-01-02T12:00:00+03:00', blog_published_at='2026-09-17T00:00:00+03:00')
     catalog = replace(catalog, articles=tuple(first if item.slug == first.slug else item for item in catalog.articles))
     monkeypatch.setattr('app.blog_routes._public_catalog', lambda db: catalog)
-    page = client.get('/blog/articles/' + first.slug)
+    page = client.get('/blog/' + first.slug)
     assert structured(page.text)[0]['datePublished'] == first.original_published_at
     assert 'Опубликовано <time' in page.text
     assert '02.01.2023</time>' in page.text
@@ -119,9 +120,9 @@ def test_new_moderation_draft_cannot_change_public_revision_date(authoring):
         published = publish_article(db, slug=slug, expected_version=seed.version_no, admin='test')
         published.created_at = datetime(2026, 9, 30, 12, 0, tzinfo=timezone.utc)
         db.commit()
-        before = client.get('/blog/articles/' + slug).text
+        before = client.get('/blog/' + public_slug(slug)).text
         update_text(db, slug=slug, markdown='Новый черновик.', expected_version=seed.version_no, admin='test')
-        after = client.get('/blog/articles/' + slug).text
+        after = client.get('/blog/' + public_slug(slug)).text
     assert structured(before)[0]['dateModified'] == '2026-09-30T12:00:00+00:00'
     assert structured(after)[0]['dateModified'] == structured(before)[0]['dateModified']
     assert 'Новый черновик.' not in after
@@ -137,10 +138,10 @@ def test_bad_publication_timestamp_is_rejected(value, field):
         validate_blog_catalog(replace(catalog, articles=(first, *catalog.articles[1:])))
 
 
-def test_japanese_article_legacy_link_uses_same_published_article_without_redirect(authoring):
+def test_japanese_article_legacy_link_is_removed_without_redirect(authoring):
     client, _ = authoring
     response = client.get('/jpn', follow_redirects=False)
-    article = client.get('/blog/articles/pochemu-yapontsy-hudye-a-ty-net')
-    assert response.status_code == 200
+    article = client.get('/blog/pochemu-yapontsy-hudye')
+    assert response.status_code == 404
     assert 'location' not in response.headers
-    assert response.text == article.text
+    assert article.status_code == 200

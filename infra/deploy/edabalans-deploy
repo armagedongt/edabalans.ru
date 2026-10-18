@@ -211,7 +211,7 @@ fi
 curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 3 --max-time 20 \
     https://похудение-это-есть.рф/blog >/dev/null
 curl --fail --silent --show-error --max-time 20 \
-    https://похудение-это-есть.рф/blog/articles/skolko-vremeni-nuzhno-na-pohudenie >/dev/null
+    https://похудение-это-есть.рф/blog/sroki-pohudeniya >/dev/null
 curl --fail --silent --show-error --max-time 20 \
     https://похудение-это-есть.рф/blog/media/13277231/01.png >/dev/null
 curl --fail --silent --show-error --max-time 15 \

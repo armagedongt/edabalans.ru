@@ -1,3 +1,4 @@
+from blog_test_helpers import public_slug
 import json
 
 import pytest
@@ -59,7 +60,7 @@ def test_public_title_uses_git_markdown_before_first_api_publication(monkeypatch
 
     app.dependency_overrides[get_db] = get_test_db
     with TestClient(app) as client:
-        page = client.get('/blog/articles/' + article.slug)
+        page = client.get('/blog/' + article.slug)
         assert page.status_code == 200
         assert '<title>' + escape(git_title) + ' · Похудение — это есть</title>' in page.text
         assert '<h1>' + escape(article.title) + '</h1>' in page.text
@@ -129,13 +130,13 @@ def test_api_save_preview_publish_and_later_draft_preserve_title_boundary(seo_ti
     for dependency in (optional_blog_admin, require_blog_admin, require_blog_mutation):
         app.dependency_overrides[dependency] = lambda: 'test-owner'
     slug = 'pochemu-yapontsy-hudye-a-ty-net'
-    title = load_blog_catalog().by_slug(slug).title
+    title = load_blog_catalog().by_document_key(slug).title
     markdown = '---\nseo_title: ' + json.dumps(seo_title) + '\n---\n\n## Section\n\nFirst. Second.'
     api = '/admin/api/blog/articles/' + slug
     with TestClient(app) as client:
         with Session(engine) as db:
             version = ensure_existing_article(db, slug).version_no
-        before = client.get('/blog/articles/' + slug).text
+        before = client.get('/blog/' + public_slug(slug)).text
         saved = client.patch(api + '/text', json={'expected_version': version, 'markdown': markdown})
         assert saved.status_code == 200, saved.text
         version = saved.json()['article']['version']
@@ -145,19 +146,19 @@ def test_api_save_preview_publish_and_later_draft_preserve_title_boundary(seo_ti
         assert 'seo_title:' not in preview.json()['html']
         draft_page = client.get('/blog/drafts/' + slug).text
         assert '<title>' + escape(seo_title) + ' · Предпросмотр блога</title>' in draft_page
-        assert client.get('/blog/articles/' + slug).text == before
+        assert client.get('/blog/' + public_slug(slug)).text == before
         stale = client.patch(api + '/text', json={'expected_version': version - 1, 'markdown': 'Wrong.'})
         assert stale.status_code == 409
         published = client.post(api + '/publish', json={'expected_version': version, 'confirm': True})
         assert published.status_code == 200, published.text
-        page = client.get('/blog/articles/' + slug).text
+        page = client.get('/blog/' + public_slug(slug)).text
         assert '<title>' + escape(seo_title) + ' · Похудение — это есть</title>' in page
         assert '<h1>' + escape(title) + '</h1>' in page
         assert '<meta property="og:title" content="' + escape(title, quote=True) + '">' in page
         assert 'seo_title:' not in page
         assert '<script>alert(1)</script>' not in page
         assert client.patch(api + '/text', json={'expected_version': version, 'markdown': 'New beginning. Second.'}).status_code == 200
-        assert client.get('/blog/articles/' + slug).text == page
+        assert client.get('/blog/' + public_slug(slug)).text == page
         history = client.get(api).json()['history']
         assert len(history) >= 3
     engine.dispose()

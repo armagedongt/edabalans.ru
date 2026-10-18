@@ -30,6 +30,7 @@ from app.blog_content import (
     parse_blog_metadata,
     insert_telegram_origin,
     blog_description,
+    rewrite_blog_links,
 )
 from app.managed_documents import (
     active_document,
@@ -227,7 +228,7 @@ def prepare_package(slug: str, source: dict) -> dict:
     hero = source.get("hero")
     if hero is not None and hero not in seen:
         raise _invalid("Hero должен ссылаться на изображение из пакета")
-    manifest_article = load_blog_catalog().by_slug(slug)
+    manifest_article = load_blog_catalog().by_document_key(slug)
     manifest_card = manifest_article.card.file if manifest_article is not None else None
     requested_card = source.get("card")
     selected_card = requested_card or (manifest_card if manifest_card in seen else hero)
@@ -270,7 +271,7 @@ def prepare_package(slug: str, source: dict) -> dict:
 
 def _existing_catalog_article(slug: str):
     catalog = load_blog_catalog()
-    article = catalog.by_slug(slug)
+    article = catalog.by_document_key(slug)
     if article is None:
         raise HTTPException(404, "Материал не найден")
     return catalog, article
@@ -524,8 +525,8 @@ def article_versions(db: Session, slug: str) -> list[ManagedDocumentVersion]:
 def active_articles(db: Session) -> list[ManagedDocumentVersion]:
     catalog = load_blog_catalog()
     for article in catalog.published:
-        ensure_existing_article(db, article.slug)
-    allowed = [article.slug for article in catalog.published]
+        ensure_existing_article(db, article.document_key)
+    allowed = [article.document_key for article in catalog.published]
     return list(
         db.scalars(
             select(ManagedDocumentVersion)
@@ -541,6 +542,7 @@ def active_articles(db: Session) -> list[ManagedDocumentVersion]:
 
 def serialize_article(version: ManagedDocumentVersion, *, source: bool, db: Session | None = None) -> dict:
     payload = effective_article_payload(version)
+    _, manifest_article = _existing_catalog_article(version.document_key)
     media = [
         {
             **{key: item[key] for key in ("name", "sha256", "mime", "provenance", "alt", "width", "height")},
@@ -555,6 +557,7 @@ def serialize_article(version: ManagedDocumentVersion, *, source: bool, db: Sess
     ]
     result = {
         "slug": version.document_key,
+        "public_slug": manifest_article.slug,
         "version": version.version_no,
         "title": payload["title"],
         "excerpt": payload["excerpt"],
@@ -621,7 +624,7 @@ def render_article(
         value = re.sub(
             r"(?<=\]\()" + re.escape(f"/media/{item['name']}") + r"(?=[\s)])",
             (
-                f"/articles/{slug}/media/{item['name']}"
+                f"/blog/{_existing_catalog_article(slug)[1].slug}/media/{item['name']}"
                 if public
                 else f"/blog/drafts/{slug}/media/{item['name']}"
             ),
@@ -630,7 +633,7 @@ def render_article(
     body = markdown_to_article_html(value)
     body += render_blog_component("blog_cta", [payload["cta"]])
     body = insert_telegram_origin(body, metadata)
-    return add_heading_anchors(body)
+    return add_heading_anchors(rewrite_blog_links(body, load_blog_catalog()))
 
 
 def publish_article(
@@ -723,7 +726,7 @@ def public_payload(db: Session, slug: str) -> dict | None:
 
 def published_card_overrides(db: Session) -> dict[str, tuple[str, str]]:
     catalog = load_blog_catalog()
-    articles = {article.slug: article for article in catalog.published}
+    articles = {article.document_key: article for article in catalog.published}
     rows = db.scalars(
         select(ManagedDocumentVersion).where(
             ManagedDocumentVersion.document_type == PUBLISHED_DOCUMENT_TYPE,
@@ -740,7 +743,7 @@ def published_card_overrides(db: Session) -> dict[str, tuple[str, str]]:
         card = row.payload.get("card")
         fit = row.payload.get("card_fit", "cover")
         if card in allowed and fit in CARD_FITS:
-            result[row.document_key] = (card, fit)
+            result[article.slug] = (card, fit)
     return result
 
 
@@ -749,7 +752,9 @@ def published_markdown_overrides(db: Session) -> dict[str, str]:
         ManagedDocumentVersion.document_type == PUBLISHED_DOCUMENT_TYPE,
         ManagedDocumentVersion.is_active.is_(True),
     ))
-    return {row.document_key: row.payload["markdown"] for row in rows}
+    catalog = load_blog_catalog()
+    return {article.slug: row.payload["markdown"] for row in rows
+            if (article := catalog.by_document_key(row.document_key)) is not None}
 
 
 def published_description_overrides(db: Session) -> dict[str, str]:

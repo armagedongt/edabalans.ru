@@ -21,68 +21,68 @@
 
 | Статья | Канон | Привязанные внешние проявления | Возможные версии на проверку |
 |---|---|---:|---:|
-| Как на меня напали собаки в лесу | [blog:kak-na-menya-napali-sobaki-v-lesu](https://blog.похудение-это-есть.рф/articles/kak-na-menya-napali-sobaki-v-lesu) | 2 | 0 |
-| 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://blog.похудение-это-есть.рф/articles/10-debilnyh-faktov-o-vrednyh-produktah) | 1 | 0 |
-| 12 простых изменений в питании и образе жизни | [blog:12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni](https://blog.похудение-это-есть.рф/articles/12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni) | 1 | 0 |
-| 13 правил для организации домашних тренировок | [blog:13-pravil-domashnih-trenirovok](https://blog.похудение-это-есть.рф/articles/13-pravil-domashnih-trenirovok) | 2 | 0 |
-| 15 советов тем, кто худеет — по одному на килограмм лишнего веса | [blog:15-sovetov-tem-kto-hudeet](https://blog.похудение-это-есть.рф/articles/15-sovetov-tem-kto-hudeet) | 1 | 0 |
-| «Сладкоежка — увеличьте дозу витаминов!» | [blog:sladkoezhka-uvelichte-dozu-vitaminov](https://blog.похудение-это-есть.рф/articles/sladkoezhka-uvelichte-dozu-vitaminov) | 1 | 0 |
-| А мне тренер посоветовал… | [blog:a-mne-trener-posovetoval](https://blog.похудение-это-есть.рф/articles/a-mne-trener-posovetoval) | 1 | 1 |
-| Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ? | [blog:belyy-ris-kury-i-vitamin-b1](https://blog.похудение-это-есть.рф/articles/belyy-ris-kury-i-vitamin-b1) | 1 | 0 |
-| Борьба с лишним весом: почему одних шагов недостаточно | [blog:borba-s-lishnim-vesom-pochemu-shagov-nedostatochno](https://blog.похудение-это-есть.рф/articles/borba-s-lishnim-vesom-pochemu-shagov-nedostatochno) | 1 | 0 |
-| Великий пост, похудение и здоровье | [blog:velikiy-post-pohudenie-i-zdorove](https://blog.похудение-это-есть.рф/articles/velikiy-post-pohudenie-i-zdorove) | 2 | 0 |
-| Весы — инструкция по применению | [blog:vesy-instrukciya-po-primeneniyu](https://blog.похудение-это-есть.рф/articles/vesy-instrukciya-po-primeneniyu) | 1 | 0 |
-| Вот вам и ОЛИВЬЕ! | [blog:vot-vam-i-olive](https://blog.похудение-это-есть.рф/articles/vot-vam-i-olive) | 1 | 0 |
-| Все знают, никто не делает | [blog:vse-znayut-nikto-ne-delaet](https://blog.похудение-это-есть.рф/articles/vse-znayut-nikto-ne-delaet) | 1 | 0 |
-| Главные ошибки в похудении: что нужно знать до того, как испытывать голод | [blog:glavnye-oshibki-v-pohudenii-do-goloda](https://blog.похудение-это-есть.рф/articles/glavnye-oshibki-v-pohudenii-do-goloda) | 1 | 0 |
-| Гликемический индекс — это лишнее! | [blog:glikemicheskiy-indeks-eto-lishnee](https://blog.похудение-это-есть.рф/articles/glikemicheskiy-indeks-eto-lishnee) | 1 | 1 |
-| Диета. Срыв. И математика | [blog:dieta-sryv-i-matematika](https://blog.похудение-это-есть.рф/articles/dieta-sryv-i-matematika) | 1 | 0 |
-| Долбаная бедность | [blog:dolbanaya-bednost](https://blog.похудение-это-есть.рф/articles/dolbanaya-bednost) | 2 | 0 |
-| Жиросжигающая зона не работает! И вот почему | [blog:zhiroszhigayushchaya-zona-ne-rabotaet](https://blog.похудение-это-есть.рф/articles/zhiroszhigayushchaya-zona-ne-rabotaet) | 3 | 0 |
-| Задача — похудеть. Уровень сложности — ЗИМА | [blog:zadacha-pohudet-uroven-slozhnosti-zima](https://blog.похудение-это-есть.рф/articles/zadacha-pohudet-uroven-slozhnosti-zima) | 3 | 0 |
-| Зачем нужны тренировки (кроме похудения) | [blog:zachem-nuzhny-trenirovki-krome-pohudeniya](https://blog.похудение-это-есть.рф/articles/zachem-nuzhny-trenirovki-krome-pohudeniya) | 1 | 0 |
-| Измеряем вашу жирность | [blog:izmeryaem-vashu-zhirnost](https://blog.похудение-это-есть.рф/articles/izmeryaem-vashu-zhirnost) | 2 | 0 |
-| Интуитивное питание — вы всё неправильно поняли | [blog:intuitivnoe-pitanie-vy-vse-nepravilno-ponyali](https://blog.похудение-это-есть.рф/articles/intuitivnoe-pitanie-vy-vse-nepravilno-ponyali) | 2 | 0 |
-| Как начать тренировки и не бросить | [blog:kak-nachat-trenirovki-i-ne-brosit](https://blog.похудение-это-есть.рф/articles/kak-nachat-trenirovki-i-ne-brosit) | 3 | 3 |
-| Как я решил пройти 100 000 шагов за один день | [blog:kak-ya-reshil-proyti-100000-shagov](https://blog.похудение-это-есть.рф/articles/kak-ya-reshil-proyti-100000-shagov) | 3 | 0 |
-| Какая самая вредная диета? | [blog:kakaya-samaya-vrednaya-dieta](https://blog.похудение-это-есть.рф/articles/kakaya-samaya-vrednaya-dieta) | 2 | 0 |
-| Короче, я застраховал маму от онкологии | [blog:zastrahoval-mamu-ot-onkologii](https://blog.похудение-это-есть.рф/articles/zastrahoval-mamu-ot-onkologii) | 1 | 0 |
-| Мама, с днём рождения!!! | [blog:mama-s-dnyom-rozhdeniya](https://blog.похудение-это-есть.рф/articles/mama-s-dnyom-rozhdeniya) | 1 | 0 |
-| Минус 12 килограммов за 2 месяца | [blog:minus-12-kilogrammov-za-2-mesyaca](https://blog.похудение-это-есть.рф/articles/minus-12-kilogrammov-za-2-mesyaca) | 1 | 0 |
-| Можно ли пить во время еды? | [blog:mozhno-li-pit-vo-vremya-edy](https://blog.похудение-это-есть.рф/articles/mozhno-li-pit-vo-vremya-edy) | 1 | 2 |
-| Мусорная рыба или мусорные нутрициологи? | [blog:musornaya-ryba-ili-musornye-nutriciologi](https://blog.похудение-это-есть.рф/articles/musornaya-ryba-ili-musornye-nutriciologi) | 2 | 0 |
-| Неприятная правда про мёд | [blog:nepriyatnaya-pravda-pro-med](https://blog.похудение-это-есть.рф/articles/nepriyatnaya-pravda-pro-med) | 1 | 0 |
-| Нет времени объяснять. Просто худей! | [blog:net-vremeni-obyasnyat-prosto-hudey](https://blog.похудение-это-есть.рф/articles/net-vremeni-obyasnyat-prosto-hudey) | 1 | 0 |
-| Нутрициолог или диетолог — кому верить? | [blog:nutriciolog-ili-dietolog-komu-verit](https://blog.похудение-это-есть.рф/articles/nutriciolog-ili-dietolog-komu-verit) | 1 | 0 |
-| О ярлыках | [blog:o-yarlykah](https://blog.похудение-это-есть.рф/articles/o-yarlykah) | 1 | 0 |
-| Один небольшой прыжок — большие перемены в жизни | [blog:odin-nebolshoy-pryzhok-bolshie-peremeny](https://blog.похудение-это-есть.рф/articles/odin-nebolshoy-pryzhok-bolshie-peremeny) | 2 | 0 |
-| Последний жир на животе. План действий | [blog:posledniy-zhir-na-zhivote-plan-deystviy](https://blog.похудение-это-есть.рф/articles/posledniy-zhir-na-zhivote-plan-deystviy) | 3 | 0 |
-| Потеря мышц при похудении | [blog:poterya-myshc-pri-pohudenii](https://blog.похудение-это-есть.рф/articles/poterya-myshc-pri-pohudenii) | 1 | 0 |
-| Похудение начинается не с похудения | [blog:pohudenie-nachinaetsya-ne-s-pohudeniya](https://blog.похудение-это-есть.рф/articles/pohudenie-nachinaetsya-ne-s-pohudeniya) | 4 | 0 |
-| Почему люди худеют и снова набирают вес | [blog:pochemu-lyudi-hudeyut-i-snova-nabirayut-ves](https://blog.похудение-это-есть.рф/articles/pochemu-lyudi-hudeyut-i-snova-nabirayut-ves) | 1 | 0 |
-| Почему питание всегда важнее тренировок!! | [blog:pochemu-pitanie-vazhnee-trenirovok](https://blog.похудение-это-есть.рф/articles/pochemu-pitanie-vazhnee-trenirovok) | 1 | 0 |
-| Почему японцы худые, а ты нет? | [blog:pochemu-yapontsy-hudye-a-ty-net](https://blog.похудение-это-есть.рф/articles/pochemu-yapontsy-hudye-a-ty-net) | 3 | 0 |
-| ПП-рецепты — это плохо. И вот почему | [blog:pp-recepty-eto-ploho](https://blog.похудение-это-есть.рф/articles/pp-recepty-eto-ploho) | 1 | 2 |
-| Правила безопасности за шведским столом | [blog:pravila-bezopasnosti-za-shvedskim-stolom](https://blog.похудение-это-есть.рф/articles/pravila-bezopasnosti-za-shvedskim-stolom) | 1 | 1 |
-| Правило 30-ти растений | [blog:pravilo-30-rasteniy](https://blog.похудение-это-есть.рф/articles/pravilo-30-rasteniy) | 4 | 0 |
-| Профессиональный едок | [blog:professionalnyy-edok](https://blog.похудение-это-есть.рф/articles/professionalnyy-edok) | 1 | 0 |
-| Резинки для тренировок! | [blog:rezinki-dlya-trenirovok](https://blog.похудение-это-есть.рф/articles/rezinki-dlya-trenirovok) | 2 | 0 |
-| Самый здоровый человек на планете | [blog:samyy-zdorovyy-chelovek-na-planete](https://blog.похудение-это-есть.рф/articles/samyy-zdorovyy-chelovek-na-planete) | 1 | 0 |
-| Сахарозаменитель в диетических напитках вызывает рак? Нет | [blog:saharozamenitel-vyzyvaet-rak-net](https://blog.похудение-это-есть.рф/articles/saharozamenitel-vyzyvaet-rak-net) | 1 | 1 |
-| Сделать похудение проще | [blog:sdelat-pohudenie-proshche](https://blog.похудение-это-есть.рф/articles/sdelat-pohudenie-proshche) | 1 | 0 |
-| Сколько времени нужно на похудение? | [blog:skolko-vremeni-nuzhno-na-pohudenie](https://blog.похудение-это-есть.рф/articles/skolko-vremeni-nuzhno-na-pohudenie) | 1 | 0 |
-| Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!? | [blog:skolko-polzy-ostaetsya-v-moloke](https://blog.похудение-это-есть.рф/articles/skolko-polzy-ostaetsya-v-moloke) | 2 | 0 |
-| Скрытые запоры и банальный сюжет | [blog:skrytye-zapory-i-banalnyy-syuzhet](https://blog.похудение-это-есть.рф/articles/skrytye-zapory-i-banalnyy-syuzhet) | 1 | 0 |
-| Средиземноморская диета — это вообще что?!?! | [blog:sredizemnomorskaya-dieta-eto-voobshche-chto](https://blog.похудение-это-есть.рф/articles/sredizemnomorskaya-dieta-eto-voobshche-chto) | 1 | 0 |
-| Температура воды для приёма внутрь | [blog:temperatura-vody-dlya-priema-vnutr](https://blog.похудение-это-есть.рф/articles/temperatura-vody-dlya-priema-vnutr) | 1 | 1 |
-| Техника безопасности питания за новогодним столом | [blog:tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom](https://blog.похудение-это-есть.рф/articles/tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom) | 1 | 0 |
-| Три ошибки в начале похудения | [blog:tri-oshibki-v-nachale-pohudeniya](https://blog.похудение-это-есть.рф/articles/tri-oshibki-v-nachale-pohudeniya) | 1 | 0 |
-| У взрослой женщины не должно быть перекусов | [blog:u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov](https://blog.похудение-это-есть.рф/articles/u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov) | 2 | 0 |
-| Уколол и похудел: Оземпик, Семавик и нюансы | [blog:ukolol-i-pohudel-ozempik-semavik-nyuansy](https://blog.похудение-это-есть.рф/articles/ukolol-i-pohudel-ozempik-semavik-nyuansy) | 2 | 0 |
-| Ходить, чтобы худеть | [blog:hodit-chtoby-hudet](https://blog.похудение-это-есть.рф/articles/hodit-chtoby-hudet) | 1 | 0 |
-| Хочешь худеть? Заткнись и ешь картошку! | [blog:hochesh-hudet-esh-kartoshku](https://blog.похудение-это-есть.рф/articles/hochesh-hudet-esh-kartoshku) | 1 | 0 |
-| Что вы не понимаете о формировании привычек? | [blog:chto-vy-ne-ponimaete-o-formirovanii-privychek](https://blog.похудение-это-есть.рф/articles/chto-vy-ne-ponimaete-o-formirovanii-privychek) | 4 | 0 |
-| Эти долбанные 10 000 шагов | [blog:eti-dolbannye-10000-shagov](https://blog.похудение-это-есть.рф/articles/eti-dolbannye-10000-shagov) | 1 | 0 |
+| Как на меня напали собаки в лесу | [blog:kak-na-menya-napali-sobaki-v-lesu](https://похудение-это-есть.рф/blog/pokusali-sobaki) | 2 | 0 |
+| 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://похудение-это-есть.рф/blog/mify-o-produktah) | 1 | 0 |
+| 12 простых изменений в питании и образе жизни | [blog:12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni](https://похудение-это-есть.рф/blog/12-prostyh-izmeneniy) | 1 | 0 |
+| 13 правил для организации домашних тренировок | [blog:13-pravil-domashnih-trenirovok](https://похудение-это-есть.рф/blog/domashnie-trenirovki) | 2 | 0 |
+| 15 советов тем, кто худеет — по одному на килограмм лишнего веса | [blog:15-sovetov-tem-kto-hudeet](https://похудение-это-есть.рф/blog/11-sovetov-hudeyushchim) | 1 | 0 |
+| «Сладкоежка — увеличьте дозу витаминов!» | [blog:sladkoezhka-uvelichte-dozu-vitaminov](https://похудение-это-есть.рф/blog/sahar-i-vitaminy) | 1 | 0 |
+| А мне тренер посоветовал… | [blog:a-mne-trener-posovetoval](https://похудение-это-есть.рф/blog/sovety-trenera) | 1 | 1 |
+| Белый рис, воровство, куры и витамин B1. А причем тут здоровое питание... ? | [blog:belyy-ris-kury-i-vitamin-b1](https://похудение-это-есть.рф/blog/ris-i-vitamin-b1) | 1 | 0 |
+| Борьба с лишним весом: почему одних шагов недостаточно | [blog:borba-s-lishnim-vesom-pochemu-shagov-nedostatochno](https://похудение-это-есть.рф/blog/pochemu-shagov-nedostatochno) | 1 | 0 |
+| Великий пост, похудение и здоровье | [blog:velikiy-post-pohudenie-i-zdorove](https://похудение-это-есть.рф/blog/velikiy-post-i-pitanie) | 2 | 0 |
+| Весы — инструкция по применению | [blog:vesy-instrukciya-po-primeneniyu](https://похудение-это-есть.рф/blog/vesy-instrukciya-po-primeneniyu) | 1 | 0 |
+| Вот вам и ОЛИВЬЕ! | [blog:vot-vam-i-olive](https://похудение-это-есть.рф/blog/5-sovetov-k-zastolyu) | 1 | 0 |
+| Все знают, никто не делает | [blog:vse-znayut-nikto-ne-delaet](https://похудение-это-есть.рф/blog/kak-delat-zaryadku) | 1 | 0 |
+| Главные ошибки в похудении: что нужно знать до того, как испытывать голод | [blog:glavnye-oshibki-v-pohudenii-do-goloda](https://похудение-это-есть.рф/blog/glavnye-oshibki-pohudeniya) | 1 | 0 |
+| Гликемический индекс — это лишнее! | [blog:glikemicheskiy-indeks-eto-lishnee](https://похудение-это-есть.рф/blog/glikemicheskiy-indeks) | 1 | 1 |
+| Диета. Срыв. И математика | [blog:dieta-sryv-i-matematika](https://похудение-это-есть.рф/blog/dieta-sryv-i-matematika) | 1 | 0 |
+| Долбаная бедность | [blog:dolbanaya-bednost](https://похудение-это-есть.рф/blog/skidki-i-pereedanie) | 2 | 0 |
+| Жиросжигающая зона не работает! И вот почему | [blog:zhiroszhigayushchaya-zona-ne-rabotaet](https://похудение-это-есть.рф/blog/zhiroszhigayushchaya-zona-ne-rabotaet) | 3 | 0 |
+| Задача — похудеть. Уровень сложности — ЗИМА | [blog:zadacha-pohudet-uroven-slozhnosti-zima](https://похудение-это-есть.рф/blog/pohudenie-zimoy) | 3 | 0 |
+| Зачем нужны тренировки (кроме похудения) | [blog:zachem-nuzhny-trenirovki-krome-pohudeniya](https://похудение-это-есть.рф/blog/zachem-nuzhny-trenirovki) | 1 | 0 |
+| Измеряем вашу жирность | [blog:izmeryaem-vashu-zhirnost](https://похудение-это-есть.рф/blog/procent-zhira) | 2 | 0 |
+| Интуитивное питание — вы всё неправильно поняли | [blog:intuitivnoe-pitanie-vy-vse-nepravilno-ponyali](https://похудение-это-есть.рф/blog/intuitivnoe-pitanie) | 2 | 0 |
+| Как начать тренировки и не бросить | [blog:kak-nachat-trenirovki-i-ne-brosit](https://похудение-это-есть.рф/blog/kak-nachat-trenirovki) | 3 | 3 |
+| Как я решил пройти 100 000 шагов за один день | [blog:kak-ya-reshil-proyti-100000-shagov](https://похудение-это-есть.рф/blog/100000-shagov) | 3 | 0 |
+| Какая самая вредная диета? | [blog:kakaya-samaya-vrednaya-dieta](https://похудение-это-есть.рф/blog/kakaya-samaya-vrednaya-dieta) | 2 | 0 |
+| Короче, я застраховал маму от онкологии | [blog:zastrahoval-mamu-ot-onkologii](https://похудение-это-есть.рф/blog/strahovka-ot-onkologii) | 1 | 0 |
+| Мама, с днём рождения!!! | [blog:mama-s-dnyom-rozhdeniya](https://похудение-это-есть.рф/blog/mama-s-dnyom-rozhdeniya) | 1 | 0 |
+| Минус 12 килограммов за 2 месяца | [blog:minus-12-kilogrammov-za-2-mesyaca](https://похудение-это-есть.рф/blog/bystroe-pohudenie) | 1 | 0 |
+| Можно ли пить во время еды? | [blog:mozhno-li-pit-vo-vremya-edy](https://похудение-это-есть.рф/blog/mozhno-li-pit-vo-vremya-edy) | 1 | 2 |
+| Мусорная рыба или мусорные нутрициологи? | [blog:musornaya-ryba-ili-musornye-nutriciologi](https://похудение-это-есть.рф/blog/mify-o-tilapii) | 2 | 0 |
+| Неприятная правда про мёд | [blog:nepriyatnaya-pravda-pro-med](https://похудение-это-есть.рф/blog/med-polza-i-vred) | 1 | 0 |
+| Нет времени объяснять. Просто худей! | [blog:net-vremeni-obyasnyat-prosto-hudey](https://похудение-это-есть.рф/blog/osnovy-pohudeniya) | 1 | 0 |
+| Нутрициолог или диетолог — кому верить? | [blog:nutriciolog-ili-dietolog-komu-verit](https://похудение-это-есть.рф/blog/nutriciolog-ili-dietolog) | 1 | 0 |
+| О ярлыках | [blog:o-yarlykah](https://похудение-это-есть.рф/blog/yarlyki-i-pohudenie) | 1 | 0 |
+| Один небольшой прыжок — большие перемены в жизни | [blog:odin-nebolshoy-pryzhok-bolshie-peremeny](https://похудение-это-есть.рф/blog/travma-na-velosipede) | 2 | 0 |
+| Последний жир на животе. План действий | [blog:posledniy-zhir-na-zhivote-plan-deystviy](https://похудение-это-есть.рф/blog/posledniy-zhir-na-zhivote) | 3 | 0 |
+| Потеря мышц при похудении | [blog:poterya-myshc-pri-pohudenii](https://похудение-это-есть.рф/blog/poterya-myshc-pri-pohudenii) | 1 | 0 |
+| Похудение начинается не с похудения | [blog:pohudenie-nachinaetsya-ne-s-pohudeniya](https://похудение-это-есть.рф/blog/plan-pohudeniya) | 4 | 0 |
+| Почему люди худеют и снова набирают вес | [blog:pochemu-lyudi-hudeyut-i-snova-nabirayut-ves](https://похудение-это-есть.рф/blog/vozvrat-vesa) | 1 | 0 |
+| Почему питание всегда важнее тренировок!! | [blog:pochemu-pitanie-vazhnee-trenirovok](https://похудение-это-есть.рф/blog/pochemu-pitanie-vazhnee-trenirovok) | 1 | 0 |
+| Почему японцы худые, а ты нет? | [blog:pochemu-yapontsy-hudye-a-ty-net](https://похудение-это-есть.рф/blog/pochemu-yapontsy-hudye) | 3 | 0 |
+| ПП-рецепты — это плохо. И вот почему | [blog:pp-recepty-eto-ploho](https://похудение-это-есть.рф/blog/pp-recepty-i-pohudenie) | 1 | 2 |
+| Правила безопасности за шведским столом | [blog:pravila-bezopasnosti-za-shvedskim-stolom](https://похудение-это-есть.рф/blog/pitanie-na-shvedskom-stole) | 1 | 1 |
+| Правило 30-ти растений | [blog:pravilo-30-rasteniy](https://похудение-это-есть.рф/blog/pravilo-30-rasteniy) | 4 | 0 |
+| Профессиональный едок | [blog:professionalnyy-edok](https://похудение-это-есть.рф/blog/professionalnyy-edok) | 1 | 0 |
+| Резинки для тренировок! | [blog:rezinki-dlya-trenirovok](https://похудение-это-есть.рф/blog/rezinki-dlya-trenirovok) | 2 | 0 |
+| Самый здоровый человек на планете | [blog:samyy-zdorovyy-chelovek-na-planete](https://похудение-это-есть.рф/blog/rezhim-brayana-dzhonsona) | 1 | 0 |
+| Сахарозаменитель в диетических напитках вызывает рак? Нет | [blog:saharozamenitel-vyzyvaet-rak-net](https://похудение-это-есть.рф/blog/saharozameniteli-i-rak) | 1 | 1 |
+| Сделать похудение проще | [blog:sdelat-pohudenie-proshche](https://похудение-это-есть.рф/blog/sdelat-pohudenie-proshche) | 1 | 0 |
+| Сколько времени нужно на похудение? | [blog:skolko-vremeni-nuzhno-na-pohudenie](https://похудение-это-есть.рф/blog/sroki-pohudeniya) | 1 | 0 |
+| Сколько РЕАЛЬНО пользы в молоке, которое мы пьем?!? | [blog:skolko-polzy-ostaetsya-v-moloke](https://похудение-это-есть.рф/blog/polza-moloka) | 2 | 0 |
+| Скрытые запоры и банальный сюжет | [blog:skrytye-zapory-i-banalnyy-syuzhet](https://похудение-это-есть.рф/blog/skrytye-zapory) | 1 | 0 |
+| Средиземноморская диета — это вообще что?!?! | [blog:sredizemnomorskaya-dieta-eto-voobshche-chto](https://похудение-это-есть.рф/blog/sredizemnomorskaya-dieta) | 1 | 0 |
+| Температура воды для приёма внутрь | [blog:temperatura-vody-dlya-priema-vnutr](https://похудение-это-есть.рф/blog/temperatura-vody) | 1 | 1 |
+| Техника безопасности питания за новогодним столом | [blog:tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom](https://похудение-это-есть.рф/blog/novogodniy-stol-bez-pereedaniya) | 1 | 0 |
+| Три ошибки в начале похудения | [blog:tri-oshibki-v-nachale-pohudeniya](https://похудение-это-есть.рф/blog/tri-oshibki-pohudeniya) | 1 | 0 |
+| У взрослой женщины не должно быть перекусов | [blog:u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov](https://похудение-это-есть.рф/blog/perekusy-i-pohudenie) | 2 | 0 |
+| Уколол и похудел: Оземпик, Семавик и нюансы | [blog:ukolol-i-pohudel-ozempik-semavik-nyuansy](https://похудение-это-есть.рф/blog/ozempik-i-semavik) | 2 | 0 |
+| Ходить, чтобы худеть | [blog:hodit-chtoby-hudet](https://похудение-это-есть.рф/blog/hodit-chtoby-hudet) | 1 | 0 |
+| Хочешь худеть? Заткнись и ешь картошку! | [blog:hochesh-hudet-esh-kartoshku](https://похудение-это-есть.рф/blog/kartoshka-i-pohudenie) | 1 | 0 |
+| Что вы не понимаете о формировании привычек? | [blog:chto-vy-ne-ponimaete-o-formirovanii-privychek](https://похудение-это-есть.рф/blog/formirovanie-privychek) | 4 | 0 |
+| Эти долбанные 10 000 шагов | [blog:eti-dolbannye-10000-shagov](https://похудение-это-есть.рф/blog/10000-shagov) | 1 | 0 |
 
 ## Отложенный корпус по типам
 

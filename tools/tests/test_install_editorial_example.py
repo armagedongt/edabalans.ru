@@ -51,7 +51,7 @@ def test_blog_installed_example_uses_real_manifest_related_targets(tmp_path):
     folder = tmp_path / "Шпаргалка"
     html = (folder / "Вставки блога.html").read_text(encoding="utf-8")
     parsed = Elements(html)
-    assert [attrs["href"] for tag, attrs in parsed.tags if tag == "base"] == ["https://blog.похудение-это-есть.рф/"]
+    assert [attrs["href"] for tag, attrs in parsed.tags if tag == "base"] == ["https://похудение-это-есть.рф/"]
     article = load_blog_catalog().by_source_id("amkbo7kgg1")
     target = load_blog_catalog().by_source_id(article.inline_related.source_id)
     assert len(parsed.with_class("blog-cta")) == 1
@@ -59,7 +59,7 @@ def test_blog_installed_example_uses_real_manifest_related_targets(tmp_path):
     assert len(parsed.with_class("article-card")) == len(article.related_source_ids)
     assert len(parsed.with_class("article-grid")) == 1
     assert html.index('class="reader-related"') < html.index('id="' + article.inline_related.before_heading + '"')
-    assert any(tag == "a" and attrs.get("href") == "/articles/" + target.slug for tag, attrs in parsed.tags)
+    assert any(tag == "a" and attrs.get("href") == "/blog/" + target.slug for tag, attrs in parsed.tags)
     assert (folder / "Вставки блога.md").read_text(encoding="utf-8") == (examples.REPO / "content/article-components/examples/blog.md").read_text(encoding="utf-8")
 
 

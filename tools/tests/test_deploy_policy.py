@@ -85,7 +85,7 @@ class DeployPolicyTests(unittest.TestCase):
         self.assertIn('[[ "${retired_blog_status}" != "410" ]]', source)
         self.assertIn("for retired_blog_path in / /articles/pochemu-yapontsy-hudye-a-ty-net; do", source)
         self.assertIn('https://blog.похудение-это-есть.рф${retired_blog_path}', source)
-        self.assertIn("/articles/skolko-vremeni-nuzhno-na-pohudenie", source)
+        self.assertIn("/sroki-pohudeniya", source)
         self.assertIn("/blog/media/13277231/01.png", source)
         self.assertIn("/sitemap.xml", source)
         self.assertIn("/robots.txt", source)

@@ -191,7 +191,7 @@ def main():
     for article in manifest['articles']:
         prov = article.get('source_provenance') or {}
         for url in (prov.get('urls') or []) + ([prov['url']] if prov.get('url') else []):
-            by_url[url_key(url)].add('blog:'+article['slug'])
+            by_url[url_key(url)].add('blog:'+article.get('document_key', article['slug']))
     # Independently catalog old site sources, with no length cutoff and no
     # automatic publication approval inferred from a publicly accessible URL.
     source_index = {}
