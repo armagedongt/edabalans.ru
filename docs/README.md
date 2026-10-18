@@ -74,6 +74,7 @@
 | Каталог материалов | `CONTENT_CATALOG.md` |
 | Приём и локальная расшифровка любых голосовых, аудио и видео | [Голосовой диспетчер](knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md), модуль `platform.content` |
 | Список опубликованных статей: названия и действующие ссылки | [Таблица статей](../content/author-voice/source-selection/article-source-registry.md#канон-в-блоге); происхождение и версии — в том же реестре |
+| Какие ссылки стоят в постах канала и что уже исправлено | [Готовый каталог ссылок и журнал ревизии](../content/author-voice/source-selection/ARTICLE_SOURCE_LINKING.md#готовый-каталог-ссылок-канала); начать с сохранённой карты, не собирать историю заново |
 | Блог: статьи, SEO, аналитика и публикация | `knowledge-base/modules/blog/README.md`, модуль `platform.blog` |
 | Писарь: единый вход, правила, источники, прошлые разборы и маршруты публикации | [Писарь](../content/author-voice/README.md); рабочая инструкция — `../content/author-voice/skill/edabalans-writer/SKILL.md` |
 | Использование нашего видеоплеера: возможности, настройки и места подключения | [Использование нашего видеоплеера](../backend/app/static/video-player-development/README.md) |
