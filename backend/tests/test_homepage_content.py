@@ -45,7 +45,7 @@ def test_replacing_fixed_homepage_photo_preserves_the_entire_rest_of_layout(clie
     from app.homepage_content_service import image_definitions
     initial = client.get("/preview/homepage-release-candidate").text
     current = source(client)
-    slot = image_definitions()[0]
+    slot = image_definitions()[slot_index]
     assert f"<!-- homepage-image:{slot['key']} -->" in current["markdown"]
     old_src = slot["originalSrc"]
     new_src = "https://example.test/replacement.png"
@@ -88,6 +88,22 @@ def test_homepage_attachment_is_hidden_until_its_fixed_slot_is_published(client,
     assert client.get(url).content == raw
     assert client.get("/preview/homepage-release-candidate").text == initial.replace(
         f'src="{old_src}"', f'src="{url}"')
+
+
+def test_previously_saved_image_override_renders_without_republication(client, monkeypatch):
+    from types import SimpleNamespace
+    from app import homepage_content_service as service
+    initial = client.get("/preview/homepage-release-candidate").text
+    payload = service.compile_homepage(source(client)["markdown"])
+    slot = service.image_definitions()[0]
+    legacy = "https://edabalans.ru/editorial-media/homepage/" + "a" * 64 + ".png"
+    payload["images"][slot["key"]] = {"src": legacy, "alt": slot["alt"]}
+    monkeypatch.setattr(service, "active_homepage", lambda _: SimpleNamespace(payload=payload))
+    response = client.get("/preview/homepage-release-candidate")
+    canonical = legacy.replace("https://edabalans.ru", service.PUBLIC_IMAGE_ORIGIN)
+    assert response.status_code == 200
+    assert response.text == initial.replace(f'src="{slot["originalSrc"]}"', f'src="{canonical}"')
+    assert payload["images"][slot["key"]]["src"] == legacy
 
 
 def test_initial_homepage_keeps_the_accepted_html_without_client_content_fetch(client):
