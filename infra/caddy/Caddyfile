@@ -3,7 +3,7 @@
 	email {$ACME_EMAIL}
 }
 
-{$PUBLIC_DOMAIN} {
+{$PUBLIC_DOMAIN}, xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai, www.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai, admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai {
 	encode zstd gzip
 
 	header {
@@ -12,6 +12,21 @@
 		Content-Security-Policy "frame-ancestors 'self' https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
 		Referrer-Policy "strict-origin-when-cross-origin"
 		-Server
+	}
+
+	@brand_admin_root {
+		host admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai
+		path /
+	}
+	handle @brand_admin_root {
+		rewrite * /admin
+		reverse_proxy backend:8000
+	}
+
+	handle_path /media/reviews/* {
+		root * /srv/edabalans-public/reviews
+		header Cache-Control "public, max-age=86400"
+		file_server
 	}
 
 	handle /api/messaging/telegram/webhook {
