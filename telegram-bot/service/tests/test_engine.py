@@ -80,7 +80,7 @@ def test_personalized_delivery_resolves_body_and_button_with_same_code(tmp_path)
         masterclass_code = configuration["buttons"][0]["url"].rsplit("/", 1)[-1]
         assert intensive_code == masterclass_code
         assert len(intensive_code) == 9
-        assert intensive_url == f"https://edabalans.ru/intensive?i={intensive_code}&from=tg&entry=bot"
+        assert intensive_url == f"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive?i={intensive_code}&from=tg&entry=bot"
 
 
 def test_personalized_delivery_binds_links_to_max_contact(tmp_path):
@@ -125,7 +125,7 @@ def test_personalized_delivery_binds_links_to_max_contact(tmp_path):
         intensive_url = rendered.body_source.removeprefix("Интенсив: ")
         intensive_code = parse_qs(urlparse(intensive_url).query)["i"][0]
         assert configuration["buttons"][0]["url"].endswith(intensive_code)
-        assert intensive_url == f"https://edabalans.ru/intensive?i={intensive_code}&from=max&entry=bot"
+        assert intensive_url == f"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive?i={intensive_code}&from=max&entry=bot"
 
 
 def test_personalized_delivery_resolves_current_issued_day_and_strips_internal_config(tmp_path):
