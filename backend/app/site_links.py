@@ -88,7 +88,7 @@ def relative_site_html(value: str) -> str:
                 old = unescape(match["value"] if match["quote"] else match["bare"])
                 new = relative_site_url(old) if tag.lower() in {"a", "form"} else relative_media_url(old)
                 if match["name"].lower() == "srcset":
-                    new = re.sub(r"(?<!\S)https?://[^\s,]+", lambda part: relative_media_url(part[0]), old)
+                    new = re.sub(r"(?<![^\s,])https?://[^\s,]+", lambda part: relative_media_url(part[0]), old)
                 if tag.lower() == "iframe" and new.startswith("/course-assets/masterclass/audio-player?"):
                     parts = urlsplit(new)
                     query = [(key, relative_media_url(val) if key in {"src", "avatar"} else val)

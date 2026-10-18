@@ -97,6 +97,10 @@ def test_html_attributes_do_not_rewrite_attribute_looking_alt_text():
     assert relative_site_html(source) == source.replace(' src=https://edabalans.ru/media/reviews/a.jpg>', ' src="/media/reviews/a.jpg">')
 
 
-def test_responsive_media_candidates_keep_descriptors_and_external_source():
+@pytest.mark.parametrize("separator", [", ", ","])
+def test_responsive_media_candidates_keep_descriptors_and_external_source(separator):
     source = '<img srcset="https://edabalans.ru/media/reviews/a.webp 1x, https://other.example/b.webp 2x">'
-    assert relative_site_html(source) == '<img srcset="/media/reviews/a.webp 1x, https://other.example/b.webp 2x">'
+    source = source.replace(", ", separator)
+    assert relative_site_html(source) == '<img srcset="/media/reviews/a.webp 1x, https://other.example/b.webp 2x">'.replace(", ", separator)
+    own = source.replace("https://other.example/b.webp", "https://edabalans.ru/media/reviews/b.webp")
+    assert "edabalans.ru" not in relative_site_html(own)

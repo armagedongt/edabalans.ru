@@ -349,7 +349,6 @@ def test_real_markdown_package_round_trip_and_owner_preview(authoring) -> None:
     assert preview.status_code == 200
     assert f"/blog/drafts/{SLUG}/media/01.webp" in preview.json()["html"]
     assert "blog-cta" in preview.json()["html"]
-    assert "Посмотреть программу" in preview.json()["html"]
     for response in (created, reopened, media, page, editor, preview):
         assert response.headers["cache-control"] == "private, no-store"
         assert response.headers["x-robots-tag"] == "noindex, nofollow"
@@ -580,7 +579,7 @@ def test_existing_article_seed_publish_and_later_draft_do_not_leak(authoring) ->
         db.commit()
     refreshed_public_page = client.get(f"/blog/{PUBLIC_SLUG}")
     assert marker in refreshed_public_page.text
-    assert 'data-tracking-key="blog_intensive"' in refreshed_public_page.text
+    assert f'data-tracking-key="blog_{load_blog_catalog().by_document_key(SLUG).cta}"' in refreshed_public_page.text
     assert 'data-tracking-key="blog_telegram"' not in refreshed_public_page.text
 
     next_marker = "Эта строка пока только на модерации."

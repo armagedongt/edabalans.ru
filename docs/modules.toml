@@ -22,7 +22,7 @@ owns_files = [
 ]
 owns_routes = ["*/embed.js", "*/site-footer.js", "*/cookie-notice.js", "*/favicon.ico", "*/favicon.png", "*/apple-touch-icon.png"]
 sources = [
-  { path = "backend/app/site_links.py", role = "runtime", shared = true, consumers = ["platform.content", "platform.blog", "platform.commerce", "products.public-site", "products.masterclass.course", "products.calories"] },
+  { path = "backend/app/site_links.py", role = "runtime", shared = true, consumers = ["messaging.telegram.attribution", "operations.delivery", "platform.blog", "platform.commerce", "platform.content", "platform.knowledge", "products", "products.calories", "products.intensive", "products.masterclass.course", "products.masterclass.questionnaires", "products.public-site"] },
   { path = "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.masterclass.runtime", "products.calories", "products.public-site", "products.intensive"] },
   { path = "backend/app/static/site-cookie-notice.js", role = "runtime", shared = true, consumers = ["products.public-site", "platform.blog", "products.intensive"] },
 ]
@@ -344,7 +344,7 @@ owns_tables = [
   "knowledge_review_items", "knowledge_usage_events",
 ]
 owns_routes = ["*/admin/library", "*/admin/api/library*", "*/mcp*"]
-reads_from = ["platform.web_design", "platform.content", "admin.project-knowledge"]
+reads_from = ["platform", "platform.web_design", "platform.content", "admin.project-knowledge"]
 
 [[modules]]
 id = "platform.web_design"
@@ -365,7 +365,7 @@ owns_routes = ["*/preview/app-visual-catalog*"]
 
 [[modules]]
 id = "products"
-reads_from = ["platform.web_design"]
+reads_from = ["platform", "platform.web_design"]
 card = "docs/knowledge-base/modules/catalog/products.md"
 depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
@@ -735,7 +735,7 @@ reads_from = ["platform.web_design", "platform", "products.masterclass.course", 
 
 [[modules]]
 id = "products.masterclass.questionnaires"
-reads_from = ["platform.web_design"]
+reads_from = ["platform", "platform.web_design"]
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.questionnaires.md"
 owns_files = ["backend/app/static/apps/onboarding-questionnaire.html", "backend/app/questionnaire_person_service.py", "backend/app/masterclass_feedback.py", "backend/app/static/questionnaire-person.*"]
@@ -832,7 +832,7 @@ id = "messaging.telegram.attribution"
 parent = "messaging.telegram"
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.attribution.md"
 depends_on = ["platform.crm", "messaging.telegram.engine", "products.intensive"]
-reads_from = ["platform.web_design", "platform.blog"]
+reads_from = ["platform", "platform.web_design", "platform.blog"]
 telegram_code = "start_attribution"
 telegram_name = "Старт и атрибуция"
 telegram_status = "Исполняемый модуль · временный вход в единую статью"
@@ -1083,6 +1083,7 @@ owns_tables = ["alembic_version"]
 
 [[modules]]
 id = "operations.delivery"
+reads_from = ["platform"]
 parent = "operations"
 card = "docs/knowledge-base/modules/catalog/operations.delivery.md"
 depends_on = ["operations.database", "operations.backup", "operations.proxy", "operations.health"]
