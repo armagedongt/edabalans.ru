@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from app.article_markup import inline_markdown, safe_href, safe_image_src, canonical_image_src, PUBLIC_IMAGE_ORIGIN
 from app.managed_documents import active_document, ensure_seed_document, publish_document
 from app.models import ManagedDocumentVersion
+from app.public_site_content_service import render_reader_subscription
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -33,7 +34,13 @@ def definitions() -> tuple[list[dict], str]:
     mapping = json.loads((CONTENT_ROOT / "block-map.json").read_text(encoding="utf-8"))
     slots = mapping["textSlots"]
     digest = hashlib.sha256(json.dumps(slots, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
-    return slots, digest
+    return [slot for slot in slots if slot["key"] not in mapping.get("sharedSlots", {})], digest
+
+
+def without_shared_slots(markdown: str) -> str:
+    mapping = json.loads((CONTENT_ROOT / "block-map.json").read_text(encoding="utf-8"))
+    shared = mapping.get("sharedSlots", {})
+    return SOURCE_SLOT.sub(lambda match: "" if match[1] in shared else match[0], markdown)
 
 
 def image_definitions() -> list[dict]:
@@ -125,6 +132,7 @@ def compile_inline(source: str, definition: dict) -> str:
 def compile_homepage(markdown: str) -> dict:
     if not markdown.strip() or len(markdown.encode("utf-8")) > 500_000 or "\x00" in markdown:
         raise HTTPException(422, "Некорректный Markdown главной")
+    markdown = without_shared_slots(markdown)
     slots, schema_hash = definitions()
     known = {item["key"]: item for item in slots}
     fragments: dict[str, str] = {}
@@ -168,7 +176,7 @@ def active_homepage(db: Session) -> ManagedDocumentVersion:
 
 
 def serialize_homepage(version: ManagedDocumentVersion) -> dict:
-    return {"markdown": source_with_images(version.payload["markdown"]), "version": version.version_no,
+    return {"markdown": source_with_images(without_shared_slots(version.payload["markdown"])), "version": version.version_no,
             "updated_at": version.created_at.isoformat(), "updated_by": version.created_by,
             "schema_hash": version.payload["schema_hash"]}
 
@@ -190,6 +198,9 @@ def render_homepage(db: Session, template: str) -> str:
             or set(keys) != {slot["key"] for slot in slots}):
         raise HTTPException(503, "Редакционная карта главной не соответствует шаблону")
     template = TEMPLATE_SLOT.sub(lambda match: document.payload["fragments"][match.group(1)], template)
+    if "{{READER_HOMEPAGE}}" in template:
+        card = (Path(__file__).resolve().parent / "static/blog/reader-subscription.html").read_text(encoding="utf-8")
+        template = template.replace("{{READER_HOMEPAGE}}", render_reader_subscription(db, card, popup=False))
     slots = {slot["originalSrc"]: slot for slot in image_definitions()}
     images = document.payload.get("images", {})
     def replace_image(match):

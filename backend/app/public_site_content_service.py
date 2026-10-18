@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from html import escape
+import json
 from pathlib import Path
 import re
+from urllib.parse import urlsplit
 
 from fastapi import HTTPException
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from sqlalchemy.orm import Session
 
-from app.article_markup import markdown_to_article_html
+from app.article_markup import inline_markdown, markdown_to_article_html, safe_href
 from app.managed_documents import active_document, ensure_seed_document, publish_document
 from app.models import ManagedDocumentVersion
 
@@ -25,7 +29,69 @@ DOCUMENTS = {
     "calories": {"title": "Мини-курс «Калорийный»", "kind": "article", "file": "calories.md"},
     "training": {"title": "Мини-курс «С мягкого дивана до регулярных тренировок»", "kind": "article", "file": "training.md"},
     "faq": {"title": "Частые вопросы", "kind": "faq", "file": "faq.md"},
+    "reader-subscription": {
+        "title": "Блок статьи и подписки", "kind": "reader-subscription", "file": "reader-subscription.md",
+    },
 }
+
+
+class ReaderSubscriptionSettings(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    telegram_url: str = Field(min_length=1, max_length=2048)
+    max_url: str = Field(min_length=1, max_length=2048)
+
+
+def render_reader_subscription_source(markdown: str) -> dict:
+    source = VERSION_MARKER.sub("", markdown, count=1).lstrip()
+    match = re.fullmatch(r"```json\n(.*?)\n```\s*\n(.+)", source, re.S)
+    if match is None:
+        raise HTTPException(422, "Сохраните JSON-настройки блока перед текстом")
+    try:
+        settings = ReaderSubscriptionSettings.model_validate(json.loads(match[1])).model_dump()
+    except (ValueError, ValidationError) as exc:
+        raise HTTPException(422, "Проверьте ссылки блока") from exc
+    for key, host in (("telegram_url", "t.me"), ("max_url", "max.ru")):
+        value = settings[key]
+        try:
+            parsed = urlsplit(value)
+            valid = safe_href(value) and parsed.scheme == "https" and parsed.netloc == host and bool(parsed.path.strip("/"))
+        except ValueError:
+            valid = False
+        if not valid:
+            raise HTTPException(422, f"{key}: нужна HTTPS-ссылка на {host}")
+    sections = re.fullmatch(r"## Статья и подписка\s*\n(.+?)\n## Только подписка\s*\n(.+)", match[2].strip(), re.S)
+    if sections is None:
+        raise HTTPException(422, "Сохраните разделы «Статья и подписка» и «Только подписка»")
+    variants = {}
+    for key, text in zip(("full", "subscribe"), sections.groups()):
+        text = text.strip()
+        if not text or len(text) > 5000:
+            raise HTTPException(422, "Каждый текст блока должен содержать от 1 до 5000 символов")
+        variants[key] = inline_markdown(text)
+    return {"html": '<p class="reader-channel-copy">' + variants["full"] + '</p>',
+            "variants": variants, "settings": settings}
+
+
+def reader_subscription_document(db: Session) -> ManagedDocumentVersion:
+    return active_public_site_document(db, "reader-subscription")
+
+
+def render_reader_subscription(db: Session, template: str, *, popup: bool = True) -> str:
+    payload = reader_subscription_document(db).payload
+    settings = payload["settings"]
+    values = {
+        "READER_COPY": payload["html"],
+        "READER_TELEGRAM": escape(settings["telegram_url"], quote=True),
+        "READER_MAX": escape(settings["max_url"], quote=True),
+    }
+    card = re.sub(r"\{\{(READER_COPY|READER_TELEGRAM|READER_MAX)\}\}", lambda match: values[match[1]], template)
+    if not popup:
+        return card.replace('<section class="reader-channel blog-cta">',
+                            '<section id="reader-channel-homepage" class="reader-channel blog-cta" hidden>')
+    return ('<dialog id="reader-popup" aria-label="Приглашение читать мои посты">'
+            '<button class="reader-close" type="button" aria-label="Закрыть приглашение">×</button>'
+            + card + '</dialog>')
 
 
 def document_definition(slug: str) -> dict:
@@ -48,7 +114,7 @@ def normalize_payload(slug: str, payload: dict) -> dict:
     if len(markdown) > 250_000:
         raise HTTPException(422, "Markdown-документ слишком большой")
     rendered = render_document(slug, markdown)
-    return {
+    result = {
         "schemaVersion": SCHEMA_VERSION,
         "slug": slug,
         "title": definition["title"],
@@ -57,6 +123,10 @@ def normalize_payload(slug: str, payload: dict) -> dict:
         "html": rendered["html"],
         "items": rendered.get("items", []),
     }
+    if definition["kind"] == "reader-subscription":
+        result["settings"] = rendered["settings"]
+        result["variants"] = rendered["variants"]
+    return result
 
 
 def render_faq(markdown: str) -> dict:
@@ -83,6 +153,8 @@ def render_document(slug: str, markdown: str) -> dict:
     definition = document_definition(slug)
     if definition["kind"] == "faq":
         return render_faq(markdown)
+    if definition["kind"] == "reader-subscription":
+        return render_reader_subscription_source(markdown)
     return {"html": markdown_to_article_html(markdown), "items": []}
 
 

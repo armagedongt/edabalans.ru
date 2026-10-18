@@ -16,9 +16,36 @@
     if (!id) return undefined;
     return Array.from(article.querySelectorAll(':scope > h2')).find(node => node.id === id);
   }
-  if (typeof module !== 'undefined') { module.exports = {due,progress,cookieDomain,subscriptionAnchor}; return; }
+  function messengerDestination(value, host) {
+    if (typeof value !== 'string') return null;
+    try {
+      const url = new URL(value);
+      return url.protocol === 'https:' && url.host === host && !url.username && !url.password && url.pathname !== '/' ? url.href : null;
+    } catch (_) { return null; }
+  }
+  if (typeof module !== 'undefined') { module.exports = {due,progress,cookieDomain,subscriptionAnchor,messengerDestination}; return; }
   const popup = document.getElementById('reader-popup'), article = document.getElementById('article');
-  if (!popup || !article || typeof popup.showModal !== 'function') return;
+  const homepage = document.getElementById('reader-channel-homepage');
+  if (!homepage && (!popup || !article || typeof popup.showModal !== 'function')) return;
+  if (homepage) {
+    const source = new URLSearchParams(location.search).get('from');
+    const channelEntry = source === 'tg' || source === 'max';
+    fetch('/blog/reader/context'+(channelEntry ? '?from='+source : ''),{credentials:'same-origin',cache:'no-store'})
+      .then(response => { if (!response.ok) throw new Error('reader context unavailable'); return response.json(); })
+      .catch(() => ({show_subscription:!channelEntry}))
+      .then(context => {
+        if (context.show_subscription === false) return;
+        if (typeof context.copy_html === 'string') homepage.querySelector('.reader-channel-copy').innerHTML = context.copy_html;
+        const telegram = messengerDestination(context.telegram && context.telegram.url, 't.me');
+        const max = messengerDestination(context.max && context.max.url, 'max.ru');
+        if (telegram) homepage.querySelector('.reader-bot-telegram').href = telegram;
+        if (max) homepage.querySelector('.reader-bot-max').href = max;
+        homepage.hidden = false;
+        const section = homepage.closest('[data-homepage-block="free-intensive"]');
+        if (section) section.hidden = false;
+      });
+    return;
+  }
   // Provenance takes precedence even if a stale client context says otherwise.
   if (article.querySelector('[data-channel-origin="telegram"]')) { popup.remove(); return; }
   const key = 'edabalans_subscription_popup_at';
@@ -74,9 +101,11 @@
     .then(context => {
       allowed = context.show_subscription !== false;
       if (!allowed) return;
-      if (context.telegram && ['https://t.me/Fitness_Talks_bot','https://t.me/Fitness_Talks/260'].includes(context.telegram.url)) {
-        popup.querySelector('.reader-bot-telegram').href = context.telegram.url;
-      }
+      if (typeof context.copy_html === 'string') popup.querySelector('.reader-channel-copy').innerHTML = context.copy_html;
+      const telegram = messengerDestination(context.telegram && context.telegram.url, 't.me');
+      const max = messengerDestination(context.max && context.max.url, 'max.ru');
+      if (telegram) popup.querySelector('.reader-bot-telegram').href = telegram;
+      if (max) popup.querySelector('.reader-bot-max').href = max;
       // An absent or edited heading disables the curated slot; never guess a new placement.
       const anchor = subscriptionAnchor(article);
       if (anchor) {

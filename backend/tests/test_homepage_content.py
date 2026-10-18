@@ -109,8 +109,9 @@ def test_previously_saved_image_override_renders_without_republication(client, m
 def test_initial_homepage_keeps_the_accepted_html_without_client_content_fetch(client):
     response = client.get("/preview/homepage-release-candidate")
     assert response.status_code == 200
-    # Accepted rendered page with the shared public menu shell.
-    assert hashlib.sha256(response.text.encode()).hexdigest() == "e1a26ad588d4c6a0c425a5e31cbda585378c7276aab429d233fbefe976c54804"
+    # Accepted shell with the shared reader invitation in the former free-intensive slot.
+    assert hashlib.sha256(response.text.encode()).hexdigest() == "fe9adc8f942738cea1af1571efaf5896b9f78e8f93e8c8ded4221f027cb0d74e"
+    assert response.text.count('id="reader-channel-homepage"') == 1
     assert "<!-- homepage-slot:" not in response.text
     faq = response.text.split("<template data-local-faq-template>", 1)[1].split("</template>", 1)[0]
     assert faq.count('class="faq-question-text"') == 17
@@ -219,3 +220,41 @@ def test_shared_price_fields_and_media_are_not_a_second_markdown_owner(client):
 def test_homepage_original_requires_existing_admin_authentication(client):
     app.dependency_overrides.pop(require_admin)
     assert client.get("/admin/api/public-site/homepage").status_code == 401
+
+
+def test_shared_card_updates_without_republishing_homepage_or_exposing_retired_slot(client):
+    home = source(client)
+    assert 'homepage:free-intensive.aside-02' not in home['markdown']
+    card = client.get('/admin/api/public-site/content/reader-subscription').json()['active']
+    changed = card['markdown'].replace('Познакомьтесь с моим подходом поближе', 'Обновлённый общий текст')
+    saved = client.put('/admin/api/public-site/content/reader-subscription', json={
+        'expected_version': card['version'], 'markdown': changed})
+    assert saved.status_code == 200, saved.text
+    rendered = client.get('/preview/homepage-release-candidate')
+    assert rendered.status_code == 200
+    assert 'Обновлённый общий текст' in rendered.text
+    assert source(client)['version'] == home['version']
+    # Existing homepage bodies may still carry the old slot. It must never regain ownership.
+    legacy = home['markdown'] + '\n<!-- homepage:free-intensive.aside-02 -->\nСтарая карточка\n<!-- /homepage:free-intensive.aside-02 -->\n'
+    saved_home = client.put('/admin/api/public-site/homepage', json={
+        'expected_version': home['version'], 'markdown': legacy})
+    assert saved_home.status_code == 200, saved_home.text
+    assert 'Старая карточка' not in source(client)['markdown']
+    assert 'Обновлённый общий текст' in client.get('/preview/homepage-release-candidate').text
+
+
+def test_active_pre_shared_slot_payload_renders_without_republication(client, monkeypatch):
+    from types import SimpleNamespace
+    from copy import deepcopy
+    from app import homepage_content_service as service
+    current = source(client)
+    legacy = deepcopy(service.compile_homepage(current['markdown']))
+    # Digest of the complete pre-rollout textSlots map, recorded at cd69fe1.
+    legacy['schema_hash'] = 'b65bffd35026ebe3547f7548065fe99d7b800611c5fd2b0d33d354342028c539'
+    legacy['fragments']['free-intensive.aside-02'] = '<p>Предыдущая независимая карточка</p>'
+    monkeypatch.setattr(service, 'active_homepage', lambda _: SimpleNamespace(payload=legacy))
+    result = client.get('/preview/homepage-release-candidate')
+    assert result.status_code == 200
+    assert 'Предыдущая независимая карточка' not in result.text
+    assert 'Познакомьтесь с моим подходом поближе' in result.text
+    assert result.text.count('id="reader-channel-homepage"') == 1

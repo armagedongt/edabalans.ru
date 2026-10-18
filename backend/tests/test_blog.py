@@ -147,10 +147,9 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
     assert 'class="toc-dock"' in response.text
     assert "В этом материале" in response.text
     assert 'data-component="blog-cta"' in response.text
-    assert 'data-tracking-key="blog_intensive"' in response.text
-    assert 'href="/intensive"' in response.text
-    assert "Как сделать похудение проще" in response.text
-    assert "Читать бесплатно" in response.text
+    assert 'data-tracking-key="blog_masterclass"' in response.text
+    assert "Подробное описание программы и отзывы участников — на моём сайте." in response.text
+    assert "О мастер-классе" in response.text
     assert '<header class="article-hero">' in response.text
     assert 'src="/cookie-notice.js"' in response.text
     article_hero = response.text.split('<header class="article-hero">', 1)[1].split("</header>", 1)[0]

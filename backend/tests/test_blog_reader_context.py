@@ -12,9 +12,12 @@ from sqlalchemy.pool import StaticPool
 
 from app.database import Base, get_db
 from app.blog_routes import router
-from app.blog_reader_context import COOKIE, TELEGRAM_BOT, TELEGRAM_PIN
+from app.blog_reader_context import COOKIE
 from app.intensive_web_access import issue_access_token
-from app.models import User, MessengerAccount, MessengerLinkToken
+from app.models import CourseEvent, Payment, Resource, UserAccess, User, MessengerAccount, MessengerLinkToken
+
+TELEGRAM_BOT = "https://t.me/Fitness_Talks_bot/channel?startapp=site"
+TELEGRAM_PIN = TELEGRAM_BOT
 
 
 def test_public_article_prepares_single_shared_subscription_component(reader_client):
@@ -22,7 +25,7 @@ def test_public_article_prepares_single_shared_subscription_component(reader_cli
     response = client.get('/blog/pochemu-yapontsy-hudye')
     assert response.status_code == 200
     assert response.text.count('id="reader-popup"') == 1
-    assert response.text.split('<dialog id="reader-popup"')[1].count('Пишу о питании и похудении так, чтобы вы менялись.') == 1
+    assert response.text.split('<dialog id="reader-popup"')[1].count('Познакомьтесь с моим подходом поближе') == 1
     assert '/blog/assets/reader-subscription.js' in response.text
     assert 'reader-visitor' not in response.text
     assert client.get('/blog/assets/reader-subscription.js').status_code == 200
@@ -110,6 +113,61 @@ def test_invalid_channel_marker_preserves_normal_rules(reader_client):
     assert client.get('/blog/reader/context?from=other').json()['show_subscription'] is True
 
 
+@pytest.mark.parametrize('percent,status,source,variant', [
+    (0, 'subscribed', '', 'full'),
+    (75, 'subscribed', '', 'full'),
+    (76, 'subscribed', '', 'hidden'),
+    (100, 'not_subscribed', '', 'subscribe'),
+    (76, 'unknown', '', 'subscribe'),
+    (76, 'not_subscribed', 'tg', 'subscribe'),
+    (0, 'unknown', 'tg', 'hidden'),
+    (0, 'subscribed', 'tg', 'hidden'),
+])
+def test_reading_threshold_subscription_and_channel_entry_form_one_policy(reader_client, percent, status, source, variant):
+    client, engine, token, ids = reader_client
+    with Session(engine) as db:
+        account = db.get(MessengerAccount, ids[2])
+        account.subscription_status = status
+        account.subscription_checked_at = datetime.now(timezone.utc)
+        db.add(CourseEvent(user_id=ids[0], course_code='intensive', event_key='progress-test',
+                           event_type='intensive_onepage_progress',
+                           details={'viewed_percent': percent, 'max_depth_percent': 100}))
+        db.commit()
+    client.post('/blog/reader/recognize', json={'token': token})
+    context = client.get('/blog/reader/context', params={'from': source}).json()
+    assert context['subscription_variant'] == variant
+    assert context['show_subscription'] is (variant != 'hidden')
+    if variant == 'subscribe':
+        assert context['copy_html'] == 'Подпишитесь, чтобы не пропускать новые посты.'
+    elif variant == 'hidden':
+        assert context['copy_html'] == ''
+
+
+@pytest.mark.parametrize('kind', ['paid', 'confirmed', 'legacy', 'masterclass'])
+@pytest.mark.parametrize('source', ['', 'tg'])
+def test_recognized_buyers_are_hidden_even_when_not_subscribed(reader_client, kind, source):
+    client, engine, token, ids = reader_client
+    with Session(engine) as db:
+        account = db.get(MessengerAccount, ids[2])
+        account.subscription_status = 'not_subscribed'
+        account.subscription_checked_at = datetime.now(timezone.utc)
+        if kind in ('legacy', 'masterclass'):
+            resource = Resource(code='ACCESS_MASTERCLASS_LEGACY' if kind == 'legacy' else 'ACCESS_MASTERCLASS',
+                                name='Synthetic course', status='active')
+            db.add(resource)
+            db.flush()
+            db.add(UserAccess(user_id=ids[0], resource_id=resource.id,
+                              source='test', granted_at=datetime.now(timezone.utc)))
+        else:
+            db.add(Payment(user_id=ids[0], source='test', product_name_raw='Synthetic purchase', payment_status=kind))
+        db.commit()
+    client.post('/blog/reader/recognize', json={'token': token})
+    context = client.get('/blog/reader/context', params={'from': source}).json()
+    assert context['recognized'] is True
+    assert context['show_subscription'] is False
+    assert context['subscription_variant'] == 'hidden'
+
+
 def test_personal_link_sets_shared_recognition_cookie_without_login_or_personal_data(reader_client):
     client, _, token, _ = reader_client
     linked = client.post('/blog/reader/recognize', json={'token': token})
@@ -135,11 +193,11 @@ def test_cookie_is_shared_between_russian_main_and_blog_not_unrelated_domains(re
 
 
 @pytest.mark.parametrize('entered,status,age,show,url', [
-    (True, 'subscribed', 1, False, TELEGRAM_PIN),
+    (True, 'subscribed', 1, True, TELEGRAM_PIN),
     (True, 'not_subscribed', 1, True, TELEGRAM_PIN),
     (True, 'unknown', 1, True, TELEGRAM_PIN),
     (True, 'subscribed', 25, True, TELEGRAM_PIN),
-    (False, 'subscribed', 1, False, TELEGRAM_BOT),
+    (False, 'subscribed', 1, True, TELEGRAM_BOT),
     (False, 'unknown', 1, True, TELEGRAM_BOT),
 ])
 def test_bot_start_selects_destination_and_membership_separately_controls_visibility(reader_client, entered, status, age, show, url):
@@ -286,3 +344,26 @@ def test_foreign_channel_membership_cannot_suppress_known_readers_invitation(rea
     assert context['recognized'] is True
     assert context['show_subscription'] is True
     assert context['telegram']['url'] == TELEGRAM_BOT
+
+
+@pytest.mark.parametrize('published', [False, True])
+def test_terminal_masterclass_name_follows_active_catalog_for_both_article_sources(reader_client, published):
+    from copy import deepcopy
+    from app.product_catalog_service import active_product_catalog, publish_product_catalog
+    from app.blog_draft_service import ensure_existing_article, publish_article
+    client, engine, _, _ = reader_client
+    with Session(engine) as db:
+        active = active_product_catalog(db)
+        payload = deepcopy(active.payload)
+        product = next(p for p in payload['products'] if p['code'] == 'masterclass')
+        product['fullName'] = 'Актуальное имя мастер-класса из каталога'
+        publish_product_catalog(db, payload=payload, expected_version=active.version_no, admin='test')
+        if published:
+            from app.blog_content import load_blog_catalog
+            article = load_blog_catalog().by_slug('pochemu-yapontsy-hudye')
+            draft = ensure_existing_article(db, article.document_key)
+            publish_article(db, slug=article.document_key, expected_version=draft.version_no, admin='test')
+    response = client.get('/blog/pochemu-yapontsy-hudye')
+    assert response.status_code == 200
+    assert 'Актуальное имя мастер-класса из каталога' in response.text
+    assert 'О мастер-классе' in response.text

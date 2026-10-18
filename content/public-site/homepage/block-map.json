@@ -1869,5 +1869,8 @@
       "originalSrc": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/media/reviews/v1/r043-stream-collage.webp",
       "alt": "Коллаж отзывов участников со стрима"
     }
-  ]
+  ],
+  "sharedSlots": {
+    "free-intensive.aside-02": "public-site-content/reader-subscription"
+  }
 }

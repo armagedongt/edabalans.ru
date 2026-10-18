@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const {due,progress,cookieDomain,subscriptionAnchor} = require('../app/static/blog/assets/reader-subscription.js');
+const {due,progress,cookieDomain,subscriptionAnchor,messengerDestination} = require('../app/static/blog/assets/reader-subscription.js');
 assert.equal(due(null,0),true);
 assert.equal(due(1000,1000+86400000-1),false);
 assert.equal(due(1000,1000+86400000),true);
@@ -23,6 +23,11 @@ assert.equal(subscriptionAnchor(article('first')),first);
 assert.equal(subscriptionAnchor(article('missing')),undefined);
 assert.equal(subscriptionAnchor(article('fir')),undefined,'A prefix must not relocate the insertion');
 assert.equal(subscriptionAnchor(article(undefined)),undefined);
+assert.equal(messengerDestination('https://t.me/Fitness_Talks_bot/channel?startapp=pk','t.me'),'https://t.me/Fitness_Talks_bot/channel?startapp=pk');
+assert.equal(messengerDestination('https://max.ru/id230409966750_biz','max.ru'),'https://max.ru/id230409966750_biz');
+for (const url of ['javascript:alert(1)','https://t.me.evil.test/post','https://user@t.me/post','//t.me/post','https://t.me/']) {
+  assert.equal(messengerDestination(url,'t.me'),null);
+}
 console.log('reader subscription timing, domain, progress and curated anchor assertions passed');
 const {test} = require('node:test');
 const vm = require('node:vm');
@@ -30,13 +35,27 @@ const fs = require('node:fs');
 const path = require('node:path');
 const source = fs.readFileSync(path.join(__dirname, '../app/static/blog/assets/reader-subscription.js'), 'utf8');
 
-async function entry(search, context, fail = false) {
+async function entry(search, context, fail = false, home = false) {
   const result = { inline: null, opened: false, request: null };
+  const nodes = {
+    '.reader-close': {addEventListener() {}},
+    '.reader-channel-copy': {innerHTML:'seed'},
+    '.reader-bot-telegram': {href:'https://t.me/seed'},
+    '.reader-bot-max': {href:'https://max.ru/seed'}
+  };
+  const section = {hidden:true};
+  const homepage = {hidden:true, querySelector: selector => nodes[selector], closest: () => section};
+  result.nodes = nodes;
+  result.homepage = homepage;
+  result.section = section;
   const popup = {
     showModal() { result.opened = true; }, close() {}, addEventListener() {},
     querySelector(selector) {
-      if (selector === '.reader-channel') return {cloneNode: () => ({addEventListener() {}})};
-      return {addEventListener() {}};
+      if (selector === '.reader-channel') return {cloneNode: () => ({
+        addEventListener() {}, copy:nodes['.reader-channel-copy'].innerHTML,
+        telegram:nodes['.reader-bot-telegram'].href, max:nodes['.reader-bot-max'].href
+      })};
+      return nodes[selector];
     }
   };
   const heading = {id: 'section', before(node) { result.inline = node; }};
@@ -48,10 +67,10 @@ async function entry(search, context, fail = false) {
   };
   const document = {
     cookie: '', visibilityState: 'visible', addEventListener() {}, querySelector: () => null,
-    getElementById: id => id === 'reader-popup' ? popup : article
+    getElementById: id => id === 'reader-channel-homepage' ? (home ? homepage : null) : id === 'reader-popup' ? popup : id === 'article' ? article : null
   };
   vm.runInNewContext(source, {
-    URLSearchParams, document, location: {search, hostname:'edabalans.ru', protocol:'https:'},
+    URL, URLSearchParams, document, location: {search, hostname:'edabalans.ru', protocol:'https:'},
     window: {addEventListener() {}}, scrollY: 0, innerHeight: 800,
     fetch: async url => {
       result.request = url;
@@ -91,4 +110,27 @@ test('context failure hides only marked entry, and does not persist suppression'
     assert.equal(state.inline.id, 'reader-channel-inline');
     assert.equal(state.opened, true);
   }
+});
+
+test('server-selected copy and edited destinations reach popup and its inline clone', async () => {
+  const state = await entry('', {show_subscription:true, copy_html:'Subscribe only',
+    telegram:{url:'https://t.me/Fitness_Talks_bot/channel?startapp=pk'},
+    max:{url:'https://max.ru/channel_post'}});
+  assert.equal(state.nodes['.reader-channel-copy'].innerHTML, 'Subscribe only');
+  assert.equal(state.inline.copy, 'Subscribe only');
+  assert.equal(state.inline.telegram, 'https://t.me/Fitness_Talks_bot/channel?startapp=pk');
+  assert.equal(state.inline.max, 'https://max.ru/channel_post');
+});
+
+test('homepage uses the same context without opening a popup or writing its interval cookie', async () => {
+  const state = await entry('', {show_subscription:true, copy_html:'Homepage copy',
+    telegram:{url:'https://t.me/Fitness_Talks_bot/channel?startapp=yt'}}, false, true);
+  assert.equal(state.homepage.hidden, false);
+  assert.equal(state.section.hidden, false);
+  assert.equal(state.nodes['.reader-channel-copy'].innerHTML, 'Homepage copy');
+  assert.equal(state.opened, false);
+  assert.equal(state.cookie, '');
+  const hidden = await entry('?from=tg', {show_subscription:false}, false, true);
+  assert.equal(hidden.homepage.hidden, true);
+  assert.equal(hidden.section.hidden, true);
 });

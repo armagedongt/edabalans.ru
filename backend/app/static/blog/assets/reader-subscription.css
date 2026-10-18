@@ -1,4 +1,7 @@
 .reader-channel { background: var(--surface); border-color: var(--border); }
+#reader-channel-homepage { --surface: #fff; --text: #252525; --muted: rgba(37,37,37,.68); --border: #e5e7eb; --blue: #924ff7; margin: 24px 0 0; padding: 20px; border: 1px solid var(--border); border-radius: 10px; font-family: var(--ed-font-body, Manrope, Arial, sans-serif); }
+#reader-channel-homepage[hidden], .free-intensive[hidden] { display: none !important; }
+#reader-channel-homepage .reader-channel-copy { font-size: 14px; line-height: 1.55; margin: 16px 0; color: var(--text); }
 .reader-channel-author { display: flex; align-items: center; gap: 12px; padding-right: 30px; font-size: 14px; line-height: 1.4; }
 .reader-channel-author strong { font-size: inherit; white-space: nowrap; }
 .reader-channel-role { display: block; font-size: 13px; color: var(--muted); font-weight: 400; }

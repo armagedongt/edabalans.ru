@@ -9,18 +9,18 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import Request, Response
 from cryptography.fernet import Fernet, InvalidToken
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.intensive_web_access import access_token_row, aware_utc, ACCESS_PURPOSE, PLATFORMS
-from app.models import MessengerAccount, MessengerLinkToken, User
+from app.models import CourseEvent, MessengerAccount, MessengerLinkToken, Payment, User
+from app.course_access_service import active_resource_codes
+from app.product_identity import CONFIRMED_PAYMENT_STATUSES
+from app.public_site_content_service import reader_subscription_document
 
 COOKIE = "edabalans_reader"
 COOKIE_AGE = 30 * 24 * 60 * 60
 ROOTS = ("edabalans.ru", "xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai")
-TELEGRAM_BOT = "https://t.me/Fitness_Talks_bot"
-TELEGRAM_PIN = "https://t.me/Fitness_Talks/260"
-MAX_BOT = "https://max.ru/id230409966750_bot"
 
 
 def _cipher(secret: str) -> Fernet:
@@ -79,31 +79,40 @@ def _subscription(account: MessengerAccount | None) -> bool | None:
 
 
 def reader_context(db: Session, request: Request, secret: str) -> dict:
+    payload = reader_subscription_document(db).payload
+    destinations = payload["settings"]
     user = reader_user(db, request, secret)
-    account = db.scalar(select(MessengerAccount).where(
-        MessengerAccount.user_id == user.id,
-        MessengerAccount.platform == "telegram",
-        MessengerAccount.is_deliverable.is_(True),
-    )) if user else None
-    entered = bool(account and account.main_scenario_seen_at)
-    subscribed = _subscription(account)
-    channel = {"tg": "telegram", "max": "max"}.get(request.query_params.get("from"))
-    show_subscription = subscribed is not True
-    if channel:
-        source_account = account if channel == "telegram" else (
-            db.scalar(select(MessengerAccount).where(
-                MessengerAccount.user_id == user.id,
-                MessengerAccount.platform == channel,
-                MessengerAccount.is_deliverable.is_(True),
-            )) if user else None
-        )
-        source_subscription = _subscription(source_account)
-        # The entry hint suppresses promotion, but never proves membership or identity.
-        show_subscription = source_subscription is False
+    accounts = {account.platform: account for account in db.scalars(
+        select(MessengerAccount).where(MessengerAccount.user_id == user.id,
+                                      MessengerAccount.is_deliverable.is_(True))
+    )} if user else {}
+    subscribed = _subscription(accounts.get("telegram"))
+    source_platform = {"tg": "telegram", "max": "max"}.get(request.query_params.get("from"))
+    source_subscription = _subscription(accounts.get(source_platform)) if source_platform else subscribed
+    buyer = False
+    read_percent = 0
+    if user:
+        buyer = bool(db.scalar(select(Payment.id).where(
+            Payment.user_id == user.id,
+            Payment.payment_status.in_(CONFIRMED_PAYMENT_STATUSES),
+        ).limit(1))) or bool(active_resource_codes(db, user.id) & {
+            "ACCESS_MASTERCLASS", "ACCESS_MASTERCLASS_LEGACY"})
+        read_percent = db.scalar(select(func.max(CourseEvent.details["viewed_percent"].as_integer())).where(
+            CourseEvent.user_id == user.id, CourseEvent.course_code == "intensive",
+            CourseEvent.event_type.in_(("intensive_onepage_progress", "intensive_onepage_heading",
+                                       "intensive_onepage_reading_start")),
+        )) or 0
+    if buyer or (source_platform and source_subscription is not False):
+        variant = "hidden"
+    elif read_percent > 75:
+        variant = "hidden" if source_subscription is True else "subscribe"
+    else:
+        variant = "full"
     return {
         "recognized": user is not None,
-        "show_subscription": show_subscription,
-        "telegram": {"url": TELEGRAM_PIN if entered else TELEGRAM_BOT, "subscribed": subscribed},
-        # MAX pin integration remains explicitly deferred by the owner.
-        "max": {"url": MAX_BOT},
+        "show_subscription": variant != "hidden",
+        "subscription_variant": variant,
+        "copy_html": payload["variants"].get(variant, ""),
+        "telegram": {"url": destinations["telegram_url"], "subscribed": subscribed},
+        "max": {"url": destinations["max_url"]},
     }

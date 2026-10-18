@@ -65,7 +65,7 @@ def test_verified_telegram_input_only_returns_the_post_and_no_session():
 
 
 @pytest.mark.parametrize(("code", "source"), [
-    ("ig", "instagram"), ("yt", "youtube"), ("th", "threads"),
+    ("site", "website"), ("ig", "instagram"), ("yt", "youtube"), ("th", "threads"),
     ("pk", "pikabu"), ("dz", "dzen"), ("vk", "vk"), ("tt", "tiktok"),
     ("writepreview", None), ("preview", None), ("unknown", None), ("", None),
 ])

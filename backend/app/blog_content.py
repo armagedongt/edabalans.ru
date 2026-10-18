@@ -397,7 +397,7 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
                     raise ValueError(f"blog article {article.source_id} inline related target is outside curated pool")
 
 
-def render_blog_component(name: str, arguments: list[str]) -> str:
+def render_blog_component(name: str, arguments: list[str], *, masterclass_name: str | None = None) -> str:
     if name != "blog_cta" or len(arguments) != 1:
         raise HTTPException(422, "Компонент блога принимает один ключ CTA")
     cta = public_cta(arguments[0])
@@ -411,7 +411,7 @@ def render_blog_component(name: str, arguments: list[str]) -> str:
     return (
         f'<section class="blog-cta blog-cta-{escape(cta.key)}" data-component="blog-cta">'
         f'<span class="blog-cta-eyebrow">{escape(cta.eyebrow)}</span>'
-        f'<h3>{escape(cta.title)}</h3><p>{escape(cta.copy)}</p>'
+        f'<h3>{escape(masterclass_name if cta.key == "masterclass" and masterclass_name else cta.title)}</h3><p>{escape(cta.copy)}</p>'
         f'<a href="{escape(destination, quote=True)}" data-tracking-key="{escape(cta.tracking_key, quote=True)}">'
         f'{escape(cta.button_label)}</a></section>'
     )
@@ -441,10 +441,10 @@ def add_heading_anchors(rendered: str) -> tuple[str, tuple[tuple[str, str], ...]
     return with_anchors, tuple(toc)
 
 
-def render_article_body(catalog: BlogCatalog, article: BlogArticle) -> tuple[str, tuple[tuple[str, str], ...]]:
+def render_article_body(catalog: BlogCatalog, article: BlogArticle, *, masterclass_name: str | None = None) -> tuple[str, tuple[tuple[str, str], ...]]:
     source = (catalog.content_dir / "articles" / article.body_file).read_text(encoding="utf-8")
     metadata, source = parse_blog_metadata(source)
-    rendered = markdown_to_article_html(source, component_renderer=render_blog_component)
+    rendered = markdown_to_article_html(source, component_renderer=lambda name, args: render_blog_component(name, args, masterclass_name=masterclass_name))
     rendered = insert_telegram_origin(rendered, metadata)
     return add_heading_anchors(rewrite_blog_links(rendered, catalog))
 

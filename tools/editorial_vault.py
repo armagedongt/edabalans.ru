@@ -225,7 +225,13 @@ class Vault:
         docs = self.api.request("GET", "/admin/api/public-site/content")["documents"]
         for document in docs:
             slug = document["slug"]
-            if slug in POPUPS:
+            if slug == "reader-subscription":
+                items["public:" + slug] = {
+                    "kind": "public", "group": "Сайт", "title": document["title"],
+                    "api_path": "/admin/api/public-site/content/" + slug,
+                    "path": "Сайт/Блок статьи и подписки.md",
+                }
+            elif slug in POPUPS:
                 ident = "public:" + slug
                 items[ident] = {"kind": "public", "group": "Описания продуктов", "api_path": "/admin/api/public-site/content/" + slug,
                                 "path": "Описания продуктов/" + slug + ".md"}

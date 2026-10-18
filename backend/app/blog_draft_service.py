@@ -609,6 +609,7 @@ def render_article(
     markdown: str | None = None,
     *,
     public: bool = False,
+    masterclass_name: str | None = None,
 ) -> tuple[str, tuple]:
     value = payload["markdown"] if markdown is None else markdown
     _validate_markdown(value, payload["media"])
@@ -631,7 +632,7 @@ def render_article(
             value,
         )
     body = markdown_to_article_html(value)
-    body += render_blog_component("blog_cta", [payload["cta"]])
+    body += render_blog_component("blog_cta", [payload["cta"]], masterclass_name=masterclass_name)
     body = insert_telegram_origin(body, metadata)
     return add_heading_anchors(rewrite_blog_links(body, load_blog_catalog()))
 

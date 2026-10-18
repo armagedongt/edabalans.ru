@@ -33,6 +33,8 @@ from app.blog_draft_service import public_payload, published_card_overrides, pub
 from app.database import get_db
 from app.blog_responsive_media import apply_responsive_images, derivative_files
 from app.blog_reader_context import recognize_reader, reader_context
+from app.public_site_content_service import render_reader_subscription
+from app.product_catalog_service import product_public
 from app.config import get_settings
 from sqlalchemy.orm import Session
 
@@ -307,10 +309,11 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         published["markdown"] if published is not None
         else (catalog.content_dir / "articles" / article.body_file).read_text(encoding="utf-8")
     )
+    masterclass_name = product_public(db, "masterclass")["name"]
     body, toc = (
-        render_article(article.document_key, published, public=True)
+        render_article(article.document_key, published, public=True, masterclass_name=masterclass_name)
         if published is not None
-        else render_article_body(catalog, article)
+        else render_article_body(catalog, article, masterclass_name=masterclass_name)
     )
     body = insert_inline_related(catalog, article, body)
     canonical = f"{BLOG_PUBLIC_URL}/{article.slug}"
@@ -384,8 +387,8 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
         _template("article.html"),
     )
     if 'data-channel-origin="telegram"' not in body:
-        rendered = rendered.replace('</head>', '<link rel="stylesheet" href="/blog/assets/reader-subscription.css?v=20261005a"></head>')
-        rendered = rendered.replace('</body>', _template('reader-subscription.html') + '<script src="/blog/assets/reader-subscription.js?v=20261018from" defer></script></body>')
+        rendered = rendered.replace('</head>', '<link rel="stylesheet" href="/blog/assets/reader-subscription.css?v=20261019rollout"></head>')
+        rendered = rendered.replace('</body>', render_reader_subscription(db, _template('reader-subscription.html')) + '<script src="/blog/assets/reader-subscription.js?v=20261019rollout" defer></script></body>')
     return _html_response(apply_responsive_images(rendered, catalog.content_dir, catalog.allowed_media))
 
 

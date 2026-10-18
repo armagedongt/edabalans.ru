@@ -17,6 +17,7 @@ STATIC_DIR = Path(__file__).resolve().parent / "static" / "channel-bridge"
 # deliberately: arbitrary destinations are not accepted from URL parameters.
 PREVIEW_POST_URL = "https://t.me/Fitness_Talks/260"
 ENTRY_SOURCES = {
+    "site": "website",
     "ig": "instagram",
     "yt": "youtube",
     "th": "threads",
