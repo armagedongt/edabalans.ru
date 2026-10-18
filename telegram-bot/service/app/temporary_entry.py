@@ -6,7 +6,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.models import Broadcast, Contact, ContentItem, CrmTag, CrmUser, CrmUserTag, TrackingEvent, Sequence, SequenceVersion, SequenceRun
 
-CONTENT_CODE = "tpl_temporary_intensive_entry"
+CONTENT_CODE = "tpl_channel_article_entry"
+VIDEO_CODE = "tpl_temporary_intensive_entry"
+CIRCLE_CODE = "tpl_entry_circle"
 NAVIGATION_CODE = "tpl_onepage_entry_navigation"
 NAVIGATION_TAG_CODE = "post_onepage_entry_navigation"
 NAVIGATION_TAG_NAME = "Пост - Навигация"
@@ -84,10 +86,10 @@ def seed_temporary_entry(session: Session) -> None:
         session.add(CrmTag(code=POOL_CODE, name=POOL_NAME, category="manual", status="active"))
     if not session.scalar(select(CrmTag).where(CrmTag.code == NAVIGATION_TAG_CODE)):
         session.add(CrmTag(code=NAVIGATION_TAG_CODE, name=NAVIGATION_TAG_NAME, category="content", status="active"))
-    item = session.scalar(select(ContentItem).where(ContentItem.code == CONTENT_CODE))
+    item = session.scalar(select(ContentItem).where(ContentItem.code == VIDEO_CODE))
     if not item:
         item = ContentItem(
-            code=CONTENT_CODE, title="Вход — видео и единый интенсив", body_source=BODY,
+            code=VIDEO_CODE, title="Вход — видео и единый интенсив", body_source=BODY,
             source_format="telegram_html", editorial_status="approved", status="published",
             media_kind="video", media_path=VIDEO_PATH,
             purpose="Выдать согласованное видео и персональную ссылку после навигации.",
@@ -104,6 +106,14 @@ def seed_temporary_entry(session: Session) -> None:
         item.content_version = (item.content_version or 0) + 1
         item.purpose = "Выдать согласованное видео и персональную ссылку после навигации."
         item.writer_brief = "Дословный текст Сергея 07.10.2026. Кнопка «Читать прямо сейчас»."
+    if not session.scalar(select(ContentItem).where(ContentItem.code == CONTENT_CODE)):
+        session.add(ContentItem(
+            code=CONTENT_CODE, title="Вход — статья «Как сделать похудение проще»",
+            body_source=BODY.replace(" (см. видео)", ""), source_format="telegram_html",
+            editorial_status="approved", status="published",
+            purpose="Текстовый анонс статьи после навигации и старого приветственного кружка.",
+            writer_brief="Согласованный анонс; обычный ролик сохранён отдельно. Без ссылки на видео в заголовке.",
+        ))
     if not session.scalar(select(ContentItem).where(ContentItem.code == NAVIGATION_CODE)):
         session.add(ContentItem(
             code=NAVIGATION_CODE, title="Вход — навигационный закреп", body_source=NAVIGATION_BODY,
@@ -188,7 +198,8 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
         (previous.metadata_json or {}).get("delivery_status") == "sent"
         and (previous.metadata_json or {}).get("message_id")
         and ((previous.metadata_json or {}).get("navigation_message_id")
-             or (previous.metadata_json or {}).get("video_message_id"))
+             or (previous.metadata_json or {}).get("video_message_id")
+             or (previous.metadata_json or {}).get("article_message_id"))
         for previous in previous_deliveries
     )
     first_navigation = next((previous for previous in previous_deliveries
@@ -197,13 +208,13 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
         session.add(CrmUserTag(user_id=contact.user_id, tag_id=navigation_tag.id,
                                source="temporary_navigation_history", created_at=first_navigation.occurred_at))
     repeat_offer = None
-    from app.onepage_campaign import ENTRY_CODES
-    group = ENTRY_CODES["max" if platform == "max" else "tg"]
-    independent = session.scalar(select(ContentItem).where(ContentItem.code == group["repeat_video" if repeat else "first_video"]))
-    independent_ready = independent and content_is_runtime_ready(independent) and (independent.body_source or "").strip() != "[[SKIP]]"
-    if independent_ready:
-        item = independent
-    if repeat and not independent_ready:
+    from app.onepage_campaign import family_received, record_family
+    circle = session.scalar(select(ContentItem).where(ContentItem.code == CIRCLE_CODE))
+    needs_circle = not repeat and not family_received(session, contact, "entry_circle")
+    if needs_circle and (not circle or not content_is_runtime_ready(circle)
+                         or circle.media_kind != "video_note" or not (circle.media_path or circle.telegram_file_id)):
+        raise RuntimeError("Welcome circle is not approved and ready")
+    if repeat:
         repeat_offer = session.scalar(select(ContentItem).where(ContentItem.code == REPEAT_OFFER_CODE))
         if not repeat_offer or repeat_offer.status != "published" or not content_is_runtime_ready(repeat_offer):
             raise RuntimeError("Repeat entry offer is not approved and ready")
@@ -237,32 +248,34 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
                 sender.pin_message(contact.chat_id, navigation_id)
         else:
             session.commit()
-        video_content = SimpleNamespace(
+        if needs_circle:
+            # Recheck under the same existing CRM lock after navigation committed.
+            session.scalar(select(CrmUser).where(CrmUser.id == contact.user_id).with_for_update())
+            if not family_received(session, contact, "entry_circle"):
+                from app.onepage_campaign import before_direct, record_direct
+                before_direct(session, contact, circle.code, sender)
+                circle_id = sender.send_content(contact.chat_id, circle, {"buttons": [], "link_preview": False})
+                record_direct(session, contact, "entry_circle", circle_id)
+                record_family(session, contact, "entry_circle", circle.code, circle_id)
+                event.metadata_json = {**event.metadata_json, "circle_message_id": str(circle_id)}
+            session.commit()
+        article_content = SimpleNamespace(
             code=item.code, title=item.title, source_format="telegram_html",
             body_source=replace_template_values(item.body_source, {"personal_intensive_url": url})
-            + ("\n\n" + repeat_offer.body_source if repeat_offer and not independent_ready else ""),
-            media_kind=item.media_kind, media_path=item.media_path, telegram_file_id=item.telegram_file_id,
+            + ("\n\n" + repeat_offer.body_source if repeat_offer else ""),
+            media_kind=None, media_path=None, telegram_file_id=None,
         )
-        video_content, video_config = personalized_delivery(session, contact, video_content,
+        article_content, article_config = personalized_delivery(session, contact, article_content,
             {"buttons": [] if repeat else [{"text": BUTTON_TEXT, "url": url}], "link_preview": False, "media_separate": True})
         from app.onepage_campaign import before_direct,record_direct
         before_direct(session,contact,item.code,sender)
-        message_id = sender.send_content(contact.chat_id, video_content, video_config)
-        record_direct(session,contact,"entry_video",message_id)
-        if platform == "telegram" and video_content.telegram_file_id:
-            item.telegram_file_id = video_content.telegram_file_id
+        message_id = sender.send_content(contact.chat_id, article_content, article_config)
+        record_direct(session,contact,"entry_article",message_id)
     except Exception:
         event.metadata_json = {**event.metadata_json, "delivery_status": "uncertain"}
         session.commit()
         raise
     event.metadata_json = {**event.metadata_json, "delivery_status": "sent", "message_id": str(message_id),
-                           "video_message_id": str(message_id)}
+                           "article_message_id": str(message_id)}
     session.commit()
-    if not repeat:
-        from app.onepage_campaign import live
-        from app.engine import start_run
-        if live(session):
-            run = start_run(session, contact.id, "welcome_intensive")
-            run.context={**run.context,"last_family":"entry_video"}
-            session.commit()
     return {"ok": True, "temporary_entry": True}

@@ -12,7 +12,7 @@ from app.engine import advance_run, start_run
 from app.max import process_max_update
 from app.models import Contact, ContentItem, CrmTag, CrmUserTag, UserVariable, UpdateReceipt, SequenceRun, TrackingEvent
 from app.seed import seed_defaults, WELCOME_CODE
-from app.temporary_entry import CONTENT_CODE, NAVIGATION_CODE, NAVIGATION_TAG_CODE, BUTTON_TEXT, VIDEO_PATH, POOL_CODE, REPEAT_OFFER_BODY, pause_marketing
+from app.temporary_entry import CONTENT_CODE, VIDEO_CODE, CIRCLE_CODE, NAVIGATION_CODE, NAVIGATION_TAG_CODE, BUTTON_TEXT, VIDEO_PATH, POOL_CODE, REPEAT_OFFER_BODY, pause_marketing
 
 
 class Sender:
@@ -109,7 +109,8 @@ def run_max(session, sender, event):
 def assert_invitation(session, sender, repeat=False):
     _, content, config = sender.sent[-1]
     assert content.code == CONTENT_CODE
-    assert content.media_kind == "video" and content.media_path == VIDEO_PATH
+    assert content.media_kind is None and content.media_path is None
+    assert "(см. видео)" not in content.body_source
     if repeat:
         assert config["buttons"] == []
         assert content.body_source.endswith("\n\n" + REPEAT_OFFER_BODY)
@@ -140,15 +141,15 @@ def test_start_repeat_message_callback_and_duplicate(setup, platform):
         before = len(sender.sent)
         assert invoke(e)["temporary_entry"]
         assert_invitation(session, sender, repeat=index > 0)
-        assert [content.code for _, content, _ in sender.sent[before:]] == ([NAVIGATION_CODE, CONTENT_CODE] if index == 0 else [CONTENT_CODE])
+        assert [content.code for _, content, _ in sender.sent[before:]] == ([NAVIGATION_CODE, CIRCLE_CODE, CONTENT_CODE] if index == 0 else [CONTENT_CODE])
     nav = sender.sent[0]
     assert "{{" not in nav[1].body_source and nav[2]["link_preview"] is False
     assert "<b>Навигация!</b>" in nav[1].body_source
     assert "https://похудение-это-есть.рф" not in sender.sent[-1][1].body_source
     assert "<b>похудение-это-есть.рф</b>" in sender.sent[-1][1].body_source
-    assert len(sender.sent) == 5
+    assert len(sender.sent) == 6
     assert invoke(events[-1])["duplicate"]
-    assert len(sender.sent) == 5
+    assert len(sender.sent) == 6
     tag = session.scalar(select(CrmTag).where(CrmTag.code == POOL_CODE))
     assert session.scalar(select(func.count()).select_from(CrmUserTag).where(CrmUserTag.tag_id == tag.id)) == 1
     assert [value for value in sender.answers if isinstance(value, str)] == ["cb4"]
@@ -198,7 +199,7 @@ def test_lost_response_is_not_replayed_but_new_interaction_works(setup):
     assert main.process_update(tg(1), session)["duplicate"]
     assert len(sender.sent) == 1
     assert main.process_update(tg(2), session)["temporary_entry"]
-    assert len(sender.sent) == 3
+    assert len(sender.sent) == 4
     assert_invitation(session, sender)
     assert session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "temporary_intensive_entry")).metadata_json["delivery_status"] == "uncertain"
 
@@ -312,7 +313,7 @@ def test_max_service_and_self_events_are_not_answered(setup):
 def test_existing_placeholder_upgrades_once_and_preserves_later_owner_edits(setup):
     from app.temporary_entry import BODY, LEGACY_BODY, seed_temporary_entry
     session, sender = setup
-    item = session.scalar(select(ContentItem).where(ContentItem.code == CONTENT_CODE))
+    item = session.scalar(select(ContentItem).where(ContentItem.code == VIDEO_CODE))
     item.body_source = LEGACY_BODY
     item.media_kind = None
     item.media_path = None
@@ -330,23 +331,27 @@ def test_existing_placeholder_upgrades_once_and_preserves_later_owner_edits(setu
     assert item.body_source == "<b>Последующая правка Сергея</b>" and item.content_version == 8
 
 
-def test_uploaded_telegram_video_is_cached_for_following_entry(setup):
+def test_old_circle_is_used_and_cached_while_ordinary_video_is_preserved(setup):
     session, sender = setup
+    video = session.scalar(select(ContentItem).where(ContentItem.code == VIDEO_CODE))
+    preserved = (video.body_source, video.media_kind, video.media_path, video.telegram_file_id)
     send = sender.send_content
-    incoming_video_refs = []
     def send_with_file_id(chat_id, content, config):
-        if content.media_kind == "video":
-            incoming_video_refs.append(content.telegram_file_id)
-        message_id = send(chat_id, content, config)
-        if content.media_kind == "video":
-            content.telegram_file_id = "telegram-video-file-id"
-        return message_id
+        result = send(chat_id, content, config)
+        if content.code == CIRCLE_CODE:
+            content.telegram_file_id = "old-welcome-circle-file-id"
+        return result
     sender.send_content = send_with_file_id
     main.process_update(tg(1), session)
+    assert [content.code for _, content, _ in sender.sent] == [NAVIGATION_CODE, CIRCLE_CODE, CONTENT_CODE]
+    assert sender.sent[1][1].media_kind == "video_note"
+    assert sender.sent[1][1].media_path == "/app/media/welcome-intro-circle.mp4"
     session.expire_all()
-    assert session.scalar(select(ContentItem).where(ContentItem.code == CONTENT_CODE)).telegram_file_id == "telegram-video-file-id"
+    assert session.scalar(select(ContentItem).where(ContentItem.code == CIRCLE_CODE)).telegram_file_id == "old-welcome-circle-file-id"
+    video = session.scalar(select(ContentItem).where(ContentItem.code == VIDEO_CODE))
+    assert (video.body_source, video.media_kind, video.media_path, video.telegram_file_id) == preserved
     main.process_update(tg(2), session)
-    assert incoming_video_refs == [None, "telegram-video-file-id"]
+    assert [content.code for _, content, _ in sender.sent].count(CIRCLE_CODE) == 1
 
 
 def test_old_placeholder_delivery_is_not_a_video_delivery(setup):
@@ -380,7 +385,7 @@ def test_linked_contact_uses_shared_user_video_history(setup):
     session.commit()
     send_temporary_entry(session, linked, sender, "linked-max-first", "max", "https://edabalans.ru/intensive")
     assert_invitation(session, sender, repeat=True)
-    assert [content.code for _, content, _ in sender.sent] == [NAVIGATION_CODE, CONTENT_CODE, CONTENT_CODE]
+    assert [content.code for _, content, _ in sender.sent] == [NAVIGATION_CODE, CIRCLE_CODE, CONTENT_CODE, CONTENT_CODE]
 
 
 def test_existing_navigation_history_assigns_tag_without_resending(setup):
@@ -419,8 +424,58 @@ def test_video_failure_after_navigation_does_not_resend_navigation(setup):
         main.process_update(tg(1), session)
     sender.send_content = send
     main.process_update(tg(2), session)
-    assert [content.code for _, content, _ in sender.sent] == [NAVIGATION_CODE, CONTENT_CODE]
+    assert [content.code for _, content, _ in sender.sent] == [NAVIGATION_CODE, CIRCLE_CODE, CONTENT_CODE]
     assert_invitation(session, sender, repeat=False)
     main.process_update(tg(3), session)
     assert_invitation(session, sender, repeat=True)
     assert [value for value in sender.answers if isinstance(value, tuple)] == [("pin", "4101", "1")]
+
+
+def test_article_failure_does_not_repeat_successfully_delivered_circle(setup):
+    session, sender = setup
+    send = sender.send_content
+    def fail_article(chat_id, content, config):
+        if content.code == CONTENT_CODE:
+            raise RuntimeError('Article failed')
+        return send(chat_id, content, config)
+    sender.send_content = fail_article
+    with pytest.raises(RuntimeError, match='Article failed'):
+        main.process_update(tg(1001), session)
+    assert [c.code for _, c, _ in sender.sent] == [NAVIGATION_CODE, CIRCLE_CODE]
+    sender.send_content = send
+    main.process_update(tg(1002), session)
+    assert [c.code for _, c, _ in sender.sent] == [NAVIGATION_CODE, CIRCLE_CODE, CONTENT_CODE]
+    assert_invitation(session, sender)
+
+
+def test_unapproved_circle_blocks_first_entry_before_any_message(setup):
+    session, sender = setup
+    circle = session.scalar(select(ContentItem).where(ContentItem.code == CIRCLE_CODE))
+    circle.editorial_status = 'draft'
+    session.commit()
+    with pytest.raises(RuntimeError, match='circle'):
+        main.process_update(tg(1201), session)
+    assert sender.sent == []
+
+
+def test_temporary_greeting_does_not_start_even_an_enabled_old_campaign(setup, monkeypatch):
+    session, sender = setup
+    monkeypatch.setattr('app.onepage_campaign.live', lambda _: True)
+    main.process_update(tg(1301), session)
+    assert [c.code for _, c, _ in sender.sent] == [NAVIGATION_CODE, CIRCLE_CODE, CONTENT_CODE]
+    assert session.scalar(select(func.count()).select_from(SequenceRun)) == 0
+
+
+def test_circle_delivered_by_overlapping_entry_is_rechecked_after_navigation(setup, monkeypatch):
+    from app.onepage_campaign import record_family
+    session, sender = setup
+    send = sender.send_content
+    def other_entry_finishes_circle(chat_id, content, config):
+        result = send(chat_id, content, config)
+        if content.code == NAVIGATION_CODE:
+            contact = session.scalar(select(Contact).where(Contact.telegram_user_id == '4101'))
+            record_family(session, contact, 'entry_circle', CIRCLE_CODE, 'other-entry-circle')
+        return result
+    sender.send_content = other_entry_finishes_circle
+    main.process_update(tg(1302), session)
+    assert [c.code for _, c, _ in sender.sent] == [NAVIGATION_CODE, CONTENT_CODE]

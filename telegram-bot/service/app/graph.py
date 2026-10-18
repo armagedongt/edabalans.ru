@@ -178,7 +178,7 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         {"id": "e20", "source": "send_legacy", "target": "exit_legacy", "label": "Отправлено", "branch": "default"},
     ]
     from app.config import get_settings
-    from app.temporary_entry import CONTENT_CODE, NAVIGATION_CODE, NAVIGATION_TAG_NAME, REPEAT_OFFER_CODE, ENTRY_RULES, POOL_NAME, navigation_content
+    from app.temporary_entry import CONTENT_CODE, CIRCLE_CODE, NAVIGATION_CODE, NAVIGATION_TAG_NAME, REPEAT_OFFER_CODE, ENTRY_RULES, POOL_NAME, navigation_content
     active_navigation = navigation_content(session, "telegram")
     navigation_code = active_navigation.code if active_navigation else NAVIGATION_CODE
     enabled = get_settings().temporary_intensive_entry_enabled
@@ -189,9 +189,11 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         node("temporary_navigation_seen", "condition", "Навигация уже получена?", NAVIGATION_TAG_NAME + "; учитывать прежние доставки", 28),
         node("temporary_navigation", "message", "Отправить навигацию", "Персональные ссылки; preview выключен", 28, navigation_code),
         node("temporary_pin", "action", "Закрепить навигацию", "Telegram: pin_message; MAX: без закрепления", 29),
-        node("temporary_article", "message", "Отправить видео и кнопку", "Читать прямо сейчас; персональная ссылка", 30, CONTENT_CODE),
-        node("temporary_video_seen", "condition", "Видео уже успешно отправлялось?", "Общий user_id; успешная доставка видео, не старой заглушки", 30),
-        node("temporary_repeat_article", "message", "Видео с припиской о Мастер-классе, без кнопки", "Тот же текст и видео; приписка из отдельного слота", 31, REPEAT_OFFER_CODE),
+        node("temporary_circle_seen", "condition", "Приветственный кружок уже получен?", "Успешная доставка семьи entry_circle", 30),
+        node("temporary_circle", "message", "Старый приветственный кружок", "Исходный video_note, не конвертация обычного ролика", 30, CIRCLE_CODE),
+        node("temporary_article", "message", "Отправить текст статьи и кнопку", "Читать прямо сейчас; персональная ссылка", 30, CONTENT_CODE),
+        node("temporary_video_seen", "condition", "Анонс уже успешно отправлялся?", "Общий user_id; доставка статьи или прежнего видео, не заглушки", 30),
+        node("temporary_repeat_article", "message", "Анонс с припиской о Мастер-классе, без кнопки", "Текст статьи; приписка из отдельного слота", 31, REPEAT_OFFER_CODE),
         node("temporary_exit", "module_exit", "Не запускать старые рассылки", "Пауза Welcome, продающих цепочек и broadcast", 29),
     ])
     next(edge for edge in edges if edge["id"] == "e05a")["target"] = "temporary_gate"
@@ -212,8 +214,11 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         {"id": "temporary_nav_skip", "source": "temporary_navigation_seen", "target": "temporary_video_seen", "label": "Да", "branch": "true"},
         {"id": "temporary_pin_nav", "source": "temporary_navigation", "target": "temporary_pin", "label": "Отправлено", "branch": "default"},
         {"id": "temporary_video", "source": "temporary_pin", "target": "temporary_video_seen", "label": "Далее", "branch": "default"},
-        {"id": "temporary_video_first", "source": "temporary_video_seen", "target": "temporary_article", "label": "Нет", "branch": "false"},
+        {"id": "temporary_video_first", "source": "temporary_video_seen", "target": "temporary_circle_seen", "label": "Нет", "branch": "false"},
         {"id": "temporary_video_repeat", "source": "temporary_video_seen", "target": "temporary_repeat_article", "label": "Да", "branch": "true"},
+        {"id": "temporary_circle_skip", "source": "temporary_circle_seen", "target": "temporary_article", "label": "Да", "branch": "true"},
+        {"id": "temporary_circle_send", "source": "temporary_circle_seen", "target": "temporary_circle", "label": "Нет", "branch": "false"},
+        {"id": "temporary_circle_done", "source": "temporary_circle", "target": "temporary_article", "label": "Отправлено", "branch": "default"},
         {"id": "temporary_repeat_stop", "source": "temporary_repeat_article", "target": "temporary_exit", "label": "Отправлено", "branch": "default"},
         {"id": "temporary_stop", "source": "temporary_article", "target": "temporary_exit", "label": "Отправлено", "branch": "default"},
     ])

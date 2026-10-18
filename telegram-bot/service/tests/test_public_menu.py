@@ -103,9 +103,9 @@ def test_resume_keeps_existing_stopped_sequence_completed(menu):
 def test_guide_uses_same_temporary_start_path(menu):
     session, sent = menu
     assert main.process_update(update(1, "/guide"), session)["temporary_entry"]
-    assert [method for method, _ in sent] == ["sendMessage", "pinChatMessage", "sendVideo"]
+    assert [method for method, _ in sent] == ["sendMessage", "pinChatMessage", "sendVideoNote", "sendMessage"]
     assert main.process_update(update(2, "/start"), session)["temporary_entry"]
-    assert sent[-1][0] == "sendVideo"
+    assert sent[-1][0] == "sendMessage"
     events = list(session.scalars(select(main.TrackingEvent).where(main.TrackingEvent.event_type == "start_maintenance")))
     assert len(events) == 2
 

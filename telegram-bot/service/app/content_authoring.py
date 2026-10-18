@@ -41,22 +41,22 @@ DIRECT_TRIGGER_CONTEXT = {
         "kind": "direct_trigger",
         "module": "start_attribution",
         "step": "temporary_repeat_article",
-        "previous": "Видео уже успешно отправлялось этому CRM-пользователю",
-        "next": "Добавить к подписи видео; отправить без кнопки",
+        "previous": "Статья или прежнее видео уже успешно отправлялись CRM-пользователю",
+        "next": "Добавить к тексту анонса; отправить без кнопки",
     },
-    "tpl_temporary_intensive_entry": {
+    "tpl_channel_article_entry": {
         "kind": "direct_trigger",
         "module": "start_attribution",
         "step": "temporary_article",
         "previous": "Временный режим: личный вход, не покупатель и без стоп-метки",
-        "next": "Видео и персональная кнопка; старые маркетинговые цепочки не запускать",
+        "next": "Текст статьи и персональная кнопка; старые маркетинговые цепочки не запускать",
     },
     "tpl_onepage_entry_navigation": {
         "kind": "direct_trigger",
         "module": "start_attribution",
         "step": "temporary_navigation",
         "previous": "Вход во временную группу или личная команда /channel либо /contact",
-        "next": "При первом входе закрепить и отправить видео; по команде — только навигация",
+        "next": "При первом входе закрепить, отправить старый кружок и анонс статьи; по команде — только навигация",
     },
     "tpl_apps_strength_admin": {
         "kind": "direct_trigger",
