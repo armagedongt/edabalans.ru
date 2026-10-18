@@ -169,10 +169,22 @@
     location.replace("/admin");
   });
 
-  fetch("/admin/api/project-map", {credentials:"same-origin"}).then(function (response) {
-    if (!response.ok) throw new Error("catalog unavailable");
-    return response.json();
-  }).then(function (data) { render(data.modules); }).catch(function () {
-    render([{id:"platform.crm",admin_catalog:[{category:"clients",order:10,url:"/crm",label:"CRM",description:"Клиенты",icon:"👥"}]}]);
-  });
+  function loadNavigation() {
+    fetch("/admin/api/navigation", {credentials:"same-origin"}).then(function (response) {
+      if (response.status === 401) {
+        location.replace("/admin?next=" + encodeURIComponent(location.pathname + location.search));
+        throw new Error("session expired");
+      }
+      if (!response.ok) throw new Error("catalog unavailable");
+      return response.json();
+    }).then(function (data) { render(data.modules); }).catch(function () {
+      shellNav.replaceChildren();
+      const retry = document.createElement("button");
+      retry.type = "button";
+      retry.textContent = "Меню не загрузилось. Повторить";
+      retry.addEventListener("click", loadNavigation);
+      shellNav.append(retry);
+    });
+  }
+  loadNavigation();
 }());

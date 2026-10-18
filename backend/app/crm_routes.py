@@ -23,6 +23,7 @@ from app.auth import (
     valid_admin_credentials,
 )
 from app.config import Settings, get_settings
+from app.admin_assets import admin_file, version_admin_html
 from app.crm_service import (
     add_note,
     add_tag,
@@ -123,10 +124,8 @@ class EmailMessageIn(BaseModel):
     text: str = Field(min_length=1, max_length=10_000)
 
 
-def protected_file(name: str) -> FileResponse:
-    response = FileResponse(STATIC_DIR / name)
-    response.headers["Cache-Control"] = "no-store"
-    return response
+def protected_file(name: str, request: Request | None = None) -> Response:
+    return admin_file(name, request)
 
 
 @router.get("/admin", include_in_schema=False)
@@ -160,7 +159,7 @@ def admin_asset(
     is_public_asset = asset_name.startswith("admin-login") or asset_name == "admin-favicon.svg"
     if not is_public_asset and not admin_identity(request, credentials):
         raise HTTPException(status_code=401, detail="admin authentication required")
-    return protected_file(asset_name)
+    return protected_file(asset_name, request)
 
 
 @router.get("/admin/masterclass-offers-preview", include_in_schema=False)
@@ -183,7 +182,7 @@ def masterclass_offers_preview(
         1,
     )
     return HTMLResponse(
-        source,
+        version_admin_html(source),
         headers={"Cache-Control": "no-store"},
     )
 
@@ -295,7 +294,7 @@ def admin_section(
             f"/assets/{section}-favicon.svg",
             1,
         )
-        return HTMLResponse(source, headers={"Cache-Control": "no-store"})
+        return HTMLResponse(version_admin_html(source), headers={"Cache-Control": "no-store"})
     return protected_file("admin.html")
 
 
@@ -340,13 +339,13 @@ def crm_index(
 
 
 @router.get("/crm/crm.css", include_in_schema=False)
-def crm_css(_: str = Depends(require_admin)) -> FileResponse:
-    return protected_file("crm.css")
+def crm_css(request: Request, _: str = Depends(require_admin)) -> Response:
+    return protected_file("crm.css", request)
 
 
 @router.get("/crm/crm.js", include_in_schema=False)
-def crm_js(_: str = Depends(require_admin)) -> FileResponse:
-    return protected_file("crm.js")
+def crm_js(request: Request, _: str = Depends(require_admin)) -> Response:
+    return protected_file("crm.js", request)
 
 
 @router.get("/admin/api/audit/tags")

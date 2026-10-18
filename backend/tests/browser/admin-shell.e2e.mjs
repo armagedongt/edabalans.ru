@@ -159,7 +159,7 @@ const server = createServer((request, response) => {
     response.writeHead(200, { "Content-Type": "text/javascript" });
     return response.end("");
   }
-  if (url.pathname === "/admin/api/project-map") return json(response, projectMap);
+  if (url.pathname === "/admin/api/navigation") return json(response, projectMap);
   if (url.pathname === "/admin/api/summary") return json(response, { users: 321, buyers: 87, paid_payments: 112, revenue_rub: 950000, access_reviews: 4 });
   if (url.pathname === "/admin/api/payment-products" || url.pathname === "/admin/api/tags") return json(response, []);
   if (url.pathname === "/admin/api/users") {

@@ -1014,16 +1014,18 @@ owns_files = ["docs/ADMIN_ARCHITECTURE.md"]
 
 [[modules]]
 id = "admin.control"
-reads_from = ["platform.web_design"]
+reads_from = ["platform.web_design", "admin.project-knowledge"]
 admin_catalog = [{ category = "external", order = 10, url = "/weather/", label = "Погода", icon = "🌦️", description = "Личный погодный экран и карта." }, { category = "external", order = 20, url = "/game/", label = "Игра для Серёжи и Сонечки", icon = "💗", description = "Отдельная личная игра для двоих." }, { category = "external", order = 30, url = "https://app.edabalans.ru/sherbakova/", label = "Сайт Щербаковой", icon = "🌿", description = "Изолированный preview стороннего сайта." }]
 parent = "admin"
 card = "docs/knowledge-base/modules/catalog/admin.control.md"
 owns_files = [
   "backend/app/crm_routes.py",
+  "backend/app/admin_assets.py", "backend/tests/test_admin_loading.py",
   "backend/app/static/admin.css", "backend/app/static/admin.html", "backend/app/static/admin.js", "backend/app/static/admin-favicon.svg",
   "backend/app/static/admin-shell.css", "backend/app/static/admin-shell.js",
   "backend/app/static/crm.css", "backend/app/static/crm.html", "backend/app/static/crm.js",
   "backend/tests/browser/admin-shell.e2e.mjs",
+  "backend/tests/browser/admin-loading.e2e.mjs",
   "backend/app/static/max-logo.png", "prototypes/private-weather/**", "backend/tests/test_weather_page.py",
   "backend/app/static/private-game/**", "backend/tests/test_game_page.py",
 ]
@@ -1049,7 +1051,7 @@ owns_files = [
   "tools/tests/test_module_inventory.py", "work/module-knowledge-system/**",
   "docs/knowledge-base/OWNER_PROJECT_GUIDE.md",
 ]
-owns_routes = ["*/admin/knowledge-base", "*/admin/api/knowledge-base*", "*/admin/api/project-map"]
+owns_routes = ["*/admin/knowledge-base", "*/admin/api/knowledge-base*", "*/admin/api/project-map", "*/admin/api/navigation"]
 
 [[modules]]
 id = "admin.nocodb"

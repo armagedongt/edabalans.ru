@@ -3,10 +3,11 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from functools import lru_cache
 from typing import Any
 
 import markdown
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
 from app.auth import require_admin
 
@@ -165,6 +166,25 @@ def read_project_map(path: Path | None = None) -> dict[str, Any]:
         module_ids.add(module_id)
 
     return payload
+
+
+@lru_cache(maxsize=1)
+def _navigation_snapshot(path: str, modified: int, size: int) -> dict[str, Any]:
+    data = read_project_map(Path(path))
+    return {"modules": [
+        {"id": module["id"], "admin_catalog": module["admin_catalog"]}
+        for module in data["modules"] if module.get("admin_catalog")
+    ]}
+
+
+@router.get("/admin/api/navigation")
+def admin_navigation(response: Response, _: str = Depends(require_admin)) -> dict[str, Any]:
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        stat = PROJECT_MAP_PATH.stat()
+    except OSError as exc:
+        raise HTTPException(status_code=503, detail="navigation is temporarily unavailable") from exc
+    return _navigation_snapshot(str(PROJECT_MAP_PATH), stat.st_mtime_ns, stat.st_size)
 
 
 @router.get("/admin/api/knowledge-base")

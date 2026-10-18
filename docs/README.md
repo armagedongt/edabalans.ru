@@ -81,7 +81,7 @@
 | Дизайн, адаптив и компоненты главной | `knowledge-base/HOMEPAGE_DESIGN_PASSPORT.md` |
 | Обязательный визуальный гайдбук новых страниц: шрифты, hero, логотип, кнопки, меню и оглавления | `knowledge-base/SITE_TYPOGRAPHY.md` |
 | Бесплатный интенсив | `INTENSIVE_PAGES.md` |
-| Административные инструменты | `ADMIN_ARCHITECTURE.md` |
+| Административные инструменты, порядок загрузки и правила для следующего проекта | [ADMIN_ARCHITECTURE](ADMIN_ARCHITECTURE.md#загрузка-админки-и-повторное-использование-решений) |
 | Теги | `TAG_RULES.md` |
 | Legacy Google | `../legacy/google/README.md` |
 

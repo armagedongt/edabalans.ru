@@ -3,7 +3,7 @@
 
   const root = document.getElementById("crm-app");
   const state = {
-    view: "users", query: "", summary: null, users: [], payments: [], tags: [], offset: 0,
+    view: "users", query: "", users: [], payments: [], tags: [], offset: 0,
     paymentOffset: 0, paymentSnapshotAt: null, userProducts: null, userTags: null, userRequest: null, userDetails: new Map(),
     paymentFilters: { q: "", product_code: "", date_from: "", date_to: "", amount_kind: "all" }, userFilters: { buyer_kind: "all", product_code: "", first_seen_from: "", first_seen_to: "", masterclass_access: "", accompaniment_status: "all", tag_id: "" },
     courseAccessPreview: null, addManualAccountOpen: false, addPaidOfferOpen: false
@@ -107,19 +107,6 @@
     root.querySelectorAll("[data-view]").forEach((button) => {
       button.addEventListener("click", () => showView(button.dataset.view).catch(showError));
     });
-  }
-
-  function stats() {
-    const data = state.summary || {};
-    return `
-      <div class="crm-stats">
-        <div class="crm-stat"><div class="crm-k">ЛЮДЕЙ В CRM</div><div class="crm-v">${data.users || 0}</div><div class="crm-s">единый user_id</div></div>
-        <div class="crm-stat"><div class="crm-k">ПОКУПАТЕЛЕЙ</div><div class="crm-v">${data.buyers || 0}</div><div class="crm-s">есть подтверждённая оплата</div></div>
-        <div class="crm-stat"><div class="crm-k">ПОКУПОК В ИСТОРИИ</div><div class="crm-v">${data.paid_payments || 0}</div><div class="crm-s">включая старые без известной суммы</div></div>
-        <div class="crm-stat"><div class="crm-k">ВЫРУЧКА ПО ФАКТУ</div><div class="crm-v">${money(data.revenue_rub)}</div><div class="crm-s">без расчётных сумм${data.estimated_revenue_rub ? ` · ещё ≈ ${money(data.estimated_revenue_rub)}` : ""}</div></div>
-        <div class="crm-stat"><div class="crm-k">АККАУНТОВ TILDA</div><div class="crm-v">${data.tilda_members || 0}</div><div class="crm-s">последняя каноничная сверка</div></div>
-        <div class="crm-stat"><div class="crm-k">ПРОВЕРИТЬ ДОСТУПЫ</div><div class="crm-v">${data.access_reviews || 0}</div><div class="crm-s">только реальные спорные случаи</div></div>
-      </div>`;
   }
 
   function loadUserDetail(id) {
@@ -1151,7 +1138,6 @@
   }
 
   async function loadHome(view) {
-    state.summary = await api("/admin/api/summary");
     return showView(view || state.view);
   }
 
@@ -1173,7 +1159,6 @@
   }
 
   async function initialise() {
-    state.summary = await api("/admin/api/summary");
     const params = new URLSearchParams(location.search); state.query = params.get("q") || "";
     const initialUser = params.get("user");
     if (initialUser) return openUser(initialUser, false);
