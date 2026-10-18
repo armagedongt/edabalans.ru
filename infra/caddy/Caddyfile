@@ -291,78 +291,16 @@ www.{$PUBLIC_DOMAIN} {
 }
 
 {$BLOG_DOMAIN} {
-	encode zstd gzip
-
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "DENY"
 		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Robots-Tag "noindex, nofollow"
 		-Server
 	}
 
-	@journey path /browser-journey.js /site-cookie-notice.js /api/public/browser-journey
-	handle @journey {
-		reverse_proxy backend:8000
-	}
-
-	@brand_icons path /favicon.ico /favicon.png /apple-touch-icon.png
-	handle @brand_icons {
-		reverse_proxy backend:8000
-	}
-
-	@blog_home path /
-	handle @blog_home {
-		rewrite * /blog
-		reverse_proxy backend:8000
-	}
-
-	handle /blog/fonts/* {
-		reverse_proxy backend:8000
-	}
-
-	handle /blog/assets/* {
-		reverse_proxy backend:8000
-	}
-
-	handle /blog/media/* {
-		reverse_proxy backend:8000
-	}
-
-	@blog_article path_regexp blog_article ^/articles/([a-z0-9]+(?:-[a-z0-9]+)*)/?$
-	handle @blog_article {
-		rewrite * /blog/articles/{re.blog_article.1}
-		reverse_proxy backend:8000
-	}
-
-	# Reader recognition is invitation-only, not an account/auth endpoint.
-	@blog_reader path /blog/reader/context /blog/reader/recognize
-	handle @blog_reader {
-		reverse_proxy backend:8000
-	}
-
-	handle /author/sergey-vorontsov {
-		rewrite * /blog/author/sergey-vorontsov
-		reverse_proxy backend:8000
-	}
-
-	@blog_favicon_test path_regexp blog_favicon_test ^/favicon-tests/(black|blue|face)/?$
-	handle @blog_favicon_test {
-		rewrite * /blog/favicon-tests/{re.blog_favicon_test.1}
-		reverse_proxy backend:8000
-	}
-
-	handle /sitemap.xml {
-		rewrite * /blog/sitemap.xml
-		reverse_proxy backend:8000
-	}
-
-	handle /robots.txt {
-		rewrite * /blog/robots.txt
-		reverse_proxy backend:8000
-	}
-
-	respond 404
+	respond 410
 
 	log {
 		output stdout

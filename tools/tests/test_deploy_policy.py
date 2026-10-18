@@ -81,27 +81,21 @@ class DeployPolicyTests(unittest.TestCase):
     def test_deploy_smoke_checks_the_public_blog_boundary(self) -> None:
         source = (REPOSITORY_ROOT / "infra/deploy/edabalans-deploy").read_text(encoding="utf-8")
 
-        self.assertIn("https://blog.похудение-это-есть.рф/", source)
+        self.assertIn("https://похудение-это-есть.рф/blog", source)
+        self.assertIn('[[ "${retired_blog_status}" != "410" ]]', source)
+        self.assertIn("for retired_blog_path in / /articles/pochemu-yapontsy-hudye-a-ty-net; do", source)
+        self.assertIn('https://blog.похудение-это-есть.рф${retired_blog_path}', source)
         self.assertIn("/articles/skolko-vremeni-nuzhno-na-pohudenie", source)
         self.assertIn("/blog/media/13277231/01.png", source)
         self.assertIn("/sitemap.xml", source)
         self.assertIn("/robots.txt", source)
         self.assertIn("--retry 5 --retry-all-errors --retry-delay 3", source)
 
-    def test_caddy_exposes_only_the_three_temporary_favicon_pages(self) -> None:
-        source = (REPOSITORY_ROOT / "infra/caddy/Caddyfile").read_text(encoding="utf-8")
+    def test_deploy_smoke_checks_the_three_temporary_favicon_pages(self) -> None:
         deploy = (REPOSITORY_ROOT / "infra/deploy/edabalans-deploy").read_text(encoding="utf-8")
 
-        self.assertIn(
-            "^/favicon-tests/(black|blue|face)/?$",
-            source,
-        )
-        self.assertIn(
-            "rewrite * /blog/favicon-tests/{re.blog_favicon_test.1}",
-            source,
-        )
         self.assertIn("favicon_page in black blue face", deploy)
-        self.assertIn("/favicon-tests/${favicon_page}", deploy)
+        self.assertIn("/blog/favicon-tests/${favicon_page}", deploy)
         self.assertIn(
             "favicon-test-black.svg favicon-test-blue.svg favicon-test-face.png",
             deploy,
@@ -122,16 +116,16 @@ class DeployPolicyTests(unittest.TestCase):
 
         self.assertEqual(
             source.count("@brand_icons path /favicon.ico /favicon.png /apple-touch-icon.png"),
-            2,
+            1,
         )
-        self.assertEqual(source.count("handle @brand_icons"), 2)
+        self.assertEqual(source.count("handle @brand_icons"), 1)
         for domain in (
             "edabalans.ru",
             "www.edabalans.ru",
             "api.edabalans.ru",
             "app.edabalans.ru",
             "go.похудение-это-есть.рф",
-            "blog.похудение-это-есть.рф",
+            "похудение-это-есть.рф",
         ):
             self.assertIn(domain, deploy)
         self.assertIn('"https://${favicon_domain}/favicon.ico"', deploy)

@@ -209,32 +209,42 @@ fi
   curl -fsS --retry 5 --retry-delay 2 \
     https://go.похудение-это-есть.рф/lk >/dev/null
 curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 3 --max-time 20 \
-    https://blog.похудение-это-есть.рф/ >/dev/null
+    https://похудение-это-есть.рф/blog >/dev/null
 curl --fail --silent --show-error --max-time 20 \
-    https://blog.похудение-это-есть.рф/articles/skolko-vremeni-nuzhno-na-pohudenie >/dev/null
+    https://похудение-это-есть.рф/blog/articles/skolko-vremeni-nuzhno-na-pohudenie >/dev/null
 curl --fail --silent --show-error --max-time 20 \
-    https://blog.похудение-это-есть.рф/blog/media/13277231/01.png >/dev/null
+    https://похудение-это-есть.рф/blog/media/13277231/01.png >/dev/null
 curl --fail --silent --show-error --max-time 15 \
-    https://blog.похудение-это-есть.рф/sitemap.xml >/dev/null
+    https://похудение-это-есть.рф/blog/sitemap.xml >/dev/null
 curl --fail --silent --show-error --max-time 15 \
-    https://blog.похудение-это-есть.рф/robots.txt >/dev/null
+    https://похудение-это-есть.рф/blog/robots.txt >/dev/null
+for retired_blog_path in / /articles/pochemu-yapontsy-hudye-a-ty-net; do
+    retired_blog_status="$(curl --silent --show-error --max-time 15 \
+        --output /dev/null --write-out '%{http_code}' \
+        "https://blog.похудение-это-есть.рф${retired_blog_path}")"
+    if [[ "${retired_blog_status}" != "410" ]]; then
+        echo "The retired blog path ${retired_blog_path} must return HTTP 410" >&2
+        exit 1
+    fi
+done
+
 for favicon_domain in \
     edabalans.ru \
     www.edabalans.ru \
     api.edabalans.ru \
     app.edabalans.ru \
     go.похудение-это-есть.рф \
-    blog.похудение-это-есть.рф; do
+    похудение-это-есть.рф; do
     curl --fail --silent --show-error --location --max-time 15 \
         "https://${favicon_domain}/favicon.ico" >/dev/null
 done
 for favicon_page in black blue face; do
     curl --fail --silent --show-error --max-time 15 \
-        "https://blog.похудение-это-есть.рф/favicon-tests/${favicon_page}" >/dev/null
+        "https://похудение-это-есть.рф/blog/favicon-tests/${favicon_page}" >/dev/null
 done
 for favicon_asset in favicon-test-black.svg favicon-test-blue.svg favicon-test-face.png; do
     curl --fail --silent --show-error --max-time 15 \
-        "https://blog.похудение-это-есть.рф/blog/assets/${favicon_asset}" >/dev/null
+        "https://похудение-это-есть.рф/blog/assets/${favicon_asset}" >/dev/null
 done
 
 if [[ "${caddy_changed}" == "true" ]]; then
