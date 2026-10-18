@@ -34,10 +34,10 @@ try {
       const body=route.request().postDataJSON(); calls.push(body);
       await new Promise(resolve=>setTimeout(resolve,80));
       concurrent--;
-      const id=body.transfer?.replace('handoff-', '') || body.context?.replace('visitor-', '') || 'one';
+      const id=body.transfer?.replace('handoff-', '') || body.context?.replace('visitor-', '') || (url.hostname === 'edabalans.ru' ? 'one' : 'unlinked');
       return route.fulfill({contentType:'application/json',headers,body:JSON.stringify({context:'visitor-'+id,transfer:'handoff-'+id})});
     }
-    return route.fulfill({contentType:'text/html',body:`<!doctype html><html><head><meta charset="utf-8"><script src="https://edabalans.ru/browser-journey.js"></script></head><body><a id="bridge" href="https://${url.hostname==='edabalans.ru'?root:'edabalans.ru'}/next">Продолжить</a><button id="accept" onclick="document.cookie='edabalans_cookie_notice=accepted-v1; Path=/';document.dispatchEvent(new Event('edabalans:cookie-accepted'))">Приемлемо</button></body></html>`});
+    return route.fulfill({contentType:'text/html',body:`<!doctype html><html><head><meta charset="utf-8"><script src="https://edabalans.ru/browser-journey.js"></script></head><body><a id="pricing-link" href="#pricing">Pricing</a><section id="pricing">Prices</section><a id="bridge" href="https://${url.hostname==='edabalans.ru'?root:'edabalans.ru'}/next">Продолжить</a><button id="accept" onclick="document.cookie='edabalans_cookie_notice=accepted-v1; Path=/';document.dispatchEvent(new Event('edabalans:cookie-accepted'))">Приемлемо</button></body></html>`});
   });
   const page=await context.newPage(); const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('https://edabalans.ru/intensive?i=personal-fixture');
@@ -53,13 +53,25 @@ try {
   assert(calls.some(c=>c.event==='page'&&c.accepted));
   assert(calls.filter(c=>c.event!=='init').every(c=>!c.personal_token));
   assert.equal(maximum,1);
+  const bridgeRequest = page.waitForRequest(request => request.isNavigationRequest() && new URL(request.url()).hostname === root);
   await page.click('#bridge');
+  assert.equal(new URL((await bridgeRequest).url()).searchParams.get('visitor_transfer'), 'handoff-one');
   await page.waitForFunction(()=>window.EdabalansBrowserJourney?.context());
   assert.equal(await page.evaluate(()=>window.EdabalansBrowserJourney.context()),'visitor-one');
   assert(!page.url().includes('visitor_transfer'));
   const target=(await context.cookies('https://'+root)).find(c=>c.name==='edabalans_visitor');
   assert.equal(target.value,'visitor-one');
   assert.equal(target.domain,'.'+root);
+  const currentOrigin = 'https://' + root;
+  assert.equal(await page.evaluate(() => window.EdabalansBrowserJourney.decorate('#pricing')), currentOrigin + '/next#pricing');
+  assert.equal(await page.evaluate(() => window.EdabalansBrowserJourney.decorate('/lk')), currentOrigin + '/lk');
+  assert((await page.evaluate(() => window.EdabalansBrowserJourney.decorate('https://edabalans.ru/next'))).includes('visitor_transfer=handoff-one'));
+  await page.evaluate(() => { window.pricingNavigationMarker = 'same-document'; });
+  await page.click('#pricing-link');
+  assert.equal(page.url(), currentOrigin + '/next#pricing');
+  assert.equal(await page.locator('#pricing-link').getAttribute('href'), '#pricing');
+  assert.equal(await page.evaluate(() => window.pricingNavigationMarker), 'same-document');
+
   assert.deepEqual(errors,[]);
   await page.goto('https://'+root+'/direct-entry?utm_source=yandex');
   await page.waitForFunction(()=>document.querySelector('#edb-direct-intensive-v1'));

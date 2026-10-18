@@ -68,7 +68,7 @@
   const ready = send('init').then(page);
   function decorate(value) {
     const target = new URL(value, location.href);
-    if (transfer && target.protocol === 'https:' && allowed(target.hostname)) {
+    if (transfer && target.origin !== location.origin && target.protocol === 'https:' && allowed(target.hostname)) {
       target.searchParams.set('visitor_transfer', transfer);
       if (target.hostname.startsWith('go.') || /^\/(go|r)\//.test(target.pathname)) target.searchParams.set('browser_context', context);
     }
@@ -81,7 +81,7 @@
     if (!anchor) return;
     let target;
     try { target = new URL(anchor.href, location.href); } catch (_error) { return; }
-    if (transfer && target.protocol === 'https:' && allowed(target.hostname)) {
+    if (transfer && target.origin !== location.origin && target.protocol === 'https:' && allowed(target.hostname)) {
       anchor.href = decorate(target.href);
     }
     if (accepted()) void send('action', 'link:' + target.hostname + target.pathname.slice(0, 50));
