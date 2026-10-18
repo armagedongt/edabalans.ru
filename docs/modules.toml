@@ -10,7 +10,7 @@ derived_outputs = [
 
 [[modules]]
 id = "platform"
-reads_from = ["platform.web_design"]
+reads_from = ["platform.web_design", "platform.content"]
 card = "docs/knowledge-base/modules/catalog/platform.md"
 owns_files = [
   "README.md", "PROJECT_CONTEXT.md", "ARCHITECTURE.md",
@@ -264,6 +264,7 @@ owns_tables = [
 owns_routes = ["*/admin/api/content*", "*/admin/api/editorial/service-emails*", "*/admin/api/editorial/media*", "*/editorial-media/*"]
 sources = [
   { path = "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md", role = "rule", shared = true, consumers = ["platform.knowledge", "operations.imports"] },
+  { path = "docs/IMAGE_CATALOG.md", role = "rule", shared = true, consumers = ["platform.knowledge", "platform.blog", "platform.web_design", "platform", "products.public-site", "products.intensive", "products.masterclass.course", "products.calories", "products.recipes"] },
   { path = "content/author-voice/source-selection/ARTICLE_SOURCE_LINKING.md", role = "rule", shared = true, consumers = ["platform.blog", "platform.knowledge", "messaging.telegram", "messaging.max"] },
     { path = "docs/knowledge-base/EDITORIAL_VAULT.md", role = "rule", shared = true, consumers = ["products.catalog", "platform.commerce", "products.masterclass.course", "products.calories", "messaging.telegram.engine"] },
     { path = "content/author-voice/recipe-authoring-v1.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.recipes"] },
@@ -343,6 +344,7 @@ reads_from = ["platform.web_design", "platform.content", "admin.project-knowledg
 
 [[modules]]
 id = "platform.web_design"
+reads_from = ["platform.content"]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.web_design.md"
 depends_on = ["platform.content"]
@@ -390,7 +392,7 @@ id = "products.public-site"
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.public-site.md"
 depends_on = ["platform.content", "platform.commerce", "platform.web_design"]
-reads_from = ["platform.web_design", "platform"]
+reads_from = ["platform.web_design", "platform", "platform.content"]
 owns_files = [
     "backend/app/public_site_content_service.py", "backend/app/public_site_routes.py",
     "backend/app/homepage_content_service.py", "backend/tests/test_homepage_content.py",
@@ -607,7 +609,7 @@ owns_files = [
 ]
 owns_routes = ["*/intensive*", "*/admin/api/intensive*", "*/admin/api/editorial/intensive*"]
 depends_on = ["platform.content"]
-reads_from = ["platform.web_design", "platform", "products.public-site", "products.masterclass.course"]
+reads_from = ["platform.web_design", "platform", "products.public-site", "products.masterclass.course", "platform.content"]
 
 [[modules]]
 id = "products.intensive.telegram-login"

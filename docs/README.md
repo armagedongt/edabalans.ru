@@ -36,6 +36,7 @@
 | Как Сергею ставить задачи и что значат термины | `knowledge-base/OWNER_PROJECT_GUIDE.md` | человекочитаемая памятка |
 | Как устроены контент, курсы, страницы, дизайн и публикация | `knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md` | канон редакционно-продуктового процесса |
 | Где править материалы в Obsidian и Codex и как опубликовать выбранные | `knowledge-base/EDITORIAL_VAULT.md` | `platform.content`; одна внешняя рабочая папка |
+| Где искать изображения, как добавлять новые, сжимать и переиспользовать без дублей | [Контур изображений](IMAGE_CATALOG.md) | `platform.content`; карточки и поиск — через `platform.knowledge` |
 | Что существует и как связано | `modules.toml`, `generated/module-map.md` | registry; Markdown — производная |
 | Что делает конкретный модуль | `knowledge-base/modules/catalog/<module_id>.md` | карточка модуля |
 | Полные правила бизнеса/продукта | `knowledge-base/README.md` и ссылки из карточки | канонический Markdown |
