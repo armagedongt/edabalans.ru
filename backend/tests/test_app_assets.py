@@ -1267,7 +1267,7 @@ def test_checkout_and_cookie_legal_links_use_permanent_public_domain() -> None:
     for path in ("/embed.js", "/cookie-notice.js"):
         response = client.get(path)
         assert response.status_code == 200
-        assert "publicRoot + '/legal/privacy'" in response.text
+        assert "https://похудение-это-есть.рф/legal/privacy" in response.text
         assert "APP_HOST + '/legal/privacy.html'" not in response.text
     embed = client.get("/embed.js").text
     account = (Path(__file__).parents[1] / "app/static/apps/account.html").read_text(encoding="utf-8")
