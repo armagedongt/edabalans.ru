@@ -5,13 +5,13 @@
   var bottom = document.querySelector('.reader-bottom');
   if (!sheet || !menu || !bottom || typeof sheet.showModal !== 'function') return;
   var navigation = sheet.querySelector('.reader-site-menu');
-  var originalNav = document.getElementById('public-blog-nav');
+  var originalNav = document.querySelector('.blog-header .site-menu-quick-links') || document.getElementById('public-blog-nav');
   // Reuse the live destinations and labels, not a second contact/product catalogue.
   Array.from(originalNav.querySelectorAll(':scope > a')).slice(1).forEach(function (link) {
     navigation.insertBefore(link.cloneNode(true), sheet.querySelector('.reader-account'));
   });
   var contacts = sheet.querySelector('#reader-contacts div');
-  originalNav.querySelectorAll('.nav-contact-panel a').forEach(function (link) {
+  originalNav.querySelectorAll('#mobile-contact-panel a, .nav-contact-panel a').forEach(function (link) {
     contacts.appendChild(link.cloneNode(true));
   });
   bottom.hidden = false;

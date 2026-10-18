@@ -59,20 +59,18 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert response.headers["cache-control"] == "no-cache"
     assert "Похудение — это есть.рф" in response.text
     assert "Блог Сергея Воронцова" in response.text
-    assert response.text.index('<h1 id="blog-title">') < response.text.index(
-        '<p class="eyebrow">Блог Сергея Воронцова</p>'
-    )
+    assert '<h1 id="blog-title">Блог Сергея Воронцова</h1>' in response.text
     hero = response.text.split('<section class="shell hero"', 1)[1].split('</section>', 1)[0]
-    hero_copy = hero.split('<div class="hero-copy">', 1)[1].split('</div>', 1)[0]
-    assert 'class="categories"' not in hero_copy
-    assert hero.index('class="hero-photo"') < hero.index('class="categories"')
+    assert 'class="categories"' not in hero
+    assert response.text.index('class="starter-fold"') < response.text.index('data-blog-server-catalog')
+    catalog_html = response.text.split('data-blog-server-catalog', 1)[1]
     assert (
         "Пишу о питании, похудении и пищевых привычках, "
         "чтобы сделать ваше похудение проще."
     ) in response.text
     published_count = min(15, len(load_blog_catalog().published))
     assert response.text.count('class="article-card"') == published_count
-    assert response.text.count('class="card-tag"') == published_count
+    assert catalog_html.count('class="card-tag"') == published_count
     first_card = response.text.split('class="article-card"', 1)[1].split('</article>', 1)[0]
     assert first_card.index('class="card-visual"') < first_card.index('class="card-tag"')
     assert first_card.index('class="card-tag"') < first_card.index('class="card-title"')
@@ -84,7 +82,7 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     expected_health_count = sum(
         article.category == "Ну, типа... ЗОЖ" for article in load_blog_catalog().published[:15]
     )
-    assert response.text.count('data-category="Ну, типа... ЗОЖ"') == expected_health_count
+    assert catalog_html.count('data-category="Ну, типа... ЗОЖ"') == expected_health_count
     assert 'id="articles-title"' not in response.text
     assert f'/blog/{load_blog_catalog().published[0].slug}' in response.text
     assert f'/blog/media/{load_blog_catalog().published[0].card.file}' in response.text
@@ -98,11 +96,11 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert '>Главная</a>' not in response.text
     assert 'class="brand-icon"' not in response.text
     assert 'class="nav-intensive"' not in response.text
-    public_header = response.text.split('<header class="site-header site-header--public">', 1)[1].split("</header>", 1)[0]
+    public_header = response.text.split('<header class="site-header site-header--public blog-header">', 1)[1].split("</header>", 1)[0]
     assert public_header.index('>Блог</a>') < public_header.index('>Мастер-класс</a>')
     assert public_header.index('>Мастер-класс</a>') < public_header.index('>Бесплатный интенсив</a>')
-    assert public_header.index('>Бесплатный интенсив</a>') < public_header.index('class="nav-contact"')
-    assert 'class="nav-contact-trigger"' in response.text
+    assert public_header.index('>Бесплатный интенсив</a>') < public_header.index('id="mobile-contact-panel"')
+    assert 'aria-controls="mobile-contact-panel"' in response.text
     assert 'href="#contacts">Контакты</a>' not in response.text
     assert 'href="https://t.me/FitnessSergey"' in response.text
     assert 'href="https://max.ru/id230409966750_biz"' in response.text
@@ -164,7 +162,7 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
     assert '>Главная</a>' not in response.text
     assert 'class="brand-icon"' not in response.text
     assert 'class="nav-intensive"' not in response.text
-    assert 'class="nav-contact-trigger"' in response.text
+    assert 'aria-controls="mobile-contact-panel"' in response.text
 
 
 def test_unknown_blog_article_returns_404() -> None:

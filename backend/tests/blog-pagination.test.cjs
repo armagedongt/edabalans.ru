@@ -85,3 +85,82 @@ test('server-rendered catalogue links are not overwritten or intercepted', () =>
   assert.equal(ui.visible().length, 22);
   assert.deepEqual(ui.history, []);
 });
+
+const unifiedSource = fs.readFileSync(path.join(__dirname, '../app/static/blog/assets/blog-unified.js'), 'utf8');
+function readingFixture({page = 'article', stored = '[]', unavailable = false} = {}) {
+  const handlers = {};
+  let top = 0;
+  let value = stored;
+  let writes = 0;
+  let mark = null;
+  let markCount = 0;
+  const link = {
+    href: 'https://example.test/blog/example',
+    querySelector(selector) {
+      return selector === '.read-mark' ? mark : {appendChild(item) {mark = item; markCount++;}};
+    },
+  };
+  const body = {getBoundingClientRect() {return {top, height: 1000};}};
+  const context = {
+    URL,
+    document: {
+      body: {dataset: {page}},
+      querySelector(selector) {return selector === 'link[rel=canonical]' ? {href: link.href} : null;},
+      querySelectorAll() {return [link];},
+      getElementById() {return body;},
+      createElement() {return {};},
+    },
+    window: {
+      innerHeight: 500,
+      addEventListener(name, callback) {handlers[name] = callback;},
+      removeEventListener(name) {delete handlers[name];},
+    },
+    localStorage: {
+      getItem() {if (unavailable) throw new Error('storage blocked'); return value;},
+      setItem(_, next) {if (unavailable) throw new Error('storage blocked'); writes++; value = next;},
+    },
+  };
+  vm.runInNewContext(unifiedSource, context);
+  return {
+    scroll(nextTop) {top = nextTop; handlers.scroll?.();},
+    saved: () => JSON.parse(value),
+    writes: () => writes,
+    marked: () => mark?.textContent,
+    markCount: () => markCount,
+    handlers,
+  };
+}
+
+test('read mark starts at 75 percent of article body and persists only once', () => {
+  const ui = readingFixture();
+  ui.scroll(-249);
+  assert.equal(ui.writes(), 0);
+  ui.scroll(-250);
+  assert.deepEqual(ui.saved(), ['example']);
+  assert.equal(ui.writes(), 1);
+  ui.scroll(-900);
+  assert.equal(ui.writes(), 1);
+  assert.equal(readingFixture({page: 'home', stored: JSON.stringify(ui.saved())}).marked(), '✓ Прочитано');
+});
+
+test('catalogue never marks articles from its own scroll and duplicate marks are avoided', () => {
+  const ui = readingFixture({page: 'home', stored: '["example"]'});
+  assert.equal(ui.handlers.scroll, undefined);
+  ui.handlers.pageshow();
+  assert.equal(ui.marked(), '✓ Прочитано');
+  assert.equal(ui.markCount(), 1);
+  ui.handlers.storage({key: 'edabalans-blog-read-v1'});
+  assert.equal(ui.markCount(), 1);
+  assert.equal(ui.writes(), 0);
+});
+
+test('blocked or malformed browser storage does not break reading', () => {
+  const blocked = readingFixture({unavailable: true});
+  assert.doesNotThrow(() => blocked.scroll(-250));
+  const malformed = readingFixture({stored: '{invalid'});
+  malformed.scroll(-250);
+  assert.deepEqual(malformed.saved(), ['example']);
+  const wrongShape = readingFixture({stored: '{}'});
+  wrongShape.scroll(-250);
+  assert.deepEqual(wrongShape.saved(), ['example']);
+});

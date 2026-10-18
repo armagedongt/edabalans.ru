@@ -2,230 +2,98 @@
   "version": 1,
   "articles": [
     {
-      "source_id": "10369434",
-      "slug": "pokusali-sobaki",
-      "title": "Как на меня напали собаки в лесу",
-      "excerpt": "Сегодня я должен был ехать на горный забег в 62 км, к которому долго готовился, а в итоге еду на вторую прививку от бешенства, к которой вообще не готовился. Собаки на меня напали впервые.",
-      "category": "Личное",
-      "body_file": "10369434.md",
-      "hero": {
-        "file": "10369434/01.webp",
-        "alt": "Фото до и после нападения собак, сохранились только такие",
-        "provenance": "https://cs14.pikabu.ru/post_img/big/2023/06/17/6/1686995034118247836.jpg",
-        "show": false
-      },
-      "card": {
-        "file": "10369434/01.webp",
-        "alt": "Фото до и после нападения собак, сохранились только такие",
-        "provenance": "https://cs14.pikabu.ru/post_img/big/2023/06/17/6/1686995034118247836.jpg",
-        "fit": "contain"
-      },
-      "related_source_ids": [
-        "2e269fdc52d600a64753",
-        "0d583f6ad1cea0eef750",
-        "12269678"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "10369434/01.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434",
-          "https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17"
-        ],
-        "external_ids": [
-          "10369434",
-          "Kak-na-menya-napali-sobaki-v-lesu-06-17"
-        ],
-        "source_uri": "content://item/7ee045e3-43dc-4f56-8539-6a5b87b7db6f",
-        "source_revision": 1,
-        "sha256": "fbcf1b0c990d8670f315dbffc1381e7ed24c7bad0a7bdc2dac0763bef23fe000",
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass",
-        "full_scientific_pass": false,
-        "owner_decision": "2026-10-04 keep author meaning unchanged including va-bank paragraph",
-        "adaptation": "minimal_proofread_platform_tail_cleanup_original_image",
-        "original_published_at": "2023-06-17T13:18:08+03:00"
-      },
-      "document_key": "kak-na-menya-napali-sobaki-v-lesu"
-    },
-    {
-      "source_id": "amkbo7kgg1",
+      "source_id": "11927800",
+      "subscription_before_heading": "принцип-no4-контролировать-окружение",
       "inline_related": {
-        "source_id": "11801517",
-        "before_heading": "а-как-посчитать-расход-калорий-на-тренировках"
+        "source_id": "habits-formation-and-one-percent",
+        "before_heading": "принцип-no5-достаточно-времени"
       },
-      "slug": "zachem-nuzhny-trenirovki",
-      "title": "Зачем нужны тренировки (кроме похудения)",
-      "excerpt": "Золотое правило любой тренировки — вы должны четко понимать, что и зачем вы делаете, иначе вы можете потратить время и силы, но лишь просто посотрясать воздух без осязаемой пользы для себя. Каждый вид тренировочной активности (бег, силовые, плавание, пилатес и пр.) имеет свою понятную конкретную…",
-      "category": "Тренировки",
-      "body_file": "amkbo7kgg1.md",
-      "hero": {
-        "file": "amkbo7kgg1/01.webp",
-        "alt": "Разные задачи тренировок",
-        "provenance": "https://static.tildacdn.com/tild6634-6635-4563-a239-643463376534/imagepng.webp",
-        "show": false
-      },
-      "card": {
-        "file": "amkbo7kgg1/01.webp",
-        "alt": "Разные задачи тренировок",
-        "provenance": "https://static.tildacdn.com/tild6634-6635-4563-a239-643463376534/imagepng.webp",
-        "fit": "contain"
-      },
-      "related_source_ids": [
-        "11801517",
-        "10425659",
-        "10573917"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "amkbo7kgg1/01.webp",
-        "amkbo7kgg1/02.webp",
-        "amkbo7kgg1/03.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni"
-        ],
-        "external_ids": [
-          "amkbo7kgg1"
-        ],
-        "source_uri": "knowledge://resource/tilda-intensive-amkbo7kgg1",
-        "original_published_at": "2026-04-03T00:00:00+03:00",
-        "original_date_evidence": {
-          "basis": "owner_approved_tilda_date_candidate",
-          "precision": "day",
-          "owner_approved_at": "2026-10-05"
-        },
-        "source_revision": 1,
-        "sha256": "78f741f863fc124bac125c2cc685e702664438ecdce58552eb8d197ee45f6932",
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass",
-        "adaptation": "minimal_proofread_intensive_navigation_cleanup_original_3_images"
-      },
-      "document_key": "zachem-nuzhny-trenirovki-krome-pohudeniya"
-    },
-    {
-      "source_id": "12193581",
-      "subscription_before_heading": "добавляем-а-не-исключаем",
-      "slug": "novogodniy-stol-bez-pereedaniya",
-      "title": "Техника безопасности питания за новогодним столом",
-      "excerpt": "Часто ТБ написана кровью, но те правила, о которых я расскажу сегодня, — выстраданы килограммами лишнего жира на боках и литрами пота в попытках от них потом избавиться. Время чтения = 4 минуты.",
+      "slug": "pochemu-yapontsy-hudye",
+      "title": "Почему японцы худые, а ты нет?",
+      "excerpt": "Давайте узнаем, а в чем причина-то? Они выиграли в генетическую лотерею или просто делают что-то, что мы не делаем? А вдруг мы тоже можем?",
       "category": "Качество питания",
-      "body_file": "12193581.md",
+      "body_file": "11927800.md",
       "hero": {
-        "file": "12193581/01.webp",
-        "alt": "Стол-книжка: «Атлант совсем скоро расправит плечи»",
-        "provenance": "https://cs15.pikabu.ru/post_img/big/2024/12/29/8/173547521414365771.png",
-        "show": false
+        "file": "11927800/tilda-01-v3-photo.webp",
+        "alt": "Сергей Воронцов за столом",
+        "show": false,
+        "provenance": "https://static.tildacdn.com/tild6332-3565-4530-a430-313862393165/_.jpg"
       },
       "card": {
-        "file": "12193581/01.webp",
-        "alt": "Стол-книжка: «Атлант совсем скоро расправит плечи»",
-        "provenance": "https://cs15.pikabu.ru/post_img/big/2024/12/29/8/173547521414365771.png",
-        "fit": "contain"
-      },
-      "related_source_ids": [
-        "10978866",
-        "12857458",
-        "11401696"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "12193581/01.webp",
-        "12193581/02.webp",
-        "12193581/03.webp",
-        "12193581/04.webp",
-        "12193581/05.webp",
-        "12193581/06.webp",
-        "12193581/07.webp",
-        "12193581/08.webp",
-        "12193581/09.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581"
-        ],
-        "external_ids": [
-          "12193581"
-        ],
-        "source_uri": "content://item/533a8da7-496b-453c-a65f-57251d7bb8d4",
-        "source_revision": 1,
-        "source_date": "2024-12-29",
-        "sha256": "0a1da07bbbbb7becd8f7a2775a517f70760cb2e234e0c4dafa17855e045d020c",
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass",
-        "adaptation": "minimal_proofread_platform_cta_cleanup_seasonal_author_text_9_original_images",
-        "original_published_at": "2024-12-29T18:12:24+03:00",
-        "original_date_evidence": {
-          "source": "https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581",
-          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
-        }
-      },
-      "document_key": "tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom"
-    },
-    {
-      "source_id": "14062380",
-      "slug": "sredizemnomorskaya-dieta",
-      "title": "Средиземноморская диета — это вообще что?!?!",
-      "excerpt": "\"Диеты\" — это утрированное коверкание некоторых адекватных принципов питания в красивой обёртке. Например, средиземноморская диета — ешьте дофига овощей и фруктов и побольше цельнозерновых, да бобовых вместо булок и конфет.",
-      "category": "Качество питания",
-      "body_file": "14062380.md",
-      "hero": {
-        "file": "14062380/03.webp",
-        "alt": "Пирамида средиземноморской диеты",
-        "provenance": "https://cs19.pikabu.ru/s/2026/06/14/20/xgedxme2.jpg",
-        "show": false
-      },
-      "card": {
-        "file": "14062380/03.webp",
-        "alt": "Пирамида средиземноморской диеты",
-        "provenance": "https://cs19.pikabu.ru/s/2026/06/14/20/xgedxme2.jpg",
-        "fit": "contain"
+        "file": "11927800/tilda-04-v2-card.webp",
+        "alt": "Сумоист в воде",
+        "provenance": "https://static.tildacdn.com/tild3463-6131-4034-a265-333864373434/image.png"
       },
       "related_source_ids": [
         "11401696",
-        "14021584",
-        "12296286"
+        "tilda-49745867",
+        "11875492"
       ],
       "cta": "masterclass",
       "status": "published",
       "media": [
-        "14062380/01.webp",
-        "14062380/02.webp",
-        "14062380/03.webp"
+        "11927800/tilda-01-v3-photo.webp",
+        "11927800/tilda-01.jpg",
+        "11927800/tilda-02-v2-body.webp",
+        "11927800/tilda-02.png",
+        "11927800/tilda-03-v2-body.webp",
+        "11927800/tilda-03.png",
+        "11927800/tilda-04-v2-body.webp",
+        "11927800/tilda-04-v2-card.webp",
+        "11927800/tilda-04.png",
+        "11927800/tilda-05-v2-body.webp",
+        "11927800/tilda-05-v3-photo.webp",
+        "11927800/tilda-05.png",
+        "11927800/tilda-06.jpg",
+        "11927800/tilda-07-v2-body.webp",
+        "11927800/tilda-07-v3-photo.webp",
+        "11927800/tilda-07.png",
+        "11927800/tilda-08-v3-photo.webp",
+        "11927800/tilda-08.jpg",
+        "11927800/tilda-09-v2-body.webp",
+        "11927800/tilda-09-v3-animation.webp",
+        "11927800/tilda-09.gif",
+        "11927800/tilda-10.gif",
+        "11927800/tilda-10-v2-animation.webp",
+        "11927800/tilda-11-v2-body.webp",
+        "11927800/tilda-11.png",
+        "11927800/tilda-12-v2-body.webp",
+        "11927800/tilda-12.jpg",
+        "11927800/tilda-13-v2-body.webp",
+        "11927800/tilda-13.jpg",
+        "11927800/tilda-14-v2-body.webp",
+        "11927800/tilda-14.jpg",
+        "11927800/tilda-15.jpg"
       ],
       "source_provenance": {
         "urls": [
-          "https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380"
+          "https://похудение-это-есть.рф/jpn",
+          "https://pikabu.ru/story/pochemu_yapontsyi_khudyie_a_tyi_net_11927800"
         ],
         "external_ids": [
-          "14062380"
+          "11927800",
+          "61175321"
         ],
-        "source_uri": "content://item/17d14cc0-906c-4e5d-b458-952441361368",
-        "source_revision": 3,
-        "source_date": "2026-06-14",
-        "sha256": "d955395c8d84892021a09bc7a6288542bb84e77c874c8778cb5278ea2c23c1f9",
+        "sha256": [
+          "43e5b32bd74e13c043cab351dbbb8122ab06614d6d8f4f809e85e9617c18e72b",
+          "0e080acdf6dadda56f34f71e20bf2ed8a963a891fd6664f5eb98af31a9f2bccd"
+        ],
+        "platform": "tilda+pikabu",
+        "project_id": "9532923",
+        "page_id": "61175321",
+        "retrieved_at": "2026-09-17",
         "source_basis": "full_source",
         "validation_status": "pass",
         "review_status": "pass",
-        "adaptation": "minimal_proofread_author_critique_3_original_images_preserved_not_archived_A203",
-        "original_published_at": "2026-06-14T20:48:09+03:00",
+        "original_published_at": "2024-10-19T14:27:13+03:00",
         "original_date_evidence": {
-          "source": "https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380",
-          "page_sha256": "d86ea75dd9d480d17c843ae0d47a7ea17a9ebfdcdcdb87605d5ed4ab8616bf15",
+          "source": "https://pikabu.ru/story/pochemu_yapontsyi_khudyie_a_tyi_net_11927800",
+          "page_sha256": "84b3a41cc79e6a6f9bef41836d8fe33717b9d9317c07b9037e4954d97eb054e7",
           "field": "datePublished",
           "checked_at": "2026-10-04T21:59:58.825440+03:00"
         }
       },
-      "document_key": "sredizemnomorskaya-dieta-eto-voobshche-chto"
+      "document_key": "pochemu-yapontsy-hudye-a-ty-net"
     },
     {
       "source_id": "Prostejshie-12-izmenenij-v-vashej-zhizni-08-11",
@@ -317,6 +185,953 @@
         }
       },
       "document_key": "12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni"
+    },
+    {
+      "source_id": "10999474",
+      "subscription_before_heading": "наш-девиз-всё-или-ничего",
+      "slug": "pp-recepty-i-pohudenie",
+      "title": "ПП-рецепты — это плохо. И вот почему",
+      "excerpt": "Как ярлык «ПП» заставляет переоценивать полезность блюда и почему рецепт лучше оценивать по задаче, составу и порции.",
+      "category": "Качество питания",
+      "body_file": "10999474.md",
+      "inline_related": {
+        "source_id": "12296286",
+        "before_heading": "так-что-же-такое-это-ваше-пп"
+      },
+      "hero": {
+        "file": "10999474/01.webp",
+        "alt": "Мем «Первая причина — это ты!»",
+        "show": false,
+        "provenance": "https://cs13.pikabu.ru/post_img/2024/01/07/6/1704615738221844529.webp"
+      },
+      "card": {
+        "file": "10999474/01.webp",
+        "alt": "Мем «Первая причина — это ты!»",
+        "provenance": "https://cs13.pikabu.ru/post_img/2024/01/07/6/1704615738221844529.webp"
+      },
+      "related_source_ids": [
+        "11207593",
+        "14183275",
+        "12857458"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "10999474/01.webp",
+        "10999474/02.webp",
+        "10999474/03.webp",
+        "10999474/04.webp",
+        "10999474/05.webp",
+        "10999474/06.webp",
+        "10999474/07.webp",
+        "10999474/08.webp",
+        "10999474/10-body.webp",
+        "10999474/11-body.webp",
+        "10999474/12-body.webp",
+        "10999474/13-body.webp",
+        "10999474/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/pp_retseptyi__yeto_plokho_i_vot_pochemu_10999474"
+        ],
+        "external_ids": [
+          "10999474"
+        ],
+        "sha256": [
+          "6ca7aba7ecfec08012fba0f6c0122ce4ad4b4236f2d06905a91856c82f615796"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "original_published_at": "2024-01-07T11:32:05+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/pp_retseptyi__yeto_plokho_i_vot_pochemu_10999474",
+          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
+        }
+      },
+      "document_key": "pp-recepty-eto-ploho"
+    },
+    {
+      "source_id": "11401696",
+      "subscription_before_heading": "пищевые-привычки",
+      "slug": "plan-pohudeniya",
+      "title": "Похудение начинается не с похудения",
+      "excerpt": "Для начала у похудения должен быть план! Особенно если есть желание сделать его действительно последним, а не лишь ещё одним.",
+      "category": "Похудение",
+      "body_file": "11401696.md",
+      "inline_related": {
+        "source_id": "30e4d208f2cbd8e57201",
+        "before_heading": "мотивация"
+      },
+      "hero": {
+        "file": "11401696/tilda-01.jpg",
+        "alt": "Мем о цикле похудения и обвинении обмена веществ",
+        "provenance": "https://static.tildacdn.com/tild3131-3165-4165-b238-353862333766/Frame_492445251.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "11401696/tilda-09-v2-card.webp",
+        "alt": "Сначала изменения в питании, потом дефицит калорий",
+        "provenance": "https://static.tildacdn.com/tild6131-6162-4739-b265-623138646634/image.png"
+      },
+      "related_source_ids": [
+        "13277231",
+        "11927800",
+        "tilda-49734795"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "11401696/tilda-01.jpg",
+        "11401696/tilda-02-v2-body.webp",
+        "11401696/tilda-02.png",
+        "11401696/tilda-03.jpg",
+        "11401696/tilda-03-v3-body.webp",
+        "11401696/tilda-04-v2-body.webp",
+        "11401696/tilda-04.png",
+        "11401696/tilda-05-v2-body.webp",
+        "11401696/tilda-05-v3-body.webp",
+        "11401696/tilda-05.png",
+        "11401696/tilda-06-v2-body.webp",
+        "11401696/tilda-06.png",
+        "11401696/tilda-07-v2-body.webp",
+        "11401696/tilda-07.jpg",
+        "11401696/tilda-08-v2-body.webp",
+        "11401696/tilda-08.png",
+        "11401696/tilda-09-v2-body.webp",
+        "11401696/tilda-09-v3-body.webp",
+        "11401696/tilda-09-v2-card.webp",
+        "11401696/tilda-09.png",
+        "11401696/tilda-10-v2-body.webp",
+        "11401696/tilda-10.png",
+        "11401696/tilda-11-v2-body.webp",
+        "11401696/tilda-11.png",
+        "11401696/tilda-12-v2-body.webp",
+        "11401696/tilda-12.png",
+        "11401696/tilda-13-v2-body.webp",
+        "11401696/tilda-13.png",
+        "11401696/tilda-14.jpg",
+        "11401696/tilda-14-v2-body.webp",
+        "d1baceb9e2b6b72013b6/09-source.webp",
+        "13785403/06.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://похудение-это-есть.рф/starts",
+          "https://pikabu.ru/story/pokhudenie_nachinaetsya_ne_s_pokhudeniya_11401696"
+        ],
+        "external_ids": [
+          "11401696",
+          "49216621"
+        ],
+        "sha256": [
+          "1f9dee6d7651088a17a4d6004d5f7df6c1111eb02f9aa4be2da8fd5086a78bd9",
+          "90e6b203468c60c76d8f850b579505fe4a22ab50780791b7e0598ee28b818a89"
+        ],
+        "platform": "tilda+pikabu",
+        "project_id": "9532923",
+        "page_id": "49216621",
+        "retrieved_at": "2026-09-17",
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "original_published_at": "2024-05-10T13:59:36+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/pokhudenie_nachinaetsya_ne_s_pokhudeniya_11401696",
+          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
+        },
+        "editorial_assembly": {
+          "decided_at": "2026-10-19",
+          "basis": "Прямое решение Сергея 19.10.2026: из трёх статей собрать две. Подробная подготовка — Похудение начинается не с похудения; остальные ошибки — Главные ошибки. Три ошибки сохранить как архивный источник, отдельную публичную публикацию снять. Самостоятельную Сделать похудение проще не объединять, изменить только название.",
+          "source_ids": [
+            "11401696",
+            "d1baceb9e2b6b72013b6",
+            "13785403"
+          ],
+          "relation": "owner_approved_block_transfer_not_exact_duplicate"
+        }
+      },
+      "document_key": "pohudenie-nachinaetsya-ne-s-pohudeniya"
+    },
+    {
+      "source_id": "11801517",
+      "slug": "pochemu-pitanie-vazhnee-trenirovok",
+      "title": "Почему питание всегда важнее тренировок!!",
+      "excerpt": "Статья хорошая. Только можно вообще забить на питание.",
+      "category": "Похудение",
+      "body_file": "11801517.md",
+      "hero": {
+        "file": "11801517/01.webp",
+        "alt": "Комментарий Huligane о питании и тренировках",
+        "provenance": "https://cs15.pikabu.ru/post_img/2024/09/05/10/172555224918977637.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "11801517/01.webp",
+        "alt": "Комментарий Huligane о питании и тренировках",
+        "provenance": "https://cs15.pikabu.ru/post_img/2024/09/05/10/172555224918977637.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11401696",
+        "training-combined-2023",
+        "11857250"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "11801517/01.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517"
+        ],
+        "external_ids": [
+          "11801517"
+        ],
+        "source_uri": "content://item/7b8f734c-46f1-4288-bf9c-d8e63cf9cf00",
+        "source_revision": 1,
+        "source_date": "2024-09-12T16:57:20+03:00",
+        "sha256": [
+          "c07e1700a35577c6e6fbc35d77b5e9afc3afade223671eb90e517243507cb004"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "original_published_at": "2024-09-12T16:57:20+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517",
+          "page_sha256": "6c53298645fb743741083950a35d1542603e3f21c59211df18b43a01e38301e8",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
+      },
+      "document_key": "pochemu-pitanie-vazhnee-trenirovok"
+    },
+    {
+      "source_id": "tilda-49745867",
+      "subscription_before_heading": "мои-результаты",
+      "inline_related": {
+        "source_id": "12296286",
+        "before_heading": "польза-этого-правила-о-растениях-в-другом"
+      },
+      "slug": "pravilo-30-rasteniy",
+      "title": "Правило 30-ти растений",
+      "excerpt": "Микробиом важен для нашего здоровья, а разнообразие растений в питании — важно для здоровья микробиома. Поэтому желательно набирать 30 разных растений в неделю.",
+      "category": "Качество питания",
+      "body_file": "tilda-49745867.md",
+      "hero": {
+        "file": "tilda-49745867/tilda-01-v2-body.webp",
+        "alt": "Кот перед овощами: правило 30 растений",
+        "provenance": "https://static.tildacdn.com/tild3363-3631-4565-b831-373036323431/image.png"
+      },
+      "card": {
+        "file": "tilda-49745867/tilda-04-v3-card.webp",
+        "alt": "Разноцветные овощи на прилавке",
+        "provenance": "https://static.tildacdn.com/tild3466-3036-4631-b237-636161656438/image.png"
+      },
+      "related_source_ids": [
+        "11401696",
+        "11927800",
+        "11875492"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "tilda-49745867/tilda-01-v2-body.webp",
+        "tilda-49745867/tilda-01.png",
+        "tilda-49745867/tilda-02-v2-body.webp",
+        "tilda-49745867/tilda-02.jpg",
+        "tilda-49745867/tilda-03-v2-body.webp",
+        "tilda-49745867/tilda-03.png",
+        "tilda-49745867/tilda-04-v2-body.webp",
+        "tilda-49745867/tilda-04-v2-card.webp",
+        "tilda-49745867/tilda-04.png",
+        "tilda-49745867/tilda-05-v2-body.webp",
+        "tilda-49745867/tilda-05.png",
+        "tilda-49745867/tilda-03-v3-body.webp",
+        "tilda-49745867/tilda-04-v3-body.webp",
+        "tilda-49745867/tilda-04-v3-card.webp"
+      ],
+      "source_provenance": {
+        "platform": "tilda",
+        "project_id": "9532923",
+        "page_id": "49745867",
+        "original_published_at": "2023-08-08T00:00:00+03:00",
+        "original_date_evidence": {
+          "basis": "owner_selected_family_origin",
+          "source": "https://telegra.ph/CHast-2-08-08",
+          "precision": "day",
+          "owner_approved_at": "2026-10-05",
+          "not_first_release_of_combined_version": true
+        },
+        "url": "https://похудение-это-есть.рф/30-rastenij",
+        "html_sha256": "e76801cbf0f7bd1767d55cf87b32617755de45261818c0fdb3420aa56bd8c93a",
+        "retrieved_at": "2026-09-17",
+        "source_basis": "full_source"
+      },
+      "document_key": "pravilo-30-rasteniy"
+    },
+    {
+      "source_id": "12296286",
+      "slug": "osnovy-pohudeniya",
+      "title": "Нет времени объяснять. Просто худей!",
+      "excerpt": "Четыре сферы жизни, которые определяют, будет похудение посильным процессом или очередной короткой диетой на силе воли.",
+      "category": "Похудение",
+      "body_file": "12296286.md",
+      "inline_related": {
+        "source_id": "11801517",
+        "before_heading": "2-пищевое-поведение-ノ-o-oノ"
+      },
+      "hero": {
+        "file": "12296286/01.webp",
+        "alt": "Обложка материала «Нет времени объяснять. Просто худей!»",
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2025/01/25/6/1737798565157363834.png"
+      },
+      "card": {
+        "file": "12296286/01.webp",
+        "alt": "Обложка карточки «Нет времени объяснять. Просто худей!»",
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2025/01/25/6/1737798565157363834.png",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "14021584",
+        "d1baceb9e2b6b72013b6",
+        "13436070"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "12296286/01.webp",
+        "12296286/02.webp",
+        "12296286/03.webp",
+        "12296286/04.webp",
+        "12296286/05.webp",
+        "12296286/06.webp",
+        "12296286/07.webp",
+        "12296286/08.webp",
+        "12296286/card.webp",
+        "12296286/09-source-ending.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/net_vremeni_obyasnyat_prosto_khudey_12296286"
+        ],
+        "external_ids": [
+          "12296286"
+        ],
+        "sha256": [
+          "823dc29029a91e77d5381a555032e07705e96655836f0ae6f2274c029e0ea472"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "original_published_at": "2025-01-25T15:02:45+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/net_vremeni_obyasnyat_prosto_khudey_12296286",
+          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
+        }
+      },
+      "document_key": "net-vremeni-obyasnyat-prosto-hudey"
+    },
+    {
+      "source_id": "13277231",
+      "inline_related": {
+        "source_id": "11401696",
+        "before_heading": "как-получить-адекватные-ожидания"
+      },
+      "slug": "sroki-pohudeniya",
+      "title": "Сколько времени нужно на похудение?",
+      "excerpt": "Ответ на вопрос о сроках либо поставит жирный крест на вашем похудении, либо заложит крепкий фундамент для изменений в жизни.",
+      "category": "Похудение",
+      "body_file": "13277231.md",
+      "hero": {
+        "file": "13277231/01-v2-body.webp",
+        "alt": "Таблица для примерного расчёта сроков похудения при разном дефиците калорий",
+        "provenance": "https://cs17.pikabu.ru/s/2025/10/11/11/mjwvk2e5_lg.png"
+      },
+      "card": {
+        "file": "13277231/02-v2-card.webp",
+        "alt": "Мем «Пу-пу-пууу» о попытке быстро рассчитать сроки похудения",
+        "provenance": "https://cs19.pikabu.ru/s/2025/10/11/13/aqaew6iq_lg.png"
+      },
+      "related_source_ids": [
+        "11401696",
+        "11927800",
+        "11875492"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "13277231/01-v2-body.webp",
+        "13277231/01.png",
+        "13277231/02-v2-body.webp",
+        "13277231/02-v2-card.webp",
+        "13277231/02.png"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/skolko_vremeni_nuzhno_na_pokhudenie_13277231"
+        ],
+        "external_ids": [
+          "13277231"
+        ],
+        "sha256": [
+          "caffa8b6a629bd75d5b38a512dd48559b3ec12c70c9d35519d67e9666d9b345b"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "original_published_at": "2025-10-11T15:24:13+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/skolko_vremeni_nuzhno_na_pokhudenie_13277231",
+          "page_sha256": "08f26806a216dc89eaeb6473564265fd9c83479e84e48753ebbf000ac006e08b",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
+      },
+      "document_key": "skolko-vremeni-nuzhno-na-pohudenie"
+    },
+    {
+      "source_id": "habits-formation-and-one-percent",
+      "slug": "formirovanie-privychek",
+      "title": "Что вы не понимаете о формировании привычек?",
+      "excerpt": "Почему правило «21 дня» мало помогает со сложными изменениями — и как заменить героическое терпение привычкой улучшать питание хотя бы на 1%.",
+      "category": "Похудение",
+      "body_file": "habits-formation-and-one-percent.md",
+      "hero": {
+        "file": "habits-formation-and-one-percent/01.webp",
+        "alt": "Иллюстрация к статье «Что вы не понимаете о формировании привычек?»",
+        "provenance": "https://static.tildacdn.com/tild3639-3638-4139-a531-383964313937/image.png",
+        "show": true
+      },
+      "card": {
+        "file": "habits-formation-and-one-percent/01.webp",
+        "alt": "Иллюстрация к статье «Что вы не понимаете о формировании привычек?»",
+        "provenance": "https://static.tildacdn.com/tild3639-3638-4139-a531-383964313937/image.png",
+        "fit": "cover"
+      },
+      "related_source_ids": [
+        "11401696",
+        "d1baceb9e2b6b72013b6",
+        "training-combined-2023"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "habits-formation-and-one-percent/01.webp",
+        "habits-formation-and-one-percent/02.webp",
+        "habits-formation-and-one-percent/03.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://похудение-это-есть.рф/intensiv/tpost/fpvaefo9e1-kak-formiruyutsya-privichki-i-pravilo-1"
+        ],
+        "external_ids": [
+          "habits-formation-and-one-percent"
+        ],
+        "sha256": [
+          "c49868a9c9ac9c0231aef1b4066e17e5f45db3d815f270f0aadceac016ce7b0f"
+        ],
+        "original_published_at": "2026-02-03T00:00:00+03:00",
+        "original_date_evidence": {
+          "basis": "owner_selected_full_version",
+          "source": "knowledge://resource/tilda-intensive-fpvaefo9e1",
+          "precision": "day",
+          "owner_approved_at": "2026-10-05"
+        },
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      },
+      "inline_related": {
+        "source_id": "30e4d208f2cbd8e57201",
+        "before_heading": "я-называю-это-правило-1"
+      },
+      "document_key": "chto-vy-ne-ponimaete-o-formirovanii-privychek"
+    },
+    {
+      "source_id": "amkbo7kgg1",
+      "inline_related": {
+        "source_id": "11801517",
+        "before_heading": "а-как-посчитать-расход-калорий-на-тренировках"
+      },
+      "slug": "zachem-nuzhny-trenirovki",
+      "title": "Зачем нужны тренировки (кроме похудения)",
+      "excerpt": "Золотое правило любой тренировки — вы должны четко понимать, что и зачем вы делаете, иначе вы можете потратить время и силы, но лишь просто посотрясать воздух без осязаемой пользы для себя. Каждый вид тренировочной активности (бег, силовые, плавание, пилатес и пр.) имеет свою понятную конкретную…",
+      "category": "Тренировки",
+      "body_file": "amkbo7kgg1.md",
+      "hero": {
+        "file": "amkbo7kgg1/01.webp",
+        "alt": "Разные задачи тренировок",
+        "provenance": "https://static.tildacdn.com/tild6634-6635-4563-a239-643463376534/imagepng.webp",
+        "show": false
+      },
+      "card": {
+        "file": "amkbo7kgg1/01.webp",
+        "alt": "Разные задачи тренировок",
+        "provenance": "https://static.tildacdn.com/tild6634-6635-4563-a239-643463376534/imagepng.webp",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11801517",
+        "10425659",
+        "10573917"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "amkbo7kgg1/01.webp",
+        "amkbo7kgg1/02.webp",
+        "amkbo7kgg1/03.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv_old/tpost/amkbo7kgg1-zachem-nuzhni-trenirovki-krome-pohudeni"
+        ],
+        "external_ids": [
+          "amkbo7kgg1"
+        ],
+        "source_uri": "knowledge://resource/tilda-intensive-amkbo7kgg1",
+        "original_published_at": "2026-04-03T00:00:00+03:00",
+        "original_date_evidence": {
+          "basis": "owner_approved_tilda_date_candidate",
+          "precision": "day",
+          "owner_approved_at": "2026-10-05"
+        },
+        "source_revision": 1,
+        "sha256": "78f741f863fc124bac125c2cc685e702664438ecdce58552eb8d197ee45f6932",
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "adaptation": "minimal_proofread_intensive_navigation_cleanup_original_3_images"
+      },
+      "document_key": "zachem-nuzhny-trenirovki-krome-pohudeniya"
+    },
+    {
+      "source_id": "11906015",
+      "subscription_before_heading": "4-выбирайте-орехи-и-белок",
+      "inline_related": {
+        "source_id": "12296286",
+        "before_heading": "5-иногда-перекусы-даже-помогают"
+      },
+      "slug": "perekusy-i-pohudenie",
+      "title": "У взрослой женщины не должно быть перекусов",
+      "excerpt": "Скажите, вам когда-нибудь советовали отказаться от перекусов, полностью убрать сладкое, не есть после 18-00 или кушать кашку по утрам, а может, наоборот, ни в коем случае не кушать кашку? А вы задавались вопросом \"зачем?\"",
+      "category": "Качество питания",
+      "body_file": "11906015.md",
+      "hero": {
+        "file": "11906015/04.webp",
+        "alt": "Половинки грецкого ореха на ладони",
+        "provenance": "https://cs15.pikabu.ru/post_img/2024/10/13/6/1728811020157950360.webp",
+        "show": false
+      },
+      "card": {
+        "file": "11906015/04.webp",
+        "alt": "Половинки грецкого ореха на ладони",
+        "provenance": "https://cs15.pikabu.ru/post_img/2024/10/13/6/1728811020157950360.webp",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11801517",
+        "11401696",
+        "11857250"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "11906015/doctor-original.mp4",
+        "11906015/01.webp",
+        "11906015/02.webp",
+        "11906015/03.webp",
+        "11906015/04.webp",
+        "11906015/05.webp",
+        "11906015/06.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://telegra.ph/ZHenshchina-dolzhna-06-21",
+          "https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015"
+        ],
+        "external_ids": [
+          "11906015",
+          "ZHenshchina-dolzhna-06-21"
+        ],
+        "source_uri": "content://item/cdec03fe-8a06-407c-8acd-5c816c4efbcb",
+        "source_revision": 1,
+        "source_date": "2025-06-21T12:40:58+03:00",
+        "sha256": [
+          "f51e160637a8a0e66f617201ef087bf4bf54c514a97381811efc47fba16b5389",
+          "3773a5485163314eecae6fb9e19aee81ac9aadf03ae92b48408299b02ba0e64e"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "original_published_at": "2024-10-13T12:40:18+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015",
+          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
+        }
+      },
+      "document_key": "u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov"
+    },
+    {
+      "source_id": "10532723",
+      "subscription_before_heading": "качество-питания",
+      "inline_related": {
+        "source_id": "11401696",
+        "before_heading": "короче-выход-только-один-худеть-дальше"
+      },
+      "slug": "posledniy-zhir-na-zhivote",
+      "title": "Последний жир на животе. План действий",
+      "excerpt": "Каждый день вижу посты про упрямый жир и выпирающий живот, но советы там, мягко скажем, однобокие, а иногда и совсем дебильные, написанные дешевыми копирайтерами. Неважно, ваш живот сейчас — это сдача с прошлого похудения, начало нового набора веса или вы живете с такой композицией тела, сколько себя помните, план действий от этого не зависит.",
+      "category": "Похудение",
+      "body_file": "10532723.md",
+      "hero": {
+        "file": "10532723/01.webp",
+        "alt": "Сравнение комплекции и распределения жира",
+        "provenance": "https://telegra.ph/file/c53e9442ea76e90cfd1c2.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "10532723/01.webp",
+        "alt": "Сравнение комплекции и распределения жира",
+        "provenance": "https://telegra.ph/file/c53e9442ea76e90cfd1c2.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "13436070",
+        "13178972",
+        "10425659"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "10532723/01.webp",
+        "10532723/02.webp",
+        "10532723/03.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://telegra.ph/Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07",
+          "https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723",
+          "https://telegra.ph/Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13"
+        ],
+        "external_ids": [
+          "Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07",
+          "10532723",
+          "Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13"
+        ],
+        "source_uri": "content://item/61458c9a-8db0-44d6-b144-0ab618a4855f",
+        "source_revision": 1,
+        "source_date": "2024-03-07T16:10:43+03:00",
+        "sha256": [
+          "481d659c295cee8f720f97cfb4b674c276a1844e98d291f74648d5ec7d77c38e",
+          "778f44e6d3d12a00de5c93481aa0d871e10c0dcb251837351a620b7422fcf1c7",
+          "dd3bbeedeb9625bb3861026ae8c7dac7c78cf60fe056e793061e3d53a1f178fa"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "original_published_at": "2023-08-05T14:44:13+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723",
+          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
+        }
+      },
+      "document_key": "posledniy-zhir-na-zhivote-plan-deystviy"
+    },
+    {
+      "source_id": "14062380",
+      "slug": "sredizemnomorskaya-dieta",
+      "title": "Средиземноморская диета — это вообще что?!?!",
+      "excerpt": "\"Диеты\" — это утрированное коверкание некоторых адекватных принципов питания в красивой обёртке. Например, средиземноморская диета — ешьте дофига овощей и фруктов и побольше цельнозерновых, да бобовых вместо булок и конфет.",
+      "category": "Качество питания",
+      "body_file": "14062380.md",
+      "hero": {
+        "file": "14062380/03.webp",
+        "alt": "Пирамида средиземноморской диеты",
+        "provenance": "https://cs19.pikabu.ru/s/2026/06/14/20/xgedxme2.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "14062380/03.webp",
+        "alt": "Пирамида средиземноморской диеты",
+        "provenance": "https://cs19.pikabu.ru/s/2026/06/14/20/xgedxme2.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11401696",
+        "14021584",
+        "12296286"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "14062380/01.webp",
+        "14062380/02.webp",
+        "14062380/03.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380"
+        ],
+        "external_ids": [
+          "14062380"
+        ],
+        "source_uri": "content://item/17d14cc0-906c-4e5d-b458-952441361368",
+        "source_revision": 3,
+        "source_date": "2026-06-14",
+        "sha256": "d955395c8d84892021a09bc7a6288542bb84e77c874c8778cb5278ea2c23c1f9",
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "adaptation": "minimal_proofread_author_critique_3_original_images_preserved_not_archived_A203",
+        "original_published_at": "2026-06-14T20:48:09+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/sredizemnomorskaya_dieta__yeto_voobshche_chto_14062380",
+          "page_sha256": "d86ea75dd9d480d17c843ae0d47a7ea17a9ebfdcdcdb87605d5ed4ab8616bf15",
+          "field": "datePublished",
+          "checked_at": "2026-10-04T21:59:58.825440+03:00"
+        }
+      },
+      "document_key": "sredizemnomorskaya-dieta-eto-voobshche-chto"
+    },
+    {
+      "source_id": "10425659",
+      "inline_related": {
+        "source_id": "11801517",
+        "before_heading": "инвентарь"
+      },
+      "slug": "domashnie-trenirovki",
+      "title": "13 правил для организации домашних тренировок",
+      "excerpt": "От банального к неочевидному. Организовывал тренировки дома и себе, и другим.",
+      "category": "Тренировки",
+      "body_file": "10425659.md",
+      "hero": {
+        "file": "10425659/01.webp",
+        "alt": "Сергей Воронцов: коврик, вода, полотенце и кроссовки для домашней тренировки",
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2023/07/01/5/1688196961113872084.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "10425659/01.webp",
+        "alt": "Сергей Воронцов: коврик, вода, полотенце и кроссовки для домашней тренировки",
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2023/07/01/5/1688196961113872084.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "training-combined-2023",
+        "11801517",
+        "12922345"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "10425659/01.webp",
+        "10425659/02.webp",
+        "10425659/03.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659",
+          "https://telegra.ph/13-pravil-09-18"
+        ],
+        "external_ids": [
+          "10425659",
+          "13-pravil-09-18"
+        ],
+        "source_uri": "content://item/9cd3cd1a-4c80-4657-a212-935a9fae2fd3",
+        "source_revision": 1,
+        "source_date": "2023-07-01T10:39:06+03:00",
+        "sha256": [
+          "514025ade84f5acf74a3dd1845d1f74d26d32d2b689c2f31c1c03e906709c2d4",
+          "f3af3651caec3c3407612bd2198ee25945e84e650d8406bb7e8928daa8a5cb13"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "original_published_at": "2023-07-01T10:39:06+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659",
+          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
+        }
+      },
+      "document_key": "13-pravil-domashnih-trenirovok"
+    },
+    {
+      "source_id": "10573917",
+      "slug": "rezinki-dlya-trenirovok",
+      "title": "Резинки для тренировок!",
+      "excerpt": "Привет, давно обещал сделать пост про резинки. Сделал!",
+      "category": "Тренировки",
+      "body_file": "10573917.md",
+      "hero": {
+        "file": "10573917/03.webp",
+        "alt": "Эластичные петли, закреплённые на перекладине",
+        "provenance": "https://cs13.pikabu.ru/post_img/2023/08/19/5/1692428073175986559.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "10573917/03.webp",
+        "alt": "Эластичные петли, закреплённые на перекладине",
+        "provenance": "https://cs13.pikabu.ru/post_img/2023/08/19/5/1692428073175986559.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "10425659",
+        "13436070",
+        "training-combined-2023"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "10573917/01.webp",
+        "10573917/02.webp",
+        "10573917/bands-original.mp4",
+        "10573917/03.webp",
+        "10573917/04.webp",
+        "10573917/05.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://telegra.ph/Rezinki-09-01",
+          "https://pikabu.ru/story/rezinki_dlya_trenirovok_10573917"
+        ],
+        "external_ids": [
+          "Rezinki-09-01",
+          "10573917"
+        ],
+        "source_uri": "content://item/b3b632f9-1f6f-46ab-8193-f7d0d3b649b0",
+        "source_revision": 1,
+        "source_date": "2023-09-01T15:41:57+0000",
+        "sha256": [
+          "022afd2cf1fffcdac43ef061f7bbcaf9863f56ff0edb09d0264b3fcdf439a110",
+          "413211e581508f1865b10210374a8fbcb1494cbdddcc512c0d8f6e9bdce58cf8"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "original_published_at": "2023-08-19T10:00:27+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/rezinki_dlya_trenirovok_10573917",
+          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
+        }
+      },
+      "document_key": "rezinki-dlya-trenirovok"
+    },
+    {
+      "source_id": "10369434",
+      "slug": "pokusali-sobaki",
+      "title": "Как на меня напали собаки в лесу",
+      "excerpt": "Сегодня я должен был ехать на горный забег в 62 км, к которому долго готовился, а в итоге еду на вторую прививку от бешенства, к которой вообще не готовился. Собаки на меня напали впервые.",
+      "category": "Личное",
+      "body_file": "10369434.md",
+      "hero": {
+        "file": "10369434/01.webp",
+        "alt": "Фото до и после нападения собак, сохранились только такие",
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2023/06/17/6/1686995034118247836.jpg",
+        "show": false
+      },
+      "card": {
+        "file": "10369434/01.webp",
+        "alt": "Фото до и после нападения собак, сохранились только такие",
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2023/06/17/6/1686995034118247836.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "2e269fdc52d600a64753",
+        "0d583f6ad1cea0eef750",
+        "12269678"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "10369434/01.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/kak_na_menya_napali_sobaki_v_lesu_10369434",
+          "https://telegra.ph/Kak-na-menya-napali-sobaki-v-lesu-06-17"
+        ],
+        "external_ids": [
+          "10369434",
+          "Kak-na-menya-napali-sobaki-v-lesu-06-17"
+        ],
+        "source_uri": "content://item/7ee045e3-43dc-4f56-8539-6a5b87b7db6f",
+        "source_revision": 1,
+        "sha256": "fbcf1b0c990d8670f315dbffc1381e7ed24c7bad0a7bdc2dac0763bef23fe000",
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "full_scientific_pass": false,
+        "owner_decision": "2026-10-04 keep author meaning unchanged including va-bank paragraph",
+        "adaptation": "minimal_proofread_platform_tail_cleanup_original_image",
+        "original_published_at": "2023-06-17T13:18:08+03:00"
+      },
+      "document_key": "kak-na-menya-napali-sobaki-v-lesu"
+    },
+    {
+      "source_id": "12193581",
+      "subscription_before_heading": "добавляем-а-не-исключаем",
+      "slug": "novogodniy-stol-bez-pereedaniya",
+      "title": "Техника безопасности питания за новогодним столом",
+      "excerpt": "Часто ТБ написана кровью, но те правила, о которых я расскажу сегодня, — выстраданы килограммами лишнего жира на боках и литрами пота в попытках от них потом избавиться. Время чтения = 4 минуты.",
+      "category": "Качество питания",
+      "body_file": "12193581.md",
+      "hero": {
+        "file": "12193581/01.webp",
+        "alt": "Стол-книжка: «Атлант совсем скоро расправит плечи»",
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2024/12/29/8/173547521414365771.png",
+        "show": false
+      },
+      "card": {
+        "file": "12193581/01.webp",
+        "alt": "Стол-книжка: «Атлант совсем скоро расправит плечи»",
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2024/12/29/8/173547521414365771.png",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "10978866",
+        "12857458",
+        "11401696"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "12193581/01.webp",
+        "12193581/02.webp",
+        "12193581/03.webp",
+        "12193581/04.webp",
+        "12193581/05.webp",
+        "12193581/06.webp",
+        "12193581/07.webp",
+        "12193581/08.webp",
+        "12193581/09.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581"
+        ],
+        "external_ids": [
+          "12193581"
+        ],
+        "source_uri": "content://item/533a8da7-496b-453c-a65f-57251d7bb8d4",
+        "source_revision": 1,
+        "source_date": "2024-12-29",
+        "sha256": "0a1da07bbbbb7becd8f7a2775a517f70760cb2e234e0c4dafa17855e045d020c",
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass",
+        "adaptation": "minimal_proofread_platform_cta_cleanup_seasonal_author_text_9_original_images",
+        "original_published_at": "2024-12-29T18:12:24+03:00",
+        "original_date_evidence": {
+          "source": "https://pikabu.ru/story/tekhnika_bezopasnosti_pitaniya_za_novogodnim_stolom_12193581",
+          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
+        }
+      },
+      "document_key": "tehnika-bezopasnosti-pitaniya-za-novogodnim-stolom"
     },
     {
       "source_id": "11448583",
@@ -577,317 +1392,6 @@
       "document_key": "zhiroszhigayushchaya-zona-ne-rabotaet"
     },
     {
-      "source_id": "10573917",
-      "slug": "rezinki-dlya-trenirovok",
-      "title": "Резинки для тренировок!",
-      "excerpt": "Привет, давно обещал сделать пост про резинки. Сделал!",
-      "category": "Тренировки",
-      "body_file": "10573917.md",
-      "hero": {
-        "file": "10573917/03.webp",
-        "alt": "Эластичные петли, закреплённые на перекладине",
-        "provenance": "https://cs13.pikabu.ru/post_img/2023/08/19/5/1692428073175986559.jpg",
-        "show": false
-      },
-      "card": {
-        "file": "10573917/03.webp",
-        "alt": "Эластичные петли, закреплённые на перекладине",
-        "provenance": "https://cs13.pikabu.ru/post_img/2023/08/19/5/1692428073175986559.jpg",
-        "fit": "contain"
-      },
-      "related_source_ids": [
-        "10425659",
-        "13436070",
-        "training-combined-2023"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "10573917/01.webp",
-        "10573917/02.webp",
-        "10573917/bands-original.mp4",
-        "10573917/03.webp",
-        "10573917/04.webp",
-        "10573917/05.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://telegra.ph/Rezinki-09-01",
-          "https://pikabu.ru/story/rezinki_dlya_trenirovok_10573917"
-        ],
-        "external_ids": [
-          "Rezinki-09-01",
-          "10573917"
-        ],
-        "source_uri": "content://item/b3b632f9-1f6f-46ab-8193-f7d0d3b649b0",
-        "source_revision": 1,
-        "source_date": "2023-09-01T15:41:57+0000",
-        "sha256": [
-          "022afd2cf1fffcdac43ef061f7bbcaf9863f56ff0edb09d0264b3fcdf439a110",
-          "413211e581508f1865b10210374a8fbcb1494cbdddcc512c0d8f6e9bdce58cf8"
-        ],
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass",
-        "original_published_at": "2023-08-19T10:00:27+03:00",
-        "original_date_evidence": {
-          "source": "https://pikabu.ru/story/rezinki_dlya_trenirovok_10573917",
-          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
-        }
-      },
-      "document_key": "rezinki-dlya-trenirovok"
-    },
-    {
-      "source_id": "10532723",
-      "subscription_before_heading": "качество-питания",
-      "inline_related": {
-        "source_id": "11401696",
-        "before_heading": "короче-выход-только-один-худеть-дальше"
-      },
-      "slug": "posledniy-zhir-na-zhivote",
-      "title": "Последний жир на животе. План действий",
-      "excerpt": "Каждый день вижу посты про упрямый жир и выпирающий живот, но советы там, мягко скажем, однобокие, а иногда и совсем дебильные, написанные дешевыми копирайтерами. Неважно, ваш живот сейчас — это сдача с прошлого похудения, начало нового набора веса или вы живете с такой композицией тела, сколько себя помните, план действий от этого не зависит.",
-      "category": "Похудение",
-      "body_file": "10532723.md",
-      "hero": {
-        "file": "10532723/01.webp",
-        "alt": "Сравнение комплекции и распределения жира",
-        "provenance": "https://telegra.ph/file/c53e9442ea76e90cfd1c2.jpg",
-        "show": false
-      },
-      "card": {
-        "file": "10532723/01.webp",
-        "alt": "Сравнение комплекции и распределения жира",
-        "provenance": "https://telegra.ph/file/c53e9442ea76e90cfd1c2.jpg",
-        "fit": "contain"
-      },
-      "related_source_ids": [
-        "13436070",
-        "13178972",
-        "10425659"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "10532723/01.webp",
-        "10532723/02.webp",
-        "10532723/03.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://telegra.ph/Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07",
-          "https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723",
-          "https://telegra.ph/Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13"
-        ],
-        "external_ids": [
-          "Poslednij-zhir-na-zhivote-Plan-dejstvij-03-07",
-          "10532723",
-          "Video-Poslednij-zhir-v-oblasti-zhivota-Plan-dejstvij-08-13"
-        ],
-        "source_uri": "content://item/61458c9a-8db0-44d6-b144-0ab618a4855f",
-        "source_revision": 1,
-        "source_date": "2024-03-07T16:10:43+03:00",
-        "sha256": [
-          "481d659c295cee8f720f97cfb4b674c276a1844e98d291f74648d5ec7d77c38e",
-          "778f44e6d3d12a00de5c93481aa0d871e10c0dcb251837351a620b7422fcf1c7",
-          "dd3bbeedeb9625bb3861026ae8c7dac7c78cf60fe056e793061e3d53a1f178fa"
-        ],
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass",
-        "original_published_at": "2023-08-05T14:44:13+03:00",
-        "original_date_evidence": {
-          "source": "https://pikabu.ru/story/posledniy_zhir_v_oblasti_zhivota_plan_deystviy_10532723",
-          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
-        }
-      },
-      "document_key": "posledniy-zhir-na-zhivote-plan-deystviy"
-    },
-    {
-      "source_id": "11906015",
-      "subscription_before_heading": "4-выбирайте-орехи-и-белок",
-      "inline_related": {
-        "source_id": "12296286",
-        "before_heading": "5-иногда-перекусы-даже-помогают"
-      },
-      "slug": "perekusy-i-pohudenie",
-      "title": "У взрослой женщины не должно быть перекусов",
-      "excerpt": "Скажите, вам когда-нибудь советовали отказаться от перекусов, полностью убрать сладкое, не есть после 18-00 или кушать кашку по утрам, а может, наоборот, ни в коем случае не кушать кашку? А вы задавались вопросом \"зачем?\"",
-      "category": "Качество питания",
-      "body_file": "11906015.md",
-      "hero": {
-        "file": "11906015/04.webp",
-        "alt": "Половинки грецкого ореха на ладони",
-        "provenance": "https://cs15.pikabu.ru/post_img/2024/10/13/6/1728811020157950360.webp",
-        "show": false
-      },
-      "card": {
-        "file": "11906015/04.webp",
-        "alt": "Половинки грецкого ореха на ладони",
-        "provenance": "https://cs15.pikabu.ru/post_img/2024/10/13/6/1728811020157950360.webp",
-        "fit": "contain"
-      },
-      "related_source_ids": [
-        "11801517",
-        "11401696",
-        "11857250"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "11906015/doctor-original.mp4",
-        "11906015/01.webp",
-        "11906015/02.webp",
-        "11906015/03.webp",
-        "11906015/04.webp",
-        "11906015/05.webp",
-        "11906015/06.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://telegra.ph/ZHenshchina-dolzhna-06-21",
-          "https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015"
-        ],
-        "external_ids": [
-          "11906015",
-          "ZHenshchina-dolzhna-06-21"
-        ],
-        "source_uri": "content://item/cdec03fe-8a06-407c-8acd-5c816c4efbcb",
-        "source_revision": 1,
-        "source_date": "2025-06-21T12:40:58+03:00",
-        "sha256": [
-          "f51e160637a8a0e66f617201ef087bf4bf54c514a97381811efc47fba16b5389",
-          "3773a5485163314eecae6fb9e19aee81ac9aadf03ae92b48408299b02ba0e64e"
-        ],
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass",
-        "original_published_at": "2024-10-13T12:40:18+03:00",
-        "original_date_evidence": {
-          "source": "https://pikabu.ru/story/u_vzrosloy_zhenshchinyi_ne_dolzhno_byit_perekusov_11906015",
-          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
-        }
-      },
-      "document_key": "u-vzrosloy-zhenshchiny-ne-dolzhno-byt-perekusov"
-    },
-    {
-      "source_id": "10425659",
-      "inline_related": {
-        "source_id": "11801517",
-        "before_heading": "инвентарь"
-      },
-      "slug": "domashnie-trenirovki",
-      "title": "13 правил для организации домашних тренировок",
-      "excerpt": "От банального к неочевидному. Организовывал тренировки дома и себе, и другим.",
-      "category": "Тренировки",
-      "body_file": "10425659.md",
-      "hero": {
-        "file": "10425659/01.webp",
-        "alt": "Сергей Воронцов: коврик, вода, полотенце и кроссовки для домашней тренировки",
-        "provenance": "https://cs14.pikabu.ru/post_img/big/2023/07/01/5/1688196961113872084.jpg",
-        "show": false
-      },
-      "card": {
-        "file": "10425659/01.webp",
-        "alt": "Сергей Воронцов: коврик, вода, полотенце и кроссовки для домашней тренировки",
-        "provenance": "https://cs14.pikabu.ru/post_img/big/2023/07/01/5/1688196961113872084.jpg",
-        "fit": "contain"
-      },
-      "related_source_ids": [
-        "training-combined-2023",
-        "11801517",
-        "12922345"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "10425659/01.webp",
-        "10425659/02.webp",
-        "10425659/03.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659",
-          "https://telegra.ph/13-pravil-09-18"
-        ],
-        "external_ids": [
-          "10425659",
-          "13-pravil-09-18"
-        ],
-        "source_uri": "content://item/9cd3cd1a-4c80-4657-a212-935a9fae2fd3",
-        "source_revision": 1,
-        "source_date": "2023-07-01T10:39:06+03:00",
-        "sha256": [
-          "514025ade84f5acf74a3dd1845d1f74d26d32d2b689c2f31c1c03e906709c2d4",
-          "f3af3651caec3c3407612bd2198ee25945e84e650d8406bb7e8928daa8a5cb13"
-        ],
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass",
-        "original_published_at": "2023-07-01T10:39:06+03:00",
-        "original_date_evidence": {
-          "source": "https://pikabu.ru/story/13_pravil_dlya_organizatsii_domashnikh_trenirovok_10425659",
-          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
-        }
-      },
-      "document_key": "13-pravil-domashnih-trenirovok"
-    },
-    {
-      "source_id": "11801517",
-      "slug": "pochemu-pitanie-vazhnee-trenirovok",
-      "title": "Почему питание всегда важнее тренировок!!",
-      "excerpt": "Статья хорошая. Только можно вообще забить на питание.",
-      "category": "Похудение",
-      "body_file": "11801517.md",
-      "hero": {
-        "file": "11801517/01.webp",
-        "alt": "Комментарий Huligane о питании и тренировках",
-        "provenance": "https://cs15.pikabu.ru/post_img/2024/09/05/10/172555224918977637.jpg",
-        "show": false
-      },
-      "card": {
-        "file": "11801517/01.webp",
-        "alt": "Комментарий Huligane о питании и тренировках",
-        "provenance": "https://cs15.pikabu.ru/post_img/2024/09/05/10/172555224918977637.jpg",
-        "fit": "contain"
-      },
-      "related_source_ids": [
-        "11401696",
-        "training-combined-2023",
-        "11857250"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "11801517/01.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517"
-        ],
-        "external_ids": [
-          "11801517"
-        ],
-        "source_uri": "content://item/7b8f734c-46f1-4288-bf9c-d8e63cf9cf00",
-        "source_revision": 1,
-        "source_date": "2024-09-12T16:57:20+03:00",
-        "sha256": [
-          "c07e1700a35577c6e6fbc35d77b5e9afc3afade223671eb90e517243507cb004"
-        ],
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass",
-        "original_published_at": "2024-09-12T16:57:20+03:00",
-        "original_date_evidence": {
-          "source": "https://pikabu.ru/story/pochemu_pitanie_vsegda_vazhnee_trenirovok_11801517",
-          "page_sha256": "6c53298645fb743741083950a35d1542603e3f21c59211df18b43a01e38301e8",
-          "field": "datePublished",
-          "checked_at": "2026-10-04T21:59:58.825440+03:00"
-        }
-      },
-      "document_key": "pochemu-pitanie-vazhnee-trenirovok"
-    },
-    {
       "source_id": "10978866",
       "slug": "5-sovetov-k-zastolyu",
       "title": "Вот вам и ОЛИВЬЕ!",
@@ -1115,64 +1619,6 @@
         }
       },
       "document_key": "vse-znayut-nikto-ne-delaet"
-    },
-    {
-      "source_id": "habits-formation-and-one-percent",
-      "slug": "formirovanie-privychek",
-      "title": "Что вы не понимаете о формировании привычек?",
-      "excerpt": "Почему правило «21 дня» мало помогает со сложными изменениями — и как заменить героическое терпение привычкой улучшать питание хотя бы на 1%.",
-      "category": "Похудение",
-      "body_file": "habits-formation-and-one-percent.md",
-      "hero": {
-        "file": "habits-formation-and-one-percent/01.webp",
-        "alt": "Иллюстрация к статье «Что вы не понимаете о формировании привычек?»",
-        "provenance": "https://static.tildacdn.com/tild3639-3638-4139-a531-383964313937/image.png",
-        "show": true
-      },
-      "card": {
-        "file": "habits-formation-and-one-percent/01.webp",
-        "alt": "Иллюстрация к статье «Что вы не понимаете о формировании привычек?»",
-        "provenance": "https://static.tildacdn.com/tild3639-3638-4139-a531-383964313937/image.png",
-        "fit": "cover"
-      },
-      "related_source_ids": [
-        "11401696",
-        "d1baceb9e2b6b72013b6",
-        "training-combined-2023"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "habits-formation-and-one-percent/01.webp",
-        "habits-formation-and-one-percent/02.webp",
-        "habits-formation-and-one-percent/03.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://похудение-это-есть.рф/intensiv/tpost/fpvaefo9e1-kak-formiruyutsya-privichki-i-pravilo-1"
-        ],
-        "external_ids": [
-          "habits-formation-and-one-percent"
-        ],
-        "sha256": [
-          "c49868a9c9ac9c0231aef1b4066e17e5f45db3d815f270f0aadceac016ce7b0f"
-        ],
-        "original_published_at": "2026-02-03T00:00:00+03:00",
-        "original_date_evidence": {
-          "basis": "owner_selected_full_version",
-          "source": "knowledge://resource/tilda-intensive-fpvaefo9e1",
-          "precision": "day",
-          "owner_approved_at": "2026-10-05"
-        },
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass"
-      },
-      "inline_related": {
-        "source_id": "30e4d208f2cbd8e57201",
-        "before_heading": "я-называю-это-правило-1"
-      },
-      "document_key": "chto-vy-ne-ponimaete-o-formirovanii-privychek"
     },
     {
       "source_id": "11339712",
@@ -2404,68 +2850,6 @@
       "document_key": "professionalnyy-edok"
     },
     {
-      "source_id": "12296286",
-      "slug": "osnovy-pohudeniya",
-      "title": "Нет времени объяснять. Просто худей!",
-      "excerpt": "Четыре сферы жизни, которые определяют, будет похудение посильным процессом или очередной короткой диетой на силе воли.",
-      "category": "Похудение",
-      "body_file": "12296286.md",
-      "inline_related": {
-        "source_id": "11801517",
-        "before_heading": "2-пищевое-поведение-ノ-o-oノ"
-      },
-      "hero": {
-        "file": "12296286/01.webp",
-        "alt": "Обложка материала «Нет времени объяснять. Просто худей!»",
-        "provenance": "https://cs15.pikabu.ru/post_img/big/2025/01/25/6/1737798565157363834.png"
-      },
-      "card": {
-        "file": "12296286/01.webp",
-        "alt": "Обложка карточки «Нет времени объяснять. Просто худей!»",
-        "provenance": "https://cs15.pikabu.ru/post_img/big/2025/01/25/6/1737798565157363834.png",
-        "fit": "contain"
-      },
-      "related_source_ids": [
-        "14021584",
-        "d1baceb9e2b6b72013b6",
-        "13436070"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "12296286/01.webp",
-        "12296286/02.webp",
-        "12296286/03.webp",
-        "12296286/04.webp",
-        "12296286/05.webp",
-        "12296286/06.webp",
-        "12296286/07.webp",
-        "12296286/08.webp",
-        "12296286/card.webp",
-        "12296286/09-source-ending.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://pikabu.ru/story/net_vremeni_obyasnyat_prosto_khudey_12296286"
-        ],
-        "external_ids": [
-          "12296286"
-        ],
-        "sha256": [
-          "823dc29029a91e77d5381a555032e07705e96655836f0ae6f2274c029e0ea472"
-        ],
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass",
-        "original_published_at": "2025-01-25T15:02:45+03:00",
-        "original_date_evidence": {
-          "source": "https://pikabu.ru/story/net_vremeni_obyasnyat_prosto_khudey_12296286",
-          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
-        }
-      },
-      "document_key": "net-vremeni-obyasnyat-prosto-hudey"
-    },
-    {
       "source_id": "13436070",
       "inline_related": {
         "source_id": "12296286",
@@ -2999,72 +3383,6 @@
       "document_key": "glikemicheskiy-indeks-eto-lishnee"
     },
     {
-      "source_id": "10999474",
-      "subscription_before_heading": "наш-девиз-всё-или-ничего",
-      "slug": "pp-recepty-i-pohudenie",
-      "title": "ПП-рецепты — это плохо. И вот почему",
-      "excerpt": "Как ярлык «ПП» заставляет переоценивать полезность блюда и почему рецепт лучше оценивать по задаче, составу и порции.",
-      "category": "Качество питания",
-      "body_file": "10999474.md",
-      "inline_related": {
-        "source_id": "12296286",
-        "before_heading": "так-что-же-такое-это-ваше-пп"
-      },
-      "hero": {
-        "file": "10999474/01.webp",
-        "alt": "Мем «Первая причина — это ты!»",
-        "show": false,
-        "provenance": "https://cs13.pikabu.ru/post_img/2024/01/07/6/1704615738221844529.webp"
-      },
-      "card": {
-        "file": "10999474/01.webp",
-        "alt": "Мем «Первая причина — это ты!»",
-        "provenance": "https://cs13.pikabu.ru/post_img/2024/01/07/6/1704615738221844529.webp"
-      },
-      "related_source_ids": [
-        "11207593",
-        "14183275",
-        "12857458"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "10999474/01.webp",
-        "10999474/02.webp",
-        "10999474/03.webp",
-        "10999474/04.webp",
-        "10999474/05.webp",
-        "10999474/06.webp",
-        "10999474/07.webp",
-        "10999474/08.webp",
-        "10999474/10-body.webp",
-        "10999474/11-body.webp",
-        "10999474/12-body.webp",
-        "10999474/13-body.webp",
-        "10999474/card.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://pikabu.ru/story/pp_retseptyi__yeto_plokho_i_vot_pochemu_10999474"
-        ],
-        "external_ids": [
-          "10999474"
-        ],
-        "sha256": [
-          "6ca7aba7ecfec08012fba0f6c0122ce4ad4b4236f2d06905a91856c82f615796"
-        ],
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass",
-        "original_published_at": "2024-01-07T11:32:05+03:00",
-        "original_date_evidence": {
-          "source": "https://pikabu.ru/story/pp_retseptyi__yeto_plokho_i_vot_pochemu_10999474",
-          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
-        }
-      },
-      "document_key": "pp-recepty-eto-ploho"
-    },
-    {
       "source_id": "training-combined-2023",
       "subscription_before_heading": "день-3-разминка-не-должна-быть-статической-а-заминка-вообще-не-нужна",
       "slug": "kak-nachat-trenirovki",
@@ -3198,260 +3516,6 @@
         }
       },
       "document_key": "a-mne-trener-posovetoval"
-    },
-    {
-      "source_id": "13277231",
-      "inline_related": {
-        "source_id": "11401696",
-        "before_heading": "как-получить-адекватные-ожидания"
-      },
-      "slug": "sroki-pohudeniya",
-      "title": "Сколько времени нужно на похудение?",
-      "excerpt": "Ответ на вопрос о сроках либо поставит жирный крест на вашем похудении, либо заложит крепкий фундамент для изменений в жизни.",
-      "category": "Похудение",
-      "body_file": "13277231.md",
-      "hero": {
-        "file": "13277231/01-v2-body.webp",
-        "alt": "Таблица для примерного расчёта сроков похудения при разном дефиците калорий",
-        "provenance": "https://cs17.pikabu.ru/s/2025/10/11/11/mjwvk2e5_lg.png"
-      },
-      "card": {
-        "file": "13277231/02-v2-card.webp",
-        "alt": "Мем «Пу-пу-пууу» о попытке быстро рассчитать сроки похудения",
-        "provenance": "https://cs19.pikabu.ru/s/2025/10/11/13/aqaew6iq_lg.png"
-      },
-      "related_source_ids": [
-        "11401696",
-        "11927800",
-        "11875492"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "13277231/01-v2-body.webp",
-        "13277231/01.png",
-        "13277231/02-v2-body.webp",
-        "13277231/02-v2-card.webp",
-        "13277231/02.png"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://pikabu.ru/story/skolko_vremeni_nuzhno_na_pokhudenie_13277231"
-        ],
-        "external_ids": [
-          "13277231"
-        ],
-        "sha256": [
-          "caffa8b6a629bd75d5b38a512dd48559b3ec12c70c9d35519d67e9666d9b345b"
-        ],
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass",
-        "original_published_at": "2025-10-11T15:24:13+03:00",
-        "original_date_evidence": {
-          "source": "https://pikabu.ru/story/skolko_vremeni_nuzhno_na_pokhudenie_13277231",
-          "page_sha256": "08f26806a216dc89eaeb6473564265fd9c83479e84e48753ebbf000ac006e08b",
-          "field": "datePublished",
-          "checked_at": "2026-10-04T21:59:58.825440+03:00"
-        }
-      },
-      "document_key": "skolko-vremeni-nuzhno-na-pohudenie"
-    },
-    {
-      "source_id": "11401696",
-      "subscription_before_heading": "пищевые-привычки",
-      "slug": "plan-pohudeniya",
-      "title": "Похудение начинается не с похудения",
-      "excerpt": "Для начала у похудения должен быть план! Особенно если есть желание сделать его действительно последним, а не лишь ещё одним.",
-      "category": "Похудение",
-      "body_file": "11401696.md",
-      "inline_related": {
-        "source_id": "30e4d208f2cbd8e57201",
-        "before_heading": "мотивация"
-      },
-      "hero": {
-        "file": "11401696/tilda-01.jpg",
-        "alt": "Мем о цикле похудения и обвинении обмена веществ",
-        "provenance": "https://static.tildacdn.com/tild3131-3165-4165-b238-353862333766/Frame_492445251.jpg",
-        "show": false
-      },
-      "card": {
-        "file": "11401696/tilda-09-v2-card.webp",
-        "alt": "Сначала изменения в питании, потом дефицит калорий",
-        "provenance": "https://static.tildacdn.com/tild6131-6162-4739-b265-623138646634/image.png"
-      },
-      "related_source_ids": [
-        "13277231",
-        "11927800",
-        "tilda-49734795"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "11401696/tilda-01.jpg",
-        "11401696/tilda-02-v2-body.webp",
-        "11401696/tilda-02.png",
-        "11401696/tilda-03.jpg",
-        "11401696/tilda-03-v3-body.webp",
-        "11401696/tilda-04-v2-body.webp",
-        "11401696/tilda-04.png",
-        "11401696/tilda-05-v2-body.webp",
-        "11401696/tilda-05-v3-body.webp",
-        "11401696/tilda-05.png",
-        "11401696/tilda-06-v2-body.webp",
-        "11401696/tilda-06.png",
-        "11401696/tilda-07-v2-body.webp",
-        "11401696/tilda-07.jpg",
-        "11401696/tilda-08-v2-body.webp",
-        "11401696/tilda-08.png",
-        "11401696/tilda-09-v2-body.webp",
-        "11401696/tilda-09-v3-body.webp",
-        "11401696/tilda-09-v2-card.webp",
-        "11401696/tilda-09.png",
-        "11401696/tilda-10-v2-body.webp",
-        "11401696/tilda-10.png",
-        "11401696/tilda-11-v2-body.webp",
-        "11401696/tilda-11.png",
-        "11401696/tilda-12-v2-body.webp",
-        "11401696/tilda-12.png",
-        "11401696/tilda-13-v2-body.webp",
-        "11401696/tilda-13.png",
-        "11401696/tilda-14.jpg",
-        "11401696/tilda-14-v2-body.webp",
-        "d1baceb9e2b6b72013b6/09-source.webp",
-        "13785403/06.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://похудение-это-есть.рф/starts",
-          "https://pikabu.ru/story/pokhudenie_nachinaetsya_ne_s_pokhudeniya_11401696"
-        ],
-        "external_ids": [
-          "11401696",
-          "49216621"
-        ],
-        "sha256": [
-          "1f9dee6d7651088a17a4d6004d5f7df6c1111eb02f9aa4be2da8fd5086a78bd9",
-          "90e6b203468c60c76d8f850b579505fe4a22ab50780791b7e0598ee28b818a89"
-        ],
-        "platform": "tilda+pikabu",
-        "project_id": "9532923",
-        "page_id": "49216621",
-        "retrieved_at": "2026-09-17",
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass",
-        "original_published_at": "2024-05-10T13:59:36+03:00",
-        "original_date_evidence": {
-          "source": "https://pikabu.ru/story/pokhudenie_nachinaetsya_ne_s_pokhudeniya_11401696",
-          "snapshot_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843"
-        },
-        "editorial_assembly": {
-          "decided_at": "2026-10-19",
-          "basis": "Прямое решение Сергея 19.10.2026: из трёх статей собрать две. Подробная подготовка — Похудение начинается не с похудения; остальные ошибки — Главные ошибки. Три ошибки сохранить как архивный источник, отдельную публичную публикацию снять. Самостоятельную Сделать похудение проще не объединять, изменить только название.",
-          "source_ids": [
-            "11401696",
-            "d1baceb9e2b6b72013b6",
-            "13785403"
-          ],
-          "relation": "owner_approved_block_transfer_not_exact_duplicate"
-        }
-      },
-      "document_key": "pohudenie-nachinaetsya-ne-s-pohudeniya"
-    },
-    {
-      "source_id": "11927800",
-      "subscription_before_heading": "принцип-no4-контролировать-окружение",
-      "inline_related": {
-        "source_id": "habits-formation-and-one-percent",
-        "before_heading": "принцип-no5-достаточно-времени"
-      },
-      "slug": "pochemu-yapontsy-hudye",
-      "title": "Почему японцы худые, а ты нет?",
-      "excerpt": "Давайте узнаем, а в чем причина-то? Они выиграли в генетическую лотерею или просто делают что-то, что мы не делаем? А вдруг мы тоже можем?",
-      "category": "Качество питания",
-      "body_file": "11927800.md",
-      "hero": {
-        "file": "11927800/tilda-01-v3-photo.webp",
-        "alt": "Сергей Воронцов за столом",
-        "show": false,
-        "provenance": "https://static.tildacdn.com/tild6332-3565-4530-a430-313862393165/_.jpg"
-      },
-      "card": {
-        "file": "11927800/tilda-04-v2-card.webp",
-        "alt": "Сумоист в воде",
-        "provenance": "https://static.tildacdn.com/tild3463-6131-4034-a265-333864373434/image.png"
-      },
-      "related_source_ids": [
-        "11401696",
-        "tilda-49745867",
-        "11875492"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "11927800/tilda-01-v3-photo.webp",
-        "11927800/tilda-01.jpg",
-        "11927800/tilda-02-v2-body.webp",
-        "11927800/tilda-02.png",
-        "11927800/tilda-03-v2-body.webp",
-        "11927800/tilda-03.png",
-        "11927800/tilda-04-v2-body.webp",
-        "11927800/tilda-04-v2-card.webp",
-        "11927800/tilda-04.png",
-        "11927800/tilda-05-v2-body.webp",
-        "11927800/tilda-05-v3-photo.webp",
-        "11927800/tilda-05.png",
-        "11927800/tilda-06.jpg",
-        "11927800/tilda-07-v2-body.webp",
-        "11927800/tilda-07-v3-photo.webp",
-        "11927800/tilda-07.png",
-        "11927800/tilda-08-v3-photo.webp",
-        "11927800/tilda-08.jpg",
-        "11927800/tilda-09-v2-body.webp",
-        "11927800/tilda-09-v3-animation.webp",
-        "11927800/tilda-09.gif",
-        "11927800/tilda-10.gif",
-        "11927800/tilda-10-v2-animation.webp",
-        "11927800/tilda-11-v2-body.webp",
-        "11927800/tilda-11.png",
-        "11927800/tilda-12-v2-body.webp",
-        "11927800/tilda-12.jpg",
-        "11927800/tilda-13-v2-body.webp",
-        "11927800/tilda-13.jpg",
-        "11927800/tilda-14-v2-body.webp",
-        "11927800/tilda-14.jpg",
-        "11927800/tilda-15.jpg"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://похудение-это-есть.рф/jpn",
-          "https://pikabu.ru/story/pochemu_yapontsyi_khudyie_a_tyi_net_11927800"
-        ],
-        "external_ids": [
-          "11927800",
-          "61175321"
-        ],
-        "sha256": [
-          "43e5b32bd74e13c043cab351dbbb8122ab06614d6d8f4f809e85e9617c18e72b",
-          "0e080acdf6dadda56f34f71e20bf2ed8a963a891fd6664f5eb98af31a9f2bccd"
-        ],
-        "platform": "tilda+pikabu",
-        "project_id": "9532923",
-        "page_id": "61175321",
-        "retrieved_at": "2026-09-17",
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass",
-        "original_published_at": "2024-10-19T14:27:13+03:00",
-        "original_date_evidence": {
-          "source": "https://pikabu.ru/story/pochemu_yapontsyi_khudyie_a_tyi_net_11927800",
-          "page_sha256": "84b3a41cc79e6a6f9bef41836d8fe33717b9d9317c07b9037e4954d97eb054e7",
-          "field": "datePublished",
-          "checked_at": "2026-10-04T21:59:58.825440+03:00"
-        }
-      },
-      "document_key": "pochemu-yapontsy-hudye-a-ty-net"
     },
     {
       "source_id": "11269472",
@@ -3742,70 +3806,6 @@
         "source_basis": "full_source"
       },
       "document_key": "15-sovetov-tem-kto-hudeet"
-    },
-    {
-      "source_id": "tilda-49745867",
-      "subscription_before_heading": "мои-результаты",
-      "inline_related": {
-        "source_id": "12296286",
-        "before_heading": "польза-этого-правила-о-растениях-в-другом"
-      },
-      "slug": "pravilo-30-rasteniy",
-      "title": "Правило 30-ти растений",
-      "excerpt": "Микробиом важен для нашего здоровья, а разнообразие растений в питании — важно для здоровья микробиома. Поэтому желательно набирать 30 разных растений в неделю.",
-      "category": "Качество питания",
-      "body_file": "tilda-49745867.md",
-      "hero": {
-        "file": "tilda-49745867/tilda-01-v2-body.webp",
-        "alt": "Кот перед овощами: правило 30 растений",
-        "provenance": "https://static.tildacdn.com/tild3363-3631-4565-b831-373036323431/image.png"
-      },
-      "card": {
-        "file": "tilda-49745867/tilda-04-v3-card.webp",
-        "alt": "Разноцветные овощи на прилавке",
-        "provenance": "https://static.tildacdn.com/tild3466-3036-4631-b237-636161656438/image.png"
-      },
-      "related_source_ids": [
-        "11401696",
-        "11927800",
-        "11875492"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "tilda-49745867/tilda-01-v2-body.webp",
-        "tilda-49745867/tilda-01.png",
-        "tilda-49745867/tilda-02-v2-body.webp",
-        "tilda-49745867/tilda-02.jpg",
-        "tilda-49745867/tilda-03-v2-body.webp",
-        "tilda-49745867/tilda-03.png",
-        "tilda-49745867/tilda-04-v2-body.webp",
-        "tilda-49745867/tilda-04-v2-card.webp",
-        "tilda-49745867/tilda-04.png",
-        "tilda-49745867/tilda-05-v2-body.webp",
-        "tilda-49745867/tilda-05.png",
-        "tilda-49745867/tilda-03-v3-body.webp",
-        "tilda-49745867/tilda-04-v3-body.webp",
-        "tilda-49745867/tilda-04-v3-card.webp"
-      ],
-      "source_provenance": {
-        "platform": "tilda",
-        "project_id": "9532923",
-        "page_id": "49745867",
-        "original_published_at": "2023-08-08T00:00:00+03:00",
-        "original_date_evidence": {
-          "basis": "owner_selected_family_origin",
-          "source": "https://telegra.ph/CHast-2-08-08",
-          "precision": "day",
-          "owner_approved_at": "2026-10-05",
-          "not_first_release_of_combined_version": true
-        },
-        "url": "https://похудение-это-есть.рф/30-rastenij",
-        "html_sha256": "e76801cbf0f7bd1767d55cf87b32617755de45261818c0fdb3420aa56bd8c93a",
-        "retrieved_at": "2026-09-17",
-        "source_basis": "full_source"
-      },
-      "document_key": "pravilo-30-rasteniy"
     },
     {
       "source_id": "tilda-67280331",

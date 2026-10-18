@@ -34,7 +34,8 @@ def client():
 
 
 def slugs(html):
-    return re.findall(r'<a class="card-link" href="/blog/([^"]+)"', html)
+    catalog = html.split('data-blog-server-catalog', 1)[-1]
+    return re.findall(r'<a class="card-link" href="/blog/([^"]+)"', catalog)
 
 
 def canonical(html):
@@ -100,3 +101,29 @@ def test_empty_catalogue_has_visible_message_and_no_pagination(client, monkeypat
     assert '<p class="empty-state" >' in response.text
     assert '<nav class="pagination" aria-label="Навигация по страницам блога"></nav>' in response.text
     assert canonical(response.text) == BLOG_PUBLIC_URL
+
+def test_starter_is_closed_and_contains_only_public_articles_on_first_unfiltered_page(client):
+    from pathlib import Path
+    import json
+    response = client.get('/blog')
+    fold = re.search(r'<details class="starter-fold"[^>]*>(.*?)</details>', response.text, re.S)
+    assert fold is not None and ' open' not in fold.group(0).split('>', 1)[0]
+    config = json.loads((load_blog_catalog().content_dir / 'homepage.json').read_text(encoding='utf-8'))
+    expected = [slug for slug in config['starter_slugs'] if load_blog_catalog().by_slug(slug)]
+    actual = re.findall(r'<a class="card-link" href="/blog/([^"]+)"', fold.group(1))
+    assert actual == expected and len(actual) == len(set(actual)) == 6
+    for query in ('?page=2', '?category=Похудение', '?q=японцы'):
+        assert 'class="starter-fold"' not in client.get('/blog' + query).text
+
+
+def test_unpublished_starter_reference_is_never_exposed(client, monkeypatch):
+    catalog = load_blog_catalog()
+    first = catalog.by_slug('osnovy-pohudeniya')
+    restricted = replace(catalog, articles=tuple(
+        replace(article, status='draft') if article.slug == first.slug else article
+        for article in catalog.articles
+    ))
+    monkeypatch.setattr('app.blog_routes._public_catalog', lambda db: restricted)
+    response = client.get('/blog')
+    assert f'href="/blog/{first.slug}"' not in response.text
+    assert response.text.count('class="starter-card"') == 5

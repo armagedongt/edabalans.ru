@@ -30,6 +30,7 @@ from app.blog_content import (
 )
 from app.blog_draft_routes import optional_blog_admin, owner_cards_html, PRIVATE_HEADERS
 from app.blog_draft_service import public_payload, published_card_overrides, published_description_overrides, published_markdown_overrides, render_article
+from app.site_menu import render_site_menu
 from app.database import get_db
 from app.blog_responsive_media import apply_responsive_images, derivative_files
 from app.blog_reader_context import recognize_reader, reader_context
@@ -81,6 +82,8 @@ BLOG_FONT_FILES = {"inter-cyrillic.woff2", "inter-latin.woff2", "manrope-cyrilli
 BLOG_ARTICLE_STYLES = {"article-typography.css": "typography.css", "article-note.css": "note.css"}
 BLOG_ASSET_FILES = {
     "blog.css",
+    "blog-unified.css",
+    "blog-unified.js",
     "blog.js",
     "reader-navigation.css",
     "reader-navigation.js",
@@ -103,6 +106,16 @@ FAVICON_TEST_PAGES = {
 FAVICON_TEST_VERSION = "20260831a"
 def _template(name: str, search_query: str = "") -> str:
     template = (BLOG_DIR / name).read_text(encoding="utf-8")
+    if "<!-- BLOG_HEADER -->" in template:
+        header = (BLOG_DIR / "header.html").read_text(encoding="utf-8")
+        menu = render_site_menu(
+            '<a href="/blog">Блог</a><a href="/">Мастер-класс</a>'
+            '<a href="/intensive">Бесплатный интенсив</a>', "",
+        )
+        toggle, panel = menu.split('  <aside', 1)
+        header = header.replace("<!-- BLOG_SITE_MENU_TOGGLE -->", toggle)
+        header = header.replace("<!-- BLOG_SITE_MENU_PANEL -->", '  <aside' + panel)
+        template = template.replace("<!-- BLOG_HEADER -->", header)
     if "<!-- BLOG_HEADER_SEARCH -->" in template:
         search = (BLOG_DIR / "header-search.html").read_text(encoding="utf-8")
         search = search.replace("{{SEARCH_ACTION}}", escape(BLOG_PUBLIC_PATH, quote=True))
@@ -246,10 +259,29 @@ def blog_home(
         title += f" · {category}"
     if active_page > 1:
         title += f" · Страница {active_page}"
+    homepage = json.loads((catalog.content_dir / "homepage.json").read_text(encoding="utf-8"))
+    starter_cards = []
+    if active_page == 1 and category == "all" and not q:
+        for slug in homepage["starter_slugs"]:
+            article = catalog.by_slug(slug)
+            if article is None:
+                continue
+            file, fit = card_overrides.get(article.slug, (article.card.file, article.card.fit))
+            card = card_html(article, heading_level=3, card_file=file, card_fit=fit)
+            card = card.replace('class="article-card"', 'class="starter-card"')
+            starter_cards.append(card)
+    starter = (
+        '<section class="shell starter" aria-label="Рекомендуемые статьи">'
+        '<details class="starter-fold"><summary><span>Рекомендую начать с этих статей</span>'
+        '<span class="fold-action">Раскрыть</span><span class="fold-chevron" aria-hidden="true"></span></summary>'
+        '<div class="starter-grid">' + ''.join(starter_cards) + '</div></details></section>'
+    ) if starter_cards else ""
     rendered = (
         _template("index.html", q)
+        .replace("<!-- BLOG_STARTER -->", starter)
         .replace("{{CATALOG_CANONICAL}}", escape(canonical, quote=True))
         .replace("{{CATALOG_TITLE}}", escape(title))
+        .replace('data-theme="light"', 'data-theme="light" data-starter-thumbnails="' + str(homepage["mobile_thumbnails"]).lower() + '"', 1)
         .replace("{{EMPTY_HIDDEN}}", "hidden" if selected else "")
         .replace("{{EMPTY_MESSAGE}}", "Ничего не найдено. Попробуйте другой запрос." if q else "В этой рубрике пока нет опубликованных статей.")
         .replace("<!-- BLOG_SEARCH_RESULTS -->", (f'<p class="search-results" role="status">Поиск: «{escape(q)}» · Найдено: {len(selected)}</p>' if q else ""))

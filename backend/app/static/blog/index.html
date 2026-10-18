@@ -15,60 +15,29 @@
   <link rel="canonical" href="{{CATALOG_CANONICAL}}">
   <link rel="stylesheet" href="/blog/assets/blog.css?v=20261018-brand-hero">
   <title>{{CATALOG_TITLE}}</title>
+  <link rel="stylesheet" href="/public-site-assets/site-menu.css?v=20261019-blog">
+  <link rel="stylesheet" href="/blog/assets/blog-unified.css?v=20261019-release2">
 </head>
 <body data-page="home">
-  <header class="site-header site-header--public">
-    <div class="shell header-inner">
-      <a class="brand" href="/blog">
-        <strong>Похудение — это есть.рф</strong>
-        <span>Блог Сергея Воронцова</span>
-      </a>
-      <button class="mobile-nav-toggle" type="button" aria-expanded="false" aria-controls="public-blog-nav" aria-label="Открыть меню">
-        <span></span><span></span><span></span>
-      </button>
-      <nav class="nav" id="public-blog-nav" aria-label="Основная навигация">
-        <a href="#articles" aria-current="page">Блог</a>
-        <a href="/">Мастер-класс</a>
-        <a href="/intensive">Бесплатный интенсив</a>
-        <div class="nav-contact">
-          <button class="nav-contact-trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="blog-contact-panel">
-            Контакты<span class="nav-contact-chevron" aria-hidden="true"></span>
-          </button>
-          <div class="nav-contact-panel" id="blog-contact-panel" hidden>
-            <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">Написать в ЛС в Telegram</a>
-            <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener">Написать в ЛС в MAX</a>
-            <a href="https://t.me/Fitness_Talks" target="_blank" rel="noopener">Telegram-канал</a>
-            <a href="https://max.ru/id230409966750_biz" target="_blank" rel="noopener">Канал в MAX</a>
-          </div>
-        </div>
-      </nav>
-      <div class="header-actions">
-      <!-- BLOG_HEADER_SEARCH -->
-      <button class="theme-toggle" type="button" aria-label="Включить тёмную тему" title="Включить тёмную тему">
-        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
-        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path></svg>
-      </button>
-    </div>
-    </div>
-  </header>
+<!-- BLOG_HEADER -->
 
   <main>
     <!-- BLOG_OWNER_PANEL -->
     <section class="shell hero" aria-labelledby="blog-title">
       <div class="hero-copy">
-        <h1 id="blog-title">Похудение — это есть</h1>
-        <p class="eyebrow">Блог Сергея Воронцова</p>
+        <h1 id="blog-title">Блог Сергея Воронцова</h1>
         <p class="lead">Пишу о питании, похудении и пищевых привычках, чтобы сделать ваше похудение проще.</p>
       </div>
       <figure class="hero-photo">
-        <img src="/media/reviews/blog-images-v1/cbe3f07ef27af9cf0fc2d92ebe45a0090fc8d56aef6cabfcac556801e5687243.webp" alt="Сергей Воронцов — автор блога" loading="eager" decoding="async" fetchpriority="high">
+        <img src="/blog/assets/sergey-author-v2.webp" alt="Сергей Воронцов — автор блога" loading="eager" decoding="async" fetchpriority="high">
       </figure>
-      <ul class="categories" aria-label="Категории блога">
-        <!-- BLOG_CATEGORIES -->
-      </ul>
     </section>
 
+    <!-- BLOG_STARTER -->
+
     <section class="shell articles-section" id="articles" aria-label="Статьи блога" data-blog-server-catalog>
+      <h2 class="catalog-title">Все материалы</h2>
+      <ul class="categories" aria-label="Категории блога"><!-- BLOG_CATEGORIES --></ul>
       <!-- BLOG_SEARCH_RESULTS -->
       <div class="article-grid"><!-- BLOG_CARDS --></div>
       <p class="empty-state" {{EMPTY_HIDDEN}}>{{EMPTY_MESSAGE}}</p>
@@ -79,6 +48,8 @@
   <div id="contacts" data-edabalans-site-footer></div>
   <script src="/site-footer.js" defer></script>
   <script src="/cookie-notice.js" defer></script>
-  <script src="/blog/assets/blog.js?v=20261004-ssr" defer></script>
+  <script src="/blog/assets/blog.js?v=20261019-release" defer></script>
+  <script src="/public-site-assets/site-menu.js?v=20261019-blog" defer></script>
+  <script src="/blog/assets/blog-unified.js?v=20261019-release" defer></script>
 </body>
 </html>
