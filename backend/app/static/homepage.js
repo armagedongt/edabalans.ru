@@ -13,7 +13,7 @@
   if (!mount || mount.dataset.edabalansLoaded === 'true') return;
   mount.dataset.edabalansLoaded = 'true';
   mount.setAttribute('aria-busy', 'true');
-  mount.innerHTML = '<div role="status" style="min-height:100vh;display:grid;place-items:center;text-align:center;color:#239fe9;font-family:Arial,sans-serif"><div><div aria-hidden="true" style="font-size:24px;line-height:1;letter-spacing:6px">•••</div><div style="margin-top:10px;font-size:14px">Загрузка</div></div></div>';
+  mount.innerHTML = '<div role="status" style="min-height:100vh;display:grid;place-items:center;text-align:center;color:#239fe9;font-family:var(--ed-font-body, Manrope, Arial, sans-serif)"><div><div aria-hidden="true" style="font-size:24px;line-height:1;letter-spacing:6px">•••</div><div style="margin-top:10px;font-size:14px">Загрузка</div></div></div>';
 
   function absolute(value, baseUrl) {
     if (!value || value.charAt(0) === '#') return value;
@@ -298,7 +298,7 @@
     var parsed = new DOMParser().parseFromString(result.html, 'text/html');
     var scripts = Array.prototype.slice.call(parsed.querySelectorAll('script'));
     var headAssets = Array.prototype.slice.call(
-      parsed.head.querySelectorAll('style,link[rel="stylesheet"]')
+      parsed.head.querySelectorAll('style,link[rel="stylesheet"],link[rel="preload"][as="font"]')
     );
 
     headAssets.forEach(function (asset, index) {
@@ -310,7 +310,8 @@
       } else {
         var link = document.createElement('link');
         link.id = 'edabalans-homepage-style-' + index;
-        link.rel = 'stylesheet';
+        link.rel = asset.rel;
+        if (asset.as === 'font') { link.as = 'font'; link.type = asset.type; link.crossOrigin = 'anonymous'; }
         link.href = absolute(asset.getAttribute('href'), result.baseUrl);
         document.head.appendChild(link);
       }

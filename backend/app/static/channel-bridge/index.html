@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="ru">
 <head>
+<link rel="preload" href="/assets/fonts/manrope-cyrillic-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/manrope-latin-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site-typography.css?v=20261018-typography">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
@@ -9,7 +12,7 @@
   <style>
     :root { color-scheme: light dark; }
     * { box-sizing: border-box; }
-    body { margin: 0; padding: 24px 16px; background: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #18212b); font: 16px/1.5 system-ui, sans-serif; }
+    body { margin: 0; padding: 24px 16px; background: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #18212b); font: 16px/1.5 var(--ed-font-body, Manrope, Arial, sans-serif); }
     main { max-width: 460px; margin: 0 auto; padding: 24px; border: 1px solid var(--tg-theme-section-separator-color, #e0e4e8); border-radius: 14px; }
     header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
     .avatar { width: 64px; height: 64px; flex: 0 0 64px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 4px var(--tg-theme-bg-color, #fff), 0 4px 20px #18212b20; }

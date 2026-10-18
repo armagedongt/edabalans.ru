@@ -1,6 +1,7 @@
+@import url("/assets/site-typography.css?v=20261018-typography");
 :root{--admin-shell-width:270px;--admin-shell-compact:74px;--admin-shell-dark:#18332a;--admin-shell-green:#d8edbf;--admin-shell-line:#ffffff1a;--admin-brand-blue:#27aff5;--admin-brand-blue-deep:#118ed8;--admin-brand-orange:#f46a35;--admin-brand-ink:#17191e;--admin-brand-text:#4f555e;--admin-brand-mist:#f4fbff;--admin-brand-line:rgba(17,142,216,.18)}
 body.ed-admin-shell{display:block!important;padding-left:var(--admin-shell-width);transition:padding-left .18s ease}
-body.ed-admin-shell{--bg:#f4fbff;--card:#fff;--paper:#fff;--ink:#17191e;--text:#17191e;--muted:#4f555e;--line:rgba(17,142,216,.18);--green:#118ed8;--blue:#27aff5;--link:#118ed8;--soft:#eef9ff;--purple:#27aff5;--purple-dark:#118ed8;--purple2:#eef9ff;--shadow:0 15px 34px -27px rgba(12,91,136,.5);background:radial-gradient(circle at 86% 7%,rgba(39,175,245,.14),transparent 28%),radial-gradient(circle at 16% 88%,rgba(17,142,216,.08),transparent 32%),#f4fbff;color:#17191e;font-family:Manrope,Inter,Arial,sans-serif}
+body.ed-admin-shell{--bg:#f4fbff;--card:#fff;--paper:#fff;--ink:#17191e;--text:#17191e;--muted:#4f555e;--line:rgba(17,142,216,.18);--green:#118ed8;--blue:#27aff5;--link:#118ed8;--soft:#eef9ff;--purple:#27aff5;--purple-dark:#118ed8;--purple2:#eef9ff;--shadow:0 15px 34px -27px rgba(12,91,136,.5);background:radial-gradient(circle at 86% 7%,rgba(39,175,245,.14),transparent 28%),radial-gradient(circle at 16% 88%,rgba(17,142,216,.08),transparent 32%),#f4fbff;color:#17191e;font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
 body.ed-admin-shell.admin-shell-collapsed{padding-left:var(--admin-shell-compact)}
 body.ed-admin-shell.admin-shell-hidden{padding-left:0}
 .ed-admin-shell .admin-sidebar{position:fixed;inset:0 auto 0 0;z-index:100;width:var(--admin-shell-width);height:100dvh;padding:18px 12px 12px;display:flex;flex-direction:column;background:linear-gradient(165deg,#214438 0%,var(--admin-shell-dark) 52%,#12271f 100%);color:#fff;overflow:hidden;box-shadow:14px 0 38px #10251c1c;transition:width .18s ease,transform .18s ease}
@@ -8,7 +9,7 @@ body.ed-admin-shell.admin-shell-hidden{padding-left:0}
 .ed-admin-shell .admin-brand{display:flex;align-items:center;gap:11px;min-width:0;color:#fff}
 .ed-admin-shell .admin-brand img{display:block;width:48px;height:48px;flex:0 0 48px;object-fit:contain;filter:drop-shadow(0 7px 12px #07170f52)}
 .ed-admin-shell .admin-brand span,.ed-admin-shell .admin-brand small{display:block}
-.ed-admin-shell .admin-brand span{font:750 13px/1.2 Inter,Arial,sans-serif;white-space:normal!important}
+.ed-admin-shell .admin-brand span{font:750 13px/1.2 var(--ed-font-body, Manrope, Arial, sans-serif);white-space:normal!important}
 .ed-admin-shell .admin-brand small{color:#aebdb3;font-size:10px;font-weight:400}
 .ed-admin-shell.admin-shell-collapsed .admin-sidebar{width:var(--admin-shell-compact)}
 .ed-admin-shell.admin-shell-hidden .admin-sidebar{transform:translateX(-100%)}
@@ -38,7 +39,7 @@ body.ed-admin-shell.admin-shell-hidden{padding-left:0}
 .admin-shell-nav>span[data-admin-category="courses"]{color:#c9b4ff!important}
 .admin-shell-nav>span[data-admin-category="commerce"]{color:#ffb4a8!important}
 .admin-shell-nav>span[data-admin-category="knowledge"]{color:#8ee5dd!important}
-.admin-shell-nav .admin-nav-icon{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;background:transparent;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;font-size:27px;line-height:1;font-weight:400;filter:drop-shadow(0 3px 5px #08171042)}
+.admin-shell-nav .admin-nav-icon{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;background:transparent;font-family:"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;font-size:27px;line-height:1;font-weight:400;filter:drop-shadow(0 3px 5px #08171042)}
 .admin-shell-nav .admin-nav-icon-crm{background:transparent}
 .admin-shell-nav .admin-nav-copy{min-width:0;display:grid;gap:1px}
 .admin-shell-nav .admin-nav-copy b{overflow:hidden;text-overflow:ellipsis;font-size:12px;white-space:nowrap}
@@ -67,8 +68,8 @@ body.ed-admin-shell.admin-shell-hidden{padding-left:0}
 .ed-admin-shell.admin-shell-collapsed .wiki-topbar,.ed-admin-shell.admin-shell-collapsed .wiki-sidebar{left:var(--admin-shell-compact)}
 .ed-admin-shell.admin-shell-hidden .wiki-topbar,.ed-admin-shell.admin-shell-hidden .wiki-sidebar{left:0}
 .admin-home-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px}
-.admin-home-head h1{margin:2px 0 0;font:500 30px Georgia,serif}
-.ed-admin-shell .admin-home-head h1,.ed-admin-shell .admin-app-directory-head h1,.ed-admin-shell .admin-profile-head h2,.ed-admin-shell .admin-section-head h2,.ed-admin-shell .pricing-version-head h2{color:var(--admin-brand-ink);font-family:Manrope,Inter,Arial,sans-serif;font-weight:800;letter-spacing:-.035em}
+.admin-home-head h1{margin:2px 0 0;font:500 30px var(--ed-font-body, Manrope, Arial, sans-serif)}
+.ed-admin-shell .admin-home-head h1,.ed-admin-shell .admin-app-directory-head h1,.ed-admin-shell .admin-profile-head h2,.ed-admin-shell .admin-section-head h2,.ed-admin-shell .pricing-version-head h2{color:var(--admin-brand-ink);font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-weight:800;letter-spacing:-.035em}
 .admin-home-head small{color:#2e6845;font-size:10px;font-weight:800;letter-spacing:.12em}
 .admin-home-actions{display:flex;align-items:center;gap:8px;width:min(570px,56vw)}
 .admin-home-actions form{display:flex;gap:7px;flex:1}
@@ -77,7 +78,7 @@ body.ed-admin-shell.admin-shell-hidden{padding-left:0}
 .ed-admin-shell .admin-home-actions button{background:var(--admin-brand-blue);box-shadow:0 10px 20px -15px rgba(17,142,216,.9)}
 .ed-admin-shell .admin-home-actions button:hover{background:var(--admin-brand-blue-deep)}
 .ed-admin-shell .admin-home-actions input:focus{border-color:var(--admin-brand-blue);box-shadow:0 0 0 3px rgba(39,175,245,.18)}
-.ed-admin-shell .shell,.ed-admin-shell .editor-shell{color:var(--admin-brand-ink);font-family:Manrope,Inter,Arial,sans-serif}
+.ed-admin-shell .shell,.ed-admin-shell .editor-shell{color:var(--admin-brand-ink);font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
 .ed-admin-shell .shell a,.ed-admin-shell .editor-shell a{color:var(--admin-brand-blue-deep)}
 .ed-admin-shell .shell .save-box,.ed-admin-shell .shell .course-card,.ed-admin-shell .shell .day,.ed-admin-shell .shell .group,.ed-admin-shell .shell .history,.ed-admin-shell .editor-shell .source-pane,.ed-admin-shell .editor-shell .result-pane,.ed-admin-shell .editor-shell .history-box{border-color:var(--admin-brand-line);background:#fff;box-shadow:0 15px 34px -29px rgba(12,91,136,.48)}
 .ed-admin-shell .shell .group{background:#f8fcfe}

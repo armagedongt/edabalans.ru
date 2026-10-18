@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="ru" data-variant="blue">
 <head>
+<link rel="preload" href="/assets/fonts/manrope-cyrillic-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/manrope-latin-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site-typography.css?v=20261018-typography">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow">
@@ -11,28 +14,11 @@
         ? 'hard'
         : 'soft';
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:ital,wght@0,700;0,800;1,800&display=swap" rel="stylesheet">
   <style>
 
-    @font-face {
-      font-family: 'Montserrat';
-      font-style: normal;
-      font-weight: 500 900;
-      font-display: swap;
-      src: url('/preview/homepage-mobile/montserrat-cyrillic.woff2') format('woff2');
-      unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-    }
 
-    @font-face {
-      font-family: 'Montserrat';
-      font-style: normal;
-      font-weight: 500 900;
-      font-display: swap;
-      src: url('/preview/homepage-mobile/montserrat-latin.woff2') format('woff2');
-      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-    }
+
+
 
     :root {
       --crying-bg: #f7fbfe;
@@ -40,7 +26,7 @@
       --crying-ink: #252525;
       --crying-blue: #1769d2;
       --crying-blue-dark: #1769d2;
-      --crying-font: Montserrat, Arial, sans-serif;
+      --crying-font: var(--ed-font-body, Manrope, Arial, sans-serif);
       --support-surface: rgba(255, 240, 236, .9);
       --support-border: rgba(231, 104, 80, .34);
       --support-accent: #d75b45;
@@ -384,7 +370,7 @@
       --crying-ink: var(--site-ink);
       --crying-blue: var(--site-blue);
       --crying-blue-dark: var(--site-blue-deep);
-      --crying-font: Manrope, Arial, sans-serif;
+      --crying-font: var(--ed-font-body, Manrope, Arial, sans-serif);
     }
 
     @media (min-width: 980px) and (max-width: 1200px) {
@@ -399,7 +385,7 @@
       }
     }
 
-    body { background: #fff; font-family: Manrope, Arial, sans-serif; }
+    body { background: #fff; font-family: var(--ed-font-body, Manrope, Arial, sans-serif); }
     button, a { font: inherit; }
 
     .cookie-notice {
@@ -437,7 +423,7 @@
       background: var(--site-blue);
       box-shadow: 0 4px 8px -4px rgba(17,142,216,.55);
       color: #fff;
-      font-family: Manrope,Arial,sans-serif;
+      font-family: var(--ed-font-body, Manrope, Arial, sans-serif);
       font-size: 12px;
       font-weight: 700;
       line-height: 1;
@@ -503,7 +489,7 @@
     .mobile-sheet.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
     .mobile-sheet__title { margin: 0 0 16px; color: var(--site-blue-deep); font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
     .mobile-links { display: grid; }
-    .mobile-links > a, .mobile-contact__trigger { display: flex; width: 100%; justify-content: space-between; padding: 15px 3px; border: 0; border-bottom: 1px solid #e5e9ec; color: var(--site-ink); font: 800 18px/1.25 Manrope,sans-serif; text-align: left; text-decoration: none; background: transparent; }
+    .mobile-links > a, .mobile-contact__trigger { display: flex; width: 100%; justify-content: space-between; padding: 15px 3px; border: 0; border-bottom: 1px solid #e5e9ec; color: var(--site-ink); font: 800 18px/1.25 var(--ed-font-body, Manrope, Arial, sans-serif); text-align: left; text-decoration: none; background: transparent; }
     .mobile-links > a::after { color: #a7adb2; content: "→"; }
     .mobile-contact__trigger::after { color: #a7adb2; content: "+"; font-size: 22px; font-weight: 500; line-height: 1; }
     .mobile-contact__trigger[aria-expanded="true"]::after { content: "−"; }
@@ -517,9 +503,9 @@
 
     .site-hero { padding: 28px var(--page-gutter) 0; background: radial-gradient(circle at 48% 11%, rgba(39,175,245,.14), transparent 34%), #fff; }
     .site-hero__inner { width: min(100%, var(--content-copy)); margin: 0 auto; }
-    .site-eyebrow { display: flex; width: max-content; max-width: 100%; min-height: 31px; align-items: center; margin: 0 auto; padding: 6px 9px; border: 1px solid rgba(33,85,121,.14); border-radius: 11px; background: rgba(255,255,255,.92); box-shadow: 0 7px 18px -13px rgba(28,67,94,.48); color: #168fe3; font-family: Manrope, sans-serif; font-size: clamp(9px,2.8vw,13px); font-weight: 800; line-height: 1.2; letter-spacing: .02em; text-transform: uppercase; backdrop-filter: blur(10px); }
+    .site-eyebrow { display: flex; width: max-content; max-width: 100%; min-height: 31px; align-items: center; margin: 0 auto; padding: 6px 9px; border: 1px solid rgba(33,85,121,.14); border-radius: 11px; background: rgba(255,255,255,.92); box-shadow: 0 7px 18px -13px rgba(28,67,94,.48); color: #168fe3; font-family: var(--ed-font-body, Manrope, Arial, sans-serif); font-size: clamp(9px,2.8vw,13px); font-weight: 800; line-height: 1.2; letter-spacing: .02em; text-transform: uppercase; backdrop-filter: blur(10px); }
     .site-eyebrow::before { width: 7px; height: 7px; flex: 0 0 7px; margin-right: 7px; border-radius: 50%; background: #ff6738; content: ""; }
-    .site-title { margin: 28px 0 0; font-family: Unbounded, Manrope, sans-serif; font-style: italic; font-weight: 800; line-height: .98; letter-spacing: -.068em; text-align: center; text-transform: uppercase; word-spacing: .08em; }
+    .site-title { margin: 28px 0 0; font-family: var(--ed-font-body, Manrope, Arial, sans-serif); font-style: italic; font-weight: 800; line-height: .98; letter-spacing: -.068em; text-align: center; text-transform: uppercase; word-spacing: .08em; }
     .site-title span { display: block; width: max-content; max-width: 100%; margin-inline: auto; white-space: nowrap; }
     .site-title__plain { font-size: clamp(25px,7.6vw,58px); }
     .site-title__plain + .site-title__plain { margin-top: 3px; }
@@ -580,7 +566,7 @@
     .crying-scroll__pain--final { background: rgba(17,142,216,.96); }
     .final-old { position: relative; display: inline-block; }
     .final-old::after { position: absolute; top: 52%; right: -.08em; left: -.08em; height: 3px; border-radius: 3px; background: #ff6a55; content: ""; transform: rotate(-5deg); }
-    .final-new { display: inline-block; margin-left: .35em; color: #ff6a55; font-family: "Segoe Print", "Comic Sans MS", cursive; font-size: 1.14em; transform: rotate(-4deg); }
+    .final-new { display: inline-block; margin-left: .35em; color: #ff6a55; font-family: var(--ed-font-body, Manrope, Arial, sans-serif); font-size: 1.14em; transform: rotate(-4deg); }
 
     .method-transition { padding: 82px var(--page-gutter) 108px; background: #fff; }
     .method-kicker { display: inline-block; margin: 0; padding: 8px 12px; border-radius: 9px; background: var(--site-orange); color: #fff; font-size: 15px; font-weight: 800; transform: rotate(-1deg); }
@@ -601,9 +587,9 @@
       .mobile-toggle, .mobile-sheet { display: none; }
       .desktop-header { position: relative; z-index: 50; display: block; padding: 18px 12px 0; background: #fff; }
       .desktop-header__pill { display: grid; width: min(100%,1390px); min-height: 68px; grid-template-columns: minmax(210px,1fr) auto minmax(210px,1fr); align-items: center; gap: 20px; margin: 0 auto; padding: 9px 13px; border-radius: 34px; background: var(--site-blue); box-shadow: 0 16px 34px -28px rgba(17,142,216,.8); }
-      .desktop-wordmark { padding-left: 12px; color: #fff; font-family: Unbounded,Manrope,sans-serif; font-size: 17px; font-weight: 800; line-height: 1; letter-spacing: -.055em; text-decoration: none; white-space: nowrap; }
+      .desktop-wordmark { padding-left: 12px; color: #fff; font-family: var(--ed-font-body, Manrope, Arial, sans-serif); font-size: 17px; font-weight: 800; line-height: 1; letter-spacing: -.055em; text-decoration: none; white-space: nowrap; }
       .desktop-nav { display: flex; align-items: center; justify-content: center; gap: 4px; }
-      .desktop-nav > a, .desktop-contact__trigger { display: inline-flex; height: 40px; align-items: center; justify-content: center; padding: 0 12px; border: 0; border-radius: 14px; appearance: none; color: #fff; font: 800 14px/1 Manrope,sans-serif; text-decoration: none; white-space: nowrap; background: transparent; transition: background .16s ease; }
+      .desktop-nav > a, .desktop-contact__trigger { display: inline-flex; height: 40px; align-items: center; justify-content: center; padding: 0 12px; border: 0; border-radius: 14px; appearance: none; color: #fff; font: 800 14px/1 var(--ed-font-body, Manrope, Arial, sans-serif); text-decoration: none; white-space: nowrap; background: transparent; transition: background .16s ease; }
       .desktop-nav > a:hover, .desktop-nav > a:focus-visible, .desktop-contact__trigger:hover, .desktop-contact__trigger:focus-visible, .desktop-contact__trigger[aria-expanded="true"] { background: rgba(255,255,255,.16); }
       .desktop-contact { position: relative; display: flex; align-items: center; }
       .desktop-contact__trigger { gap: 7px; cursor: pointer; }
@@ -649,7 +635,7 @@
       --final:#332b3b;
     }
     *{box-sizing:border-box}
-    html,body{margin:0;background:#fff;color:var(--ink);font-family:Manrope,Arial,sans-serif}
+    html,body{margin:0;background:#fff;color:var(--ink);font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
     .chain-block--recognition{--recognition-scene-top:clamp(24px,4vw,52px);padding-top:calc(var(--space-section) - var(--recognition-scene-top))}
     .argument{padding:var(--recognition-scene-top) 0 0;background:#fff}
     .argument__inner{width:min(100%,var(--content-frame));margin:0 auto}
@@ -678,7 +664,7 @@
     .pain--final{left:50%!important;width:min(calc(100% - 24px),390px);background:var(--final);color:#fff;font-weight:800;text-align:center;box-shadow:0 7px 16px rgba(51,43,59,.16)}
     .final-old{position:relative;display:inline-block}
     .final-old::after{position:absolute;top:52%;right:-.08em;left:-.08em;height:4px;border-radius:4px;background:#ff665b;content:"";transform:rotate(-5deg)}
-    .final-new{display:inline-block;margin-left:.35em;color:#ff665b;font-family:"Segoe Print","Comic Sans MS",cursive;font-size:1.14em;transform:rotate(-4deg)}
+    .final-new{display:inline-block;margin-left:.35em;color:#ff665b;font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-size:1.14em;transform:rotate(-4deg)}
 
     .method-transition{position:relative;z-index:12;margin-top:0;padding:var(--recognition-media-gap) 0 48px;background:#fff}
     .method-transition__inner{width:min(100%,var(--content-frame));margin:0 auto}
@@ -810,7 +796,7 @@
 
     .chain-block--faq{--ink:#16181d;--muted:#5b6470;--blue:#26afff;--warm:#e76850;--line:#edf0f4;--page:#f6f8fb}
     *{box-sizing:border-box}
-    .chain-block--faq{margin:0;color:var(--ink);background:var(--page);font-family:Manrope,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    .chain-block--faq{margin:0;color:var(--ink);background:var(--page);font-family:var(--ed-font-body, Manrope, Arial, sans-serif);-webkit-font-smoothing:antialiased}
     .faq-section{min-height:0;padding:var(--space-section) var(--page-gutter) 0}
     .faq-shell{width:min(100%,var(--content-panel));margin:0 auto}
     .chain-block--faq h1{max-width:var(--content-panel);margin:0 auto;font-size:var(--type-section);font-weight:800;line-height:1.1;letter-spacing:-1px;text-align:center;text-wrap:balance}
@@ -842,7 +828,7 @@
     .chain-block--final{--blue:#26afff;--blue-deep:#118ed8;--orange:#ff684b;--telegram:#229ed9;--max-blue:#471aff;--max-violet:#9500ff}
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    .chain-block--final{margin:0;background:#f6f8fb;color:#fff;font-family:Manrope,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    .chain-block--final{margin:0;background:#f6f8fb;color:#fff;font-family:var(--ed-font-body, Manrope, Arial, sans-serif);-webkit-font-smoothing:antialiased}
     .chain-block--final a:focus-visible{outline:3px solid #fff;outline-offset:4px}
     .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     .final-section{padding:var(--space-section) var(--page-gutter) 0}
@@ -851,17 +837,17 @@
     .final-card::before{top:-150px;right:-130px;width:380px;height:380px;background:radial-gradient(circle,rgba(255,255,255,.28),rgba(255,255,255,0) 68%)}
     .final-card::after{bottom:-180px;left:-120px;width:430px;height:430px;background:radial-gradient(circle,rgba(255,255,255,.15),rgba(255,255,255,0) 68%)}
     .final-main{--final-inline:18px;display:flex;max-width:860px;flex-direction:column;align-items:flex-start;padding:46px var(--final-inline) 64px;text-align:left}
-    .sign-sticker{display:inline-block;margin:0 0 24px;padding:9px 16px;color:#fff;background:var(--orange);border:2px solid rgba(255,255,255,.82);border-radius:999px;box-shadow:0 9px 20px -13px rgba(70,20,10,.7);font-family:Unbounded,Manrope,sans-serif;font-size:11px;font-weight:800;letter-spacing:.04em;transform:rotate(-3deg)}
-    .chain-block--final h1{display:grid;max-width:var(--content-reading);margin:0;font-family:Unbounded,Manrope,sans-serif;font-size:var(--type-display);font-weight:700;line-height:1.14;letter-spacing:-1.35px;text-wrap:balance}
+    .sign-sticker{display:inline-block;margin:0 0 24px;padding:9px 16px;color:#fff;background:var(--orange);border:2px solid rgba(255,255,255,.82);border-radius:999px;box-shadow:0 9px 20px -13px rgba(70,20,10,.7);font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-size:11px;font-weight:800;letter-spacing:.04em;transform:rotate(-3deg)}
+    .chain-block--final h1{display:grid;max-width:var(--content-reading);margin:0;font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-size:var(--type-display);font-weight:700;line-height:1.14;letter-spacing:-1.35px;text-wrap:balance}
     .chain-block--final h1 span+span{margin-top:24px}
     .chain-block--final h1 .final-sign{text-shadow:0 4px 0 rgba(5,104,164,.16)}
-    .chain-block--final h1 .question-line{font-family:Manrope,Arial,sans-serif;font-size:.62em;font-weight:600;line-height:1.25;letter-spacing:0}
+    .chain-block--final h1 .question-line{font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-size:.62em;font-weight:600;line-height:1.25;letter-spacing:0}
     .meme-card{position:relative;align-self:center;width:min(calc(100% + var(--final-inline) + var(--final-inline) - 28px),680px);margin:38px auto 0;padding:0 10px;border:3px solid rgba(255,255,255,.86);border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 24px 48px -28px rgba(0,53,90,.72);transform:rotate(-1.25deg)}
     .meme-card img{display:block;width:100%;height:auto;margin:0 auto}
     .action-group{width:min(100%,680px);margin-top:42px}
     .contact-copy{max-width:640px;margin:0 0 22px;color:rgba(255,255,255,.9);font-size:17px;font-weight:400;line-height:1.55}
     .social-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    .social-button,.primary-cta{min-height:66px;border:0;border-radius:16px;font:800 17px/1 Manrope,sans-serif;text-decoration:none;transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease,filter .18s ease}
+    .social-button,.primary-cta{min-height:66px;border:0;border-radius:16px;font:800 17px/1 var(--ed-font-body, Manrope, Arial, sans-serif);text-decoration:none;transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease,filter .18s ease}
     .social-button{display:flex;align-items:center;justify-content:center;gap:12px;color:#fff;box-shadow:0 16px 28px -22px rgba(0,48,80,.75)}
     .social-button:hover,.social-button:focus-visible{filter:none;box-shadow:0 19px 30px -20px rgba(0,48,80,.9);transform:rotate(-1deg) translateY(-2px)}
     .social-button--telegram{color:var(--telegram);background:#fff}
@@ -924,7 +910,7 @@
     .reviews-voice .voice-widget + .voice-widget{margin-top:var(--space-element)}
     .anya-story__cta{width:fit-content;margin:var(--space-related) 0 0 max(var(--page-gutter),calc((100% - var(--content-frame))/2))}
     .reviews-after-cat{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin:0 auto;padding:var(--space-block) 0 0;color:#16181d}
-    .reviews-after-cat h2{margin:0;font-family:Unbounded,Manrope,sans-serif;font-size:var(--type-section);font-weight:800;line-height:1.14;letter-spacing:-.045em;text-wrap:balance}
+    .reviews-after-cat h2{margin:0;font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-size:var(--type-section);font-weight:800;line-height:1.14;letter-spacing:-.045em;text-wrap:balance}
     .reviews-after-cat p{max-width:var(--content-reading);margin:22px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
 
     html{scroll-behavior:smooth;background:#e7f7ff}
@@ -984,7 +970,7 @@
     .homepage-chain{position:relative;display:block;min-width:0;overflow:clip;background:transparent}
     .chain-block{position:relative;z-index:1;min-width:0}
     .chain-block--before-after{padding:0;background:transparent}
-    .chain-block--anya{padding:var(--space-section) 0 0;background:transparent;color:#16181d;font-family:Manrope,Arial,sans-serif}
+    .chain-block--anya{padding:var(--space-section) 0 0;background:transparent;color:#16181d;font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
     .anya-story{width:100%;max-width:none;margin:0;padding:0}
     .anya-story__player-shell{padding:0 var(--page-gutter)}
     .anya-story__player-frame{width:min(var(--content-video-frame),calc(100% - 24px));margin:25px auto 0}
@@ -994,7 +980,7 @@
     @media (min-width:900px){.anya-story__player-frame{margin-top:31px}}
     .anya-story__header{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin-right:auto;margin-left:auto}
     .anya-story__kicker{display:inline-flex;padding:8px 12px;border-radius:999px;background:#ff684b;color:#fff;font-size:12px;font-weight:900;letter-spacing:.05em;transform:rotate(-2deg)}
-    .anya-story__header h2{margin:18px 0 0;font-family:Unbounded,Manrope,sans-serif;font-size:var(--type-section);font-weight:800;line-height:1.04;letter-spacing:-.055em}
+    .anya-story__header h2{margin:18px 0 0;font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-size:var(--type-section);font-weight:800;line-height:1.04;letter-spacing:-.055em}
     .anya-story__header p{max-width:580px;margin:18px 0 0;color:#55616d;font-size:var(--type-body);font-weight:600;line-height:1.55}
     .anya-story__gesture{display:inline-grid;width:64px;height:36px;margin-left:15px;vertical-align:-.3em;color:#168fd3;place-items:center}
     .anya-story__gesture[hidden]{display:none}
@@ -1054,7 +1040,7 @@
 
     body.reviews-wall--locked{overflow:hidden}
     .reviews-voice{width:100%;margin:0 auto;padding:var(--space-block) 0 0}
-    .voice-widget{width:var(--content-frame);max-width:100%;display:grid;grid-template-columns:46px minmax(0,1fr);align-items:start;gap:10px;margin:0 auto;font-family:Roboto,Arial,sans-serif;-webkit-user-select:none;user-select:none}
+    .voice-widget{width:var(--content-frame);max-width:100%;display:grid;grid-template-columns:46px minmax(0,1fr);align-items:start;gap:10px;margin:0 auto;font-family:var(--ed-font-body, Manrope, Arial, sans-serif);-webkit-user-select:none;user-select:none}
     .voice-widget__avatar{position:relative;width:46px;height:46px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;overflow:hidden;background:#e7f3fa;box-shadow:0 2px 3px rgba(41,96,132,.30),0 6px 8px rgba(41,96,132,.28);cursor:pointer}
     .voice-widget__avatar img{width:100%;height:100%;display:block;object-fit:cover}
     .voice-widget__avatar:focus-visible,.voice-widget__play:focus-visible,.voice-widget__seek:focus-visible{outline:3px solid #247fd3;outline-offset:3px}
@@ -1448,7 +1434,7 @@
     </div>
     <section class="chain-block chain-block--pricing" id="pricing" aria-label="Тарифы"><div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="/api/pricing/site/preview" data-checkout-endpoint="/api/payments/robokassa/checkout" data-checkout-mode="robokassa">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Noto+Color+Emoji&family=Unbounded:wght@700;800&display=swap');
+
 
     #edb-pricing-neurozeh-v1 {
       width: 100%;
@@ -1458,7 +1444,7 @@
       justify-content: center;
       background: transparent;
       color: #16181d;
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--ed-font-body, Manrope, Arial, sans-serif);
     }
 
     #edb-pricing-neurozeh-v1 * {
@@ -1484,7 +1470,7 @@
       border-radius: 999px;
       background: transparent;
       color: rgba(255, 255, 255, .72);
-      font: 800 12px 'Manrope', sans-serif;
+      font: 800 12px var(--ed-font-body, Manrope, Arial, sans-serif);
       cursor: pointer;
     }
 
@@ -1613,7 +1599,7 @@
 
     #edb-pricing-neurozeh-v1 .edb-pricing-plan-name {
       margin: 0;
-      font-family: 'Unbounded', sans-serif;
+      font-family: var(--ed-font-body, Manrope, Arial, sans-serif);
       font-size: 21px;
       font-weight: 800;
       line-height: 1.1;
@@ -1861,7 +1847,7 @@
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-price {
-      font-family: 'Unbounded', sans-serif;
+      font-family: var(--ed-font-body, Manrope, Arial, sans-serif);
       font-size: 37px;
       font-weight: 800;
       line-height: 1;
@@ -1878,7 +1864,7 @@
       background: #26afff;
       box-shadow: 0 16px 30px -17px rgba(38, 175, 255, .72);
       color: #ffffff;
-      font: 800 16px 'Manrope', sans-serif;
+      font: 800 16px var(--ed-font-body, Manrope, Arial, sans-serif);
       cursor: pointer;
       transition: transform .18s ease, background .18s ease, color .18s ease, box-shadow .18s ease;
     }
@@ -2096,7 +2082,7 @@
 
     #edb-pricing-neurozeh-v1 .edb-fire-emoji {
       display: block;
-      font-family: 'Noto Color Emoji', 'Apple Color Emoji', sans-serif;
+      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
       font-size: 35px;
       font-style: normal;
       line-height: 1;
@@ -2113,7 +2099,7 @@
 
     #edb-pricing-neurozeh-v1 .edb-pricing-details-title {
       margin: 0;
-      font-family: 'Unbounded', sans-serif;
+      font-family: var(--ed-font-body, Manrope, Arial, sans-serif);
       font-size: var(--type-section);
       font-weight: 800;
       line-height: 1.06;
@@ -2140,7 +2126,7 @@
       background: #ffffff;
       box-shadow: 0 16px 28px -25px rgba(20, 30, 60, .55);
       color: #24303a;
-      font: 800 14px 'Manrope', sans-serif;
+      font: 800 14px var(--ed-font-body, Manrope, Arial, sans-serif);
       text-align: left;
       cursor: pointer;
       transition: transform .13s ease-out, border-color .13s ease-out, background .13s ease-out, color .13s ease-out, box-shadow .13s ease-out;
@@ -2318,7 +2304,7 @@
       background: #26afff;
       color: #ffffff;
       box-shadow: 0 10px 22px -16px rgba(17, 142, 216, .78);
-      font: 800 15px 'Manrope', sans-serif;
+      font: 800 15px var(--ed-font-body, Manrope, Arial, sans-serif);
       cursor: pointer;
     }
 
@@ -2330,7 +2316,7 @@
 
     #edb-pricing-neurozeh-v1 .edb-product-overlay-title {
       margin: 0;
-      font-family: 'Unbounded', sans-serif;
+      font-family: var(--ed-font-body, Manrope, Arial, sans-serif);
       font-size: 18px;
       font-weight: 800;
       line-height: 1.08;
@@ -2403,7 +2389,7 @@
     }
 
     #edb-pricing-neurozeh-v1 .edb-product-day-number {
-      font-family: 'Unbounded', sans-serif;
+      font-family: var(--ed-font-body, Manrope, Arial, sans-serif);
       color: #168fdc;
       font-size: 19px;
       font-weight: 900;
@@ -2428,7 +2414,7 @@
       border-radius: 16px;
       background: var(--site-orange);
       color: #ffffff;
-      font: 800 16px 'Manrope', sans-serif;
+      font: 800 16px var(--ed-font-body, Manrope, Arial, sans-serif);
       cursor: pointer;
     }
 
@@ -2450,7 +2436,7 @@
       display:grid;
       place-items:center;
       padding:20px;
-      font-family:'Manrope',sans-serif;
+      font-family:var(--ed-font-body, Manrope, Arial, sans-serif);
     }
     #edb-pricing-neurozeh-v1 .edb-checkout-backdrop {
       position:absolute;
@@ -2480,12 +2466,12 @@
       border-radius:999px;
       background:#edf7fd;
       color:#176ba3;
-      font:600 25px/1 'Manrope',sans-serif;
+      font:600 25px/1 var(--ed-font-body, Manrope, Arial, sans-serif);
       cursor:pointer;
     }
     #edb-pricing-neurozeh-v1 .edb-checkout-dialog h2 {
       margin:0 42px 8px 0;
-      font:800 clamp(22px,6vw,28px)/1.16 'Manrope',sans-serif;
+      font:800 clamp(22px,6vw,28px)/1.16 var(--ed-font-body, Manrope, Arial, sans-serif);
       letter-spacing:-.03em;
     }
     #edb-pricing-neurozeh-v1 .edb-checkout-summary {
@@ -2517,7 +2503,7 @@
       border-radius:13px;
       background:#fbfdff;
       color:#162838;
-      font:600 16px 'Manrope',sans-serif;
+      font:600 16px var(--ed-font-body, Manrope, Arial, sans-serif);
       outline:none;
     }
     #edb-pricing-neurozeh-v1 .edb-checkout-email:focus {
@@ -2538,7 +2524,7 @@
       border-radius:15px;
       background:#ff6a2a;
       color:#fff;
-      font:800 16px 'Manrope',sans-serif;
+      font:800 16px var(--ed-font-body, Manrope, Arial, sans-serif);
       cursor:pointer;
       box-shadow:0 14px 28px rgba(255,106,42,.24);
     }

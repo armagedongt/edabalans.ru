@@ -1,15 +1,15 @@
-@font-face{font-family:Manrope;src:url('/intensive/assets/roadmap/manrope-800.ttf') format('truetype');font-weight:800;font-display:optional}
+
 *{box-sizing:border-box}
 :root{--header-offset:94px}
 html{background:#fff;color:#17191e}
-body{margin:0;font-family:Arial,sans-serif}
-#article{width:min(700px,calc(100% - 40px));margin:120px auto 100px;font-family:Arial,sans-serif}
-#article p,#article li{font-family:Arial,sans-serif}
-#article .intensive-title{margin:0 0 30px;font-family:Unbounded,Manrope,Arial,sans-serif;font-size:clamp(23px,6.25vw,52px);font-weight:800;line-height:1.06;letter-spacing:-.05em;text-transform:uppercase}
+body{margin:0;font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
+#article{width:min(700px,calc(100% - 40px));margin:120px auto 100px;font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
+#article p,#article li{font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
+#article .intensive-title{margin:0 0 30px;font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-size:var(--ed-article-h1,44px);font-weight:800;line-height:1.06;letter-spacing:-.05em;text-transform:uppercase}
 #article .intensive-title span{display:block}
 #article .intensive-title__accent{width:max-content;max-width:100%;margin-top:10px;padding:clamp(5px,1.8vw,8px) clamp(7px,2.2vw,11px) clamp(7px,2.2vw,11px);border-radius:clamp(8px,2.7vw,12px);background:#ff6b36;color:#fff;font-size:.86em;line-height:1.05;letter-spacing:-.025em;white-space:nowrap;transform:rotate(-.8deg)}
-#article h2{margin:56px 0 20px;font:800 clamp(24px,3.4vw,32px)/1.2 Unbounded,Manrope,Arial,sans-serif;letter-spacing:-.035em}
-#article h3{margin:32px 0 14px;font:700 23px/1.25 Arial,sans-serif;color:inherit}
+#article h2{scroll-margin-top:var(--header-offset)}
+#article h3{scroll-margin-top:var(--header-offset)}
 #article h2+h3{margin-top:18px}
 #article h2,#article h3{width:100%;max-width:none;margin-inline:0;text-wrap:wrap}
 #article h2,#article h3,.section-anchor{scroll-margin-top:var(--header-offset)}
@@ -19,7 +19,7 @@ body{margin:0;font-family:Arial,sans-serif}
 #article .comparison .article-note-accent{padding:24px;border-radius:16px}
 .reading-header{position:fixed;z-index:10;top:12px;left:50%;transform:translateX(-50%);width:min(720px,calc(100% - 40px));padding:8px 14px;background:rgba(255,255,255,.97);border:1px solid #e7e9eb;border-radius:18px;box-shadow:0 7px 26px #19314716}
 .reading-header nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-bottom:6px}
-.reading-header a{min-height:40px;display:flex;align-items:center;justify-content:center;padding:5px 4px;border-radius:10px;text-align:center;text-decoration:none;color:#65707b;font:800 13px/1.25 Manrope,Arial,sans-serif;white-space:nowrap}
+.reading-header a{min-height:40px;display:flex;align-items:center;justify-content:center;padding:5px 4px;border-radius:10px;text-align:center;text-decoration:none;color:#65707b;font:800 13px/1.25 var(--ed-font-body, Manrope, Arial, sans-serif);white-space:nowrap}
 .reading-label-break{display:none}
 @media(max-width:760px){.reading-label-break{display:initial}}
 .reading-header a:hover,.reading-header a:focus-visible{color:#17191e}
@@ -27,12 +27,13 @@ body{margin:0;font-family:Arial,sans-serif}
 .reading-fill{width:100%;height:100%;background:linear-gradient(90deg,#278ddc 0%,#42b782 45%,#f4a147 78%,#ed754d 100%);clip-path:inset(0 100% 0 0 round 10px);transition:clip-path .35s ease-out}
 button:focus-visible,a:focus-visible{outline:3px solid #278ddc;outline-offset:4px}
 #contents section+section{margin-top:20px}
-#contents .site-menu-contents a{display:block;color:inherit;font-weight:400;text-decoration:none;line-height:1.4;padding:8px 9px;border-radius:9px}
-#contents .toc-group{color:#202a32;font:800 15px/1.35 Unbounded,Manrope,Arial,sans-serif;letter-spacing:-.025em}
+#contents .site-menu-contents a{display:block;color:inherit;font-weight:var(--ed-toc-weight,400);font-size:var(--ed-toc-size,14px);text-decoration:none;line-height:var(--ed-toc-leading,1.4);padding:8px 9px;border-radius:9px}
+#contents .toc-group{color:#202a32;font:var(--ed-heading-weight,800) 15px/1.35 var(--ed-font-body, Manrope, Arial, sans-serif);letter-spacing:-.025em}
+#contents .site-menu-contents .toc-group{font-weight:var(--ed-heading-weight,800);font-size:15px}
 #contents .site-menu-contents ul{list-style:none;padding:0 0 0 14px;margin:4px 0 0;border-left:2px solid #e8edf0;font-size:14px}
 #contents .site-menu-contents a:hover,#contents .site-menu-contents a:focus-visible{background:#eaf8ff;color:#118ed8}
 #article .article-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:28px 0}
-#article .article-actions a{height:82px;display:flex;align-items:center;justify-content:center;gap:12px;border-radius:18px;font:800 20px/1 Manrope,Arial,sans-serif;box-shadow:0 10px 18px -11px #002e4ec7;transition:transform .18s ease,box-shadow .18s ease;padding:14px;text-decoration:none}
+#article .article-actions a{height:82px;display:flex;align-items:center;justify-content:center;gap:12px;border-radius:18px;font:800 20px/1 var(--ed-font-body, Manrope, Arial, sans-serif);box-shadow:0 10px 18px -11px #002e4ec7;transition:transform .18s ease,box-shadow .18s ease;padding:14px;text-decoration:none}
 #article .article-actions .social-telegram{background:linear-gradient(180deg,#2aabee,#229ed9)}
 #article .article-actions .social-telegram{gap:13px}
 #article .article-actions .social-telegram .social-logo{width:43px;height:43px;flex:none}
@@ -46,8 +47,8 @@ button:focus-visible,a:focus-visible{outline:3px solid #278ddc;outline-offset:4p
 @media(max-width:620px){
  :root{--header-offset:82px}
  #article{width:calc(100% - 32px);margin-top:104px;margin-bottom:110px}
- #article .intensive-title{font-size:clamp(21px,6.2vw,28px);margin-bottom:24px}
- #article .intensive-title__accent{font-size:clamp(17px,5.15vw,23px)}
+ #article .intensive-title{font-size:var(--ed-article-h1,32px);margin-bottom:24px}
+ #article .intensive-title__accent{font-size:.86em}
  #article h2{margin-top:44px}
  #article h3{font-size:21px}
  .reading-header{top:8px;width:calc(100% - 24px);padding:7px 8px;border-radius:15px}

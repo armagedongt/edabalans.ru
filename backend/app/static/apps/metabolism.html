@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="ru">
 <head>
+<link rel="preload" href="/assets/fonts/manrope-cyrillic-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/manrope-latin-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site-typography.css?v=20261018-typography">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
@@ -18,7 +21,7 @@
 <body>
 <div id="metabolism-app">
   <style>
-    #metabolism-app{color-scheme:light;font:14px/1.4 Inter,Arial,sans-serif;color:#17172b}
+    #metabolism-app{color-scheme:light;font:14px/1.4 var(--ed-font-body, Manrope, Arial, sans-serif);color:#17172b}
     #metabolism-app *{box-sizing:border-box}
     #metabolism-app .mw-window{background:var(--ed-app-bg,#f5f5f7);padding:18px;max-width:1440px;margin:auto;border-radius:16px}
     #metabolism-app .mw-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
@@ -219,7 +222,7 @@
     #metabolism-app .mw-phone .mw-field-caption{min-height:28px;margin-bottom:4px}
     #metabolism-app .mw-phone .mw-stat span{min-height:57px}
     @media(max-width:720px){#metabolism-app .mw-field-caption{min-height:28px;margin-bottom:4px}#metabolism-app .mw-stat span{min-height:57px}}
-    #metabolism-app .mw-help-dialog{width:min(440px,calc(100% - 32px));max-height:80vh;overflow:auto;padding:20px;border:1px solid #e7e7ef;border-radius:16px;background:#fff;color:#17172b;font:14px/1.5 Inter,Arial,sans-serif;box-shadow:0 12px 48px #14142824}
+    #metabolism-app .mw-help-dialog{width:min(440px,calc(100% - 32px));max-height:80vh;overflow:auto;padding:20px;border:1px solid #e7e7ef;border-radius:16px;background:#fff;color:#17172b;font:14px/1.5 var(--ed-font-body, Manrope, Arial, sans-serif);box-shadow:0 12px 48px #14142824}
     #metabolism-app .mw-help-dialog::backdrop{background:#17172b66}
     #metabolism-app .mw-help-header{display:flex;align-items:start;justify-content:space-between;gap:12px}
     #metabolism-app .mw-help-dialog h3{font-size:17px;margin:3px 0 0}

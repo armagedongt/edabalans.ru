@@ -56,11 +56,11 @@
     if (document.getElementById('edabalans-loading-styles')) return;
     var style = document.createElement('style');
     style.id = 'edabalans-loading-styles';
-    style.textContent = '.ed-loading{box-sizing:border-box;display:grid;place-items:center;min-height:260px;padding:24px;background:#fff;color:#46515b;font:600 15px/1.5 Manrope,Arial,sans-serif;text-align:center}' +
+    style.textContent = '.ed-loading{box-sizing:border-box;display:grid;place-items:center;min-height:260px;padding:24px;background:#fff;color:#46515b;font:600 15px/1.5 var(--ed-font-body, Manrope, Arial, sans-serif);text-align:center}' +
       '.ed-loading-screen{position:fixed;inset:0;z-index:2147483000;min-height:100dvh}.ed-loading-inline{position:absolute;inset:0;z-index:100}' +
       '.ed-loading-stage{min-height:46px;max-width:320px;margin:0 0 18px}.ed-loading-dots{display:flex;justify-content:center;align-items:center;gap:9px;height:22px}' +
       '.ed-loading-dots i{display:block;width:10px;height:10px;border-radius:50%;background:#27aff5;animation:ed-loading-pulse 1.1s ease-in-out infinite}.ed-loading-dots i:nth-child(2){animation-delay:.15s}.ed-loading-dots i:nth-child(3){animation-delay:.3s;background:#f39a2f}' +
-      '.ed-loading-error{max-width:420px;margin:12px 0;color:#b42318}.ed-loading-retry{min-height:44px;padding:10px 22px;border:0;border-radius:12px;background:#27aff5;color:#fff;font:800 15px/1.4 Manrope,Arial,sans-serif;cursor:pointer}.ed-loading-retry:focus-visible{outline:3px solid #118ed8;outline-offset:3px}' +
+      '.ed-loading-error{max-width:420px;margin:12px 0;color:#b42318}.ed-loading-retry{min-height:44px;padding:10px 22px;border:0;border-radius:12px;background:#27aff5;color:#fff;font:800 15px/1.4 var(--ed-font-body, Manrope, Arial, sans-serif);cursor:pointer}.ed-loading-retry:focus-visible{outline:3px solid #118ed8;outline-offset:3px}' +
       'body:has(>.ed-loading-screen){background:#fff!important}body:has(>.ed-loading-screen) [data-edabalans-app]{pointer-events:none}' +
       '@keyframes ed-loading-pulse{0%,70%,100%{transform:translateY(0);opacity:.45}35%{transform:translateY(-6px);opacity:1}}@media(prefers-reduced-motion:reduce){.ed-loading-dots i{animation:none;opacity:1}}';
     document.head.appendChild(style);
@@ -192,7 +192,7 @@
 
   function showStandaloneAccessError(mount, message) {
     finishLoading(mount);
-    mount.innerHTML = '<div style="box-sizing:border-box;min-height:100vh;display:grid;place-items:center;padding:22px;background:#f4f4f6;font:16px/1.5 Arial,sans-serif;color:#17172b">' +
+    mount.innerHTML = '<div style="box-sizing:border-box;min-height:100vh;display:grid;place-items:center;padding:22px;background:#f4f4f6;font:16px/1.5 var(--ed-font-body, Manrope, Arial, sans-serif);color:#17172b">' +
       '<div style="width:min(520px,100%);padding:26px;border-radius:22px;background:#fff;box-shadow:0 16px 50px rgba(15,23,42,.12)">' +
       '<h1 style="margin:0 0 12px;font-size:24px">Приложение не открылось</h1>' +
       '<p style="margin:0 0 18px">' + escapeHtml(message) + '</p>' +
@@ -415,7 +415,7 @@
               '<a href="' + escapeHtml('https://похудение-это-есть.рф' + item.url) + '" target="_blank" rel="noopener">Читать полностью ↗</a>' + policy + '</span></label>';
           }).join('');
           mount.innerHTML = '<style>' +
-            '.edabalans-dqs-legal-shell{box-sizing:border-box;min-height:70vh;display:grid;place-items:center;padding:32px 18px;background:#f5f0e7;color:#25241f;font:16px/1.5 Inter,Arial,sans-serif}' +
+            '.edabalans-dqs-legal-shell{box-sizing:border-box;min-height:70vh;display:grid;place-items:center;padding:32px 18px;background:#f5f0e7;color:#25241f;font:16px/1.5 var(--ed-font-body, Manrope, Arial, sans-serif)}' +
             '.edabalans-dqs-legal-window{box-sizing:border-box;width:min(760px,100%);padding:28px;border:1px solid #e3a38f;border-radius:24px;background:#fffdf8;box-shadow:0 18px 50px rgba(80,53,27,.12)}' +
             '.edabalans-dqs-legal-window>p{margin:12px 0 22px;color:#684c43}' +
             '.edabalans-dqs-legal-list{display:grid;gap:12px}' +

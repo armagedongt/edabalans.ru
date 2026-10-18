@@ -47,6 +47,26 @@
       var style = parsed.getElementById('edb-direct-intensive-v1-styles');
       if (!landing || !style) throw new Error('landing source is incomplete');
 
+      parsed.querySelectorAll('link[rel="preload"][as="font"]').forEach(function (sourceLink) {
+        var href = new URL(sourceLink.getAttribute('href'), appHost).href;
+        if (Array.from(document.querySelectorAll('link[rel="preload"]')).some(function (link) { return link.href === href; })) return;
+        var link = document.importNode(sourceLink, true);
+        link.href = href;
+        document.head.appendChild(link);
+      });
+      await Promise.all(Array.from(parsed.querySelectorAll('link[rel="stylesheet"]')).map(function (sourceLink) {
+        var href = new URL(sourceLink.getAttribute('href'), appHost).href;
+        var existing = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).find(function (link) { return link.href === href; });
+        if (existing && existing.sheet) return Promise.resolve();
+        return new Promise(function (resolve, reject) {
+          var link = existing || document.createElement('link');
+          link.rel = 'stylesheet'; link.href = href;
+          link.addEventListener('load', resolve, {once:true});
+          link.addEventListener('error', reject, {once:true});
+          if (!existing) document.head.appendChild(link);
+        });
+      }));
+
       if (!document.getElementById(style.id)) {
         document.head.appendChild(document.importNode(style, true));
       }

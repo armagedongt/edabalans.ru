@@ -40,6 +40,10 @@ implementation_status: implemented
 
 ## Источники истины
 
+- [Единая типографика](../../SITE_TYPOGRAPHY.md) и
+  `backend/app/static/site-typography.css` — семейства, загрузка и переменные
+  текстовых ролей всех действующих страниц; Unbounded только в публичном hero.
+
 - `content/design-workflow/skill/sergey-web-design/SKILL.md` — обязательный маршрут;
 - `content/design-workflow/skill/sergey-web-design/references/design-preferences.md` —
   устойчивые визуальные предпочтения;

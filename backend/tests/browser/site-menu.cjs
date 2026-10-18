@@ -29,7 +29,12 @@ const evidence = process.env.MENU_EVIDENCE_DIR;
         if (evidence) await page.screenshot({path:path.join(evidence,`${name}-${width}-closed.png`)});
         await toggle.click();
         await page.waitForFunction(()=>document.querySelector('[data-site-menu-toggle]').getAttribute('aria-expanded')==='true');
-        await page.waitForTimeout(250);
+        await page.waitForFunction(width => {
+          const panel = document.querySelector('[data-site-menu]');
+          const button = document.querySelector('[data-site-menu-toggle]');
+          return getComputedStyle(panel).visibility === 'visible' &&
+            Math.round(button.getBoundingClientRect().width) === (width >= 900 ? 44 : 38);
+        }, width);
         assert(await panel.isVisible());
         assert.equal(await panel.getAttribute('aria-hidden'),'false');
         const expanded=page.locator('[data-site-menu-contents]');

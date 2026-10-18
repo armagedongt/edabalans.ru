@@ -18,7 +18,7 @@ client = TestClient(app)
 
 
 def test_native_course_visual_assets_are_public_and_allowlisted() -> None:
-    for name in ("account-visual.css", "course-visual.css", "account-theme.css", "article-typography.css", "article-note.css"):
+    for name in ("account-visual.css", "course-visual.css", "account-theme.css", "article-typography.css", "article-note.css", "site-typography.css"):
         response = client.get("/assets/" + name)
         assert response.status_code == 200, name
         assert response.headers["content-type"].startswith("text/css")
@@ -620,9 +620,10 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "o.code==='single:consultation'?' is-featured':''" in offers_js.text
     assert ".mc-offer-card.is-featured" in offers_css.text
     assert ".mc.mc-offer-page{--ink:#17191e" in offers_css.text.replace("\r\n", "\n")
-    assert "font:500 16px/1.55 Manrope,Arial,sans-serif" in offers_css.text
+    assert "font:500 16px/1.55 var(--ed-font-body, Manrope, Arial, sans-serif)" in offers_css.text
     assert "/assets/article-typography.css" in program_card_css.text
-    assert "fonts.googleapis.com/css2?family=Manrope" in client.get("/apps/masterclass-offers.html").text
+    assert "/assets/site-typography.css" in client.get("/apps/masterclass-offers.html").text
+
     theme_css = client.get("/assets/account-theme.css").text
     assert 'html[data-account-theme="dark"] .mc.mc-offer-page' in theme_css
     assert client.get("/assets/max-logo.png").status_code == 200
@@ -805,6 +806,21 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "function watchPurchase" in masterclass
     assert "setInterval(check,5000)" in masterclass
     assert "if(!still)" in masterclass
+
+
+
+
+def test_shared_typography_fonts_are_public_cacheable_and_allowlisted() -> None:
+    for family in ("manrope", "unbounded-800"):
+        for subset in ("cyrillic", "latin"):
+            response = client.get(f"/assets/fonts/{family}-{subset}-v1.woff2")
+            assert response.status_code == 200
+            assert response.headers["content-type"] == "font/woff2"
+            assert response.headers["access-control-allow-origin"] == "*"
+            assert "immutable" in response.headers["cache-control"]
+            assert response.content[:4] == b"wOF2"
+    assert client.get("/assets/fonts/unknown.woff2").status_code == 404
+    assert client.get("/assets/fonts/MANROPE-OFL.txt").status_code == 404
 
 
 def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) -> None:
@@ -1237,7 +1253,7 @@ def test_legal_navigation_uses_permanent_public_domain() -> None:
         documents = [url for url in links if "/legal/" in url]
         assert len(documents) >= 4
         assert all(url.startswith("https://похудение-это-есть.рф/legal/") for url in documents)
-        assert 'href="/legal/legal.css"' in response.text
+        assert re.search(r'href="/legal/legal\.css(?:\?[^\"]*)?"', response.text)
         assert '<script src="/site-footer.js" defer></script>' in response.text
 
 
@@ -1271,7 +1287,7 @@ def test_intensive_concept_pages_are_public() -> None:
     assert "Бесплатный интенсив" in menu.text
     assert "«Последнее похудение»" in menu.text
     assert 'data-view="menu"' in menu.text
-    assert 'href="/intensive/intensive-components.css"' in menu.text
+    assert re.search(r'href="/intensive/intensive-components\.css(?:\?[^\"]*)?"', menu.text)
     assert 'src="/intensive/max-full-colored-official.png"' in menu.text
     assert client.get("/intensive/menu").text == menu.text
     entry = client.get("/intensive/start", follow_redirects=False)

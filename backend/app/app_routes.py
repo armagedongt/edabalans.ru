@@ -632,7 +632,7 @@ def app_fragment(app_code: str) -> Response:
     )
     if PRODUCT_CONNECTIONS.get(product_code, {}).get("maintenance"):
         return HTMLResponse(
-            '<link rel="stylesheet" href="/assets/app-shell.css?v=20260917-maintenance1">'
+            '<link rel="stylesheet" href="/assets/app-shell.css?v=20261018-typography">'
             f'<section id="{escape(app_code)}-app"><div class="ed-app-maintenance">'
             '<h1>На ремонте</h1>'
             '<a class="ed-app-account-link ed-app-maintenance-account" href="/lk">Личный кабинет</a>'
@@ -646,7 +646,7 @@ def app_fragment(app_code: str) -> Response:
             encoding="utf-8"
         )
         replacements = {
-            "</head>": '<link rel="stylesheet" href="/assets/calories-course.css?v=20260926-recipes"></head>',
+            "</head>": '<link rel="stylesheet" href="/assets/calories-course.css?v=20261018-typography"></head>',
             "Мастер-класс · первые дни": "Система рецептов",
             'id="masterclass-course-app"': 'id="recipes-course-app"',
             "edabalans_first_days_v2": "edabalans_recipes_course_v1",
@@ -668,7 +668,7 @@ def app_fragment(app_code: str) -> Response:
             encoding="utf-8"
         )
         replacements = {
-            "</head>": '<link rel="stylesheet" href="/assets/calories-course.css?v=20260925"></head>',
+            "</head>": '<link rel="stylesheet" href="/assets/calories-course.css?v=20261018-typography"></head>',
             "Мастер-класс · первые дни": "Калорийный курс",
             'id="masterclass-course-app"': 'id="calories-course-app"',
             "edabalans_first_days_v2": "edabalans_calories_course_v1",
@@ -798,6 +798,19 @@ def strength_exercise_asset(asset_name: str) -> FileResponse:
     return public_asset(STATIC_DIR / "strength-exercises" / asset_name)
 
 
+@router.get("/assets/fonts/{font_name}", include_in_schema=False)
+def typography_font(font_name: str) -> FileResponse:
+    if font_name not in {
+        "manrope-cyrillic-v1.woff2", "manrope-latin-v1.woff2",
+        "unbounded-800-cyrillic-v1.woff2", "unbounded-800-latin-v1.woff2",
+    }:
+        raise HTTPException(status_code=404, detail="font not found")
+    response = FileResponse(STATIC_DIR / "fonts" / font_name, media_type="font/woff2")
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    return response
+
+
 @router.get("/assets/{asset_name}", include_in_schema=False)
 def app_asset(asset_name: str) -> FileResponse:
     if asset_name == "brain-logo.png":
@@ -807,7 +820,7 @@ def app_asset(asset_name: str) -> FileResponse:
         return public_asset(STATIC_DIR.parents[2] / "content" / "article-components" / filename)
     if asset_name not in {
         "dqs-favicon.svg", "strength-favicon.svg", "metabolism-favicon.svg",
-        "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png",
+        "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png", "site-typography.css",
         "content-gallery.js", "public-program-card.css", "public-program-card.js",
         "account-visual.css", "account-legacy-offer.js", "course-visual.css", "calories-course.css",
         "course-product-popup.js", "course-product-popup.css",

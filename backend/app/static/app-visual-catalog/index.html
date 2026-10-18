@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="ru" data-theme="light">
 <head>
+<link rel="preload" href="/assets/fonts/manrope-cyrillic-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/manrope-latin-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site-typography.css?v=20261018-typography">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
@@ -8,7 +11,7 @@
   <style>
     :root {
       color-scheme: light;
-      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font: var(--ed-font-body, Manrope, Arial, sans-serif);
       --page: #f3f6fb;
       --surface: #ffffff;
       --surface-2: #f7f9fc;

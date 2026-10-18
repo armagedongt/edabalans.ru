@@ -1,34 +1,34 @@
 <!doctype html>
 <html lang="ru">
 <head>
+<link rel="preload" href="/assets/fonts/manrope-cyrillic-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/manrope-latin-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site-typography.css?v=20261018-typography">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,follow">
   <link rel="icon" type="image/png" href="/favicon.png?v=20260910a">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260910a">
   <title>Как сбалансированное питание реально помогает худеть? — День 2</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Unbounded:wght@700;800&amp;display=swap" rel="stylesheet">
-  <link href="./intensive-components.css" rel="stylesheet">
+  <link href="./intensive-components.css?v=20261018-typography" rel="stylesheet">
   <style>
     :root{--ink:#151c24;--text:#334654;--muted:#617383;--blue:#26a8ef;--orange:#ff6b36;--green:#36a965;--reading:650px;--gutter:clamp(16px,4.16vw,32px)}
     *{box-sizing:border-box}
     html{scroll-behavior:smooth;background:#e8f7ff}
-    body{min-width:0;margin:0;overflow-x:hidden;background:#e8f7ff;color:var(--ink);font-family:Manrope,Arial,sans-serif}
+    body{min-width:0;margin:0;overflow-x:hidden;background:#e8f7ff;color:var(--ink);font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
     a,button{font:inherit}
     .page{min-height:100vh;background:radial-gradient(ellipse 72% 20% at 88% -2%,rgba(67,183,245,.24),rgba(67,183,245,.1) 48%,transparent 80%),radial-gradient(ellipse 76% 23% at 8% 102%,rgba(67,183,245,.2),rgba(67,183,245,.08) 50%,transparent 81%),linear-gradient(180deg,#e8f7ff 0%,#f5fbff 22%,#fbfdff 48%,#f4fbff 76%,#e8f7ff 100%)}
     .shell{width:min(calc(100% - var(--gutter) - var(--gutter)),760px);margin:0 auto;padding:28px 0 44px}
     .hero,.article{width:min(100%,var(--reading));margin-inline:auto}
-    .eyebrow{display:flex;width:max-content;max-width:100%;min-height:31px;align-items:center;margin:0 0 24px;padding:6px 9px;border:1px solid rgba(33,85,121,.14);border-radius:11px;background:rgba(255,255,255,.92);box-shadow:0 7px 18px -13px rgba(28,67,94,.48);color:#168fe3;font:800 clamp(9px,2.8vw,13px)/1.2 Manrope,sans-serif;letter-spacing:.02em;text-transform:uppercase;backdrop-filter:blur(10px)}
+    .eyebrow{display:flex;width:max-content;max-width:100%;min-height:31px;align-items:center;margin:0 0 24px;padding:6px 9px;border:1px solid rgba(33,85,121,.14);border-radius:11px;background:rgba(255,255,255,.92);box-shadow:0 7px 18px -13px rgba(28,67,94,.48);color:#168fe3;font:800 clamp(9px,2.8vw,13px)/1.2 var(--ed-font-body, Manrope, Arial, sans-serif);letter-spacing:.02em;text-transform:uppercase;backdrop-filter:blur(10px)}
     .eyebrow:before{width:7px;height:7px;flex:0 0 7px;margin-right:7px;border-radius:50%;background:var(--orange);content:""}
-    h1{margin:0;font-family:Unbounded,Manrope,sans-serif;font-size:clamp(24px,6vw,48px);font-weight:800;line-height:1.08;letter-spacing:-.05em;text-transform:uppercase}
+    h1{margin:0;font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-size:clamp(24px,6vw,48px);font-weight:800;line-height:1.08;letter-spacing:-.05em;text-transform:uppercase}
     h1 span{display:block}
     h1 .accent{width:max-content;max-width:100%;margin-top:10px;padding:clamp(5px,1.8vw,8px) clamp(7px,2.2vw,11px) clamp(7px,2.2vw,11px);border-radius:clamp(8px,2.7vw,12px);background:var(--orange);color:#fff;font-size:.77em;line-height:1.05;letter-spacing:-.025em;white-space:nowrap;transform:rotate(-.7deg)}
     .article{margin-top:34px;color:var(--text);font-size:clamp(16px,4.15vw,19px);font-weight:500;line-height:1.68}
     .article p{margin:0 0 20px}
     .article strong{color:var(--ink);font-weight:800}
-    .article h2{margin:54px 0 20px;color:var(--ink);font-family:Manrope,Arial,sans-serif;font-size:clamp(25px,6.2vw,36px);font-weight:800;line-height:1.16;letter-spacing:-.035em}
+    .article h2{margin:54px 0 20px;color:var(--ink);font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-size:clamp(25px,6.2vw,36px);font-weight:800;line-height:1.16;letter-spacing:-.035em}
     .article h2:first-child{margin-top:0}
     .lead{color:#253b4a;font-size:clamp(18px,4.7vw,22px);line-height:1.55}
     .prompt{margin:25px 0 28px;padding:18px 20px;border:1px solid rgba(38,168,239,.2);border-radius:17px;background:rgba(255,255,255,.78);box-shadow:0 13px 28px -25px rgba(17,96,143,.5);color:#253b4a}

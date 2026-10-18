@@ -67,7 +67,7 @@
         background: rgba(255,255,255,.83);
         box-shadow: 0 6px 12px -6px rgba(22,104,157,.42), 0 2px 5px rgba(22,104,157,.1);
         color: #1d2b38;
-        font-family: Manrope, Inter, Arial, sans-serif;
+        font-family: var(--ed-font-body, Manrope, Arial, sans-serif);
         transform: translateX(-50%);
         backdrop-filter: blur(8px);
       }
@@ -83,7 +83,7 @@
         background: #239fe9;
         box-shadow: 0 4px 8px -4px rgba(17,142,216,.55);
         color: #fff;
-        font: 700 12px/1 Manrope, Inter, Arial, sans-serif;
+        font: 700 12px/1 var(--ed-font-body, Manrope, Arial, sans-serif);
         white-space: nowrap;
         cursor: pointer;
         transition: background-color .16s ease, box-shadow .16s ease;

@@ -1,10 +1,10 @@
 /* Материалы Калорика внутри общей оболочки МК. */
-:is(#calories-course-app, #recipes-course-app) { --course-heading-size: clamp(32px,4vw,44px); --course-media-gap: 24px; font-family: Manrope,Arial,sans-serif; }
-:is(#calories-course-app, #recipes-course-app) .article h1 { font: 800 var(--course-heading-size)/1.12 Manrope,Arial,sans-serif; letter-spacing: -.035em; margin-bottom: 24px; }
+:is(#calories-course-app, #recipes-course-app) { --course-heading-size: clamp(32px,4vw,44px); --course-media-gap: 24px; font-family: var(--ed-font-body, Manrope, Arial, sans-serif); }
+:is(#calories-course-app, #recipes-course-app) .article h1 { font: 800 var(--course-heading-size)/1.12 var(--ed-font-body, Manrope, Arial, sans-serif); letter-spacing: -.035em; margin-bottom: 24px; }
 :is(#calories-course-app, #recipes-course-app) .course-module { --module-color: #c8a2f8; margin: 14px 0 22px; }
 :is(#calories-course-app, #recipes-course-app) .course-module-2 { --module-color: #f7c569; }
 :is(#calories-course-app, #recipes-course-app) .course-module-3 { --module-color: #89d8af; }
-:is(#calories-course-app, #recipes-course-app) .course-module h2 { color: #fff; text-transform: uppercase; font: 800 12px/1.5 Manrope,Arial,sans-serif; letter-spacing: .035em; margin: 0 8px 10px; }
+:is(#calories-course-app, #recipes-course-app) .course-module h2 { color: #fff; text-transform: uppercase; font: 800 12px/1.5 var(--ed-font-body, Manrope, Arial, sans-serif); letter-spacing: .035em; margin: 0 8px 10px; }
 :is(#calories-course-app, #recipes-course-app) .course-module-items { position: relative; padding-left: 11px; display: grid; gap: 7px; }
 :is(#calories-course-app, #recipes-course-app) .course-module-items::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 22px; border-left: 3px solid var(--module-color); border-radius: 22px 0 0 22px; mask-image: linear-gradient(to bottom,transparent,#000 14px,#000 calc(100% - 14px),transparent); pointer-events: none; }
 :is(#calories-course-app, #recipes-course-app) #days .day-button { min-width: 0; }

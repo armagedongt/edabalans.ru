@@ -10,6 +10,7 @@ derived_outputs = [
 
 [[modules]]
 id = "platform"
+reads_from = ["platform.web_design"]
 card = "docs/knowledge-base/modules/catalog/platform.md"
 owns_files = [
   "README.md", "PROJECT_CONTEXT.md", "ARCHITECTURE.md",
@@ -47,7 +48,7 @@ owns_tables = [
 
 [[modules]]
 id = "platform.commerce"
-reads_from = ["messaging.telegram.attribution", "platform.content"]
+reads_from = ["platform.web_design", "messaging.telegram.attribution", "platform.content"]
 admin_catalog = [{ category = "commerce", order = 20, url = "/admin/pricing", label = "Цены и тарифы", icon = "🏷️", description = "Цены продуктов, тарифы и дополнительные предложения." }, { category = "commerce", order = 40, url = "/finance", label = "Финансовая модель", icon = "📊", description = "Расчёт потока, выручки, рекламы, нагрузки и маржи." }, { category = "commerce", order = 50, url = "/admin/tilda-mailing", label = "Перенос кабинетов — письма", icon = "✉️", description = "Подготовленные письма, правки, исключения и отдельный запуск отправки." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.commerce.md"
@@ -135,11 +136,11 @@ owns_files = [
 owns_tables = ["account_credentials", "account_sessions"]
 owns_routes = ["*/account-auth/*", "*/app-auth/*", "*/lk", "*/admin/api/login", "*/admin/api/logout", "*/admin/api/session"]
 depends_on = ["platform.crm"]
-reads_from = ["platform.commerce", "platform.content"]
+reads_from = ["platform.web_design", "platform.commerce", "platform.content"]
 
 [[modules]]
 id = "platform.content"
-reads_from = ["products.masterclass.course", "platform.commerce"]
+reads_from = ["platform.web_design", "products.masterclass.course", "platform.commerce"]
 writes_to = ["platform.commerce"]
 admin_catalog = [{ category = "marketing", order = 20, url = "/admin/content", label = "Каталог материалов", icon = "🗂️", description = "Материалы Telegram, Pikabu и рабочий каталог контента." }]
 parent = "platform"
@@ -278,7 +279,7 @@ depends_on = [
   "platform.content", "platform.crm", "products.calories",
   "products.masterclass.offers", "products.masterclass.messenger-links",
 ]
-reads_from = ["platform", "platform.auth", "platform.knowledge", "products.intensive", "products.masterclass", "messaging.telegram.attribution", "messaging.max", "marketing.analytics", "operations.proxy"]
+reads_from = ["platform.web_design", "platform", "platform.auth", "platform.knowledge", "products.intensive", "products.masterclass", "messaging.telegram.attribution", "messaging.max", "marketing.analytics", "operations.proxy"]
 owns_files = [
   "backend/app/blog_routes.py", "backend/app/blog_content.py",
   "backend/app/blog_responsive_media.py", "tools/build_blog_responsive_media.py",
@@ -337,7 +338,7 @@ owns_tables = [
   "knowledge_review_items", "knowledge_usage_events",
 ]
 owns_routes = ["*/admin/library", "*/admin/api/library*", "*/mcp*"]
-reads_from = ["platform.content", "admin.project-knowledge"]
+reads_from = ["platform.web_design", "platform.content", "admin.project-knowledge"]
 
 [[modules]]
 id = "platform.web_design"
@@ -347,11 +348,17 @@ depends_on = ["platform.content"]
 owns_files = [
   "content/design-workflow/**",
   "backend/app/static/app-visual-catalog/**",
+  "backend/app/static/site-typography.css", "backend/app/static/fonts/**",
+  "docs/knowledge-base/SITE_TYPOGRAPHY.md",
+]
+sources = [
+  { path = "backend/app/static/site-typography.css", role = "runtime", shared = true, consumers = ["admin.control", "admin.project-knowledge", "marketing.analytics", "messaging.telegram.attribution", "platform", "platform.auth", "platform.blog", "platform.commerce", "platform.content", "platform.knowledge", "products", "products.calories", "products.catalog", "products.dqs", "products.intensive", "products.intensive.telegram-login", "products.masterclass.course", "products.masterclass.offers", "products.masterclass.questionnaires", "products.masterclass.runtime", "products.metabolism", "products.public-site", "products.recipes", "products.strength"] },
 ]
 owns_routes = ["*/preview/app-visual-catalog*"]
 
 [[modules]]
 id = "products"
+reads_from = ["platform.web_design"]
 card = "docs/knowledge-base/modules/catalog/products.md"
 depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
@@ -382,7 +389,7 @@ id = "products.public-site"
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.public-site.md"
 depends_on = ["platform.content", "platform.commerce", "platform.web_design"]
-reads_from = ["platform"]
+reads_from = ["platform.web_design", "platform"]
 owns_files = [
     "backend/app/public_site_content_service.py", "backend/app/public_site_routes.py",
     "backend/app/homepage_content_service.py", "backend/tests/test_homepage_content.py",
@@ -432,7 +439,7 @@ admin_catalog = [{ category = "commerce", order = 10, url = "/admin/products", l
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.catalog.md"
 depends_on = ["platform.auth", "platform.commerce"]
-reads_from = ["products.public-site", "platform", "platform.content", "platform.commerce", "messaging.telegram", "messaging.max", "operations.proxy", "operations.health"]
+reads_from = ["platform.web_design", "products.public-site", "platform", "platform.content", "platform.commerce", "messaging.telegram", "messaging.max", "operations.proxy", "operations.health"]
 owns_files = [
   "backend/app/product_catalog_service.py", "backend/app/product_catalog_routes.py",
   "backend/app/static/product-catalog-editor.*", "docs/knowledge-base/PRODUCT_CATALOG.md",
@@ -448,7 +455,7 @@ admin_catalog = [{ category = "applications", order = 10, url = "/admin/dqs", la
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.dqs.md"
 depends_on = ["platform.auth", "platform.commerce", "products.masterclass.runtime"]
-reads_from = ["products.masterclass.runtime"]
+reads_from = ["platform.web_design", "products.masterclass.runtime"]
 owns_files = [
   "backend/app/static/apps/dqs.html", "backend/app/static/apps/dqs-category-rules.js", "backend/app/dqs_access_service.py", "legacy/google/dqs/**",
   "legacy/google/sheets/DQS_SCHEMA.md", "backend/tests/test_masterclass_dqs_gate.py", "backend/tests/browser/dqs-access.e2e.mjs",
@@ -461,6 +468,7 @@ owns_routes = ["*/apps/dqs*", "*/api/apps/dqs*", "*/dqs"]
 
 [[modules]]
 id = "products.strength"
+reads_from = ["platform.web_design"]
 admin_catalog = [{ category = "applications", order = 20, url = "/admin/strength", label = "Силовые", icon = "💪", description = "Приложение силовых тренировок клиентов." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.strength.md"
@@ -518,7 +526,7 @@ owns_files = [
 ]
 owns_tables = ["metabolism_states"]
 owns_routes = ["*/apps/metabolism*", "*/api/apps/metabolism*", "*/metabolism", "*/metabolism-old"]
-reads_from = ["products.calories", "products.masterclass.questionnaires"]
+reads_from = ["platform.web_design", "products.calories", "products.masterclass.questionnaires"]
 
 [[modules]]
 id = "products.calories"
@@ -529,7 +537,7 @@ depends_on = [
   "platform.auth", "platform.content", "products.catalog",
   "products.masterclass.course", "products.metabolism", "operations.delivery",
 ]
-reads_from = ["platform", "platform.content"]
+reads_from = ["platform.web_design", "platform", "platform.content"]
 owns_files = [
   "backend/app/calorie_course_routes.py", "backend/app/calorie_course_service.py",
   "backend/app/calorie_course_material_service.py",
@@ -570,7 +578,7 @@ owns_files = [
 owns_tables = ["nutrition_products", "recipe_books", "recipe_ingredients"]
 owns_routes = ["*/apps/recipes*", "*/api/apps/recipes*", "*/api/recipes/course*", "*/recipes", "*/recipe-calculator"]
 depends_on = ["platform.auth", "platform.commerce", "operations.imports", "products.masterclass.course"]
-reads_from = ["platform.content", "products.masterclass.runtime"]
+reads_from = ["platform.web_design", "platform.content", "products.masterclass.runtime"]
 writes_to = ["platform.content", "products.masterclass.runtime"]
 sources = [
   { path = "backend/app/recipe_originals.py", role = "runtime", shared = true, consumers = ["products.masterclass.course"] },
@@ -598,10 +606,11 @@ owns_files = [
 ]
 owns_routes = ["*/intensive*", "*/admin/api/intensive*", "*/admin/api/editorial/intensive*"]
 depends_on = ["platform.content"]
-reads_from = ["platform", "products.public-site", "products.masterclass.course"]
+reads_from = ["platform.web_design", "platform", "products.public-site", "products.masterclass.course"]
 
 [[modules]]
 id = "products.intensive.telegram-login"
+reads_from = ["platform.web_design"]
 parent = "products.intensive"
 card = "docs/knowledge-base/modules/catalog/products.intensive.telegram-login.md"
 depends_on = ["messaging.telegram.attribution", "platform.auth"]
@@ -630,7 +639,7 @@ id = "products.masterclass.course"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.course.md"
 depends_on = ["platform.content"]
-reads_from = ["platform", "platform.content", "products.recipes", "products.calories"]
+reads_from = ["platform.web_design", "platform", "platform.content", "products.recipes", "products.calories"]
 writes_to = ["products.recipes", "products.calories"]
 owns_files = [
   "backend/app/course_structure_routes.py", "backend/app/course_structure_service.py",
@@ -715,10 +724,11 @@ owns_tables = [
   "masterclass_notifications", "masterclass_test_profiles",
 ]
 owns_routes = ["*/api/masterclass*", "*/admin/api/masterclass*", "*/admin/masterclass*"]
-reads_from = ["platform", "products.masterclass.course", "products.dqs"]
+reads_from = ["platform.web_design", "platform", "products.masterclass.course", "products.dqs"]
 
 [[modules]]
 id = "products.masterclass.questionnaires"
+reads_from = ["platform.web_design"]
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.questionnaires.md"
 owns_files = ["backend/app/static/apps/onboarding-questionnaire.html", "backend/app/questionnaire_person_service.py", "backend/app/masterclass_feedback.py", "backend/app/static/questionnaire-person.*"]
@@ -744,7 +754,7 @@ owns_files = [
 owns_tables = ["offer_stages", "user_offers", "offer_checkouts"]
 owns_routes = ["*/api/masterclass/*offer*", "*/admin/api/masterclass/*offer*"]
 depends_on = ["platform.commerce", "products.masterclass.runtime", "products.public-site"]
-reads_from = ["products.public-site"]
+reads_from = ["platform.web_design", "products.public-site"]
 sources = [
   { path = "backend/app/masterclass_offer_rules.py", role = "rule", shared = true, consumers = ["messaging.telegram.postpurchase"] },
   { path = "backend/app/masterclass_offer_catalog.py", role = "copy", shared = false, consumers = [] },
@@ -814,7 +824,7 @@ id = "messaging.telegram.attribution"
 parent = "messaging.telegram"
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.attribution.md"
 depends_on = ["platform.crm", "messaging.telegram.engine", "products.intensive"]
-reads_from = ["platform.blog"]
+reads_from = ["platform.web_design", "platform.blog"]
 telegram_code = "start_attribution"
 telegram_name = "Старт и атрибуция"
 telegram_status = "Исполняемый модуль · временный вход в единую статью"
@@ -1000,6 +1010,7 @@ owns_files = ["docs/ADMIN_ARCHITECTURE.md"]
 
 [[modules]]
 id = "admin.control"
+reads_from = ["platform.web_design"]
 admin_catalog = [{ category = "external", order = 10, url = "/weather/", label = "Погода", icon = "🌦️", description = "Личный погодный экран и карта." }, { category = "external", order = 20, url = "/game/", label = "Игра для Серёжи и Сонечки", icon = "💗", description = "Отдельная личная игра для двоих." }, { category = "external", order = 30, url = "https://app.edabalans.ru/sherbakova/", label = "Сайт Щербаковой", icon = "🌿", description = "Изолированный preview стороннего сайта." }]
 parent = "admin"
 card = "docs/knowledge-base/modules/catalog/admin.control.md"
@@ -1020,6 +1031,7 @@ depends_on = ["platform.auth", "platform.crm"]
 
 [[modules]]
 id = "admin.project-knowledge"
+reads_from = ["platform.web_design"]
 admin_catalog = [{ category = "knowledge", order = 10, url = "/admin/knowledge-base?view=map", label = "Карта системы", icon = "🗺️", description = "Дерево продуктов, модулей и связей." }, { category = "knowledge", order = 20, url = "/admin/knowledge-base?view=guide", label = "Как работать с проектом", icon = "📘", description = "Короткая памятка для владельца." }, { category = "knowledge", order = 30, url = "/admin/knowledge-base?view=plans", label = "Планы", icon = "📌", description = "Только явно отложенные идеи." }, { category = "knowledge", order = 40, url = "/admin/knowledge-base?view=documents", label = "Документы проекта", icon = "📄", description = "Человекочитаемая база знаний." }]
 parent = "admin"
 card = "docs/knowledge-base/modules/catalog/admin.project-knowledge.md"
@@ -1179,7 +1191,7 @@ owns_files = [
 owns_routes = ["*/admin/marketing", "*/admin/api/marketing/*", "*/api/internal/marketing/*"]
 owns_tables = ["marketing_daily_reports"]
 depends_on = ["platform.auth", "platform.crm", "messaging.telegram.attribution", "messaging.max", "products.intensive"]
-reads_from = ["messaging.telegram.attribution", "messaging.max", "platform.crm", "platform.commerce", "products.intensive"]
+reads_from = ["platform.web_design", "messaging.telegram.attribution", "messaging.max", "platform.crm", "platform.commerce", "products.intensive"]
 
 [[modules]]
 id = "planned.telegram-quiz"

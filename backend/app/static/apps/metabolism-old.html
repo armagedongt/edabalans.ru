@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/assets/site-typography.css?v=20261018-typography">
 <div id="metabolism-old-app"></div>
 
 <style>
@@ -31,7 +32,7 @@ html,body{
   max-width:1000px;
   margin:0 auto;
   padding:7px;
-  font-family:Arial,sans-serif;
+  font-family:var(--ed-font-body, Manrope, Arial, sans-serif);
   color:var(--text);
 }
 
@@ -1773,9 +1774,9 @@ window.META={
    INIT
 ===================================== */
 
-root.innerHTML='<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Загрузка…</div>';
+root.innerHTML='<div style="padding:30px;text-align:center;font-family:var(--ed-font-body, Manrope, Arial, sans-serif)">Загрузка…</div>';
 loadServer().then(render).catch(function(error){
-  root.innerHTML='<div style="max-width:520px;margin:30px auto;padding:24px;border-radius:18px;background:#fff;color:#b42318;font-family:Arial,sans-serif">'+String(error.message||error)+'</div>';
+  root.innerHTML='<div style="max-width:520px;margin:30px auto;padding:24px;border-radius:18px;background:#fff;color:#b42318;font-family:var(--ed-font-body, Manrope, Arial, sans-serif)">'+String(error.message||error)+'</div>';
 });
 
 })();

@@ -1,7 +1,7 @@
 :root{color-scheme:light;--ink:#171717;--copy:#343434;--muted:#737373;--line:#dedbd5;--paper:#fff;--soft:#f7f5f1;--accent:#a84f35}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.7 Arial,sans-serif}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.7 var(--ed-font-body, Manrope, Arial, sans-serif)}
 a{color:inherit;text-underline-offset:3px}
 .legal-page{width:min(860px,100%);margin:auto;padding:58px 24px 80px}
 .legal-brand{margin:0 0 10px;color:var(--muted);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}

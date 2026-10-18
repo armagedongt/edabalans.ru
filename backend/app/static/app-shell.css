@@ -1,3 +1,4 @@
+@import url("/assets/site-typography.css?v=20261018-typography");
 :root{
   --ed-app-bg:#f5f5f7;
   --ed-app-card:#fff;
@@ -15,7 +16,7 @@
 
 [data-edabalans-app]{
   color:var(--ed-app-text);
-  font-family:Inter,Arial,sans-serif;
+  font-family:var(--ed-font-body, Manrope, Arial, sans-serif);
 }
 
 .ed-app-account-link{
@@ -62,7 +63,7 @@
   color:var(--ed-app-text);
   border:1px solid var(--ed-app-line);
   border-radius:var(--ed-app-radius-large);
-  font:16px/1.5 Manrope,Arial,sans-serif;
+  font:16px/1.5 var(--ed-font-body, Manrope, Arial, sans-serif);
 }
 .ed-app-maintenance h1{margin:0;font-size:28px}
 .ed-app-maintenance-account{width:auto;padding:0 20px;color:#119ee8}

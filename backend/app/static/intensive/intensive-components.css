@@ -8,11 +8,11 @@
 }
 [hidden]{display:none!important}
 .intensive-meta{display:flex;flex-flow:row nowrap;align-items:center;gap:7px;margin:0 0 24px}
-.intensive-meta__pill{display:flex;width:max-content;max-width:100%;min-height:31px;align-items:center;margin:0;padding:6px 9px;border:1px solid rgba(33,85,121,.14);border-radius:11px;background:rgba(255,255,255,.92);box-shadow:0 7px 18px -13px rgba(28,67,94,.48);color:#168fe3;font:800 clamp(9px,2.8vw,13px)/1.2 Manrope,Arial,sans-serif;letter-spacing:.02em;text-transform:uppercase;backdrop-filter:blur(10px)}
+.intensive-meta__pill{display:flex;width:max-content;max-width:100%;min-height:31px;align-items:center;margin:0;padding:6px 9px;border:1px solid rgba(33,85,121,.14);border-radius:11px;background:rgba(255,255,255,.92);box-shadow:0 7px 18px -13px rgba(28,67,94,.48);color:#168fe3;font:800 clamp(9px,2.8vw,13px)/1.2 var(--ed-font-body, Manrope, Arial, sans-serif);letter-spacing:.02em;text-transform:uppercase;backdrop-filter:blur(10px)}
 .intensive-meta__pill--name:before{width:7px;height:7px;flex:0 0 7px;margin-right:7px;border-radius:50%;background:var(--intensive-orange);content:""}
 .intensive-meta__pill--part{color:var(--intensive-orange)}
 .intensive-meta__pill--part:before{content:var(--intensive-part-label-prefix) attr(data-part-number)}
-.intensive-skill-label{display:inline-flex;width:max-content;max-width:100%;min-height:38px;align-items:center;margin:0 0 13px;padding:8px 12px;border-radius:12px;background:var(--intensive-green-soft);color:var(--intensive-green);font:900 clamp(15px,3.8vw,18px)/1 Manrope,Arial,sans-serif;text-transform:uppercase}
+.intensive-skill-label{display:inline-flex;width:max-content;max-width:100%;min-height:38px;align-items:center;margin:0 0 13px;padding:8px 12px;border-radius:12px;background:var(--intensive-green-soft);color:var(--intensive-green);font:900 clamp(15px,3.8vw,18px)/1 var(--ed-font-body, Manrope, Arial, sans-serif);text-transform:uppercase}
 .intensive-skill-label[hidden]{display:none}
 .intensive-skill-label:before{content:var(--intensive-skill-label-prefix) attr(data-skill-number)}
 .intensive-media-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start;margin:27px 0 38px}

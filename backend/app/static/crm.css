@@ -17,7 +17,7 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; background: var(--bg); }
-body { color: var(--text); font-family: Manrope, Inter, Arial, sans-serif; background: radial-gradient(circle at 86% 7%, rgba(39, 175, 245, .14), transparent 28%), radial-gradient(circle at 16% 88%, rgba(17, 142, 216, .08), transparent 32%), var(--bg); }
+body { color: var(--text); font-family: var(--ed-font-body, Manrope, Arial, sans-serif); background: radial-gradient(circle at 86% 7%, rgba(39, 175, 245, .14), transparent 28%), radial-gradient(circle at 16% 88%, rgba(17, 142, 216, .08), transparent 32%), var(--bg); }
 button, input, textarea { font: inherit; }
 button { cursor: pointer; }
 
@@ -146,7 +146,7 @@ button { cursor: pointer; }
 .crm-profile-identity { display:flex; align-items:center; flex-wrap:wrap; gap:6px 12px; min-width:0; }
 .crm-profile-email { color:var(--muted); font-size:14px; overflow-wrap:anywhere; }
 .crm-profile-messengers { display:inline-flex; flex-wrap:wrap; align-items:center; gap:6px; }
-.crm-contact-button { display:inline-flex; align-items:center; justify-content:center; gap:5px; min-height:30px; padding:0 9px; border-radius:8px; color:#fff; font-family:Manrope, Inter, Arial, sans-serif; font-size:11px; font-weight:700; line-height:1; text-decoration:none; white-space:nowrap; }
+.crm-contact-button { display:inline-flex; align-items:center; justify-content:center; gap:5px; min-height:30px; padding:0 9px; border-radius:8px; color:#fff; font-family:var(--ed-font-body, Manrope, Arial, sans-serif); font-size:11px; font-weight:700; line-height:1; text-decoration:none; white-space:nowrap; }
 .crm-contact-button svg { width:15px; height:15px; }
 .crm-contact-button img { width:16px; height:16px; object-fit:contain; }
 .crm-contact-button--telegram { background:linear-gradient(135deg,#2aabee,#229ed9); }
@@ -242,7 +242,7 @@ button { cursor: pointer; }
 .crm-personal-access-matrix .crm-access-matrix-cell:has(input:checked) span { opacity:1; }
 .crm-personal-access-matrix .crm-access-matrix-cell:has(input:disabled) { cursor:not-allowed; filter:saturate(.25); opacity:.52; }
 .crm-new-account .crm-access-matrix-head,.crm-new-account .crm-access-matrix-row { grid-template-columns:minmax(150px,1fr) 68px 78px 88px; }
-.crm-course-access-control { position:relative; min-width:84px; padding:6px 5px; border:1px solid rgba(17,142,216,.34); border-radius:7px; color:var(--crm-blue-deep); background:#fff; cursor:pointer; font:700 11px/1.2 Manrope,Inter,Arial,sans-serif; text-align:center; }
+.crm-course-access-control { position:relative; min-width:84px; padding:6px 5px; border:1px solid rgba(17,142,216,.34); border-radius:7px; color:var(--crm-blue-deep); background:#fff; cursor:pointer; font:700 11px/1.2 var(--ed-font-body, Manrope, Arial, sans-serif); text-align:center; }
 .crm-course-access-control[aria-expanded="true"] { border-color:var(--crm-blue); background:var(--crm-blue-soft); }
 .crm-course-access-popover { grid-column:1 / -1; display:grid; gap:6px; margin-top:2px; padding:10px; border:1px solid rgba(17,142,216,.25); border-radius:10px; background:#fff; box-shadow:0 12px 26px -22px rgba(20,53,74,.55); }
 .crm-course-check { display:flex; gap:8px; align-items:flex-start; padding:8px; border-radius:8px; background:#f7fbfe; font-size:12px; }
@@ -292,7 +292,7 @@ button { cursor: pointer; }
 .crm-doc-link:hover { background: var(--purple-dark); }
 
 /* Compact owner workspace: calmer type and less pill-shaped controls. */
-#crm-app { font-family: Inter, Arial, sans-serif; }
+#crm-app { font-family: var(--ed-font-body, Manrope, Arial, sans-serif); }
 .crm-title { font-size:23px; font-weight:700; letter-spacing:-.02em; }
 .crm-tabs { border-radius:11px; }
 .crm-tab { border-radius:8px; font-weight:600; }

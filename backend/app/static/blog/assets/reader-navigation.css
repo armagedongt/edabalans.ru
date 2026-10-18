@@ -33,3 +33,5 @@ html:has(#reader-sheet[open]) { overflow: hidden; }
   #reader-sheet .reader-close { position: sticky; top: 0; z-index: 1; }
 }
 @media (prefers-reduced-motion: reduce) { .reader-bottom { transition: none; } }
+
+.reader-sidebar,#reader-sheet ol{font-size:var(--ed-toc-size,14px);font-weight:var(--ed-toc-weight,400);line-height:var(--ed-toc-leading,1.4)}

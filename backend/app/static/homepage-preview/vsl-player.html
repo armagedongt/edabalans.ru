@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/assets/site-typography.css?v=20261018-typography">
 <style>html,body{width:100%;height:100%;margin:0;overflow:hidden;background:transparent!important}body{padding:0}</style>
 <div id="modular-video-player" class="mvp" tabindex="0">
   <video class="mvp__video mvp__video--preview" playsinline autoplay muted preload="auto"></video>
@@ -92,7 +93,7 @@
   overflow:hidden;
   border-radius:16px;
   background:#000;
-  font-family:Inter,Arial,sans-serif;
+  font-family:var(--ed-font-body, Manrope, Arial, sans-serif);
   box-shadow:0 16px 40px rgba(20,16,38,.16);
 }
 #modular-video-player *{box-sizing:border-box}
@@ -176,7 +177,7 @@
 #modular-video-player .mvp__quality-option{
   width:100%;min-height:46px;display:flex;align-items:center;justify-content:space-between;gap:14px;
   padding:10px 14px;border:0;border-bottom:1px solid rgba(255,255,255,.09);
-  background:transparent;color:#fff;text-align:left;font:600 13px/1.25 Inter,Arial,sans-serif;cursor:pointer;
+  background:transparent;color:#fff;text-align:left;font:600 13px/1.25 var(--ed-font-body, Manrope, Arial, sans-serif);cursor:pointer;
 }
 #modular-video-player .mvp__settings-row:last-child,
 #modular-video-player .mvp__speed-option:last-child,

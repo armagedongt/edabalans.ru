@@ -70,6 +70,7 @@
 | Единая библиотека, Библиотекарь и MCP | `KNOWLEDGE_LIBRARY.md` |
 | Редакционная и продуктовая система | `knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md` |
 | Дизайн, адаптив и компоненты главной | `knowledge-base/HOMEPAGE_DESIGN_PASSPORT.md` |
+| Шрифты и типографика всех страниц, кнопок и оглавлений | `knowledge-base/SITE_TYPOGRAPHY.md` |
 | Бесплатный интенсив | `INTENSIVE_PAGES.md` |
 | Административные инструменты | `ADMIN_ARCHITECTURE.md` |
 | Теги | `TAG_RULES.md` |

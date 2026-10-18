@@ -1,4 +1,4 @@
-.mc{--ink:#252525;--muted:#706d68;--paper:#f5f0e8;--card:#fffdf9;--accent:#c95b3d;--line:#dfd6ca;max-width:920px;margin:24px auto;padding:16px;color:var(--ink);font:16px/1.5 Inter,Arial,sans-serif}
+.mc{--ink:#252525;--muted:#706d68;--paper:#f5f0e8;--card:#fffdf9;--accent:#c95b3d;--line:#dfd6ca;max-width:920px;margin:24px auto;padding:16px;color:var(--ink);font:16px/1.5 var(--ed-font-body, Manrope, Arial, sans-serif)}
 .mc *{box-sizing:border-box}
 .mc h1{margin:0 0 14px;font-size:clamp(30px,5vw,54px);line-height:1.04}
 .mc h2{margin:0 0 8px;font-size:24px}
@@ -136,8 +136,8 @@ html.mc-product-overlay-open,html.mc-product-overlay-open body{overflow:hidden}
 }
 
 /* Витрина предложений продолжает визуальную систему ЛК, а не старую бежевую тему. */
-.mc.mc-offer-page{--ink:#17191e;--muted:#4f5965;--paper:#fff;--card:#fff;--line:rgba(17,142,216,.18);--accent:#f46a35;max-width:900px;color:var(--ink);font:500 16px/1.55 Manrope,Arial,sans-serif}
-.mc.mc-offer-page h1,.mc.mc-offer-page h2,.mc.mc-offer-page button,.mc.mc-offer-page .button{font-family:Manrope,Arial,sans-serif}
+.mc.mc-offer-page{--ink:#17191e;--muted:#4f5965;--paper:#fff;--card:#fff;--line:rgba(17,142,216,.18);--accent:#f46a35;max-width:900px;color:var(--ink);font:500 16px/1.55 var(--ed-font-body, Manrope, Arial, sans-serif)}
+.mc.mc-offer-page h1,.mc.mc-offer-page h2,.mc.mc-offer-page button,.mc.mc-offer-page .button{font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
 .mc.mc-offer-page>h1{color:#17191e;letter-spacing:-.05em}
 .mc.mc-offer-page>.lead{color:#4f5965;font-size:17px;line-height:1.55}
 .mc.mc-offer-page .mc-product-back{color:#118ed8!important}
