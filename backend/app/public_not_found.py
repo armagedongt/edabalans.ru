@@ -2,6 +2,7 @@ from pathlib import Path
 from html import escape
 from urllib.parse import urlsplit, urlunsplit
 from app.config import get_settings
+from app.site_links import relative_site_url
 
 from fastapi import APIRouter, Request
 from fastapi.exception_handlers import http_exception_handler
@@ -27,10 +28,9 @@ def public_origin() -> str:
 
 
 def fragment(origin: str = "") -> str:
-    destination = INTENSIVE_PUBLIC_CTA["destination"]
-    own_origin = public_origin()
-    if destination.startswith(own_origin + "/"):
-        destination = origin + destination[len(own_origin):]
+    destination = relative_site_url(INTENSIVE_PUBLIC_CTA["destination"])
+    if destination.startswith("/") and not destination.startswith("//"):
+        destination = origin + destination
     return (ASSET_DIR / "404-fragment.html").read_text(encoding="utf-8").replace(
         "{{intensive_url}}", escape(destination, quote=True)
     ).replace("{{origin}}", escape(origin, quote=True)).replace(

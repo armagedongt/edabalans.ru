@@ -150,3 +150,15 @@ def test_legacy_manual_payment_links_serve_existing_form_directly(path):
     assert response.status_code == 200
     assert "location" not in response.headers
     assert response.content == client.get("/pay").content
+
+
+def test_error_page_cta_keeps_current_host_after_future_cutover(monkeypatch):
+    from app import public_not_found
+    monkeypatch.setenv("ACCOUNT_PUBLIC_URL", "https://future.example/lk")
+    monkeypatch.setattr(public_not_found, "public_origin", lambda: "https://future.example")
+    nav = Navigation()
+    nav.feed(public_not_found.fragment())
+    assert nav.links[2] == "/intensive"
+    external = Navigation()
+    external.feed(public_not_found.fragment("https://future.example"))
+    assert external.links[2] == "https://future.example/intensive"

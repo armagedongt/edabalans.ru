@@ -272,11 +272,12 @@ def test_paused_entitlement_is_hidden_from_application_menu(tmp_path):
         session.close()
 
 
-def test_application_and_admin_buttons_follow_configured_public_origin(tmp_path, monkeypatch):
+@pytest.mark.parametrize("explicit_base", ["https://future.example", ""])
+def test_application_and_admin_buttons_follow_configured_public_origin(tmp_path, monkeypatch, explicit_base):
     from types import SimpleNamespace
     from app import app_menu
     monkeypatch.setattr(app_menu, "get_settings", lambda: SimpleNamespace(
-        telegram_public_base_url="https://future.example", masterclass_account_url="https://previous.example/lk"))
+        telegram_public_base_url=explicit_base, masterclass_account_url="https://future.example/lk"))
     session, user, contact = prepared(tmp_path)
     try:
         grant(session, user, "dqs")
