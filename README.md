@@ -1,15 +1,22 @@
-# edabalans.ru
+# Похудение — это есть.рф
 
 Новый сотрудник или ИИ должен начинать с [docs/README.md](docs/README.md): там находится карта
 канонических документов, модулей, таблиц и очередь будущих изменений.
+
+Перенос завершён. Единственный сайт — `https://похудение-это-есть.рф`: главная,
+блог, интенсив, кабинет, приложения и оплаты используют этот адрес. Админка —
+`https://admin.похудение-это-есть.рф`, прежний сайт — архив на `old.похудение-это-есть.рф`.
+Правило адресов обязательно в [AGENTS.md](AGENTS.md); актуальная карта —
+[PROJECT_IDENTITY](docs/knowledge-base/PROJECT_IDENTITY.md), страницы интенсива —
+[INTENSIVE_PAGES](docs/INTENSIVE_PAGES.md). Прежний host не является вторым входом.
 
 ## Текущее состояние
 
 Production-фундамент развёрнут на Timeweb Cloud:
 
-- `https://api.edabalans.ru/health` — FastAPI;
-- `https://api.edabalans.ru/ready` — проверка связи API с PostgreSQL;
-- `https://data.edabalans.ru` — закрытая регистрация NocoDB для просмотра таблиц;
+- `https://похудение-это-есть.рф/health` — FastAPI;
+- `https://похудение-это-есть.рф/ready` — проверка связи API с PostgreSQL;
+- закрытый NocoDB для просмотра таблиц — технический доступ по `docs/OPERATIONS.md`;
 - Caddy автоматически обслуживает HTTPS;
 - PostgreSQL доступен только внутри Docker-сети;
 - ежедневные резервные копии двух баз уходят в Yandex Object Storage;
