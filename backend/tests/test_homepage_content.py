@@ -91,8 +91,8 @@ def test_homepage_attachment_is_hidden_until_its_fixed_slot_is_published(client,
 def test_initial_homepage_keeps_the_accepted_html_without_client_content_fetch(client):
     response = client.get("/preview/homepage-release-candidate")
     assert response.status_code == 200
-    # Migration fingerprint of the accepted current page, before replacing text with slots.
-    assert hashlib.sha256(response.text.encode()).hexdigest() == "6ce208de3369f6a755749eed7c2f66e15736c9879c1490cb936379390eda5c28"
+    # Accepted rendered page after the approved public-origin URL migration.
+    assert hashlib.sha256(response.text.encode()).hexdigest() == "5cd2c85ec242ea62acf1077cafab36c22b36522b23fd05062eb9e4b3479d7c9d"
     assert "<!-- homepage-slot:" not in response.text
     faq = response.text.split("<template data-local-faq-template>", 1)[1].split("</template>", 1)[0]
     assert faq.count('class="faq-question-text"') == 17

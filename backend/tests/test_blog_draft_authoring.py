@@ -25,7 +25,7 @@ from app.blog_draft_routes import (
     require_blog_admin,
     require_blog_mutation,
 )
-from app.blog_content import load_blog_catalog
+from app.blog_content import BLOG_PUBLIC_URL, load_blog_catalog
 from app.blog_routes import BLOG_PAGE_SIZE
 from app.blog_draft_service import (
     DOCUMENT_TYPE,
@@ -294,7 +294,7 @@ def _catalog_page(client: TestClient, slug: str):
     index = next(index for index, article in enumerate(published) if article.slug == slug)
     response = client.get("/blog", params={"page": index // BLOG_PAGE_SIZE + 1})
     assert response.status_code == 200
-    assert f'href="/articles/{slug}"' in response.text
+    assert f'href="{BLOG_PUBLIC_URL}/articles/{slug}"' in response.text
     return response
 
 
@@ -526,13 +526,13 @@ def test_existing_article_seed_publish_and_later_draft_do_not_leak(authoring) ->
     )
     assert published.status_code == 200, published.text
     assert published.json()["article"]["editorial_status"] == "published"
-    assert published.json()["public_url"].startswith("https://blog.")
+    assert published.json()["public_url"].startswith(BLOG_PUBLIC_URL + "/articles/")
     assert published.json()["public_url"].endswith(f"/articles/{SLUG}")
     public_page = client.get(f"/blog/articles/{SLUG}")
     assert marker in public_page.text
     assert public_page.text.count('data-component="blog-cta"') == 1
     assert 'data-tracking-key="blog_intensive"' in public_page.text
-    assert f'<link rel="canonical" href="https://blog.' in public_page.text
+    assert f'<link rel="canonical" href="{BLOG_PUBLIC_URL}/articles/' in public_page.text
 
     repeated = client.post(
         f"/admin/api/blog/articles/{SLUG}/publish",
