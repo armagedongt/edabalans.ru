@@ -174,7 +174,7 @@ def _message_for_payment(
         lines.append(f'{label}: <a href="{escape(url, quote=True)}">{escape(name)}</a>{provenance}')
     contact_id = user_id or (observed or {}).get("user_id")
     if contact_id:
-        lines.append(f'<a href="https://edabalans.ru/crm?user={escape(str(contact_id), quote=True)}">Карточка клиента</a>')
+        lines.append(f'<a href="https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/crm?user={escape(str(contact_id), quote=True)}">Карточка клиента</a>')
     if payment.external_order_id:
         lines.extend(("", f"Счёт: {escape(payment.external_order_id)}"))
     if event_kind == EVENT_FAILED and failure_reason:

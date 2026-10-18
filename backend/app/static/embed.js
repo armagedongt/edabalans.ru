@@ -4,8 +4,9 @@
   var loaderOnly = document.currentScript && document.currentScript.getAttribute('data-edabalans-loader-only') === 'true';
 
   var APP_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || location.hostname.indexOf('go.') === 0
+    || ['edabalans.ru', 'www.edabalans.ru', 'xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai', 'www.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai', 'admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai'].indexOf(location.hostname) !== -1
     ? location.origin
-    : 'https://edabalans.ru';
+    : 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai';
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
   var PUBLIC_ACCOUNT_URL = APP_HOST + '/lk';
   var appHtmlCache = {};

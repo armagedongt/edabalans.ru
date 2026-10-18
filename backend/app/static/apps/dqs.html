@@ -1548,7 +1548,7 @@ body{
 <script src="/apps/dqs-category-rules.js"></script>
 <script>
 let API_URL =
-  'https://edabalans.ru/api/apps/dqs';
+  (window.EdabalansAppHost || 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai') + '/api/apps/dqs';
 
 const APP_CONTEXT = window.EdabalansAppContext || {};
 const MANAGED_TARGET =

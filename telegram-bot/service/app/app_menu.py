@@ -29,10 +29,10 @@ class Application:
 
 
 APPLICATIONS = (
-    Application("dqs", "dqs", "Оценка качества питания", "https://edabalans.ru/dqs", ("dqs",)),
-    Application("strength", "training", "Силовые тренировки", "https://edabalans.ru/training", ("strength", "ACCESS_STRENGTH")),
-    Application("metabolism", "metabolism", "Калькулятор метаболизма", "https://edabalans.ru/metabolism", ("metabolism", "ACCESS_CALORIES")),
-    Application("recipes", "recipes", "Калькулятор рецептов", "https://edabalans.ru/recipes", ("recipes", "ACCESS_RECIPES")),
+    Application("dqs", "dqs", "Оценка качества питания", "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/dqs", ("dqs",)),
+    Application("strength", "training", "Силовые тренировки", "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/training", ("strength", "ACCESS_STRENGTH")),
+    Application("metabolism", "metabolism", "Калькулятор метаболизма", "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/metabolism", ("metabolism", "ACCESS_CALORIES")),
+    Application("recipes", "recipes", "Калькулятор рецептов", "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/recipes", ("recipes", "ACCESS_RECIPES")),
 )
 APPLICATION_BY_PAYLOAD = {item.payload: item for item in APPLICATIONS}
 REVEAL_EVENTS = {
@@ -167,7 +167,7 @@ def menu_presentation(
             {
                 "buttons": [{
                     "text": "Открыть админку тренировок",
-                    "web_app": {"url": f"https://edabalans.ru/admin/strength?mobile=1{query}"},
+                    "web_app": {"url": f"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/strength?mobile=1{query}"},
                 }]
             },
         )

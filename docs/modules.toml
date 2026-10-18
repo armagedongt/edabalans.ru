@@ -16,7 +16,7 @@ owns_files = [
   "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md",
   "backend/app/brand_routes.py", "backend/app/static/brand/**",
   "backend/app/static/site-cookie-notice.js",
-  "backend/tests/test_brand_assets.py",
+  "backend/tests/test_brand_assets.py", "backend/tests/embed-origin.test.cjs",
 ]
 owns_routes = ["*/embed.js", "*/site-footer.js", "*/cookie-notice.js", "*/favicon.ico", "*/favicon.png", "*/apple-touch-icon.png"]
 sources = [
@@ -579,7 +579,7 @@ sources = [
 
 [[modules]]
 id = "products.intensive"
-admin_catalog = [{ category = "courses", order = 30, url = "https://edabalans.ru/intensive", label = "Бесплатный интенсив", icon = "⚡", description = "Единая статья и архив четырёх дней интенсива." }]
+admin_catalog = [{ category = "courses", order = 30, url = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive", label = "Бесплатный интенсив", icon = "⚡", description = "Единая статья и архив четырёх дней интенсива." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.intensive.md"
 owns_files = [
@@ -946,7 +946,7 @@ owns_routes = ["*/bot-api/*broadcast*", "*/bot-api/*manual-message*"]
 
 [[modules]]
 id = "messaging.telegram.engine"
-admin_catalog = [{ category = "service", order = 10, url = "https://edabalans.ru/admin/messaging", label = "Telegram-бот", icon = "💬", description = "Пока не редактируется в админке: канонические тексты и правила меняются через Codex." }]
+admin_catalog = [{ category = "service", order = 10, url = "/admin/messaging", label = "Telegram-бот", icon = "💬", description = "Пока не редактируется в админке: канонические тексты и правила меняются через Codex." }]
 parent = "messaging.telegram"
 reads_from = ["platform.content"]
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.engine.md"

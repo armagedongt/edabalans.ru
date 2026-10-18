@@ -1,5 +1,8 @@
 import pytest
 import os
+import shutil
+import subprocess
+from pathlib import Path
 from datetime import datetime, timezone
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
@@ -117,6 +120,17 @@ def setup() -> tuple[TestClient, sessionmaker[Session]]:
 
 def login_native(client: TestClient) -> None:
     assert client.post("/api/account-auth/login", json={"email": "member@example.test", "password": "Test-Password-9"}).status_code == 200
+
+
+def test_application_loader_keeps_requests_on_the_branded_host():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is required for the application loader test")
+    result = subprocess.run(
+        [node, "--test", str(Path(__file__).with_name("embed-origin.test.cjs"))],
+        capture_output=True, text=True, timeout=30,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 def test_course_api_rejects_direct_access_before_current_legal_acceptances():

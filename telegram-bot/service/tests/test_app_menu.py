@@ -118,7 +118,7 @@ def test_strength_admin_deep_link_opens_protected_mobile_admin_for_current_profi
         assert configuration["buttons"] == [{
             "text": "Открыть админку тренировок",
             "web_app": {
-                "url": f"https://edabalans.ru/admin/strength?mobile=1&user={user.id}"
+                "url": f"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/strength?mobile=1&user={user.id}"
             },
         }]
     finally:
@@ -250,7 +250,7 @@ def test_client_dqs_open_event_does_not_reveal_application(tmp_path):
         session.commit()
         assert [item.code for item in available_applications(session, user.id)] == ["dqs"]
         _, configuration = menu_presentation(session, contact)
-        assert configuration["buttons"][0]["url"] == "https://edabalans.ru/dqs"
+        assert configuration["buttons"][0]["url"] == "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/dqs"
         content, _ = menu_presentation(session, contact, app_request("/start dqs"))
         assert "Если вход в личный кабинет в браузере истёк" in content.body_source
         assert "без повторного ввода" not in content.body_source

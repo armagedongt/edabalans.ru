@@ -1513,7 +1513,7 @@
 ========================================================= */
 
 var API_URL =
-  'https://edabalans.ru/api/apps/strength';
+  (window.EdabalansAppHost || 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai') + '/api/apps/strength';
 
 var APP_CONTEXT = window.EdabalansAppContext || {};
 var ACCOUNT_URL = String(APP_CONTEXT.accountUrl || '/lk');

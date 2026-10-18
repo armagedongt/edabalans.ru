@@ -59,7 +59,7 @@
 
   function setHeading(name, sub) {
     title.textContent = name;
-    kicker.textContent = sub || "EDABALANS";
+    kicker.textContent = sub || "Похудение — это есть!";
   }
 
   function loading() { root.innerHTML = '<div class="admin-empty">Загружаю…</div>'; }

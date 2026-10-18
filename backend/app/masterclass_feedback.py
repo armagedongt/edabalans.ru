@@ -149,7 +149,7 @@ def store_feedback(db: Session, user: User, payment: Payment, day: int, answers:
     for code, answer in answers.items():
         db.add(QuestionnaireAnswer(run_id=run.id, question_code=code, answer_text=answer))
     labels = {item["code"]: item["title"] for item in PULSES[day]["questions"]}
-    lines = [f"Обратная связь по Мастер-классу · день {day}", f"Имя: {user.display_name or 'не указано'}", f"Email: {primary_email(db, user.id)}", f"CRM: https://edabalans.ru/admin/users?user={user.id}"]
+    lines = [f"Обратная связь по Мастер-классу · день {day}", f"Имя: {user.display_name or 'не указано'}", f"Email: {primary_email(db, user.id)}", f"CRM: https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/users?user={user.id}"]
     lines.extend(f"{labels[code]}: {answers[code]}" for code in labels)
     if answers["comment"]:
         lines.append(f"Комментарий: {answers['comment']}")
