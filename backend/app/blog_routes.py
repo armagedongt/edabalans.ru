@@ -385,7 +385,7 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
     )
     if 'data-channel-origin="telegram"' not in body:
         rendered = rendered.replace('</head>', '<link rel="stylesheet" href="/blog/assets/reader-subscription.css?v=20261005a"></head>')
-        rendered = rendered.replace('</body>', _template('reader-subscription.html') + '<script src="/blog/assets/reader-subscription.js?v=20261018channel" defer></script></body>')
+        rendered = rendered.replace('</body>', _template('reader-subscription.html') + '<script src="/blog/assets/reader-subscription.js?v=20261018from" defer></script></body>')
     return _html_response(apply_responsive_images(rendered, catalog.content_dir, catalog.allowed_media))
 
 

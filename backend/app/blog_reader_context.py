@@ -87,7 +87,7 @@ def reader_context(db: Session, request: Request, secret: str) -> dict:
     )) if user else None
     entered = bool(account and account.main_scenario_seen_at)
     subscribed = _subscription(account)
-    channel = {"tg": "telegram", "max": "max"}.get(request.query_params.get("from_channel"))
+    channel = {"tg": "telegram", "max": "max"}.get(request.query_params.get("from"))
     show_subscription = subscribed is not True
     if channel:
         source_account = account if channel == "telegram" else (

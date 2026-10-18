@@ -71,7 +71,7 @@ def test_unknown_and_forged_cookie_never_prove_identity(reader_client):
 @pytest.mark.parametrize('source', ['tg', 'max'])
 def test_channel_entry_hides_for_guest_without_persisting_or_recognizing(reader_client, source):
     client, _, _, _ = reader_client
-    response = client.get('/blog/reader/context', params={'from_channel': source})
+    response = client.get('/blog/reader/context', params={'from': source})
     assert response.json()['show_subscription'] is False
     assert response.json()['recognized'] is False
     assert response.json()['telegram']['subscribed'] is None
@@ -100,14 +100,14 @@ def test_channel_entry_uses_fresh_membership_of_source_channel(reader_client, so
         account.subscription_checked_at = datetime.now(timezone.utc) - timedelta(hours=age) if age is not None else None
         db.commit()
     assert client.post('/blog/reader/recognize', json={'token': token}).status_code == 204
-    response = client.get('/blog/reader/context', params={'from_channel': source})
+    response = client.get('/blog/reader/context', params={'from': source})
     assert response.json()['recognized'] is True
     assert response.json()['show_subscription'] is show
 
 
 def test_invalid_channel_marker_preserves_normal_rules(reader_client):
     client, _, _, _ = reader_client
-    assert client.get('/blog/reader/context?from_channel=other').json()['show_subscription'] is True
+    assert client.get('/blog/reader/context?from=other').json()['show_subscription'] is True
 
 
 def test_personal_link_sets_shared_recognition_cookie_without_login_or_personal_data(reader_client):

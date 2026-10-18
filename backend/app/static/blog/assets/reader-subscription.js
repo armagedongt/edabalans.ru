@@ -66,9 +66,9 @@
   popup.addEventListener('click',stopAfterClick);
   document.addEventListener('click',event => { if (event.target.closest('#reader-menu, .toc-mobile, .toc-dock')) popup.close(); });
   // Real context only. No demo selector, account login or guessed identity.
-  const source = new URLSearchParams(location.search).get('from_channel');
+  const source = new URLSearchParams(location.search).get('from');
   const channelEntry = source === 'tg' || source === 'max';
-  fetch('/blog/reader/context'+(channelEntry ? '?from_channel='+source : ''),{credentials:'same-origin',cache:'no-store'})
+  fetch('/blog/reader/context'+(channelEntry ? '?from='+source : ''),{credentials:'same-origin',cache:'no-store'})
     .then(response => { if (!response.ok) throw new Error('reader context unavailable'); return response.json(); })
     .catch(() => ({show_subscription:!channelEntry}))
     .then(context => {

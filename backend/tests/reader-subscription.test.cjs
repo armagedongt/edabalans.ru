@@ -66,26 +66,26 @@ async function entry(search, context, fail = false) {
 
 for (const channel of ['tg', 'max']) {
   test(`channel ${channel} reaches context and hides both invitations for unknown visitor`, async () => {
-    const state = await entry('?utm_source=post&from_channel='+channel, {show_subscription:false});
-    assert.equal(state.request, '/blog/reader/context?from_channel='+channel);
+    const state = await entry('?utm_source=post&from='+channel, {show_subscription:false});
+    assert.equal(state.request, '/blog/reader/context?from='+channel);
     assert.equal(state.inline, null);
     assert.equal(state.opened, false);
     assert.equal(state.cookie, '');
   });
   test(`confirmed non-member can see both invitations even from ${channel}`, async () => {
-    const state = await entry('?from_channel='+channel, {show_subscription:true});
+    const state = await entry('?from='+channel, {show_subscription:true});
     assert.equal(state.inline.id, 'reader-channel-inline');
     assert.equal(state.opened, true);
   });
 }
 test('context failure hides only marked entry, and does not persist suppression', async () => {
-  for (const search of ['?from_channel=tg','?from_channel=max']) {
+  for (const search of ['?from=tg','?from=max']) {
     const state = await entry(search, null, true);
     assert.equal(state.inline, null);
     assert.equal(state.opened, false);
     assert.equal(state.cookie, '');
   }
-  for (const search of ['', '?from_channel=other']) {
+  for (const search of ['', '?from=other']) {
     const state = await entry(search, null, true);
     assert.equal(state.request, '/blog/reader/context');
     assert.equal(state.inline.id, 'reader-channel-inline');
