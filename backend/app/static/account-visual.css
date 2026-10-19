@@ -213,3 +213,5 @@ html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app
 }
 
 .account-public-links{margin-top:12px;font-size:14px;line-height:1.6}.account-public-links a{color:var(--ed-color-action-hover,#118ed8);text-decoration:none;white-space:nowrap}.account-public-links a:hover{text-decoration:underline}
+
+@media(max-width:760px){#account-app .account-public-links{margin-top:0;line-height:1.4}#account-app .account-head{padding-bottom:8px}}
