@@ -17,7 +17,7 @@
   var DEFAULT_NAV = [
     [publicRoot + '/', 'Главная'],
     [publicRoot + '/blog', 'Блог'],
-    [publicRoot + '/#intensive', 'Бесплатный интенсив'],
+    [publicRoot + '/intensive', 'Бесплатный интенсив'],
     [publicRoot + '/', 'Мастер-класс']
   ];
 

@@ -65,7 +65,7 @@
     return lastShown() === now;
   }
   function contentsOpen() {
-    return document.querySelector('#reader-sheet[open], .toc-mobile[open], .toc-popover:not([hidden])');
+    return document.querySelector('[data-site-menu].is-open');
   }
   function readingProgress() {
     const rect = article.getBoundingClientRect();
@@ -91,7 +91,7 @@
   popup.addEventListener('close', () => { if (returnFocus && returnFocus.isConnected) returnFocus.focus({preventScroll:true}); });
   function stopAfterClick(event) { if (event.target.closest('a')) { clicked = true; popup.close(); } }
   popup.addEventListener('click',stopAfterClick);
-  document.addEventListener('click',event => { if (event.target.closest('#reader-menu, .toc-mobile, .toc-dock')) popup.close(); });
+  document.addEventListener('click',event => { if (event.target.closest('[data-site-menu-toggle]')) popup.close(); });
   // Real context only. No demo selector, account login or guessed identity.
   const source = new URLSearchParams(location.search).get('from');
   const channelEntry = source === 'tg' || source === 'max';

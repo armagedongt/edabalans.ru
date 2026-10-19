@@ -31,6 +31,9 @@ def test_public_article_archive_and_assets():
     try:
         page = client.get('/intensive')
         assert page.status_code == 200
+        menu = page.text.split('class="site-menu-quick-links"', 1)[1].split('data-site-menu-contents', 1)[0]
+        assert 'href="/blog">Блог</a>' in menu
+        assert 'href="/">Мастер-класс</a>' in menu
         assert 'data-intensive-identified="false"' in page.text
         assert '<!--' not in page.text
         assert 'ПЕРЕД ПУБЛИКАЦИЕЙ' not in page.text

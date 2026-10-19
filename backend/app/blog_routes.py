@@ -25,7 +25,6 @@ from app.blog_content import (
     insert_inline_related,
     related_cards_html,
     render_article_body,
-    toc_html,
     split_blog_metadata,
 )
 from app.blog_draft_routes import optional_blog_admin, owner_cards_html, PRIVATE_HEADERS
@@ -104,17 +103,32 @@ FAVICON_TEST_PAGES = {
     "face": ("Главная — фотография", "favicon-test-face.png"),
 }
 FAVICON_TEST_VERSION = "20260831a"
-def _template(name: str, search_query: str = "") -> str:
+def _recommended_outline(catalog) -> str:
+    settings = json.loads((catalog.content_dir / "homepage.json").read_text(encoding="utf-8"))
+    articles = (catalog.by_slug(slug) for slug in settings["starter_slugs"])
+    return ''.join(
+        f'<a href="{BLOG_PUBLIC_PATH}/{escape(article.slug, quote=True)}">{escape(article.title)}</a>'
+        for article in articles if article is not None
+    )
+
+
+def _template(name: str, search_query: str = "", *, menu_outline: str | None = None, article_menu: bool = False) -> str:
     template = (BLOG_DIR / name).read_text(encoding="utf-8")
     if "<!-- BLOG_HEADER -->" in template:
         header = (BLOG_DIR / "header.html").read_text(encoding="utf-8")
+        if menu_outline is None:
+            menu_outline = _recommended_outline(load_blog_catalog())
         menu = render_site_menu(
             '<a href="/blog">Блог</a><a href="/">Мастер-класс</a>'
-            '<a href="/intensive">Бесплатный интенсив</a>', "",
+            '<a href="/intensive">Бесплатный интенсив</a>', menu_outline,
+            article=article_menu,
+            outline_label=None if article_menu else "Рекомендую начать с этих статей",
         )
         toggle, panel = menu.split('  <aside', 1)
-        header = header.replace("<!-- BLOG_SITE_MENU_TOGGLE -->", toggle)
-        header = header.replace("<!-- BLOG_SITE_MENU_PANEL -->", '  <aside' + panel)
+        header = header.replace("<!-- BLOG_SITE_MENU_TOGGLE -->", "" if article_menu else toggle)
+        header = header.replace("<!-- BLOG_SITE_MENU_PANEL -->", "" if article_menu else '  <aside' + panel)
+        if article_menu:
+            header += menu
         template = template.replace("<!-- BLOG_HEADER -->", header)
     if "<!-- BLOG_HEADER_SEARCH -->" in template:
         search = (BLOG_DIR / "header-search.html").read_text(encoding="utf-8")
@@ -183,7 +197,7 @@ def blog_author() -> HTMLResponse:
     replacements = {"{{TITLE}}": escape(author["name"]), "{{SEO_TITLE}}": escape(author["name"] + " — " + author["role"]),
                     "{{DESCRIPTION}}": escape(author["description"], quote=True), "{{CANONICAL}}": escape(person["url"], quote=True),
                     "{{HERO_ABSOLUTE}}": escape(person["image"], quote=True), "{{CATEGORY}}": "", "{{HERO}}": "",
-                    "{{TOC_DESKTOP}}": "", "{{TOC_MOBILE}}": "", "{{ARTICLE_BODY}}": body,
+                    "{{ARTICLE_BODY}}": body,
                     "{{READER_NAVIGATION}}": "", "{{SUBSCRIPTION_SLOT}}": "",
                     "{{BREADCRUMBS}}": breadcrumbs, "{{AUTHOR_BYLINE}}": "", "{{ARTICLE_DATES}}": "",
                     "{{BREADCRUMB_DATA}}": json.dumps({"@context": "https://schema.org", **breadcrumb_data}, ensure_ascii=False).replace("</", r"<\/"),
@@ -277,7 +291,7 @@ def blog_home(
         '<div class="starter-grid">' + ''.join(starter_cards) + '</div></details></section>'
     ) if starter_cards else ""
     rendered = (
-        _template("index.html", q)
+        _template("index.html", q, menu_outline=_recommended_outline(catalog))
         .replace("<!-- BLOG_STARTER -->", starter)
         .replace("{{CATALOG_CANONICAL}}", escape(canonical, quote=True))
         .replace("{{CATALOG_TITLE}}", escape(title))
@@ -399,14 +413,8 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
             f' data-subscription-before-heading="{escape(article.subscription_before_heading, quote=True)}"'
             if article.subscription_before_heading else ""
         ),
-        "{{TOC_DESKTOP}}": toc_html(toc, mobile=False),
-        "{{TOC_MOBILE}}": toc_html(toc, mobile=True),
-        "{{READER_NAVIGATION}}": _template("reader-navigation.html").replace(
-            "{{READER_TOC}}",
-            ('<strong>В этом материале</strong><ol>' + ''.join(
-                f'<li><a href="#{escape(anchor, quote=True)}">{escape(title)}</a></li>'
-                for anchor, title in toc) + '</ol>') if len(toc) >= 3 else '',
-        ),
+
+        "{{READER_NAVIGATION}}": _template("reader-navigation.html"),
         "{{RELATED_CARDS}}": related_cards_html(
             catalog, article, card_overrides=card_overrides
         ),
@@ -416,11 +424,14 @@ def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
     rendered = re.sub(
         r"\{\{[A-Z_]+\}\}",
         lambda match: replacements.get(match.group(0), match.group(0)),
-        _template("article.html"),
+        _template("article.html", article_menu=True, menu_outline=''.join(
+            f'<a href="#{escape(anchor, quote=True)}">{escape(title)}</a>'
+            for anchor, title in toc
+        )),
     )
     if 'data-channel-origin="telegram"' not in body:
         rendered = rendered.replace('</head>', '<link rel="stylesheet" href="/blog/assets/reader-subscription.css?v=20261019rollout"></head>')
-        rendered = rendered.replace('</body>', render_reader_subscription(db, _template('reader-subscription.html')) + '<script src="/blog/assets/reader-subscription.js?v=20261019rollout" defer></script></body>')
+        rendered = rendered.replace('</body>', render_reader_subscription(db, _template('reader-subscription.html')) + '<script src="/blog/assets/reader-subscription.js?v=20261019-navigation" defer></script></body>')
     return _html_response(apply_responsive_images(rendered, catalog.content_dir, catalog.allowed_media))
 
 

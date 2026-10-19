@@ -140,10 +140,11 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
         'href="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blog/'
         'sroki-pohudeniya">'
     ) in response.text
-    assert 'class="toc-mobile"' in response.text
-    assert '<details class="toc-mobile"><summary>Содержание</summary>' in response.text
-    assert 'class="toc-dock"' in response.text
-    assert "В этом материале" in response.text
+    assert 'site-menu-toggle--article' in response.text
+    assert 'aria-label="Открыть содержание"' in response.text
+    assert 'Содержание статьи' in response.text
+    assert 'class="toc-mobile"' not in response.text
+    assert 'class="toc-dock"' not in response.text
     assert 'data-component="blog-cta"' in response.text
     assert 'data-tracking-key="blog_masterclass"' in response.text
     assert "Подробное описание программы и отзывы участников — на моём сайте." in response.text
