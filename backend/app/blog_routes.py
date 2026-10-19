@@ -125,6 +125,8 @@ def _template(name: str, search_query: str = "", *, menu_outline: str | None = N
             outline_label=None if article_menu else "Рекомендую начать с этих статей",
         )
         toggle, panel = menu.split('  <aside', 1)
+        contact_links = re.search(r'id="mobile-contact-panel" hidden>(.*?)</div>', menu, re.S).group(1)
+        header = header.replace("<!-- BLOG_HEADER_CONTACT_LINKS -->", contact_links)
         header = header.replace("<!-- BLOG_SITE_MENU_TOGGLE -->", "" if article_menu else toggle)
         header = header.replace("<!-- BLOG_SITE_MENU_PANEL -->", "" if article_menu else '  <aside' + panel)
         if article_menu:

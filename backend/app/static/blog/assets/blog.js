@@ -57,12 +57,6 @@
     contactTrigger.addEventListener('click', function () {
       setContactOpen(contactTrigger.getAttribute('aria-expanded') !== 'true');
     });
-    if (window.matchMedia && window.matchMedia('(hover: hover) and (min-width: 641px)').matches) {
-      contact.addEventListener('mouseenter', function () { setContactOpen(true); });
-      contact.addEventListener('mouseleave', function () {
-        if (!contact.contains(document.activeElement)) setContactOpen(false);
-      });
-    }
     document.addEventListener('click', function (event) {
       if (!contact.contains(event.target)) setContactOpen(false);
     });

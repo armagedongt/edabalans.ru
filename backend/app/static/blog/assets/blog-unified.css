@@ -8,6 +8,8 @@ html[data-theme=dark]{--page:#171a20;--surface:#222831;--surface-soft:#283846;--
 .blog-desktop-nav{display:flex;gap:28px;align-items:center;font-size:14px;font-weight:600}
 .blog-desktop-nav a{text-decoration:none;padding:12px 0;white-space:nowrap}
 .blog-desktop-nav a[aria-current]{color:var(--blue);box-shadow:0 2px var(--blue)}
+.blog-desktop-nav .nav-contact-trigger{font:inherit;color:inherit;padding:12px 0;min-height:0}
+.blog-desktop-nav .nav-contact-panel a{padding:9px 12px;white-space:normal}
 .blog-header-tools{position:relative;display:flex;gap:8px;align-items:center}
 .blog-header-tools .theme-toggle,.blog-header-tools .site-menu-toggle,.blog-search summary{width:42px;height:42px;min-height:42px;display:grid;place-content:center;padding:0;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);box-shadow:none;cursor:pointer}
 .blog-search summary svg{width:21px;height:21px}
@@ -16,7 +18,7 @@ html[data-theme=dark]{--page:#171a20;--surface:#222831;--surface-soft:#283846;--
  .blog-header-tools .site-menu-toggle:not(.site-menu-toggle--article){width:112px;height:44px;display:flex;gap:10px}
  .blog-header-tools .site-menu-toggle:not(.site-menu-toggle--article) .site-menu-toggle__label{display:block}
  .blog-header-tools .site-menu-toggle[aria-expanded=true]{width:44px}
- body:has(>.site-menu-toggle--article) .blog-header-inner{padding-right:156px}
+ body:has(>.site-menu-toggle--article) .blog-header-inner{padding-right:168px}
 }
 .blog-header-tools .site-menu-toggle[aria-expanded=true]{position:fixed;top:8px;right:24px;z-index:102}
 .blog-search form{top:calc(100% + 18px);right:0;width:min(520px,calc(100vw - 48px))}
@@ -64,6 +66,7 @@ html[data-theme=dark] .starter-fold{background:#213341;border-color:var(--border
  .starter-card:hover{transform:translateY(-2px);box-shadow:0 9px 22px -14px rgba(12,91,136,.32)}
 }
 @media(max-width:1120px){.blog-desktop-nav{gap:16px}}
+@media(min-width:1001px) and (max-width:1200px){.blog-header-inner{gap:12px}.blog-desktop-nav{gap:12px;font-size:12px}}
 @media(max-width:1000px){.blog-desktop-nav{display:none}.blog-header-inner{gap:12px}}
 @media(max-width:920px){.starter-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}}
 @media(max-width:640px){
