@@ -143,7 +143,7 @@ reads_from = ["platform.web_design", "platform.commerce", "platform.content"]
 
 [[modules]]
 id = "platform.content"
-reads_from = ["platform", "platform.web_design", "products.masterclass.course", "platform.commerce"]
+reads_from = ["platform", "platform.web_design", "products.masterclass.course", "platform.commerce", "platform.auth", "messaging.telegram.engine"]
 writes_to = ["platform.commerce", "platform.knowledge"]
 admin_catalog = [{ category = "marketing", order = 20, url = "/admin/content", label = "Каталог материалов", icon = "🗂️", description = "Материалы Telegram, Pikabu и рабочий каталог контента." }]
 parent = "platform"
@@ -151,6 +151,7 @@ card = "docs/knowledge-base/modules/catalog/platform.content.md"
 owns_files = [
   "backend/app/content_routes.py", "backend/app/content_service.py",
   "backend/app/content_authoring_service.py",
+  "docs/knowledge-base/USER_NOTIFICATIONS.md",
     "backend/app/article_markup.py",
     "backend/app/article_markdown_conversion.py", "backend/tests/test_article_markdown_conversion.py",
     "backend/app/course_markdown_routes.py", "backend/tests/test_course_markdown_adoption.py",
@@ -268,6 +269,7 @@ owns_tables = [
 owns_routes = ["*/admin/api/content*", "*/admin/api/editorial/service-emails*", "*/admin/api/editorial/media*", "*/editorial-media/*"]
 sources = [
   { path = "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md", role = "rule", shared = true, consumers = ["platform.knowledge", "operations.imports"] },
+  { path = "docs/knowledge-base/USER_NOTIFICATIONS.md", role = "rule", shared = true, consumers = ["platform.auth", "platform.commerce", "messaging.telegram.engine"] },
   { path = "docs/IMAGE_CATALOG.md", role = "rule", shared = true, consumers = ["platform.knowledge", "platform.blog", "platform.web_design", "platform", "products.public-site", "products.intensive", "products.masterclass.course", "products.calories", "products.recipes"] },
   { path = "content/author-voice/source-selection/ARTICLE_SOURCE_LINKING.md", role = "rule", shared = true, consumers = ["platform.blog", "platform.knowledge", "messaging.telegram", "messaging.max"] },
     { path = "docs/knowledge-base/EDITORIAL_VAULT.md", role = "rule", shared = true, consumers = ["products.catalog", "platform.commerce", "products.masterclass.course", "products.calories", "messaging.telegram.engine"] },
