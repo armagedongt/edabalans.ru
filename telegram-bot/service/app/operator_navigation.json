@@ -1,0 +1,158 @@
+{
+  "technical": {
+    "text": "Быстрый доступ Сергея\n\n💰 Финансы — @fitpostgpbot\n📈 Реклама — @TetrisgfgfgfBot\n🛠 Техническое — @Chat_GPT_4_SV_bot\n✉️ Тесты рассылок — @Fitness_Talks_bot\n\nКнопки ниже открывают сайт и разделы админки. Для закрытых разделов нужен обычный вход администратора.\n\nВ CRM оплаты открываются вкладкой «Оплаты». «Финансовая модель» — расчётная модель, а не журнал реальных оплат.\n\nЧтобы бот мог писать в каждый аккаунт, открой его из этого аккаунта и нажми «Запустить»; если он заблокирован — разблокируй.\n\nСейчас команды этому боту не передаются в Codex. Получение сообщений через Coze отключено. Управление через Codex пока не подключено.\n\nПовторить эту карточку: /links.",
+    "reply_markup": {
+      "inline_keyboard": [
+        [
+          {
+            "text": "🌐 Главная",
+            "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/"
+          },
+          {
+            "text": "⚡ Интенсив",
+            "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive"
+          }
+        ],
+        [
+          {
+            "text": "✍️ Блог",
+            "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blog"
+          },
+          {
+            "text": "👤 Личный кабинет",
+            "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk"
+          }
+        ],
+        [
+          {
+            "text": "💳 Форма оплаты",
+            "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/pay"
+          },
+          {
+            "text": "📣 Telegram-канал",
+            "url": "https://t.me/Fitness_Talks"
+          }
+        ],
+        [
+          {
+            "text": "⚙️ Админка",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin"
+          },
+          {
+            "text": "👥 CRM и оплаты",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/crm"
+          }
+        ],
+        [
+          {
+            "text": "📈 Источники и воронка",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/marketing"
+          },
+          {
+            "text": "📊 Финансовая модель",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/finance"
+          }
+        ],
+        [
+          {
+            "text": "🏷 Цены и тарифы",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/pricing"
+          },
+          {
+            "text": "📦 Продукты",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/products"
+          }
+        ],
+        [
+          {
+            "text": "🎓 Мастер-класс: редактор",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/courses/masterclass-21/structure"
+          },
+          {
+            "text": "🍎 Калорийный: редактор",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/courses/calories/structure"
+          }
+        ],
+        [
+          {
+            "text": "🗂 Каталог материалов",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/content"
+          },
+          {
+            "text": "🔎 Библиотекарь",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/library"
+          }
+        ],
+        [
+          {
+            "text": "🥑 DQS",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/dqs"
+          },
+          {
+            "text": "💪 Силовые",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/strength"
+          },
+          {
+            "text": "🔥 Метаболизм",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/metabolism"
+          }
+        ],
+        [
+          {
+            "text": "🗺 Карта системы",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/knowledge-base?view=map"
+          },
+          {
+            "text": "📄 Документы",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/knowledge-base?view=documents"
+          }
+        ]
+      ]
+    },
+    "disable_web_page_preview": true
+  },
+  "finance": {
+    "text": "Финансы — быстрый доступ\n\nОплаты: CRM → «Оплаты». Повторить эту карточку: /links.",
+    "reply_markup": {
+      "inline_keyboard": [
+        [
+          {
+            "text": "CRM и оплаты",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/crm"
+          }
+        ],
+        [
+          {
+            "text": "Цены",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/pricing"
+          },
+          {
+            "text": "Финансовая модель",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/finance"
+          }
+        ]
+      ]
+    },
+    "disable_web_page_preview": true
+  },
+  "marketing": {
+    "text": "Реклама — быстрый доступ\n\nПовторить эту карточку: /links.",
+    "reply_markup": {
+      "inline_keyboard": [
+        [
+          {
+            "text": "Источники и воронка",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/marketing"
+          }
+        ],
+        [
+          {
+            "text": "Каталог материалов",
+            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/content"
+          }
+        ]
+      ]
+    },
+    "disable_web_page_preview": true
+  }
+}

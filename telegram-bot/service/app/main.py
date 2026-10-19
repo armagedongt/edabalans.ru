@@ -54,6 +54,7 @@ from app.content_formatting import SUPPORTED_SOURCE_FORMATS, is_placeholder_text
 from app.seed import LEGACY_PREPURCHASE_CODE, PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE, seed_defaults
 from app.start_router import StartFacts, decision_from_facts, execute_start_decision, inspect_start
 from app.telegram import TelegramClient, TelegramError
+from app.operator_navigation import navigation_loop
 from app.tracking import active_link, assign_first_touch, create_tracking_session, ensure_crm_identity, exact_utm_matches, generate_alias_token, normalize_value, parse_utm_url, resolve_alias, resolve_pending_channel_touch, resolve_start_payload, tag_code, tracking_query_params, tracking_session_by_payload, tracking_session_context, unresolved_utm_groups
 
 
@@ -758,6 +759,9 @@ async def lifespan(_: FastAPI):
             enable_subscription_checks=bool(settings.telegram_channel_id),
         )
     tasks = []
+    for role in ("technical", "finance", "marketing"):
+        if settings.telegram_polling_enabled and getattr(settings, f"{role}_telegram_bot_token") and getattr(settings, f"{role}_telegram_recipient_ids"):
+            tasks.append(asyncio.create_task(navigation_loop(settings, role)))
     if settings.max_bot_token:
         tasks.append(asyncio.create_task(max_health_loop()))
     if settings.scheduler_enabled:
