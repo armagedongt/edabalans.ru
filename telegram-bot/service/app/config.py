@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     finance_telegram_recipient_ids: str = ""
     technical_telegram_bot_token: str = ""
     technical_telegram_recipient_ids: str = ""
+    marketing_telegram_bot_token: str = ""
+    marketing_telegram_recipient_ids: str = ""
     max_bot_username: str = ""
     max_bot_token: str = ""
     max_webhook_secret: str = ""

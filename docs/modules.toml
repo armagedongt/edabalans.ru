@@ -983,6 +983,7 @@ owns_files = [
   "docs/knowledge-base/modules/telegram/ONEPAGE_CAMPAIGN.md",
   "telegram-bot/service/tests/test_message_markdown.py", "telegram-bot/service/tests/test_markdown_publication.py",
   "telegram-bot/service/app/account_credentials.py",
+  "telegram-bot/service/app/operator_navigation.py", "telegram-bot/service/app/operator_navigation.json",
   "telegram-bot/service/app/customer_lifecycle.py", "telegram-bot/service/app/database.py",
   "telegram-bot/service/app/engine.py", "telegram-bot/service/app/formatting.py",
   "telegram-bot/service/app/delivery_registry.py", "telegram-bot/service/app/messenger_resolver.py",
