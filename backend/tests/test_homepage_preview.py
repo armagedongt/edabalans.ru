@@ -1904,3 +1904,13 @@ def test_main_site_serves_the_accepted_homepage_directly_with_public_pricing():
     assert 'data-pricing-endpoint="/api/pricing/site"' in response.text
     assert 'data-pricing-endpoint="/api/pricing/site/preview"' not in response.text
     assert 'https://app.edabalans.ru/' not in response.text
+
+
+def test_homepage_navigation_links_directly_to_blog_on_desktop_and_menu():
+    response = client.get('/')
+    assert response.status_code == 200
+    html = response.text
+    menu = html.split('class="site-menu-quick-links"', 1)[1].split('data-site-menu-contents', 1)[0]
+    assert 'href="/blog">Блог</a>' in menu
+    desktop = html.split('class="desktop-nav"', 1)[1].split('</nav>', 1)[0]
+    assert 'href="/blog">Блог</a>' in desktop

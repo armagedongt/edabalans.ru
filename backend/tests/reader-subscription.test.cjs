@@ -35,7 +35,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const source = fs.readFileSync(path.join(__dirname, '../app/static/blog/assets/reader-subscription.js'), 'utf8');
 
-async function entry(search, context, fail = false, home = false) {
+async function entry(search, context, fail = false, home = false, menuOpen = false) {
   const result = { inline: null, opened: false, request: null };
   const nodes = {
     '.reader-close': {addEventListener() {}},
@@ -66,7 +66,7 @@ async function entry(search, context, fail = false, home = false) {
     getBoundingClientRect: () => ({top: 0, bottom: 1000})
   };
   const document = {
-    cookie: '', visibilityState: 'visible', addEventListener() {}, querySelector: () => null,
+    cookie: '', visibilityState: 'visible', addEventListener() {}, querySelector: selector => menuOpen && selector === '[data-site-menu].is-open' ? {} : null,
     getElementById: id => id === 'reader-channel-homepage' ? (home ? homepage : null) : id === 'reader-popup' ? popup : id === 'article' ? article : null
   };
   vm.runInNewContext(source, {
@@ -133,4 +133,10 @@ test('homepage uses the same context without opening a popup or writing its inte
   const hidden = await entry('?from=tg', {show_subscription:false}, false, true);
   assert.equal(hidden.homepage.hidden, true);
   assert.equal(hidden.section.hidden, true);
+});
+
+test('shared contents panel prevents subscription popup from opening', async () => {
+  const state = await entry('', {show_subscription:true}, false, false, true);
+  assert.equal(state.opened, false);
+  assert.equal(state.cookie, '');
 });

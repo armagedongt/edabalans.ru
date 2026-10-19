@@ -424,6 +424,11 @@ owns_files = [
   "docs/knowledge-base/HOMEPAGE_DESIGN_PASSPORT.md",
   "work/public-homepage-redesign/**",
 ]
+sources = [
+  { path = "backend/app/site_menu.py", role = "runtime", shared = true, consumers = ["platform.blog", "products.intensive"] },
+  { path = "backend/app/static/public-site-assets/site-menu.css", role = "runtime", shared = true, consumers = ["platform.blog", "products.intensive"] },
+  { path = "backend/app/static/public-site-assets/site-menu.js", role = "runtime", shared = true, consumers = ["platform.blog", "products.intensive"] },
+]
 owns_routes = [
   "*/", "*/members", "*/members/*", "*/homepage.js", "*/preview/homepage-recognition*", "*/preview/homepage-mobile*",
   "*/public-site-errors/*",

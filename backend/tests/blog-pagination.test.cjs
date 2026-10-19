@@ -164,3 +164,34 @@ test('blocked or malformed browser storage does not break reading', () => {
   wrongShape.scroll(-250);
   assert.deepEqual(wrongShape.saved(), ['example']);
 });
+
+
+test('shared contents highlights Cyrillic anchors and follows scroll', () => {
+  const handlers = {};
+  let secondTop = 500;
+  const headings = [
+    {id: 'первый-раздел', getBoundingClientRect: () => ({top: -10})},
+    {id: 'второй-раздел', getBoundingClientRect: () => ({top: secondTop})},
+  ];
+  const links = headings.map(heading => ({
+    hash: new URL('https://example.test/#' + heading.id).hash,
+    attrs: {},
+    getAttribute: () => '#' + heading.id,
+    setAttribute(name, value) {this.attrs[name] = value;},
+    removeAttribute(name) {delete this.attrs[name];},
+  }));
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../app/static/blog/assets/reader-navigation.js'), 'utf8'), {
+    document: {
+      querySelector: () => ({classList: {toggle() {}}}),
+      querySelectorAll: () => links,
+      getElementById: id => id === 'reader-top' ? {addEventListener() {}} : headings.find(h => h.id === id),
+    },
+    window: {scrollY: 0, addEventListener(name, callback) {handlers[name] = callback;}},
+  });
+  assert.equal(links[0].attrs['aria-current'], 'location');
+  assert.equal(links[1].attrs['aria-current'], undefined);
+  secondTop = 100;
+  handlers.scroll();
+  assert.equal(links[0].attrs['aria-current'], undefined);
+  assert.equal(links[1].attrs['aria-current'], 'location');
+});
