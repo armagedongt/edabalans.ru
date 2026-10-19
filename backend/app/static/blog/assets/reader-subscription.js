@@ -36,6 +36,11 @@
       .then(context => {
         if (context.show_subscription === false) return;
         if (typeof context.copy_html === 'string') homepage.querySelector('.reader-channel-copy').innerHTML = context.copy_html;
+        const footer = homepage.querySelector('.reader-channel-footer');
+        if (typeof context.footer_html === 'string') {
+          footer.innerHTML = context.footer_html;
+          footer.hidden = !context.footer_html;
+        }
         const telegram = messengerDestination(context.telegram && context.telegram.url, 't.me');
         const max = messengerDestination(context.max && context.max.url, 'max.ru');
         if (telegram) homepage.querySelector('.reader-bot-telegram').href = telegram;
@@ -102,6 +107,11 @@
       allowed = context.show_subscription !== false;
       if (!allowed) return;
       if (typeof context.copy_html === 'string') popup.querySelector('.reader-channel-copy').innerHTML = context.copy_html;
+      const footer = popup.querySelector('.reader-channel-footer');
+      if (typeof context.footer_html === 'string') {
+        footer.innerHTML = context.footer_html;
+        footer.hidden = !context.footer_html;
+      }
       const telegram = messengerDestination(context.telegram && context.telegram.url, 't.me');
       const max = messengerDestination(context.max && context.max.url, 'max.ru');
       if (telegram) popup.querySelector('.reader-bot-telegram').href = telegram;

@@ -24,3 +24,6 @@ html:has(#reader-popup[open]) { overflow: hidden; }
 #reader-popup :focus-visible, #reader-channel-inline :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 @media (max-width:900px) { #reader-popup { right: 16px; bottom: 124px; max-height: calc(100dvh - 150px); overflow-y: auto; } }
 @media (prefers-reduced-motion:reduce) { .reader-channel-actions a { transition: none; } .reader-channel-actions a:hover { transform: none; } }
+
+#article .reader-channel-footer, #reader-popup .reader-channel-footer, #reader-channel-homepage .reader-channel-footer { margin: 16px 0 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+.reader-channel-footer[hidden] { display: none !important; }

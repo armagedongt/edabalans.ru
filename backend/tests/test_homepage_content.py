@@ -110,8 +110,8 @@ def test_previously_saved_image_override_renders_without_republication(client, m
 def test_initial_homepage_keeps_the_accepted_html_without_client_content_fetch(client):
     response = client.get("/preview/homepage-release-candidate")
     assert response.status_code == 200
-    # Accepted shell with the shared reader invitation and direct blog navigation.
-    assert hashlib.sha256(response.text.encode()).hexdigest() == "4597b0bc56a776eb0976770d574780a56a90d04b645bafd06b4f408e671ed50c"
+    # Accepted shell with direct blog navigation and the shared subscription footer.
+    assert hashlib.sha256(response.text.encode()).hexdigest() == "8af5d1588fda4e9bcfcf1bba9df5fbee75e0a74e03d33f036bf3520c3695828a"
     assert response.text.count('id="reader-channel-homepage"') == 1
     assert "<!-- homepage-slot:" not in response.text
     faq = response.text.split("<template data-local-faq-template>", 1)[1].split("</template>", 1)[0]

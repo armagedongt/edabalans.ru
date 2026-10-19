@@ -113,6 +113,7 @@ def reader_context(db: Session, request: Request, secret: str) -> dict:
         "show_subscription": variant != "hidden",
         "subscription_variant": variant,
         "copy_html": payload["variants"].get(variant, ""),
+        "footer_html": payload.get("footer_html", "") if variant == "full" else "",
         "telegram": {"url": destinations["telegram_url"], "subscribed": subscribed},
         "max": {"url": destinations["max_url"]},
     }

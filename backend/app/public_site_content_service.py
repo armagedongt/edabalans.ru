@@ -66,13 +66,16 @@ def render_reader_subscription_source(markdown: str) -> dict:
     if sections is None:
         raise HTTPException(422, "Сохраните разделы «Статья и подписка» и «Только подписка»")
     variants = {}
+    footer = ""
     for key, text in zip(("full", "subscribe"), sections.groups()):
         text = text.strip()
         if not text or len(text) > 5000:
             raise HTTPException(422, "Каждый текст блока должен содержать от 1 до 5000 символов")
+        if key == "full":
+            text, _, footer = text.partition("\n\n")
         variants[key] = inline_markdown(text)
     return {"html": '<p class="reader-channel-copy">' + variants["full"] + '</p>',
-            "variants": variants, "settings": settings}
+            "variants": variants, "footer_html": inline_markdown(footer.strip()), "settings": settings}
 
 
 def reader_subscription_document(db: Session) -> ManagedDocumentVersion:
@@ -84,10 +87,12 @@ def render_reader_subscription(db: Session, template: str, *, popup: bool = True
     settings = payload["settings"]
     values = {
         "READER_COPY": payload["html"],
+        "READER_FOOTER": payload.get("footer_html", ""),
+        "READER_FOOTER_HIDDEN": "" if payload.get("footer_html") else "hidden",
         "READER_TELEGRAM": escape(settings["telegram_url"], quote=True),
         "READER_MAX": escape(settings["max_url"], quote=True),
     }
-    card = re.sub(r"\{\{(READER_COPY|READER_TELEGRAM|READER_MAX)\}\}", lambda match: values[match[1]], template)
+    card = re.sub(r"\{\{(READER_COPY|READER_TELEGRAM|READER_MAX|READER_FOOTER|READER_FOOTER_HIDDEN)\}\}", lambda match: values[match[1]], template)
     if not popup:
         return card.replace('<section class="reader-channel blog-cta">',
                             '<section id="reader-channel-homepage" class="reader-channel blog-cta" hidden>')
@@ -128,6 +133,7 @@ def normalize_payload(slug: str, payload: dict) -> dict:
     if definition["kind"] == "reader-subscription":
         result["settings"] = rendered["settings"]
         result["variants"] = rendered["variants"]
+        result["footer_html"] = rendered["footer_html"]
     return result
 
 

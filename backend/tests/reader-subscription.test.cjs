@@ -40,6 +40,7 @@ async function entry(search, context, fail = false, home = false, menuOpen = fal
   const nodes = {
     '.reader-close': {addEventListener() {}},
     '.reader-channel-copy': {innerHTML:'seed'},
+    '.reader-channel-footer': {innerHTML:'seed footer', hidden:false},
     '.reader-bot-telegram': {href:'https://t.me/seed'},
     '.reader-bot-max': {href:'https://max.ru/seed'}
   };
@@ -52,7 +53,7 @@ async function entry(search, context, fail = false, home = false, menuOpen = fal
     showModal() { result.opened = true; }, close() {}, addEventListener() {},
     querySelector(selector) {
       if (selector === '.reader-channel') return {cloneNode: () => ({
-        addEventListener() {}, copy:nodes['.reader-channel-copy'].innerHTML,
+        addEventListener() {}, copy:nodes['.reader-channel-copy'].innerHTML, footer:nodes['.reader-channel-footer'].innerHTML, footerHidden:nodes['.reader-channel-footer'].hidden,
         telegram:nodes['.reader-bot-telegram'].href, max:nodes['.reader-bot-max'].href
       })};
       return nodes[selector];
@@ -113,21 +114,24 @@ test('context failure hides only marked entry, and does not persist suppression'
 });
 
 test('server-selected copy and edited destinations reach popup and its inline clone', async () => {
-  const state = await entry('', {show_subscription:true, copy_html:'Subscribe only',
+  const state = await entry('', {show_subscription:true, copy_html:'Subscribe only', footer_html:'',
     telegram:{url:'https://t.me/Fitness_Talks_bot/channel?startapp=pk'},
     max:{url:'https://max.ru/channel_post'}});
   assert.equal(state.nodes['.reader-channel-copy'].innerHTML, 'Subscribe only');
   assert.equal(state.inline.copy, 'Subscribe only');
+  assert.equal(state.inline.footerHidden, true);
   assert.equal(state.inline.telegram, 'https://t.me/Fitness_Talks_bot/channel?startapp=pk');
   assert.equal(state.inline.max, 'https://max.ru/channel_post');
 });
 
 test('homepage uses the same context without opening a popup or writing its interval cookie', async () => {
-  const state = await entry('', {show_subscription:true, copy_html:'Homepage copy',
+  const state = await entry('', {show_subscription:true, copy_html:'Homepage copy', footer_html:'Below buttons',
     telegram:{url:'https://t.me/Fitness_Talks_bot/channel?startapp=yt'}}, false, true);
   assert.equal(state.homepage.hidden, false);
   assert.equal(state.section.hidden, false);
   assert.equal(state.nodes['.reader-channel-copy'].innerHTML, 'Homepage copy');
+  assert.equal(state.nodes['.reader-channel-footer'].innerHTML, 'Below buttons');
+  assert.equal(state.nodes['.reader-channel-footer'].hidden, false);
   assert.equal(state.opened, false);
   assert.equal(state.cookie, '');
   const hidden = await entry('?from=tg', {show_subscription:false}, false, true);
@@ -139,4 +143,13 @@ test('shared contents panel prevents subscription popup from opening', async () 
   const state = await entry('', {show_subscription:true}, false, false, true);
   assert.equal(state.opened, false);
   assert.equal(state.cookie, '');
+});
+
+test('full footer reaches popup clone, and a failed homepage context preserves server footer', async () => {
+  const state = await entry('', {show_subscription:true, copy_html:'Article', footer_html:'Subscribe below'});
+  assert.equal(state.inline.footer, 'Subscribe below');
+  assert.equal(state.inline.footerHidden, false);
+  const failed = await entry('', null, true, true);
+  assert.equal(failed.nodes['.reader-channel-footer'].innerHTML, 'seed footer');
+  assert.equal(failed.nodes['.reader-channel-footer'].hidden, false);
 });

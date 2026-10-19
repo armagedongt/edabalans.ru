@@ -37,8 +37,9 @@ def test_approved_seed_copy_preserves_author_buttons_without_counter(editor):
     client, _, _, _ = editor
     html = client.get(ARTICLE).text.split('<dialog id="reader-popup"', 1)[1]
     assert ('Познакомьтесь с моим подходом поближе — читайте статью-инструкцию в моем канале '
-            '<strong>«Как сделать похудение проще»</strong> и не забудьте подписаться, '
-            'чтобы не пропускать новые посты.') in html
+            '<strong>«Как сделать похудение проще»</strong>.') in html
+    assert html.index('reader-channel-actions') < html.index('reader-channel-footer')
+    assert 'И не забудьте подписаться, чтобы не пропускать новые посты.' in html
     assert 'Сергей Воронцов 🍌' in html and 'Тренер по питанию' in html
     assert '/blog/assets/sergey-author-channel.webp' in html
     assert 'href="https://t.me/Fitness_Talks_bot/channel?startapp=site"' in html
@@ -117,3 +118,23 @@ def test_invalid_source_json_is_reported_as_editor_error():
     with pytest.raises(HTTPException) as exc:
         render_reader_subscription_source('```json\n{invalid}\n```\nТекст')
     assert exc.value.status_code == 422
+
+
+def test_editor_footer_is_separate_escaped_and_removed_for_subscribe_variant(editor):
+    client, engine, token, ids = editor
+    initial = client.get(EDITOR).json()["active"]
+    changed = source(initial["settings"], "Article invitation\n\nFooter <script>alert(1)</script>")
+    saved = client.put(EDITOR, json={"expected_version": initial["version"], "markdown": changed})
+    assert saved.status_code == 200
+    context = client.get('/blog/reader/context').json()
+    assert context['copy_html'] == 'Article invitation'
+    assert context['footer_html'] == 'Footer &lt;script&gt;alert(1)&lt;/script&gt;'
+    from app.models import CourseEvent
+    client.post('/blog/reader/recognize', json={'token': token})
+    with Session(engine) as db:
+        db.add(CourseEvent(user_id=ids[0], course_code='intensive',
+                           event_key='footer-test-read', event_type='intensive_onepage_progress', details={'viewed_percent': 80}))
+        db.commit()
+    context = client.get('/blog/reader/context').json()
+    assert context['subscription_variant'] == 'subscribe'
+    assert context['footer_html'] == ''
