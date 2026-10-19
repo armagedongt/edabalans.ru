@@ -27,10 +27,10 @@ def store():
     factory = sessionmaker(engine, expire_on_commit=False)
     with factory() as db:
         active_product_catalog(db)
-        for code in ("ACCESS_MASTERCLASS", "ACCESS_MASTERCLASS_LEGACY", "ACCESS_CALORIES", "ACCESS_CALORIES_LEGACY", "ACCESS_RECIPES", "dqs", "recipes", "metabolism"):
+        for code in ("ACCESS_MASTERCLASS", "ACCESS_MASTERCLASS_LEGACY", "ACCESS_CALORIES", "ACCESS_CALORIES_LEGACY", "ACCESS_RECIPES", "ACCESS_CONSULTATION", "dqs", "recipes", "metabolism"):
             db.add(Resource(code=code, name=code, status="active"))
         db.commit()
-        members = [{"email":"new@example.test", "name":"New", "groups":[], "codes":["ACCESS_MASTERCLASS"]},
+        members = [{"email":"new@example.test", "name":"New", "groups":[], "codes":["ACCESS_MASTERCLASS", "ACCESS_CONSULTATION"]},
                    {"email":"unknown@example.test", "name":"Unknown", "groups":[], "codes":[]},
                    {"email":"old@example.test", "name":"Old", "groups":[], "codes":["ACCESS_MASTERCLASS_LEGACY", "ACCESS_CALORIES_LEGACY"]},
                    {"email":"existing@example.test", "name":"Existing", "groups":[], "codes":["ACCESS_MASTERCLASS"]}]
@@ -64,6 +64,9 @@ def test_paused_drafts_have_current_password_correct_editions_and_exclude_existi
             credential = db.get(AccountCredential, row.user_id)
             assert decrypt_password(credential.password_ciphertext, settings().app_auth_secret) in bundle["message_text"]
             assert row.email_status == "draft"
+            if bundle["email"] == "new@example.test":
+                assert "консультац" not in bundle["message_text"].lower()
+                assert "ACCESS_CONSULTATION" in mailing.active_resource_codes(db, row.user_id)
             assert 'edabalans.ru' not in bundle["message_text"]
             if bundle["email"].startswith('old'):
                 assert 'необновляемый доступ' in bundle['message_text']

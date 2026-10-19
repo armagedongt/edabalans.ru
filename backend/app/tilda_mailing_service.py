@@ -41,7 +41,7 @@ def access_text(db, user):
             opening = "можно начать сразу; материалы открываются последовательно"
         edition = "необновляемый доступ" if resource.endswith("_LEGACY") else "обновляемый доступ"
         lines.append(f"— {product_public(db, product)['name']} — {edition}; {opening}.")
-    for product, code in (("consultation", "ACCESS_CONSULTATION"), ("coaching", "ACCESS_COACHING")):
+    for product, code in (("coaching", "ACCESS_COACHING"),):
         if code in owned:
             lines.append(f"— {product_public(db, product)['name']}. По условиям и началу работы напишите мне.")
     apps = [("dqs", "DQS — оценка качества питания"), ("metabolism", "Калькулятор метаболизма"),

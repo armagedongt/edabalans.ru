@@ -112,6 +112,10 @@ implementation_status: implemented
 Изменение платёжной настройки или механики подтверждения проходит свой безопасный
 маршрут; уточнение документации не включает автоматическое переключение платежей.
 
+В письмах переноса кабинетов не обещают повторную индивидуальную консультацию:
+консультации этой исторической группы уже проведены. Подробности —
+`docs/knowledge-base/ACCESS_MANAGEMENT_GUIDE.md`.
+
 ## Источники истины
 
 PostgreSQL pricing/payments/access/subscription tables и `payment_browser_grants`, `docs/TILDA_PAYMENTS.md`,
