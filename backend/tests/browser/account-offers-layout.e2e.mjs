@@ -78,7 +78,7 @@ async function captureAccount() {
   await page.locator('.account-messengers-summary').waitFor();
   await page.evaluate(() => document.fonts.ready);
   assert(await page.evaluate(() => document.fonts.check('16px Manrope')), 'Manrope fixture font is unavailable');
-  for (const width of [360, 430, 768, 1440]) {
+  for (const width of [360, 430, 431, 720, 760, 761, 768, 900, 901, 1440]) {
     await page.setViewportSize({width, height: 1000});
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `account overflow at ${width}`);
     const lineDisplay = await page.locator('.account-messengers-line').evaluate(el => getComputedStyle(el).display);
@@ -88,13 +88,13 @@ async function captureAccount() {
       const headBox = await page.locator('.account-head').boundingBox();
       assert(summaryBox && summaryBox.height <= 44, `mobile messenger row is too tall at ${width}`);
       assert(headBox && headBox.height <= 175, `mobile account header is too tall at ${width}`);
-    } else {
-      const [titleBox, sessionBox] = await Promise.all([
-        page.locator('.account-title-row h1').boundingBox(),
-        page.locator('.account-session').boundingBox(),
-      ]);
-      assert(titleBox && sessionBox && sessionBox.y < titleBox.y + titleBox.height && sessionBox.y + sessionBox.height > titleBox.y, `desktop title and session are not on one row at ${width}`);
     }
+    const [titleBox, sessionBox] = await Promise.all([
+      page.locator('.account-title-row h1').boundingBox(),
+      page.locator('.account-session').boundingBox(),
+    ]);
+    assert(titleBox && sessionBox && sessionBox.y >= titleBox.y + titleBox.height, `account session must stay below title at ${width}`);
+    assert(Math.abs(sessionBox.x - titleBox.x) < 1, `account session must align left with title at ${width}`);
     if (width === 768) {
       const columns = await page.locator('.application-grid').evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
       assert.equal(columns, 1, 'application cards must use one readable column at 768px');
