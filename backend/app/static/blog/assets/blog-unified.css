@@ -5,6 +5,14 @@ html[data-theme=dark]{--page:#171a20;--surface:#222831;--surface-soft:#283846;--
 .blog-header-inner{min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:8px 0;position:relative}
 .blog-brand{display:flex;align-items:center;gap:7px;flex-shrink:0;color:#27aff5;text-decoration:none;font:800 12px/1.12 var(--ed-font-brand,Unbounded,sans-serif);letter-spacing:-.055em}
 .blog-brand img{width:30px;height:30px;flex:0 0 30px}
+.pagination .page-link{color:#066b9e;border-color:#9bdcff;background:#f2fbff}
+.pagination .page-link:hover{background:#def4ff;border-color:#27aff5}
+.pagination .page-link[aria-current="page"]{background:#27aff5;border-color:#27aff5;color:#12384d}
+.pagination .page-link:focus-visible{outline:2px solid #066b9e;outline-offset:3px}
+html[data-theme=dark] .pagination .page-link{color:#91d9ff;border-color:#39799c;background:#20394a}
+html[data-theme=dark] .pagination .page-link:hover{background:#284b61;border-color:#69c9ff}
+html[data-theme=dark] .pagination .page-link[aria-current="page"]{background:#27aff5;border-color:#27aff5;color:#12384d}
+html[data-theme=dark] .pagination .page-link:focus-visible{outline-color:#91d9ff}
 .blog-desktop-nav{display:flex;gap:28px;align-items:center;font-size:14px;font-weight:600}
 .blog-desktop-nav a{text-decoration:none;padding:12px 0;white-space:nowrap}
 .blog-desktop-nav a[aria-current]{color:var(--blue);box-shadow:0 2px var(--blue)}
