@@ -252,7 +252,7 @@ html[data-theme="dark"] #article {
 .reader-related-arrow { display: inline-block; transition: transform .15s cubic-bezier(.4,0,.2,1); }
 .reader-related:hover .reader-related-arrow { transform: translate(2px,-2px); }
 .related-section > h2 { margin: 0 0 26px; font-size: clamp(28px, 3vw, 38px); letter-spacing: -.035em; }
-#contacts { border-top: 1px solid var(--border); background: var(--surface-soft); }
+#contacts { background: var(--surface-soft); }
 
 @media (max-width: 1120px) {
   .header-inner { gap: 12px; }

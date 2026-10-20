@@ -18,24 +18,22 @@
   };
 
   var CSS = [
-    '.eb-footer{box-sizing:border-box;width:100%;background:transparent;color:inherit;font-family:inherit;font-size:14px;line-height:1.55}',
+    '.eb-footer{box-sizing:border-box;width:100%;background:var(--surface-soft,#f3f9fc);box-shadow:0 -7px 22px rgba(35,77,106,.07);color:inherit;font-family:inherit;font-size:14px;line-height:1.55}',
     '.eb-footer *{box-sizing:border-box}',
     '.eb-footer__inner{position:relative;width:min(1200px,100%);margin:0 auto;padding:26px 24px 32px}',
-    '.eb-footer__inner:before{content:"";position:absolute;inset:0 24px auto;height:1px;background:currentColor;opacity:.18}',
     '.eb-footer__row{display:grid;grid-template-columns:minmax(260px,1fr) auto;gap:16px 32px;align-items:start}',
     '.eb-footer__owner,.eb-footer__contacts{margin:0;color:inherit}',
-    '.eb-footer__rights{display:block;margin-top:3px;opacity:.66}',
+    '.eb-footer__rights{display:block;margin:20px 0 0;font-size:11px;opacity:.66}.eb-footer__inn{display:inline-block;white-space:nowrap}',
     '.eb-footer__contacts{text-align:right}',
     '.eb-footer__links{display:flex;justify-content:flex-end;gap:7px 16px;flex-wrap:wrap}',
     '.eb-footer__links a{font-weight:600}',
-    '.eb-footer a{color:inherit;text-decoration:none;border-bottom:1px solid currentColor}',
+    '.eb-footer a{color:inherit;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;border:0}',
     '.eb-footer a:hover{opacity:.72}',
     '.eb-footer a:focus-visible{outline:2px solid currentColor;outline-offset:3px}',
     '.eb-footer__documents{display:flex;gap:8px 18px;flex-wrap:wrap;margin-top:15px;opacity:.72}',
-    '.eb-footer--private{color:var(--ed-app-muted,#7b8094);font:13px/1.55 var(--ed-font-body, Manrope, Arial, sans-serif)}',
+    '.eb-footer--private{background:var(--ed-app-card,#f3f9fc);color:var(--ed-app-muted,#7b8094);font:13px/1.55 var(--ed-font-body, Manrope, Arial, sans-serif)}',
     '.eb-footer--private .eb-footer__inner{width:min(1080px,100%);padding:22px 20px 30px}',
-    '.eb-footer--private .eb-footer__inner:before{inset-inline:20px}',
-    '@media(max-width:640px){.eb-footer__inner{padding:23px 20px 28px}.eb-footer__inner:before{inset-inline:20px}.eb-footer__row{grid-template-columns:1fr;gap:12px}.eb-footer__owner,.eb-footer__contacts{text-align:center}.eb-footer__links,.eb-footer__documents{justify-content:center}}'
+    '@media(max-width:640px){.eb-footer__inner{padding:23px 20px 28px}.eb-footer__row{grid-template-columns:1fr;gap:12px}.eb-footer__owner,.eb-footer__contacts{text-align:center}.eb-footer__links,.eb-footer__documents{justify-content:center}}'
   ].join('');
 
   function link(url, text) {
@@ -46,8 +44,7 @@
     return '<footer class="eb-footer eb-footer--public" aria-label="Подвал сайта">' +
       '<div class="eb-footer__inner">' +
         '<div class="eb-footer__row">' +
-          '<p class="eb-footer__owner">© ' + new Date().getFullYear() + ' ИП Воронцов Сергей Сергеевич · ИНН 230409966750' +
-            '<span class="eb-footer__rights">Копирование материалов запрещено.</span>' +
+          '<p class="eb-footer__owner">© ' + new Date().getFullYear() + ' ИП Воронцов Сергей Сергеевич <span class="eb-footer__inn">ИНН 230409966750</span>' +
           '</p>' +
           '<div class="eb-footer__contacts"><div class="eb-footer__links" aria-label="Контакты">' +
             link(LINKS.telegram, 'Telegram') +
@@ -59,6 +56,7 @@
           link(LINKS.offer, 'Оферта') +
           link(LINKS.privacy, 'Политика обработки персональных данных') +
         '</nav>' +
+        '<p class="eb-footer__rights">Копирование материалов запрещено.</p>' +
       '</div>' +
     '</footer>';
   }
@@ -68,7 +66,6 @@
       '<div class="eb-footer__inner">' +
         '<div class="eb-footer__row">' +
           '<p class="eb-footer__owner">© ' + new Date().getFullYear() + ' Воронцов Сергей' +
-            '<span class="eb-footer__rights">Копирование материалов запрещено.</span>' +
           '</p>' +
           '<div class="eb-footer__contacts"><div class="eb-footer__links" aria-label="Контакты">' +
             link(LINKS.telegram, 'Telegram') +
@@ -79,6 +76,7 @@
           link(LINKS.disclaimer, 'Образовательный дисклеймер') +
           link(LINKS.privacy, 'Политика обработки персональных данных') +
         '</nav>' +
+        '<p class="eb-footer__rights">Копирование материалов запрещено.</p>' +
       '</div>' +
     '</footer>';
   }

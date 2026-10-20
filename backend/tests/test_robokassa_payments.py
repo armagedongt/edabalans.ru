@@ -2331,3 +2331,18 @@ def test_browser_contact_survives_callback_without_becoming_the_buyer():
         assert card["observed_contacts"][0]["user_id"]==str(observed_id)
         assert card["messengers"]==[]
     app.dependency_overrides.clear()
+
+@pytest.mark.parametrize('route', ['/pay', '/payment', '/payment_5900', '/payment_7900', '/payment_9800', '/payment_all', '/subscription', '/payments/robokassa/success', '/payments/robokassa/fail', '/preview/robokassa-success/manual-service'])
+def test_payment_pages_use_the_shared_public_footer(route: str) -> None:
+    client = TestClient(app, base_url='https://app.edabalans.ru')
+    response = client.get(route)
+    assert response.status_code == 200
+    assert response.text.count('data-edabalans-site-footer') >= 1
+    assert response.text.count('<script src="/site-footer.js" defer></script>') == 1
+    assert '<footer class="footer">' not in response.text
+
+
+def test_manual_payment_footer_follows_both_checkout_steps() -> None:
+    client = TestClient(app, base_url='https://app.edabalans.ru')
+    page = client.get('/pay').text
+    assert page.index('id="details-step"') < page.index('<div data-edabalans-site-footer>')
