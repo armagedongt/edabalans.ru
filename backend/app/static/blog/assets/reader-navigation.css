@@ -5,7 +5,7 @@
 .reader-bottom svg{display:block;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .reader-bottom :focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 html[data-theme=dark] .reader-bottom button{background:#fafafa;color:#171717}
-@media(max-width:899px){.reader-bottom{bottom:68px;right:24px}body:has([data-cookie-notice][data-cookie-ready=true]:not([hidden])) .reader-bottom{bottom:164px}}
+@media(max-width:899px){.reader-bottom{bottom:calc(24px + env(safe-area-inset-bottom));right:24px}body:has([data-cookie-notice][data-cookie-ready=true]:not([hidden])) .reader-bottom{bottom:calc(120px + env(safe-area-inset-bottom))}}
 @media(prefers-reduced-motion:reduce){.reader-bottom{transition:none}}
 
 .site-menu-contents a[aria-current=location]{background:var(--cloud);color:var(--blue);box-shadow:inset 2px 0 var(--blue)}
