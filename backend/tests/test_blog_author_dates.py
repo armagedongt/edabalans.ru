@@ -59,7 +59,7 @@ def test_profile_and_article_share_one_author_without_generated_copy(authoring):
     assert person['url'] in client.get('/blog/sitemap.xml').text
 
 
-def test_breadcrumbs_are_clickable_and_match_structured_data(authoring):
+def test_breadcrumbs_keep_parent_links_without_repeating_article_title(authoring):
     client, _ = authoring
     article = load_blog_catalog().by_slug('pochemu-yapontsy-hudye')
     page = client.get('/blog/' + article.slug)
@@ -69,7 +69,12 @@ def test_breadcrumbs_are_clickable_and_match_structured_data(authoring):
     assert breadcrumbs[1]['item'] == BLOG_PUBLIC_URL + '?' + urlencode({'category': article.category})
     assert breadcrumbs[2]['item'] == BLOG_PUBLIC_URL + '/' + article.slug
     assert f'href="/blog?{urlencode({"category": article.category})}"' in page.text
-    assert f'<span aria-current="page">{article.title}</span>' in page.text
+    visible = re.search(r'<nav class="breadcrumbs"[^>]*>.*?</nav>', page.text, re.S).group(0)
+    assert re.findall(r'href="([^"]+)"', visible) == [
+        "/blog", "/blog?" + urlencode({"category": article.category}),
+    ]
+    assert article.title not in re.sub(r"<[^>]+>", "", visible)
+    assert 'aria-current="page"' not in visible
 
 
 def test_confirmed_source_date_is_shown_and_missing_date_is_not_invented(authoring, monkeypatch):
