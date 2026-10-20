@@ -33,10 +33,19 @@ const page=await browser.newPage({viewport:{width,height:900},hasTouch:true});
         const body = options.body ? JSON.parse(options.body) : null;
         const action = body?.action || parsed.searchParams.get('action');
         const response = { ok: true, version: 2 };
+        if(parsed.pathname === '/admin/api/apps/strength/telegram'){
+          window.__telegramBody = structuredClone(body);
+          await new Promise(resolve=>{window.__telegramRelease=resolve;});
+          return new Response(JSON.stringify({ok:true,message_ids:[77]}),{headers:{'Content-Type':'application/json'}});
+        }
         if (action === 'openUser') response.user = { user_id: 'synthetic-profile', email: 'synthetic@example.test', display_name: 'Тестовый профиль' };
         if (action === 'getWorkout') response.workout = workouts[Number(parsed.searchParams.get('type') || 1)];
         if (body) window.__saveBodies.push(structuredClone(body));
         if (action === 'saveSession') response.session = body.session;
+        if(action === 'saveSession' && window.__holdSave){
+          await new Promise(resolve=>{window.__saveRelease=resolve;});
+          window.__holdSave=false;
+        }
         if(body?.session?.deleted && window.__holdDelete){
           await new Promise(resolve=>{window.__deleteRelease=resolve;});
           window.__holdDelete=false;
@@ -51,6 +60,16 @@ const page=await browser.newPage({viewport:{width,height:900},hasTouch:true});
     }, { workouts: { 1: fixture(1), 2: fixture(2), 3: fixture(3) } });
     await page.goto(pathToFileURL(path.resolve('app/static/apps/strength.html')).href);
     await page.getByText('Тренировка №5', { exact: true }).waitFor();
+    const telegramButton=page.getByRole('button',{name:'Отправить тренировку в Telegram',exact:true});
+    assert.ok(await telegramButton.isEnabled());
+    await telegramButton.click();
+    await page.waitForFunction(()=>!!window.__telegramRelease);
+    assert.ok(await page.getByRole('button',{name:'Отправляю…',exact:true}).isDisabled());
+    assert.deepEqual(await page.evaluate(()=>window.__telegramBody),{target_user_id:'synthetic-profile',session_id:'s5',version:1});
+    page.once('dialog',d=>d.accept());
+    await page.evaluate(()=>window.__telegramRelease());
+    await telegramButton.waitFor();
+    assert.ok(await telegramButton.isEnabled());
 
 if(width<=700){
   const cdp=await page.context().newCDPSession(page);
@@ -78,8 +97,21 @@ if(width<=700){
 }
 const date=page.locator('.st-session-date input');
 assert.ok(await date.isVisible());
+await page.evaluate(()=>{window.__holdSave=true;window.__telegramBody=null;});
 await date.fill('2026-10-17'); await date.dispatchEvent('change');
 await page.waitForFunction(()=>window.__saveBodies.some(b=>b.action==='saveSession' && b.session.date==='2026-10-17'));
+await page.waitForFunction(()=>!!window.__saveRelease);
+assert.ok(await telegramButton.isDisabled(),'Export waits for saving');
+await page.evaluate(()=>window.ST.sendTelegram());
+assert.equal(await page.evaluate(()=>window.__telegramBody),null,'Direct invocation also waits for saving');
+await page.evaluate(()=>window.__saveRelease());
+await page.waitForFunction(()=>!document.querySelector('.st-telegram-send').disabled);
+await telegramButton.click();
+await page.waitForFunction(()=>!!window.__telegramBody);
+assert.equal(await page.evaluate(()=>window.__telegramBody.version),2,'Export uses saved version');
+page.once('dialog',d=>d.accept());
+await page.evaluate(()=>window.__telegramRelease());
+await telegramButton.waitFor();
 await page.getByRole('button',{name:'Предыдущая тренировка',exact:true}).click();
 await page.getByText('Тренировка №3',{exact:true}).waitFor();
 if(width<=700){

@@ -490,6 +490,7 @@ card = "docs/knowledge-base/modules/catalog/products.strength.md"
 depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
   "backend/app/static/apps/strength.html", "legacy/google/strength/**",
+    "backend/app/strength_telegram.py", "backend/tests/test_strength_telegram.py",
   "backend/app/strength_exercise_guides.json", "backend/app/static/strength-exercises/**",
   "legacy/google/sheets/STRENGTH_SCHEMA.md",
   "backend/app/importers/strength_matrix.py", "backend/tests/test_strength_matrix_import.py",

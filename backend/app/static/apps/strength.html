@@ -1383,6 +1383,8 @@
 
 }
 .st-entry-control-bar{position:sticky;top:0;z-index:12;padding:6px 0 8px;background:linear-gradient(180deg,#f6f6f8 82%,rgba(246,246,248,0))}
+.st-telegram-send{width:100%;min-height:40px;margin-top:6px;font-size:13px}
+#strength-app:has(.st-telegram-send){--st-sheet-top:118px}
 .st-entry-modes{padding:6px;display:grid;grid-template-columns:1fr 1fr;gap:7px;border-radius:13px;background:rgba(237,237,242,.96);box-shadow:0 8px 20px rgba(31,30,52,.08);backdrop-filter:blur(12px)}
 .st-entry-modes button{min-height:44px;border:0;border-radius:9px;background:transparent;color:#777a87;font-size:13px;font-weight:800}
 .st-entry-modes button.active{background:#fff;color:var(--st-purple);box-shadow:0 2px 8px rgba(0,0,0,.06)}
@@ -1465,7 +1467,7 @@
 }
 @media(min-width:1000px){
   .st-admin-sheet-scroll{overflow:visible}
-  .st-admin-sheet-sticky{position:sticky;top:70px;z-index:11;background:#fff;padding:5px 0}
+  .st-admin-sheet-sticky{position:sticky;top:var(--st-sheet-top,70px);z-index:11;background:#fff;padding:5px 0}
   .st-admin-sheet-sticky .st-admin-window-nav{margin-top:0}
   .st-admin-sheet-sticky .st-days{margin-top:8px}
 }
@@ -1586,6 +1588,7 @@ var app = {
   saving:false,
   saveError:'',
   creatingSession:false,
+  telegramSending:false,
 
   motivation:''
 };
@@ -2875,13 +2878,13 @@ function flushSessionSave(timerKey){
 
       app.saveError = '';
 
+      if(!queue.pending.length){ delete app.sessionSaveQueues[timerKey]; }
       renderSavingOnly();
       renderManagerSavingOnly();
       if(createdSession){
         render();
       }
 
-      if(!queue.pending.length){ delete app.sessionSaveQueues[timerKey]; }
       flushManagerSave();
       Object.keys(app.sessionSaveQueues).forEach(function(key){ flushSessionSave(key); });
 
@@ -2940,6 +2943,8 @@ function saveErrorText(){
 }
 
 function renderSavingOnly(){
+
+  updateTelegramButton();
 
   var el =
     document.getElementById(
@@ -3518,6 +3523,20 @@ function renderSessionControls(session){
 }
 
 
+function telegramExportBlocked(){
+  var session = currentWorkout().sessions[app.selectedIndex];
+  return app.telegramSending || app.saving || !!app.saveError || app.creatingSession ||
+    app.saveRequests > 0 || app.managerSaveRunning || !!app.managerSavePending ||
+    Object.keys(app.sessionSaveQueues).length > 0 || !session || !session.session_id;
+}
+
+function updateTelegramButton(){
+  var button = root.querySelector('.st-telegram-send');
+  if(!button){ return; }
+  button.disabled = telegramExportBlocked();
+  button.textContent = app.telegramSending ? 'Отправляю…' : 'Отправить тренировку в Telegram';
+}
+
 function renderEntryControls(){
 
   var hasSession = templateSessionIndices().length > 0;
@@ -3534,6 +3553,7 @@ function renderEntryControls(){
           '<button '+(hasSession?'':'disabled')+' onclick="ST.setEntryMode(\'train\')">Начать тренировку</button>'
         )+
       '</div>'+
+      (MANAGED_TARGET ? '<button class="st-action st-telegram-send" onclick="ST.sendTelegram()">Отправить тренировку в Telegram</button>' : '')+
     '</div>'+
     renderActions()
   );
@@ -5561,6 +5581,27 @@ function queueManagerSave(){
 ========================================================= */
 
 window.ST = {
+
+  sendTelegram:async function(){
+    var session = currentWorkout().sessions[app.selectedIndex];
+    if(!MANAGED_TARGET || telegramExportBlocked() || !session){ return; }
+    app.telegramSending = true;
+    updateTelegramButton();
+    try{
+      var response = await fetch('/admin/api/apps/strength/telegram',{
+        method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({target_user_id:MANAGED_TARGET,session_id:session.session_id,version:app.version})
+      });
+      var result = await response.json();
+      if(!response.ok || !result.ok){ throw new Error(result.detail || 'Telegram не подтвердил доставку. Проверьте чат перед повторной отправкой.'); }
+      alert('Тренировка отправлена в ваш Telegram.');
+    }catch(error){
+      alert(error.message || 'Telegram не подтвердил доставку. Проверьте чат перед повторной отправкой.');
+    }finally{
+      app.telegramSending = false;
+      updateTelegramButton();
+    }
+  },
 
   backToUsers:function(){
 
