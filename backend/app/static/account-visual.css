@@ -107,7 +107,7 @@
 html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app):not(:has(#masterclass-course-app)) { background: rgb(255, 255, 255) !important; }
 #account-app { --ink: #17191e; --muted: #3f4b55; --paper: #fff; --card: #fff; --line: rgba(17,142,216,.16); --accent: #27aff5; --accent-soft: #eef9ff; --radius-large: 18px; --radius-small: 14px; --radius-control: 12px; min-height: 100vh; color: var(--ink); font: 500 16px / 1.55 var(--ed-font-body, Manrope, Arial, sans-serif); background: transparent !important; }
 #account-app .account-shell { width: min(1080px, 100%); padding: 34px 24px 80px; }
-#account-app .account-head { max-width: 760px; margin-bottom: 31px; padding-bottom: 25px; border-bottom: 1px solid rgba(17, 142, 216, 0.15); }
+#account-app .account-head { max-width: 760px; margin-bottom: 31px; padding-bottom: 0; border-bottom: 0; }
 .account-messengers { margin-top: 18px; padding: 14px 16px; border: 1px solid rgba(17,142,216,.22); border-radius: 16px; background: rgba(17,142,216,.055); display: flex; align-items: center; justify-content: space-between; gap: 14px; }
 .account-messengers[hidden] { display: none; }
 .account-messengers strong, .account-messengers span { display: block; }
@@ -158,7 +158,7 @@ html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app
 #account-app .account-logout:focus-visible, #account-app .account-open:focus-visible, #account-app .legacy-link:focus-visible, #account-app .account-contact a:focus-visible { outline-color: rgb(244, 106, 53); }
 @media (max-width: 760px) {
 #account-app .account-shell { padding: 27px 16px 66px; }
-#account-app .account-head { padding-bottom: 21px; }
+#account-app .account-head { padding-bottom: 0; }
 #account-app .account-kicker::before { width: 24px; height: 24px; flex-basis: 24px; }
 #account-app .account-kicker::after { font-size: 11px; }
 #account-app .account-card { padding: 19px; }
@@ -181,7 +181,7 @@ html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app
 }
 
 /* Компактная шапка ЛК и единая точка управления подключёнными мессенджерами. */
-#account-app .account-head { max-width: none; margin-bottom: 24px; padding-bottom: 20px; }
+#account-app .account-head { max-width: none; margin-bottom: 24px; padding-bottom: 0; }
 #account-app .account-title-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 18px; }
 #account-app .account-title-row h1 { flex: 0 1 auto; }
 #account-app .account-title-row .account-session { margin: 0; }
@@ -196,7 +196,7 @@ html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app
 
 @media (max-width: 760px) {
 #account-app .account-shell { padding-top: 20px; }
-#account-app .account-head { margin-bottom: 20px; padding-bottom: 16px; }
+#account-app .account-head { margin-bottom: 20px; padding-bottom: 0; }
 #account-app .account-kicker { margin-bottom: 8px; }
 #account-app .account-title-row { align-items: center; gap: 4px 10px; }
 #account-app .account-title-row h1 { font-size: clamp(30px,9vw,38px); letter-spacing: -0.055em; }
@@ -212,6 +212,11 @@ html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app
 #account-app .account-title-row .account-session { flex-basis: 100%; text-align: left; }
 }
 
-.account-public-links{margin-top:12px;font-size:14px;line-height:1.6}.account-public-links a{color:var(--ed-color-action-hover,#118ed8);text-decoration:none;white-space:nowrap}.account-public-links a:hover{text-decoration:underline}
-
-@media(max-width:760px){#account-app .account-public-links{margin-top:0;line-height:1.4}#account-app .account-head{padding-bottom:8px}}
+/* Keep the cabinet brand alongside the theme control, without a separate row. */
+@media (max-width: 900px) {
+#account-app .account-shell > .account-theme-toggle { position: absolute; top: 34px; right: 24px; margin: 0; }
+#account-app .account-kicker { min-height: 44px; padding-right: 56px; }
+}
+@media (max-width: 760px) {
+#account-app .account-shell > .account-theme-toggle { top: 20px; right: 16px; }
+}
