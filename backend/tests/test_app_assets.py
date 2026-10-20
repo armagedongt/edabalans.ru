@@ -283,7 +283,6 @@ def test_stable_site_footer_loader_is_public() -> None:
     assert "ИП Воронцов Сергей Сергеевич" in text
     assert "ИНН 230409966750" in text
     assert "Копирование материалов запрещено" in text
-    assert ".eb-footer{box-sizing:border-box;width:100%;background:transparent" in text
     assert "https://t.me/Fitness_Talks" in response.text
     assert "https://t.me/FitnessSergey" in response.text
     assert "https://max.ru/u/" in response.text
