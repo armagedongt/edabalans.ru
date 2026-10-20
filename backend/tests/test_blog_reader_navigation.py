@@ -28,6 +28,10 @@ def test_shared_contents_follow_public_revision_and_replace_legacy_controls():
         baseline = client.get('/blog/' + public_slug(slug))
         assert baseline.status_code == 200
         assert baseline.text.count('data-site-menu-toggle') == 1
+        header = re.search(r'<header class="site-header.*?</header>', baseline.text, re.S).group(0)
+        assert 'data-site-menu-toggle' in header
+        assert 'aria-label="Открыть меню"' in header
+        assert 'href="/blog/author/sergey-vorontsov">Об авторе</a>' in header
         assert 'site-menu-toggle--article' in baseline.text
         assert 'id="reader-sheet"' not in baseline.text and '{{READER_' not in baseline.text
         with Session(engine) as db:

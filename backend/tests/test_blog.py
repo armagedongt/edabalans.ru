@@ -142,7 +142,7 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
         'sroki-pohudeniya">'
     ) in response.text
     assert 'site-menu-toggle--article' in response.text
-    assert 'aria-label="Открыть содержание"' in response.text
+    assert 'aria-label="Открыть меню"' in response.text
     assert 'Содержание статьи' in response.text
     assert 'class="toc-mobile"' not in response.text
     assert 'class="toc-dock"' not in response.text

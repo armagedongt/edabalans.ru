@@ -13,12 +13,12 @@ html[data-theme=dark]{--page:#171a20;--surface:#222831;--surface-soft:#283846;--
 .blog-header-tools{position:relative;display:flex;gap:8px;align-items:center}
 .blog-header-tools .theme-toggle,.blog-header-tools .site-menu-toggle,.blog-search summary{width:42px;height:42px;min-height:42px;display:grid;place-content:center;padding:0;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);box-shadow:none;cursor:pointer}
 .blog-search summary svg{width:21px;height:21px}
-.blog-header-tools .site-menu-toggle{position:static}
+.blog-header-tools .site-menu-toggle{position:static;top:auto;bottom:auto;width:64px;display:flex;padding:0 10px}
+.blog-header-tools .site-menu-toggle .site-menu-toggle__label{display:block}
+.blog-header-tools .site-menu-toggle .site-menu-bars{display:none}
+.blog-header-tools .site-menu-toggle[aria-expanded=true] .site-menu-bars{display:grid}
 @media(min-width:900px){
- .blog-header-tools .site-menu-toggle:not(.site-menu-toggle--article){width:112px;height:44px;display:flex;gap:10px}
- .blog-header-tools .site-menu-toggle:not(.site-menu-toggle--article) .site-menu-toggle__label{display:block}
  .blog-header-tools .site-menu-toggle[aria-expanded=true]{width:44px}
- body:has(>.site-menu-toggle--article) .blog-header-inner{padding-right:168px}
 }
 .blog-header-tools .site-menu-toggle[aria-expanded=true]{position:fixed;top:8px;right:24px;z-index:102}
 .blog-search form{top:calc(100% + 18px);right:0;width:min(520px,calc(100vw - 48px))}
@@ -77,6 +77,7 @@ html[data-theme=dark] .starter-fold{background:#213341;border-color:var(--border
  .blog-brand{font-size:10.5px;gap:5px}.blog-brand img{width:26px;height:26px;flex-basis:26px}
  .blog-header-tools{gap:4px;flex-shrink:0}
  .blog-header-tools .theme-toggle,.blog-header-tools .site-menu-toggle,.blog-search summary{width:40px;height:40px;min-height:40px}
+ .blog-header-tools .site-menu-toggle{width:64px}
  .blog-header-tools .site-menu-bars,.blog-header-tools .site-menu-bars span{width:21px!important}
  body[data-page=home] .hero{grid-template-columns:minmax(0,1fr) 60px;gap:14px 16px;padding:24px 0}
  body[data-page=home] .hero-copy{display:contents}

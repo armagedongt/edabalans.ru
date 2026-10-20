@@ -17,6 +17,7 @@
   var DEFAULT_NAV = [
     [publicRoot + '/', 'Главная'],
     [publicRoot + '/blog', 'Блог'],
+    [publicRoot + '/blog/author/sergey-vorontsov', 'Об авторе'],
     [publicRoot + '/intensive', 'Бесплатный интенсив'],
     [publicRoot + '/', 'Мастер-класс']
   ];

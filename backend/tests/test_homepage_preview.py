@@ -1912,5 +1912,6 @@ def test_homepage_navigation_links_directly_to_blog_on_desktop_and_menu():
     html = response.text
     menu = html.split('class="site-menu-quick-links"', 1)[1].split('data-site-menu-contents', 1)[0]
     assert 'href="/blog">Блог</a>' in menu
+    assert 'href="/blog/author/sergey-vorontsov">Об авторе</a>' in menu
     desktop = html.split('class="desktop-nav"', 1)[1].split('</nav>', 1)[0]
     assert 'href="/blog">Блог</a>' in desktop

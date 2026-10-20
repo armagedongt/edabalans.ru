@@ -123,15 +123,14 @@ def _template(name: str, search_query: str = "", *, menu_outline: str | None = N
             '<a href="/blog">Блог</a><a href="/">Мастер-класс</a>'
             '<a href="/intensive">Бесплатный интенсив</a>', menu_outline,
             article=article_menu,
+            toggle_label="Меню",
             outline_label=None if article_menu else "Рекомендую начать с этих статей",
         )
         toggle, panel = menu.split('  <aside', 1)
         contact_links = re.search(r'id="mobile-contact-panel" hidden>(.*?)</div>', menu, re.S).group(1)
         header = header.replace("<!-- BLOG_HEADER_CONTACT_LINKS -->", contact_links)
-        header = header.replace("<!-- BLOG_SITE_MENU_TOGGLE -->", "" if article_menu else toggle)
-        header = header.replace("<!-- BLOG_SITE_MENU_PANEL -->", "" if article_menu else '  <aside' + panel)
-        if article_menu:
-            header += menu
+        header = header.replace("<!-- BLOG_SITE_MENU_TOGGLE -->", toggle)
+        header = header.replace("<!-- BLOG_SITE_MENU_PANEL -->", '  <aside' + panel)
         template = template.replace("<!-- BLOG_HEADER -->", header)
     if "<!-- BLOG_HEADER_SEARCH -->" in template:
         search = (BLOG_DIR / "header-search.html").read_text(encoding="utf-8")

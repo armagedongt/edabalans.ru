@@ -10,6 +10,7 @@ MENU_TEMPLATE = r'''  <button class="site-menu-toggle{toggle_class}" data-site-m
     <nav class="site-menu-links" aria-label="Навигация">
       <div class="site-menu-quick-links">
       {quick_links}
+      <a href="/blog/author/sergey-vorontsov">Об авторе</a>
       <div class="site-menu-disclosure">
         <button class="site-menu-disclosure-trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="mobile-contact-panel">Контакты</button>
         <div class="site-menu-disclosure-panel" id="mobile-contact-panel" hidden>
@@ -30,13 +31,13 @@ MENU_TEMPLATE = r'''  <button class="site-menu-toggle{toggle_class}" data-site-m
   </aside>'''
 
 
-def render_site_menu(quick_links: str, outline: str, *, article: bool = False, outline_label: str | None = None) -> str:
+def render_site_menu(quick_links: str, outline: str, *, article: bool = False, outline_label: str | None = None, toggle_label: str | None = None) -> str:
     """The two HTML fragments come from trusted page renderers, never user input."""
-    label = 'Содержание' if article else 'Меню'
+    label = toggle_label or ('Содержание' if article else 'Меню')
     return MENU_TEMPLATE.format(
         quick_links=quick_links, outline=outline,
         toggle_class=' site-menu-toggle--article toc-trigger' if article else '',
-        label=escape(label), open_label=escape('Открыть содержание' if article else 'Открыть меню'),
+        label=escape(label), open_label=escape('Открыть ' + label.lower()),
         outline_label=escape(outline_label or ('Содержание статьи' if article else 'Содержание')),
         outline_hidden='' if outline.strip() else ' hidden',
         menu_id='contents' if article else 'mobile-menu',
