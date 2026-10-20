@@ -95,7 +95,8 @@ def send_workout(settings: Settings, messages: list[str]) -> list[int]:
     if not settings.telegram_test_bot_token:
         raise HTTPException(503, "Основной Telegram-бот не настроен")
     base_url = settings.telegram_api_base_url.rstrip("/")
-    headers = {"Content-Type": "application/json"}
+    # The configured Cloudflare relay rejects the stock urllib user agent (1010).
+    headers = {"Content-Type": "application/json", "User-Agent": "EdabalansWorkoutExport/1.0"}
     if base_url:
         if not settings.telegram_gateway_token:
             raise HTTPException(503, "Маршрут основного Telegram-бота не настроен")

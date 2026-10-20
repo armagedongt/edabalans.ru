@@ -141,6 +141,7 @@ def test_existing_relay_route_and_authentication_are_used(api, monkeypatch):
     assert export.send_workout(settings, ["synthetic workout"]) == [88]
     assert calls[0].full_url == "https://relay.example.test/api/sendMessage"
     headers = {key.lower(): value for key, value in calls[0].header_items()}
+    assert headers["user-agent"] == "EdabalansWorkoutExport/1.0"
     assert headers["x-edabalans-relay-token"] == settings.telegram_gateway_token
     assert headers["x-telegram-bot-token"] == settings.telegram_test_bot_token
     settings.telegram_gateway_token = ""
