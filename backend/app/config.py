@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     telegram_test_bot_username: str = "Fitness_Talks_bot"
     telegram_test_bot_token: str = ""
     strength_telegram_owner_id: str = ""
+    telegram_api_base_url: str = ""
+    telegram_gateway_token: str = ""
     max_bot_username: str = "id230409966750_bot"
     max_bot_token: str = ""
     account_telegram_bot_username: str = "Fitness_Talks_bot"

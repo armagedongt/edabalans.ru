@@ -127,3 +127,23 @@ def test_unconfigured_recipient_and_transport_error_are_safe(api, monkeypatch):
     assert response.status_code == 502 and "secret-test" not in response.text
     with factory() as db:
         assert db.scalar(select(AdminAppEdit)) is None
+
+
+def test_existing_relay_route_and_authentication_are_used(api, monkeypatch):
+    _, _, settings, _, _ = api
+    settings.telegram_api_base_url = "https://relay.example.test/api/"
+    settings.telegram_gateway_token = "synthetic-relay-value"
+    calls = []
+    def relay(request, timeout):
+        calls.append(request)
+        return io.BytesIO(b'{"ok":true,"result":{"message_id":88}}')
+    monkeypatch.setattr(export.urllib.request, "urlopen", relay)
+    assert export.send_workout(settings, ["synthetic workout"]) == [88]
+    assert calls[0].full_url == "https://relay.example.test/api/sendMessage"
+    headers = {key.lower(): value for key, value in calls[0].header_items()}
+    assert headers["x-edabalans-relay-token"] == settings.telegram_gateway_token
+    assert headers["x-telegram-bot-token"] == settings.telegram_test_bot_token
+    settings.telegram_gateway_token = ""
+    with pytest.raises(export.HTTPException) as error:
+        export.send_workout(settings, ["synthetic workout"])
+    assert error.value.status_code == 503 and len(calls) == 1

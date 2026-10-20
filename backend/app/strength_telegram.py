@@ -94,12 +94,23 @@ def send_workout(settings: Settings, messages: list[str]) -> list[int]:
         raise HTTPException(503, "Личный Telegram-получатель тренировок не настроен")
     if not settings.telegram_test_bot_token:
         raise HTTPException(503, "Основной Telegram-бот не настроен")
+    base_url = settings.telegram_api_base_url.rstrip("/")
+    headers = {"Content-Type": "application/json"}
+    if base_url:
+        if not settings.telegram_gateway_token:
+            raise HTTPException(503, "Маршрут основного Telegram-бота не настроен")
+        headers.update({
+            "X-Edabalans-Relay-Token": settings.telegram_gateway_token,
+            "X-Telegram-Bot-Token": settings.telegram_test_bot_token,
+        })
+    else:
+        base_url = f"https://api.telegram.org/bot{settings.telegram_test_bot_token}"
     sent = []
     for message in messages:
         body = json.dumps({"chat_id": recipient, "text": message}, ensure_ascii=False).encode()
         request = urllib.request.Request(
-            f"https://api.telegram.org/bot{settings.telegram_test_bot_token}/sendMessage",
-            data=body, headers={"Content-Type": "application/json"}, method="POST",
+            f"{base_url}/sendMessage",
+            data=body, headers=headers, method="POST",
         )
         try:
             with urllib.request.urlopen(request, timeout=20) as response:
