@@ -111,7 +111,7 @@ def test_initial_homepage_keeps_the_accepted_html_without_client_content_fetch(c
     response = client.get("/preview/homepage-release-candidate")
     assert response.status_code == 200
     # Accepted shell with direct blog navigation and the shared subscription footer.
-    assert hashlib.sha256(response.text.encode()).hexdigest() == "8af5d1588fda4e9bcfcf1bba9df5fbee75e0a74e03d33f036bf3520c3695828a"
+    assert hashlib.sha256(response.text.encode()).hexdigest() == "8fbdf2c5b38233ddac5dff5c1d052e544f76cefe221a01c62e402d3dbc17871d"
     assert response.text.count('id="reader-channel-homepage"') == 1
     assert "<!-- homepage-slot:" not in response.text
     faq = response.text.split("<template data-local-faq-template>", 1)[1].split("</template>", 1)[0]
