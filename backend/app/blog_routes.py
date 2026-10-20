@@ -95,6 +95,7 @@ BLOG_ASSET_FILES = {
     "favicon-test-face.png",
     "sergey-author.png",
     "sergey-author-v2.webp",
+    "sergey-author-bright.webp",
     "sergey-author-channel.webp",
 }
 FAVICON_TEST_PAGES = {
@@ -176,7 +177,7 @@ def _breadcrumbs(article=None) -> tuple[str, dict]:
     links = ' <span aria-hidden="true">/</span> '.join(
         f'<a href="{escape(url.removeprefix(BLOG_PUBLIC_ORIGIN), quote=True)}">{escape(label)}</a>' if index < len(items) - 1
         else f'<span aria-current="page">{escape(label)}</span>'
-        for index, (label, url) in enumerate(items)
+        for index, (label, url) in enumerate(items[:-1] if article is not None else items)
     )
     data = {"@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": index + 1, "name": label, "item": url}

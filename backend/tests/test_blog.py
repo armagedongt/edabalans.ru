@@ -58,8 +58,9 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert response.status_code == 200
     assert response.headers["cache-control"] == "no-cache"
     assert "Похудение — это есть.рф" in response.text
-    assert "Блог Сергея Воронцова" in response.text
-    assert '<h1 id="blog-title">Блог Сергея Воронцова</h1>' in response.text
+    assert "Блог о похудении" in response.text
+    assert "Сергея Воронцова" in response.text
+    assert '<h1 id="blog-title"><span>Блог о похудении</span><span>Сергея Воронцова</span></h1>' in response.text
     hero = response.text.split('<section class="shell hero"', 1)[1].split('</section>', 1)[0]
     assert 'class="categories"' not in hero
     assert response.text.index('class="starter-fold"') < response.text.index('data-blog-server-catalog')
