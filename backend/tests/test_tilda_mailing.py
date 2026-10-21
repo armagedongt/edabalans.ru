@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+import uuid
 from unittest.mock import Mock
 
 from fastapi import FastAPI
@@ -15,7 +16,7 @@ from app.auth import require_admin
 from app.config import get_settings
 from app.database import Base, get_db
 from app.importers.prepare_tilda_accounts import prepare
-from app.models import AccountCredential, AccountOnboarding, Resource, User, UserCoursePolicy, UserEmail
+from app.models import AccountCredential, AccountOnboarding, AccountSession, Resource, User, UserAccess, UserCoursePolicy, UserEmail
 from app.product_catalog_service import active_product_catalog
 from app.tilda_mailing_routes import router
 
@@ -27,10 +28,10 @@ def store():
     factory = sessionmaker(engine, expire_on_commit=False)
     with factory() as db:
         active_product_catalog(db)
-        for code in ("ACCESS_MASTERCLASS", "ACCESS_MASTERCLASS_LEGACY", "ACCESS_CALORIES", "ACCESS_CALORIES_LEGACY", "ACCESS_RECIPES", "ACCESS_CONSULTATION", "dqs", "recipes", "metabolism"):
+        for code in ("ACCESS_MASTERCLASS", "ACCESS_MASTERCLASS_LEGACY", "ACCESS_CALORIES", "ACCESS_CALORIES_LEGACY", "ACCESS_RECIPES", "ACCESS_CONSULTATION", "ACCESS_COACHING", "dqs", "recipes", "metabolism"):
             db.add(Resource(code=code, name=code, status="active"))
         db.commit()
-        members = [{"email":"new@example.test", "name":"New", "groups":[], "codes":["ACCESS_MASTERCLASS", "ACCESS_CONSULTATION"]},
+        members = [{"email":"new@example.test", "name":"New", "groups":[], "codes":["ACCESS_MASTERCLASS", "ACCESS_CONSULTATION", "ACCESS_COACHING"]},
                    {"email":"unknown@example.test", "name":"Unknown", "groups":[], "codes":[]},
                    {"email":"old@example.test", "name":"Old", "groups":[], "codes":["ACCESS_MASTERCLASS_LEGACY", "ACCESS_CALORIES_LEGACY"]},
                    {"email":"existing@example.test", "name":"Existing", "groups":[], "codes":["ACCESS_MASTERCLASS"]}]
@@ -64,6 +65,8 @@ def test_paused_drafts_have_current_password_correct_editions_and_exclude_existi
             credential = db.get(AccountCredential, row.user_id)
             assert decrypt_password(credential.password_ciphertext, settings().app_auth_secret) in bundle["message_text"]
             assert row.email_status == "draft"
+            assert bundle["message_text"].startswith("Здравствуйте!\n")
+            assert "сопровожд" not in bundle["message_text"].lower()
             if bundle["email"] == "new@example.test":
                 assert "консультац" not in bundle["message_text"].lower()
                 assert "ACCESS_CONSULTATION" in mailing.active_resource_codes(db, row.user_id)
@@ -179,7 +182,7 @@ def test_admin_only_no_cache_origin_guard_and_confirmation(store):
 
 @pytest.mark.parametrize("start,unlock,expected", [
     ("blocked", "fully_unlocked", "начало пока закрыто — напишите мне"),
-    ("auto", "fully_unlocked", "начало откроется по условиям программы"),
+    ("auto", "fully_unlocked", "материалы открыты сразу"),
     ("open", "fully_unlocked", "материалы открыты сразу"),
     ("open", "paced", "можно начать сразу; материалы открываются последовательно"),
 ])
@@ -207,3 +210,96 @@ def test_main_routes_mailing_before_generic_admin_section(monkeypatch):
     response = TestClient(app).get("/admin/tilda-mailing")
     assert response.status_code == 200
     assert 'id="letter-form"' in response.text
+
+
+def record_login(db, user_id):
+    now = datetime.now(timezone.utc)
+    # Expired/revoked sessions still prove a previous customer login.
+    db.add(AccountSession(user_id=user_id, token_hash=uuid.uuid4().hex * 2,
+                          password_version=1, created_at=now - timedelta(days=60),
+                          last_seen_at=now - timedelta(days=59), expires_at=now - timedelta(days=15),
+                          revoked_at=now - timedelta(days=59)))
+    db.flush()
+
+
+def test_refresh_uses_current_rights_keeps_password_and_excludes_previous_login(store):
+    factory, manifest = store
+    stage(factory, manifest)
+    with factory() as db:
+        row = next(r for r in mailing.rows(db) if delivery._decrypt_bundle(r.claim_bundle_encrypted,settings())["email"] == "new@example.test")
+        old = delivery._decrypt_bundle(row.claim_bundle_encrypted,settings())
+        cred = db.get(AccountCredential,row.user_id)
+        fingerprint = (cred.password_hash,cred.password_ciphertext,cred.password_version)
+        resource = db.scalar(select(Resource).where(Resource.code == "ACCESS_CALORIES"))
+        db.add(UserAccess(user_id=row.user_id,resource_id=resource.id,source="fixture",granted_at=datetime.now(timezone.utc)))
+        db.add(UserCoursePolicy(user_id=row.user_id,resource_id=resource.id,start_mode="open",unlock_mode="paced",source="fixture"))
+        record_login(db,row.user_id)
+        assert mailing.refresh_drafts(db,settings(),"owner") == 3
+        db.commit()
+        bundle = delivery._decrypt_bundle(row.claim_bundle_encrypted,settings())
+        assert 'Мини-курс «Калорийный»' in bundle['message_text']
+        assert bundle['message_text'].startswith('Здравствуйте!\n')
+        assert 'сопровожд' not in bundle['message_text'].lower()
+        assert bundle['password_version'] == old['password_version']
+        assert fingerprint == (cred.password_hash,cred.password_ciphertext,cred.password_version)
+        assert row.email_status == 'excluded'
+        assert mailing.listing(db,settings())['selected'] == 2
+
+
+def test_later_login_excluded_at_launch_and_cannot_be_reincluded(store):
+    factory,manifest=store
+    stage(factory,manifest)
+    with factory() as db:
+        all_rows=mailing.rows(db)
+        new=next(r for r in all_rows if delivery._decrypt_bundle(r.claim_bundle_encrypted,settings())['email']=='new@example.test')
+        old=next(r for r in all_rows if delivery._decrypt_bundle(r.claim_bundle_encrypted,settings())['upgrade'])
+        old.email_status='excluded'
+        record_login(db,new.user_id)
+        assert mailing.listing(db,settings())['selected'] == 1
+        with pytest.raises(ValueError,match='Участник уже входил'):
+            mailing.update_draft(db,new,settings(),'owner','Тема','Текст',True)
+        assert mailing.launch(db,settings(),'owner',1) == 1
+        db.commit()
+        assert new.email_status == 'excluded'
+        assert old.email_status == 'excluded'
+        assert [r.email_status for r in mailing.rows(db)].count('pending') == 1
+
+
+@pytest.mark.parametrize("ordinary_mode", ["admin_message", "direct_password"])
+def test_login_after_queue_prevents_smtp_without_affecting_other_mail(store,monkeypatch,ordinary_mode):
+    factory,manifest=store
+    stage(factory,manifest)
+    with factory() as db:
+        row=mailing.rows(db)[0]
+        row.email_status='pending'
+        row.created_at=datetime.now(timezone.utc)-timedelta(minutes=2)
+        record_login(db,row.user_id)
+        if ordinary_mode == "admin_message":
+            regular,_=delivery.queue_admin_message_email(db,user_id=row.user_id,message_text="Личное сообщение",settings=settings(),admin="owner")
+        else:
+            user=db.get(User,row.user_id)
+            regular=delivery.queue_direct_credential_email(db,user=user,password_version=db.get(AccountCredential,user.id).password_version,settings=settings())
+        regular_id=regular.id
+        db.commit()
+    monkeypatch.setattr(delivery,'SessionLocal',factory)
+    sender=Mock();monkeypatch.setattr(delivery,'_send_message',sender)
+    assert delivery.process_due_account_email(settings()) is True
+    sender.assert_not_called()
+    assert delivery.process_due_account_email(settings()) is True
+    assert delivery.process_due_account_email(settings()) is False
+    sender.assert_called_once()
+    with factory() as db:
+        assert [r.email_status for r in mailing.rows(db)].count('excluded') == 1
+        assert db.get(AccountOnboarding,regular_id).email_status == "sent"
+
+
+def test_calories_without_start_policy_does_not_promise_immediate_entry(store):
+    factory,manifest=store
+    with factory() as db:
+        user=db.scalar(select(User).join(UserEmail).where(UserEmail.email_normalized=='new@example.test'))
+        resource=db.scalar(select(Resource).where(Resource.code=='ACCESS_CALORIES'))
+        db.add(UserAccess(user_id=user.id,resource_id=resource.id,source='fixture',granted_at=datetime.now(timezone.utc)))
+        db.flush()
+        line=next(l for l in mailing.access_text(db,user).splitlines() if 'Мини-курс' in l)
+        assert 'начало откроется по условиям программы' in line
+        assert 'можно начать сразу' not in line

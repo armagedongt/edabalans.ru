@@ -9,7 +9,7 @@ import zipfile
 from app.config import get_settings
 from app.database import SessionLocal
 from app.account_onboarding_service import _decrypt_bundle
-from app.tilda_mailing_service import prepare_drafts, rows
+from app.tilda_mailing_service import prepare_drafts, refresh_drafts, rows
 
 
 def main():
@@ -17,6 +17,7 @@ def main():
     parser.add_argument("manifest", type=Path)
     parser.add_argument("--export", type=Path, required=True)
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--refresh-existing", action="store_true", help="Rewrite unsent drafts from current accesses; replaces manual letter edits")
     args = parser.parse_args()
     if args.export.resolve().is_relative_to(Path(__file__).resolve().parents[3]):
         raise ValueError("Letters with passwords must be exported outside the repository")
@@ -24,6 +25,7 @@ def main():
     settings = get_settings()
     with SessionLocal() as db:
         created = prepare_drafts(db, manifest, settings, "tilda_transfer_prepare")
+        refreshed = refresh_drafts(db, settings, "tilda_transfer_refresh") if args.refresh_existing else 0
         args.export.parent.mkdir(parents=True, exist_ok=True)
         index = io.StringIO(newline="")
         writer = csv.writer(index)
@@ -37,7 +39,7 @@ def main():
             archive.writestr("recipients.csv", "\ufeff" + index.getvalue())
         args.export.chmod(0o600)
         db.commit() if args.apply else db.rollback()
-    print(json.dumps({"drafts_created": created, "messages_queued": 0, "applied": args.apply}))
+    print(json.dumps({"drafts_created": created, "drafts_refreshed": refreshed, "messages_queued": 0, "applied": args.apply}))
 
 
 if __name__ == "__main__":

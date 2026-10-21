@@ -21,7 +21,7 @@ from app.app_service import EMAIL_RE, normalize_email
 from app.config import Settings
 from app.service_email_templates import render_section
 from app.database import SessionLocal
-from app.models import AccountCredential, AccountOnboarding, AdminAppEdit, MessengerLinkToken, Payment, User, UserEmail
+from app.models import AccountCredential, AccountOnboarding, AccountSession, AdminAppEdit, MessengerLinkToken, Payment, User, UserEmail
 
 
 logger = logging.getLogger(__name__)
@@ -399,6 +399,10 @@ def _send_message(message: EmailMessage, settings: Settings) -> None:
         smtp.send_message(message)
 
 
+def has_account_login(db: Session, user_id) -> bool:
+    return db.scalar(select(AccountSession.id).where(AccountSession.user_id == user_id).limit(1)) is not None
+
+
 def process_due_account_email(settings: Settings) -> bool:
     now = datetime.now(UTC)
     with SessionLocal() as db:
@@ -436,6 +440,11 @@ def process_due_account_email(settings: Settings) -> bool:
                 message_text = bundle["message_text"]
                 email = bundle["email"]
             if row.delivery_mode == "tilda_transfer":
+                if has_account_login(db, row.user_id):
+                    row.email_status = "excluded"
+                    row.email_error = "Участник уже входил в личный кабинет"
+                    db.commit()
+                    return True
                 credential = db.get(AccountCredential, row.user_id)
                 user = db.get(User, row.user_id)
                 linked = db.scalar(select(UserEmail.id).where(UserEmail.user_id == row.user_id, UserEmail.email_normalized == email))

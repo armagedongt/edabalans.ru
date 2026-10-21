@@ -4,9 +4,9 @@ import uuid
 
 from sqlalchemy import select
 from app.access_service import review_blocks_access
-from app.account_onboarding_service import _encrypt_bundle, _decrypt_bundle, direct_credential_email_configuration_error
+from app.account_onboarding_service import _encrypt_bundle, _decrypt_bundle, direct_credential_email_configuration_error, has_account_login
 from app.account_security import decrypt_password
-from app.course_access_service import active_resource_codes
+from app.course_access_service import active_resource_codes, course_entry_unlocked
 from app.legacy_upgrade_service import eligible, PRICE_CODES
 from app.models import AccountCredential, AccountOnboarding, AdminAppEdit, ManagedDocumentVersion, Resource, User, UserCoursePolicy, UserEmail
 from app.pricing_service import active_pricing_version, pricing_entry_map
@@ -31,25 +31,53 @@ def access_text(db, user):
         if not resource:
             continue
         policy = policies.get(resource)
-        if policy and policy.start_mode == "blocked":
-            opening = "начало пока закрыто — напишите мне"
-        elif policy and policy.start_mode == "auto":
-            opening = "начало откроется по условиям программы"
+        if not course_entry_unlocked(db, user.id, code):
+            opening = "начало пока закрыто — напишите мне" if policy and policy.start_mode == "blocked" else "начало откроется по условиям программы"
         elif policy and policy.unlock_mode == "fully_unlocked":
             opening = "материалы открыты сразу"
         else:
             opening = "можно начать сразу; материалы открываются последовательно"
         edition = "необновляемый доступ" if resource.endswith("_LEGACY") else "обновляемый доступ"
         lines.append(f"— {product_public(db, product)['name']} — {edition}; {opening}.")
-    for product, code in (("coaching", "ACCESS_COACHING"),):
-        if code in owned:
-            lines.append(f"— {product_public(db, product)['name']}. По условиям и началу работы напишите мне.")
     apps = [("dqs", "DQS — оценка качества питания"), ("metabolism", "Калькулятор метаболизма"),
             ("recipes", "Каталог и калькулятор рецептов"), ("strength", "Дневник силовых тренировок")]
     for code, name in apps:
         if code in owned:
             lines.append(f"— {name} — по условиям открытия соответствующих материалов.")
     return "В вашем личном кабинете доступны:\n\n" + "\n".join(lines) if lines else render_section("tilda-transfer", "unconfirmed")
+
+
+def letter_bundle(db, user, email, credential, settings):
+    return {"batch": BATCH, "email": email, "name": user.display_name or email,
+            "subject": render_section("tilda-transfer", "subject"),
+            "message_text": render_section("tilda-transfer", "text",
+                account_url=settings.account_public_url, email=email,
+                password=decrypt_password(credential.password_ciphertext, settings.app_auth_secret),
+                access_text=access_text(db, user),
+                upgrade_text=render_section("tilda-transfer", "upgrade") if eligible(db, user) else ""),
+            "password_version": credential.password_version, "upgrade": eligible(db, user)}
+
+
+def refresh_drafts(db, settings, admin):
+    refreshed = 0
+    for row in rows(db, lock=True):
+        if row.email_status not in {"draft", "excluded"}:
+            continue
+        bundle = _decrypt_bundle(row.claim_bundle_encrypted, settings)
+        user = db.get(User, row.user_id)
+        credential = db.get(AccountCredential, row.user_id)
+        linked = db.scalar(select(UserEmail.id).where(UserEmail.user_id == row.user_id, UserEmail.email_normalized == bundle["email"]))
+        if not user or user.status != "active" or user.merged_into_user_id or not credential or not credential.password_ciphertext or not linked:
+            raise ValueError("Не удалось подтвердить аккаунт получателя")
+        row.claim_bundle_encrypted = _encrypt_bundle(letter_bundle(db, user, bundle["email"], credential, settings), settings)
+        if has_account_login(db, row.user_id):
+            row.email_status = "excluded"
+            row.email_error = "Участник уже входил в личный кабинет"
+        db.add(AdminAppEdit(admin_username=admin, target_user_id=row.user_id, app_code="crm",
+                           action="refresh_tilda_letter", details={"delivery_id": str(row.id)}))
+        refreshed += 1
+    db.flush()
+    return refreshed
 
 
 def prepare_drafts(db, manifest, settings, admin):
@@ -72,14 +100,7 @@ def prepare_drafts(db, manifest, settings, admin):
         linked = db.scalar(select(UserEmail).where(UserEmail.user_id == user_id, UserEmail.email_normalized == email))
         if not user or user.status != "active" or user.merged_into_user_id or not credential or not credential.password_ciphertext or not linked:
             raise ValueError("Не удалось подтвердить аккаунт получателя")
-        password = decrypt_password(credential.password_ciphertext, settings.app_auth_secret)
-        upgrade = eligible(db, user)
-        text = render_section("tilda-transfer", "text", name=user.display_name or "участник",
-                              account_url=settings.account_public_url, email=email, password=password,
-                              access_text=access_text(db, user), upgrade_text=render_section("tilda-transfer", "upgrade") if upgrade else "")
-        bundle = {"batch": BATCH, "email": email, "name": user.display_name or email,
-                  "subject": render_section("tilda-transfer", "subject"), "message_text": text,
-                  "password_version": credential.password_version, "upgrade": upgrade}
+        bundle = letter_bundle(db, user, email, credential, settings)
         now = datetime.now(timezone.utc)
         row = AccountOnboarding(user_id=user_id, delivery_mode=MODE, email_status="draft",
                                 expires_at=now + timedelta(days=10), claim_bundle_encrypted=_encrypt_bundle(bundle, settings))
@@ -123,11 +144,13 @@ def listing(db, settings):
     selected = []
     for row in rows(db):
         bundle = _decrypt_bundle(row.claim_bundle_encrypted, settings)
-        if row.email_status == "draft":
+        seen = has_account_login(db, row.user_id)
+        excluded_for_login = seen and row.email_status in {"draft", "excluded"}
+        if row.email_status == "draft" and not seen:
             selected.append((row, bundle))
         items.append({"id": str(row.id), "user_id": str(row.user_id), "name": bundle["name"],
-                      "email": bundle["email"], "subject": bundle["subject"], "status": row.email_status,
-                      "error": row.email_error, "sent_at": row.email_sent_at.isoformat() if row.email_sent_at else None})
+                      "email": bundle["email"], "subject": bundle["subject"], "status": "excluded" if excluded_for_login else row.email_status,
+                      "error": "Участник уже входил в личный кабинет" if excluded_for_login else row.email_error, "sent_at": row.email_sent_at.isoformat() if row.email_sent_at else None})
     return {"recipients": items, "selected": len(selected), "blockers": blockers(db, selected, settings)}
 
 
@@ -141,6 +164,8 @@ def get_draft(db, delivery_id):
 def update_draft(db, row, settings, admin, subject, text, included):
     if row.email_status not in {"draft", "excluded"}:
         raise ValueError("Письмо уже запущено; изменить его нельзя")
+    if included and has_account_login(db, row.user_id):
+        raise ValueError("Участник уже входил в личный кабинет")
     if not subject.strip() or any(ord(c) < 32 or ord(c) == 127 for c in subject) or not text.strip():
         raise ValueError("Укажите тему одной строкой и текст письма")
     bundle = _decrypt_bundle(row.claim_bundle_encrypted, settings)
@@ -152,13 +177,19 @@ def update_draft(db, row, settings, admin, subject, text, included):
 
 
 def launch(db, settings, admin, expected_count):
-    selected = [(r, _decrypt_bundle(r.claim_bundle_encrypted, settings)) for r in rows(db, lock=True) if r.email_status == "draft"]
+    candidates = [r for r in rows(db, lock=True) if r.email_status == "draft"]
+    seen = {r.user_id for r in candidates if has_account_login(db, r.user_id)}
+    selected = [(r, _decrypt_bundle(r.claim_bundle_encrypted, settings)) for r in candidates if r.user_id not in seen]
     if len(selected) != expected_count or not selected:
         raise ValueError("Список получателей изменился — обновите страницу")
     errors = blockers(db, selected, settings)
     if errors:
         raise ValueError("; ".join(errors))
     now = datetime.now(timezone.utc)
+    for row in candidates:
+        if row.user_id in seen:
+            row.email_status = "excluded"
+            row.email_error = "Участник уже входил в личный кабинет"
     for row, bundle in selected:
         row.email_status = "pending"
         row.next_email_attempt_at = now

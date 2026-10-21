@@ -64,7 +64,8 @@ def draft(delivery_id: uuid.UUID, admin: str = Depends(require_admin), db: Sessi
     bundle = _decrypt_bundle(row.claim_bundle_encrypted, settings)
     db.add(AdminAppEdit(admin_username=admin, target_user_id=row.user_id, app_code="crm", action="view_tilda_letter", details={"delivery_id": str(row.id)}))
     db.commit()
-    return JSONResponse({"id": str(row.id), "subject": bundle["subject"], "text": bundle["message_text"], "included": row.email_status == "draft", "editable": row.email_status in {"draft", "excluded"}}, headers={"Cache-Control": "no-store"})
+    seen = service.has_account_login(db, row.user_id)
+    return JSONResponse({"id": str(row.id), "subject": bundle["subject"], "text": bundle["message_text"], "included": row.email_status == "draft" and not seen, "editable": row.email_status in {"draft", "excluded"} and not seen}, headers={"Cache-Control": "no-store"})
 
 
 @router.put("/admin/api/tilda-mailing/{delivery_id}", dependencies=[Depends(same_origin)])
