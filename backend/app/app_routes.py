@@ -83,7 +83,10 @@ from app.models import (
 )
 
 
+from app.finance_plans import router as finance_plans_router
+
 router = APIRouter()
+router.include_router(finance_plans_router)
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 PUBLIC_SITE_ASSETS_DIR = STATIC_DIR / "public-site-assets"
 HOMEPAGE_VERSIONS_DIR = STATIC_DIR / "homepage-preview" / "versions"
@@ -311,12 +314,12 @@ def finance_model(
     request: Request,
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> Response:
-    """Owner-facing EDA Balance financial model. Settings stay in the browser."""
+    """Owner-facing EDA Balance financial model. Plans use the private server store."""
     if not admin_identity(request, credentials):
         return RedirectResponse("/admin?next=/finance", status_code=303)
     return FileResponse(
         STATIC_DIR / "eda-finance.html",
-        headers={"Cache-Control": "no-cache"},
+        headers={"Cache-Control": "no-store"},
     )
 
 

@@ -13,18 +13,35 @@
     :root{--ink:#15262a;--green:#176a60;--soft:#e5f2ed;--bg:#f4f3ef;--line:#e2dfd8;--muted:#647278;--red:#a23832;--amber:#8a5910}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.35 var(--ed-font-body, Manrope, Arial, sans-serif);color:var(--ink)}main{max-width:1440px;margin:auto;padding:16px}.grid{display:grid;grid-template-columns:370px minmax(0,1fr);gap:16px;align-items:start}.box{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px}h1{margin:0 0 10px;font-size:21px}h2{margin:16px 0 6px;color:var(--green);font-size:12px;letter-spacing:.06em;text-transform:uppercase}.field{display:grid;grid-template-columns:minmax(0,1fr) 88px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid #f0eeeb}.field input{width:88px;padding:7px;border:1px solid #cbd7d3;border-radius:7px;text-align:right;font:inherit;background:#fff}.field input[type=checkbox]{justify-self:end;width:18px;height:18px;accent-color:var(--green)}.q{display:inline-grid;place-items:center;width:16px;height:16px;border:1px solid #86a69e;border-radius:50%;color:#38665e;font:700 11px var(--ed-font-body, Manrope, Arial, sans-serif);cursor:pointer;font-style:normal}.tooltip{position:fixed;z-index:20;max-width:min(280px,calc(100vw - 16px));padding:10px 12px;border-radius:8px;background:#193934;color:#fff;box-shadow:0 5px 18px #15262a3b;font-size:13px;line-height:1.35}.buttons{display:flex;gap:7px;align-items:center;margin:0 0 7px}.buttons button{border:1px solid #7fa69d;background:#fff;color:var(--green);padding:7px 9px;border-radius:7px;font:600 13px var(--ed-font-body, Manrope, Arial, sans-serif);cursor:pointer}.buttons button:first-child{background:var(--green);color:#fff}.saved{color:var(--muted);font-size:12px}.dashboard{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(320px,1.2fr) minmax(260px,.9fr);gap:10px;align-items:start}.summary-stack,.top-side{display:grid;gap:10px}.metric{min-height:76px;display:flex;flex-direction:column;justify-content:space-between;padding:12px;border:1px solid #d5e7e1;border-radius:10px;background:#f6fbf9}.metric.primary{background:var(--soft)}.metric span{display:block;color:var(--muted);font-size:12px}.metric b{display:block;font-size:22px;letter-spacing:-.04em;white-space:nowrap}.blocks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:11px;align-items:start}.months{grid-template-columns:repeat(4,minmax(0,1fr))}.block{border:1px solid var(--line);border-radius:10px;padding:12px}.block h2{margin:0 0 7px}.row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #f0eeeb}.row:last-child{border:0}.row span{min-width:0;color:var(--muted);font-size:13px;overflow-wrap:anywhere}.row b{white-space:nowrap;text-align:right}.months .row{align-items:flex-start;flex-wrap:wrap}.total{margin:5px -3px -3px;padding:8px 3px;background:var(--soft);border-radius:7px}.bad{color:var(--red)}.good{color:var(--green)}.warn{color:var(--amber)}details{margin-top:10px}summary{color:var(--green);cursor:pointer;font-weight:700}.note{margin:12px 0 0;padding:10px;background:#f6f7f5;border-radius:8px;color:#526064;font-size:12px}.reference-panel{margin:12px 0 2px;padding:10px 12px;border:1px solid #cfe2dc;border-radius:10px;background:#f7fbfa}.reference-panel summary{font-size:13px}.reference-intro{margin:8px 0 6px;color:var(--muted);font-size:12px}.reference-group{margin-top:10px}.reference-group h3{margin:0 0 4px;color:var(--ink);font-size:13px}.reference-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:5px 0;border-bottom:1px solid #e4eeeb;font-size:12px}.reference-row:last-child{border:0}.reference-row span{color:var(--muted)}.reference-row b{text-align:right}.reference-source{margin:10px 0 0;padding-top:8px;border-top:1px solid #dce9e5;color:var(--muted);font-size:11px}.hidden{display:none}@media(max-width:1100px){.grid{grid-template-columns:1fr}.dashboard{grid-template-columns:repeat(2,minmax(0,1fr))}.summary-stack{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr))}.blocks{grid-template-columns:repeat(2,minmax(0,1fr))}.months{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:620px){main{padding:10px}.dashboard,.summary-stack,.blocks,.months{grid-template-columns:1fr}.summary-stack{grid-column:auto}.metric{min-height:78px}.reference-row{grid-template-columns:1fr}.reference-row b{text-align:left}}
     .metric.metric-income{border-color:#9fdcff;background:#eaf8ff}.metric.metric-income b{color:#0f8fd8}.metric.metric-consult{border-color:#ffd1b6;background:#fff3ea}.metric.metric-consult b{color:#d8662f}.metric.metric-margin{border-color:#b8e3c7;background:#edf9f1}.metric.metric-margin b{color:#25834d}.metric.metric-turnover{border-color:#d7c9ff;background:#f5f1ff}.metric.metric-turnover b{color:#6f56b5}.metric.metric-margin b.bad,.metric.metric-income b.bad{color:var(--red)}
     @media(min-width:1280px){.finance-admin-page .dashboard{grid-template-columns:minmax(170px,.75fr) minmax(260px,1.25fr) minmax(190px,.9fr)}}
+    .plans-box{margin-bottom:16px;min-width:0}.plans-scroll{overflow-x:auto}.plans-table{border-collapse:collapse;width:100%;font-size:13px}.plans-table th,.plans-table td{padding:9px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}.plans-table td:nth-child(2){white-space:normal;min-width:130px;overflow-wrap:anywhere}.plans-table button{padding:7px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--green);cursor:pointer}.plans-table button+button{margin-left:6px}.plan-name{width:100%;margin:5px 0 10px;padding:9px;border:1px solid #cbd7d3;border-radius:7px;font:inherit}.buttons{flex-wrap:wrap}button:disabled{opacity:.5;cursor:wait}.metric-pair{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px}.metric-pair em{font-style:normal;color:var(--muted)}.metric-pair b{font-size:19px}.metric.metric-club{background:#f5f1ff;border-color:#d7c9ff}.metric.metric-ads{background:#fff3ea;border-color:#ffd1b6}.metric.metric-opex{background:#fff8e5;border-color:#e8d6a2}.metric.metric-buyers{background:#f0f5fa;border-color:#cbd8e5}
+    .finance-summary{position:sticky;top:0;z-index:30;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;margin:-16px -4px 16px;padding:10px 4px;background:var(--bg);box-shadow:0 8px 12px -12px #15262a80}.finance-summary .metric{min-width:0;min-height:70px;padding:9px}.finance-summary .metric span{font-size:11px}.finance-summary .metric b{font-size:18px}.dashboard{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.dashboard details{margin-top:0}.dashboard summary{font-size:13px;margin-bottom:8px}.blocks{grid-template-columns:repeat(3,minmax(0,1fr))}.months{grid-template-columns:repeat(4,minmax(0,1fr))}
+    @media(min-width:1280px){.finance-admin-page .dashboard{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+    @media(max-width:1100px){.finance-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.blocks,.months{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){.finance-summary{padding-left:48px;margin-top:-10px}.finance-summary .metric{padding:7px;min-height:60px}.finance-summary .metric b{font-size:15px}}
+    @media(max-width:620px){.finance-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.finance-summary .metric span{font-size:10px}.finance-summary .metric b{font-size:14px}.dashboard,.blocks,.months{grid-template-columns:1fr}}
   </style>
 </head>
 <body class="finance-admin-page">
 <main>
-  <p class="note finance-mode-note"><b>Сценарная модель.</b> Здесь меняются предположения для прогноза. Фактические оплаты и рекламные показатели пока не подставляются автоматически; сохранение действует только в этом браузере.</p>
+        <div class="summary-stack finance-summary" aria-label="Результат в устойчивый месяц">
+        <div class="metric primary metric-income"><span>Общий доход / оборот</span><div class="metric-pair"><b id="personal"></b><em>/</em><b id="turnover"></b></div></div>
+        <div class="metric metric-margin"><span>Консультации / маржа</span><div class="metric-pair"><b id="consult-income"></b><em>/</em><b id="business-margin"></b></div></div>
+        <div class="metric metric-club"><span>Клуб · оборот</span><b id="club-card"></b></div>
+        <div class="metric metric-ads"><span>Расходы на рекламу</span><b id="ads-card"></b></div>
+        <div class="metric metric-opex"><span>Прочие постоянные расходы</span><b id="opex-card"></b></div>
+        <div class="metric metric-buyers"><span>Покупатели: платные / органические</span><div class="metric-pair"><b id="paid-card"></b><em>/</em><b id="organic-card"></b></div></div>
+        </div>
+
+  <section class="box plans-box"><h1>Сохранённые планы</h1><div class="plans-scroll"><table class="plans-table"><thead><tr><th>Дата сохранения</th><th>План</th><th>Клуб</th><th>Общий доход</th><th>Маржа</th><th>Реклама</th><th>Постоянные</th><th>Действия</th></tr></thead><tbody id="plans"></tbody></table></div><p id="plans-state" class="saved" role="status">Загрузка планов…</p></section>
+
   <div class="grid">
     <section class="box">
       <h1>Параметры <i class="q" title="Шаги ввода: покупатели и лимиты — 1; конверсия и воронка — 5 п.п.; лид → покупатель — 0,25 п.п.; CPL — 5 ₽; цены и средний чек — 100 ₽; длительность сопровождения — 0,5 месяца; налоги — 1 п.п. Доли трёх входных тарифов всегда автоматически приводятся к сумме 100%.">?</i></h1>
-      <div class="buttons"><button id="save" type="button">Сохранить</button><button id="restore" type="button">Вернуть сохранённое</button><span id="saved" class="saved"></span></div>
+      <label for="plan-name">Название плана</label><input id="plan-name" class="plan-name" maxlength="120" placeholder="Новый план">
+      <div class="buttons"><button id="save" type="button" disabled>Сохранить план</button><span id="saved" class="saved" role="status" aria-live="polite"></span></div>
       <details id="club-settings"><summary>Настройки клуба</summary><div id="club-fields"></div></details>
       <h2>Поток и реклама</h2><div id="main-fields"></div>
-      <details class="reference-panel" open>
+      <details class="reference-panel">
         <summary>Рабочие ориентиры по воронке</summary>
         <p class="reference-intro">Сравнивай с ними фактические показатели, но не подставляй эти значения в расчёт автоматически.</p>
         <div class="reference-group">
@@ -54,24 +71,18 @@
     <section class="box">
       <h1>Твой результат в устойчивый месяц</h1>
       <div class="dashboard">
-        <div class="summary-stack">
-        <div class="metric primary metric-income"><span>Общий твой доход <i class="q" title="Деньги, остающиеся тебе после налогов, рекламы и постоянных расходов. Внутри — оплата твоих консультаций и маржа бизнеса.">?</i></span><b id="personal"></b></div>
-        <div class="metric metric-consult"><span>Доход от консультаций <i class="q" title="Консультационные единицы × внутренняя стоимость одной консультации. Это часть твоего общего дохода, а не дополнительная сумма к нему.">?</i></span><b id="consult-income"></b></div>
-        <div class="metric metric-margin"><span>Маржа бизнеса <i class="q" title="Часть общего дохода, которая остаётся сверх оплаты твоих консультационных часов.">?</i></span><b id="business-margin"></b></div>
-        <div class="metric metric-turnover"><span>Оборот <i class="q" title="Все поступления: входные тарифы, допы, сопровождение и при включении — клуб.">?</i></span><b id="turnover"></b></div>
-        </div>
-        <div class="top-flow">
-        <div class="block"><h2>Поток и клиент</h2><div class="row"><span>Всего покупателей / мес.</span><b id="buyers"></b></div><div class="row"><span>Тариф с консультацией: факт / мес.</span><b id="consult-tariff-sold"></b></div><div class="row"><span>Не купили из-за лимита <i class="q" title="10% спроса сверх лимита тарифа с консультацией выпадает из воронки. Остальные 90% поровну переходят в минимальный и стандартный тариф.">?</i></span><b id="lost-by-cap"></b></div><div class="row"><span>Платных лидов / мес.</span><b id="leads"></b></div><div class="row"><span>CAC</span><b id="cac"></b></div><div class="row"><span>Самостоятельные: cashflow на входе <i class="q" title="Средний платёж самостоятельного покупателя в момент покупки: минимальный или стандартный тариф плюс ожидаемый цифровой доп. Тариф с консультацией, разбор и сопровождение исключены.">?</i></span><b id="self-cashflow"></b></div><div class="row"><span>Самостоятельные: LTV после комиссий <i class="q" title="Весь автоматический LTV самостоятельного покупателя: cashflow на входе и, если включён, ожидаемый клуб. Консультационный тариф, разбор и сопровождение исключены.">?</i></span><b id="self-ltv"></b></div><div class="row"><span>Самостоятельные: после CAC <i class="q" title="Автоматический LTV после комиссий минус CAC. Это вклад одного платного самостоятельного покупателя до постоянных расходов.">?</i></span><b id="self-after-cac"></b></div><div class="row"><span>LTV после комиссий <i class="q" title="Ожидаемая выручка с одного клиента за весь путь, уже после налогов и эквайринга.">?</i></span><b id="ltv"></b></div><div class="row"><span>LTV после найма <i class="q" title="LTV после комиссий минус стоимость консультаций по внутренней ставке. Реклама и постоянные расходы здесь ещё не вычтены.">?</i></span><b id="ltv-after-labor"></b></div><div class="row"><span>Рекламный бюджет</span><b id="ad-budget"></b></div></div>
-        </div>
+        <details class="top-flow"><summary>Поток и юнит-экономика</summary>
+        <div class="block"><h2>Поток и клиент</h2><div class="row"><span>Налоги + эквайринг</span><b id="fees"></b></div><div class="row"><span>Всего покупателей / мес.</span><b id="buyers"></b></div><div class="row"><span>Тариф с консультацией: факт / мес.</span><b id="consult-tariff-sold"></b></div><div class="row"><span>Не купили из-за лимита <i class="q" title="10% спроса сверх лимита тарифа с консультацией выпадает из воронки. Остальные 90% поровну переходят в минимальный и стандартный тариф.">?</i></span><b id="lost-by-cap"></b></div><div class="row"><span>Платных лидов / мес.</span><b id="leads"></b></div><div class="row"><span>CAC</span><b id="cac"></b></div><div class="row"><span>Самостоятельные: cashflow на входе <i class="q" title="Средний платёж самостоятельного покупателя в момент покупки: минимальный или стандартный тариф плюс ожидаемый цифровой доп. Тариф с консультацией, разбор и сопровождение исключены.">?</i></span><b id="self-cashflow"></b></div><div class="row"><span>Самостоятельные: LTV после комиссий <i class="q" title="Весь автоматический LTV самостоятельного покупателя: cashflow на входе и, если включён, ожидаемый клуб. Консультационный тариф, разбор и сопровождение исключены.">?</i></span><b id="self-ltv"></b></div><div class="row"><span>Самостоятельные: после CAC <i class="q" title="Автоматический LTV после комиссий минус CAC. Это вклад одного платного самостоятельного покупателя до постоянных расходов.">?</i></span><b id="self-after-cac"></b></div><div class="row"><span>LTV после комиссий <i class="q" title="Ожидаемая выручка с одного клиента за весь путь, уже после налогов и эквайринга.">?</i></span><b id="ltv"></b></div><div class="row"><span>LTV после найма <i class="q" title="LTV после комиссий минус стоимость консультаций по внутренней ставке. Реклама и постоянные расходы здесь ещё не вычтены.">?</i></span><b id="ltv-after-labor"></b></div></div>
+        </details>
         <div class="top-side">
-        <div class="block"><h2>Из оборота вычитается</h2><div class="row"><span>Налоги + эквайринг</span><b id="fees"></b></div><div class="row"><span>Реклама</span><b id="ads"></b></div><div class="row"><span>Тех. расходы</span><b id="opex"></b></div><div class="row"><span>Стоимость твоего времени</span><b id="time-cost"></b></div></div>
+
         <div class="block"><h2>Консультации на полке</h2><div class="row"><span>Первичные / разовые в неделю</span><b id="primary-week"></b></div><div class="row"><span>Сопровождение в неделю</span><b id="support-week"></b></div><div class="row"><span>Всего в неделю</span><b id="total-week"></b></div><div class="row"><span>Твой предел</span><b id="capacity"></b></div><div class="row total"><span><b>Статус</b></span><b id="status"></b></div></div>
         </div>
       </div>
       <div class="blocks detail-blocks">
         <div class="block"><h2>Клиенты сопровождения</h2><div class="row"><span>Новых / месяц</span><b id="new-support"></b></div><div class="row"><span>Активных на полке</span><b id="active-support"></b></div><div class="row"><span>Выход на полку</span><b id="plateau"></b></div><div class="row"><span>Оборот сопровождения</span><b id="support-revenue"></b></div></div>
-        <div class="block"><h2>Структура цифровых допов</h2><div class="row"><span>Разовый продукт</span><b>40% × 3 400 ₽</b></div><div class="row"><span>Пакет</span><b>45% × 5 400 ₽</b></div><div class="row"><span>Расширенный пакет</span><b>15% × 7 000 ₽</b></div><div class="row total"><span>Средний чек цифрового допа</span><b id="digital-average-display"></b></div></div>
-        <div class="block"><h2>Клуб</h2><div class="row"><span>Статус</span><b id="club-status"></b></div><div class="row"><span>Активных на полке</span><b id="active-club"></b></div><div class="row"><span>Оборот клуба</span><b id="club-revenue"></b></div></div>
+        <details class="block"><summary>Структура цифровых допов</summary><div class="row"><span>Разовый продукт</span><b>40% × 3 400 ₽</b></div><div class="row"><span>Пакет</span><b>45% × 5 400 ₽</b></div><div class="row"><span>Расширенный пакет</span><b>15% × 7 000 ₽</b></div><div class="row total"><span>Средний чек цифрового допа</span><b id="digital-average-display"></b></div></details>
+        <div class="block"><h2>Клиенты клуба</h2><div class="row"><span>Активных на полке</span><b id="active-club"></b></div></div>
       </div>
       <div class="blocks months">
         <div class="block"><h2>1-й месяц: запуск</h2><div class="row"><span>Вложить в начале</span><b id="m1-start"></b></div><div class="row"><span>Оборот</span><b id="m1-turnover"></b></div><div class="row"><span>Налоги + эквайринг</span><b id="m1-fees"></b></div><div class="row total"><span><b>Чистый доход</b></span><b id="m1-net"></b></div></div>
@@ -128,6 +139,7 @@
     input(otherIds[0]).value=Math.min(remainingUnits,Math.max(0,firstUnits))*5;
     input(otherIds[1]).value=(remainingUnits-Math.min(remainingUnits,Math.max(0,firstUnits)))*5;
   }
+  let currentSummary;
   function calculate(){
     const d=values(), demandBuyers=d.paid+d.organic, mix=d.minShare+d.standardShare+d.consultShare || 1;
     const intendedMinimum=demandBuyers*d.minShare/mix, intendedStandard=demandBuyers*d.standardShare/mix, intendedConsultTariff=demandBuyers*d.consultShare/mix;
@@ -150,13 +162,15 @@
     const expectedLtv=(entryRevenue+newSupport*d.supportPrice*d.supportMonths+(d.clubEnabled ? d.clubRate/100*d.clubMonths*d.clubPrice : 0))*(1-d.feeRate/100)/Math.max(buyers,1);
     const ltvAfterLabor=expectedLtv-consultationIncome/Math.max(buyers,1);
     set('personal',money(personalIncome),personalIncome<0?'bad':'good'); set('consult-income',money(consultationIncome)); set('business-margin',money(businessMargin),businessMargin<0?'bad':'good'); set('turnover',money(turnover));
-    set('fees','−'+money(fees)); set('ads','−'+money(ads)); set('opex','−'+money(d.opex)); set('time-cost','−'+money(consultationIncome));
+    currentSummary={club:clubRevenue,club_enabled:d.clubEnabled,income:personalIncome,margin:businessMargin,ads,opex:d.opex,turnover};
+    set('club-card',d.clubEnabled?money(clubRevenue):'выключен'); set('ads-card',money(ads)); set('opex-card',money(d.opex)); set('paid-card',number(d.paid)); set('organic-card',number(d.organic));
+    set('fees','−'+money(fees));
     const cac=paidActualBuyers ? ads/paidActualBuyers : 0;
-    set('buyers',number(buyers)); set('consult-tariff-sold',number(consultTariff)); set('lost-by-cap',number(lostByCap)); set('leads',number(paidLeads)); set('cac',money(cac)); set('self-cashflow',money(selfCashflow)); set('self-ltv',money(selfLtv)); set('self-after-cac',money(selfLtv-cac),selfLtv-cac<0?'bad':'good'); set('ltv',money(expectedLtv)); set('ltv-after-labor',money(ltvAfterLabor),ltvAfterLabor<0?'bad':'good'); set('ad-budget',money(ads));
+    set('buyers',number(buyers)); set('consult-tariff-sold',number(consultTariff)); set('lost-by-cap',number(lostByCap)); set('leads',number(paidLeads)); set('cac',money(cac)); set('self-cashflow',money(selfCashflow)); set('self-ltv',money(selfLtv)); set('self-after-cac',money(selfLtv-cac),selfLtv-cac<0?'bad':'good'); set('ltv',money(expectedLtv)); set('ltv-after-labor',money(ltvAfterLabor),ltvAfterLabor<0?'bad':'good');
     const primaryWeek=directUnits/4.33, supportWeek=supportUnits/4.33, totalWeek=primaryWeek+supportWeek, status=totalWeek>d.weeklyCap?'выше предела':'в пределах';
     set('primary-week',number(primaryWeek)); set('support-week',number(supportWeek)); set('total-week',number(totalWeek)); set('capacity',number(d.weeklyCap)); set('status',status,status==='выше предела'?'bad':'good');
     set('new-support',number(newSupport)); set('active-support',number(activeSupport)); set('plateau',(1+Math.ceil(d.supportMonths))+'-й месяц'); set('support-revenue',money(supportRevenue));
-    set('club-status',d.clubEnabled?'включён':'выключен',d.clubEnabled?'good':'warn'); set('active-club',number(clubActive)); set('club-revenue',money(clubRevenue)); set('digital-average-display',money(d.digitalAverage));
+    set('active-club',number(clubActive)); set('digital-average-display',money(d.digitalAverage));
     for(let month=1;month<=4;month++){
       const supportCohorts=Math.min(Math.max(month-1,0),d.supportMonths), clubCohorts=d.clubEnabled ? Math.min(Math.max(month-1,0),d.clubMonths) : 0;
       const monthTurnover=entryRevenue+newSupport*supportCohorts*d.supportPrice+buyers*d.clubRate/100*clubCohorts*d.clubPrice;
@@ -164,8 +178,7 @@
       set(`m${month}-start`,'−'+money(startCost)); set(`m${month}-turnover`,money(monthTurnover)); set(`m${month}-fees`,'−'+money(monthFees)); set(`m${month}-net`,money(net),net<0?'bad':'good');
     }
   }
-  function snapshot(){ return Object.fromEntries(Object.keys(defaults).map(id => [id,input(id).type==='checkbox'?input(id).checked:input(id).value])); }
-  function apply(data){ Object.entries(data||{}).forEach(([id,saved])=>{const el=input(id);if(!el)return;if(el.type==='checkbox')el.checked=Boolean(saved);else el.value=(saved === '' || saved === null || saved === undefined || saved === 'undefined') ? defaults[id] : saved;}); normaliseTariffShares('consultShare'); calculate(); }
+  function apply(data){ Object.keys(defaults).forEach(id=>{const el=input(id),saved=data?.[id] ?? defaults[id];if(el.type==='checkbox')el.checked=saved===true;else el.value=(saved === '' || saved === 'undefined') ? defaults[id] : saved;}); normaliseTariffShares('consultShare'); calculate(); }
   function savedLabel(message){ input('saved').textContent=message; }
   const tooltip=document.createElement('div'); tooltip.id='finance-tooltip'; tooltip.className='tooltip hidden'; document.body.append(tooltip);
   const closeTooltip=()=>tooltip.classList.add('hidden');
@@ -183,9 +196,57 @@
     tooltip.style.left=`${left}px`; tooltip.style.top=`${top}px`;
   });
   document.querySelectorAll('input').forEach(el => el.addEventListener('change',()=>{ if(shareIds.includes(el.id)) normaliseTariffShares(el.id); calculate(); }));
-  input('save').addEventListener('click',()=>{ localStorage.setItem(STORAGE_KEY,JSON.stringify(snapshot())); savedLabel('Сохранено в этом браузере'); });
-  input('restore').addEventListener('click',()=>{ try { const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'); if(saved){apply(saved);savedLabel('Сохранённые значения восстановлены');}else savedLabel('Сохранённых значений пока нет'); }catch{savedLabel('Не удалось прочитать сохранённые значения');} });
-  try { const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'); if(saved){apply(saved);savedLabel('Загружены сохранённые значения');}else calculate(); } catch { calculate(); }
+  const API='/admin/api/finance/plans';
+  let plans=[];
+  async function request(path='',options={}){
+    const response=await fetch(API+path,{credentials:'same-origin',...options,headers:{'Content-Type':'application/json','X-Finance-Write':'1',...options.headers}});
+    if(!response.ok) throw new Error(response.status===401?'Войдите в админку и повторите.':'Не удалось выполнить запрос. Попробуйте ещё раз.');
+    return response.json();
+  }
+  function renderPlans(){
+    input('plans').replaceChildren();
+    plans.forEach(plan=>{
+      const row=document.createElement('tr'), summary=plan.summary;
+      const date=new Date(plan.saved_at).toLocaleString('ru-RU',{timeZone:'Europe/Moscow'});
+      [date,plan.name,summary.club_enabled?money(summary.club):'выключен',money(summary.income),money(summary.margin),money(summary.ads),money(summary.opex)].forEach(text=>{const cell=document.createElement('td');cell.textContent=text;row.append(cell);});
+      const actions=document.createElement('td');
+      const load=document.createElement('button'); load.type='button'; load.textContent='Загрузить';
+      load.addEventListener('click',()=>{apply(plan.parameters);input('plan-name').value=plan.name;savedLabel('Загружен план от '+date);});
+      const remove=document.createElement('button');remove.type='button';remove.textContent='Удалить';
+      remove.addEventListener('click',async()=>{if(!confirm('Удалить план «'+plan.name+'»?'))return;remove.disabled=true;try{await request('/'+plan.id,{method:'DELETE'});plans=plans.filter(item=>item.id!==plan.id);renderPlans();}catch(error){savedLabel(error.message);remove.disabled=false;}});
+      actions.append(load,remove);row.append(actions);input('plans').append(row);
+    });
+    input('plans-state').textContent=plans.length?'Дата и время — московские.':'Пока нет сохранённых планов.';
+  }
+  async function savePlan(legacy=false){
+    calculate();
+    const result=await request('',{method:'POST',body:JSON.stringify({name:legacy?'Перенесённый план':input('plan-name').value.trim()||'План',parameters:values(),summary:currentSummary,legacy})});
+    return result.plan;
+  }
+  input('save').addEventListener('click',async()=>{
+    input('save').disabled=true;
+    try{const plan=await savePlan();plans.unshift(plan);renderPlans();savedLabel('План сохранён на сервере');}
+    catch(error){savedLabel(error.message);}finally{input('save').disabled=false;}
+  });
+  const parameterInputs=[...document.querySelectorAll('.field input,#plan-name')];
+  parameterInputs.forEach(el=>el.disabled=true);
+  async function initialize(){
+    calculate();
+    let legacy=null;
+    try{legacy=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');}catch{savedLabel('Не удалось прочитать старое сохранение браузера');}
+    if(legacy&&typeof legacy==='object'&&!Array.isArray(legacy)) apply(legacy);
+    try{
+      if(legacy&&typeof legacy==='object'&&!Array.isArray(legacy)){
+        await savePlan(true);
+        try{localStorage.removeItem(STORAGE_KEY);}catch{}
+        savedLabel('Прежний план перенесён на сервер');
+      }
+      plans=(await request()).plans;renderPlans();
+      if(!legacy&&plans.length){apply(plans[0].parameters);input('plan-name').value=plans[0].name;savedLabel('Загружен последний серверный план');}
+    }catch(error){input('plans-state').textContent=error.message;savedLabel(error.message);}
+    finally{parameterInputs.forEach(el=>el.disabled=false);input('save').disabled=false;}
+  }
+  initialize();
 })();
 </script>
 </body>

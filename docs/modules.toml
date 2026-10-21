@@ -368,7 +368,7 @@ owns_routes = ["*/preview/app-visual-catalog*"]
 
 [[modules]]
 id = "products"
-reads_from = ["platform", "platform.web_design"]
+reads_from = ["platform", "platform.web_design", "products.masterclass.course"]
 card = "docs/knowledge-base/modules/catalog/products.md"
 depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
@@ -378,7 +378,7 @@ owns_files = [
   "backend/app/static/dqs-favicon.svg", "backend/app/static/strength-favicon.svg", "backend/app/static/metabolism-favicon.svg",
   "backend/tests/test_admin_apps.py", "backend/tests/test_app_assets.py", "backend/tests/test_eda_finance.py",
   "backend/app/static/apps/recipes-part-1.html", "backend/app/static/apps/recipes-part-2.html",
-  "backend/app/static/eda-finance.html", "docs/FINANCE_MODEL.md",
+  "backend/app/static/eda-finance.html", "backend/app/finance_plans.py", "docs/FINANCE_MODEL.md",
   "backend/app/static/embed.js", "backend/app/static/site-footer.js", "backend/app/static/content-gallery.js",
   "backend/app/static/app-shell.css",
   "backend/app/static/account-theme.css", "backend/app/static/account-theme.js",
@@ -391,7 +391,7 @@ owns_files = [
   "legacy/google/SOURCES.md",
 ]
 owns_routes = [
-  "*/apps/*", "*/assets/*", "*/max-app", "*/finance*",
+  "*/apps/*", "*/assets/*", "*/max-app", "*/finance*", "*/admin/api/finance/plans*",
 ]
 
 [[modules]]
