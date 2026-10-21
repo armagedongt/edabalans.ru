@@ -97,8 +97,6 @@
 #strength-app .st-modern-tools button{width:26px;min-width:26px;height:28px;min-height:28px;font-size:16px}
 #strength-app .st-modern-editor{padding-left:3px;padding-right:3px}
 .st-grid-set,.st-grid-labels{grid-template-columns:8px calc(3ch + 12px) calc(2ch + 12px) 24px calc(3.3ch + 13.2px) calc(2.2ch + 13.2px) calc(1ch + 14px)}
-#strength-app[data-journal-scale="expanded"] .st-grid-set,
-#strength-app[data-journal-scale="expanded"] .st-grid-labels{grid-template-columns:8px minmax(0,3fr) minmax(0,2fr) 24px minmax(0,3.3fr) minmax(0,2.2fr) minmax(0,1.8fr)}
 #strength-app .st-modern-comment{display:block;box-sizing:border-box;width:100%;height:29px;min-height:29px;max-height:29px;margin:5px 0 0;padding:5px 6px;border:1px solid #d9dfe9;border-radius:7px;background:#fff;color:#737b89;font:400 10px/17px var(--ed-font-body,Manrope,Arial,sans-serif);text-align:left;cursor:pointer}
 #strength-app .st-modern-comment span{display:block;padding:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 #strength-app .st-modern-comment.has-note{background:#fff4db;border-color:#e5c384;color:#624e2b}
