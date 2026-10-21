@@ -730,53 +730,6 @@
     );
   }
 
-  function bindMarketingScrollbars() {
-    root.querySelectorAll(".marketing-horizontal-scroll").forEach((rail) => {
-      const target = root.querySelector(`#${rail.dataset.scrollTarget}`);
-      const spacer = rail.firstElementChild;
-      if (!target || !spacer) return;
-      let syncing = false;
-      let hasOverflow = false;
-      const resize = () => {
-        spacer.style.width = `${target.scrollWidth}px`;
-        hasOverflow = target.scrollWidth > target.clientWidth + 1;
-        rail.hidden = !hasOverflow;
-      };
-      target.addEventListener("scroll", () => {
-        if (syncing) return;
-        syncing = true;
-        rail.scrollLeft = target.scrollLeft;
-        syncing = false;
-      }, { passive: true });
-      rail.addEventListener("scroll", () => {
-        if (syncing) return;
-        syncing = true;
-        target.scrollLeft = rail.scrollLeft;
-        syncing = false;
-      }, { passive: true });
-      new ResizeObserver(resize).observe(target);
-      resize();
-
-      // The journeys table can be much taller than one screen. Its scrollbar
-      // must remain reachable while reading it, not only after the last row.
-      if (rail.dataset.scrollTarget === "marketing-journeys") {
-        rail.classList.add("marketing-horizontal-scroll--fixed");
-        const placeRail = () => {
-          const box = target.getBoundingClientRect();
-          const visible = hasOverflow && box.bottom > 76 && box.top < window.innerHeight;
-          rail.toggleAttribute("hidden", !visible);
-          if (!visible) return;
-          const left = Math.max(8, box.left);
-          rail.style.left = `${left}px`;
-          rail.style.width = `${Math.max(0, Math.min(box.width, window.innerWidth - left - 8))}px`;
-        };
-        window.addEventListener("scroll", placeRail, { passive: true });
-        window.addEventListener("resize", placeRail, { passive: true });
-        placeRail();
-      }
-    });
-  }
-
   function marketingPopoverData(title, entries) {
     return encodeURIComponent(JSON.stringify({ title, entries }));
   }
@@ -891,13 +844,10 @@
       <div class="marketing-table-wrap" id="marketing-journeys"><table class="marketing-table marketing-leads"><thead><tr>
         <th>Пользователь</th><th>Источник</th><th>Вход</th><th>Старт</th><th>Статус</th><th>Интенсив</th><th>Последнее</th>
       </tr></thead><tbody>${rows || '<tr><td colspan="7"><div class="admin-empty">По выбранным фильтрам пользователей нет</div></td></tr>'}</tbody></table></div>
-      <div class="marketing-horizontal-scroll" data-scroll-target="marketing-journeys" aria-label="Горизонтальная прокрутка таблицы путей"><div></div></div>
       <h2 class="marketing-analytics-title" id="marketing-conversions">Конверсии текущего среза</h2>
       <div class="marketing-table-wrap marketing-analytics-wrap" id="marketing-conversions-table"><table class="marketing-table marketing-analytics"><thead><tr><th>Действие</th><th>Количество</th><th>От прошлого шага</th><th>Потеряно</th><th>От стартовавших</th></tr></thead><tbody>${analytics}</tbody></table></div>
-      <div class="marketing-horizontal-scroll" data-scroll-target="marketing-conversions-table" aria-label="Горизонтальная прокрутка конверсий"><div></div></div>
       <h2 class="marketing-analytics-title" id="marketing-entry-losses">Потери до старта по объявлениям</h2>
       <div class="marketing-table-wrap" id="marketing-entry-losses-table"><table class="marketing-table"><thead><tr><th>Источник</th><th>Кампания</th><th>Объявление</th><th>Мессенджер</th><th>Способ</th><th>Переходы</th><th>Старты</th><th>Потеряно</th><th>Конверсия</th></tr></thead><tbody>${entryBreakdown || '<tr><td colspan="9"><div class="admin-empty">Новые точные данные появятся после публикации обновлённой посадки</div></td></tr>'}</tbody></table></div>
-      <div class="marketing-horizontal-scroll" data-scroll-target="marketing-entry-losses-table" aria-label="Горизонтальная прокрутка потерь до старта"><div></div></div>
       ${data.totals.clicks_ignore_user_filter ? '<div class="marketing-note">Переходы считаются по источнику и кампании: технический клик пока нельзя надёжно привязать к поиску конкретного пользователя.</div>' : ""}<aside class="marketing-timeline-popover" id="marketing-timeline-popover" hidden></aside>`;
     document.getElementById("marketing-filters").addEventListener("submit", (event) => {
       event.preventDefault();
@@ -909,7 +859,6 @@
       }
       location.href = `/admin/marketing?${next}`;
     });
-    bindMarketingScrollbars();
     bindMarketingTimelinePopover();
   }
 
