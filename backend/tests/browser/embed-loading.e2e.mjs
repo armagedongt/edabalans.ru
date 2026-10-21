@@ -20,6 +20,8 @@ const homepageLoader = await readFile(new URL('../../app/static/homepage.js', im
 const intensiveLoader = await readFile(new URL('../../app/static/intensive/tilda-loader.js', import.meta.url), 'utf8')
 const dqsHtml = await readFile(new URL('../../app/static/apps/dqs.html', import.meta.url), 'utf8')
 const strengthHtml = await readFile(new URL('../../app/static/apps/strength.html', import.meta.url), 'utf8')
+const strengthJournalCss = await readFile(new URL('../../app/static/strength-journal.css', import.meta.url), 'utf8')
+const strengthJournalModel = await readFile(new URL('../../app/static/strength-journal-model.js', import.meta.url), 'utf8')
 const dqsRules = await readFile(new URL('../../app/static/apps/dqs-category-rules.js', import.meta.url), 'utf8')
 const accountVisual = await readFile(new URL('../../app/static/account-visual.css', import.meta.url), 'utf8')
 const accountTheme = await readFile(new URL('../../app/static/account-theme.css', import.meta.url), 'utf8')
@@ -276,6 +278,8 @@ try {
       if(path==='/apps/masterclass-course.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:courseHtml})
       if(path==='/apps/dqs.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:dqsHtml})
       if(path==='/apps/strength.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:strengthHtml})
+      if(path==='/assets/strength-journal.css')return route.fulfill({contentType:'text/css',body:strengthJournalCss})
+      if(path==='/assets/strength-journal-model.js')return route.fulfill({contentType:'application/javascript',body:strengthJournalModel})
       if(path==='/apps/dqs-category-rules.js')return route.fulfill({contentType:'application/javascript; charset=utf-8',body:dqsRules})
       if(path==='/apps/masterclass-offers.html'){if(delays.special)await delays.special.promise;return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div id="masterclass-offers-app">Готовые предложения</div>'})}
       if(path==='/assets/course-visual.css')return route.fulfill({contentType:'text/css',body:visualCss})
