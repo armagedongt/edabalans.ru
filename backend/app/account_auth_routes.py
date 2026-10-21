@@ -27,7 +27,7 @@ from app.app_service import AppAccessError, EMAIL_RE, normalize_email, require_u
 from app.application_access_service import application_access_state
 from app.config import Settings, get_settings
 from app.database import get_db
-from app.legal_service import accept_current_legal_documents
+from app.legal_service import accept_current_legal_documents, checkout_legal_snapshot, record_data_consent
 from app.models import AccountCredential, AccountSession, MessengerAccount, User, UserEmail
 
 
@@ -49,6 +49,7 @@ class PasswordLoginIn(BaseModel):
 
 class EmailRegistrationIn(BaseModel):
     email: str = Field(min_length=3, max_length=320)
+    data_consent: bool = Field(strict=True)
 
 
 class NativeLegalIn(BaseModel):
@@ -253,6 +254,8 @@ def register_account(
     settings: Settings = Depends(get_settings),
 ) -> dict:
     """Create a no-access account and queue the existing email-to-messenger flow."""
+    if not body.data_consent:
+        raise HTTPException(422, "Подтвердите согласие на обработку персональных данных")
     key = _registration_key(request)
     _check_registration_attempts(key)
     email = normalize_email(body.email)
@@ -272,7 +275,10 @@ def register_account(
         )
     try:
         _record_registration_attempt(key)
-        ensure_free_account_onboarding(db, body.email, settings)
+        existing_user_id = db.scalar(select(UserEmail.user_id).where(UserEmail.email_normalized == email))
+        onboarding = ensure_free_account_onboarding(db, body.email, settings)
+        if onboarding is not None and existing_user_id is None:
+            record_data_consent(db, onboarding.user_id, checkout_legal_snapshot("registration"))
         db.commit()
     except ValueError as exc:
         db.rollback()

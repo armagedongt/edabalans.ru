@@ -140,6 +140,7 @@ def create_subscription_payment(
     *,
     terms_ip: str | None,
     terms_user_agent: str | None,
+    legal_acceptance: dict | None = None,
 ) -> dict:
     _require_checkout_settings(settings)
     email = normalize_checkout_email(email_original)
@@ -223,6 +224,8 @@ def create_subscription_payment(
         "recurring_role": "parent",
         "checkout_id": str(checkout.id),
     }
+    if legal_acceptance:
+        payment.raw_payload = {**payment.raw_payload, "legal_acceptance": legal_acceptance}
     fields = _payment_fields(settings, payment, entry.name, email, expires_at)
     fields["Recurring"] = "true"
     db.commit()

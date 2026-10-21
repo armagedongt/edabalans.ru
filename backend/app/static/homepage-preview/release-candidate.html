@@ -3183,8 +3183,12 @@
         <input class="edb-checkout-email" id="edb-checkout-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="320" required placeholder="primer@pochta.ru">
         <p class="edb-checkout-error" role="alert" hidden></p>
         <label class="edb-checkout-consent">
-          <input name="consent" type="checkbox" required>
-          <span>Я принимаю <a href="/legal/offer" target="_blank" rel="noopener">публичную оферту</a> и даю <a href="/legal/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a>.</span>
+          <input name="accept_offer" type="checkbox" required>
+          <span>Принимаю <a href="/legal/offer" target="_blank" rel="noopener">публичную оферту</a>.</span>
+        </label>
+        <label class="edb-checkout-consent">
+          <input name="data_consent" type="checkbox" required>
+          <span>Даю <a href="/legal/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a>. <a href="/legal/privacy" target="_blank" rel="noopener">Политика обработки данных</a>.</span>
         </label>
         <button class="edb-checkout-submit" type="submit">Перейти к оплате</button>
         <p class="edb-checkout-note">Сумму сформирует сервер. Оплата откроется на защищённой странице Robokassa.</p>
@@ -3235,7 +3239,8 @@
       const checkoutDialog = root.querySelector('.edb-checkout-dialog');
       const checkoutForm = root.querySelector('.edb-checkout-form');
       const checkoutEmail = root.querySelector('.edb-checkout-email');
-      const checkoutConsent = checkoutForm.elements.consent;
+      const checkoutConsent = checkoutForm.elements.data_consent;
+      const checkoutOffer = checkoutForm.elements.accept_offer;
       const checkoutSummary = root.querySelector('.edb-checkout-summary');
       const checkoutError = root.querySelector('.edb-checkout-error');
       const checkoutSubmit = root.querySelector('.edb-checkout-submit');
@@ -3668,7 +3673,7 @@
           checkoutEmail.focus();
           return;
         }
-        if (!checkoutConsent.checked) {
+        if (!checkoutConsent.checked || !checkoutOffer.checked) {
           checkoutError.textContent = 'Подтвердите согласие, чтобы перейти к оплате.';
           checkoutError.hidden = false;
           checkoutConsent.focus();
@@ -3683,6 +3688,8 @@
         const values = {
           price_code: selectedPlan.dataset.priceCode,
           email: checkoutEmail.value,
+          accept_offer: String(checkoutOffer.checked),
+          data_consent: String(checkoutConsent.checked),
           intensive_offer: activeOfferToken || '',
           source_context: activeSourceContext || '',
           browser_context: window.EdabalansBrowserJourney?.context() || ''

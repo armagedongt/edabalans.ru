@@ -25,6 +25,7 @@ from app.intensive_web_access import (
     offer_for_user,
 )
 from app.models import (
+    UserEmail,
     OfferCheckout,
     Payment,
     PersonalAccessLink,
@@ -44,6 +45,7 @@ from app.tilda_service import (
     record_paid_tracking_event,
     validate_user_email_binding,
 )
+from app.legal_service import record_data_consent
 from app.account_onboarding_service import (
     ensure_paid_account_onboarding,
     issue_initial_direct_password,
@@ -308,6 +310,7 @@ def create_payment(
     source_context: str | None = None,
     acquisition_query: dict[str, str] | None = None,
     browser_context: str | None = None,
+    legal_acceptance: dict | None = None,
 ) -> dict:
     _require_checkout_settings(settings)
     email = normalize_checkout_email(email_original)
@@ -414,6 +417,8 @@ def create_payment(
         payment.raw_payload["personal_source_snapshot"] = trusted
     if observed:
         payment.raw_payload["observed_browser"] = observed
+    if legal_acceptance:
+        payment.raw_payload = {**payment.raw_payload, "legal_acceptance": legal_acceptance}
     fields = _payment_fields(settings, payment, title, email, expires_at)
     db.commit()
     return {
@@ -510,7 +515,7 @@ def create_member_offer_payment(
 
 
 def create_personal_access_payment(
-    db: Session, settings: Settings, link: PersonalAccessLink
+    db: Session, settings: Settings, link: PersonalAccessLink, *, legal_acceptance: dict | None = None
 ) -> dict:
     """Create a direct Robokassa invoice for an admin-prepared offer.
 
@@ -531,6 +536,9 @@ def create_personal_access_payment(
     if checkout is not None and checkout.payment_id is not None:
         payment = db.get(Payment, checkout.payment_id)
         if payment is not None and payment.payment_status == "pending":
+            if legal_acceptance:
+                payment.raw_payload = {**payment.raw_payload, "legal_acceptance": legal_acceptance}
+                db.commit()
             return {
                 "ok": True,
                 "invoice_id": payment.external_order_id,
@@ -572,6 +580,8 @@ def create_personal_access_payment(
             "personal_access_link_id": str(link.id),
         },
     )
+    if legal_acceptance:
+        payment.raw_payload = {**payment.raw_payload, "legal_acceptance": legal_acceptance}
     db.add(payment)
     db.flush()
     checkout = OfferCheckout(
@@ -609,6 +619,8 @@ def create_manual_service_payment(
     payer_name: str,
     email_original: str,
     comment: str = "",
+    *,
+    legal_acceptance: dict | None = None,
 ) -> dict:
     """Create a no-access payment for an individually agreed service."""
     _require_checkout_settings(settings)
@@ -663,6 +675,8 @@ def create_manual_service_payment(
         "payer_name": clean_name,
         "comment": clean_comment,
     }
+    if legal_acceptance:
+        payment.raw_payload = {**payment.raw_payload, "legal_acceptance": legal_acceptance}
     fields = _payment_fields(settings, payment, MANUAL_SERVICE_TITLE, email, expires_at)
     db.commit()
     return {
@@ -848,6 +862,7 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
             "checkout_id": checkout_metadata.get("checkout_id"),
             "payer_name": checkout_metadata.get("payer_name"),
             "comment": checkout_metadata.get("comment"),
+            "legal_acceptance": checkout_metadata.get("legal_acceptance"),
             "integration": {"test_mode": is_test_payment},
             "notification": payload,
         }
@@ -884,6 +899,9 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         checkout.status = "test_paid"
         db.commit()
         return invoice_id
+    existing_user_id = checkout.user_id or db.scalar(
+        select(UserEmail.user_id).where(UserEmail.email_normalized == (payment.email_at_purchase or ""))
+    )
     if checkout.user_id is not None:
         user = db.get(User, checkout.user_id)
         if user is None:
@@ -931,6 +949,7 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         "success_kind": success_kind,
         "account_purchase": account_purchase,
         "purchase_place": checkout_metadata.get("purchase_place"),
+        "legal_acceptance": checkout_metadata.get("legal_acceptance"),
         "checkout_id": checkout_metadata.get("checkout_id"),
         "subscription_id": checkout_metadata.get("subscription_id"),
         "recurring_role": checkout_metadata.get("recurring_role"),
@@ -953,6 +972,9 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         personal_link.user_id = user.id
     checkout.status = payment.payment_status
     if not is_test_payment:
+        # A public payer email cannot grant a new consent for an existing account.
+        if existing_user_id is None:
+            record_data_consent(db, user.id, checkout_metadata.get("legal_acceptance") or {})
         if checkout.checkout_kind == "recurring_subscription":
             from app.robokassa_subscription_service import apply_confirmed_subscription_payment
 

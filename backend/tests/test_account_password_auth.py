@@ -122,6 +122,39 @@ def seed_credential(factory: sessionmaker[Session]) -> None:
         db.commit()
 
 
+@pytest.mark.parametrize("body", [{"email": "new@example.test"}, {"email": "new@example.test", "data_consent": False}])
+def test_registration_requires_explicit_data_consent_before_creating_account(body):
+    client, factory = setup()
+    try:
+        response = client.post("/api/account-auth/register", json=body)
+        assert response.status_code == 422
+        with factory() as db:
+            assert db.scalar(select(User)) is None
+            assert db.scalar(select(AccountOnboarding)) is None
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_public_registration_does_not_accept_documents_for_existing_imported_user():
+    client, factory = setup()
+    with factory() as db:
+        user = User(status="active", data_origin="imported")
+        db.add(user)
+        db.flush()
+        user_id = user.id
+        db.add(UserEmail(user_id=user_id, email_original="imported@example.test",
+                         email_normalized="imported@example.test", source="test"))
+        db.commit()
+    try:
+        response = client.post("/api/account-auth/register", json={"email": "imported@example.test", "data_consent": True})
+        assert response.status_code == 200
+        with factory() as db:
+            assert db.get(AccountCredential, user_id) is None
+            assert db.scalar(select(UserLegalAcceptance).where(UserLegalAcceptance.user_id == user_id)) is None
+    finally:
+        app.dependency_overrides.clear()
+
+
 def test_admin_email_message_uses_existing_queue_and_preserves_edited_text(monkeypatch):
     client, factory = setup()
     seed_credential(factory)
@@ -631,14 +664,14 @@ def test_email_registration_creates_no_access_user_and_one_reusable_onboarding(m
 
     response = client.post(
         "/api/account-auth/register",
-        json={"email": "New.Member@Example.Test"},
+        json={"data_consent": True, "email": "New.Member@Example.Test"},
     )
 
     assert response.status_code == 200
     assert "Проверьте почту" in response.json()["message"]
     repeated = client.post(
         "/api/account-auth/register",
-        json={"email": "new.member@example.test"},
+        json={"data_consent": True, "email": "new.member@example.test"},
     )
     assert repeated.status_code == 200
     with factory() as db:
@@ -661,6 +694,12 @@ def test_email_registration_creates_no_access_user_and_one_reusable_onboarding(m
             )
         )
         assert len(onboardings) == 1
+        consents = list(db.scalars(select(UserLegalAcceptance).where(UserLegalAcceptance.user_id == user.id)))
+        assert len(consents) == 1
+        assert consents[0].document_code == "personal_data_consent"
+        from app.legal_service import current_legal_versions
+        assert consents[0].document_version == current_legal_versions()["personal_data_consent"]
+        assert consents[0].source == "registration"
         links = onboarding_links(onboarding, settings())
         assert links["telegram"].startswith("https://t.me/test_tg_bot?start=M")
         tokens = {
@@ -685,12 +724,12 @@ def test_registration_limits_valid_requests_per_ip():
     for number in range(5):
         response = client.post(
             "/api/account-auth/register",
-            json={"email": f"member-{number}@example.test"},
+            json={"data_consent": True, "email": f"member-{number}@example.test"},
         )
         assert response.status_code == 200
     blocked = client.post(
         "/api/account-auth/register",
-        json={"email": "member-6@example.test"},
+        json={"data_consent": True, "email": "member-6@example.test"},
     )
     assert blocked.status_code == 429
     app.dependency_overrides.clear()

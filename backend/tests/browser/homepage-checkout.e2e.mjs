@@ -104,11 +104,14 @@ try {
     throw new Error('Direct Robokassa email modal did not open in Tilda embed mode')
   }
   await page.locator('.edb-checkout-email').fill('test@example.ru')
-  await page.locator('.edb-checkout-consent').check()
+  await page.locator('input[name=accept_offer]').check()
+  await page.locator('input[name=data_consent]').check()
+  if (await page.locator('input[name=accept_offer]').count() !== 1 || await page.locator('input[name=data_consent]').count() !== 1) throw new Error('Consent fields must be separate');
   const paymentNavigation = page.waitForURL('https://auth.robokassa.ru/**')
   await page.locator('.edb-checkout-form').evaluate(form => form.requestSubmit())
   await paymentNavigation
 
+  if (checkoutBody?.accept_offer !== 'true' || checkoutBody?.data_consent !== 'true') throw new Error('Consent confirmations missing from checkout');
   if (checkoutBody?.browser_context !== 'managed-homepage-browser') throw new Error('Managed homepage checkout lost browser context');
   if (checkoutBody?.price_code !== 'site.masterclass.basic' || checkoutBody?.intensive_offer !== 'offer-test') {
     throw new Error(`Stored intensive offer was not restored in Tilda checkout: ${JSON.stringify(checkoutBody)}`)
@@ -135,7 +138,7 @@ try {
     contentType: 'application/json',
     body: JSON.stringify(catalog),
   }))
-  await page.goto(`${baseUrl}/preview/homepage-mobile`, { waitUntil: 'domcontentloaded' })
+  await page.goto(`${baseUrl}/preview/homepage-release-candidate`, { waitUntil: 'domcontentloaded' })
   const standaloneButton = page.locator('[data-price-code="site.masterclass.basic"] .edb-pricing-button')
   await standaloneButton.waitFor({ state: 'visible' })
   await standaloneButton.click()

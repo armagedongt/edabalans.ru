@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 
 from app.config import Settings, get_settings
 from app.database import get_db
+from app.legal_service import checkout_legal_snapshot, data_consent_complete
 from app.account_auth_routes import primary_email, require_native_user
 from app.intensive_web_access import offer_user_id
 from app.app_auth import require_placement
@@ -115,7 +116,22 @@ def _success_kind(payment: Payment) -> str:
 GO_TEST_EMAIL = "robokassa-test@pohudenie-eto-est.invalid"
 
 
-class RobokassaCheckoutIn(BaseModel):
+class ExternalLegalIn(BaseModel):
+    accept_offer: bool = Field(strict=True)
+    data_consent: bool = Field(strict=True)
+
+
+def require_external_consent(body: ExternalLegalIn) -> None:
+    if not body.accept_offer or not body.data_consent:
+        raise HTTPException(422, "Примите оферту и отдельно подтвердите согласие на обработку данных")
+
+
+def require_account_consent(db: Session, user_id: uuid.UUID) -> None:
+    if not data_consent_complete(db, user_id):
+        raise HTTPException(403, "Сначала подтвердите согласие на обработку данных в личном кабинете")
+
+
+class RobokassaCheckoutIn(ExternalLegalIn):
     price_code: str = Field(min_length=3, max_length=120)
     email: str = Field(min_length=3, max_length=320)
     intensive_offer: str | None = Field(default=None, max_length=1024)
@@ -143,14 +159,14 @@ class NativeTariffCheckoutIn(BaseModel):
     price_code: str = Field(min_length=3, max_length=120)
 
 
-class ManualPaymentCheckoutIn(BaseModel):
+class ManualPaymentCheckoutIn(ExternalLegalIn):
     amount: Decimal = Field(gt=0, le=10_000_000, max_digits=14, decimal_places=2)
     payer_name: str = Field(min_length=1, max_length=255)
     email: str = Field(min_length=3, max_length=320)
     comment: str = Field(default="", max_length=1000)
 
 
-class SubscriptionCheckoutIn(BaseModel):
+class SubscriptionCheckoutIn(ExternalLegalIn):
     email: str = Field(min_length=3, max_length=320)
     accept_terms: bool
 
@@ -239,8 +255,9 @@ def robokassa_subscription_checkout(
     enforce_preview_checkout_rate_limit(request)
     if not settings.robokassa_recurring_worker_enabled:
         raise HTTPException(503, "Подписка пока не опубликована")
+    require_external_consent(body)
     if not body.accept_terms:
-        raise HTTPException(422, "Нужно принять условия подписки и обработки данных")
+        raise HTTPException(422, "Подтвердите ежемесячные автоматические списания")
     version = active_pricing_version(db)
     if version is None:
         raise HTTPException(503, "Активная версия цен не опубликована")
@@ -252,6 +269,7 @@ def robokassa_subscription_checkout(
             body.email,
             terms_ip=request.client.host if request.client else None,
             terms_user_agent=request.headers.get("user-agent"),
+            legal_acceptance=checkout_legal_snapshot("subscription"),
         )
     except RobokassaError as exc:
         db.rollback()
@@ -291,17 +309,56 @@ def _robokassa_redirect(payment_form: dict) -> RedirectResponse:
 
 
 @router.get("/access-links/{token}", include_in_schema=False)
-def personal_access_payment_redirect(
+def personal_access_payment_page(token: str, db: Session = Depends(get_db)) -> HTMLResponse:
+    link = link_by_token(db, token)
+    if link is None or link.mode != "paid" or not active_link(link):
+        raise HTTPException(status.HTTP_410_GONE, "Персональное предложение больше не доступно")
+    return HTMLResponse(
+        '<!doctype html><html lang="ru"><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        '<title>Персональное предложение</title><link rel="stylesheet" href="/legal/legal.css">'
+        '</head><body><main class="legal-page"><h1>Персональное предложение</h1>'
+        f'<p>К оплате: {escape(str(link.final_amount))} ₽.</p>'
+        '<p>Состав и условия покупки согласованы с Исполнителем в личной переписке.</p>'
+        f'<form method="post" action="/access-links/{escape(token, quote=True)}">'
+        '<p><label><input type="checkbox" name="accept_offer" value="true" required> '
+        'Принимаю <a href="/legal/offer" target="_blank" rel="noopener">публичную оферту</a> '
+        'и условия предложения, согласованные в личной переписке.</label></p>'
+        '<p><label><input type="checkbox" name="data_consent" value="true" required> '
+        'Даю <a href="/legal/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a>. '
+        '<a href="/legal/privacy" target="_blank" rel="noopener">Политика обработки данных</a>.</label></p>'
+        '<button type="submit">Перейти к оплате</button></form></main></body></html>',
+        headers={"Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow", "Referrer-Policy": "no-referrer"},
+    )
+
+
+@router.post("/access-links/{token}", include_in_schema=False)
+async def personal_access_payment_redirect(
     token: str,
+    request: Request,
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> RedirectResponse:
-    """A personal URL goes directly to Robokassa, without an account page."""
+    _enforce_checkout_origin(request, settings)
+    enforce_preview_checkout_rate_limit(request)
+    if request.headers.get("content-type", "").split(";", 1)[0].lower() != "application/x-www-form-urlencoded":
+        raise HTTPException(415, "Ожидается форма оплаты")
+    raw = await request.body()
+    if len(raw) > 4096:
+        raise HTTPException(413, "Форма оплаты слишком большая")
+    try:
+        form = parse_qs(raw.decode("utf-8"))
+    except UnicodeDecodeError as exc:
+        raise HTTPException(422, "Некорректная форма оплаты") from exc
+    if form.get("accept_offer") != ["true"] or form.get("data_consent") != ["true"]:
+        raise HTTPException(422, "Примите оферту и отдельно подтвердите согласие на обработку данных")
     link = link_by_token(db, token, for_update=True)
     if link is None or link.mode != "paid" or not active_link(link):
         raise HTTPException(status.HTTP_410_GONE, "Персональное предложение больше не доступно")
     try:
-        checkout = create_personal_access_payment(db, settings, link)
+        checkout = create_personal_access_payment(
+            db, settings, link, legal_acceptance=checkout_legal_snapshot("personal_payment"),
+        )
     except RobokassaError as exc:
         db.rollback()
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(exc)) from exc
@@ -460,6 +517,7 @@ def robokassa_checkout(
 ) -> dict:
     _enforce_checkout_origin(request, settings)
     enforce_preview_checkout_rate_limit(request)
+    require_external_consent(body)
     version = active_pricing_version(db)
     if version is None:
         raise HTTPException(503, "Активная версия цен не опубликована")
@@ -479,6 +537,7 @@ def robokassa_checkout(
             source_context=body.source_context,
             browser_context=body.browser_context,
             acquisition_query=body.acquisition_query,
+            legal_acceptance=checkout_legal_snapshot("public_checkout"),
         )
         payment = db.scalar(select(Payment).where(
             Payment.source == "robokassa",
@@ -535,6 +594,8 @@ async def robokassa_first_party_start(
         body = RobokassaCheckoutIn(
             price_code=form.get("price_code", ""),
             email=form.get("email", ""),
+            accept_offer=form.get("accept_offer") == "true",
+            data_consent=form.get("data_consent") == "true",
             intensive_offer=form.get("intensive_offer") or None,
             source_context=form.get("source_context") or None,
             browser_context=form.get("browser_context") or None,
@@ -546,6 +607,7 @@ async def robokassa_first_party_start(
         )
     except (UnicodeDecodeError, ValueError) as exc:
         raise HTTPException(422, "Некорректные данные оплаты") from exc
+    require_external_consent(body)
     version = active_pricing_version(db)
     if version is None:
         raise HTTPException(503, "Активная версия цен не опубликована")
@@ -559,6 +621,7 @@ async def robokassa_first_party_start(
             source_context=body.source_context,
             browser_context=body.browser_context,
             acquisition_query=body.acquisition_query,
+            legal_acceptance=checkout_legal_snapshot("public_checkout"),
         )
         payment = db.scalar(select(Payment).where(
             Payment.source == "robokassa",
@@ -586,9 +649,11 @@ def robokassa_manual_checkout(
 ) -> dict:
     _enforce_checkout_origin(request, settings)
     enforce_preview_checkout_rate_limit(request)
+    require_external_consent(body)
     try:
         return create_manual_service_payment(
-            db, settings, body.amount, body.payer_name, body.email, body.comment
+            db, settings, body.amount, body.payer_name, body.email, body.comment,
+            legal_acceptance=checkout_legal_snapshot("manual_payment")
         )
     except RobokassaError as exc:
         db.rollback()
@@ -605,6 +670,7 @@ def robokassa_account_tariff_checkout(
     _enforce_checkout_origin(request, settings)
     enforce_preview_checkout_rate_limit(request)
     user = require_native_user(request, db)
+    require_account_consent(db, user.id)
     already_owned = db.scalar(
         select(UserAccess.id)
         .join(Resource, Resource.id == UserAccess.resource_id)
@@ -634,6 +700,7 @@ def robokassa_account_offer_checkout(
     _enforce_checkout_origin(request, settings)
     enforce_preview_checkout_rate_limit(request)
     user = require_native_user(request, db)
+    require_account_consent(db, user.id)
     payload = build_offers(
         db, user, "offers-hub", use_pricing_catalog=settings.pricing_catalog_enabled,
         focus_product_code=body.focus_product_code, readonly=True,
@@ -664,6 +731,7 @@ def robokassa_course_offer_checkout(
         raise HTTPException(422, "unknown masterclass placement")
     require_placement(request, body.placement, body.placement_token, settings)
     user = resolve_masterclass_user(request, db, "", settings)
+    require_account_consent(db, user.id)
     payload = build_offers(
         db, user, body.placement, use_pricing_catalog=settings.pricing_catalog_enabled,
     )

@@ -265,7 +265,9 @@ def create_checkout(
     source_context: str | None = None,
     acquisition_query: dict[str, str] | None = None,
 ) -> dict:
-    body: dict[str, str] = {
+    body = {
+        "accept_offer": True,
+        "data_consent": True,
         "price_code": "site.masterclass.basic",
         "email": email,
     }
@@ -280,6 +282,147 @@ def create_checkout(
     )
     assert response.status_code == 200, response.text
     return response.json()
+
+
+@pytest.mark.parametrize("confirmation", ["accept_offer", "data_consent"])
+@pytest.mark.parametrize("value", [None, False, "true", 1])
+def test_external_checkout_requires_each_explicit_boolean_confirmation(confirmation, value):
+    client, factory, _ = make_client()
+    seed_catalog(factory)
+    body = {"price_code": "site.masterclass.basic", "email": "buyer@example.test",
+            "accept_offer": True, "data_consent": True}
+    if value is None:
+        body.pop(confirmation)
+    else:
+        body[confirmation] = value
+    try:
+        response = client.post("/api/payments/robokassa/checkout", json=body,
+                               headers={"Origin": "https://app.edabalans.ru"})
+        assert response.status_code == 422
+        with factory() as db:
+            assert db.scalar(select(func.count(Payment.id))) == 0
+            assert db.scalar(select(func.count(UserLegalAcceptance.id))) == 0
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_paid_external_consent_is_recorded_once_without_accepting_disclaimer():
+    client, factory, key = make_client(test_mode=False)
+    seed_catalog(factory)
+    try:
+        checkout = create_checkout(client)
+        with factory() as db:
+            payment = db.scalar(select(Payment))
+            evidence = dict(payment.raw_payload["legal_acceptance"])
+            assert evidence["source"] == "public_checkout"
+            assert db.scalar(select(func.count(UserLegalAcceptance.id))) == 0
+        notification = signed_result(key, checkout["invoice_id"], "5900.00")
+        for _ in range(2):
+            assert client.post("/integrations/robokassa/result2", content=notification).status_code == 200
+        with factory() as db:
+            rows = list(db.scalars(select(UserLegalAcceptance)))
+            assert len(rows) == 1
+            assert rows[0].document_code == "personal_data_consent"
+            assert rows[0].document_version == evidence["personal_data_consent"]
+            assert rows[0].accepted_at.isoformat() == datetime.fromisoformat(evidence["accepted_at"]).replace(tzinfo=None).isoformat()
+            assert db.scalar(select(Payment)).raw_payload["legal_acceptance"] == evidence
+    finally:
+        app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize("endpoint", ["/payments/robokassa/start", "/api/payments/robokassa/manual-checkout", "/api/payments/robokassa/subscription/checkout"])
+@pytest.mark.parametrize("confirmation", ["accept_offer", "data_consent"])
+def test_other_external_payment_routes_reject_refusal_before_creating_invoice(endpoint, confirmation):
+    client, factory, _ = make_client()
+    seed_subscription_catalog(factory)
+    body = {"price_code": "site.masterclass.basic", "email": "member@example.test",
+            "amount": "3500", "payer_name": "Участник", "accept_terms": True,
+            "accept_offer": True, "data_consent": True}
+    headers = {"Origin": "https://app.edabalans.ru"}
+    try:
+        def send(fields):
+            if endpoint.endswith("/start"):
+                return client.post(endpoint, data={k: str(v).lower() if isinstance(v, bool) else v for k, v in fields.items()}, headers=headers)
+            return client.post(endpoint, json=fields, headers=headers)
+        assert send({**body, confirmation: False}).status_code == 422
+        with factory() as db:
+            assert db.scalar(select(func.count(Payment.id))) == 0
+            assert db.scalar(select(func.count(UserLegalAcceptance.id))) == 0
+        assert send(body).status_code == 200
+        with factory() as db:
+            assert db.scalar(select(func.count(Payment.id))) == 1
+    finally:
+        app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize("old_version", [None, "2026-08-24-v1"])
+def test_internal_purchase_requires_current_saved_consent_without_another_checkbox(old_version):
+    client, factory, _ = make_client()
+    user_id = seed_subscription_catalog(factory)
+    with factory() as db:
+        db.add(AccountSession(user_id=user_id, token_hash=token_hash("legal-session"), password_version=1,
+                              expires_at=datetime.now(timezone.utc) + timedelta(days=1)))
+        if old_version:
+            db.add(UserLegalAcceptance(user_id=user_id, document_code="personal_data_consent", document_version=old_version, source="test"))
+        db.commit()
+    client.cookies.set(COOKIE_NAME, "legal-session")
+    try:
+        kwargs = {"json": {"price_code": "site.masterclass.basic"}, "headers": {"Origin": "https://app.edabalans.ru"}}
+        rejected = client.post("/api/payments/robokassa/account-tariffs/checkout", **kwargs)
+        assert rejected.status_code == 403
+        with factory() as db:
+            assert db.scalar(select(func.count(Payment.id))) == 0
+            db.add(UserLegalAcceptance(user_id=user_id, document_code="personal_data_consent",
+                                       document_version=next(d["version"] for d in LEGAL_DOCUMENTS if d["code"] == "personal_data_consent"), source="native_account"))
+            db.commit()
+        assert client.post("/api/payments/robokassa/account-tariffs/checkout", **kwargs).status_code == 200
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_public_payment_email_cannot_upgrade_an_existing_users_consent():
+    client, factory, key = make_client(test_mode=False)
+    user_id = seed_subscription_catalog(factory)
+    try:
+        checkout = create_checkout(client, email="member@example.test")
+        assert client.post("/integrations/robokassa/result2", content=signed_result(key, checkout["invoice_id"], "5900.00")).status_code == 200
+        with factory() as db:
+            assert db.scalar(select(Payment)).user_id == user_id
+            assert db.scalar(select(Payment)).raw_payload["legal_acceptance"]
+            assert db.scalar(select(UserLegalAcceptance).where(UserLegalAcceptance.user_id == user_id)) is None
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_personal_payment_get_only_shows_consents_and_post_enforces_both():
+    client, factory, _ = make_client(test_mode=False)
+    seed_catalog(factory)
+    app.dependency_overrides[require_admin] = lambda: "test-admin"
+    try:
+        created = client.post("/admin/api/personal-access-links", json={
+            "email": "personal-legal@example.test", "resource_codes": ["ACCESS_MASTERCLASS"],
+            "resource_settings": [{"resource_code": "ACCESS_MASTERCLASS", "start_open": True, "all_lessons_open": True}],
+            "final_amount": 4900,
+        })
+        assert created.status_code == 200, created.text
+        path = urlsplit(created.json()["url"]).path
+        page = client.get(path)
+        assert page.status_code == 200
+        assert 'name="accept_offer"' in page.text and 'name="data_consent"' in page.text
+        assert "personal-legal@example.test" not in page.text
+        with factory() as db:
+            assert db.scalar(select(func.count(Payment.id))) == 0
+        for fields in ({}, {"accept_offer": "true"}, {"data_consent": "true"}):
+            rejected = client.post(path, data=fields or {"unused": "1"},
+                                   headers={"Origin": "https://app.edabalans.ru"})
+            assert rejected.status_code == 422
+        accepted = client.post(path, data={"accept_offer": "true", "data_consent": "true"},
+                               headers={"Origin": "https://app.edabalans.ru"}, follow_redirects=False)
+        assert accepted.status_code == 303
+        with factory() as db:
+            assert db.scalar(select(Payment)).raw_payload["legal_acceptance"]["source"] == "personal_payment"
+    finally:
+        app.dependency_overrides.clear()
 
 
 def seed_personal_link_source(
@@ -892,7 +1035,7 @@ def test_checkout_fails_before_redirect_when_result2_certificate_is_missing() ->
 
     response = client.post(
         "/api/payments/robokassa/checkout",
-        json={"price_code": "site.masterclass.basic", "email": "buyer@example.test"},
+        json={"accept_offer": True, "data_consent": True, "price_code": "site.masterclass.basic", "email": "buyer@example.test"},
         headers={"Origin": "https://app.edabalans.ru"},
     )
 
@@ -990,8 +1133,8 @@ def test_direct_paid_personal_offer_creates_account_only_after_live_result() -> 
         assert db.scalar(select(func.count(User.id))) == 0
         assert db.scalar(select(PersonalAccessLink.user_id)) is None
 
-    first = client.get(path, follow_redirects=False)
-    second = client.get(path, follow_redirects=False)
+    first = client.post(path, data={"accept_offer": "true", "data_consent": "true"}, headers={"Origin": "https://app.edabalans.ru"}, follow_redirects=False)
+    second = client.post(path, data={"accept_offer": "true", "data_consent": "true"}, headers={"Origin": "https://app.edabalans.ru"}, follow_redirects=False)
     assert first.status_code == second.status_code == 303
     invoice = parse_qs(urlsplit(first.headers["location"]).query)["InvId"][0]
     with factory() as db:
@@ -1031,7 +1174,7 @@ def test_cancelled_personal_offer_stops_new_opening_but_finishes_existing_invoic
     )
     assert created.status_code == 200
     path = urlsplit(created.json()["url"]).path
-    invoice = parse_qs(urlsplit(client.get(path, follow_redirects=False).headers["location"]).query)["InvId"][0]
+    invoice = parse_qs(urlsplit(client.post(path, data={"accept_offer": "true", "data_consent": "true"}, headers={"Origin": "https://app.edabalans.ru"}, follow_redirects=False).headers["location"]).query)["InvId"][0]
     with factory() as db:
         link = db.scalar(select(PersonalAccessLink))
         assert link is not None
@@ -1070,7 +1213,7 @@ def test_personal_offer_for_existing_account_grants_rights_without_resetting_pas
     )
     assert created.status_code == 200
     path = urlsplit(created.json()["url"]).path
-    invoice = parse_qs(urlsplit(client.get(path, follow_redirects=False).headers["location"]).query)["InvId"][0]
+    invoice = parse_qs(urlsplit(client.post(path, data={"accept_offer": "true", "data_consent": "true"}, headers={"Origin": "https://app.edabalans.ru"}, follow_redirects=False).headers["location"]).query)["InvId"][0]
     assert client.post("/integrations/robokassa/result2", content=signed_result(key, invoice, "4900.00")).status_code == 200
     with factory() as db:
         assert db.scalar(select(func.count(User.id))) == 1
@@ -1105,7 +1248,7 @@ def test_personal_offer_issues_password_for_imported_email_without_credential() 
     )
     assert created.status_code == 200
     path = urlsplit(created.json()["url"]).path
-    invoice = parse_qs(urlsplit(client.get(path, follow_redirects=False).headers["location"]).query)["InvId"][0]
+    invoice = parse_qs(urlsplit(client.post(path, data={"accept_offer": "true", "data_consent": "true"}, headers={"Origin": "https://app.edabalans.ru"}, follow_redirects=False).headers["location"]).query)["InvId"][0]
     assert client.post("/integrations/robokassa/result2", content=signed_result(key, invoice, "4900.00")).status_code == 200
     with factory() as db:
         credential = db.get(AccountCredential, user_id)
@@ -1132,14 +1275,14 @@ def test_personal_offer_test_result_does_not_consume_offer_or_create_account() -
     )
     assert created.status_code == 200
     path = urlsplit(created.json()["url"]).path
-    start = client.get(path, follow_redirects=False)
+    start = client.post(path, data={"accept_offer": "true", "data_consent": "true"}, headers={"Origin": "https://app.edabalans.ru"}, follow_redirects=False)
     invoice = parse_qs(urlsplit(start.headers["location"]).query)["InvId"][0]
     assert client.post("/integrations/robokassa/result2", content=signed_result(key, invoice, "4900.00")).status_code == 200
     with factory() as db:
         link = db.scalar(select(PersonalAccessLink))
         assert link is not None and link.status == "active" and link.user_id is None
         assert db.scalar(select(func.count(User.id))) == 0
-    retry = client.get(path, follow_redirects=False)
+    retry = client.post(path, data={"accept_offer": "true", "data_consent": "true"}, headers={"Origin": "https://app.edabalans.ru"}, follow_redirects=False)
     assert retry.status_code == 303
     assert parse_qs(urlsplit(retry.headers["location"]).query)["InvId"][0] != invoice
     app.dependency_overrides.clear()
@@ -1233,7 +1376,7 @@ def test_first_party_checkout_start_sets_secure_grant_cookie_and_posts_to_roboka
 
     response = client.post(
         "/api/payments/robokassa/start",
-        data={
+        data={"accept_offer": "true", "data_consent": "true",
             "price_code": "site.masterclass.basic",
             "email": "form-buyer@example.test",
             "utm_source": "site",
@@ -1371,6 +1514,8 @@ def test_account_purchase_is_not_exported_as_initial_public_purchase() -> None:
                 expires_at=datetime.now(timezone.utc) + timedelta(days=1),
             )
         )
+        db.add(UserLegalAcceptance(user_id=user.id, document_code="personal_data_consent",
+                                   document_version=next(d["version"] for d in LEGAL_DOCUMENTS if d["code"] == "personal_data_consent"), source="test"))
         db.commit()
     client.cookies.set(COOKIE_NAME, raw_session)
 
@@ -1695,7 +1840,7 @@ def test_personal_offer_changes_preview_and_checkout_by_one_thousand() -> None:
     preview = client.get("/api/pricing/site/preview", params={"intensive_offer": token})
     checkout = client.post(
         "/api/payments/robokassa/checkout",
-        json={
+        json={"accept_offer": True, "data_consent": True,
             "price_code": "site.masterclass.basic",
             "email": "selected@example.test",
             "intensive_offer": token,
@@ -1732,7 +1877,7 @@ def test_manual_payment_keeps_comment_without_creating_access_or_account() -> No
     page = client.get("/pay")
     checkout = client.post(
         "/api/payments/robokassa/manual-checkout",
-        json={
+        json={"accept_offer": True, "data_consent": True,
             "amount": "3500.50",
             "payer_name": "Ирина Петрова",
             "email": "irina@example.test",
@@ -1794,10 +1939,10 @@ def test_manual_payment_accepts_omitted_comment_and_still_requires_name() -> Non
     fields.feed(client.get("/pay").text)
     assert "required" not in fields.fields["comment"]
     assert "required" in fields.fields["payer-name"]
-    body = {"amount": "3500", "payer_name": "Ирина", "email": "irina@example.test"}
+    body = {"accept_offer": True, "data_consent": True, "amount": "3500", "payer_name": "Ирина", "email": "irina@example.test"}
     headers = {"Origin": "https://app.edabalans.ru"}
     for invalid_name in ("", "   "):
-        rejected = client.post("/api/payments/robokassa/manual-checkout", json={**body, "payer_name": invalid_name}, headers=headers)
+        rejected = client.post("/api/payments/robokassa/manual-checkout", json={"accept_offer": True, "data_consent": True, **body, "payer_name": invalid_name}, headers=headers)
         assert rejected.status_code == 422
     response = client.post("/api/payments/robokassa/manual-checkout", json=body, headers=headers)
     assert response.status_code == 200, response.text
@@ -1845,7 +1990,7 @@ def test_personal_offer_rejects_another_email_before_payment() -> None:
 
     response = client.post(
         "/api/payments/robokassa/checkout",
-        json={
+        json={"accept_offer": True, "data_consent": True,
             "price_code": "site.masterclass.basic",
             "email": "typo@example.test",
             "intensive_offer": token,
@@ -1867,7 +2012,7 @@ def test_public_subscription_uses_postgres_price_and_existing_account() -> None:
     offer = client.get("/api/payments/robokassa/subscription/offer")
     checkout = client.post(
         "/api/payments/robokassa/subscription/checkout",
-        json={"email": "member@example.test", "accept_terms": True},
+        json={"accept_offer": True, "data_consent": True, "email": "member@example.test", "accept_terms": True},
         headers={"Origin": "https://app.edabalans.ru"},
     )
 
@@ -1908,7 +2053,7 @@ def test_subscription_rejects_unknown_account_before_creating_invoice() -> None:
 
     response = client.post(
         "/api/payments/robokassa/subscription/checkout",
-        json={"email": "unknown@example.test", "accept_terms": True},
+        json={"accept_offer": True, "data_consent": True, "email": "unknown@example.test", "accept_terms": True},
         headers={"Origin": "https://app.edabalans.ru"},
     )
 
@@ -1927,7 +2072,7 @@ def test_subscription_result_activates_month_without_account_onboarding() -> Non
     user_id = seed_subscription_catalog(factory)
     checkout = client.post(
         "/api/payments/robokassa/subscription/checkout",
-        json={"email": "member@example.test", "accept_terms": True},
+        json={"accept_offer": True, "data_consent": True, "email": "member@example.test", "accept_terms": True},
         headers={"Origin": "https://app.edabalans.ru"},
     ).json()
 
@@ -1965,7 +2110,7 @@ def test_subscription_cancellation_requires_login_and_stops_future_charge() -> N
     user_id = seed_subscription_catalog(factory)
     checkout = client.post(
         "/api/payments/robokassa/subscription/checkout",
-        json={"email": "member@example.test", "accept_terms": True},
+        json={"accept_offer": True, "data_consent": True, "email": "member@example.test", "accept_terms": True},
         headers={"Origin": "https://app.edabalans.ru"},
     ).json()
     client.post(
@@ -2310,7 +2455,7 @@ def test_browser_contact_survives_callback_without_becoming_the_buyer():
         bind_personal(db,row,"robokassa-tests",token=personal)
         context=issue_context("robokassa-tests",row.metadata_json["browser_id"])
         db.commit(); observed_id=observed_user.id
-    result=client.post("/api/payments/robokassa/checkout", json={"price_code":"site.masterclass.basic", "email":"actual@example.test", "browser_context":context},headers={"Origin":"https://app.edabalans.ru"})
+    result=client.post("/api/payments/robokassa/checkout", json={"accept_offer": True, "data_consent": True, "price_code":"site.masterclass.basic", "email":"actual@example.test", "browser_context":context},headers={"Origin":"https://app.edabalans.ru"})
     assert result.status_code==200, result.text
     invoice=result.json()["invoice_id"]
     with factory() as db:

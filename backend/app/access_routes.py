@@ -33,6 +33,7 @@ from app.database import get_db
 from app.legal_service import (
     accept_current_legal_documents,
     legal_status_payload,
+    data_consent_complete,
 )
 from app.models import (
     AdminAppEdit,
@@ -555,9 +556,7 @@ def account_payload(email: str, db: Session, *, progress_user_id: uuid.UUID | No
     )
     purchases = purchased_products(db, user.id)
     legal = legal_status_payload(db, user.id)
-    # There is no personal data inside an empty showcase account. Ask for the
-    # two confirmations when a product actually becomes available, not before.
-    legal["required"] = bool(owned) and legal["required"]
+    legal["required"] = (bool(owned) and legal["required"]) or not data_consent_complete(db, user.id)
     masterclass_purchase = next(
         (item for item in purchases if str(item.get("product_code") or "").startswith("MASTERCLASS_")),
         None,
@@ -755,6 +754,8 @@ def claim_personal_link(token: str, body: LinkActionIn, request: Request, db: Se
 @router.post("/api/access-links/{token}/checkout")
 def personal_link_checkout(token: str, body: LinkActionIn, request: Request, db: Session = Depends(get_db)) -> dict:
     link, user = matching_link(db, token, native_user(request, db), for_update=True)
+    if not data_consent_complete(db, user.id):
+        raise HTTPException(403, "Сначала подтвердите согласие на обработку данных в личном кабинете")
     if link.mode != "paid":
         raise HTTPException(409, "Это бесплатная ссылка")
     if link.status == "paid":

@@ -3,7 +3,7 @@
   function esc(value) { return String(value || '').replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function money(value) { return Number(value).toLocaleString('ru-RU') + ' ₽'; }
   window.EdabalansLegacyOffer = function (root, data, host) {
-    if (data.state !== 'ready' || !data.legacy_portal || !data.legacy_portal.available) return;
+    if (data.state !== 'ready' || (data.legal && data.legal.required) || !data.legacy_portal || !data.legacy_portal.available) return;
     var holder = root.querySelector('[data-legacy-offer]');
     if (!holder) return;
     var timer;
@@ -23,11 +23,10 @@
       var card = payload.offers[0], discount = payload.stage !== 'standard', offset = Date.parse(payload.server_now) - Date.now();
       holder.hidden = false;
       holder.className = 'legacy-upgrade account-card' + (payload.stage === 'first' ? ' legacy-upgrade-first' : '');
-      holder.innerHTML = '<h2>Получите полный обновляемый пакет</h2><div class="legacy-upgrade-columns"><div><h3>У вас сейчас</h3><ul>' + payload.current.map(function (item) { return '<li>✓ <strong class="legacy-upgrade-product">' + esc(item.name) + '</strong>' + (item.edition === 'non_updating' ? ' — необновляемый доступ' : ' — обновляемый доступ') + '</li>'; }).join('') + '</ul></div><div><h3>После перехода</h3><ul>' + card.details.map(function (item) { return '<li>✓ <strong class="legacy-upgrade-product">' + esc(item.name) + '</strong>' + ' — обновляемый доступ</li>'; }).join('') + '<li>✓ Приложения внутри программ (DQS, калькулятор метаболизма и калькулятор рецептов)</li><li>✓ Новые материалы и дальнейшие обновления</li></ul></div></div><p class="legacy-upgrade-price">' + '<strong>Всего за ' + money(card.price) + '</strong>' + (discount ? ' <span>(обычная цена — <s>' + money(card.regular_price) + '</s>)</span>' : '') + '</p>' + (payload.stage === 'first' ? '<p><strong>Самая низкая цена — первые 10 минут.</strong><br>Предложение за ' + money(card.price) + ' действительно 10 минут.</p>' : '') + '<p data-legacy-countdown></p><p>Приложения открываются по мере прохождения соответствующих материалов. Доступные вам материалы можно продолжать изучать.</p><label class="legacy-upgrade-consent"><input type="checkbox" data-legacy-consent> <span>Принимаю <a href="/legal/offer" target="_blank" rel="noopener">публичную оферту</a> и даю <a href="/legal/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a>.</span></label><button class="account-open purchase" data-legacy-buy disabled>Получить полный пакет за ' + money(card.price) + '</button><p data-legacy-status role="status"></p>';
-      var button = holder.querySelector('[data-legacy-buy]'), consent = holder.querySelector('[data-legacy-consent]'), status = holder.querySelector('[data-legacy-status]');
-      consent.onchange = function () { button.disabled = !consent.checked; };
+      holder.innerHTML = '<h2>Получите полный обновляемый пакет</h2><div class="legacy-upgrade-columns"><div><h3>У вас сейчас</h3><ul>' + payload.current.map(function (item) { return '<li>✓ <strong class="legacy-upgrade-product">' + esc(item.name) + '</strong>' + (item.edition === 'non_updating' ? ' — необновляемый доступ' : ' — обновляемый доступ') + '</li>'; }).join('') + '</ul></div><div><h3>После перехода</h3><ul>' + card.details.map(function (item) { return '<li>✓ <strong class="legacy-upgrade-product">' + esc(item.name) + '</strong>' + ' — обновляемый доступ</li>'; }).join('') + '<li>✓ Приложения внутри программ (DQS, калькулятор метаболизма и калькулятор рецептов)</li><li>✓ Новые материалы и дальнейшие обновления</li></ul></div></div><p class="legacy-upgrade-price">' + '<strong>Всего за ' + money(card.price) + '</strong>' + (discount ? ' <span>(обычная цена — <s>' + money(card.regular_price) + '</s>)</span>' : '') + '</p>' + (payload.stage === 'first' ? '<p><strong>Самая низкая цена — первые 10 минут.</strong><br>Предложение за ' + money(card.price) + ' действительно 10 минут.</p>' : '') + '<p data-legacy-countdown></p><p>Приложения открываются по мере прохождения соответствующих материалов. Доступные вам материалы можно продолжать изучать.</p><p>Оплата подтверждает принятие <a href="/legal/offer" target="_blank" rel="noopener">публичной оферты</a>.</p><button class="account-open purchase" data-legacy-buy>Получить полный пакет за ' + money(card.price) + '</button><p data-legacy-status role="status"></p>';
+      var button = holder.querySelector('[data-legacy-buy]'), status = holder.querySelector('[data-legacy-status]');
       button.onclick = function () {
-        if (!consent.checked || button.disabled) return;
+        if (button.disabled) return;
         button.disabled = true; status.textContent = 'Готовлю оплату…';
         request('/api/payments/robokassa/account-offers/checkout', {offer_code:card.code,expected_price:card.price}).then(function (result) {
           // A timer boundary may change the server price: show it before charging.
@@ -35,7 +34,7 @@
           var form = document.createElement('form'); form.method = result.payment_form.method || 'POST'; form.action = result.payment_form.action;
           Object.keys(result.payment_form.fields).forEach(function (name) { var input = document.createElement('input'); input.type='hidden'; input.name=name; input.value=String(result.payment_form.fields[name]); form.appendChild(input); });
           document.body.appendChild(form); form.submit();
-        }).catch(function (error) { status.textContent = error.message; button.disabled = !consent.checked; if (error.message.indexOf('Цена изменилась') >= 0) load(); });
+        }).catch(function (error) { status.textContent = error.message; button.disabled = false; if (error.message.indexOf('Цена изменилась') >= 0) load(); });
       };
       function tick() {
         if (!holder.isConnected) { clearInterval(timer); return; }

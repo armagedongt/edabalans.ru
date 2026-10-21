@@ -151,6 +151,13 @@ def test_paid_personal_link_uses_shared_short_checkout_reference():
     token = parse_qs(urlparse(created.json()["url"]).query)["access_token"][0]
     login_user(client, "client@example.test")
 
+    rejected = client.post(f"/api/access-links/{token}/checkout", json={"email": "client@example.test"})
+    assert rejected.status_code == 403
+    accepted = client.post("/api/account-auth/legal-acceptances", json={
+        "document_codes": ["educational_disclaimer", "personal_data_consent"],
+    })
+    assert accepted.status_code == 200
+
     response = client.post(
         f"/api/access-links/{token}/checkout",
         json={"email": "client@example.test"},
