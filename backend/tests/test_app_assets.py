@@ -300,20 +300,20 @@ def test_stable_site_footer_loader_is_public() -> None:
     private = text[text.index("function privateMarkup"):text.index("function ensureStyle")]
     assert "Оферта" in public
     assert "Образовательный дисклеймер" not in public
-    assert "Telegram-канал" in public
+    assert "contactsMarkup()" in public
     assert "ИП Воронцов Сергей Сергеевич" in public
-    assert "link(LINKS.telegram, 'Telegram')" in public
-    assert "link(LINKS.max, 'MAX')" in public
     assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in public
     assert "cookie-settings" not in public
     assert "Образовательный дисклеймер" in private
     assert "Оферта" not in private
-    assert "Telegram-канал" not in private
+    assert "contactsMarkup()" in private
     assert "© ' + new Date().getFullYear() + ' Воронцов Сергей" in private
-    assert "link(LINKS.telegram, 'Telegram')" in private
-    assert "link(LINKS.max, 'MAX')" in private
     assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in private
     assert "cookie-settings" not in private
+    contacts = text[text.index("function contactsMarkup"):text.index("function publicMarkup")]
+    for key, label in [("telegramChannel", "Telegram"), ("maxChannel", "MAX"), ("telegram", "Telegram"), ("max", "MAX")]:
+        assert f"link(LINKS.{key}, '{label}')" in contacts
+    assert "https://max.ru/id230409966750_biz" in text
 
 
 def test_intensive_and_blog_templates_declare_image_loading_strategy() -> None:

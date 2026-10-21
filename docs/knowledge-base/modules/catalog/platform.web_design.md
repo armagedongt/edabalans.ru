@@ -61,3 +61,10 @@ implementation_status: implemented
 
 Глобальный каталог Codex подключает проектную папку skill через directory junction,
 поэтому у проекта и других чатов остаётся один источник истины без копий.
+
+## Сохранённые образцы
+
+[`content/design-workflow/templates/four-contact-buttons.html`](../../../../content/design-workflow/templates/four-contact-buttons.html) —
+одобренный21.10.2026 третий вариант контактов: четыре отдельные кнопки
+с круглыми логотипами и подписью назначения. Сохранён для повторного
+применения в других блоках; для общего подвала выбран текстовый вариант.

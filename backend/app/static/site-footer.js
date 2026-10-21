@@ -12,6 +12,7 @@
     telegram: 'https://t.me/FitnessSergey',
     max: 'https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw',
     telegramChannel: 'https://t.me/Fitness_Talks',
+    maxChannel: 'https://max.ru/id230409966750_biz',
     offer: publicRoot + '/legal/offer',
     privacy: publicRoot + '/legal/privacy',
     disclaimer: publicRoot + '/legal/disclaimer'
@@ -27,6 +28,7 @@
     '.eb-footer__contacts{text-align:right}',
     '.eb-footer__links{display:flex;justify-content:flex-end;gap:7px 16px;flex-wrap:wrap}',
     '.eb-footer__links a{font-weight:600}',
+    '.eb-footer__contact-lines{display:grid;gap:3px}.eb-footer__contact-lines p{margin:0}.eb-footer__contact-pair{display:inline-block;white-space:nowrap}',
     '.eb-footer a{color:inherit;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;border:0}',
     '.eb-footer a:hover{opacity:.72}',
     '.eb-footer a:focus-visible{outline:2px solid currentColor;outline-offset:3px}',
@@ -40,17 +42,19 @@
     return '<a href="' + url + '" target="_blank" rel="noopener">' + text + '</a>';
   }
 
+  function contactsMarkup() {
+    return '<div class="eb-footer__contacts eb-footer__contact-lines" aria-label="Каналы и личная связь">' +
+      '<p>Читать мой канал: <span class="eb-footer__contact-pair">' + link(LINKS.telegramChannel, 'Telegram') + ' / ' + link(LINKS.maxChannel, 'MAX') + '</span></p>' +
+      '<p>Написать мне лично: <span class="eb-footer__contact-pair">' + link(LINKS.telegram, 'Telegram') + ' / ' + link(LINKS.max, 'MAX') + '</span></p></div>';
+  }
+
   function publicMarkup() {
     return '<footer class="eb-footer eb-footer--public" aria-label="Подвал сайта">' +
       '<div class="eb-footer__inner">' +
         '<div class="eb-footer__row">' +
           '<p class="eb-footer__owner">© ' + new Date().getFullYear() + ' ИП Воронцов Сергей Сергеевич <span class="eb-footer__inn">ИНН 230409966750</span>' +
           '</p>' +
-          '<div class="eb-footer__contacts"><div class="eb-footer__links" aria-label="Контакты">' +
-            link(LINKS.telegram, 'Telegram') +
-            link(LINKS.max, 'MAX') +
-            link(LINKS.telegramChannel, 'Telegram-канал') +
-          '</div></div>' +
+          contactsMarkup() +
         '</div>' +
         '<nav class="eb-footer__documents" aria-label="Юридические документы">' +
           link(LINKS.offer, 'Оферта') +
@@ -67,10 +71,7 @@
         '<div class="eb-footer__row">' +
           '<p class="eb-footer__owner">© ' + new Date().getFullYear() + ' Воронцов Сергей' +
           '</p>' +
-          '<div class="eb-footer__contacts"><div class="eb-footer__links" aria-label="Контакты">' +
-            link(LINKS.telegram, 'Telegram') +
-            link(LINKS.max, 'MAX') +
-          '</div></div>' +
+          contactsMarkup() +
         '</div>' +
         '<nav class="eb-footer__documents" aria-label="Документы личного кабинета">' +
           link(LINKS.disclaimer, 'Образовательный дисклеймер') +
