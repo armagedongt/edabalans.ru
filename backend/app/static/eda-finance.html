@@ -19,6 +19,10 @@
     @media(max-width:1100px){.finance-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.blocks,.months{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:760px){.finance-summary{padding-left:48px;margin-top:-10px}.finance-summary .metric{padding:7px;min-height:60px}.finance-summary .metric b{font-size:15px}}
     @media(max-width:620px){.finance-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.finance-summary .metric span{font-size:10px}.finance-summary .metric b{font-size:14px}.dashboard,.blocks,.months{grid-template-columns:1fr}}
+    body.finance-admin-page main>.grid,body.ed-admin-shell.finance-admin-page main>.grid{grid-template-columns:minmax(0,1fr)}.parameters-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}.parameter-group{min-width:0}.parameter-group h2{margin:8px 0}.parameter-group .field{font-size:13px;padding:5px 0;min-height:43px}.parameter-group .field input{font-size:14px;padding:6px}.parameter-settings details{margin:8px 0 12px}.parameter-settings summary{font-size:12px}.plan-toolbar{display:grid;grid-template-columns:auto minmax(180px,300px) auto minmax(0,1fr);gap:10px;align-items:center;margin-bottom:12px}.plan-toolbar label{font-size:13px}.plan-toolbar .plan-name,.plan-toolbar .buttons{margin:0}.plans-box>summary{font-size:14px}.plans-box>summary span{font-weight:400}.plans-box[open]>summary{margin-bottom:10px}.result-overview{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:0}.top-flow{margin:12px 0}.top-flow>.block{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 20px}.top-flow>.block h2{grid-column:1/-1}.tooltip{z-index:40}
+    @media(max-width:1279px){.parameters-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.result-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.top-flow>.block{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:1100px){.plan-toolbar{grid-template-columns:minmax(0,1fr) auto}.plan-toolbar label,.plan-toolbar .saved{grid-column:1/-1}}
+    @media(max-width:620px){.parameters-grid,.result-overview,.top-flow>.block{grid-template-columns:minmax(0,1fr)}.parameters-grid{gap:12px}.parameter-group .field{font-size:14px}.parameter-settings details{margin-top:10px}}
   </style>
 </head>
 <body class="finance-admin-page">
@@ -32,15 +36,14 @@
         <div class="metric metric-buyers"><span>Покупатели: платные / органические</span><div class="metric-pair"><b id="paid-card"></b><em>/</em><b id="organic-card"></b></div></div>
         </div>
 
-  <section class="box plans-box"><h1>Сохранённые планы</h1><div class="plans-scroll"><table class="plans-table"><thead><tr><th>Дата сохранения</th><th>План</th><th>Клуб</th><th>Общий доход</th><th>Маржа</th><th>Реклама</th><th>Постоянные</th><th>Действия</th></tr></thead><tbody id="plans"></tbody></table></div><p id="plans-state" class="saved" role="status">Загрузка планов…</p></section>
+  <details class="box plans-box" id="saved-plans"><summary>Сохранённые планы <span id="plan-count"></span></summary><div class="plans-scroll"><table class="plans-table"><thead><tr><th>Дата сохранения</th><th>План</th><th>Клуб</th><th>Общий доход</th><th>Маржа</th><th>Реклама</th><th>Постоянные</th><th>Действия</th></tr></thead><tbody id="plans"></tbody></table></div><p id="plans-state" class="saved" role="status">Загрузка планов…</p></details>
 
   <div class="grid">
-    <section class="box">
+    <section class="box parameters-box">
       <h1>Параметры <i class="q" title="Шаги ввода: покупатели и лимиты — 1; конверсия и воронка — 5 п.п.; лид → покупатель — 0,25 п.п.; CPL — 5 ₽; цены и средний чек — 100 ₽; длительность сопровождения — 0,5 месяца; налоги — 1 п.п. Доли трёх входных тарифов всегда автоматически приводятся к сумме 100%.">?</i></h1>
-      <label for="plan-name">Название плана</label><input id="plan-name" class="plan-name" maxlength="120" placeholder="Новый план">
-      <div class="buttons"><button id="save" type="button" disabled>Сохранить план</button><span id="saved" class="saved" role="status" aria-live="polite"></span></div>
-      <details id="club-settings"><summary>Настройки клуба</summary><div id="club-fields"></div></details>
-      <h2>Поток и реклама</h2><div id="main-fields"></div>
+      <div class="plan-toolbar"><label for="plan-name">Название плана</label><input id="plan-name" class="plan-name" maxlength="120" placeholder="Новый план"><div class="buttons"><button id="save" type="button" disabled>Сохранить план</button></div><span id="saved" class="saved" role="status" aria-live="polite"></span></div>
+      <div class="parameters-grid">
+        <section class="parameter-group"><h2>Поток и реклама</h2><div id="main-fields"></div>
       <details class="reference-panel">
         <summary>Рабочие ориентиры по воронке</summary>
         <p class="reference-intro">Сравнивай с ними фактические показатели, но не подставляй эти значения в расчёт автоматически.</p>
@@ -64,26 +67,26 @@
         </div>
         <p class="reference-source">Источник: сообщение прошлого маркетолога. Это рабочие гипотезы до сверки с собственной аналитикой.</p>
       </details>
-      <h2>Входные тарифы</h2><div id="tariff-fields"></div>
-      <h2>Путь после самостоятельного тарифа</h2><div id="funnel-fields"></div>
-      <details><summary>Постоянные и внутренние настройки</summary><div id="advanced-fields"></div></details>
+        </section>
+        <section class="parameter-group"><h2>Входные тарифы</h2><div id="tariff-fields"></div></section>
+        <section class="parameter-group"><h2>Путь после самостоятельного тарифа</h2><div id="funnel-fields"></div></section>
+        <section class="parameter-group parameter-settings">
+          <details id="club-settings"><summary>Настройки клуба</summary><div id="club-fields"></div></details>
+          <details id="advanced-settings"><summary>Постоянные и внутренние настройки</summary><div id="advanced-fields"></div></details>
+        </section>
+      </div>
     </section>
     <section class="box">
       <h1>Твой результат в устойчивый месяц</h1>
-      <div class="dashboard">
-        <details class="top-flow"><summary>Поток и юнит-экономика</summary>
-        <div class="block"><h2>Поток и клиент</h2><div class="row"><span>Налоги + эквайринг</span><b id="fees"></b></div><div class="row"><span>Всего покупателей / мес.</span><b id="buyers"></b></div><div class="row"><span>Тариф с консультацией: факт / мес.</span><b id="consult-tariff-sold"></b></div><div class="row"><span>Не купили из-за лимита <i class="q" title="10% спроса сверх лимита тарифа с консультацией выпадает из воронки. Остальные 90% поровну переходят в минимальный и стандартный тариф.">?</i></span><b id="lost-by-cap"></b></div><div class="row"><span>Платных лидов / мес.</span><b id="leads"></b></div><div class="row"><span>CAC</span><b id="cac"></b></div><div class="row"><span>Самостоятельные: cashflow на входе <i class="q" title="Средний платёж самостоятельного покупателя в момент покупки: минимальный или стандартный тариф плюс ожидаемый цифровой доп. Тариф с консультацией, разбор и сопровождение исключены.">?</i></span><b id="self-cashflow"></b></div><div class="row"><span>Самостоятельные: LTV после комиссий <i class="q" title="Весь автоматический LTV самостоятельного покупателя: cashflow на входе и, если включён, ожидаемый клуб. Консультационный тариф, разбор и сопровождение исключены.">?</i></span><b id="self-ltv"></b></div><div class="row"><span>Самостоятельные: после CAC <i class="q" title="Автоматический LTV после комиссий минус CAC. Это вклад одного платного самостоятельного покупателя до постоянных расходов.">?</i></span><b id="self-after-cac"></b></div><div class="row"><span>LTV после комиссий <i class="q" title="Ожидаемая выручка с одного клиента за весь путь, уже после налогов и эквайринга.">?</i></span><b id="ltv"></b></div><div class="row"><span>LTV после найма <i class="q" title="LTV после комиссий минус стоимость консультаций по внутренней ставке. Реклама и постоянные расходы здесь ещё не вычтены.">?</i></span><b id="ltv-after-labor"></b></div></div>
-        </details>
-        <div class="top-side">
+      <div class="blocks result-overview"><div class="block"><h2>Консультации на полке</h2><div class="row"><span>Первичные / разовые в неделю</span><b id="primary-week"></b></div><div class="row"><span>Сопровождение в неделю</span><b id="support-week"></b></div><div class="row"><span>Всего в неделю</span><b id="total-week"></b></div><div class="row"><span>Твой предел</span><b id="capacity"></b></div><div class="row total"><span><b>Статус</b></span><b id="status"></b></div></div>
 
-        <div class="block"><h2>Консультации на полке</h2><div class="row"><span>Первичные / разовые в неделю</span><b id="primary-week"></b></div><div class="row"><span>Сопровождение в неделю</span><b id="support-week"></b></div><div class="row"><span>Всего в неделю</span><b id="total-week"></b></div><div class="row"><span>Твой предел</span><b id="capacity"></b></div><div class="row total"><span><b>Статус</b></span><b id="status"></b></div></div>
-        </div>
-      </div>
-      <div class="blocks detail-blocks">
         <div class="block"><h2>Клиенты сопровождения</h2><div class="row"><span>Новых / месяц</span><b id="new-support"></b></div><div class="row"><span>Активных на полке</span><b id="active-support"></b></div><div class="row"><span>Выход на полку</span><b id="plateau"></b></div><div class="row"><span>Оборот сопровождения</span><b id="support-revenue"></b></div></div>
         <details class="block"><summary>Структура цифровых допов</summary><div class="row"><span>Разовый продукт</span><b>40% × 3 400 ₽</b></div><div class="row"><span>Пакет</span><b>45% × 5 400 ₽</b></div><div class="row"><span>Расширенный пакет</span><b>15% × 7 000 ₽</b></div><div class="row total"><span>Средний чек цифрового допа</span><b id="digital-average-display"></b></div></details>
         <div class="block"><h2>Клиенты клуба</h2><div class="row"><span>Активных на полке</span><b id="active-club"></b></div></div>
-      </div>
+            </div>
+      <details class="top-flow"><summary>Поток и юнит-экономика</summary>
+        <div class="block"><h2>Поток и клиент</h2><div class="row"><span>Налоги + эквайринг</span><b id="fees"></b></div><div class="row"><span>Всего покупателей / мес.</span><b id="buyers"></b></div><div class="row"><span>Тариф с консультацией: факт / мес.</span><b id="consult-tariff-sold"></b></div><div class="row"><span>Не купили из-за лимита <i class="q" title="10% спроса сверх лимита тарифа с консультацией выпадает из воронки. Остальные 90% поровну переходят в минимальный и стандартный тариф.">?</i></span><b id="lost-by-cap"></b></div><div class="row"><span>Платных лидов / мес.</span><b id="leads"></b></div><div class="row"><span>CAC</span><b id="cac"></b></div><div class="row"><span>Самостоятельные: cashflow на входе <i class="q" title="Средний платёж самостоятельного покупателя в момент покупки: минимальный или стандартный тариф плюс ожидаемый цифровой доп. Тариф с консультацией, разбор и сопровождение исключены.">?</i></span><b id="self-cashflow"></b></div><div class="row"><span>Самостоятельные: LTV после комиссий <i class="q" title="Весь автоматический LTV самостоятельного покупателя: cashflow на входе и, если включён, ожидаемый клуб. Консультационный тариф, разбор и сопровождение исключены.">?</i></span><b id="self-ltv"></b></div><div class="row"><span>Самостоятельные: после CAC <i class="q" title="Автоматический LTV после комиссий минус CAC. Это вклад одного платного самостоятельного покупателя до постоянных расходов.">?</i></span><b id="self-after-cac"></b></div><div class="row"><span>LTV после комиссий <i class="q" title="Ожидаемая выручка с одного клиента за весь путь, уже после налогов и эквайринга.">?</i></span><b id="ltv"></b></div><div class="row"><span>LTV после найма <i class="q" title="LTV после комиссий минус стоимость консультаций по внутренней ставке. Реклама и постоянные расходы здесь ещё не вычтены.">?</i></span><b id="ltv-after-labor"></b></div></div>
+        </details>
       <div class="blocks months">
         <div class="block"><h2>1-й месяц: запуск</h2><div class="row"><span>Вложить в начале</span><b id="m1-start"></b></div><div class="row"><span>Оборот</span><b id="m1-turnover"></b></div><div class="row"><span>Налоги + эквайринг</span><b id="m1-fees"></b></div><div class="row total"><span><b>Чистый доход</b></span><b id="m1-net"></b></div></div>
         <div class="block"><h2>2-й месяц</h2><div class="row"><span>Вложить в начале</span><b id="m2-start"></b></div><div class="row"><span>Оборот</span><b id="m2-turnover"></b></div><div class="row"><span>Налоги + эквайринг</span><b id="m2-fees"></b></div><div class="row total"><span><b>Чистый доход</b></span><b id="m2-net"></b></div></div>
@@ -120,6 +123,7 @@
   const field = ([id,label,help='',type='number']) => { const options=fieldOptions[id]||{}; return `<div class="field"><label for="${id}">${label}${tip(help)}</label><input id="${id}" type="${type}" ${type==='checkbox' ? '' : `value="${defaults[id]}" step="${options.step ?? .1}"${options.min !== undefined ? ` min="${options.min}"` : ''}${options.max !== undefined ? ` max="${options.max}"` : ''}`}></div>`; };
   Object.entries(groups).forEach(([target, fields]) => document.getElementById(target).innerHTML = fields.map(field).join(''));
   const input = id => document.getElementById(id);
+  if(window.matchMedia('(min-width:1101px)').matches){input('club-settings').open=true;input('advanced-settings').open=true;}
   const value = id => {
     const el=input(id);
     if(el.type === 'checkbox') return el.checked;
@@ -205,6 +209,7 @@
   }
   function renderPlans(){
     input('plans').replaceChildren();
+    input('plan-count').textContent='('+plans.length+')';
     plans.forEach(plan=>{
       const row=document.createElement('tr'), summary=plan.summary;
       const date=new Date(plan.saved_at).toLocaleString('ru-RU',{timeZone:'Europe/Moscow'});
@@ -225,7 +230,7 @@
   }
   input('save').addEventListener('click',async()=>{
     input('save').disabled=true;
-    try{const plan=await savePlan();plans.unshift(plan);renderPlans();savedLabel('План сохранён на сервере');}
+    try{const plan=await savePlan();plans.unshift(plan);renderPlans();input('saved-plans').open=true;savedLabel('План сохранён на сервере');}
     catch(error){savedLabel(error.message);}finally{input('save').disabled=false;}
   });
   const parameterInputs=[...document.querySelectorAll('.field input,#plan-name')];
