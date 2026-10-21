@@ -388,6 +388,7 @@ owns_files = [
   "backend/tests/browser/account-offers-layout.e2e.mjs",
   "backend/tests/browser/embed-loading.e2e.mjs",
   "work/lk-loading-polish-20260917/**",
+  "work/finance-actuals/**",
   "backend/app/importers/google_apps.py", "backend/tests/test_google_apps_import.py",
   "legacy/google/SOURCES.md",
 ]
