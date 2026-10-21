@@ -1,22 +1,15 @@
-# Проверки 21.10.2026
+# Проверки и выпуск 21.10.2026
 
-Owner preview: navigation713727 pinned → original circle713729 → article713730.
-No real campaign started, no clientbase messages.
+- Реальная отправка владельцу: navigation713727 закреплён → исходный circle713729 → article713730. История и клиентские рассылки не сбрасывались.
+- Спецификация: completeness/adequacy/factual CLEAN; обязательный executor block и границы проверок дополнены по quality review.
+- Реализация: две волны code/security/test review; финальная CLEAN. Документация CLEAN.
+- Bot: temporary/engine/graph-authoring/tracking100PASS до последних локальных исправлений; итоговые temporary/MAX/routing82PASS, отдельно8permissionPASS.
+- Backend:32целевых PASS и26проверок positive report/collection PASS. В расширенном локальном наборе87PASS, одна существующая test_app_assets homepage-loader проверка требует глобальную БД; ни SQLite без таблиц, ни недоступный localhost PostgreSQL её не предоставляют. Полный GitHub Test на d989407d SUCCESS.
+- Browser: общий cookie scope PASS; Telegram bridge17PASS; настоящий inline observer при медленной загрузке SDK сохраняет первый экран и100%дна; MAX shared card/native SDK dispatch mock PASS.
+- PostgreSQL: отдельный временный контейнер с пустой БД, без production-данных и внешних отправок. Два одновременных потока timer/Start: один completed run, одна durable квитанция, ровно3mock-доставки. После проверки контейнер остановлен, временный source удалён. Два первоначальных прогона выявили неполную тестовую схему; третий исполнил assertions гонки, финальная read-only проверка подтвердила квитанции после исправления detached-ID в проверочном коде.
+- Код fa7086d принят в main; production d989407d содержит его. Публичные health/ready200, оба контейнера healthy. Runtime подтвердил DELAY600 → ENTRY_GROUP → STOP и наличие исходного файла кружка. Конструктор и отчёт проверены на production без вывода персональных данных.
+- VSL получил готовый контракт и задачу проверки актуальной статьи/целей. Отправка в чат Я.Директ не прошла: его thread-store вернул «Недостаточно места на диске»; контекст сохранён здесь и у VSL.
 
-Specification wave1: completeness/adequacy/factual clean. Quality template instruction
-and explicit testing boundaries corrected locally; no owner semantics changed.
-
-Implementation wave1: security clean; code found first-observer initialization and
-continued scroll depth gaps; both corrected. Test review found exact Telegram scheduler
-and positive homepage report gaps; regression checks added. Wave2: code/security/tests CLEAN.
-
-Focused checks: bot temporary/engine/graph-authoring/tracking100passed before last
-review fixes. Backend88tested,87passed then duplicate-autoflush issue fixed; targeted32
-passed after fix. Browser cookie scope PASS, Telegram bridge17PASS. Exact-recipient scheduler8permissiontests PASS; positive homepage report26focusedbackendtests PASS; realobserver startup/bottom100% and MAX SDK dispatch browser PASS. Final combined runs and CI pending.
-
-MAX native registration/client check remains pending owner. Cross-root account-login
-expansion excluded pending owner answer; visitor and consent do not grant account rights.
-
-PostgreSQL concurrent-session race was not executed locally (no local server/runtime). The common durable pending claim and row-lock logic were reviewed; automated SQLite tests do not establish PostgreSQL locking.
-
-Final bot temporary/MAX/routing82PASS. Final documentation review CLEAN. Shared-cookie browser PASS; TGbridge17PASS; MAXcard and observer browserPASS. One local combinedrun with DATABASE_URL forcedSQLite hit existing uninitialised global homepage-loaderDB; rerun with standardCI postgres fallback environment in progress.
+Остаётся ручная проверка нативного запуска MAX на телефоне. Междоменная авторизация
+кабинета не расширялась: отдельный вопрос владельцу пока без ответа. Передача visitor
+и согласия не создаёт account session или продуктовых прав. Дальнейшая рассылка выключена.
