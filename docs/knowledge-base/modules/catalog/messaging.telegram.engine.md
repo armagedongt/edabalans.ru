@@ -11,6 +11,13 @@ implementation_status: implemented
 
 ## Функции
 
+- обслуживать явную ручную выдачу плана силовой тренировки через подписанный
+  внутренний adapter products.strength: основной канал разрешается прежним
+  preferred_destination, без выбора в UI и без fallback. Producer
+  strength_workout_plan — technical_payload, proactive=false; автоматическая
+  цепочка/рассылка не создаётся. Доставка и неопределённые результаты фиксируются
+  в существующих tg_manual_messages, повтор request_id не дублирует подтверждённые части;
+
 - идемпотентно принимать updates и исполнять due steps;
 - принимать `write_access_allowed` как служебное согласие: сохранить контакт,
   не менять его остановку и не запускать приветствие или отправку;

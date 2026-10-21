@@ -487,14 +487,16 @@ reads_from = ["platform.web_design"]
 admin_catalog = [{ category = "applications", order = 20, url = "/admin/strength", label = "Силовые", icon = "💪", description = "Приложение силовых тренировок клиентов." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.strength.md"
-depends_on = ["platform.auth", "platform.commerce"]
+depends_on = ["platform.auth", "platform.commerce", "messaging.telegram.engine"]
 owns_files = [
   "backend/app/static/apps/strength.html", "legacy/google/strength/**",
   "backend/app/static/strength-journal.css", "backend/app/static/strength-journal-model.js",
   "backend/app/strength_templates.py",
-  "backend/tests/test_strength_templates.py", "backend/tests/strength-journal-model.test.cjs",
+    "backend/tests/test_strength_templates.py", "backend/tests/test_strength_comments.py", "backend/tests/strength-journal-model.test.cjs",
   "backend/tests/browser/strength-history-views.e2e.mjs", "backend/tests/browser/strength-editor.e2e.mjs",
     "backend/app/strength_telegram.py", "backend/tests/test_strength_telegram.py",
+    "backend/app/strength_delivery.py", "backend/tests/test_strength_delivery.py",
+    "telegram-bot/service/app/strength_delivery.py", "telegram-bot/service/tests/test_strength_delivery.py",
   "backend/app/strength_exercise_guides.json", "backend/app/static/strength-exercises/**",
   "legacy/google/sheets/STRENGTH_SCHEMA.md",
   "backend/app/importers/strength_matrix.py", "backend/tests/test_strength_matrix_import.py",
@@ -509,7 +511,7 @@ owns_files = [
   "content/training/reference/**",
 ]
 owns_tables = ["strength_states", "strength_exercises"]
-owns_routes = ["*/apps/strength*", "*/api/apps/strength*", "*/assets/strength-exercises/*", "*/training", "*/strength"]
+owns_routes = ["*/apps/strength*", "*/api/apps/strength*", "*/internal/strength-plan", "*/assets/strength-exercises/*", "*/training", "*/strength"]
 
 [[modules]]
 id = "products.training"

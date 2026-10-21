@@ -1602,6 +1602,7 @@ def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, work
                 "session_number": number, "exercise_id": exercise.get("exercise_id"),
                 "exercise_name": exercise.get("exercise_name", ""),
                 "sort_order": exercise.get("sort_order", ex_index), "note": exercise.get("note", ""),
+                "coach_note": exercise.get("coach_note", ""),
                 "source": exercise.get("source", "app"),
             })
             for set_index, item in enumerate(exercise.get("sets", []), 1):
@@ -1713,6 +1714,18 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
                         number = max(all_numbers, default=0) + 1
                 now = datetime.now(timezone.utc).isoformat()
                 item = {**(existing or {}), **session, "session_id": session_id, "workout_type": workout_type, "session_number": number, "updated_at": now, "created_at": (existing or {}).get("created_at") or now, "source": (existing or {}).get("source") or "app"}
+                previous_exercises = {
+                    str(exercise.get("exercise_id")): exercise
+                    for exercise in (existing or {}).get("exercises", [])
+                }
+                for exercise in item.get("exercises", []):
+                    if "coach_note" in exercise:
+                        if not isinstance(exercise["coach_note"], str) or len(exercise["coach_note"]) > 20000:
+                            raise ValueError("INVALID_COACH_NOTE")
+                    else:
+                        previous = previous_exercises.get(str(exercise.get("exercise_id")), {})
+                        if "coach_note" in previous:
+                            exercise["coach_note"] = previous["coach_note"]
                 item["status"] = "filled" if any(
                     set_item.get("rpe") not in (None, "")
                     for exercise in item.get("exercises", []) for set_item in exercise.get("sets", [])

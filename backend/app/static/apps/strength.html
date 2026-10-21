@@ -1573,8 +1573,8 @@
 
 </style>
 
-<link rel="stylesheet" href="/assets/strength-journal.css?v=20261021-history-eye-fix">
-<script src="/assets/strength-journal-model.js?v=20261021-history-eye-fix"></script>
+<link rel="stylesheet" href="/assets/strength-journal.css?v=20261021-draft-history">
+<script src="/assets/strength-journal-model.js?v=20261021-draft-history"></script>
 <script>
 (function(){
 
@@ -2312,6 +2312,8 @@ function buildWorkoutModel(raw){
       note:
         row.note || '',
 
+      coachNote:row.coach_note || '',
+
       sets:[]
     };
 
@@ -2607,6 +2609,8 @@ function sessionPayload(session){
 
       note:
         ex.note || '',
+
+      coach_note:ex.coachNote || '',
 
       sets:[]
     };
@@ -2967,6 +2971,8 @@ function renderSavingOnly(){
     el.className =
       'st-saving error';
 
+    el.title='Ошибка сохранения';
+
     el.innerHTML =
       'Ошибка сохранения: ' +
       esc(saveErrorText()) +
@@ -2978,6 +2984,7 @@ function renderSavingOnly(){
 
   el.className =
     'st-saving'+(app.saving || app.templateSaveRunning ? ' loading' : '');
+  el.title=app.saving ? 'Сохранение в процессе' : 'Сохранено';
 
   el.innerHTML =
     app.saving
@@ -3222,7 +3229,7 @@ function render(){
 
 
 
-var screenHistory=null,screenOwner=String(Date.now())+Math.random();
+var screenHistory=null,screenOwner=String(Date.now())+Math.random(),journalWidthObserver=null,resizeJournal=null;
 function screenView(){return {mainTab:app.mainTab,modal:app.modal?cloneValue(app.modal):null};}
 function screenKey(view){return JSON.stringify(view);}
 function screenUrl(view){
@@ -3271,6 +3278,36 @@ window.addEventListener('popstate',function(event){
   render();screenHistory.restoring=false;
   requestAnimationFrame(function(){window.scrollTo(0,entry.scrollY);});
 });
+function applyJournalWidth(){
+  var style=getComputedStyle(root),previous=app.trainingColumnWidth;
+  var width=app.journalView==='training' && matchMedia('(max-width:700px)').matches
+    ? root.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight) : 216;
+  if(previous && previous!==width && app.journalView==='training' && !app.axisTargetSession){
+    app.axisTargetSession=app.trainingAnchor;
+  }
+  if(app.journalView==='training')app.trainingColumnWidth=width;
+  root.style.setProperty('--st-history-width',width+'px');
+}
+function rememberTrainingAnchor(axis){
+  if(axis.dataset.axis!=='training' || Math.abs(axis.clientWidth-app.trainingViewportWidth)>1)return;
+  var indices=templateSessionIndices(),style=getComputedStyle(root);
+  var width=parseFloat(style.getPropertyValue('--st-history-width')),stride=width+parseFloat(style.getPropertyValue('--st-history-gap'));
+  var position=Math.min(indices.length-1,Math.max(0,Math.round((axis.scrollLeft+axis.clientWidth-width)/stride)));
+  var session=currentWorkout().sessions[indices[Math.max(0,position)]];
+  app.trainingAnchor=session?session.session_id:null;
+}
+function observeJournalWidth(){
+  if(journalWidthObserver || !window.ResizeObserver)return;
+  var previous=root.clientWidth;
+  journalWidthObserver=new ResizeObserver(function(){
+    if(!root.isConnected){journalWidthObserver.disconnect();return;}
+    if(previous===root.clientWidth)return;
+    previous=root.clientWidth;
+    if(app.mainTab==='training' && resizeJournal)resizeJournal();
+  });
+  journalWidthObserver.observe(root);
+}
+
 function commonHeader(){
   return '<div class="st-card st-header"><div class="st-top">'+
     '<img class="st-app-icon" src="/assets/strength-favicon.svg" alt="Силовые тренировки">'+
@@ -3388,6 +3425,7 @@ function renderClient(){
   rememberAxisPositions();
   syncScreenHistory();
   root.dataset.journalView=app.journalView;
+  applyJournalWidth();
   var html='';
   if(app.mainTab === 'stats'){
     html='<header class="st-stats-return"><button onclick="ST.setMainTab(\'training\')">← Вернуться к тренировкам</button></header>'+renderStatsTabs()+(app.statsTab==='calendar' ? renderCalendar() : renderAnalysis());
@@ -3397,7 +3435,11 @@ function renderClient(){
   }
   html+=renderModal()+renderFloatingRpe();
   root.innerHTML=html;
+  root.querySelectorAll('button[aria-label],input[aria-label],a[aria-label]').forEach(function(control){
+    if(!control.hasAttribute('title'))control.title=control.getAttribute('aria-label');
+  });
   renderManagedActions();renderSavingOnly();syncModalLock();bindJournalAxes();
+  observeJournalWidth();
 }
 
 function renderMainTabs(){
@@ -3432,13 +3474,13 @@ function renderMainTabs(){
 
 function renderTypes(){
   return '<div class="st-template-row"><div class="st-types">'+app.templates.filter(function(t){return t.active!==false;}).map(function(t){
-    return '<button class="st-type '+(app.workoutType===Number(t.workout_type)?'active':'')+'" aria-pressed="'+(app.workoutType===Number(t.workout_type))+'" onclick="ST.setWorkoutType('+Number(t.workout_type)+')">'+esc(t.title || 'Шаблон '+t.workout_type)+'</button>';
+    return '<button class="st-type '+(app.workoutType===Number(t.workout_type)?'active':'')+'" title="'+esc(t.title || 'Шаблон '+t.workout_type)+'" aria-pressed="'+(app.workoutType===Number(t.workout_type))+'" onclick="ST.setWorkoutType('+Number(t.workout_type)+')">'+esc(t.title || 'Шаблон '+t.workout_type)+'</button>';
   }).join('')+'</div><button class="st-template-edit" onclick="ST.openTemplates()" aria-label="Управление шаблонами" title="Управление шаблонами">✎</button></div>';
 }
 
 function renderJournalViewToggle(){
   var training=app.journalView==='training';
-  return '<button class="st-icon-link st-view-toggle" onclick="ST.toggleJournalView()" aria-label="'+(training?'Показать историю упражнений':'Показать тренировки целиком')+'" title="'+(training?'По тренировкам':'По упражнениям')+'" aria-pressed="'+training+'">'+journalIcon('eye')+'</button>';
+  return '<button class="st-icon-link st-view-toggle" onclick="ST.toggleJournalView()" aria-label="'+(training?'Показать историю упражнений':'Показать тренировки целиком')+'" title="'+(training?'По тренировкам':'По упражнениям')+'" aria-pressed="'+(!training)+'">'+journalIcon('eye')+'</button>';
 }
 
 function renderJournalHeader(){
@@ -3461,29 +3503,23 @@ function renderEmptySessionHistory(){
 }
 
 
-function telegramExportBlocked(){
-  var session = currentWorkout().sessions[app.selectedIndex];
+function telegramExportBlocked(index){
+  var session = currentWorkout().sessions[index===undefined?app.selectedIndex:index];
   return app.telegramSending || app.saving || !!app.saveError || app.creatingSession ||
     app.saveRequests > 0 || app.managerSaveRunning || !!app.managerSavePending ||
     Object.keys(app.sessionSaveQueues).length > 0 || !session || !session.session_id;
 }
 
 function renderManagedActions(){
-  if(!MANAGED_TARGET)return;
   var controls=root.parentNode.querySelector('[data-strength-managed-actions]');
-  if(!controls){
-    controls=document.createElement('div');controls.className='st-managed-actions';
-    controls.setAttribute('data-strength-managed-actions','');controls.setAttribute('aria-label','Административные действия');
-    controls.innerHTML='<button class="st-action st-telegram-send" data-strength-telegram-export onclick="ST.sendTelegram()">Отправить тренировку в Telegram</button>';
-    root.parentNode.insertBefore(controls,root);
-  }
+  if(controls)controls.remove();
 }
 
 function updateTelegramButton(){
-  var button = MANAGED_TARGET ? root.parentNode.querySelector('[data-strength-telegram-export]') : null;
-  if(!button){ return; }
-  button.disabled = telegramExportBlocked();
-  button.textContent = app.telegramSending ? 'Отправляю…' : 'Отправить тренировку в Telegram';
+  root.querySelectorAll('[data-strength-send-plan]').forEach(function(button){
+    button.disabled=telegramExportBlocked(Number(button.dataset.sessionIndex));
+    button.setAttribute('aria-busy',String(app.telegramSending));
+  });
 }
 
 function renderEntryControls(){
@@ -3502,7 +3538,6 @@ function renderEntryControls(){
           '<button '+(hasSession?'':'disabled')+' onclick="ST.setEntryMode(\'train\')">Начать тренировку</button>'
         )+
       '</div>'+
-      (MANAGED_TARGET ? '<button class="st-action st-telegram-send" onclick="ST.sendTelegram()">Отправить тренировку в Telegram</button>' : '')+
     '</div>'+
     renderActions()
   );
@@ -3569,9 +3604,10 @@ function renderJournal(){
   var sessions=currentWorkout().sessions,exercises=activeCatalog();
   if(!exercises.length)return '<div class="st-empty">Добавьте упражнения в состав шаблона.</div><button class="st-action" onclick="ST.openTemplates()">Управление шаблонами</button>';
   var indices=templateSessionIndices();
+  var latestIndex=indices.length?indices[indices.length-1]:-1;
   if(app.journalView==='training' && !indices.length)return '';
   var rows=exercises.map(function(item,order){
-    var id=String(item.exercise_id),ownIndices=app.journalView==='training'?indices:sessions.map(function(_,index){return index;}).filter(function(index){return exerciseHasRecord(findExercise(sessions[index],id));});
+    var id=String(item.exercise_id),ownIndices=app.journalView==='training'?indices:sessions.map(function(_,index){return index;}).filter(function(index){return index===latestIndex || exerciseHasRecord(findExercise(sessions[index],id));});
     var maxSets=sessions.reduce(function(max,session){var ex=findExercise(session,id);return Math.max(max,ex?ex.sets.length:0);},1);
     maxSets=ownIndices.reduce(function(max,index){var ex=exerciseForDisplay(sessions[index],id);return Math.max(max,ex?ex.sets.length:0);},maxSets);
     return {item:item,order:order,indices:ownIndices,maxSets:maxSets};
@@ -3658,21 +3694,22 @@ function journalIcon(kind){
 }
 
 function journalDate(index,session,className){
-  var number=className==='st-history-date'?'<span class="st-session-number">№'+esc(session.number)+'</span>':
+  var number=className==='st-history-date'?'<span class="st-session-number" title="Номер тренировки №'+esc(session.number)+'">№'+esc(session.number)+'</span>':
     '<button class="st-session-number" onclick="ST.selectSession('+index+')" aria-label="Выбрать тренировку №'+esc(session.number)+'" aria-pressed="'+(index===app.selectedIndex)+'">№'+esc(session.number)+'</button>';
   return '<div class="'+className+'" data-session-index="'+index+'">'+number+
     '<span class="st-date-field"><input class="st-journal-date-text" type="text" lang="ru" placeholder="дд.мм.гггг" maxlength="10" aria-label="Дата тренировки №'+esc(session.number)+'" value="'+esc(formatDate(session.date) || '')+'" readonly onclick="ST.openDatePicker('+index+',event)">'+
     '<input class="st-date-picker" type="date" lang="ru" aria-label="Календарь тренировки №'+esc(session.number)+'" value="'+esc(session.date || '')+'" onclick="ST.openDatePicker('+index+',event)" onchange="ST.setDate('+index+',this.value)"></span>'+
-    (className==='st-date-cell'?'<button class="st-toolbar-delete" onclick="ST.deleteSession('+index+')" aria-label="Удалить тренировку №'+esc(session.number)+'">×</button>':'')+'</div>';
+    '<button class="st-toolbar-delete" onclick="ST.deleteSession('+index+')" aria-label="Удалить тренировку №'+esc(session.number)+'" title="Удалить всю тренировку №'+esc(session.number)+'">×</button>'+
+    '<button class="st-send-plan" data-strength-send-plan data-session-index="'+index+'" onclick="ST.sendTelegram('+index+')" aria-label="Отправить план тренировки №'+esc(session.number)+'" title="Отправить план в мессенджер"><span class="st-send-plane" aria-hidden="true"></span></button></div>';
 }
 
 function journalExerciseTone(order){
   var palettes=[
-    ['#e8efff','#ede5f8','#e4f1e6','#fff0d9','#f9e4eb','#def2ef','#edf0d9'],
-    ['#e2f1f9','#f2e5f4','#e9f1df','#fce8dc','#e6e7fa','#def0e8','#f7edda'],
-    ['#e6ecf9','#e1f2ed','#f7e6e0','#ece3f5','#eff0d9','#e0eef5','#f6e4ed'],
-    ['#e3f0e3','#e5eafa','#f8ebd8','#eee2ee','#dff1f2','#f5e4df','#e9eddc'],
-    ['#eee5fa','#dff0e8','#f8e9df','#e0edf9','#f4e3ee','#edf0dc','#dff0f0']
+    ['hsl(205 42% 93%)','hsl(25 42% 93%)','hsl(175 42% 93%)','hsl(340 42% 93%)','hsl(85 42% 93%)','hsl(265 42% 93%)','hsl(45 42% 93%)'],
+    ['hsl(217 40% 92%)','hsl(37 40% 92%)','hsl(187 40% 92%)','hsl(352 40% 92%)','hsl(97 40% 92%)','hsl(277 40% 92%)','hsl(57 40% 92%)'],
+    ['hsl(193 44% 94%)','hsl(13 44% 94%)','hsl(163 44% 94%)','hsl(328 44% 94%)','hsl(73 44% 94%)','hsl(253 44% 94%)','hsl(33 44% 94%)'],
+    ['hsl(227 38% 93%)','hsl(47 38% 93%)','hsl(197 38% 93%)','hsl(2 38% 93%)','hsl(107 38% 93%)','hsl(287 38% 93%)','hsl(67 38% 93%)'],
+    ['hsl(183 40% 92%)','hsl(3 40% 92%)','hsl(153 40% 92%)','hsl(318 40% 92%)','hsl(63 40% 92%)','hsl(243 40% 92%)','hsl(23 40% 92%)']
   ];
   var templates=app.templates.filter(function(t){return t.active!==false;}),position=templates.findIndex(function(t){return Number(t.workout_type)===app.workoutType;});
   var tone=palettes[Math.max(0,position)%palettes.length][order%7];
@@ -3692,8 +3729,17 @@ function renderHistoryExercise(index,item,order,maxSets){
     '<section class="st-modern-editor"><div class="st-grid-labels"><span></span><span class="st-plan-label">'+renderCopyButton(exercise.id,index,false,'',emptyPlan)+'<span>План</span></span><span class="st-fact-label">'+renderCopyButton(exercise.id,index,true,'',!exerciseHasFact(exercise))+'<span>Факт</span></span><span>RPE</span></div>';
   exercise.sets.forEach(function(set,setIndex){html+=renderModernSet(index,exercise,setIndex,set);});
   html+='<div class="st-history-set-space" style="height:'+Math.max(0,(maxSets-exercise.sets.length)*33)+'px"></div>'+
-    '<button class="st-modern-comment '+(String(exercise.note || '').trim()?'has-note':'')+'"'+data+' onclick="ST.openNote('+index+',this.dataset.exerciseId)" aria-label="Примечание к упражнению"><span>'+esc(exercise.note || 'Добавить примечание')+'</span></button></section></article>';
+    renderJournalNotes(index,exercise)+'</section></article>';
   return html;
+}
+
+function renderJournalNotes(index,exercise){
+  var user=String(exercise.note || '').trim(),coach=String(exercise.coachNote || '').trim();
+  var kind=user&&coach?'both-notes':coach?'coach-note':user?'has-note':'';
+  return '<button class="st-modern-comment '+kind+'" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openNote('+index+',this.dataset.exerciseId)" aria-label="Примечание к упражнению">'+
+    (user?'<span class="st-user-note">'+esc(user)+'</span>':'')+
+    (coach?'<span class="st-coach-note">'+esc(coach)+'</span>':'')+
+    (!user&&!coach?'<span>Добавить примечание</span>':'')+'</button>';
 }
 
 function rememberAxisPositions(){
@@ -3720,17 +3766,29 @@ function bindJournalAxes(){
     var viewport=root.querySelector('.st-date-viewport');
     if(viewport)viewport.scrollLeft=axis.scrollLeft;
   }
+  function alignTraining(axis){
+    if(axis.dataset.axis!=='training' || !app.axisTargetSession)return;
+    var indices=templateSessionIndices(),target=indices.findIndex(function(index){return String(currentWorkout().sessions[index].session_id)===String(app.axisTargetSession);});
+    var width=parseFloat(getComputedStyle(root).getPropertyValue('--st-history-width')),gap=parseFloat(getComputedStyle(root).getPropertyValue('--st-history-gap'));
+    if(target>=0)axis.scrollLeft=target*(width+gap)+width-axis.clientWidth;
+  }
   axes.forEach(function(axis){
     axis.scrollLeft=app.axisPositions[axis.dataset.axis]===undefined?axis.scrollWidth:app.axisPositions[axis.dataset.axis];
-    if(axis.dataset.axis==='training' && app.axisTargetSession){
-      var indices=templateSessionIndices(),target=indices.findIndex(function(index){return String(currentWorkout().sessions[index].session_id)===String(app.axisTargetSession);});
-      if(target>=0)axis.scrollLeft=(target+1)*(parseFloat(getComputedStyle(root).getPropertyValue('--st-history-width'))+parseFloat(getComputedStyle(root).getPropertyValue('--st-history-gap')))-axis.clientWidth;
-    }
+    alignTraining(axis);
     axis.addEventListener('pointerdown',function(){app.activeAxis=axis.dataset.axis;syncBar(axis);});
-    axis.addEventListener('scroll',function(){app.axisPositions[axis.dataset.axis]=axis.scrollLeft;app.activeAxis=axis.dataset.axis;syncDate(axis);if(!syncing)syncBar(axis);},{passive:true});
+    axis.addEventListener('scroll',function(){app.axisPositions[axis.dataset.axis]=axis.scrollLeft;app.activeAxis=axis.dataset.axis;rememberTrainingAnchor(axis);syncDate(axis);if(!syncing)syncBar(axis);},{passive:true});
+    app.trainingViewportWidth=axis.clientWidth;rememberTrainingAnchor(axis);
     syncDate(axis);
   });
   app.axisTargetSession=null;
+  resizeJournal=function(){
+    applyJournalWidth();
+    axes.forEach(function(axis){
+      alignTraining(axis);app.axisPositions[axis.dataset.axis]=axis.scrollLeft;
+      app.trainingViewportWidth=axis.clientWidth;rememberTrainingAnchor(axis);syncDate(axis);
+    });
+    app.axisTargetSession=null;syncBar(activeAxis());
+  };
   if(bar)bar.addEventListener('scroll',function(){if(syncing)return;var axis=activeAxis();if(axis){syncing=true;axis.scrollLeft=bar.scrollLeft;app.axisPositions[axis.dataset.axis]=axis.scrollLeft;syncDate(axis);syncing=false;}},{passive:true});
   syncBar(activeAxis());
   var dateViewport=root.querySelector('.st-date-viewport');
@@ -3774,7 +3832,7 @@ function renderModernSet(index,exercise,setIndex,set){
   function input(field,placeholder,mode){return '<input'+data+' data-field="'+field+'" inputmode="'+mode+'" aria-label="'+(field.indexOf('plan')===0?'План':'Факт')+' '+(field.indexOf('Weight')>=0?'вес':'повторения')+'" placeholder="'+placeholder+'" value="'+esc(set[field])+'" onpointerup="ST.numberClick(event,'+index+','+(field.indexOf('plan')===0)+')" onfocus="ST.numberClick(event,'+index+','+(field.indexOf('plan')===0)+')" onchange="ST.changeField('+arg+',\''+field+'\',this.value)">';}
   return '<div class="st-grid-set"><span class="st-modern-number">'+(setIndex+1)+'</span>'+input('planWeight','кг','decimal')+input('planReps','раз','numeric')+
     '<button class="st-set-done '+status+'"'+data+' onclick="ST.completeSet('+arg+')" aria-label="'+({neutral:'Заполнить факт по плану',done:'Выполнено',over:'Перевыполнено',under:'Недовыполнено'}[status])+'" title="'+({neutral:'Заполнить факт по плану',done:'Выполнено',over:'Перевыполнено',under:'Недовыполнено'}[status])+'">✓</button>'+
-    input('factWeight','кг','decimal')+input('factReps','раз','numeric')+'<button class="st-rpe-button '+rpeClass(set.rpe)+'"'+data+' onclick="ST.openRpe(event,'+arg+')" aria-label="RPE '+esc(set.rpe)+'">'+(blank(set.rpe)?'—':Number(set.rpe)===10?'×':esc(set.rpe))+'</button></div>';
+    input('factWeight','кг','decimal')+input('factReps','раз','numeric')+'<button class="st-rpe-button '+rpeClass(set.rpe)+'"'+data+' onclick="ST.openRpe(event,'+arg+')" aria-label="RPE '+esc(set.rpe)+'">'+(blank(set.rpe)?'—':esc(set.rpe))+'</button></div>';
 }
 
 function renderCurrentExercises(){
@@ -3936,7 +3994,7 @@ function renderExerciseRows(
 
 
 function exerciseHasRecord(exercise){
-  return !!exercise && (!!String(exercise.note || '').trim() || (exercise.sets || []).some(function(set){
+  return !!exercise && (!!String(exercise.note || '').trim() || !!String(exercise.coachNote || '').trim() || (exercise.sets || []).some(function(set){
     return ['planWeight','planReps','factWeight','factReps','rpe'].some(function(field){return !blank(set[field]);}) || !!set.completed;
   }));
 }
@@ -5067,8 +5125,8 @@ function renderModal(){
           '<div class="st-modal-title">'+
             esc(ex.name)+
           '</div>'+
-          '<div class="st-modal-sub">Примечание к упражнению</div>'+
-          '<textarea id="st-note-text" class="st-modal-textarea" aria-label="Текст примечания">'+esc(ex.note)+'</textarea>'+
+          '<label class="st-note-field st-coach-note">Комментарий тренера<textarea id="st-coach-note-text" class="st-modal-textarea" maxlength="20000" aria-label="Комментарий тренера">'+esc(ex.coachNote || '')+'</textarea></label>'+
+          '<label class="st-note-field st-user-note">Ваш комментарий<textarea id="st-note-text" class="st-modal-textarea" aria-label="Ваш комментарий">'+esc(ex.note || '')+'</textarea></label>'+
           '<div class="st-modal-actions">'+
             '<button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Закрыть</button>'+
             '<button class="st-modal-btn st-modal-save" onclick="ST.saveNote()">Сохранить</button>'+
@@ -5350,7 +5408,7 @@ function renderFloatingRpe(){
   ){
 
     html +=
-      '<button class="st-rpe-option rpe'+i+'" onclick="ST.setRpe('+i+')" aria-label="RPE '+i+'">'+(i===10?'×':i)+'</button>';
+      '<button class="st-rpe-option rpe'+i+'" onclick="ST.setRpe('+i+')" aria-label="RPE '+i+'">'+i+'</button>';
 
   }
 
@@ -5566,21 +5624,28 @@ function queueManagerSave(){
 
 window.ST = {
 
-  sendTelegram:async function(){
-    var session = currentWorkout().sessions[app.selectedIndex];
-    if(!MANAGED_TARGET || telegramExportBlocked() || !session){ return; }
+  sendTelegram:async function(index){
+    if(index===undefined)index=app.selectedIndex;
+    var session = currentWorkout().sessions[index];
+    if(telegramExportBlocked(index) || !session){ return; }
     app.telegramSending = true;
     updateTelegramButton();
+    var deliveryError='Доставка не подтверждена. Проверьте мессенджер перед повторной отправкой.';
     try{
-      var response = await fetch('/admin/api/apps/strength/telegram',{
+      var body={session_id:session.session_id,version:app.version,request_id:crypto.randomUUID()};
+      if(MANAGED_TARGET)body.target_user_id=MANAGED_TARGET;
+      var response = await fetch('/api/apps/strength/send-plan',{
         method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({target_user_id:MANAGED_TARGET,session_id:session.session_id,version:app.version})
+        body:JSON.stringify(body)
       });
       var result = await response.json();
-      if(!response.ok || !result.ok){ throw new Error(result.detail || 'Telegram не подтвердил доставку. Проверьте чат перед повторной отправкой.'); }
-      alert('Тренировка отправлена в ваш Telegram.');
+      if(!response.ok || result.ok!==true || !Array.isArray(result.message_ids) || !result.message_ids.length || ['telegram','max'].indexOf(result.platform)<0){
+        if(typeof result.detail==='string')deliveryError=result.detail;
+        throw new Error(deliveryError);
+      }
+      alert('План тренировки отправлен в '+(result.platform==='max'?'MAX':'Telegram')+'.');
     }catch(error){
-      alert(error.message || 'Telegram не подтвердил доставку. Проверьте чат перед повторной отправкой.');
+      alert(deliveryError);
     }finally{
       app.telegramSending = false;
       updateTelegramButton();
@@ -6015,13 +6080,14 @@ window.ST = {
       exercises:exercises
     });
 
-    app.journalView = 'training';
     app.selectedIndex = workout.sessions.length-1;
     app.axisTargetSession=workout.sessions[app.selectedIndex].session_id;
     app.entryMode = 'edit';
     app.creatingSession = workout.sessions[app.selectedIndex].session_id;
     saveSessionNow(app.selectedIndex);
     render();
+    var axis=root.querySelector('[data-axis="exercise-history"]');
+    if(axis)axis.scrollLeft=axis.scrollWidth;
 
   },
 
@@ -6079,7 +6145,8 @@ window.ST = {
 
   numberClick:function(event,index,isPlan){
   if(!isPlan && clientLocked(index)){event.preventDefault();event.target.blur();app.modal={type:'dateWarning'};render();return false;}
-  var field=event.target;setTimeout(function(){if(field.isConnected){var end=field.value.length;try{field.setSelectionRange(end,end);}catch(e){}}},0);return true;
+  var field=event.target,selectAll=event.pointerType==='mouse' || (!event.pointerType && window.matchMedia('(pointer:fine)').matches);
+  setTimeout(function(){if(field.isConnected){try{if(selectAll)field.select();else{var end=field.value.length;field.setSelectionRange(end,end);}}catch(e){}}},0);return true;
 },
 
 
@@ -6305,6 +6372,8 @@ window.ST = {
       textarea.value
       :
       '';
+
+    ex.coachNote=document.getElementById('st-coach-note-text').value;
 
     var index =
       app.modal

@@ -14,6 +14,7 @@ from app.tilda_mailing_routes import router as tilda_mailing_router
 from app.content_routes import router as content_router
 from app.app_routes import router as app_router
 from app.strength_telegram import router as strength_telegram_router
+from app.strength_delivery import router as strength_delivery_router
 from app.tilda_routes import router as tilda_router
 from app.masterclass_routes import router as masterclass_router
 from app.app_auth import router as app_auth_router
@@ -225,6 +226,7 @@ app.include_router(crm_router)
 app.include_router(content_router)
 app.include_router(app_router)
 app.include_router(strength_telegram_router)
+app.include_router(strength_delivery_router)
 app.include_router(tilda_router)
 app.include_router(masterclass_router)
 app.include_router(app_auth_router)

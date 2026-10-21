@@ -13,6 +13,7 @@ class ProducerContract:
 
 
 PROACTIVE_PRODUCERS = {
+    "strength_workout_plan": ProducerContract("technical_payload", "portable_html", "portable_html", proactive=False),
     "channel_permission_entry": ProducerContract("authored_post", "portable_html", "portable_html", routing="explicit_exact"),
     "sequence_message": ProducerContract("authored_post", "portable_html", "portable_html"),
     "scheduled_broadcast": ProducerContract("authored_post", "portable_html", "portable_html"),

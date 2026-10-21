@@ -24,6 +24,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
+from app.strength_delivery import router as strength_delivery_router
 from app.customer_lifecycle import reconcile_masterclass_presale_runs, stop_presale_runs_from_purchase_events, stop_runs_for_contact
 from app.database import Base, SessionLocal, engine, get_db
 from app.app_menu import REFRESH_CALLBACK, app_request, refresh_menu, send_menu
@@ -780,6 +781,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(title="edabalans Telegram service", version="0.1.0", lifespan=lifespan)
+app.include_router(strength_delivery_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.public_link_allowed_origins_list,
