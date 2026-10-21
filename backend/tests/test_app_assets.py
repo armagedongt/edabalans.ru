@@ -1458,3 +1458,15 @@ def test_strength_application_loads_shared_journal_assets() -> None:
         asset = client.get(f"/assets/{name}")
         assert asset.status_code == 200
         assert mime in asset.headers["content-type"]
+
+
+def test_strength_sender_mask_uses_a_served_svg() -> None:
+    stylesheet = client.get("/assets/strength-journal.css")
+    assert stylesheet.status_code == 200
+    masks = set(re.findall(r"url\(['\"]?([^)'\"\s]+)", stylesheet.text))
+    assert masks, "The send button needs a visible monochrome mask"
+    for path in masks:
+        response = client.get(path)
+        assert response.status_code == 200, path
+        assert response.headers["content-type"].startswith("image/svg+xml")
+        assert "<path" in response.text

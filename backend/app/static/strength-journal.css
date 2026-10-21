@@ -81,7 +81,7 @@
 .st-date-cell .st-date-field,.st-history-date .st-date-field{flex:0 1 124px;min-width:0}
 #strength-app .st-send-plan{display:inline-grid;place-items:center;flex:none;width:25px;min-width:25px;height:27px;min-height:27px;padding:3px;border:1px solid #b4d6e9;border-radius:6px;background:#fff;color:#258ec4;cursor:pointer}
 #strength-app .st-send-plan:disabled{opacity:.4;cursor:default}
-.st-send-plane{display:block;width:18px;height:18px;background:currentColor;mask:url('/assets/intensive/assets/roadmap/telegram-plane.svg') center/contain no-repeat}
+.st-send-plane{display:block;width:18px;height:18px;background:currentColor;mask:url('/intensive/assets/roadmap/telegram-plane.svg') center/contain no-repeat}
 #strength-app .st-date-field .st-date-picker{position:absolute;inset:0 0 0 auto;width:24px;height:27px;min-height:27px;margin:0;padding:0;border:0;background:transparent;color:transparent;cursor:pointer}
 .st-date-picker::-webkit-datetime-edit{display:none}
 .st-date-picker::-webkit-calendar-picker-indicator{width:14px;height:14px;margin:0;padding:4px;cursor:pointer}
@@ -137,7 +137,7 @@
 #strength-app .st-date-field .st-date-picker{height:32px;min-height:32px}
 #strength-app .st-date-cell .st-session-number,#strength-app .st-history-date .st-session-number{height:32px;min-height:32px}
 #strength-app .st-send-plan,#strength-app .st-date-cell>.st-toolbar-delete,#strength-app .st-history-date>.st-toolbar-delete{height:32px;min-height:32px;width:30px;min-width:30px}
-#strength-app .st-send-plane{-webkit-mask:url('/assets/intensive/assets/roadmap/telegram-plane.svg') center/contain no-repeat;mask:url('/assets/intensive/assets/roadmap/telegram-plane.svg') center/contain no-repeat;width:20px;height:20px}
+#strength-app .st-send-plane{-webkit-mask:url('/intensive/assets/roadmap/telegram-plane.svg') center/contain no-repeat;mask:url('/intensive/assets/roadmap/telegram-plane.svg') center/contain no-repeat;width:20px;height:20px}
 
 #strength-app .st-delivery-notice{position:fixed;z-index:80;bottom:30px;right:10px;max-width:min(440px,calc(100% - 20px));display:flex;align-items:center;gap:10px;box-sizing:border-box;padding:12px;border:1px solid #abd6bd;border-radius:12px;background:#f0faef;color:#25442c;font-size:14px;box-shadow:0 5px 22px #0002}
 #strength-app .st-delivery-notice.error{background:#fff2f2;border-color:#e8a8ae;color:#a12c38}
