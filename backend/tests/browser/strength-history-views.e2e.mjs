@@ -20,7 +20,7 @@ const browser=await chromium.launch();
 const errors=[];let rows=[];
 async function open(width,managed=false,longNotes=false,manyExercises=false,sameNames=false,shortHistory=false,realAdmin=false,historyGaps=false){
  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce',hasTouch:width<=700});
- const page=await context.newPage(),state=fixture(manyExercises),writes=[],telegramWrites=[];let active=0,overlap=false,failTemplate=false;let workoutReads=0,deliveryFailure=false,deliveryGate=null,sessionGate=null,failSession=false;
+ const page=await context.newPage(),state=fixture(manyExercises),writes=[],telegramWrites=[];let active=0,overlap=false,failTemplate=false;let workoutReads=0,deliveryFailure=false,deliveryGate=null,sessionGate=null,failSession=false,transportFailure=false,timeoutSession=false;
  if(sameNames)state.exercise_catalog.forEach(e=>{e.exercise_name=e.short_name='Одинаковое имя <img src=x onerror=alert(1)>';});
  if(longNotes)state.session_exercises[0].note='Примечание с несколькими строками для проверки сохранения позиции при изменении подходов. '.repeat(14);
  if(shortHistory){state.sets=state.sets.filter(set=>set.set_number<=2);state.session_exercises=state.session_exercises.filter(ex=>!(ex.session_id==='one'&&ex.exercise_id===guide[0].code));state.sets=state.sets.filter(set=>!(set.session_id==='one'&&set.exercise_id===guide[0].code));}
@@ -60,6 +60,10 @@ async function open(width,managed=false,longNotes=false,manyExercises=false,same
   let reply={ok:true,user:{user_id:'fixture',email:'example@example.test',display_name:''},version:state.version};
   if(data.action==='getWorkout'){workoutReads++;reply.workout={...structuredClone(state),exercise_catalog:structuredClone(catalogs.get(Number(data.type)) || state.exercise_catalog.map(e=>({...e,active:false})))};}
   if(route.request().method()==='POST'){
+   if(data.action==='saveSession' && (transportFailure || timeoutSession)){
+    writes.push(data);if(transportFailure){transportFailure=false;return route.abort('failed');}
+    timeoutSession=false;return;
+   }
    active++;if(active>1)overlap=true;
    writes.push(data);if(data.action==='saveExerciseCatalog'&&catalogGate){const gate=catalogGate;catalogGate=null;await gate;}if(data.action==='saveSession'&&sessionGate){const gate=sessionGate;sessionGate=null;await gate;}await new Promise(resolve=>setTimeout(resolve,30));
    if(failSession && data.action==='saveSession'){failSession=false;reply={ok:false,error:'SYNTHETIC_SAVE_ERROR'};}
@@ -73,7 +77,7 @@ async function open(width,managed=false,longNotes=false,manyExercises=false,same
  });
  await page.goto(base+(realAdmin?'/admin/strength?user=fixture':managed?'/strength-admin-local':'/strength-local'));
  await page.locator('.st-view-toggle').waitFor();await page.evaluate(()=>document.fonts.ready);
- return {context,page,writes,telegramWrites,getOverlap:()=>overlap,getWorkoutReads:()=>workoutReads,state,holdNextCatalog:()=>{let release;catalogGate=new Promise(resolve=>{release=resolve;});return release;},failNextTemplate:()=>{failTemplate=true;},failNextDelivery:()=>{deliveryFailure=true;},holdNextDelivery:()=>{let release;deliveryGate=new Promise(resolve=>{release=resolve;});return release;},holdNextSessionSave:()=>{let release;sessionGate=new Promise(resolve=>{release=resolve;});return release;},failNextSessionSave:()=>{failSession=true;}};
+ return {context,page,writes,telegramWrites,getOverlap:()=>overlap,getWorkoutReads:()=>workoutReads,state,holdNextCatalog:()=>{let release;catalogGate=new Promise(resolve=>{release=resolve;});return release;},failNextTemplate:()=>{failTemplate=true;},failNextDelivery:()=>{deliveryFailure=true;},holdNextDelivery:()=>{let release;deliveryGate=new Promise(resolve=>{release=resolve;});return release;},holdNextSessionSave:()=>{let release;sessionGate=new Promise(resolve=>{release=resolve;});return release;},failNextSessionSave:()=>{failSession=true;},failNextTransport:()=>{transportFailure=true;},timeoutNextSave:()=>{timeoutSession=true;}};
 }
 async function assertDatesFollowColumns(page){
  await page.waitForFunction(()=>{const dates=document.querySelectorAll('.st-date-cell'),cards=document.querySelector('.st-history-row').querySelectorAll('article');return [...dates].every((e,i)=>Math.abs(e.getBoundingClientRect().left-cards[i].getBoundingClientRect().left)<1);});
@@ -418,10 +422,10 @@ for(const width of [360,430,700,701,768,1440]){
  assert(await blank.locator('input').evaluateAll(fields=>fields.every(field=>field.value==='')),'whole view preserves the missing workout position');
  await gp.screenshot({path:`${out}/five-workouts-${width}.png`});
  await gp.locator('.st-view-toggle').click();
- assert.deepEqual(await gp.locator('.st-history-row').evaluateAll(rows=>rows.map(row=>row.querySelectorAll('article').length)),[2,3]);
+ assert.deepEqual(await gp.locator('.st-history-row').evaluateAll(rows=>rows.map(row=>row.querySelectorAll('article').length)),[4,5]);
  const ends=await gp.locator('.st-history-row').evaluateAll(rows=>rows.map(row=>row.querySelector('article:last-child').getBoundingClientRect().right));
  assert(Math.max(...ends)-Math.min(...ends)<1,'packed rows are aligned at their newest record on the right');
- assert.equal(await gp.locator('.st-history-date').count(),5);
+ assert.equal(await gp.locator('.st-history-date').count(),9);
  assert.equal(gaps.writes.length,0);
  await gp.screenshot({path:`${out}/five-packed-${width}.png`});
  if(width===430){
@@ -643,6 +647,63 @@ for(const width of [360,430,768,1440]){
  await page.evaluate(()=>ST.sendTelegram(8));assert.equal(unsaved.telegramWrites.length,0,'handler cannot send stale stored data after save failure');
  await unsaved.context.close();
 }
+// Scaling preserves whole-workout column width, but scales every compact-column proportion.
+for(const width of [360,430,701,1440]){
+ const scaled=await open(width),page=scaled.page;
+ const column=page.locator('.st-history-row article').last();
+ const before=await column.boundingBox();const rowBefore=await column.locator('.st-grid-set').first().boundingBox();
+ await page.locator('.st-scale-button').click();
+ const after=await column.boundingBox();const rowAfter=await column.locator('.st-grid-set').first().boundingBox();
+ assert(Math.abs(before.width-after.width)<1,'whole view keeps physical column width at '+width);
+ assert(rowAfter.height>rowBefore.height,'whole view gains vertical size');
+ await page.screenshot({path:`${out}/scale-training-105-${width}.png`});
+ await page.locator('.st-view-toggle').click();const compactBefore=await column.boundingBox();
+ await page.locator('.st-scale-button').click();const compactAfter=await column.boundingBox();
+ assert(Math.abs(compactAfter.width/compactBefore.width-110/105)<.01,'compact columns scale proportionally');
+ assert.equal(await page.locator('.st-scale-button').textContent(),'110%＋');
+ await page.screenshot({path:`${out}/scale-packed-110-${width}.png`});
+ await page.reload();assert.equal(await page.locator('.st-scale-button').textContent(),'110%＋','scale preference survives reload');
+ await page.evaluate(()=>ST.resetScale());
+ for(let i=0;i<3;i++){await page.getByRole('button',{name:'Новая тренировка',exact:true}).click();await page.waitForTimeout(150);}
+ await page.locator('.st-view-toggle').click();
+ for(const index of [9,10,11])assert.equal(await page.locator('.st-history-row article[data-session-index="'+index+'"]').count(),2,'every newly created empty workout stays available');
+ assert.equal(scaled.writes.filter(w=>w.action==='saveSession').length,3);
+ await page.screenshot({path:`${out}/scale-and-blank-${width}.png`});
+ await scaled.context.close();
+}
+
+// A rejected fetch and an unanswered request retain edits and recover via the visible retry action.
+for(const failure of ['network','timeout']){
+ const retry=await open(430),page=retry.page;await page.clock.install();
+ if(failure==='network')retry.failNextTransport();else retry.timeoutNextSave();
+ const input=page.locator('.st-history-row article').last().locator('input[data-field=planWeight]').first();
+ await input.fill('95');await input.press('Tab');await page.clock.runFor(460);
+ if(failure==='timeout')await page.clock.fastForward(20001);
+ await page.locator('#st-save-state.error').waitFor();assert.equal(await input.inputValue(),'95');
+ assert.match(await page.locator('#st-save-state').textContent(),failure==='network'?/Нет связи/:/не ответил вовремя/);
+ await page.getByRole('button',{name:'Повторить',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelector('#st-save-state').textContent==='Сохранено');
+ const saved=retry.writes.filter(w=>w.action==='saveSession').at(-1);
+ assert.equal(saved.session.exercises[1].sets[0].plan_weight,95);assert.equal(saved.session.session_id,'three');
+ assert.equal(retry.telegramWrites.length,0);await retry.context.close();
+}
+// At the largest supported scale normal three-digit weights stay readable in the fixed-width view.
+for(const width of [360,430,701,1440]){
+ const large=await open(width),page=large.page;
+ for(let i=0;i<20;i++)await page.locator('.st-scale-button').click();
+ assert.equal(await page.locator('.st-scale-button').textContent(),'200%＋');
+ const input=page.locator('.st-history-row article').last().locator('input[data-field=planWeight]').first();await input.fill('100');
+ const fit=await input.evaluate(input=>{const style=getComputedStyle(input),ctx=document.createElement('canvas').getContext('2d');ctx.font=style.font;return input.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)>=ctx.measureText(input.value).width;});
+ assert(fit,'three-digit weight fits at200% '+width);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ await page.screenshot({path:`${out}/scale-training-200-${width}.png`});
+ await page.locator('.st-view-toggle').click();assert.equal(await page.locator('.st-view-toggle').getAttribute('aria-pressed'),'true','first click after numeric edit must switch view');
+ await page.screenshot({path:`${out}/scale-packed-200-${width}.png`});
+ const rpe=page.locator('article[data-session-index="0"]').first().locator('.st-rpe-button').first();await rpe.click();
+ const popup=await page.locator('.st-rpe-floating').boundingBox();assert(popup.x>=0 && popup.y>=0 && popup.x+popup.width<=width && popup.y+popup.height<=900,'scaled RPE menu stays in viewport');
+ await page.screenshot({path:`${out}/scale-rpe-200-${width}.png`});await page.locator('.st-rpe-option').first().click();
+ await large.context.close();
+}
+
 // Same renderer and controls for a managed account; selector is outside the mount.
 const plain=await open(768),admin=await open(768,true);
 assert.equal(await plain.page.locator('#strength-app').innerHTML(),await admin.page.locator('#strength-app').innerHTML());
@@ -651,20 +712,20 @@ assert.equal(await admin.page.locator('.preview-account').count(),1);
 for(const page of [plain.page,admin.page]){const account=page.getByRole('link',{name:'Личный кабинет',exact:true});assert.equal(await account.getAttribute('href'),'/lk');assert.equal(await account.locator('svg').count(),1,'shared account control uses the standard icon');}
 assert.equal(await plain.page.locator('[data-strength-telegram-export]').count(),0);
 assert.equal(await admin.page.locator('[data-strength-telegram-export]').count(),0,'old external export control is replaced');
-const sentDialog=admin.page.waitForEvent('dialog').then(d=>d.dismiss());
-await admin.page.getByRole('button',{name:'Отправить план тренировки №1',exact:true}).click();await sentDialog;
+
+await admin.page.getByRole('button',{name:'Отправить план тренировки №1',exact:true}).click();await admin.page.locator('.st-delivery-notice').waitFor();
 assert.equal(admin.telegramWrites.length,1);assert.equal(admin.telegramWrites[0].target_user_id,'fixture');assert.equal(admin.telegramWrites[0].session_id,'one');
 assert.equal(await admin.page.locator('.st-session-number[aria-pressed=true]').textContent(),'№9','sending another column does not select or send the last workout');
-const ownDialog=plain.page.waitForEvent('dialog').then(d=>d.dismiss());
-await plain.page.getByRole('button',{name:'Отправить план тренировки №1',exact:true}).click();await ownDialog;
+
+await plain.page.getByRole('button',{name:'Отправить план тренировки №1',exact:true}).click();await plain.page.locator('.st-delivery-notice').waitFor();
 assert.equal(plain.telegramWrites.length,1);assert.equal(plain.telegramWrites[0].session_id,'one');assert(!('target_user_id' in plain.telegramWrites[0]));
 for(const body of [plain.telegramWrites[0],admin.telegramWrites[0]])assert.match(body.request_id,/^[0-9a-f-]{36}$/);
 const releaseDelivery=plain.holdNextDelivery();plain.failNextDelivery();
-const messagePromise=plain.page.waitForEvent('dialog').then(async dialog=>{const text=dialog.message();await dialog.dismiss();return text;});
+
 await plain.page.getByRole('button',{name:'Отправить план тренировки №1',exact:true}).click();
 await plain.page.waitForFunction(()=>[...document.querySelectorAll('[data-strength-send-plan]')].every(button=>button.disabled));
 assert.equal(plain.telegramWrites.length,2);releaseDelivery();
-assert.equal(await messagePromise,'Основной мессенджер не подключён');
+await plain.page.locator('.st-delivery-notice.error').waitFor();assert.match(await plain.page.locator('.st-delivery-notice.error').textContent(),/Основной мессенджер не подключён/);
 await plain.page.waitForFunction(()=>!document.querySelector('[data-strength-send-plan]').disabled);
 assert.equal(plain.telegramWrites.length,2,'delivery errors are never retried automatically');
 

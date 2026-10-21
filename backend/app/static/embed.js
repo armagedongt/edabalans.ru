@@ -527,7 +527,16 @@
     mounts.forEach(load);
   }
 
+  var standaloneBridgeReady = false;
   function boot() {
+    if (window.EdabalansStandaloneBridge && !standaloneBridgeReady) {
+      return window.EdabalansStandaloneBridge.then(function (ready) {
+        standaloneBridgeReady = ready;
+        if (ready) return boot();
+        var mount = document.querySelector('[data-edabalans-app]');
+        if (mount) failLoading(mount, new Error('Не удалось загрузить вход через мессенджер. Проверьте соединение и повторите.'), function () { location.reload(); });
+      });
+    }
     var mounts = Array.prototype.slice.call(document.querySelectorAll('[data-edabalans-app]'))
       .filter(function (mount) { return mount.getAttribute('data-edabalans-manual') !== 'true'; });
     if (!mounts.length) return;

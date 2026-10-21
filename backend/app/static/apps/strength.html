@@ -1573,8 +1573,8 @@
 
 </style>
 
-<link rel="stylesheet" href="/assets/strength-journal.css?v=20261021-draft-history">
-<script src="/assets/strength-journal-model.js?v=20261021-draft-history"></script>
+<link rel="stylesheet" href="/assets/strength-journal.css?v=20261021-stability-scale">
+<script src="/assets/strength-journal-model.js?v=20261021-stability-scale"></script>
 <script>
 (function(){
 
@@ -1624,6 +1624,7 @@ var app = {
   entryMode:'edit',
   selectedPrevious:{},
   journalView:'training',
+  scale:100,
   templates:[],
   accountCatalog:[],
   axisTargetSession:null,
@@ -1765,6 +1766,7 @@ function getApi(params){
 
 
 function postApi(body){
+  var controller=new AbortController(),timer=setTimeout(function(){controller.abort();},20000);
 
   if(MANAGED_TARGET){
     body.target_user_id = MANAGED_TARGET;
@@ -1774,6 +1776,7 @@ function postApi(body){
     API_URL,
     {
       method:'POST',
+      signal:controller.signal,
       credentials:'include',
 
       headers:{
@@ -1805,7 +1808,11 @@ function postApi(body){
 
     return data;
 
-  });
+  }).catch(function(error){
+    if(error.name==='AbortError')throw new Error('Сервер не ответил вовремя. Изменения ожидают повторного сохранения.');
+    if(error instanceof TypeError)throw new Error('Нет связи с сервером. Изменения ожидают повторного сохранения.');
+    throw error;
+  }).finally(function(){clearTimeout(timer);});
 
 }
 
@@ -2863,6 +2870,8 @@ function flushSessionSave(timerKey){
   body.version = app.version;
 
   app.saveRequests += 1;
+  app.saving=true;
+  renderSavingOnly();
 
   postApi(body)
     .then(function(result){
@@ -3199,6 +3208,11 @@ function clientLocked(index){
 ========================================================= */
 
 function render(){
+  root.style.zoom=app.journalView==='exercise'?app.scale/100:1;
+  root.dataset.scaled=String(app.scale>100);
+  root.dataset.largeScale=String(app.scale>125);
+  root.style.setProperty('--st-scale',app.scale/100);
+  root.style.setProperty('--st-row-scale',app.journalView==='training'?app.scale/100:1);
 
   if(app.mode === 'loading'){
 
@@ -3228,6 +3242,8 @@ function render(){
 }
 
 
+
+try{var savedScale=Number(localStorage.getItem('edabalans-strength-scale'));if(savedScale>=100 && savedScale<=200 && savedScale%5===0)app.scale=savedScale;}catch(error){}
 
 var screenHistory=null,screenOwner=String(Date.now())+Math.random(),journalWidthObserver=null,resizeJournal=null;
 function screenView(){return {mainTab:app.mainTab,modal:app.modal?cloneValue(app.modal):null};}
@@ -3312,6 +3328,7 @@ function commonHeader(){
   return '<div class="st-card st-header"><div class="st-top">'+
     '<img class="st-app-icon" src="/assets/strength-favicon.svg" alt="Силовые тренировки">'+
     '<span class="st-top-email">'+esc((app.selectedUser || {}).email || app.email)+'</span>'+
+    '<button class="st-scale-button" '+(app.scale>=200?'disabled ':'')+'onclick="ST.increaseScale()" title="Увеличить интерфейс на 5%" aria-label="Масштаб '+app.scale+'%, увеличить на 5%">'+app.scale+'%＋</button>'+
     '<button class="st-help" onclick="ST.openTutorial()">Как пользоваться</button>'+
     '<button class="st-icon-link" onclick="ST.setMainTab(\'stats\')" aria-label="Статистика" title="Статистика">'+journalIcon('stats')+'</button>'+
     '<a class="st-icon-link ed-app-account-link" href="'+esc(ACCOUNT_URL)+'" aria-label="Личный кабинет" title="Личный кабинет">'+journalIcon('account')+'</a>'+
@@ -3422,6 +3439,8 @@ function renderAdminList(){
 ========================================================= */
 
 function renderClient(){
+  root.style.zoom=app.journalView==='exercise'?app.scale/100:1;
+  root.style.setProperty('--st-row-scale',app.journalView==='training'?app.scale/100:1);
   rememberAxisPositions();
   syncScreenHistory();
   root.dataset.journalView=app.journalView;
@@ -3600,6 +3619,10 @@ function visibleSessions(){
 }
 
 
+function sessionHasRecord(session){
+  return session.exercises.some(exerciseHasRecord);
+}
+
 function renderJournal(){
   var sessions=currentWorkout().sessions,exercises=activeCatalog();
   if(!exercises.length)return '<div class="st-empty">Добавьте упражнения в состав шаблона.</div><button class="st-action" onclick="ST.openTemplates()">Управление шаблонами</button>';
@@ -3607,7 +3630,7 @@ function renderJournal(){
   var latestIndex=indices.length?indices[indices.length-1]:-1;
   if(app.journalView==='training' && !indices.length)return '';
   var rows=exercises.map(function(item,order){
-    var id=String(item.exercise_id),ownIndices=app.journalView==='training'?indices:sessions.map(function(_,index){return index;}).filter(function(index){return index===latestIndex || exerciseHasRecord(findExercise(sessions[index],id));});
+    var id=String(item.exercise_id),ownIndices=app.journalView==='training'?indices:sessions.map(function(_,index){return index;}).filter(function(index){return index===latestIndex || (Number(sessions[index].workoutType)===Number(app.workoutType) && (!sessionHasRecord(sessions[index]) || (sessions[index].status==='planned' && !sessions[index].exercises.some(exerciseHasFact)))) || exerciseHasRecord(findExercise(sessions[index],id));});
     var maxSets=sessions.reduce(function(max,session){var ex=findExercise(session,id);return Math.max(max,ex?ex.sets.length:0);},1);
     maxSets=ownIndices.reduce(function(max,index){var ex=exerciseForDisplay(sessions[index],id);return Math.max(max,ex?ex.sets.length:0);},maxSets);
     return {item:item,order:order,indices:ownIndices,maxSets:maxSets};
@@ -3728,7 +3751,7 @@ function renderHistoryExercise(index,item,order,maxSets){
     ((item.source==='base' || item.source==='custom')?'<button class="st-exercise-info"'+data+' onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Информация об упражнении">i</button>':'')+'</div></header>'+
     '<section class="st-modern-editor"><div class="st-grid-labels"><span></span><span class="st-plan-label">'+renderCopyButton(exercise.id,index,false,'',emptyPlan)+'<span>План</span></span><span class="st-fact-label">'+renderCopyButton(exercise.id,index,true,'',!exerciseHasFact(exercise))+'<span>Факт</span></span><span>RPE</span></div>';
   exercise.sets.forEach(function(set,setIndex){html+=renderModernSet(index,exercise,setIndex,set);});
-  html+='<div class="st-history-set-space" style="height:'+Math.max(0,(maxSets-exercise.sets.length)*33)+'px"></div>'+
+  html+='<div class="st-history-set-space" style="height:calc('+Math.max(0,(maxSets-exercise.sets.length)*33)+'px * var(--st-row-scale,1))"></div>'+
     renderJournalNotes(index,exercise)+'</section></article>';
   return html;
 }
@@ -3791,11 +3814,7 @@ function bindJournalAxes(){
   };
   if(bar)bar.addEventListener('scroll',function(){if(syncing)return;var axis=activeAxis();if(axis){syncing=true;axis.scrollLeft=bar.scrollLeft;app.axisPositions[axis.dataset.axis]=axis.scrollLeft;syncDate(axis);syncing=false;}},{passive:true});
   syncBar(activeAxis());
-  var dateViewport=root.querySelector('.st-date-viewport');
-  if(dateViewport)dateViewport.addEventListener('scroll',function(){
-    var axis=axes.find(function(item){return item.dataset.axis==='training';});
-    if(axis && Math.abs(axis.scrollLeft-dateViewport.scrollLeft)>1)axis.scrollLeft=dateViewport.scrollLeft;
-  },{passive:true});
+
 }
 
 function renderTemplateManager(){
@@ -3825,6 +3844,23 @@ function renderTemplateError(){
   var el=root.querySelector('#st-save-state');if(el){el.className='st-saving error';el.textContent='Ошибка: изменения не сохранены';el.title=app.saveError;}
 }
 
+
+function updateEditedSet(index,exercise,setIndex,field){
+  // Blur fires before the next control's click: preserve that control rather than replacing the journal.
+  var card=Array.from(root.querySelectorAll('article[data-session-index]')).find(function(card){return Number(card.dataset.sessionIndex)===index && card.dataset.exerciseId===String(exercise.id);});
+  if(!card){render();return;}
+  var row=card.querySelectorAll('.st-grid-set')[setIndex],set=exercise.sets[setIndex];
+  if(row){
+    var input=row.querySelector('input[data-field="'+field+'"]');if(input)input.value=set[field];
+    var status=StrengthJournalModel.completion(set),label={neutral:'Заполнить факт по плану',done:'Выполнено',over:'Перевыполнено',under:'Недовыполнено'}[status];
+    var done=row.querySelector('.st-set-done');if(done){done.className='st-set-done '+status;done.title=label;done.setAttribute('aria-label',label);}
+  }
+  var plan=card.querySelector('.st-plan-label button'),fact=card.querySelector('.st-fact-label button');
+  if(plan && !plan.classList.contains('st-paste-offer'))plan.disabled=!exercise.sets.some(function(set){return !blank(set.planWeight)||!blank(set.planReps);});
+  if(fact)fact.disabled=!exerciseHasFact(exercise);
+  var undo=root.querySelector('[aria-label="Отменить действие"]'),redo=root.querySelector('[aria-label="Повторить действие"]');
+  if(undo)undo.disabled=!app.undoStack.length;if(redo)redo.disabled=!app.redoStack.length;
+}
 
 function renderModernSet(index,exercise,setIndex,set){
   var status=StrengthJournalModel.completion(set),arg=index+',this.dataset.exerciseId,'+setIndex;
@@ -5622,7 +5658,23 @@ function queueManagerSave(){
    PUBLIC
 ========================================================= */
 
+function showDeliveryNotice(message,error){
+  var old=root.querySelector('.st-delivery-notice');if(old)old.remove();
+  var notice=document.createElement('div');notice.className='st-delivery-notice'+(error?' error':'');
+  notice.setAttribute('role',error?'alert':'status');
+  var text=document.createElement('span');text.textContent=message;notice.appendChild(text);
+  var close=document.createElement('button');close.type='button';close.textContent='×';close.setAttribute('aria-label','Закрыть уведомление');close.onclick=function(){notice.remove();};notice.appendChild(close);
+  root.appendChild(notice);
+}
+
 window.ST = {
+  increaseScale:function(){
+    if(app.scale>=200)return;
+    app.scale+=5;
+    try{localStorage.setItem('edabalans-strength-scale',String(app.scale));}catch(error){}
+    renderWithoutViewportJump();
+  },
+  resetScale:function(){app.scale=100;try{localStorage.removeItem('edabalans-strength-scale');}catch(error){}renderWithoutViewportJump();},
 
   sendTelegram:async function(index){
     if(index===undefined)index=app.selectedIndex;
@@ -5643,9 +5695,9 @@ window.ST = {
         if(typeof result.detail==='string')deliveryError=result.detail;
         throw new Error(deliveryError);
       }
-      alert('План тренировки отправлен в '+(result.platform==='max'?'MAX':'Telegram')+'.');
+      showDeliveryNotice('План тренировки отправлен в '+(result.platform==='max'?'MAX':'Telegram')+'.',false);
     }catch(error){
-      alert(deliveryError);
+      showDeliveryNotice(deliveryError,true);
     }finally{
       app.telegramSending = false;
       updateTelegramButton();
@@ -5983,6 +6035,7 @@ window.ST = {
   },
 
   retrySave:function(){
+    flushTemplateSave();
     Object.keys(app.sessionSaveQueues).forEach(function(key){ flushSessionSave(key); });
     flushManagerSave();
   },
@@ -6198,7 +6251,7 @@ window.ST = {
 
     scheduleSave(index);
 
-    render();
+    updateEditedSet(index,ex,setIndex,field);
 
   },
 
@@ -6231,10 +6284,11 @@ window.ST = {
       event.currentTarget
         .getBoundingClientRect();
 
-    var height = 200;
+    var scale=app.journalView==='exercise'?app.scale/100:1;
+    var height = 200*scale;
 
     var top =
-      rect.bottom+4;
+      rect.bottom+4*scale;
 
     if(
       top+height >
@@ -6244,7 +6298,7 @@ window.ST = {
       top =
         Math.max(
           5,
-          rect.top-height-4
+          rect.top-height-4*scale
         );
 
     }
@@ -6252,14 +6306,14 @@ window.ST = {
     var left =
       rect.left+
       rect.width/2-
-      35;
+      35*scale;
 
     left =
       Math.max(
         5,
         Math.min(
           left,
-          window.innerWidth-75
+          window.innerWidth-75*scale
         )
       );
 
@@ -6267,8 +6321,8 @@ window.ST = {
       index:index,
       id:id,
       setIndex:setIndex,
-      left:left,
-      top:top
+      left:left/scale,
+      top:top/scale
     };
 
     render();

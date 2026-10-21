@@ -975,6 +975,52 @@ try {
     assert.equal(await late.locator('.ed-loading-screen').count(),0,'A late shared script must not cover an already displayed error')
     await late.close()
   }
+  // Direct browser entry must not wait for messenger hosts. Mini apps wait only for their own SDK.
+  const standaloneTemplate=await readFile(new URL('../../app/static/standalone-app.html',import.meta.url),'utf8')
+  for(const platform of ['native','telegram','max']){
+    const direct=await browser.newPage({viewport:{width:390,height:844}}),bridge=barrier()
+    let external=0,sessionCalls=0,miniCalls=0
+    await direct.route('**/*',async route=>{
+      const url=new URL(route.request().url())
+      if(url.origin!==origin){
+        external++;await bridge.promise
+        return route.fulfill({contentType:'application/javascript',body:platform==='telegram'?'window.Telegram={WebApp:{initData:"signed-fixture",ready(){},expand(){}}};':'window.WebApp={initData:"signed-fixture",ready(){},expand(){}};'})
+      }
+      if(url.pathname==='/training')return route.fulfill({contentType:'text/html',body:standaloneTemplate.replaceAll('{{APP_CODE}}','strength').replaceAll('{{APP_TITLE}}','Силовые').replaceAll('{{APP_FAVICON}}','/favicon.ico')})
+      if(url.pathname==='/embed.js')return route.fulfill({contentType:'application/javascript',body:embed})
+      if(url.pathname==='/api/account-auth/session'){sessionCalls++;return route.fulfill({json:{authenticated:true,email:'fixture@example.test'}})}
+      if(url.pathname.includes('-miniapp')){miniCalls++;assert.equal(JSON.parse(route.request().postData()).init_data,'signed-fixture');return route.fulfill({json:{email:'fixture@example.test'}})}
+      if(url.pathname==='/apps/strength.html')return route.fulfill({contentType:'text/html',body:'<div id="strength-app">Рабочий журнал</div>'})
+      return route.fulfill({contentType:url.pathname.endsWith('.css')?'text/css':'application/javascript',body:''})
+    })
+    await direct.goto(origin+'/training'+(platform==='telegram'?'#tgWebAppData=fixture':platform==='max'?'#WebAppData=fixture':''),{waitUntil:'domcontentloaded'})
+    if(platform==='native'){
+      await direct.locator('#strength-app').waitFor();assert.equal(external,0);assert.equal(sessionCalls,1)
+    }else{
+      assert.equal(await direct.locator('#strength-app').count(),0,'no premature native fallback while miniapp SDK loads')
+      bridge.release();await direct.locator('#strength-app').waitFor();assert.equal(external,1);assert.equal(miniCalls,1);assert.equal(sessionCalls,0)
+    }
+    await direct.close()
+  }
+  for(const failure of ['network','timeout']){
+    const broken=await browser.newPage();let loads=0,sessionCalls=0
+    await broken.clock.install()
+    await broken.route('**/*',async route=>{
+      const url=new URL(route.request().url())
+      if(url.origin!==origin){loads++;if(loads===1){if(failure==='network')return route.abort('failed');return;}return route.fulfill({contentType:'application/javascript',body:'window.Telegram={WebApp:{initData:"signed-fixture",ready(){},expand(){}}};'})}
+      if(url.pathname==='/training')return route.fulfill({contentType:'text/html',body:standaloneTemplate.replaceAll('{{APP_CODE}}','strength').replaceAll('{{APP_TITLE}}','Силовые').replaceAll('{{APP_FAVICON}}','/favicon.ico')})
+      if(url.pathname==='/embed.js')return route.fulfill({contentType:'application/javascript',body:embed})
+      if(url.pathname==='/api/account-auth/telegram-miniapp'){sessionCalls++;return route.fulfill({json:{email:'fixture@example.test'}})}
+      if(url.pathname==='/apps/strength.html')return route.fulfill({contentType:'text/html',body:'<div id="strength-app">Рабочий журнал</div>'})
+      return route.fulfill({contentType:url.pathname.endsWith('.css')?'text/css':'application/javascript',body:''})
+    })
+    await broken.goto(origin+'/training#tgWebAppData=fixture',{waitUntil:'domcontentloaded'})
+    if(failure==='timeout')await broken.clock.fastForward(8001)
+    await broken.locator('.ed-loading-error').waitFor();assert.equal(sessionCalls,0)
+    await broken.getByRole('button',{name:'Повторить',exact:true}).click()
+    await broken.locator('#strength-app').waitFor();assert.equal(loads,2);assert.equal(sessionCalls,1)
+    await broken.close()
+  }
   console.log('PASS: real portal/course readiness, per-article firstscreen, inline/reduced motion, auth retry, resources and legal gate')
 } finally {
   await browser.close()

@@ -123,3 +123,74 @@
   #strength-app[data-journal-view="training"] .st-grid-set .st-rpe-button{font-size:14px}
   #strength-app[data-journal-view="training"] .st-grid-set .st-set-done{width:30px;min-width:30px;height:30px;min-height:30px;justify-self:center;font-size:16px}
 }
+
+/* Shared readable controls; the zoom preference scales the complete journal. */
+#strength-app{--st-tool-size:36px}
+#strength-app .st-top-email{font-size:13px!important;line-height:1.35}
+#strength-app .st-help{font-size:12px!important;font-weight:750;min-height:36px}
+#strength-app .st-top .st-icon-link{box-sizing:border-box;width:36px!important;min-width:36px!important;height:36px;border:1px solid #d7c8ed;border-radius:7px;background:#fff;padding:5px}
+#strength-app .st-scale-button{flex:none;min-height:32px;padding:3px 5px;border:1px solid #d7c8ed;border-radius:7px;background:#fff;color:#7040cb;font:750 11px/1.2 var(--ed-font-body,Manrope,Arial,sans-serif)}
+#strength-app .st-scale-button:disabled{opacity:.4}
+#strength-app .st-template-manager-row button{width:36px;min-width:36px;min-height:36px;font-size:17px}
+#strength-app .st-manager-back{min-height:36px!important;font-size:14px!important;font-weight:750}
+#strength-app .st-date-cell .st-journal-date-text,#strength-app .st-history-date .st-journal-date-text{height:32px;min-height:32px}
+#strength-app .st-date-field .st-date-picker{height:32px;min-height:32px}
+#strength-app .st-date-cell .st-session-number,#strength-app .st-history-date .st-session-number{height:32px;min-height:32px}
+#strength-app .st-send-plan,#strength-app .st-date-cell>.st-toolbar-delete,#strength-app .st-history-date>.st-toolbar-delete{height:32px;min-height:32px;width:30px;min-width:30px}
+#strength-app .st-send-plane{-webkit-mask:url('/assets/intensive/assets/roadmap/telegram-plane.svg') center/contain no-repeat;mask:url('/assets/intensive/assets/roadmap/telegram-plane.svg') center/contain no-repeat;width:20px;height:20px}
+
+#strength-app .st-delivery-notice{position:fixed;z-index:80;bottom:30px;right:10px;max-width:min(440px,calc(100% - 20px));display:flex;align-items:center;gap:10px;box-sizing:border-box;padding:12px;border:1px solid #abd6bd;border-radius:12px;background:#f0faef;color:#25442c;font-size:14px;box-shadow:0 5px 22px #0002}
+#strength-app .st-delivery-notice.error{background:#fff2f2;border-color:#e8a8ae;color:#a12c38}
+#strength-app .st-delivery-notice button{width:32px;min-width:32px;height:32px;padding:0;background:#fff;border:1px solid currentColor;border-radius:7px;color:inherit;font-size:22px}
+#strength-app .st-top{gap:6px}
+@media(max-width:700px){
+ #strength-app .st-top{gap:4px!important}
+ #strength-app .st-top-email{font-size:12px!important}
+ #strength-app .st-help{font-size:11px!important}
+ #strength-app .st-top .st-icon-link{width:34px!important;min-width:34px!important;height:34px}
+ #strength-app[data-journal-view="training"] .st-grid-set,#strength-app[data-journal-view="training"] .st-grid-labels{grid-template-columns:10px minmax(0,1fr) minmax(0,.75fr) 40px minmax(0,1.45fr) minmax(0,1.1fr) minmax(0,.8fr)}
+}
+
+@media(max-width:700px){
+ #strength-app[data-large-scale="true"] .st-top{flex-wrap:wrap}
+ #strength-app[data-large-scale="true"] .st-top-email{flex:1 1 120px}
+ #strength-app[data-large-scale="true"] .st-session-toolbar{grid-template-columns:1fr 1fr}
+ #strength-app[data-large-scale="true"] .st-session-toolbar>.st-template-row{grid-row:2;grid-column:1/-1}
+ #strength-app[data-large-scale="true"] .st-session-toolbar>.st-toolbar-side:last-child{justify-content:flex-end}
+}
+
+/* Whole-workout view keeps every horizontal dimension; type is capped at each field's capacity. */
+#strength-app[data-journal-view="training"] .st-top-email{font-size:min(calc(13px * var(--st-scale)),18px)!important}
+#strength-app[data-journal-view="training"] .st-help{font-size:min(calc(12px * var(--st-scale)),14px)!important;min-height:calc(36px * var(--st-scale))}
+#strength-app[data-journal-view="training"] .st-top .st-icon-link{height:calc(36px * var(--st-scale))}
+#strength-app[data-journal-view="training"] .st-scale-button{min-height:calc(32px * var(--st-scale))}
+#strength-app[data-journal-view="training"] .st-session-toolbar>.st-toolbar-side button,
+#strength-app[data-journal-view="training"] .st-template-edit{height:calc(36px * var(--st-scale));min-height:calc(36px * var(--st-scale))}
+#strength-app[data-journal-view="training"] .st-type{padding-top:calc(8px * var(--st-scale));padding-bottom:calc(8px * var(--st-scale));font-size:min(calc(12px * var(--st-scale)),15px)}
+#strength-app[data-journal-view="training"] .st-grid-set{min-height:calc(31px * var(--st-scale));margin-bottom:calc(2px * var(--st-scale))}
+#strength-app[data-journal-view="training"] .st-grid-labels{height:calc(27px * var(--st-scale))}
+#strength-app[data-journal-view="training"] .st-grid-set input{height:calc(29px * var(--st-scale));line-height:normal;font-size:min(calc(13px * var(--st-scale)),15px)}
+#strength-app[data-journal-view="training"] .st-grid-set .st-rpe-button{height:calc(29px * var(--st-scale));min-height:calc(29px * var(--st-scale));font-size:min(calc(10px * var(--st-scale)),14px)}
+#strength-app[data-journal-view="training"] .st-modern-head{min-height:calc(35px * var(--st-scale));padding-top:calc(4px * var(--st-scale));padding-bottom:calc(4px * var(--st-scale))}
+#strength-app[data-journal-view="training"] .st-modern-title strong{font-size:min(calc(11px * var(--st-scale)),13px)}
+#strength-app[data-journal-view="training"] .st-modern-tools button{height:calc(28px * var(--st-scale));min-height:calc(28px * var(--st-scale));font-size:min(calc(16px * var(--st-scale)),22px)}
+#strength-app[data-journal-view="training"] .st-date-cell .st-journal-date-text{height:calc(32px * var(--st-scale));min-height:calc(32px * var(--st-scale));font-size:min(calc(12px * var(--st-scale)),13px)!important}
+#strength-app[data-journal-view="training"] .st-date-cell .st-date-picker,
+#strength-app[data-journal-view="training"] .st-date-cell .st-session-number,
+#strength-app[data-journal-view="training"] .st-date-cell>.st-send-plan,
+#strength-app[data-journal-view="training"] .st-date-cell>.st-toolbar-delete{height:calc(32px * var(--st-scale));min-height:calc(32px * var(--st-scale))}
+#strength-app[data-journal-view="training"] .st-modern-comment{height:calc(29px * var(--st-scale));min-height:calc(29px * var(--st-scale));max-height:calc(29px * var(--st-scale));font-size:min(calc(10px * var(--st-scale)),14px);line-height:calc(17px * var(--st-scale))}
+@media(max-width:700px){
+ #strength-app[data-journal-view="training"] .st-grid-set input{font-size:min(calc(16px * var(--st-scale)),18px)}
+ #strength-app[data-journal-view="training"] .st-grid-set input[data-field^="fact"]{font-size:min(calc(18px * var(--st-scale)),22px)}
+ #strength-app[data-journal-view="training"] .st-modern-title strong{font-size:min(calc(11px * var(--st-scale)),15px)}
+}
+
+@media(max-width:700px){#strength-app[data-journal-view="training"] .st-grid-set .st-rpe-button{font-size:min(calc(14px * var(--st-scale)),18px)}}
+
+@media(max-width:700px){
+ #strength-app[data-journal-view="training"] .st-top-email{font-size:min(calc(12px * var(--st-scale)),18px)!important}
+ #strength-app[data-journal-view="training"] .st-help{font-size:min(calc(11px * var(--st-scale)),14px)!important}
+ #strength-app[data-journal-view="training"] .st-top .st-icon-link{height:calc(34px * var(--st-scale))}
+ #strength-app[data-journal-view="training"] .st-type{padding-top:calc(5px * var(--st-scale));padding-bottom:calc(5px * var(--st-scale));font-size:min(calc(11px * var(--st-scale)),15px)}
+}

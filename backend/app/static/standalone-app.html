@@ -11,8 +11,22 @@
   <meta name="robots" content="noindex,nofollow">
   <title>{{APP_TITLE}} · Похудение — это есть!</title>
   <link rel="icon" href="{{APP_FAVICON}}">
-  <script src="https://telegram.org/js/telegram-web-app.js?63" defer></script>
-  <script src="https://st.max.ru/js/max-web-app.js" defer></script>
+  <script>
+    // Messenger bridges are needed only inside their mini apps, never for a normal browser visit.
+    (function () {
+      var launch = location.search + location.hash;
+      var source = /(?:[?&#])tgWebApp/i.test(launch) ? 'https://telegram.org/js/telegram-web-app.js?63'
+        : /(?:[?&#])WebApp/i.test(launch) ? 'https://st.max.ru/js/max-web-app.js' : '';
+      window.EdabalansStandaloneBridge = source ? new Promise(function (resolve) {
+        var script = document.createElement('script');
+        var timer = setTimeout(function () { resolve(false); }, 8000);
+        script.src = source; script.async = true;
+        script.onload = function () { clearTimeout(timer); resolve(true); };
+        script.onerror = function () { clearTimeout(timer); resolve(false); };
+        document.head.appendChild(script);
+      }) : Promise.resolve(true);
+    }());
+  </script>
   <style>
     html,body{margin:0;min-height:100%;background:#f4f4f6}
     .standalone-loading{min-height:100vh;display:grid;place-items:center;color:#64748b;font:600 15px/1.4 var(--ed-font-body, Manrope, Arial, sans-serif)}
