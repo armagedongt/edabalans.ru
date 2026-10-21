@@ -101,6 +101,7 @@ const server = createServer((request, response) => {
     response.writeHead(200, { "Content-Type": "image/png" });
     return response.end(readFileSync(path.join(staticRoot, "brand/favicon.png")));
   }
+  if (url.pathname === "/admin/api/finance/plans") return json(response, { plans: [] });
   if (url.pathname === "/finance") {
     response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
     return response.end(readFileSync(path.join(staticRoot, "eda-finance.html")));
@@ -320,7 +321,11 @@ for (const width of [360, 430, 768, 1440]) {
   const dimensions = await page.locator("body").evaluate((node) => ({scrollWidth:node.scrollWidth,clientWidth:node.clientWidth}));
   const columns = await page.locator("main > .grid").evaluate((node) => getComputedStyle(node).gridTemplateColumns.split(" ").filter(Boolean).length);
   assert.equal(columns, width >= 1280 ? 2 : 1, JSON.stringify({width,columns}));
-  assert.match(await page.locator(".finance-mode-note").textContent(), /Сценарная модель/);
+  assert.equal(await page.locator(".finance-mode-note").count(), 0);
+  assert.equal(await page.locator(".finance-summary .metric").count(), 6);
+  await page.evaluate(() => window.scrollTo(0, 500));
+  assert.equal(await page.locator(".finance-summary").evaluate(node => Math.round(node.getBoundingClientRect().top)), 0);
+  await page.evaluate(() => window.scrollTo(0, 0));
   if (evidence) await page.screenshot({ path: path.join(evidence, `admin-finance-${width}.png`), fullPage: true });
   assert.ok(dimensions.scrollWidth <= dimensions.clientWidth, JSON.stringify({width,dimensions}));
   await page.close();
