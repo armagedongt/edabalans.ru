@@ -132,3 +132,24 @@ def test_next_homepage_tracks_declared_sections_and_each_pricing_cta_position() 
     assert response.text.count('href="#masterclass-title">01. О Мастер-классе</a>') == 2
     assert response.text.count('href="#free-intensive-title">14. Есть сомнения?</a>') == 2
     app.dependency_overrides.clear()
+
+
+def test_homepage_sections_attach_to_existing_visitor_without_filling_skipped_sections():
+    from app.browser_journey_service import resolve_browser, issue_context
+    from app.config import Settings, get_settings
+    from app.models import TelegramTrackingEvent
+    client, factory = make_client()
+    app.dependency_overrides[get_settings] = lambda: Settings(database_url="sqlite://", app_auth_secret="homepage-secret")
+    with factory() as db:
+        row = resolve_browser(db, "homepage-secret", None)
+        context = issue_context("homepage-secret", row.metadata_json["browser_id"])
+        db.commit()
+    payload = {**body(event="section_seen", section_id="pricing"), "context":context, "scroll_percent":65}
+    assert client.post('/api/public/homepage-analytics',json=payload).status_code == 200
+    assert client.post('/api/public/homepage-analytics',json=payload).status_code == 200
+    with factory() as db:
+        seen = list(db.scalars(select(TelegramTrackingEvent).where(TelegramTrackingEvent.event_type=="homepage_observation")))
+        assert len(seen) == 1
+        assert seen[0].metadata_json["section_id"] == "pricing"
+        assert seen[0].metadata_json["scroll_percent"] == 65
+    app.dependency_overrides.clear()

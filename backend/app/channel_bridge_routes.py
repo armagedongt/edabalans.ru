@@ -77,3 +77,37 @@ def record_channel_bridge_event(body: BridgeEventIn, settings: Settings = Depend
     record_observation(db, init_data=body.init_data, telegram_id=telegram_id, kind=body.event, granted=body.granted, username=settings.telegram_test_bot_username)
     from fastapi import Response
     return Response(status_code=204, headers=PRIVATE_HEADERS)
+
+
+@router.get("/apps/channel-bridge/card", include_in_schema=False)
+def shared_channel_card():
+    return channel_bridge_preview()
+
+
+@router.post("/apps/channel-bridge/max/verify", include_in_schema=False)
+def verify_max_channel_bridge(body: BridgeVerificationIn, settings: Settings = Depends(get_settings),
+                              db: Session = Depends(get_db)):
+    identity = messenger_init_user_id(body.init_data, settings.max_bot_token)
+    if identity is None:
+        raise HTTPException(401, "Invalid MAX data")
+    return JSONResponse(record_observation(db, init_data=body.init_data, telegram_id=identity,
+        kind="channel_entry_open", username=settings.max_bot_username, messenger="max"), headers=PRIVATE_HEADERS)
+
+
+@router.post("/apps/channel-bridge/max/event", include_in_schema=False, status_code=204)
+def max_channel_bridge_event(body: BridgeEventIn, settings: Settings = Depends(get_settings),
+                            db: Session = Depends(get_db)):
+    identity = messenger_init_user_id(body.init_data, settings.max_bot_token)
+    if identity is None:
+        raise HTTPException(401, "Invalid MAX data")
+    if body.event != "channel_open_requested":
+        raise HTTPException(422, "MAX does not request write access")
+    record_observation(db, init_data=body.init_data, telegram_id=identity, kind=body.event,
+                       username=settings.max_bot_username, messenger="max")
+    from fastapi import Response
+    return Response(status_code=204, headers=PRIVATE_HEADERS)
+
+
+@router.get("/apps/channel-bridge/max.js", include_in_schema=False)
+def max_channel_bridge_script():
+    return FileResponse(STATIC_DIR / "max.js", headers=PRIVATE_HEADERS)

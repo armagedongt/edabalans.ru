@@ -222,6 +222,17 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         {"id": "temporary_repeat_stop", "source": "temporary_repeat_article", "target": "temporary_exit", "label": "Отправлено", "branch": "default"},
         {"id": "temporary_stop", "source": "temporary_article", "target": "temporary_exit", "label": "Отправлено", "branch": "default"},
     ])
+    from app.temporary_entry import FOLLOWUP_CODE
+    followup = session.scalar(select(SequenceVersion).join(Sequence).where(
+        Sequence.code == FOLLOWUP_CODE, SequenceVersion.status == "published"))
+    if followup:
+        nodes.append(node("permission_grant", "entry", "Telegram подтвердил разрешение писать", "Серверное событие; не клиентский ответ", len(nodes)+1))
+        actual = sequence_graph(session, FOLLOWUP_CODE)
+        for projected in actual["nodes"]:
+            nodes.append({**projected, "id": "permission:" + projected["id"]})
+        edges.append({"id":"permission_start","source":"permission_grant","target":"permission:wait","label":"Сохранить ожидание","branch":"default"})
+        for projected in actual["edges"]:
+            edges.append({**projected,"id":"permission:"+projected["id"],"source":"permission:"+projected["source"],"target":"permission:"+projected["target"]})
     for command, row in COMMAND_CONTENT.items():
         nodes.append(node(f"menu_{command[1:]}", "message", command, row[3], len(nodes) + 1, navigation_code if row[0] == NAVIGATION_CODE else row[0]))
     nodes.append(node("menu_guide", "entry", "/guide", "Тот же сценарий, что /start", len(nodes) + 1))

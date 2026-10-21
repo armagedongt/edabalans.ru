@@ -13,6 +13,7 @@ class ProducerContract:
 
 
 PROACTIVE_PRODUCERS = {
+    "channel_permission_entry": ProducerContract("authored_post", "portable_html", "portable_html", routing="explicit_exact"),
     "sequence_message": ProducerContract("authored_post", "portable_html", "portable_html"),
     "scheduled_broadcast": ProducerContract("authored_post", "portable_html", "portable_html"),
     "messenger_identity": ProducerContract("technical_payload", "portable_html", "portable_html"),

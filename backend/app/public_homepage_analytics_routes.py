@@ -12,9 +12,10 @@ from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.config import Settings, get_settings
 from app.auth import require_admin
 from app.database import get_db
-from app.models import PublicHomepageEvent
+from app.models import PublicHomepageEvent, TelegramTrackingEvent
 
 
 router = APIRouter(tags=["public-homepage-analytics"])
@@ -39,6 +40,12 @@ SECTION_IDS = (
     "reviews_wall",
     "free_intensive",
 )
+SECTION_NAMES = dict(zip(SECTION_IDS, (
+    "Первый экран", "Видео о подходе", "Знакомые трудности", "Подход", "Что внутри мастер-класса",
+    "До и после", "Опыт участников", "Отзывы участников", "Метод и образование", "Тарифы",
+    "Программа по дням", "История Ани", "Об авторе", "Вопросы и ответы", "Выбор участия",
+    "Дополнительные отзывы", "Стена отзывов", "Бесплатная статья",
+)))
 CTA_IDS = (
     "pricing_nav_menu",
     "pricing_hero",
@@ -62,12 +69,14 @@ _rate_state: dict[str, tuple[float, int]] = {}
 
 
 class PublicHomepageEventIn(BaseModel):
-    event: Literal["page_open", "section_seen", "cta_click"]
+    event: Literal["page_open", "section_seen", "cta_click", "scroll_depth"]
     viewer_id: uuid.UUID
     session_id: uuid.UUID
     page_id: str = Field(min_length=1, max_length=120)
     page_path: str = Field(min_length=1, max_length=255)
     section_id: str = Field(min_length=1, max_length=80)
+    context: str | None = Field(default=None, max_length=512)
+    scroll_percent: int | None = Field(default=None, ge=0, le=100)
 
     @field_validator("page_id")
     @classmethod
@@ -112,6 +121,7 @@ def collect_public_homepage_event(
     body: PublicHomepageEventIn,
     request: Request,
     db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
 ) -> dict[str, bool]:
     enforce_rate_limit(request)
     if body.event == "page_open" and body.section_id != "page_open":
@@ -120,6 +130,8 @@ def collect_public_homepage_event(
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "section_seen requires a section")
     if body.event == "cta_click" and body.section_id not in ALLOWED_CTA_IDS:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "cta_click requires a CTA")
+    if body.event == "scroll_depth" and (body.section_id != "page_open" or body.scroll_percent is None):
+        raise HTTPException(422, "scroll_depth requires page target and depth")
     row = PublicHomepageEvent(
         session_id=str(body.session_id),
         viewer_key=viewer_key(body.viewer_id),
@@ -128,7 +140,19 @@ def collect_public_homepage_event(
         event_type=body.event,
         section_id=body.section_id,
     )
-    db.add(row)
+    from app.browser_journey_service import COOKIE_NAME, context_id, state_row
+    browser_id = context_id(settings.app_auth_secret, body.context or request.cookies.get(COOKIE_NAME))
+    browser = state_row(db, browser_id) if browser_id else None
+    if browser:
+        db.add(TelegramTrackingEvent(id=str(uuid.uuid4()), user_id=browser.user_id,
+            event_type="homepage_observation",
+            deduplication_key=f"homepage:{body.session_id}:{body.event}:{body.section_id}" + (f":{body.scroll_percent // 5}" if body.event == "scroll_depth" else ""),
+            metadata_json={"browser_id": browser.metadata_json["browser_id"],
+                "session_id": str(body.session_id), "page_path": body.page_path,
+                "action": body.event, "section_id": body.section_id, "scroll_percent": body.scroll_percent},
+            occurred_at=datetime.now(timezone.utc)))
+    if body.event != "scroll_depth":
+        db.add(row)
     try:
         db.commit()
     except Exception as exc:

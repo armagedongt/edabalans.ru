@@ -1,0 +1,172 @@
+interview_metadata:
+  started: '2026-10-21T14:24:43+03:00'
+  last_updated: '2026-10-21T14:24:43+03:00'
+  status: completed
+  can_resume: true
+  notes: 'Core scope approved by explicit implementation request and two answers.
+    Two pending clarifications do not authorize auth expansion or claim MAX native
+    setup complete: shared LK login across roots? existing MAXapp opens?'
+conversation_history:
+- asked_at: '2026-10-21T14:24:43+03:00'
+  topic_keys:
+  - manual_user_actions
+  agent_questions: Пришли ссылку на закреп или нужный пост MAX, куда должен вести
+    новый переход. Если пока такого поста нет — напиши «пока в канал», позже поменяем
+    цель в конструкторе.
+  user_answer: пока в канал
+- asked_at: '2026-10-21T14:24:43+03:00'
+  topic_keys:
+  - constraints
+  agent_questions: После входной группы какую рассылку считать «основным расписанием»?
+    Новую короткую цепочку мы отложили, а у VSL есть отдельные заготовки. Предлагаю
+    пока включить только входную группу и её запуск через 10 минут, сохранив подключение
+    дальнейшего расписания без запуска старых постов.
+  user_answer: Только входная группа, дальнейшую рассылку отдельно
+general_understanding:
+  feature_name:
+    score: 10
+    value: Общая входная группа, отложенный Telegram-вход, MAX и персональный путь
+    gaps: []
+    required: true
+  feature_description:
+    score: 10
+    value: Одна группа по Start или через 600 секунд после серверного разрешения;
+      MAX Mini App вход; связанная аналитика статьи и блоков главной; перенос consent/browser
+      identity.
+    gaps: []
+    required: true
+  work_type:
+    score: 10
+    value: feature
+    gaps: []
+    required: true
+  user_problem:
+    score: 10
+    value: После разрешения писать вход не выдается, MAX не поддержан в канальном
+      конструкторе, путь и главная не связаны с человеком.
+    gaps: []
+    required: true
+  target_users:
+    score: 10
+    value: Новые посетители из рекламы/соцсетей и возвращающиеся читатели, Telegram/MAX,
+      оба действующих публичных host.
+    gaps: []
+    required: false
+  success_criteria:
+    score: 10
+    value: Вход без дублей; реальные секции/процент главной; связь исходной посадки
+      без Start; согласие не повторяется при подтвержденном transfer; действующие
+      приложения сохранены.
+    gaps: []
+    required: true
+  constraints:
+    score: 10
+    value: Один user_id/engine/admin, существующие таблицы; без массовой рассылки
+      и старых nurture; MAX не получает вымышленное Telegram permission.
+    gaps: []
+    required: true
+  testing_strategy:
+    score: 10
+    value: Unit/integration:599/600s, grant/Startrace, stop/buyer/replay/partial;
+      MAX подписи и payloadcase; sectionallowlist/seen/skipped; consenttransfer/accountbinding.
+      Browser:2roots и3раздела, MAXexistingapps иbridge, административныйотчет.
+    gaps: []
+    required: true
+user_experience:
+  user_stories:
+    score: 10
+    value: Start -> группа сразу. Write grant -> 600s -> проверка manual request/доставки/stop/покупки
+      -> та же группа. MAX channel code -> проверенная идентичность -> канал; MAX
+      Start -> та же группа с video вместо video_note.
+    gaps: []
+    required: true
+  acceptance_criteria:
+    score: 10
+    value: 'Из запроса владельца: таймер600, отмена при ручном получении, общий канон,
+      MAX каналroot, furthercampaignOFF, homepage seen section IDs+names, browser/consent
+      transfer.'
+    gaps: []
+    required: true
+  edge_cases:
+    score: 10
+    value: Повтор permission/webhook; одновременный Start и таймер; stop/покупка до
+      срока; рестарт; uncertain delivery без слепого повтора; раздельные числовые
+      ID MAX/TG; пропущенный блок не считается прочитанным.
+    gaps: []
+    required: true
+  error_scenarios:
+    score: 10
+    value: Неверная подпись/просроченный transfer отклоняется. Нет MAX bot_started
+      -> не обещать чат-доставку. Нет приложенияMAX -> ручная настройка регистрации
+      после проверки. Потерянный ответ отправки -> uncertain.
+    gaps: []
+    required: true
+  verification_strategy:
+    score: 10
+    value: Тесты фактического общего helper+DB scheduler; подписи/identity; реальные
+      bridge/browser/section collector; owner-only сообщения; API и E2E shared roots.
+    gaps: []
+    required: true
+  ui_ux_requirements:
+    score: 10
+    value: 'Сохранить согласованную карточку; общий конструктор с двумя ссылками;
+      отчет: максимально виденный блок/список/процент, не только число.'
+    gaps: []
+    required: false
+  risks:
+    score: 10
+    value: Дубли при races; неверный preferred messenger; ложная персональная связь;
+      повтор banner; потеря существующего MAXapp. Защита existing claims/receipts/explicit
+      exact/подписанныйcontext/не менятьapp URL.
+    gaps: []
+    required: true
+  technical_decisions:
+    score: 10
+    value: Повторно использовать движок persistent SequenceRun/StepDelivery и общий
+      entry helper; новые событияглавной в существующей tracking JSON; signed transfer
+      переносит visitor/consent без account/admin credentials.
+    gaps: []
+    required: false
+  deploy_approach:
+    score: 10
+    value: Проверенный набор поверх свежего main, штатный CI/deploy. Не создавать
+      ретроспективную массовую выдачу существующей базе.
+    gaps: []
+    required: false
+  manual_user_actions:
+    score: 10
+    value: Входная группа уже отправлена владельцу3сообщениями+pin. MAX root подтвержден.
+      Проверка существующегоMAXminiapp запрошена, ожидаетответ. Дополнительная единая
+      авторизация междукорнями отдельновопросом, доответаauthнерасширять.
+    gaps: []
+    required: false
+integration:
+  integration_points:
+    score: 10
+    value: temporary_entry, main.process_update/scheduler, engine/graph, channel_entry,
+      browser_journey, homepage observer, channel report, MAX /max-app и MAX adapter.
+    gaps: []
+    required: true
+  dependencies:
+    score: 10
+    value: Существующие разрешенные канальные bot токены, проверенный old circle file,
+      существующие managed_documents и trackingevents.
+    gaps: []
+    required: false
+  technical_constraints:
+    score: 10
+    value: Контракт установлен текущим запросом и исследованием.
+    gaps: []
+    required: false
+  data_requirements:
+    score: 10
+    value: Только действующие CRM/tracking/run/delivery таблицы; новые JSON-поля для
+      consent/homepage blocks/messenger.
+    gaps: []
+    required: false
+  migration_needs:
+    score: 10
+    value: Не требуется по исследованию.
+    gaps: []
+    required: false
+notes: ''

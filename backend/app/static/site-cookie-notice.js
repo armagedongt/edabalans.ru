@@ -122,7 +122,12 @@
     return notice;
   }
 
+  let transferPending = new URLSearchParams(location.search).has("visitor_transfer");
+  document.addEventListener("edabalans:journey-ready", () => { transferPending = false; boot(document); });
+  if (transferPending) setTimeout(() => { transferPending = false; boot(document); }, 2000);
+
   function boot(root) {
+    if (transferPending) return null;
     const scope = root && typeof root.querySelector === "function" ? root : document;
     const existing = scope.querySelector("[data-cookie-notice]");
     if (cookieAccepted()) {

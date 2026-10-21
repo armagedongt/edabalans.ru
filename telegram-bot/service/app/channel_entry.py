@@ -1,13 +1,16 @@
 """Server observations for the existing Telegram channel-entry path."""
 from datetime import UTC, datetime
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from app.models import TrackingEvent, CrmMessengerAccount
 
 
-def latest_entry(session, telegram_id):
+def latest_entry(session, telegram_id, messenger="telegram"):
     return session.scalar(select(TrackingEvent).where(
         TrackingEvent.telegram_user_id == str(telegram_id),
         TrackingEvent.event_type == 'channel_entry_open',
+        or_(TrackingEvent.metadata_json['messenger'].as_string() == messenger,
+            TrackingEvent.metadata_json['messenger'].as_string().is_(None)) if messenger == 'telegram'
+        else TrackingEvent.metadata_json['messenger'].as_string() == messenger,
     ).order_by(TrackingEvent.occurred_at.desc(), TrackingEvent.id.desc()))
 
 
@@ -29,8 +32,8 @@ def server_observation(session, *, telegram_id, kind, key, contact=None, details
         account.subscription_checked_at = datetime.now(UTC)
 
 
-def pending_entry(session, telegram_id):
-    entry = latest_entry(session, telegram_id)
+def pending_entry(session, telegram_id, messenger="telegram"):
+    entry = latest_entry(session, telegram_id, messenger)
     if not entry or not entry.tracking_link_id:
         return None, {}
     from app.models import TrackingLink

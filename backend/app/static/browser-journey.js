@@ -42,7 +42,7 @@
     const timeout = setTimeout(() => abort.abort(), 1500);
     try {
       const response = await fetch(apiHost + '/api/public/browser-journey', {
-        method: 'POST', credentials: 'omit', cache: 'no-store', signal: abort.signal,
+        method: 'POST', credentials: apiHost === location.origin ? 'same-origin' : 'omit', cache: 'no-store', signal: abort.signal,
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({context, transfer: initialized ? '' : incoming, source_context: initialized ? '' : source,
           personal_token: initialized ? '' : personal, event, accepted: accepted(), page_url: location.origin + location.pathname,
@@ -53,6 +53,8 @@
       remember(result.context);
       transfer = result.transfer;
       initialized = true;
+      if (result.accepted && !accepted()) window.EdabalansCookieNotice?.accept();
+      document.dispatchEvent(new CustomEvent('edabalans:journey-ready'));
       if (incoming) {
         const clean = new URL(location.href);
         clean.searchParams.delete('visitor_transfer');
@@ -75,7 +77,7 @@
     return target.href;
   }
   window.EdabalansBrowserJourney = Object.freeze({ready, context: () => context, transfer: () => transfer, decorate});
-  document.addEventListener('edabalans:cookie-accepted', () => { ready.then(page); });
+  document.addEventListener('edabalans:cookie-accepted', () => { ready.then(async () => { await send('init'); await page(); }); });
   document.addEventListener('click', event => {
     const anchor = event.target.closest && event.target.closest('a[href]');
     if (!anchor) return;

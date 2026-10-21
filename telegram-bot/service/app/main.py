@@ -568,7 +568,7 @@ def scheduler_iteration() -> None:
                 if not contact:
                     continue
                 delivery_contact = contact
-                if contact.user_id:
+                if contact.user_id and (run.context or {}).get("delivery_intent") != "explicit_exact":
                     destination = preferred_destination(session, contact.user_id)
                     if destination is None:
                         run.status = "error"
@@ -818,13 +818,11 @@ def _public_start_alias(
 
 
 def _messenger_start_base(messenger: str, *, channel_entry: bool = False) -> str:
-    if channel_entry and messenger == "max":
-        raise HTTPException(409, "Переход Mini App в MAX пока не настроен")
     if messenger == "max":
         username = settings.max_bot_username.lstrip("@")
         if not username:
             raise HTTPException(503, "MAX bot is not configured")
-        return f"https://max.ru/{username}?start="
+        return f"https://max.ru/{username}?startapp=" if channel_entry else f"https://max.ru/{username}?start="
     username = settings.telegram_test_bot_username.lstrip("@")
     if not username:
         raise HTTPException(503, "Telegram bot is not configured")
@@ -1201,7 +1199,10 @@ def process_update(update: dict, session: Session, *, telegram_source_trusted: b
             server_observation(session, telegram_id=contact.telegram_user_id, contact=contact,
                 kind="channel_write_allowed", key=f"telegram:{update_id}:write_allowed",
                 details={"server_granted": True, "automatic_message_sent": False})
-            # Permission is not /start: keep the contact without sending the welcome.
+            if settings.temporary_intensive_entry_enabled:
+                from app.temporary_entry import schedule_permission_entry
+                schedule_permission_entry(session, contact, str(update_id))
+            # Permission is not /start: only a durable ten-minute follow-up is scheduled.
             session.commit()
             return {"ok": True, "write_access_allowed": True}
         if command_name == "/guide":

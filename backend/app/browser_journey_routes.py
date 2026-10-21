@@ -47,10 +47,19 @@ def browser_journey_event(body: BrowserEventIn, request: Request, response: Resp
         from urllib.parse import urlsplit
         if not public_host(urlsplit(origin).hostname or ""):
             raise HTTPException(403, "Browser origin rejected")
+    from app.browser_journey_service import bind_confirmed_channel_entries, _backfill
+    from app.account_auth_routes import native_session_user
+    bind_confirmed_channel_entries(db, settings.app_auth_secret)
     row = resolve_browser(db, settings.app_auth_secret,
                           body.context or request.cookies.get(COOKIE_NAME), body.transfer)
     bind_personal(db, row, settings.app_auth_secret,
                   token=body.personal_token, source_context=body.source_context)
+    account_user = native_session_user(request, db)
+    if account_user and row.user_id in (None, account_user.id):
+        row.user_id = account_user.id
+        _backfill(db, row.metadata_json["browser_id"], account_user.id)
+    if body.accepted:
+        row.metadata_json = {**row.metadata_json, "cookie_consent": "accepted-v1"}
     if body.accepted and body.event != "init":
         record_browser_event(db, row, "browser_page" if body.event == "page" else "browser_action",
                              body.page_url, attribution=body.attribution, action=body.action)
@@ -60,4 +69,5 @@ def browser_journey_event(body: BrowserEventIn, request: Request, response: Resp
     response.headers["Cache-Control"] = "no-store"
     response.set_cookie(COOKIE_NAME, context, max_age=int(RETENTION.total_seconds()),
                         secure=True, httponly=False, samesite="lax", path="/")
-    return {"context": context, "transfer": issue_context(settings.app_auth_secret, browser_id, transfer=True)}
+    return {"context": context, "transfer": issue_context(settings.app_auth_secret, browser_id, transfer=True),
+            "accepted": row.metadata_json.get("cookie_consent") == "accepted-v1"}

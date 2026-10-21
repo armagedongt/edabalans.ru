@@ -22,7 +22,7 @@ ROOTS = tuple(host.encode("idna").decode() for host in (
     "edabalans.ru", "похудение-это-есть.рф", "похудение.рф",
     urlsplit(public_site_origin()).hostname,
 ))
-EVENT_TYPES = ("visitor_state", "browser_page", "browser_action", "browser_identified")
+EVENT_TYPES = ("visitor_state", "browser_page", "browser_action", "browser_identified", "homepage_observation")
 
 
 def public_host(host: str) -> bool:
@@ -92,7 +92,7 @@ def _new_state(db: Session) -> TelegramTrackingEvent:
 
 def _backfill(db: Session, browser_id: str, user_id: uuid.UUID) -> None:
     db.execute(update(TelegramTrackingEvent).where(
-        TelegramTrackingEvent.event_type.in_(("browser_page", "browser_action")),
+        TelegramTrackingEvent.event_type.in_(("browser_page", "browser_action", "homepage_observation")),
         TelegramTrackingEvent.metadata_json["browser_id"].as_string() == browser_id,
         TelegramTrackingEvent.user_id.is_(None),
         TelegramTrackingEvent.occurred_at >= _now() - RETENTION,
@@ -110,7 +110,7 @@ def resolve_browser(db: Session, secret: str, context: str | None, transfer: str
         metadata["merged_into"] = row.metadata_json["browser_id"]
         current.metadata_json = metadata
         history = db.scalars(select(TelegramTrackingEvent).where(
-            TelegramTrackingEvent.event_type.in_(("browser_page", "browser_action")),
+            TelegramTrackingEvent.event_type.in_(("browser_page", "browser_action", "homepage_observation")),
             TelegramTrackingEvent.metadata_json["browser_id"].as_string() == metadata["browser_id"],
             TelegramTrackingEvent.user_id.is_(None),
         ))
@@ -146,7 +146,7 @@ def bind_personal(db: Session, row: TelegramTrackingEvent, secret: str, *,
             old_id = previous.metadata_json["browser_id"]
             previous.metadata_json = {**previous.metadata_json, "merged_into": metadata["browser_id"]}
             for event in db.scalars(select(TelegramTrackingEvent).where(
-                TelegramTrackingEvent.event_type.in_(("browser_page", "browser_action")),
+                TelegramTrackingEvent.event_type.in_(("browser_page", "browser_action", "homepage_observation")),
                 TelegramTrackingEvent.metadata_json["browser_id"].as_string() == old_id,
                 TelegramTrackingEvent.user_id.is_(None),
                 TelegramTrackingEvent.occurred_at >= _now() - RETENTION,
@@ -259,9 +259,17 @@ async def browser_history_worker() -> None:
     import logging
     from app.database import SessionLocal
 
+    last_purge = 0.0
+
     def clean():
+        nonlocal last_purge
+        import time
+        from app.config import get_settings
         with SessionLocal() as db:
-            purge_browser_history(db)
+            bind_confirmed_channel_entries(db, get_settings().app_auth_secret)
+            if time.monotonic() - last_purge >= 3600:
+                purge_browser_history(db)
+                last_purge = time.monotonic()
             db.commit()
 
     while True:
@@ -269,4 +277,31 @@ async def browser_history_worker() -> None:
             await asyncio.to_thread(clean)
         except Exception:
             logging.getLogger(__name__).exception("Browser history cleanup failed")
-        await asyncio.sleep(3600)
+        await asyncio.sleep(5)
+
+
+def bind_confirmed_channel_entries(db: Session, secret: str) -> int:
+    """Consume server-confirmed grants; do not infer Start from a Mini App callback."""
+    rows = list(db.scalars(select(TelegramTrackingEvent).where(
+        TelegramTrackingEvent.event_type == "channel_write_allowed",
+        TelegramTrackingEvent.metadata_json["browser_binding_checked"].as_boolean().is_(None),
+    ).order_by(TelegramTrackingEvent.occurred_at).limit(100)))
+    changed = 0
+    for grant in rows:
+        details = grant.metadata_json or {}
+        context = (details.get("journey_context") or {}).get("browser_context")
+        bid = context_id(secret, context)
+        browser = state_row(db, bid, lock=True) if bid else None
+        user = db.get(User, grant.user_id) if grant.user_id else None
+        account = db.scalar(select(MessengerAccount).where(MessengerAccount.platform == "telegram",
+            MessengerAccount.platform_user_id == grant.telegram_user_id,
+            MessengerAccount.user_id == grant.user_id)) if user else None
+        if (details.get("server_granted") is True and browser and user and account
+                and user.status == "active" and not user.merged_into_user_id
+                and browser.user_id in (None, user.id)):
+            browser.user_id = user.id
+            browser.metadata_json = {**browser.metadata_json, "platform": "telegram"}
+            _backfill(db, browser.metadata_json["browser_id"], user.id)
+            changed += 1
+        grant.metadata_json = {**details, "browser_binding_checked": True}
+    return changed

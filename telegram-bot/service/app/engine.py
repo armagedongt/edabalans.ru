@@ -760,6 +760,16 @@ def advance_run(
                     run.current_step_key = target_key
                 else:
                     _set_next(session, run, step)
+        elif step.kind == "ENTRY_GROUP":
+            from app.temporary_entry import deliver_permission_entry
+            try:
+                result = deliver_permission_entry(session, run, contact, sender)
+                run.context = {**run.context, "entry_result": result}
+                _set_next(session, run, step)
+            except Exception as exc:
+                run.status = "error"
+                run.last_error = str(exc)
+                break
         elif step.kind == "DB_WRITE":
             _write_variable(session, run.contact_id, config["key"], config.get("value")); _set_next(session, run, step)
         elif step.kind == "GOTO":

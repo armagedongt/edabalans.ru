@@ -69,7 +69,7 @@ def channel_link_report(date_from: date = Query(alias='from'), date_to: date = Q
             continue
         visit = visits.setdefault(key, {'id': key, 'at': event.occurred_at.isoformat(),
             'link_id': event.tracking_link_id, 'code': meta.get('code'), 'platform': meta.get('source'),
-            'placement': meta.get('placement'), 'telegram_user_id': event.telegram_user_id,
+            'placement': meta.get('placement'), 'messenger': meta.get('messenger','telegram'), 'telegram_user_id': event.telegram_user_id,
             'user_id': str(event.user_id) if event.user_id else None, 'events': []})
         visit['events'].append({'kind': event.event_type, 'at': event.occurred_at.isoformat(), **meta})
     # The period selects entries, not callbacks from visits opened on an earlier day.
@@ -92,7 +92,7 @@ def channel_link_report(date_from: date = Query(alias='from'), date_to: date = Q
             'already_allowed': 0, 'server_allowed': 0, 'bot_starts': 0, 'subscriptions_observed': 0,
             'article_opened': 0, 'article_read': 0, 'homepage_opened': 0, 'new_contacts_allowed': 0})
         group['entries'] += 1
-        group['people'].add(visit['telegram_user_id'])
+        group['people'].add((visit['messenger'],visit['telegram_user_id']))
         group['known'] += int(opened.get('known_contact') is True)
         visit['known_contact'] = opened.get('known_contact') is True
         group['new_contacts_allowed'] += int(not visit['known_contact'] and visit.get('permission_confirmed_at') is not None)
@@ -119,10 +119,10 @@ def channel_link_report(date_from: date = Query(alias='from'), date_to: date = Q
         for k in source.keys() - {'platform'}:
             source[k] += group[k]
     for source in sources.values():
-        source['unique_people'] = len({v['telegram_user_id'] for v in selected if (v['platform'] or 'unknown') == source['platform']})
+        source['unique_people'] = len({(v['messenger'],v['telegram_user_id']) for v in selected if (v['platform'] or 'unknown') == source['platform']})
     for visit in selected:
         visit['events'] = [{k: e[k] for k in ('kind','at','client_granted','server_granted','subscribed','automatic_message_sent') if k in e} for e in visit['events']]
     return {'links': rows, 'platforms': list(sources.values()), 'visits': selected[:500],
-        'visits_truncated': len(selected)>500, 'homepage_reading_collection': 'not_connected',
+        'visits_truncated': len(selected)>500, 'homepage_reading_collection': 'section_observations',
         'truncated': truncated, 'timezone': 'Europe/Moscow',
         'note': 'Ответ Mini App — наблюдение клиента. Отсутствие ответа не доказывает отказ; запрос перехода не доказывает подписку.'}

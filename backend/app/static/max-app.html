@@ -45,7 +45,14 @@
         query.get('WebAppStartParam') ||
         query.get('startapp') ||
         ''
-      ).toLowerCase();
+      );
+      if (/^(?:U[A-Za-z0-9_-]+|site|ig|yt|th|pk|dz|vk|tt|ya|[a-z0-9]{6})$/.test(payload) && !allowed[payload.toLowerCase()] && !query.get('app')) {
+        var channelLoader = document.createElement('script');
+        channelLoader.src = '/apps/channel-bridge/max.js';
+        document.body.appendChild(channelLoader);
+        return;
+      }
+      payload = payload.toLowerCase();
       var appCode = allowed[payload] || allowed[String(query.get('app') || '').toLowerCase()];
       var root = document.getElementById('max-app-root');
       if (!appCode) {

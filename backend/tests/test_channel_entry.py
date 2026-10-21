@@ -184,14 +184,20 @@ def test_report_tracks_observed_order_reading_and_site_for_same_person_only(entr
             event_type='intensive_onepage_progress',details={'viewed_percent':80},occurred_at=at+timedelta(seconds=6)))
         db.add(CourseEvent(user_id=other.id,course_code='intensive',event_key='read-other',
             event_type='intensive_onepage_progress',details={'viewed_percent':100},occurred_at=at+timedelta(seconds=7)))
+        db.add(TelegramTrackingEvent(user_id=user.id, event_type='homepage_observation',
+            metadata_json={'action':'section_seen','section_id':'pricing','scroll_percent':65}, occurred_at=at+timedelta(seconds=8)))
+        db.add(TelegramTrackingEvent(user_id=user.id, event_type='homepage_observation',
+            metadata_json={'action':'scroll_depth','section_id':'page_open','scroll_percent':100}, occurred_at=at+timedelta(seconds=9)))
         db.commit()
     report=client.get('/admin/api/channel-links/report',params={'from':'2026-10-19','to':'2026-10-19'}).json()
     visit=report['visits'][0]
     assert visit['order']=='channel_then_bot'
     assert visit['article_read_percent']==80
     assert visit['homepage_opened_at'] is not None
-    assert visit['homepage_read_percent'] is None
-    assert report['homepage_reading_collection']=='not_connected'
+    assert visit['homepage_read_percent'] == 100
+    assert visit['homepage_farthest_section'] == {'id':'pricing','name':'Тарифы'}
+    assert visit['homepage_seen_sections'] == [{'id':'pricing','name':'Тарифы'}]
+    assert report['homepage_reading_collection']=='section_observations'
     assert report['links'][0]['new_contacts_allowed']==1
     assert report['links'][0]['server_allowed']==1
     assert report['links'][0]['bot_starts']==1
@@ -322,3 +328,24 @@ def test_platform_totals_keep_historical_source_when_stable_link_is_edited(entry
     report = client.get('/admin/api/channel-links/report',params={'from':day,'to':day}).json()
     assert {row['platform']:row['entries'] for row in report['platforms']} == {'pikabu':1,'youtube':1}
     assert {row['platform']:row['entries'] for row in report['links']} == {'pikabu':1,'youtube':1}
+
+
+def test_max_and_telegram_entries_with_same_numeric_id_remain_distinct(entry):
+    client, engine, app = entry
+    app.dependency_overrides[get_settings] = lambda: Settings(database_url="sqlite://", telegram_test_bot_token=TOKEN, max_bot_token="max-token")
+    row = create(client)
+    assert parse_qs(urlsplit(row["max_url"]).query) == {"startapp": [row["code"]]}
+    data = signed_data(token="max-token", entry_code=row["code"])
+    response = client.post("/apps/channel-bridge/max/verify", json={"init_data":data})
+    assert response.status_code == 200, response.text
+    assert response.json()["destination"] == "https://max.ru/id230409966750_biz"
+    assert response.json()["request_write_access"] is False
+    assert client.post("/apps/channel-bridge/verify", json={"init_data":data}).status_code == 401
+    assert client.post("/apps/channel-bridge/verify", json={"init_data":signed_data(entry_code=row["code"])}).status_code == 200
+    with Session(engine) as db:
+        openings = list(db.scalars(select(TelegramTrackingEvent).where(TelegramTrackingEvent.event_type == "channel_entry_open")))
+        assert {e.metadata_json["messenger"] for e in openings} == {"telegram","max"}
+        assert len({e.metadata_json["visit"] for e in openings}) == 2
+    assert client.post("/apps/channel-bridge/max/event", json={"init_data":data,"event":"channel_permission_requested"}).status_code == 422
+    assert client.post("/apps/channel-bridge/max/event", json={"init_data":data,"event":"channel_open_requested"}).status_code == 204
+    assert client.post('/admin/api/channel-links', json={'name':'Bad','platform':'pikabu','max_destination':'https://max.ru/other'}).status_code == 422

@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 from types import SimpleNamespace
+from datetime import UTC, datetime, timedelta
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.models import Broadcast, Contact, ContentItem, CrmTag, CrmUser, CrmUserTag, TrackingEvent, Sequence, SequenceVersion, SequenceRun
+
+FOLLOWUP_CODE = "channel_permission_entry"
 
 CONTENT_CODE = "tpl_channel_article_entry"
 VIDEO_CODE = "tpl_temporary_intensive_entry"
@@ -194,6 +197,10 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
         TrackingEvent.user_id == contact.user_id,
         TrackingEvent.event_type == "temporary_intensive_entry",
     ).order_by(TrackingEvent.occurred_at)))
+    if any((previous.metadata_json or {}).get("delivery_status") == "pending"
+           for previous in previous_deliveries):
+        session.commit()
+        return {"ok": True, "temporary_entry": True, "delivery_pending": True}
     repeat = any(
         (previous.metadata_json or {}).get("delivery_status") == "sent"
         and (previous.metadata_json or {}).get("message_id")
@@ -214,6 +221,11 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
     if needs_circle and (not circle or not content_is_runtime_ready(circle)
                          or circle.media_kind != "video_note" or not (circle.media_path or circle.telegram_file_id)):
         raise RuntimeError("Welcome circle is not approved and ready")
+    if receipt_id.startswith("permission:"):
+        from app.delivery_registry import validate_body
+        for content in (navigation, circle, item):
+            if content:
+                validate_body("channel_permission_entry", content.body_source or "")
     if repeat:
         repeat_offer = session.scalar(select(ContentItem).where(ContentItem.code == REPEAT_OFFER_CODE))
         if not repeat_offer or repeat_offer.status != "published" or not content_is_runtime_ready(repeat_offer):
@@ -279,3 +291,69 @@ def send_temporary_entry(session: Session, contact: Contact, sender, receipt_id:
                            "article_message_id": str(message_id)}
     session.commit()
     return {"ok": True, "temporary_entry": True}
+
+
+def seed_permission_entry(session: Session) -> SequenceVersion:
+    """Executable follow-up graph referencing the existing canonical entry group."""
+    from app.models import SequenceStep, SequenceEdge
+    sequence = session.scalar(select(Sequence).where(Sequence.code == FOLLOWUP_CODE))
+    if not sequence:
+        sequence = Sequence(code=FOLLOWUP_CODE, name="Вход после разрешения писать", status="published",
+                            description="10 минут ожидания; та же входная группа, без дальнейшей рассылки.")
+        session.add(sequence)
+        session.flush()
+    version = session.scalar(select(SequenceVersion).where(
+        SequenceVersion.sequence_id == sequence.id, SequenceVersion.status == "published"))
+    if version:
+        return version
+    version = SequenceVersion(sequence_id=sequence.id, version_no=1, status="published", published_at=datetime.now(UTC))
+    session.add(version)
+    session.flush()
+    for position, key, kind, label, delay, config in (
+        (1, "wait", "DELAY", "Подождать 10 минут после разрешения", 600, {"anchor_step": "run_started_at"}),
+        (2, "entry", "ENTRY_GROUP", "Проверить ручной вход, stop и покупку; выдать общую группу", None, {}),
+        (3, "done", "STOP", "Дальнейшая рассылка выключена", None, {}),
+    ):
+        session.add(SequenceStep(sequence_version_id=version.id, position=position, step_key=key,
+            kind=kind, label=label, delay_seconds=delay, configuration=config))
+    for source, target in (("wait", "entry"), ("entry", "done")):
+        session.add(SequenceEdge(sequence_version_id=version.id, from_step_key=source,
+            to_step_key=target, branch_key="default", label="Далее", condition={}))
+    session.flush()
+    return version
+
+
+def schedule_permission_entry(session: Session, contact: Contact, receipt_id: str) -> SequenceRun | None:
+    if not contact.user_id:
+        return None
+    session.scalar(select(CrmUser).where(CrmUser.id == contact.user_id).with_for_update())
+    if entry_decision(session, contact) != "article":
+        return None
+    # Existing requests/deliveries include uncertain sends: never retry a whole group blindly.
+    if session.scalar(select(TrackingEvent.id).where(TrackingEvent.user_id == contact.user_id,
+            TrackingEvent.event_type == "temporary_intensive_entry").limit(1)):
+        return None
+    version = seed_permission_entry(session)
+    existing = session.scalar(select(SequenceRun).where(SequenceRun.contact_id == contact.id,
+        SequenceRun.sequence_version_id == version.id).limit(1))
+    if existing:
+        return existing
+    now = datetime.now(UTC)
+    run = SequenceRun(contact_id=contact.id, sequence_version_id=version.id,
+        current_step_key="wait", status="active", started_at=now, next_action_at=now,
+        context={"delivery_intent": "explicit_exact", "permission_receipt": receipt_id,
+                 "permission_granted_at": now.isoformat()})
+    session.add(run)
+    session.flush()
+    return run
+
+
+def deliver_permission_entry(session: Session, run: SequenceRun, contact: Contact, sender) -> dict:
+    from app.config import get_settings
+    session.scalar(select(CrmUser).where(CrmUser.id == contact.user_id).with_for_update())
+    previous = session.scalar(select(TrackingEvent.id).where(TrackingEvent.user_id == contact.user_id,
+        TrackingEvent.event_type == "temporary_intensive_entry").limit(1))
+    if previous or entry_decision(session, contact) != "article":
+        return {"skipped": "manual_entry_or_excluded"}
+    return send_temporary_entry(session, contact, sender, "permission:" + run.id, "telegram",
+                                get_settings().intensive_public_url)

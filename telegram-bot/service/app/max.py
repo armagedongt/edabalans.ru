@@ -1105,6 +1105,17 @@ def _temporary_max_update(session: Session, update: dict, bot_username: str, sen
     session.add(UpdateReceipt(update_id=receipt_id, bot_instance_id=bot.id, update_type=f"max_{kind}"))
     if kind == "bot_started":
         link, alias, tag_ids, raw, status, journey = resolve_start_payload(session, payload)
+        if not link:
+            from app.channel_entry import pending_entry
+            bridge_link, bridge = pending_entry(session, account.platform_user_id, "max")
+            if bridge_link:
+                link = bridge_link
+                alias = session.scalar(select(TrackingLinkAlias).where(TrackingLinkAlias.tracking_link_id == link.id,
+                    TrackingLinkAlias.status == "active").order_by(TrackingLinkAlias.created_at))
+                tag_ids = list(bridge.get("session_tag_ids") or [])
+                raw = dict(bridge.get("raw_query") or {})
+                journey = dict(bridge.get("journey_context") or {})
+                status = "known_channel_touch"
         _assign_first_touch(session, account, contact, account.main_scenario_seen_at is None,
                             link, alias, tag_ids, raw, status, journey, receipt_id, "", mark_scenario_seen=False)
     result = temporary_response(session, contact, sender, receipt_id, "max", public_url)

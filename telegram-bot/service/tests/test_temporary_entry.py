@@ -68,7 +68,7 @@ def test_mini_app_permission_records_contact_without_starting_welcome(setup):
     contact = session.scalar(select(Contact).where(Contact.telegram_user_id == "4101"))
     assert contact is not None
     assert sender.sent == []
-    assert session.scalar(select(func.count()).select_from(SequenceRun)) == 0
+    assert session.scalar(select(func.count()).select_from(SequenceRun)) == 1
     assert main.process_update(event, session)["duplicate"]
     # A later explicit Start still opens the normal welcome.
     assert main.process_update(tg(901), session)["temporary_entry"]
@@ -527,3 +527,78 @@ def test_owned_channel_member_without_invite_is_observed_and_updates_known_accou
     main.process_update(event,session)
     assert session.scalar(select(func.count()).select_from(TrackingEvent).where(TrackingEvent.event_type=='channel_membership'))==1
     assert sender.sent==[]
+
+
+def test_permission_followup_persists_delay_and_sends_only_entry(setup, monkeypatch):
+    from datetime import UTC, timedelta
+    import app.engine as engine
+    session, sender = setup
+    event = tg(990)
+    event["message"].pop("text")
+    event["message"]["write_access_allowed"] = {"web_app_name": "channel"}
+    main.process_update(event, session)
+    run = session.scalar(select(SequenceRun))
+    started = run.started_at.replace(tzinfo=UTC)
+    advance_run(session, run, sender)
+    assert run.current_step_key == "entry"
+    assert run.next_action_at.replace(tzinfo=UTC) == started + timedelta(seconds=600)
+    assert sender.sent == []
+    monkeypatch.setattr(engine, "utcnow", lambda: started + timedelta(seconds=599))
+    assert engine.due_runs(session) == []
+    monkeypatch.setattr(engine, "utcnow", lambda: started + timedelta(seconds=600))
+    session.expire_all()
+    runs = engine.due_runs(session)
+    assert len(runs) == 1
+    advance_run(session, runs[0], sender)
+    assert [c.code for _, c, _ in sender.sent] == [NAVIGATION_CODE, CIRCLE_CODE, CONTENT_CODE]
+    assert runs[0].status == "completed"
+    assert session.scalar(select(func.count()).select_from(SequenceRun)) == 1
+
+
+@pytest.mark.parametrize("manual", [True, False])
+def test_permission_followup_skips_manual_start_or_stop(setup, manual):
+    session, sender = setup
+    event = tg(995)
+    event["message"].pop("text")
+    event["message"]["write_access_allowed"] = {}
+    main.process_update(event, session)
+    run = session.scalar(select(SequenceRun))
+    advance_run(session, run, sender)
+    main.process_update(tg(996, "/start" if manual else "/stop"), session)
+    count = len(sender.sent)
+    advance_run(session, run, sender)
+    assert len(sender.sent) == count
+
+
+def test_permission_scheduler_keeps_exact_telegram_when_preferred_max(setup, monkeypatch):
+    from datetime import UTC, datetime, timedelta
+    from app.models import CrmMessengerAccount
+    from test_messenger_routing import _linked
+    session, sender = setup
+    event = tg(998)
+    event["message"].pop("text")
+    event["message"]["write_access_allowed"] = {}
+    main.process_update(event, session)
+    contact = session.scalar(select(Contact))
+    for account in session.scalars(select(CrmMessengerAccount).where(CrmMessengerAccount.user_id==contact.user_id)):
+        account.is_preferred = False
+    _linked(session, user_id=contact.user_id, platform="max", platform_user_id="max-other-chat", preferred=True)
+    run = session.scalar(select(SequenceRun))
+    advance_run(session, run, sender)
+    run.next_action_at = datetime.now(UTC)-timedelta(seconds=1)
+    session.commit()
+    class BorrowSession:
+        def __enter__(self): return session
+        def __exit__(self, *args): session.rollback(); session.expire_all()
+    monkeypatch.setattr(main,"SessionLocal",BorrowSession)
+    monkeypatch.setattr(main.settings,"telegram_test_bot_token","fixture-token")
+    monkeypatch.setattr(main.settings,"max_bot_token","")
+    monkeypatch.setattr(main,"TelegramClient",lambda *args,**kw: sender)
+    # Purchase notification producers are outside the recipient-routing boundary.
+    monkeypatch.setattr(main,"stop_presale_runs_from_purchase_events",lambda session:0)
+    monkeypatch.setattr(main,"reconcile_masterclass_presale_runs",lambda session:0)
+    monkeypatch.setattr(main,"dispatch_masterclass_notifications",lambda *args,**kw:None)
+    main.scheduler_iteration()
+    assert len(sender.sent)==3
+    assert {chat for chat,_,_ in sender.sent}=={"4101"}
+    assert run.status=="completed"

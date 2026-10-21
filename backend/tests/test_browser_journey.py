@@ -100,7 +100,7 @@ def test_cross_root_handoff_joins_anonymous_destination_history(browser):
     assert client.options("/api/public/browser-journey", headers={"Origin":origin,"Access-Control-Request-Method":"POST"}).headers["access-control-allow-origin"]==origin
     response=client.post("/api/public/browser-journey",headers={"Origin":origin},json={"context":target_context,"transfer":transfer})
     assert response.status_code==200
-    assert set(response.json())=={"context","transfer"}
+    assert set(response.json())=={"context","transfer","accepted"}
     with factory() as db:
         assert snapshot_for_context(db,SECRET,response.json()["context"])["user_id"]==str(uid)
         assert db.scalar(select(TelegramTrackingEvent).where(TelegramTrackingEvent.event_type=="browser_page")).user_id==uid
@@ -123,3 +123,40 @@ def test_retention_preserves_business_and_bot_history(browser):
         assert purge_browser_history(db)==2
         assert db.scalar(select(TelegramTrackingEvent.event_type))=="start_first"
         assert db.get(User,user.id) is not None
+
+
+def test_confirmed_permission_binds_history_without_start(browser):
+    from app.browser_journey_service import bind_confirmed_channel_entries
+    _, factory = browser
+    with factory() as db:
+        row = resolve_browser(db, SECRET, None)
+        token = issue_context(SECRET, row.metadata_json["browser_id"])
+        record_browser_event(db, row, "browser_page", "https://edabalans.ru/")
+        user, _ = person(db)
+        account = db.scalar(select(MessengerAccount).where(MessengerAccount.user_id == user.id))
+        grant = TelegramTrackingEvent(id=str(uuid.uuid4()), user_id=user.id,
+            telegram_user_id=account.platform_user_id, event_type="channel_write_allowed",
+            metadata_json={"server_granted": True, "journey_context": {"browser_context": token}},
+            occurred_at=datetime.now(timezone.utc))
+        db.add(grant); db.commit()
+        assert bind_confirmed_channel_entries(db, SECRET) == 1
+        db.commit()
+        assert row.user_id == user.id
+        assert db.scalar(select(TelegramTrackingEvent).where(TelegramTrackingEvent.event_type == "browser_page")).user_id == user.id
+        assert bind_confirmed_channel_entries(db, SECRET) == 0
+        assert db.scalar(select(TelegramTrackingEvent).where(TelegramTrackingEvent.event_type.like("start_%"))) is None
+        assert db.scalar(select(AccountSession)) is None
+
+
+def test_signed_transfer_carries_consent_but_invalid_transfer_does_not(browser):
+    client, factory = browser
+    source = client.post("/api/public/browser-journey", json={"accepted": True}).json()
+    assert source["accepted"] is True
+    client.cookies.clear()
+    arriving = client.post("/api/public/browser-journey", json={"transfer": source["transfer"]}).json()
+    assert arriving["accepted"] is True
+    assert context_id(SECRET, arriving["context"]) == context_id(SECRET, source["context"])
+    client.cookies.clear()
+    assert client.post("/api/public/browser-journey", json={"transfer": "X" + source["transfer"][1:]}).json()["accepted"] is False
+    with factory() as db:
+        assert db.scalar(select(AccountSession)) is None

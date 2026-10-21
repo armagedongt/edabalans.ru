@@ -35,7 +35,7 @@ class SequenceSource(StrictModel):
 class StepSource(StrictModel):
     step_key: str = Field(min_length=1, max_length=120)
     position: StrictInt = Field(ge=1, le=2_147_483_647)
-    kind: Literal["MESSAGE", "PHOTO", "VIDEO", "VIDEO_NOTE", "VOICE", "DELAY", "WAIT_BUTTON", "CONDITION", "DB_READ", "DB_WRITE", "GOTO", "STOP"]
+    kind: Literal["MESSAGE", "PHOTO", "VIDEO", "VIDEO_NOTE", "VOICE", "DELAY", "WAIT_BUTTON", "CONDITION", "DB_READ", "DB_WRITE", "GOTO", "STOP", "ENTRY_GROUP"]
     label: str = Field(max_length=255)
     content_code: str | None = Field(max_length=120)
     delay_seconds: StrictInt | None = Field(ge=0, le=2_147_483_647)

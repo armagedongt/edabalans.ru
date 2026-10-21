@@ -4216,11 +4216,18 @@
       const viewerId = readId(`${storagePrefix}:viewer`, localStorage);
       const sessionId = readId(`${storagePrefix}:session`, sessionStorage);
       const sent = new Set();
-      const send = (event, sectionId) => {
-        const key = `${event}:${sectionId}`;
+      const send = async (event, sectionId) => {
+        const depth = Math.round(Math.min(100, 100 * (scrollY + innerHeight) / Math.max(innerHeight, document.documentElement.scrollHeight)));
+        const key = `${event}:${sectionId}` + (event === 'scroll_depth' ? ':' + Math.floor(depth / 5) : '');
         if (sent.has(key)) return;
         sent.add(key);
-        const body = JSON.stringify({ event, section_id: sectionId, viewer_id: viewerId, session_id: sessionId, page_id: pageId, page_path: location.pathname });
+        if (!window.EdabalansBrowserJourney) await new Promise(resolve => {
+          const timer = setTimeout(resolve, 2000);
+          document.addEventListener('edabalans:journey-ready', () => {clearTimeout(timer); resolve();}, {once:true});
+        });
+        await window.EdabalansBrowserJourney?.ready;
+        const scrollPercent = Math.round(Math.min(100, 100 * (scrollY + innerHeight) / Math.max(innerHeight, document.documentElement.scrollHeight)));
+        const body = JSON.stringify({ event, section_id: sectionId, viewer_id: viewerId, session_id: sessionId, page_id: pageId, page_path: location.pathname, context: window.EdabalansBrowserJourney?.context() || null, scroll_percent: scrollPercent });
         fetch(endpoint, { method: 'POST', headers: {'Content-Type': 'application/json'}, body, keepalive: true }).catch(() => {});
         const metrikaGoal = event === 'section_seen' ? 'homepage_section_seen' : event === 'cta_click' ? 'homepage_cta_click' : '';
         if (metrikaGoal && typeof window.ym === 'function') {
@@ -4228,6 +4235,11 @@
         }
       };
       send('page_open', 'page_open');
+      let depthTimer;
+      addEventListener('scroll', () => {
+        clearTimeout(depthTimer);
+        depthTimer = setTimeout(() => send('scroll_depth', 'page_open'), 200);
+      }, {passive:true});
       const sectionTargets = [...document.querySelectorAll('[data-analytics-section]')];
       if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
