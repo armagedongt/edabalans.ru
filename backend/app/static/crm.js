@@ -431,12 +431,11 @@
         ? ["Имя", "Мессенджеры", "Источник", "Итого", "Подписка", "Статус", "Заметки"]
         : ["Имя", "Мессенджеры", "Источник", "Тариф", "Итого", "Статус", "В боте", "Подписка"];
     const columnClass = (heading) => `crm-col-${({"Имя":"name","Email":"email","Мессенджеры":"messengers","Источник":"source","Тариф":"tariff","Итого":"total","Статус":"status","В боте":"bot","Подписка":"channel","Заметки":"notes"})[heading] || "default"}`;
-    current.innerHTML = `<div class="crm-table-area"><div class="crm-table-scrollbar" aria-label="Горизонтальная прокрутка таблицы"><i></i></div><div class="crm-table-wrap"><table class="crm-table crm-people-table crm-people-${mode}"><colgroup>${headings.map((heading) => `<col class="${columnClass(heading)}">`).join("")}</colgroup><thead><tr>${headings.map((heading) => `<th>${heading}</th>`).join("")}</tr></thead><tbody>${state.users.map((user) => userRow(user, mode)).join("") || `<tr><td colspan="${headings.length}" class="crm-empty">Ничего не найдено</td></tr>`}</tbody></table></div></div>
+    current.innerHTML = `<div class="crm-table-wrap"><table class="crm-table crm-people-table crm-people-${mode}"><colgroup>${headings.map((heading) => `<col class="${columnClass(heading)}">`).join("")}</colgroup><thead><tr>${headings.map((heading) => `<th>${heading}</th>`).join("")}</tr></thead><tbody>${state.users.map((user) => userRow(user, mode)).join("") || `<tr><td colspan="${headings.length}" class="crm-empty">Ничего не найдено</td></tr>`}</tbody></table></div>
       <div class="crm-pager"><button class="crm-btn alt small" id="crm-prev" ${state.offset === 0 ? "disabled" : ""}>← Предыдущие</button><span>${state.users.length ? `${state.offset + 1}–${state.offset + state.users.length}` : "0"}</span><button class="crm-btn alt small" id="crm-next" ${state.users.length < pageSize ? "disabled" : ""}>Следующие →</button></div>`;
     bindUserCards();
     bindUserPreviews();
     bindEmailCopyButtons();
-    bindTableScroll();
     document.getElementById("crm-prev").addEventListener("click", () => { state.offset = Math.max(0, state.offset - pageSize); loadUserRows().catch(showError); });
     document.getElementById("crm-next").addEventListener("click", () => { state.offset += pageSize; loadUserRows().catch(showError); });
   }
@@ -705,24 +704,6 @@
       ? ""
       : `<strong class="crm-purchase-amount">${item.amount_is_estimated ? "≈ " : ""}${money(item.amount)}</strong>`;
     return `<div class="crm-preview crm-purchase-preview" data-preview-kind="progress" data-preview-user="${esc(user.id)}"><button class="crm-preview-trigger crm-purchase-item ${tone}" type="button" aria-expanded="false" aria-label="Показать прогресс: ${esc(item.product_name || "продукт")}"><span class="crm-purchase-main"><span><strong>${esc(item.product_name || "Продукт не определён")}</strong>${item.tariff ? `<span class="crm-purchase-tariff">${esc(item.tariff)}</span>` : ""}</span>${amount}</span>${details && details !== "—" ? `<span class="crm-row-meta">${esc(details)}</span>` : ""}</button><div class="crm-popover" role="tooltip"><div class="crm-popover-loading">Загружаю…</div></div></div>`;
-  }
-
-  function bindTableScroll() {
-    const tableWrap = root.querySelector(".crm-table-wrap");
-    const scrollbar = root.querySelector(".crm-table-scrollbar");
-    const spacer = scrollbar && scrollbar.querySelector("i");
-    if (!tableWrap || !scrollbar || !spacer) return;
-    const table = tableWrap.querySelector("table");
-    let syncing = false;
-    const sync = (from, to) => {
-      if (syncing) return;
-      syncing = true;
-      to.scrollLeft = from.scrollLeft;
-      syncing = false;
-    };
-    requestAnimationFrame(() => { spacer.style.width = `${table.scrollWidth}px`; });
-    scrollbar.addEventListener("scroll", () => sync(scrollbar, tableWrap), {passive:true});
-    tableWrap.addEventListener("scroll", () => sync(tableWrap, scrollbar), {passive:true});
   }
 
   function previewCourseAccesses(userId, courses, modules) {

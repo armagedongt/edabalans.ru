@@ -374,7 +374,11 @@ for (const [name, route] of Object.entries(integratedPages)) {
       await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email[aria-label='Email скопирован']").waitFor();
       assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").getAttribute("aria-label"), "Email скопирован");
       assert.equal(await page.locator(".crm-table-wrap").evaluate((node) => node.scrollWidth > node.clientWidth), true);
-      assert.equal(await page.locator(".crm-table-scrollbar").evaluate((node) => node.scrollWidth > node.clientWidth), true);
+      await page.locator(".crm-table-wrap").hover();
+      await page.mouse.wheel(500, 0);
+      await page.waitForFunction(() => document.querySelector(".crm-table-wrap").scrollLeft > 0);
+      await page.mouse.wheel(-500, 0);
+      await page.waitForFunction(() => document.querySelector(".crm-table-wrap").scrollLeft === 0);
       assert.match(await page.locator(".crm-people-table tbody").textContent(), /с 01\.08\.2026.*первая покупка 02\.08\.2026.*Подписан/s);
       await page.getByRole("button", { name:"Показать тариф и доступы: Анна" }).hover();
       await page.getByText("Доступно", { exact:true }).waitFor();
