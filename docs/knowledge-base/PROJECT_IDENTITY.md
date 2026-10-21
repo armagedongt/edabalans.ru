@@ -82,9 +82,13 @@ host как второй вход, альтернативу или «серве�
 | MAX-бот моста сообщений | Ответ из чата | `https://max.ru/id230409966750_1_bot` | `BRIDGE_MAX_BOT_TOKEN`, MAX `/me`; проверен 07.10.2026, ID `449848040` |
 | Личная связь с Сергеем для участников | Сергей Воронцов | `https://t.me/FitnessSergey` | Общий публичный подвал `backend/app/static/site-footer.js` |
 | Личная связь с Сергеем в MAX | Сергей Воронцов | `https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw` | `MAX_CONTACT_URL`, общий публичный подвал |
-| Финансовый Telegram-бот | Только оплаты и финансовая статистика | `https://t.me/fitpostgpbot` | `FINANCE_TELEGRAM_BOT_TOKEN`, `FINANCE_TELEGRAM_RECIPIENT_IDS` на сервере |
-| Рекламный Telegram-бот | Источники, привлечение, подписки/отписки и Директ | `https://t.me/TetrisgfgfgfBot` | `MARKETING_TELEGRAM_BOT_TOKEN` на сервере и в Cloudflare; `MARKETING_TELEGRAM_CHAT_IDS` в Cloudflare |
-| Технический Telegram-бот | Аварии, заметки, проверки, Codex и личное | `https://t.me/Chat_GPT_4_SV_bot` | `TECHNICAL_TELEGRAM_BOT_TOKEN` на сервере и `TELEGRAM_BOT_TOKEN` в Cloudflare; `getMe` проверен 19.10.2026 |
+| Финансовый Telegram-бот | Финансы · Сергей Воронцов | `https://t.me/fitpostgpbot` | `FINANCE_TELEGRAM_BOT_TOKEN`, `FINANCE_TELEGRAM_RECIPIENT_IDS` на сервере |
+| Рекламный Telegram-бот | Реклама · Сергей Воронцов | `https://t.me/TetrisgfgfgfBot` | `MARKETING_TELEGRAM_BOT_TOKEN` на сервере и в Cloudflare; `MARKETING_TELEGRAM_CHAT_IDS` в Cloudflare |
+| Технический Telegram-бот | Технический · Сергей Воронцов | `https://t.me/Chat_GPT_4_SV_bot` | `TECHNICAL_TELEGRAM_BOT_TOKEN` на сервере и `TELEGRAM_BOT_TOKEN` в Cloudflare; `getMe` проверен 19.10.2026 |
+
+Отображаемые имена трёх служебных ботов приведены к ролям и проверены через
+`getMe` 21.10.2026. Имена аккаунтов «личный» и «рабочий» обозначают получателей,
+а не разных ботов: каждый служебный бот доставляет своё направление обоим.
 
 ## Аккаунты Сергея и маршруты уведомлений
 
