@@ -1573,8 +1573,8 @@
 
 </style>
 
-<link rel="stylesheet" href="/assets/strength-journal.css?v=20261021-history">
-<script src="/assets/strength-journal-model.js?v=20261021-history"></script>
+<link rel="stylesheet" href="/assets/strength-journal.css?v=20261021-navigation-scale">
+<script src="/assets/strength-journal-model.js?v=20261021-navigation-scale"></script>
 <script>
 (function(){
 
@@ -1623,7 +1623,7 @@ var app = {
   selectedIndex:0,
   entryMode:'edit',
   selectedPrevious:{},
-  journalView:'training',
+  journalScale:'compact',
   templates:[],
   accountCatalog:[],
   axisTargetSession:null,
@@ -3216,6 +3216,92 @@ function render(){
 }
 
 
+
+var screenHistory=null,screenOwner=String(Date.now())+Math.random(),journalWidthObserver=null;
+function screenView(){return {mainTab:app.mainTab,modal:app.modal?cloneValue(app.modal):null};}
+function screenKey(view){return JSON.stringify(view);}
+function screenUrl(view){
+  var url=new URL(location.href);
+  if(view.mainTab==='stats')url.searchParams.set('view','stats');else url.searchParams.delete('view');
+  return url.pathname+url.search+url.hash;
+}
+function screenState(position){
+  return Object.assign({},history.state || {},{edStrengthScreen:{owner:screenOwner,position:position}});
+}
+function syncScreenHistory(){
+  var view=screenView(),key=screenKey(view);
+  if(!screenHistory){
+    screenHistory={entries:[{view:view,scrollY:window.scrollY}],position:0,restoring:false,pending:false};
+    history.replaceState(screenState(0),'',screenUrl(view));return;
+  }
+  if(screenHistory.restoring || screenHistory.pending)return;
+  var current=screenHistory.entries[screenHistory.position];
+  if(screenKey(current.view)===key)return;
+  current.scrollY=window.scrollY;
+  var previous=-1;
+  for(var i=screenHistory.position-1;i>=0;i--){if(screenKey(screenHistory.entries[i].view)===key){previous=i;break;}}
+  if(previous>=0){screenHistory.pending=true;history.go(previous-screenHistory.position);return;}
+  if(!view.modal && view.mainTab==='training'){
+    screenHistory.entries=[{view:view,scrollY:window.scrollY}];screenHistory.position=0;
+    history.replaceState(screenState(0),'',screenUrl(view));return;
+  }
+  screenHistory.entries=screenHistory.entries.slice(0,screenHistory.position+1);
+  screenHistory.entries.push({view:view,scrollY:0});screenHistory.position++;
+  history.pushState(screenState(screenHistory.position),'',screenUrl(view));
+}
+window.addEventListener('popstate',function(event){
+  var state=event.state && event.state.edStrengthScreen;
+  if(!root.isConnected || !screenHistory || !state)return;
+  if(state.owner!==screenOwner){
+    app.mainTab=new URLSearchParams(location.search).get('view')==='stats'?'stats':'training';
+    app.modal=null;app.rpeMenu=null;screenHistory=null;screenOwner=String(Date.now())+Math.random();render();return;
+  }
+  var entry=screenHistory.entries[state.position];if(!entry)return;
+  screenHistory.position=state.position;screenHistory.pending=false;screenHistory.restoring=true;
+  app.mainTab=entry.view.mainTab;app.modal=entry.view.modal?cloneValue(entry.view.modal):null;app.rpeMenu=null;
+  if(app.modal && app.modal.type==='manager'){
+    app.managerDraft=copyCatalog(templateWorkout().catalog);app.managerUndoStack=[];
+    app.managerReturnToTemplates=screenHistory.entries.slice(0,state.position).some(function(item){return item.view.modal && item.view.modal.type==='templates';});
+  }else{app.managerDraft=null;app.managerUndoStack=[];}
+  render();screenHistory.restoring=false;
+  requestAnimationFrame(function(){window.scrollTo(0,entry.scrollY);});
+});
+function visibleJournalSession(){
+  var axis=root.querySelector('[data-axis]');if(!axis)return null;
+  var box=axis.getBoundingClientRect(),center=box.left+box.width/2,best=null,distance=Infinity;
+  axis.querySelectorAll('.st-history-row:first-child article').forEach(function(card){
+    var bounds=card.getBoundingClientRect(),delta=Math.abs((bounds.left+bounds.right)/2-center);
+    if(delta<distance){best=currentWorkout().sessions[Number(card.dataset.sessionIndex)];distance=delta;}
+  });
+  return best?best.session_id:null;
+}
+function applyJournalScale(){
+  root.dataset.journalScale=app.journalScale;
+  var style=getComputedStyle(root),width=app.journalScale==='expanded'?Math.max(0,root.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)):216;
+  root.style.setProperty('--st-history-width',width+'px');
+}
+function rememberJournalAnchor(axis){
+  if(axis.dataset.axis!=='training' || Math.abs(axis.clientWidth-app.axisViewportWidth)>1)return;
+  var indices=templateSessionIndices(),style=getComputedStyle(root);
+  var stride=parseFloat(style.getPropertyValue('--st-history-width'))+parseFloat(style.getPropertyValue('--st-history-gap'));
+  var position=Math.min(indices.length-1,Math.floor((axis.scrollLeft+axis.clientWidth/2)/stride));
+  var session=currentWorkout().sessions[indices[Math.max(0,position)]];
+  app.journalAnchor=session?session.session_id:null;
+}
+function observeJournalWidth(){
+  if(journalWidthObserver || !window.ResizeObserver)return;
+  var previous=root.clientWidth;
+  journalWidthObserver=new ResizeObserver(function(){
+    if(!root.isConnected){journalWidthObserver.disconnect();return;}
+    if(previous===root.clientWidth)return;
+    previous=root.clientWidth;
+    if(app.journalScale==='expanded'){
+      app.axisTargetSession=app.journalAnchor;render();
+    }
+  });
+  journalWidthObserver.observe(root);
+}
+
 function commonHeader(){
   return '<div class="st-card st-header"><div class="st-top">'+
     '<img class="st-app-icon" src="/assets/strength-favicon.svg" alt="Силовые тренировки">'+
@@ -3331,6 +3417,8 @@ function renderAdminList(){
 
 function renderClient(){
   rememberAxisPositions();
+  syncScreenHistory();
+  applyJournalScale();
   var html='';
   if(app.mainTab === 'stats'){
     html='<header class="st-stats-return"><button onclick="ST.setMainTab(\'training\')">← Вернуться к тренировкам</button></header>'+renderStatsTabs()+(app.statsTab==='calendar' ? renderCalendar() : renderAnalysis());
@@ -3341,10 +3429,7 @@ function renderClient(){
   html+=renderModal()+renderFloatingRpe();
   root.innerHTML=html;
   renderManagedActions();renderSavingOnly();syncModalLock();bindJournalAxes();
-  root.querySelectorAll('.st-modern-comment textarea').forEach(function(field){ST.autoGrow(field);});
-  if(document.fonts && document.fonts.status!=='loaded')document.fonts.ready.then(function(){
-    root.querySelectorAll('.st-modern-comment textarea').forEach(function(field){ST.autoGrow(field);});
-  });
+  observeJournalWidth();
 }
 
 function renderMainTabs(){
@@ -3384,7 +3469,8 @@ function renderTypes(){
 }
 
 function renderJournalViewToggle(){
-  return '<button class="st-icon-link st-view-toggle" onclick="ST.toggleJournalView()" aria-label="'+(app.journalView==='training'?'Показать историю упражнений':'Показать тренировки целиком')+'" title="'+(app.journalView==='training'?'По тренировкам':'По упражнениям')+'" aria-pressed="'+(app.journalView==='exercise')+'">'+journalIcon('eye')+'</button>';
+  var expanded=app.journalScale==='expanded';
+  return '<button class="st-icon-link st-view-toggle" onclick="ST.toggleJournalScale()" aria-label="'+(expanded?'Показать компактные тренировки':'Развернуть тренировку на всю ширину')+'" title="'+(expanded?'Компактно':'Во всю ширину')+'" aria-pressed="'+expanded+'">'+journalIcon('eye')+'</button>';
 }
 
 function renderJournalHeader(){
@@ -3392,9 +3478,9 @@ function renderJournalHeader(){
   var html='<div class="st-session-sticky"><div class="st-session-toolbar"><div class="st-toolbar-side">'+
     '<button onclick="ST.undo()" '+(app.undoStack.length?'':'disabled')+' aria-label="Отменить действие">↶</button><button onclick="ST.redo()" '+(app.redoStack.length?'':'disabled')+' aria-label="Повторить действие">↷</button></div>'+
     renderTypes()+'<div class="st-toolbar-side">'+renderJournalViewToggle();
-  if(app.journalView==='training')html+='<button class="st-toolbar-add" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+' aria-label="Новая тренировка">＋</button>';
+  html+='<button class="st-toolbar-add" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+' aria-label="Новая тренировка">＋</button>';
   html+='</div></div>';
-  if(app.journalView==='training' && indices.length)html+='<div class="st-date-viewport"><div class="st-date-track" style="width:calc('+indices.length+' * (var(--st-history-width) + var(--st-history-gap)) - var(--st-history-gap))">'+indices.map(function(index){return journalDate(index,sessions[index],'st-date-cell');}).join('')+'</div></div>';
+  if(indices.length)html+='<div class="st-date-viewport"><div class="st-date-track" style="width:calc('+indices.length+' * (var(--st-history-width) + var(--st-history-gap)) - var(--st-history-gap))">'+indices.map(function(index){return journalDate(index,sessions[index],'st-date-cell');}).join('')+'</div></div>';
   return html+'</div>';
 }
 
@@ -3515,15 +3601,15 @@ function renderJournal(){
   var sessions=currentWorkout().sessions,exercises=activeCatalog();
   if(!exercises.length)return '<div class="st-empty">Добавьте упражнения в состав шаблона.</div><button class="st-action" onclick="ST.openTemplates()">Управление шаблонами</button>';
   var indices=templateSessionIndices();
-  if(app.journalView==='training' && !indices.length)return '';
+  if(!indices.length)return '';
   var rows=exercises.map(function(item,order){
-    var id=String(item.exercise_id),ownIndices=app.journalView==='training'?indices:sessions.map(function(_,index){return index;}).filter(function(index){return !!findExercise(sessions[index],id);});
+    var id=String(item.exercise_id),ownIndices=indices;
     var maxSets=sessions.reduce(function(max,session){var ex=findExercise(session,id);return Math.max(max,ex?ex.sets.length:0);},1);
     maxSets=ownIndices.reduce(function(max,index){var ex=exerciseForDisplay(sessions[index],id);return Math.max(max,ex?ex.sets.length:0);},maxSets);
     return {item:item,order:order,indices:ownIndices,maxSets:maxSets};
   });
   var maxRecords=rows.reduce(function(max,row){return Math.max(max,row.indices.length);},1);
-  var html='<div class="st-history-scroll" data-axis="'+(app.journalView==='training'?'training':'exercise-history')+'"><div class="st-history-content" style="width:calc('+maxRecords+' * (var(--st-history-width) + var(--st-history-gap)) - var(--st-history-gap))">';
+  var html='<div class="st-history-scroll" data-axis="training"><div class="st-history-content" style="width:calc('+maxRecords+' * (var(--st-history-width) + var(--st-history-gap)) - var(--st-history-gap))">';
   rows.forEach(function(row){
     html+='<div class="st-history-row">';
     row.indices.forEach(function(index){html+=renderHistoryExercise(index,row.item,row.order,row.maxSets);});
@@ -3607,8 +3693,8 @@ function journalDate(index,session,className){
   var number=className==='st-history-date'?'<span class="st-session-number">№'+esc(session.number)+'</span>':
     '<button class="st-session-number" onclick="ST.selectSession('+index+')" aria-label="Выбрать тренировку №'+esc(session.number)+'" aria-pressed="'+(index===app.selectedIndex)+'">№'+esc(session.number)+'</button>';
   return '<div class="'+className+'" data-session-index="'+index+'">'+number+
-    '<span class="st-date-field"><input class="st-journal-date-text" type="text" lang="ru" inputmode="numeric" placeholder="дд.мм.гггг" maxlength="10" aria-label="Дата тренировки №'+esc(session.number)+'" value="'+esc(formatDate(session.date) || '')+'" oninput="this.setCustomValidity(String())" onchange="ST.setDateText('+index+',this)">'+
-    '<input class="st-date-picker" type="date" lang="ru" aria-label="Календарь тренировки №'+esc(session.number)+'" value="'+esc(session.date || '')+'" onchange="ST.setDate('+index+',this.value)"></span>'+
+    '<span class="st-date-field"><input class="st-journal-date-text" type="text" lang="ru" placeholder="дд.мм.гггг" maxlength="10" aria-label="Дата тренировки №'+esc(session.number)+'" value="'+esc(formatDate(session.date) || '')+'" readonly onclick="ST.openDatePicker('+index+')">'+
+    '<input class="st-date-picker" type="date" lang="ru" aria-label="Календарь тренировки №'+esc(session.number)+'" value="'+esc(session.date || '')+'" onclick="ST.openDatePicker('+index+',event)" onchange="ST.setDate('+index+',this.value)"></span>'+
     (className==='st-date-cell'?'<button class="st-toolbar-delete" onclick="ST.deleteSession('+index+')" aria-label="Удалить тренировку №'+esc(session.number)+'">×</button>':'')+'</div>';
 }
 
@@ -3631,14 +3717,13 @@ function renderHistoryExercise(index,item,order,maxSets){
   var id=esc(exercise.id),data=' data-exercise-id="'+id+'"',args='this.dataset.exerciseId,'+index;
   var emptyPlan=!exercise.sets.some(function(set){return !blank(set.planWeight)||!blank(set.planReps);});
   var html='<article style="'+journalExerciseTone(order)+'" class="st-modern-exercise st-history-column" data-session-index="'+index+'" data-exercise-id="'+id+'">';
-  if(app.journalView==='exercise')html+=journalDate(index,session,'st-history-date');
   html+='<header class="st-modern-head"><div class="st-modern-title"><span class="st-exercise-number">'+(order+1)+'</span><strong>'+esc(item.short_name || item.exercise_name || exercise.name)+'</strong></div><div class="st-modern-tools">'+
     '<button'+data+' onclick="ST.addSet('+args+')" aria-label="Добавить подход">＋</button><button'+data+' onclick="ST.removeSet('+args+')" aria-label="Убрать подход">−</button>'+
     (item.source==='base'?'<button class="st-exercise-info"'+data+' onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Информация об упражнении">i</button>':'')+'</div></header>'+
     '<section class="st-modern-editor"><div class="st-grid-labels"><span></span><span class="st-plan-label">'+renderCopyButton(exercise.id,index,false,'',emptyPlan)+'<span>План</span></span><span class="st-fact-label">'+renderCopyButton(exercise.id,index,true,'',!exerciseHasFact(exercise))+'<span>Факт</span></span><span>RPE</span></div>';
   exercise.sets.forEach(function(set,setIndex){html+=renderModernSet(index,exercise,setIndex,set);});
   html+='<div class="st-history-set-space" style="height:'+Math.max(0,(maxSets-exercise.sets.length)*33)+'px"></div>'+
-    '<label class="st-modern-comment"><textarea'+data+' rows="1" placeholder="Добавить примечание" aria-label="Примечание к упражнению" oninput="ST.autoGrow(this)" onchange="ST.changeNote(this.dataset.exerciseId,this.value,'+index+')">'+esc(exercise.note || '')+'</textarea></label></section></article>';
+    '<button class="st-modern-comment '+(String(exercise.note || '').trim()?'has-note':'')+'"'+data+' onclick="ST.openNote('+index+',this.dataset.exerciseId)" aria-label="Примечание к упражнению"><span>'+esc(exercise.note || 'Добавить примечание')+'</span></button></section></article>';
   return html;
 }
 
@@ -3673,7 +3758,8 @@ function bindJournalAxes(){
       if(target>=0)axis.scrollLeft=(target+1)*(parseFloat(getComputedStyle(root).getPropertyValue('--st-history-width'))+parseFloat(getComputedStyle(root).getPropertyValue('--st-history-gap')))-axis.clientWidth;
     }
     axis.addEventListener('pointerdown',function(){app.activeAxis=axis.dataset.axis;syncBar(axis);});
-    axis.addEventListener('scroll',function(){app.axisPositions[axis.dataset.axis]=axis.scrollLeft;app.activeAxis=axis.dataset.axis;syncDate(axis);if(!syncing)syncBar(axis);},{passive:true});
+    axis.addEventListener('scroll',function(){app.axisPositions[axis.dataset.axis]=axis.scrollLeft;app.activeAxis=axis.dataset.axis;rememberJournalAnchor(axis);syncDate(axis);if(!syncing)syncBar(axis);},{passive:true});
+    app.axisViewportWidth=axis.clientWidth;rememberJournalAnchor(axis);
     syncDate(axis);
   });
   app.axisTargetSession=null;
@@ -5008,32 +5094,10 @@ function renderModal(){
             esc(ex.name)+
           '</div>'+
           '<div class="st-modal-sub">Примечание к упражнению</div>'+
-          (
-            app.isAdmin
-            ?
-            '<div class="st-modal-read">'+
-              (
-                ex.note
-                ?
-                esc(ex.note)
-                :
-                'Примечаний нет'
-              )+
-            '</div>'
-            :
-            '<textarea id="st-note-text" class="st-modal-textarea">'+
-              esc(ex.note)+
-            '</textarea>'
-          )+
+          '<textarea id="st-note-text" class="st-modal-textarea" aria-label="Текст примечания">'+esc(ex.note)+'</textarea>'+
           '<div class="st-modal-actions">'+
             '<button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Закрыть</button>'+
-            (
-              app.isAdmin
-              ?
-              ''
-              :
-              '<button class="st-modal-btn st-modal-save" onclick="ST.saveNote()">Сохранить</button>'
-            )+
+            '<button class="st-modal-btn st-modal-save" onclick="ST.saveNote()">Сохранить</button>'+
           '</div>'+
         '</div>'+
       '</div>'
@@ -5547,7 +5611,18 @@ window.ST = {
     }
   },
 
-  toggleJournalView:function(){app.journalView=app.journalView==='training'?'exercise':'training';app.rpeMenu=null;render();},
+  toggleJournalScale:function(){
+    var id=visibleJournalSession();
+    app.journalScale=app.journalScale==='compact'?'expanded':'compact';
+    app.axisTargetSession=id;app.rpeMenu=null;render();
+  },
+  openDatePicker:function(index,event){
+    var picker=root.querySelector('.st-date-cell[data-session-index="'+Number(index)+'"] .st-date-picker');
+    if(picker){
+      if(picker.showPicker)picker.showPicker();
+      else{picker.focus();if(!event || event.currentTarget!==picker)picker.click();}
+    }
+  },
   openTemplates:function(){app.modal={type:'templates'};render();},
   renameTemplate:function(id,value){var t=app.templates.find(function(t){return Number(t.workout_type)===id;});if(t){t.title=String(value).trim().slice(0,120) || 'Шаблон '+id;queueTemplateSave();}},
   moveTemplate:function(id,direction){
@@ -5700,7 +5775,7 @@ window.ST = {
 
   setMainTab:function(tab){
   app.mainTab=tab;app.modal=null;app.rpeMenu=null;
-  var url=new URL(location.href);if(tab==='stats')url.searchParams.set('view','stats');else url.searchParams.delete('view');history.pushState({},'',url.pathname+url.search+url.hash);render();window.scrollTo(0,0);
+  render();window.scrollTo(0,0);
 },
 
 
@@ -6216,7 +6291,6 @@ window.ST = {
   saveNote:function(){
 
     if(
-      app.isAdmin ||
       !app.modal ||
       app.modal.type !==
       'note'
@@ -6860,7 +6934,7 @@ window.ST = {
     if(infoId !== null){
       var buttons = document.querySelectorAll('.st-exercise-info');
       for(var i=0;i<buttons.length;i++){
-        if(buttons[i].dataset.exerciseId === String(infoId) && buttons[i].getClientRects().length){ buttons[i].focus(); break; }
+        if(buttons[i].dataset.exerciseId === String(infoId) && buttons[i].getClientRects().length){ buttons[i].focus({preventScroll:true}); break; }
       }
     }
 

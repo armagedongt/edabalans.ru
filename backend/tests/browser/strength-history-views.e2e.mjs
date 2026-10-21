@@ -7,6 +7,7 @@ const base=process.env.QA_BASE_URL || 'http://127.0.0.1:8823';
 assert.equal(new URL(base).hostname,'127.0.0.1');
 const out=process.env.QA_OUT || process.env.STRENGTH_EVIDENCE_DIR;assert(out,'Set QA_OUT for browser evidence');await mkdir(out,{recursive:true});
 const staticRoot=new URL('../../app/static/',import.meta.url),appHtml=await readFile(new URL('apps/strength.html',staticRoot),'utf8');
+const adminHtml=await readFile(new URL('admin.html',staticRoot),'utf8');
 const guide=JSON.parse(await readFile(new URL('../../app/strength_exercise_guides.json',import.meta.url),'utf8'));
 function fixture(manyExercises=false){
  const exercises=guide.slice(0,manyExercises?9:2).map((item,index)=>({exercise_id:item.code,exercise_name:item.name,short_name:item.short_name,full_name:item.full_name,source:'base',active:true,sort_order:index+1,guide:item.guide,media_url:item.media_url}));
@@ -17,9 +18,9 @@ function fixture(manyExercises=false){
 }
 const browser=await chromium.launch();
 const errors=[];let rows=[];
-async function open(width,managed=false,longNotes=false,manyExercises=false,sameNames=false,shortHistory=false){
+async function open(width,managed=false,longNotes=false,manyExercises=false,sameNames=false,shortHistory=false,realAdmin=false){
  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce',hasTouch:width<=700});
- const page=await context.newPage(),state=fixture(manyExercises),writes=[],telegramWrites=[];let active=0,overlap=false,failTemplate=false;
+ const page=await context.newPage(),state=fixture(manyExercises),writes=[],telegramWrites=[];let active=0,overlap=false,failTemplate=false;let workoutReads=0;
  if(sameNames)state.exercise_catalog.forEach(e=>{e.exercise_name=e.short_name='Одинаковое имя <img src=x onerror=alert(1)>';});
  if(longNotes)state.session_exercises[0].note='Примечание с несколькими строками для проверки сохранения позиции при изменении подходов. '.repeat(14);
  if(shortHistory){state.sets=state.sets.filter(set=>set.set_number<=2);state.session_exercises=state.session_exercises.filter(ex=>!(ex.session_id==='one'&&ex.exercise_id===guide[0].code));state.sets=state.sets.filter(set=>!(set.session_id==='one'&&set.exercise_id===guide[0].code));}
@@ -27,7 +28,13 @@ async function open(width,managed=false,longNotes=false,manyExercises=false,same
  page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/*',async route=>{
   const url=new URL(route.request().url());if(url.hostname!=='127.0.0.1')return route.abort();
-  if(url.pathname==='/strength-local'||url.pathname==='/strength-admin-local'){
+  if(url.pathname==='/admin/strength')return route.fulfill({contentType:'text/html',body:adminHtml});
+  if(url.pathname==='/admin/api/navigation')return route.fulfill({json:{modules:[{id:'products.strength',admin_catalog:[{category:'applications',order:1,url:'/admin/strength',label:'Силовые',icon:'💪'}]}]}});
+  if(url.pathname==='/admin/api/apps/strength/users/fixture')return route.fulfill({json:{user:{id:'fixture',email:'example@example.test',display_name:'Тестовый пользователь'},has_state:true,has_access:true}});
+  if(url.pathname==='/admin/api/apps/users')return route.fulfill({json:{users:[{user_id:'fixture',email:'example@example.test',has_state:true,has_access:true,summary:{sessions:9}}]}});
+  if(url.pathname==='/api/account-auth/session')return route.fulfill({json:{authenticated:true,email:'example@example.test'}});
+  if(url.pathname==='/favicon.png')return route.fulfill({contentType:'image/png',body:await readFile(new URL('brand/favicon.png',staticRoot))});
+  if(url.pathname==='/strength-local' ||url.pathname==='/strength-admin-local'){
     const managed=url.pathname.includes('admin');
     return route.fulfill({contentType:'text/html',body:'<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#f5f5f7}</style><body>'+(managed?'<div class="preview-account">Управляемый аккаунт</div>':'')+'<script>window.EdabalansIdentity={source:"native",email:"example@example.test"};window.EdabalansAppContext='+JSON.stringify(managed?{mode:'admin',targetUserId:'fixture',accountUrl:'/lk'}:{accountUrl:'/lk'})+';</script>'+appHtml+'</body></html>'});
   }
@@ -36,13 +43,13 @@ async function open(width,managed=false,longNotes=false,manyExercises=false,same
     return route.fulfill({contentType:'application/json',body:JSON.stringify({ok:true})});
   }
   if(url.pathname!=='/api/apps/strength'){
-    const asset=new URL(url.pathname.replace(/^\/(assets\/)?/,''),staticRoot);
+    const asset=new URL(url.pathname.replace(/^\/(assets\/|admin\/static\/)?/,''),staticRoot);
     if(!asset.href.startsWith(staticRoot.href))return route.abort();
-    try{return route.fulfill({contentType:({'.css':'text/css','.js':'text/javascript','.woff2':'font/woff2','.gif':'image/gif','.png':'image/png','.svg':'image/svg+xml'})[path.extname(asset.pathname)] || 'application/octet-stream',body:await readFile(asset)});}catch{return route.abort();}
+    try{return route.fulfill({contentType:({'.html':'text/html','.css':'text/css','.js':'text/javascript','.woff2':'font/woff2','.gif':'image/gif','.png':'image/png','.svg':'image/svg+xml'})[path.extname(asset.pathname)] || 'application/octet-stream',body:await readFile(asset)});}catch{return route.abort();}
   }
   const data=route.request().method()==='POST'?JSON.parse(route.request().postData()):Object.fromEntries(url.searchParams);
   let reply={ok:true,user:{user_id:'fixture',email:'example@example.test',display_name:''},version:state.version};
-  if(data.action==='getWorkout')reply.workout={...structuredClone(state),exercise_catalog:structuredClone(catalogs.get(Number(data.type)) || state.exercise_catalog.map(e=>({...e,active:false})))};
+  if(data.action==='getWorkout'){workoutReads++;reply.workout={...structuredClone(state),exercise_catalog:structuredClone(catalogs.get(Number(data.type)) || state.exercise_catalog.map(e=>({...e,active:false})))};}
   if(route.request().method()==='POST'){
    active++;if(active>1)overlap=true;
    writes.push(data);if(data.action==='saveExerciseCatalog'&&catalogGate){const gate=catalogGate;catalogGate=null;await gate;}await new Promise(resolve=>setTimeout(resolve,30));
@@ -54,9 +61,9 @@ async function open(width,managed=false,longNotes=false,manyExercises=false,same
   }
   await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(reply)});
  });
- await page.goto(base+(managed?'/strength-admin-local':'/strength-local'));
+ await page.goto(base+(realAdmin?'/admin/strength?user=fixture':managed?'/strength-admin-local':'/strength-local'));
  await page.locator('.st-view-toggle').waitFor();await page.evaluate(()=>document.fonts.ready);
- return {context,page,writes,telegramWrites,getOverlap:()=>overlap,state,holdNextCatalog:()=>{let release;catalogGate=new Promise(resolve=>{release=resolve;});return release;},failNextTemplate:()=>{failTemplate=true;}};
+ return {context,page,writes,telegramWrites,getOverlap:()=>overlap,getWorkoutReads:()=>workoutReads,state,holdNextCatalog:()=>{let release;catalogGate=new Promise(resolve=>{release=resolve;});return release;},failNextTemplate:()=>{failTemplate=true;}};
 }
 async function assertDatesFollowColumns(page){
  await page.waitForFunction(()=>{const dates=document.querySelectorAll('.st-date-cell'),cards=document.querySelector('.st-history-row').querySelectorAll('article');return [...dates].every((e,i)=>Math.abs(e.getBoundingClientRect().left-cards[i].getBoundingClientRect().left)<1);});
@@ -75,12 +82,14 @@ for(const width of [360,430,700,701,768,1440]){
  const columns=await page.locator('.st-history-row').first().locator('.st-modern-editor').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().height));
  assert(Math.abs(columns[0]-columns[1])<1,'same exercise rows retain max-set height');
  const inputs=await page.locator('.st-grid-set').last().locator('input').evaluateAll(es=>es.map(e=>({field:e.dataset.field,w:e.getBoundingClientRect().width,font:getComputedStyle(e).fontSize,placeholder:getComputedStyle(e,'::placeholder').fontSize})));
- assert(inputs[0].w>inputs[1].w);assert.equal(inputs[0].placeholder,inputs[1].placeholder);
+ assert(Math.abs(inputs[2].w/inputs[0].w-1.1)<.015,'fact weight is ten percent wider');assert(Math.abs(inputs[3].w/inputs[1].w-1.1)<.015,'fact reps are ten percent wider');assert(inputs[0].w>inputs[1].w);assert.equal(inputs[0].placeholder,inputs[1].placeholder);
  const align=await page.evaluate(()=>{const d=document.querySelectorAll('.st-date-cell'),c=document.querySelector('.st-history-row').querySelectorAll('article');return [...d].map((e,i)=>Math.abs(e.getBoundingClientRect().left-c[i].getBoundingClientRect().left));});
  assert(align.every(x=>x<1),'each sticky date is aligned to its workout column');
  await page.setViewportSize({width,height:400});await page.evaluate(()=>scrollTo(0,200));
  assert(Math.abs((await page.locator('.st-session-sticky').boundingBox()).y)<1,'both toolbar and dates stay pinned');
  await page.evaluate(()=>scrollTo(0,0));await page.setViewportSize({width,height:900});
+ const noteBounds=await page.locator('.st-modern-comment').first().evaluate(e=>{const box=e.getBoundingClientRect(),text=e.querySelector('span').getBoundingClientRect();return text.top>=box.top&&text.bottom<=box.bottom;});
+ assert(noteBounds,'one-line note text fits vertically at '+width);
  await page.screenshot({path:`${out}/training-${width}.png`});
  if(width<=700 && await page.locator('[data-axis=training]').evaluate(e=>e.scrollWidth>e.clientWidth)){
    const touch=await context.newCDPSession(page),axis=page.locator('[data-axis=training]');
@@ -95,18 +104,19 @@ for(const width of [360,430,700,701,768,1440]){
  await page.locator('.st-view-toggle').click();
  assert.equal(await page.locator('.st-view-toggle').getAttribute('aria-pressed'),'true');
  assert.notEqual(await page.locator('.st-view-toggle').evaluate(e=>getComputedStyle(e).backgroundColor),inactiveEye,'eye changes appearance with view');
- assert.equal(await page.locator('.st-date-viewport').count(),0,'exercise view moves dates into individual cards');
- assert.equal(await page.locator('.st-session-toolbar .st-template-row').count(),1,'templates remain in sticky controls in both views');
- assert.equal(await page.locator('[data-axis]').count(),1,'exercise histories have one shared scrolling surface');
- assert.equal(await page.locator('.st-history-row').first().locator('.st-history-column').count(),9,'all exercise history includes other templates beyond three records');
- assert.equal(await page.locator('.st-history-row').nth(1).locator('.st-history-column').count(),8,'skipped exercises leave no gap inside the compact history');
- const before=await page.locator('.st-history-row').nth(1).locator('article').first().evaluate(e=>e.getBoundingClientRect().x);
- const offset=await page.locator('[data-axis]').evaluate(e=>e.scrollLeft);
- await page.locator('[data-axis]').evaluate(e=>e.scrollLeft=0);await page.waitForTimeout(50);
- const after=await page.locator('.st-history-row').nth(1).locator('article').first().evaluate(e=>e.getBoundingClientRect().x);
- assert(Math.abs((after-before)-offset)<1,'all exercise rows move together');
- assert.equal(await page.getByRole('button',{name:'Удалить тренировку',exact:true}).count(),0);
- await page.screenshot({path:`${out}/exercise-${width}.png`});
+ assert.equal(await page.locator('.st-date-viewport').count(),1,'dates remain pinned in expanded training view');
+ assert.equal(await page.locator('.st-view-toggle').count(),1,'scale replaces the previous mode switch');
+ assert.equal(await page.locator('[data-axis]').count(),1);
+ assert.equal(await page.locator('.st-history-row').first().locator('article').count(),8,'scale does not change template history');
+ const expanded=await page.locator('.st-history-row').first().locator('article').last().boundingBox();
+ const axisWidth=await page.locator('[data-axis]').evaluate(e=>e.clientWidth);
+ assert(Math.abs(expanded.width-axisWidth)<1,'expanded workout fills available width at '+width);
+ await assertDatesFollowColumns(page);
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ await page.screenshot({path:`${out}/expanded-${width}.png`});
+ await page.locator('.st-view-toggle').click();
+ assert.equal(await page.locator('.st-view-toggle').getAttribute('aria-pressed'),'false');
+ await assertDatesFollowColumns(page);
  await page.getByRole('button',{name:'Статистика',exact:true}).click();
  assert.equal(await page.locator('.st-top,.st-types,.st-session-toolbar').count(),0);
  assert(await page.getByRole('button',{name:'Вернуться к тренировкам'}).isVisible());
@@ -118,14 +128,14 @@ let last=p.locator('.st-history-row').first().locator('.st-history-column').last
 await last.locator('input[data-field=factWeight]').first().click();
 assert(await p.locator('.st-modal-bg').isVisible(),'fact without date is blocked');
 await p.getByRole('button',{name:'Понятно',exact:true}).click();
-const beforeInvalidDate=run.writes.length;
-await p.locator('.st-date-cell').last().locator('.st-journal-date-text').fill('31.02.2026');
-await p.locator('.st-date-cell').last().locator('.st-journal-date-text').press('Tab');await p.waitForTimeout(100);
-assert.equal(run.writes.length,beforeInvalidDate,'impossible date is not saved');
-assert.equal(await p.locator('.st-date-cell').last().locator('.st-journal-date-text').evaluate(e=>e.checkValidity()),false);
-await p.locator('.st-date-cell').last().locator('.st-journal-date-text').fill('21.10.2026');await p.locator('.st-date-cell').last().locator('.st-journal-date-text').press('Tab');
-await p.waitForTimeout(550);
-assert.equal(run.writes.filter(w=>w.action==='saveSession').at(-1).session.date,'2026-10-21','Russian date is persisted as ISO');
+assert.equal(await p.locator('.st-date-cell').last().locator('.st-journal-date-text').getAttribute('readonly'),'');
+await p.evaluate(()=>{window.__calendarOpens=0;const original=HTMLInputElement.prototype.showPicker;HTMLInputElement.prototype.showPicker=function(){window.__calendarOpens++;return original.call(this);};});
+await p.locator('.st-date-cell').last().locator('.st-journal-date-text').click();
+assert.equal(await p.evaluate(()=>window.__calendarOpens),1,'date text activates the native calendar');await p.keyboard.press('Escape');
+await p.locator('.st-date-cell').last().locator('.st-date-picker').click();
+assert.equal(await p.evaluate(()=>window.__calendarOpens),2,'calendar icon activates the native calendar');await p.keyboard.press('Escape');
+await p.locator('.st-date-cell').last().locator('.st-date-picker').fill('2026-10-21');await p.waitForTimeout(550);
+assert.equal(run.writes.filter(w=>w.action==='saveSession').at(-1).session.date,'2026-10-21','calendar date is persisted as ISO');
 await p.locator('.st-date-cell').last().locator('.st-date-picker').fill('2026-10-22');await p.waitForTimeout(550);
 assert.equal(await p.locator('.st-date-cell').last().locator('.st-journal-date-text').inputValue(),'22.10.2026','native calendar updates Russian display');
 assert.equal(run.writes.filter(w=>w.action==='saveSession').at(-1).session.date,'2026-10-22');
@@ -170,22 +180,9 @@ await p.getByRole('button',{name:'Шаблон 1',exact:true}).click();
 assert.equal(run.getOverlap(),false,'autosave and template writes are serialized');
 await p.screenshot({path:`out/templates-complete.png`.replace('out',out)});
 await run.context.close();
-// A historical exercise from another template retains its original session identity.
+// Workout creation and per-date deletion still address the same selected template.
 const history=await open(430),hp=history.page;
-await hp.locator('.st-view-toggle').click();
-const beforeTemplate=await hp.locator('.st-type.active').innerText();
-await hp.locator('.st-history-row').first().locator('[data-session-index="1"] .st-session-number').click();
-assert.equal(await hp.locator('.st-type.active').innerText(),beforeTemplate,'historical record number must not switch current template');
-assert.equal(await hp.locator('.st-history-row').count(),2,'current template composition is retained');
-let foreign=hp.locator('.st-history-row').first().locator('[data-session-index="1"]');
-await foreign.locator('input[data-field=planWeight]').first().click();await hp.waitForTimeout(30);
-await foreign.locator('input[data-field=planWeight]').first().fill('75');await foreign.locator('input[data-field=planWeight]').first().press('Tab');
-await hp.waitForTimeout(550);
-let foreignSave=history.writes.filter(w=>w.action==='saveSession').at(-1);
-assert.equal(foreignSave.session.session_id,'two');assert.equal(foreignSave.workout_type,2);assert.equal(foreignSave.session.exercises[0].sets[0].plan_weight,75);
-await hp.getByRole('button',{name:'Отменить действие',exact:true}).click();await hp.waitForTimeout(550);
-assert.equal(await foreign.locator('input[data-field=planWeight]').first().inputValue(),'60');
-await hp.locator('.st-view-toggle').click();await hp.getByRole('button',{name:'Новая тренировка',exact:true}).click();await hp.waitForTimeout(100);
+await hp.getByRole('button',{name:'Новая тренировка',exact:true}).click();await hp.waitForTimeout(100);
 const newest=hp.locator('.st-history-row').first().locator('article').last();
 assert.equal(await newest.evaluate(e=>{let r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth;}),true,'created workout is brought into view');
 const confirmed=new Promise(resolve=>hp.once('dialog',async d=>{resolve(d.message());await d.dismiss();}));
@@ -271,8 +268,6 @@ await deletion.context.close();
 const short=await open(1440,false,false,false,false,true),sh=short.page;
 const heights=await sh.locator('.st-history-row').first().locator('article').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().height));
 assert(Math.max(...heights)-Math.min(...heights)<1,'synthetic blank exercises participate in maximum-height alignment');
-await sh.locator('.st-view-toggle').click();
-assert.equal(await sh.locator('.st-history-row').first().locator('.st-history-set-space').evaluateAll(es=>es.every(e=>e.getBoundingClientRect().height===0)),true,'packed history uses actual two-set maximum without missing-card spacers');
 await short.context.close();
 // Removing all templates preserves the catalogue for a replacement template.
 const replacement=await open(430),rp=replacement.page;
@@ -314,6 +309,81 @@ const identitySave=identities.writes.filter(w=>w.action==='saveSession').at(-1).
 assert.equal(identitySave.find(e=>e.exercise_id===guide[1].code).sets[0].plan_weight,42);
 assert.equal(identitySave.find(e=>e.exercise_id===guide[0].code).sets[0].plan_weight,'');
 await identities.context.close();
+// Browser Back/Forward follows nested screens rather than leaving the app.
+const navigation=await open(430,false,true),bp=navigation.page;
+await bp.locator('[data-axis]').evaluate(e=>e.scrollLeft=221);await bp.waitForTimeout(60);
+const originalAxis=await bp.locator('[data-axis]').evaluate(e=>e.scrollLeft);
+await bp.locator('.st-history-row').first().locator('.st-exercise-info').nth(1).click();await bp.goBack();
+await bp.locator('.st-guide-header').waitFor({state:'detached'});
+assert.equal(await bp.locator('[data-axis]').evaluate(e=>e.scrollLeft),originalAxis);
+await bp.screenshot({path:`${out}/back-restored.png`});
+await bp.goForward();await bp.locator('.st-guide-header').waitFor();
+await bp.getByRole('button',{name:'Закрыть информацию об упражнении'}).click();
+await bp.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
+await bp.getByRole('button',{name:'Состав упражнений шаблона 1',exact:true}).click();
+await bp.goBack();await bp.getByRole('dialog',{name:'Шаблоны',exact:true}).waitFor();
+await bp.goBack();await bp.locator('.st-modal-bg').waitFor({state:'detached'});
+const note=bp.locator('.st-history-row').first().locator('article').first().getByRole('button',{name:'Примечание к упражнению'});
+assert.equal(await note.evaluate(e=>getComputedStyle(e.querySelector('span')).textOverflow),'ellipsis');
+assert(await note.evaluate(e=>e.classList.contains('has-note')));
+await note.click();assert((await bp.getByRole('textbox',{name:'Текст примечания'}).inputValue()).length>300);
+await bp.screenshot({path:`${out}/note-full.png`});
+await bp.getByRole('textbox',{name:'Текст примечания'}).fill('Изменённое полное примечание');
+await bp.getByRole('button',{name:'Сохранить',exact:true}).click();await bp.waitForTimeout(550);
+assert.equal(navigation.writes.filter(w=>w.action==='saveSession').at(-1).session.exercises[0].note,'Изменённое полное примечание');
+await bp.getByRole('button',{name:'Статистика',exact:true}).click();await bp.goBack();
+await bp.locator('.st-view-toggle').waitFor();assert(!new URL(bp.url()).searchParams.has('view'));
+await bp.goBack();assert(!bp.url().includes('/strength-local'),'Back from the root is not trapped');
+await navigation.context.close();
+const reloaded=await open(430),reloadPage=reloaded.page;
+await reloadPage.getByRole('button',{name:'Статистика',exact:true}).click();await reloadPage.reload();
+await reloadPage.getByRole('button',{name:'Вернуться к тренировкам'}).waitFor();
+await reloadPage.goBack();await reloadPage.locator('.st-view-toggle').waitFor();assert(!new URL(reloadPage.url()).searchParams.has('view'));
+await reloadPage.goForward();await reloadPage.getByRole('button',{name:'Вернуться к тренировкам'}).waitFor();
+await reloadPage.getByRole('button',{name:'Вернуться к тренировкам'}).click();await reloadPage.locator('.st-view-toggle').waitFor();
+await reloaded.context.close();
+// Expanded width follows workspace resizing without changing the visible workout.
+const resizing=await open(430),zp=resizing.page;
+await zp.locator('[data-axis]').evaluate(e=>e.scrollLeft=221);await zp.waitForTimeout(50);
+const centered=()=>zp.locator('.st-history-row').first().evaluate(row=>{const r=row.closest('[data-axis]').getBoundingClientRect(),middle=r.left+r.width/2;return [...row.querySelectorAll('article')].sort((a,b)=>{const ar=a.getBoundingClientRect(),br=b.getBoundingClientRect();return Math.abs(ar.left+ar.width/2-middle)-Math.abs(br.left+br.width/2-middle);})[0].dataset.sessionIndex;});
+const selectedBeforeResize=await centered();
+await zp.locator('.st-view-toggle').click();
+assert.equal(await centered(),selectedBeforeResize,'expanding retains the viewed workout');
+await zp.setViewportSize({width:1440,height:900});await zp.waitForTimeout(100);
+assert.deepEqual(await centered(),selectedBeforeResize,'resizing expanded mode retains the viewed workout');
+await assertDatesFollowColumns(zp);
+const expandedWidths=await zp.locator('[data-axis]').evaluate(e=>({axis:e.clientWidth,card:e.querySelector('article').getBoundingClientRect().width}));
+assert(Math.abs(expandedWidths.axis-expandedWidths.card)<1);
+await zp.locator('.st-view-toggle').click();
+assert(await zp.locator('.st-history-row').first().locator('article[data-session-index="'+selectedBeforeResize+'"]').evaluate(e=>{const r=e.getBoundingClientRect(),axis=e.closest('[data-axis]').getBoundingClientRect();return r.left>=axis.left-1&&r.right<=axis.right+1;}),'compact scale retains the viewed workout in the viewport');
+await zp.locator('.st-view-toggle').click();await assertDatesFollowColumns(zp);
+await resizing.context.close();
+// Test actual administrative shell geometry and Back integration, not a fake wrapper.
+for(const width of [360,430,700,701,760,761,768,1440]){
+ const managed=await open(width,true,false,false,false,false,true),mp=managed.page;
+ await mp.locator('.admin-strength-toolbar').waitFor();
+ assert.equal(await mp.locator('.admin-managed-app-select').count(),0);
+ assert.equal(await mp.locator('.admin-managed-back').getAttribute('href'),'/admin/strength');
+ assert.equal(await mp.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ const available=await mp.locator('#admin-content').evaluate(e=>e.clientWidth),appWidth=await mp.locator('#strength-app').evaluate(e=>e.clientWidth);
+ assert(Math.abs(available-appWidth)<2,'managed journal fills admin workspace at '+width);
+ const reads=managed.getWorkoutReads();
+ await mp.locator('.st-exercise-info').last().click();await mp.goBack();await mp.locator('.st-guide-header').waitFor({state:'detached'});
+ assert.equal(managed.getWorkoutReads(),reads,'internal Back never reloads the managed profile');
+ if(width===430){
+  await mp.getByRole('button',{name:'Статистика',exact:true}).click();await mp.reload();
+  await mp.getByRole('button',{name:'Вернуться к тренировкам'}).waitFor();
+  const afterReload=managed.getWorkoutReads();
+  await mp.goBack();await mp.locator('.st-view-toggle').waitFor();assert(!new URL(mp.url()).searchParams.has('view'));
+  assert.equal(managed.getWorkoutReads(),afterReload,'Back after statistics reload restores the journal internally');
+  await mp.goForward();await mp.getByRole('button',{name:'Вернуться к тренировкам'}).waitFor();
+  await mp.getByRole('button',{name:'Вернуться к тренировкам'}).click();await mp.locator('.st-view-toggle').waitFor();
+ }
+ await mp.setViewportSize({width,height:400});await mp.evaluate(()=>scrollTo(0,220));
+ const toolbar=await mp.locator('.admin-strength-toolbar').boundingBox(),journal=await mp.locator('.st-session-sticky').boundingBox();
+ assert(Math.abs(toolbar.y)<1,'admin context remains at the top');assert(Math.abs(journal.y-toolbar.height)<2,'journal is pinned immediately below admin context');
+ await mp.screenshot({path:`${out}/real-admin-${width}.png`});await managed.context.close();
+}
 // Same renderer and controls for a managed account; selector is outside the mount.
 const plain=await open(768),admin=await open(768,true);
 assert.equal(await plain.page.locator('#strength-app').innerHTML(),await admin.page.locator('#strength-app').innerHTML());
@@ -331,4 +401,4 @@ await admin.page.screenshot({path:`${out}/managed-768.png`});
 await plain.context.close();await admin.context.close();
 assert.deepEqual(errors,[]);
 await writeFile(`${out}/report.json`,JSON.stringify({rows,status:'pass'},null,2));
-await browser.close();console.log('PASS: dual histories, shared scroll, shared admin UI, date gate, copy/paste, completion, undo, cursor and templates');
+await browser.close();console.log('PASS: compact/expanded training, shared scroll, shared admin UI, date gate, copy/paste, completion, undo, cursor and templates');

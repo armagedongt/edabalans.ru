@@ -13,6 +13,7 @@
   const pageParams = new URLSearchParams(location.search);
   const strengthMobileMode = location.pathname === "/admin/strength" && pageParams.get("mobile") === "1";
   if (strengthMobileMode) document.body.classList.add("strength-mobile-admin");
+  if (location.pathname === "/admin/strength" && pageParams.has("user")) document.body.classList.add("admin-strength-managed");
   const dqsCategories = [
     ["Фрукты", [2,2,2,1,0,0,0,-1]], ["Овощи", [2,2,2,1,0,0,0,-1]], ["Зелень", [2,2,2,1,0,0,0,-1]],
     ["Мясо", [2,2,1,0,0,-1,-2,-2]], ["Молочка", [2,2,1,0,-1,-2,-2,-2]], ["Сыры", [2,0,-1,-2,-2,-2,-2,-2]],
@@ -276,6 +277,11 @@
   function managedApplicationToolbar(code, detail) {
     const user = detail.user;
     const email = user.email || "email не указан";
+    if (code === "strength") return `
+      <section class="admin-managed-toolbar admin-strength-toolbar" aria-label="Выбранный пользователь">
+        <button class="admin-managed-person" id="admin-managed-person" type="button" aria-label="Сменить пользователя" title="Сменить пользователя" aria-haspopup="dialog"><strong>${esc(email)}</strong></button>
+        <a class="admin-managed-back" href="/admin/strength">Назад</a>
+      </section>`;
     return `
       <section class="admin-managed-toolbar" aria-label="Административный режим">
         <button class="admin-managed-person" id="admin-managed-person" type="button" aria-haspopup="dialog">
@@ -295,7 +301,7 @@
       : `<section class="admin-managed-empty"><strong>${esc(labels[code])} ещё не открывался</strong><p>${detail.has_access ? "Доступ у человека есть. Начальное состояние появится только после явного открытия." : "У человека нет действующего доступа к этому приложению."}</p>${detail.has_access ? '<button class="admin-action" id="admin-open-app" type="button">Открыть приложение</button>' : ""}</section>`;
     root.innerHTML = `${managedApplicationToolbar(code, detail)}${stage}`;
     document.getElementById("admin-managed-person").addEventListener("click", () => openApplicationUserPicker(code));
-    document.getElementById("admin-managed-app").addEventListener("change", (event) => {
+    document.getElementById("admin-managed-app")?.addEventListener("change", (event) => {
       location.href = applicationUserHref(event.target.value, detail.user.id);
     });
     const openButton = document.getElementById("admin-open-app");
@@ -985,6 +991,9 @@
     await fetch("/admin/api/logout", { method: "POST", credentials: "same-origin" });
     location.replace("/admin");
   });
-  window.addEventListener("popstate", () => run().catch(failure));
+  window.addEventListener("popstate", (event) => {
+    if (event.state?.edStrengthScreen) return;
+    run().catch(failure);
+  });
   run().catch(failure);
 }());

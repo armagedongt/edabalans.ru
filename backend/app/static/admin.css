@@ -67,3 +67,17 @@ body.strength-mobile-admin .admin-managed-toolbar{margin:8px 10px 10px}body.stre
   .admin-app-picker-list .admin-app-person{grid-template-columns:1fr}.admin-app-picker-list .admin-app-person-state{grid-column:auto}
   body.strength-mobile-admin .admin-managed-toolbar{top:0}
 }
+
+body.admin-strength-managed{--st-sticky-top:36px}
+body.admin-strength-managed #admin-content{padding:0}
+body.admin-strength-managed .admin-strength-toolbar{height:36px;min-height:36px;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;margin:0;padding:0 8px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:#fff;box-shadow:none;top:0}
+body.admin-strength-managed .admin-strength-toolbar .admin-managed-person{display:block;min-width:0;padding:4px 0;border-radius:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+body.admin-strength-managed .admin-strength-toolbar .admin-managed-person strong{display:block;margin:0;font-size:12px;line-height:22px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.admin-strength-managed .admin-managed-back{padding:5px 8px;font-size:12px;font-weight:600;color:var(--green);white-space:nowrap}
+body.admin-strength-managed .admin-managed-app{width:100%;padding:0}
+body.admin-strength-managed .admin-managed-app .ed-app-account-link{display:inline-grid!important}
+@media(max-width:760px){
+  body.ed-admin-shell.admin-strength-managed{padding-top:0;--st-sticky-top:44px}
+  body.ed-admin-shell.admin-strength-managed .admin-strength-toolbar{height:44px;min-height:44px;padding-left:52px}
+  body.ed-admin-shell.admin-strength-managed .admin-shell-mobile-open{width:34px;height:34px;top:5px;left:8px;border-radius:50%}
+}
