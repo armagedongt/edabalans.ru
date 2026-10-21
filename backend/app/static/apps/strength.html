@@ -3117,6 +3117,11 @@ function catalogItemById(id){
 }
 
 
+function exerciseNameHtml(item,name){
+  return esc(name)+(item && item.source === 'custom' ? ' <span title="Личное упражнение" aria-label="Личное упражнение">★</span>' : '');
+}
+
+
 function isFilled(session){
 
   var i;
@@ -3717,9 +3722,9 @@ function renderHistoryExercise(index,item,order,maxSets){
   var id=esc(exercise.id),data=' data-exercise-id="'+id+'"',args='this.dataset.exerciseId,'+index;
   var emptyPlan=!exercise.sets.some(function(set){return !blank(set.planWeight)||!blank(set.planReps);});
   var html='<article style="'+journalExerciseTone(order)+'" class="st-modern-exercise st-history-column" data-session-index="'+index+'" data-exercise-id="'+id+'">';
-  html+='<header class="st-modern-head"><div class="st-modern-title"><span class="st-exercise-number">'+(order+1)+'</span><strong>'+esc(item.short_name || item.exercise_name || exercise.name)+'</strong></div><div class="st-modern-tools">'+
+  html+='<header class="st-modern-head"><div class="st-modern-title"><span class="st-exercise-number">'+(order+1)+'</span><strong>'+exerciseNameHtml(item,item.short_name || item.exercise_name || exercise.name)+'</strong></div><div class="st-modern-tools">'+
     '<button'+data+' onclick="ST.addSet('+args+')" aria-label="Добавить подход">＋</button><button'+data+' onclick="ST.removeSet('+args+')" aria-label="Убрать подход">−</button>'+
-    (item.source==='base'?'<button class="st-exercise-info"'+data+' onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Информация об упражнении">i</button>':'')+'</div></header>'+
+    ((item.source==='base' || item.source==='custom')?'<button class="st-exercise-info"'+data+' onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Информация об упражнении">i</button>':'')+'</div></header>'+
     '<section class="st-modern-editor"><div class="st-grid-labels"><span></span><span class="st-plan-label">'+renderCopyButton(exercise.id,index,false,'',emptyPlan)+'<span>План</span></span><span class="st-fact-label">'+renderCopyButton(exercise.id,index,true,'',!exerciseHasFact(exercise))+'<span>Факт</span></span><span>RPE</span></div>';
   exercise.sets.forEach(function(set,setIndex){html+=renderModernSet(index,exercise,setIndex,set);});
   html+='<div class="st-history-set-space" style="height:'+Math.max(0,(maxSets-exercise.sets.length)*33)+'px"></div>'+
@@ -3823,7 +3828,7 @@ function renderCurrentExercises(){
     var exerciseInfo = catalogItemById(exercise.id);
     html += '<article class="st-modern-exercise ex'+(i%6)+'">'+
       '<header class="st-modern-head">'+
-        '<div class="st-modern-title"><span class="st-exercise-number">'+(i+1)+'</span><strong>'+esc(exercise.name)+'</strong></div><div class="st-modern-tools">'+(exerciseInfo && exerciseInfo.source === 'base' ? '<button class="st-exercise-info st-modern-exercise-info" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Как выполнять упражнение" title="Об упражнении"><span>i</span><span class="st-exercise-button-label">Информация</span></button>' : '')+
+        '<div class="st-modern-title"><span class="st-exercise-number">'+(i+1)+'</span><strong>'+exerciseNameHtml(exerciseInfo,exercise.name)+'</strong></div><div class="st-modern-tools">'+(exerciseInfo && (exerciseInfo.source === 'base' || exerciseInfo.source === 'custom') ? '<button class="st-exercise-info st-modern-exercise-info" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Как выполнять упражнение" title="Об упражнении"><span>i</span><span class="st-exercise-button-label">Информация</span></button>' : '')+
         '<button class="st-exercise-stats st-modern-exercise-stats" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseStats(this.dataset.exerciseId)" aria-label="Статистика упражнения" title="Статистика упражнения"><span>↗</span><span class="st-exercise-button-label">Статистика</span></button>'+
 
         '</div>'+
@@ -3929,9 +3934,9 @@ function renderExerciseRows(
     html +=
       '<section class="st-ex-row" style="--st-exercise-tone:var(--ex'+(c%6+1)+')">'+
       '<header class="st-ex-row-head">'+
-      '<span class="st-exercise-number">'+(c+1)+'</span><div class="st-ex-row-name">'+esc(catalog[c].exercise_name)+'</div>'+
+      '<span class="st-exercise-number">'+(c+1)+'</span><div class="st-ex-row-name">'+exerciseNameHtml(catalog[c],catalog[c].exercise_name)+'</div>'+
       '<div class="st-ex-row-tools">'+
-        ((catalogItemById(id) || {}).source === 'base' ? '<button class="st-exercise-info st-admin-exercise-info" data-exercise-id="'+esc(id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Информация об упражнении" title="Информация об упражнении"><span>i</span><span class="st-exercise-button-label">Информация</span></button>' : '')+
+        (['base','custom'].indexOf((catalogItemById(id) || {}).source) !== -1 ? '<button class="st-exercise-info st-admin-exercise-info" data-exercise-id="'+esc(id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Информация об упражнении" title="Информация об упражнении"><span>i</span><span class="st-exercise-button-label">Информация</span></button>' : '')+
         '<button class="st-exercise-stats st-admin-exercise-stats" data-exercise-id="'+esc(id)+'" onclick="ST.openExerciseStats(this.dataset.exerciseId)" aria-label="Статистика упражнения" title="Статистика упражнения"><span>↗</span><span class="st-exercise-button-label">Статистика</span></button>'+
       '</div>'+
       '</header><div class="st-ex-row-days">';
@@ -5120,6 +5125,11 @@ function renderModal(){
 
   if(app.modal.type === 'exerciseInfo'){
     var info = catalogItemById(app.modal.exerciseId);
+    if(info && info.source === 'custom'){
+      return '<section class="st-exercise-guide" role="dialog" aria-modal="true" aria-labelledby="st-guide-title">'+
+        '<header class="st-guide-header"><h2 id="st-guide-title">'+exerciseNameHtml(info,info.exercise_name)+'</h2><button class="st-guide-close" onclick="ST.closeModal()" aria-label="Закрыть информацию об упражнении">×</button></header>'+
+        '<div class="st-guide-body" tabindex="0"><div class="st-guide-copy"><p>Вы сами добавили это упражнение. Для него пока нет подготовленного описания.</p></div></div></section>';
+    }
     if(info && info.guide){
       var guide = info.guide;
       var guideHtml = '<section class="st-exercise-guide" role="dialog" aria-modal="true" aria-labelledby="st-guide-title">'+
@@ -5263,10 +5273,7 @@ function renderManager(){
     html +=
       '<div class="st-manager-row '+(active?'in-template':'out-template')+'">'+
         '<div class="st-manager-name">'+
-          esc(
-            catalog[i]
-              .exercise_name
-          )+
+          exerciseNameHtml(catalog[i],catalog[i].exercise_name)+
         '</div>'+
         '<div class="st-manager-actions">'+
           (active ? '<button class="st-mini" data-exercise-id="'+esc(catalog[i].exercise_id)+'" onclick="ST.moveExercise(this.dataset.exerciseId,-1)" aria-label="Выше">↑</button><button class="st-mini" data-exercise-id="'+esc(catalog[i].exercise_id)+'" onclick="ST.moveExercise(this.dataset.exerciseId,1)" aria-label="Ниже">↓</button>' : '')+
