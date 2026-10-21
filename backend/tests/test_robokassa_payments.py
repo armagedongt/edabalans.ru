@@ -355,8 +355,8 @@ def test_other_external_payment_routes_reject_refusal_before_creating_invoice(en
         app.dependency_overrides.clear()
 
 
-@pytest.mark.parametrize("old_version", [None, "2026-08-24-v1"])
-def test_internal_purchase_requires_current_saved_consent_without_another_checkbox(old_version):
+@pytest.mark.parametrize("old_version", [None, "unknown-version"])
+def test_internal_purchase_requires_recognized_saved_consent_without_another_checkbox(old_version):
     client, factory, _ = make_client()
     user_id = seed_subscription_catalog(factory)
     with factory() as db:
@@ -376,6 +376,67 @@ def test_internal_purchase_requires_current_saved_consent_without_another_checkb
                                        document_version=next(d["version"] for d in LEGAL_DOCUMENTS if d["code"] == "personal_data_consent"), source="native_account"))
             db.commit()
         assert client.post("/api/payments/robokassa/account-tariffs/checkout", **kwargs).status_code == 200
+    finally:
+        app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize("consent_version", ["2026-08-24-v1", "2026-10-21-v2"])
+def test_recognized_consent_does_not_require_reacceptance_or_block_internal_purchase(consent_version):
+    from app.legal_service import legal_acceptances_complete, legal_status_payload
+
+    client, factory, _ = make_client()
+    user_id = seed_subscription_catalog(factory)
+    with factory() as db:
+        db.add(AccountSession(user_id=user_id, token_hash=token_hash("retained-consent-session"),
+                              password_version=1, expires_at=datetime.now(timezone.utc) + timedelta(days=1)))
+        db.add(UserLegalAcceptance(user_id=user_id, document_code="personal_data_consent",
+                                   document_version=consent_version, source="native_account"))
+        db.add(UserLegalAcceptance(user_id=user_id, document_code="educational_disclaimer",
+                                   document_version="2026-08-24-v2", source="native_account"))
+        db.commit()
+        assert legal_acceptances_complete(db, user_id)
+        status = legal_status_payload(db, user_id)
+        assert status["required"] is False
+        assert all(document["accepted"] for document in status["documents"])
+    client.cookies.set(COOKIE_NAME, "retained-consent-session")
+    try:
+        response = client.post("/api/payments/robokassa/account-tariffs/checkout",
+                               json={"price_code": "site.masterclass.basic"},
+                               headers={"Origin": "https://app.edabalans.ru"})
+        assert response.status_code == 200
+        with factory() as db:
+            rows = db.scalars(select(UserLegalAcceptance).where(
+                UserLegalAcceptance.user_id == user_id,
+                UserLegalAcceptance.document_code == "personal_data_consent")).all()
+            assert [row.document_version for row in rows] == [consent_version]
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_accepting_missing_disclaimer_preserves_historical_data_consent():
+    from app.legal_service import accept_current_legal_documents, legal_status_payload
+
+    _, factory, _ = make_client()
+    user_id = seed_subscription_catalog(factory)
+    try:
+        with factory() as db:
+            db.add(UserLegalAcceptance(user_id=user_id, document_code="personal_data_consent",
+                                       document_version="2026-08-24-v1", source="historical_checkout"))
+            db.commit()
+            status = legal_status_payload(db, user_id)
+            assert status["required"] is True
+            assert {item["code"]: item["accepted"] for item in status["documents"]} == {
+                "personal_data_consent": True, "educational_disclaimer": False}
+            accept_current_legal_documents(db, user_id,
+                                           [item["code"] for item in status["documents"]],
+                                           source="native_account")
+            db.commit()
+            assert legal_status_payload(db, user_id)["required"] is False
+            rows = db.scalars(select(UserLegalAcceptance).where(
+                UserLegalAcceptance.user_id == user_id,
+                UserLegalAcceptance.document_code == "personal_data_consent")).all()
+            assert [(row.document_version, row.source) for row in rows] == [
+                ("2026-08-24-v1", "historical_checkout")]
     finally:
         app.dependency_overrides.clear()
 

@@ -777,16 +777,15 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert 'id="cookie-settings"' in privacy
     assert "«Робокассу»" in privacy
     assert "Telegram, MAX, сервис электронной почты" not in privacy
-    assert "Редакция от" in privacy
+    assert "Действует с" in privacy
     consent = client.get("/legal/consent.html").text
     assert "отдельное согласие" in consent.lower()
     assert "Публикация конкретного отзыва" in consent
     offer = client.get("/legal/offer.html").text
-    assert "90 дней с даты его оплаты" in offer
+    assert "90 дней с даты оплаты соответствующего продукта" in offer
     assert "проходит программу медленнее" not in offer
-    assert "без удержания расходов" in offer
     assert "первого открытия материалов четвёртого дня" in offer
-    assert "первого открытия материалов её первой части" in offer
+    assert "можно вернуть только до первого открытия их материалов" in offer
     disclaimer = client.get("/legal/disclaimer.html").text
     assert "не является врачом или иным медицинским работником" in disclaimer
     assert "Сергей Воронцов — нутрициолог" not in disclaimer

@@ -32,7 +32,7 @@ LEGAL_DOCUMENTS = (
             "В личном кабинете хранятся данные вашего аккаунта — история "
             "покупок, прогресс обучения, анкета, дневник питания и любые другие "
             "сведения, которые вы укажете самостоятельно.\n\n"
-            "По умолчанию данные хранятся только на территории РФ в соответствии "
+            "Данные проекта хранятся на территории РФ в соответствии "
             "с законом. Политика подробно объясняет "
             "состав данных, цели обработки, сроки хранения и ваши права."
         ),
@@ -66,8 +66,15 @@ def record_data_consent(db: Session, user_id: uuid.UUID, snapshot: dict) -> None
     ))
 
 
+def document_accepted(accepted: set[tuple[str, str]], code: str, version: str) -> bool:
+    if (code, version) in accepted:
+        return True
+    return code == "personal_data_consent" and (code, "2026-08-24-v1") in accepted
+
+
 def data_consent_complete(db: Session, user_id: uuid.UUID) -> bool:
-    return ("personal_data_consent", current_legal_versions()["personal_data_consent"]) in accepted_legal_versions(db, user_id)
+    return document_accepted(accepted_legal_versions(db, user_id), "personal_data_consent",
+                             current_legal_versions()["personal_data_consent"])
 
 
 def current_legal_versions() -> dict[str, str]:
@@ -87,7 +94,7 @@ def accepted_legal_versions(db: Session, user_id: uuid.UUID) -> set[tuple[str, s
 
 def legal_acceptances_complete(db: Session, user_id: uuid.UUID) -> bool:
     accepted = accepted_legal_versions(db, user_id)
-    return all((item["code"], item["version"]) in accepted for item in LEGAL_DOCUMENTS)
+    return all(document_accepted(accepted, item["code"], item["version"]) for item in LEGAL_DOCUMENTS)
 
 
 def legal_status_payload(db: Session, user_id: uuid.UUID) -> dict:
@@ -95,7 +102,7 @@ def legal_status_payload(db: Session, user_id: uuid.UUID) -> dict:
     documents = [
         {
             **item,
-            "accepted": (item["code"], item["version"]) in accepted,
+            "accepted": document_accepted(accepted, item["code"], item["version"]),
         }
         for item in LEGAL_DOCUMENTS
     ]
@@ -118,7 +125,7 @@ def accept_current_legal_documents(
         raise ValueError("all current legal documents must be accepted together")
     accepted = accepted_legal_versions(db, user_id)
     for code, version in current_legal_versions().items():
-        if (code, version) not in accepted:
+        if not document_accepted(accepted, code, version):
             db.add(
                 UserLegalAcceptance(
                     user_id=user_id,
