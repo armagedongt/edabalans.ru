@@ -319,6 +319,7 @@ const plain=await open(768),admin=await open(768,true);
 assert.equal(await plain.page.locator('#strength-app').innerHTML(),await admin.page.locator('#strength-app').innerHTML());
 assert.equal(await admin.page.locator('#strength-app .preview-account').count(),0);
 assert.equal(await admin.page.locator('.preview-account').count(),1);
+for(const page of [plain.page,admin.page]){const account=page.getByRole('link',{name:'Личный кабинет',exact:true});assert.equal(await account.getAttribute('href'),'/lk');assert.equal(await account.locator('svg').count(),1,'shared account control uses the standard icon');}
 assert.equal(await plain.page.locator('[data-strength-telegram-export]').count(),0);
 assert.equal(await admin.page.locator('#strength-app [data-strength-telegram-export]').count(),0,'admin export is outside shared journal');
 await admin.page.getByRole('button',{name:'Выбрать тренировку №1',exact:true}).click();

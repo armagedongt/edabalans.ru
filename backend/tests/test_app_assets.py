@@ -454,8 +454,6 @@ def test_client_apps_share_design_tokens_account_link_and_single_footer(monkeypa
     assert 'href="/admin/dqs"' in fragments["dqs"]
     assert re.search(r'dqs-profile-link ed-app-account-link[^>]*>\s*<svg', fragments["dqs"])
     assert "href=\"'+esc(ACCOUNT_URL)+'\"" in fragments["strength"]
-    assert 'href="/admin/strength"' in fragments["strength"]
-    assert re.search(r'st-profile ed-app-account-link[^>]*>\s*[^<]*<svg', fragments["strength"])
     assert "root.querySelector('.open-account').onclick=function(){location.href=accountUrl}" in fragments["recipes"]
     assert "mask:url(" in fragments["recipes"]
     metabolism = fragments["metabolism"]
