@@ -219,6 +219,7 @@ python tools/install_edabalans_writer_skill.py --check
   разворота и перехода от очевидного объяснения к авторскому критерию.
 - `correction-nutritionists-law-v1.json` — безопасные метаданные эталонной
   correction chain; сами версии текста хранятся приватно.
+- `cases/legal-revision-residue.md` — разбор следов обсуждения в оферте и проверка первого чтения;
 - `cases/cutlets.md` и `cases/nutritionists-law.md` — два утверждённых учебных
   разбора правок; это доказательства контракта, а не альтернативные инструкции.
 - `cases/calories-masterclass-neuroslop.md` — контексты лишних страховок,

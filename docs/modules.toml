@@ -221,6 +221,7 @@ owns_files = [
   "content/author-voice/writer-contract-v1.md",
   "content/author-voice/cases/cutlets.md",
   "content/author-voice/cases/calories-masterclass-neuroslop.md",
+  "content/author-voice/cases/legal-revision-residue.md",
   "content/author-voice/cases/nutritionists-law.md",
   "content/author-voice/skill/edabalans-writer/SKILL.md",
   "content/external-references/**",

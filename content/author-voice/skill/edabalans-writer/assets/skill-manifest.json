@@ -1,5 +1,5 @@
 {
-  "package_version": "2.10.31-20261019",
+  "package_version": "2.10.32-20261021",
   "files": [
     {
       "path": "content/author-voice/skill/edabalans-neuroslop-auditor/SKILL.md",
@@ -11,7 +11,7 @@
     },
     {
       "path": "content/author-voice/voice-rules-v1.json",
-      "sha256": "cdb5a5f1542154876bacd2f0f83df1730e82d10f4efc9e3e988ed429cc0b65b1"
+      "sha256": "8714af96c187d1188a59e238f73e918d106b8869566981c23323d035e4ee50e3"
     },
     {
       "path": "content/author-voice/skill/edabalans-writer/SKILL.md",
@@ -27,7 +27,7 @@
     },
     {
       "path": "content/author-voice/writer-contract-v1.md",
-      "sha256": "92753b2656cd81d8db1ae5809333bbf2f5314f6f5607ec133434bff81c508988"
+      "sha256": "6742d8f2b64fecffc986fe7add9155cc9de9bc76222f3d434cca82fe709eb4e5"
     },
     {
       "path": "docs/knowledge-base/ARTICLE_STANDARD.md",
@@ -59,7 +59,7 @@
     },
     {
       "path": "content/author-voice/README.md",
-      "sha256": "82b7cc1d5e06c64e15937d6325f4365189bad0c43241b421d713faec7a8c4dd5"
+      "sha256": "e16c61784fb0a1b31766e22c61ae9a0e93bf8ee2f87a97629f6649c85059db79"
     },
     {
       "path": "docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md",
@@ -96,6 +96,10 @@
     {
       "path": "docs/knowledge-base/USER_NOTIFICATIONS.md",
       "sha256": "17b14edb0be1ec9505ea8de9a2d57cd692e47590c5fce4817e1ebe712b5a103e"
+    },
+    {
+      "path": "content/author-voice/cases/legal-revision-residue.md",
+      "sha256": "1064e1fe879a98ee9790fafa5f9f6b32763456351dd8b7863a46c4c33bb8bdb0"
     }
   ]
 }

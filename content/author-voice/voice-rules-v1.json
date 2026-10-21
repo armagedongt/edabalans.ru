@@ -3,6 +3,20 @@
   "status": "semantic_seed_for_materialization",
   "rules": [
     {
+      "rule_id": "language.remove_revision_residue",
+      "section": "language",
+      "statement": "Применять проверку первого чтения из раздела 10 writer-contract-v1.md: итоговый абзац сообщает действующее условие, а не объясняет удалённую редакцию.",
+      "mechanism": "Скрыть переписку и прежнюю версию; назвать функцию каждой новой оговорки. Фразу, нужную только для отчёта о правке, вынести из готового текста.",
+      "scope": [
+        "all"
+      ],
+      "counter_boundary": "Сохранять отрицания, необходимые границы и факты, которые меняют действие нового читателя. Не скрывать несоответствие процесса заявленному условию.",
+      "confidence": "high",
+      "evidence_ids": [
+        "owner:2026-10-21:legal-revision-residue"
+      ]
+    },
+    {
       "rule_id": "language.stop_after_sufficient_explanation",
       "section": "language",
       "statement": "Применять раздел 10 writer-contract-v1.md уже при написании: после достаточного правила и примера не добавлять очевидную страховку, повторное определение или пустую похвалу методу.",
