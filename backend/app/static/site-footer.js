@@ -23,7 +23,7 @@
     '.eb-footer__inner{position:relative;width:min(1200px,100%);margin:0 auto;padding:26px 24px 32px}',
     '.eb-footer__row{display:grid;grid-template-columns:minmax(260px,1fr) auto;gap:16px 32px;align-items:start}',
     '.eb-footer__owner,.eb-footer__contacts{margin:0;color:inherit}',
-    '.eb-footer__rights{display:block;margin:20px 0 0;font-size:11px;opacity:.66}.eb-footer__inn{display:inline-block;white-space:nowrap}',
+    '.eb-footer__rights{display:block;margin:20px 0 0;font-size:11px;text-align:center;opacity:.66}.eb-footer__inn{display:inline-block;white-space:nowrap}',
     '.eb-footer__contacts{text-align:right}',
     '.eb-footer__links{display:flex;justify-content:flex-end;gap:7px 16px;flex-wrap:wrap}',
     '.eb-footer__links a{font-weight:600}',
