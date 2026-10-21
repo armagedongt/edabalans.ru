@@ -980,7 +980,7 @@ owns_routes = ["*/bot-api/*broadcast*", "*/bot-api/*manual-message*"]
 id = "messaging.telegram.engine"
 admin_catalog = [{ category = "service", order = 10, url = "/admin/messaging", label = "Telegram-бот", icon = "💬", description = "Пока не редактируется в админке: канонические тексты и правила меняются через Codex." }]
 parent = "messaging.telegram"
-reads_from = ["platform.content"]
+reads_from = ["platform.content", "platform.commerce", "platform.crm", "products.catalog", "marketing.analytics"]
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.engine.md"
 owns_files = [
   "telegram-bot/.env.example", "telegram-bot/.gitignore", "telegram-bot/schema/**",

@@ -25,14 +25,15 @@ class Sender:
 
 
 @pytest.mark.parametrize("role,path", [("technical", "/admin"), ("finance", "/crm"), ("marketing", "/admin/marketing")])
-def test_owner_gets_role_card_and_new_pin(role, path):
+def test_owner_gets_role_links_without_repinning(role, path):
     sender = Sender()
     assert handle_update(sender, role, {"11"}, update())
     method, payload = sender.calls[0]
     assert method == "sendMessage" and payload["chat_id"] == "11"
-    urls = [b["url"] for row in payload["reply_markup"]["inline_keyboard"] for b in row]
-    assert any(url.endswith(path) for url in urls)
-    assert sender.calls[1] == ("pinChatMessage", {"chat_id": "11", "message_id": 72, "disable_notification": True})
+    assert path in payload["text"] and payload["parse_mode"] == "HTML"
+    assert all(method != "pinChatMessage" for method, _ in sender.calls)
+    commands = sender.calls[1][1]["commands"]
+    assert {c["command"] for c in commands} == ({"links", "payments", "failed"} if role == "finance" else {"links"})
 
 
 @pytest.mark.parametrize("message", [update(user=12), update(chat=-1, kind="group"), update(chat=12), update("idea"), update("/unknown"), {}])
@@ -42,11 +43,7 @@ def test_other_people_chats_and_text_do_not_trigger_navigation(message):
     assert sender.calls == []
 
 
-def test_pin_failure_does_not_retry_already_delivered_card():
-    assert handle_update(Sender(pin_fails=True), "technical", {"11"}, update())
-
-
-@pytest.mark.parametrize("failed_method", ["pinChatMessage", "setMyCommands"])
+@pytest.mark.parametrize("failed_method", ["setMyCommands"])
 def test_network_error_after_delivery_does_not_resend_card(failed_method):
     class NetworkSender(Sender):
         def call(self, method, payload, **kwargs):
@@ -57,6 +54,91 @@ def test_network_error_after_delivery_does_not_resend_card(failed_method):
     sender = NetworkSender()
     assert handle_update(sender, "technical", {"11"}, update())
     assert sum(method == "sendMessage" for method, _ in sender.calls) == 1
+
+
+def callback(user=11, chat=11, data="owner:payments"):
+    return {"callback_query": {"id": "cb", "from": {"id": user}, "data": data,
+                               "message": {"chat": {"id": chat, "type": "private"}}}}
+
+
+@pytest.mark.parametrize("message", [update("/payments", user=12), callback(user=12), callback(chat=12), callback(data="unknown")])
+def test_payment_reports_are_private_and_owner_only(monkeypatch, message):
+    import app.operator_navigation as nav
+    monkeypatch.setattr(nav, "payment_summary", lambda *_: pytest.fail("Must not read payments"))
+    sender = Sender()
+    assert not handle_update(sender, "finance", {"11"}, message)
+    assert sender.calls == []
+
+
+def test_finance_buttons_and_commands_deliver_report_without_pin(monkeypatch):
+    import app.operator_navigation as nav
+    requested = []
+    def report(failed):
+        requested.append(failed)
+        return "report"
+    monkeypatch.setattr(nav, "payment_summary", report)
+    sender = Sender()
+    assert handle_update(sender, "finance", {"11"}, callback())
+    assert handle_update(sender, "finance", {"11"}, update("/failed"))
+    assert requested == [False, True]
+    assert [method for method, _ in sender.calls] == ["answerCallbackQuery", "sendMessage", "sendMessage"]
+    assert not handle_update(sender, "marketing", {"11"}, callback())
+
+
+def test_payment_database_error_is_safe_and_does_not_lose_the_request(monkeypatch):
+    import app.operator_navigation as nav
+    def unavailable(_):
+        raise RuntimeError("secret connection details")
+    monkeypatch.setattr(nav, "payment_summary", unavailable)
+    sender = Sender()
+    assert handle_update(sender, "finance", {"11"}, update("/payments"))
+    assert "Попробуйте" in sender.calls[0][1]["text"]
+    assert "secret" not in str(sender.calls)
+
+
+def test_payment_summary_filters_limits_orders_and_omits_customer_data(monkeypatch):
+    import app.operator_navigation as nav
+    from datetime import datetime, timedelta
+    from sqlalchemy import Column, DateTime, Integer, JSON, MetaData, Numeric, String, Table, create_engine
+    from sqlalchemy.orm import sessionmaker
+    engine = create_engine("sqlite://")
+    metadata = MetaData()
+    payments = Table("payments", metadata, Column("id", Integer, primary_key=True),
+                     Column("product_name_raw", String), Column("amount", Numeric), Column("currency", String),
+                     Column("payment_status", String), Column("paid_at", DateTime), Column("source_event_at", DateTime),
+                     Column("created_at", DateTime), Column("raw_payload", JSON), Column("email_at_purchase", String))
+    checkouts = Table("offer_checkouts", metadata, Column("payment_id", Integer), Column("checkout_kind", String))
+    metadata.create_all(engine)
+    base = datetime(2026, 10, 1, 10)
+    rows = [dict(id=i, product_name_raw=f"Курс {i}", amount=i*100, currency="RUB", payment_status="paid",
+                 created_at=base+timedelta(days=i), paid_at=None, source_event_at=None,
+                 raw_payload={}, email_at_purchase="private@example.test") for i in range(1, 19)]
+    # A recently imported old payment must not displace a recent real operation.
+    rows[0].update(created_at=base+timedelta(days=100), paid_at=base+timedelta(days=1))
+    rows[11].update(paid_at=base+timedelta(days=20), source_event_at=base+timedelta(days=15))
+    rows[10].update(source_event_at=base+timedelta(days=19))
+    rows[11]["payment_status"] = "confirmed"
+    rows[12]["payment_status"] = "pending"
+    rows[13]["payment_status"] = "failed"
+    rows[14]["payment_status"] = "cancelled"
+    rows[15]["raw_payload"] = {"integration": {"test_mode": True}}
+    rows[16]["raw_payload"] = {"test_mode": True}
+    with engine.begin() as db:
+        db.execute(payments.insert(), rows)
+        db.execute(checkouts.insert(), {"payment_id": 18, "checkout_kind": "robokassa_live_probe"})
+    monkeypatch.setattr(nav, "SessionLocal", sessionmaker(bind=engine))
+    body = nav.payment_summary(False)
+    assert len([line for line in body.splitlines() if "₽ ·" in line]) == 10
+    assert body.index("Курс 12") < body.index("Курс 11")
+    assert "21.10.2026 13:00" in body and "20.10.2026 13:00" in body
+    assert "Курс 1\n" not in body and "Курс 2\n" not in body
+    assert "13:00" in body and "private@" not in body
+    assert all(f"Курс {i}" not in body for i in range(13, 19))
+    failed = nav.payment_summary(True)
+    assert "Курс 14" in failed and "Курс 15" in failed and "Курс 13" not in failed
+    with engine.begin() as db:
+        db.execute(payments.delete())
+    assert "Операций пока нет" in nav.payment_summary(False)
 
 
 @pytest.mark.parametrize("first_blocked", [False, True])

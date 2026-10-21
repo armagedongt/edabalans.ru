@@ -1162,13 +1162,13 @@
     const params = new URLSearchParams(location.search); state.query = params.get("q") || "";
     const initialUser = params.get("user");
     if (initialUser) return openUser(initialUser, false);
-    return showView("users");
+    return showView(params.get("view") === "payments" ? "payments" : "users");
   }
 
   window.addEventListener("popstate", () => {
     const userId = new URLSearchParams(location.search).get("user");
     if (userId) openUser(userId, false).catch(showError);
-    else showView("users").catch(showError);
+    else showView(new URLSearchParams(location.search).get("view") === "payments" ? "payments" : "users").catch(showError);
   });
 
   initialise().catch(showError);

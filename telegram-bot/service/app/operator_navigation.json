@@ -1,158 +1,33 @@
 {
   "technical": {
-    "text": "Быстрый доступ Сергея\n\n💰 Финансы — @fitpostgpbot\n📈 Реклама — @TetrisgfgfgfBot\n🛠 Техническое — @Chat_GPT_4_SV_bot\n✉️ Тесты рассылок — @Fitness_Talks_bot\n\nКнопки ниже открывают сайт и разделы админки. Для закрытых разделов нужен обычный вход администратора.\n\nВ CRM оплаты открываются вкладкой «Оплаты». «Финансовая модель» — расчётная модель, а не журнал реальных оплат.\n\nЧтобы бот мог писать в каждый аккаунт, открой его из этого аккаунта и нажми «Запустить»; если он заблокирован — разблокируй.\n\nСейчас команды этому боту не передаются в Codex. Получение сообщений через Coze отключено. Управление через Codex пока не подключено.\n\nПовторить эту карточку: /links.",
-    "reply_markup": {
-      "inline_keyboard": [
-        [
-          {
-            "text": "🌐 Главная",
-            "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/"
-          },
-          {
-            "text": "⚡ Интенсив",
-            "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive"
-          }
-        ],
-        [
-          {
-            "text": "✍️ Блог",
-            "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blog"
-          },
-          {
-            "text": "👤 Личный кабинет",
-            "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk"
-          }
-        ],
-        [
-          {
-            "text": "💳 Форма оплаты",
-            "url": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/pay"
-          },
-          {
-            "text": "📣 Telegram-канал",
-            "url": "https://t.me/Fitness_Talks"
-          }
-        ],
-        [
-          {
-            "text": "⚙️ Админка",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin"
-          },
-          {
-            "text": "👥 CRM и оплаты",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/crm"
-          }
-        ],
-        [
-          {
-            "text": "📈 Источники и воронка",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/marketing"
-          },
-          {
-            "text": "📊 Финансовая модель",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/finance"
-          }
-        ],
-        [
-          {
-            "text": "🏷 Цены и тарифы",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/pricing"
-          },
-          {
-            "text": "📦 Продукты",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/products"
-          }
-        ],
-        [
-          {
-            "text": "🎓 Мастер-класс: редактор",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/courses/masterclass-21/structure"
-          },
-          {
-            "text": "🍎 Калорийный: редактор",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/courses/calories/structure"
-          }
-        ],
-        [
-          {
-            "text": "🗂 Каталог материалов",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/content"
-          },
-          {
-            "text": "🔎 Библиотекарь",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/library"
-          }
-        ],
-        [
-          {
-            "text": "🥑 DQS",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/dqs"
-          },
-          {
-            "text": "💪 Силовые",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/strength"
-          },
-          {
-            "text": "🔥 Метаболизм",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/metabolism"
-          }
-        ],
-        [
-          {
-            "text": "🗺 Карта системы",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/knowledge-base?view=map"
-          },
-          {
-            "text": "📄 Документы",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/knowledge-base?view=documents"
-          }
-        ]
-      ]
-    },
+    "text": "<b>Быстрый доступ</b>\n\n<b>Пользовательские</b>\nГлавная — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/\">похудение-это-есть.рф/</a>\nЛичный кабинет — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk\">похудение-это-есть.рф/lk</a>\nИнтенсив — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensive\">похудение-это-есть.рф/intensive</a>\nБлог — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/blog\">похудение-это-есть.рф/blog</a>\nDQS — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/dqs\">похудение-это-есть.рф/dqs</a>\nСиловые — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/strength\">похудение-это-есть.рф/strength</a>\nМетаболизм — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/metabolism\">похудение-это-есть.рф/metabolism</a>\nКалькулятор рецептов — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/recipes\">похудение-это-есть.рф/recipes</a>\nМастер-класс — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk?course_day=1\">похудение-это-есть.рф/lk?course_day=1</a>\nКурс по калориям — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk?calories_stage=1\">похудение-это-есть.рф/lk?calories_stage=1</a>\nКаталог рецептов — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk?recipes_section=1\">похудение-это-есть.рф/lk?recipes_section=1</a>\n\n<b>Администрирование</b>\nАдминка — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin\">admin.похудение-это-есть.рф/admin</a>\nКлиенты — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/crm\">admin.похудение-это-есть.рф/crm</a>\nЖурнал оплат — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/crm?view=payments\">admin.похудение-это-есть.рф/crm?view=payments</a>\nЦены — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/pricing\">admin.похудение-это-есть.рф/admin/pricing</a>\nПродукты — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/products\">admin.похудение-это-есть.рф/admin/products</a>\nПривлечение и источники — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/marketing\">admin.похудение-это-есть.рф/admin/marketing</a>\nМатериалы — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/content\">admin.похудение-это-есть.рф/admin/content</a>\nБиблиотека — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/library\">admin.похудение-это-есть.рф/admin/library</a>\nРедактор Мастер-класса — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/courses/masterclass-21/structure\">admin.похудение-это-есть.рф/admin/courses/masterclass-21/structure</a>\nРедактор калорийного курса — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/courses/calories/structure\">admin.похудение-это-есть.рф/admin/courses/calories/structure</a>\nКарта системы — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/knowledge-base?view=map\">admin.похудение-это-есть.рф/admin/knowledge-base?view=map</a>\nИндивидуальная оплата — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/pay\">похудение-это-есть.рф/pay</a>\nПодписка на сопровождение — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/subscription\">похудение-это-есть.рф/subscription</a>\n\n<b>Прочие проекты</b>\nПутешествия — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/travel\">похудение-это-есть.рф/travel</a>\nФинансовая модель — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/finance\">admin.похудение-это-есть.рф/finance</a>\nПогода — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/weather/\">похудение-это-есть.рф/weather/</a>\nИгра — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/game/\">похудение-это-есть.рф/game/</a>\n\n<a href=\"https://chatgpt.com/local/01a15b3a-caaf-73b3-9771-244f99e7a054\">Codex: проект и сервер</a>\n\n<b>Боты</b>\n@fitpostgpbot — финансы\n@TetrisgfgfgfBot — реклама\n@Chat_GPT_4_SV_bot — техническое\n@Fitness_Talks_bot — тесты рассылок\n\n/links — показать ссылки снова",
+    "parse_mode": "HTML",
     "disable_web_page_preview": true
   },
   "finance": {
-    "text": "Финансы — быстрый доступ\n\nОплаты: CRM → «Оплаты». Повторить эту карточку: /links.",
+    "text": "<b>Финансы</b>\n\nКлиенты — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/crm\">admin.похудение-это-есть.рф/crm</a>\nЖурнал оплат — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/crm?view=payments\">admin.похудение-это-есть.рф/crm?view=payments</a>\nИндивидуальная оплата — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/pay\">похудение-это-есть.рф/pay</a>\nПодписка на сопровождение — <a href=\"https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/subscription\">похудение-это-есть.рф/subscription</a>\nЦены — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/pricing\">admin.похудение-это-есть.рф/admin/pricing</a>\nПродукты — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/products\">admin.похудение-это-есть.рф/admin/products</a>\nФинансовая модель — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/finance\">admin.похудение-это-есть.рф/finance</a>\n\n/payments — последние 10 успешных\n/failed — последние 10 неуспешных\n/links — показать ссылки снова",
+    "parse_mode": "HTML",
+    "disable_web_page_preview": true,
     "reply_markup": {
       "inline_keyboard": [
         [
           {
-            "text": "CRM и оплаты",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/crm"
+            "text": "Последние оплаты",
+            "callback_data": "owner:payments"
           }
         ],
         [
           {
-            "text": "Цены",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/pricing"
-          },
-          {
-            "text": "Финансовая модель",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/finance"
+            "text": "Неуспешные оплаты",
+            "callback_data": "owner:failed"
           }
         ]
       ]
-    },
-    "disable_web_page_preview": true
+    }
   },
   "marketing": {
-    "text": "Реклама — быстрый доступ\n\nПовторить эту карточку: /links.",
-    "reply_markup": {
-      "inline_keyboard": [
-        [
-          {
-            "text": "Источники и воронка",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/marketing"
-          }
-        ],
-        [
-          {
-            "text": "Каталог материалов",
-            "url": "https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/content"
-          }
-        ]
-      ]
-    },
+    "text": "<b>Рекламная статистика</b>\n\nПривлечение, источники и воронка — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/marketing\">admin.похудение-это-есть.рф/admin/marketing</a>\nРекламные ссылки — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/channel-links\">admin.похудение-это-есть.рф/admin/channel-links</a>\nКаталог материалов — <a href=\"https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/content\">admin.похудение-это-есть.рф/admin/content</a>\n\n/links — показать ссылки снова",
+    "parse_mode": "HTML",
     "disable_web_page_preview": true
   }
 }

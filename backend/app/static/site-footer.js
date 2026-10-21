@@ -19,12 +19,12 @@
   };
 
   var CSS = [
-    '.eb-footer{box-sizing:border-box;width:100%;background:var(--surface-soft,#f3f9fc);box-shadow:0 -7px 22px rgba(35,77,106,.07);color:inherit;font-family:inherit;font-size:14px;line-height:1.55}',
+    '.eb-footer{box-sizing:border-box;width:100%;background:var(--surface-soft,#f3f9fc);box-shadow:0 -7px 22px rgba(35,77,106,.07);color:inherit;font-family:inherit;font-size:12px;line-height:1.55}',
     '.eb-footer *{box-sizing:border-box}',
-    '.eb-footer__inner{position:relative;width:min(1200px,100%);margin:0 auto;padding:26px 24px 32px}',
-    '.eb-footer__row{display:grid;grid-template-columns:minmax(260px,1fr) auto;gap:16px 32px;align-items:start}',
+    '.eb-footer__inner{position:relative;width:min(var(--eb-footer-width,var(--content-frame,760px)),calc(100% - var(--eb-footer-gutter,40px)));margin:0 auto;padding:24px 0}',
+    '.eb-footer__row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 24px;align-items:start}',
     '.eb-footer__owner,.eb-footer__contacts{margin:0;color:inherit}',
-    '.eb-footer__rights{display:block;margin:20px 0 0;font-size:11px;text-align:center;opacity:.66}.eb-footer__inn{display:inline-block;white-space:nowrap}',
+    '.eb-footer__rights{display:block;margin:12px 0 0;font-size:10px;text-align:center;opacity:.66}.eb-footer__inn{display:block;white-space:nowrap}',
     '.eb-footer__contacts{text-align:right}',
     '.eb-footer__links{display:flex;justify-content:flex-end;gap:7px 16px;flex-wrap:wrap}',
     '.eb-footer__links a{font-weight:600}',
@@ -32,10 +32,9 @@
     '.eb-footer a{color:inherit;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;border:0}',
     '.eb-footer a:hover{opacity:.72}',
     '.eb-footer a:focus-visible{outline:2px solid currentColor;outline-offset:3px}',
-    '.eb-footer__documents{display:flex;gap:8px 18px;flex-wrap:wrap;margin-top:15px;opacity:.72}',
-    '.eb-footer--private{background:var(--ed-app-card,#f3f9fc);color:var(--ed-app-muted,#7b8094);font:13px/1.55 var(--ed-font-body, Manrope, Arial, sans-serif)}',
-    '.eb-footer--private .eb-footer__inner{width:min(1080px,100%);padding:22px 20px 30px}',
-    '@media(max-width:640px){.eb-footer__inner{padding:23px 20px 28px}.eb-footer__row{grid-template-columns:1fr;gap:12px}.eb-footer__owner,.eb-footer__contacts{text-align:center}.eb-footer__links,.eb-footer__documents{justify-content:center}}'
+    '.eb-footer__documents{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:12px;font-size:11px;opacity:.8}.eb-footer__documents a{white-space:nowrap}',
+    '.eb-footer--private{background:var(--ed-app-card,#f3f9fc);color:var(--ed-app-muted,#7b8094);font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}',
+    '@media(max-width:640px){.eb-footer__row{grid-template-columns:1fr;gap:12px}.eb-footer__owner,.eb-footer__contacts{text-align:center}.eb-footer__links{justify-content:center}}'
   ].join('');
 
   function link(url, text) {
@@ -57,8 +56,8 @@
           contactsMarkup() +
         '</div>' +
         '<nav class="eb-footer__documents" aria-label="Юридические документы">' +
-          link(LINKS.offer, 'Оферта') +
           link(LINKS.privacy, 'Политика обработки персональных данных') +
+          link(LINKS.offer, 'Оферта') +
         '</nav>' +
         '<p class="eb-footer__rights">Копирование материалов запрещено.</p>' +
       '</div>' +
@@ -74,8 +73,8 @@
           contactsMarkup() +
         '</div>' +
         '<nav class="eb-footer__documents" aria-label="Документы личного кабинета">' +
-          link(LINKS.disclaimer, 'Образовательный дисклеймер') +
           link(LINKS.privacy, 'Политика обработки персональных данных') +
+          link(LINKS.disclaimer, 'Образовательный дисклеймер') +
         '</nav>' +
         '<p class="eb-footer__rights">Копирование материалов запрещено.</p>' +
       '</div>' +

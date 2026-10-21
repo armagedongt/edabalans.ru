@@ -114,3 +114,8 @@ html[data-theme=dark] .starter-fold{background:#213341;border-color:var(--border
  html[data-starter-thumbnails=true] .starter-card .card-visual img{padding:3px}
 }
 @media(prefers-reduced-motion:reduce){.article-card,.starter-card{transition:none;transform:none!important}}
+
+/* The footer uses the same content edges as this surface. */
+body{--eb-footer-width:1180px;--eb-footer-gutter:40px}
+body:has(.article-shell){--eb-footer-width:760px}
+@media(max-width:640px){body{--eb-footer-gutter:48px}}
