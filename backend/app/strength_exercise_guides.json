@@ -31,7 +31,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Жим штанги лёжа",
+    "full_name": "Жим штанги лёжа"
   },
   {
     "code": "close-grip-bench-press",
@@ -65,7 +67,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Жим узким хватом",
+    "full_name": "Жим штанги лёжа узким хватом"
   },
   {
     "code": "incline-dumbbell-press",
@@ -99,7 +103,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Жим гантелей под углом",
+    "full_name": "Жим гантелей на наклонной скамье"
   },
   {
     "code": "assisted-pull-up",
@@ -133,7 +139,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Подтягивания в гравитроне",
+    "full_name": "Подтягивания в гравитроне"
   },
   {
     "code": "lat-pulldown",
@@ -167,7 +175,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Тяга верхнего блока",
+    "full_name": "Тяга верхнего блока сидя"
   },
   {
     "code": "seated-row",
@@ -201,7 +211,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Тяга нижнего блока",
+    "full_name": "Горизонтальная тяга нижнего блока"
   },
   {
     "code": "pull-up",
@@ -235,7 +247,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Подтягивания",
+    "full_name": "Подтягивания"
   },
   {
     "code": "one-arm-dumbbell-row",
@@ -269,7 +283,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Тяга гантели одной рукой",
+    "full_name": "Тяга гантели одной рукой"
   },
   {
     "code": "barbell-row",
@@ -303,7 +319,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Тяга штанги в наклоне",
+    "full_name": "Тяга штанги в наклоне"
   },
   {
     "code": "back-squat",
@@ -337,7 +355,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Присед со штангой",
+    "full_name": "Приседание со штангой"
   },
   {
     "code": "leg-press",
@@ -371,7 +391,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Жим ногами",
+    "full_name": "Жим ногами в тренажёре"
   },
   {
     "code": "lunge",
@@ -405,7 +427,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Выпады",
+    "full_name": "Выпады"
   },
   {
     "code": "romanian-deadlift",
@@ -439,7 +463,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Румынская тяга со штангой",
+    "full_name": "Румынская тяга со штангой"
   },
   {
     "code": "deadlift",
@@ -473,7 +499,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Становая тяга",
+    "full_name": "Становая тяга со штангой"
   },
   {
     "code": "hip-thrust",
@@ -507,7 +535,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Мост в тренажёре",
+    "full_name": "Ягодичный мост в тренажёре"
   },
   {
     "code": "hip-thrust-barbell",
@@ -541,7 +571,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Мост со штангой",
+    "full_name": "Ягодичный мост со штангой"
   },
   {
     "code": "leg-curl",
@@ -575,7 +607,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Сгибание ног лёжа",
+    "full_name": "Сгибание ног в тренажёре лёжа"
   },
   {
     "code": "leg-extension",
@@ -609,7 +643,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Разгибание ног",
+    "full_name": "Разгибание ног в тренажёре сидя"
   },
   {
     "code": "hip-adduction",
@@ -643,7 +679,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Сведение ног",
+    "full_name": "Сведение ног в тренажёре"
   },
   {
     "code": "hip-abduction",
@@ -677,7 +715,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Разведение ног",
+    "full_name": "Разведение ног в тренажёре"
   },
   {
     "code": "calf-raise",
@@ -711,7 +751,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Подъём на носки стоя",
+    "full_name": "Подъём на носки стоя"
   },
   {
     "code": "dumbbell-curl",
@@ -745,7 +787,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Бицепс с гантелями стоя",
+    "full_name": "Подъём гантелей на бицепс стоя"
   },
   {
     "code": "standing-curl",
@@ -779,7 +823,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Бицепс со штангой стоя",
+    "full_name": "Подъём штанги на бицепс стоя"
   },
   {
     "code": "triceps-pushdown",
@@ -813,7 +859,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Разгибание рук на блоке",
+    "full_name": "Разгибание рук на верхнем блоке"
   },
   {
     "code": "lateral-raise",
@@ -847,7 +895,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Разведение гантелей",
+    "full_name": "Разведение гантелей в стороны"
   },
   {
     "code": "reverse-fly",
@@ -881,7 +931,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Гантели на задние дельты",
+    "full_name": "Разведение гантелей на задние дельты"
   },
   {
     "code": "incline-seated-dumbbell-curl",
@@ -915,7 +967,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Бицепс на наклонной скамье",
+    "full_name": "Подъём гантелей на бицепс на наклонной скамье"
   },
   {
     "code": "hyperextension",
@@ -949,7 +1003,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Гиперэкстензия",
+    "full_name": "Гиперэкстензия"
   },
   {
     "code": "machine-lateral-raise",
@@ -983,7 +1039,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Тренажёр на средние дельты",
+    "full_name": "Разведение рук в тренажёре на средние дельты"
   },
   {
     "code": "gravitron-single-leg-press",
@@ -1017,7 +1075,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Жим одной ногой в гравитроне",
+    "full_name": "Жим платформы гравитрона одной ногой вниз"
   },
   {
     "code": "dumbbell-fly",
@@ -1051,7 +1111,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Разведение гантелей лёжа",
+    "full_name": "Разведение гантелей лёжа"
   },
   {
     "code": "goblet-squat",
@@ -1085,7 +1147,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Гоблет-присед",
+    "full_name": "Гоблет-приседание"
   },
   {
     "code": "bulgarian-split-squat",
@@ -1119,7 +1183,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Болгарские выпады",
+    "full_name": "Болгарские выпады с гантелями"
   },
   {
     "code": "dumbbell-romanian-deadlift",
@@ -1155,7 +1221,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Румынская тяга с гантелями",
+    "full_name": "Румынская тяга с гантелями"
   },
   {
     "code": "seated-leg-curl",
@@ -1189,7 +1257,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Сгибание ног сидя",
+    "full_name": "Сгибание ног в тренажёре сидя"
   },
   {
     "code": "cable-glute-kickback",
@@ -1223,7 +1293,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Отведение ноги в кроссовере",
+    "full_name": "Отведение ноги назад в кроссовере"
   },
   {
     "code": "seated-calf-raise",
@@ -1257,7 +1329,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Подъём на носки сидя",
+    "full_name": "Подъём на носки сидя"
   },
   {
     "code": "seated-machine-row",
@@ -1293,7 +1367,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Тяга в тренажёре",
+    "full_name": "Горизонтальная тяга в тренажёре"
   },
   {
     "code": "face-pull",
@@ -1327,7 +1403,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Тяга каната к лицу",
+    "full_name": "Тяга каната к лицу"
   },
   {
     "code": "dumbbell-bench-press",
@@ -1361,7 +1439,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Жим гантелей лёжа",
+    "full_name": "Жим гантелей лёжа на горизонтальной скамье"
   },
   {
     "code": "machine-chest-press",
@@ -1395,7 +1475,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Жим от груди в тренажёре",
+    "full_name": "Жим от груди в тренажёре"
   },
   {
     "code": "pec-deck-fly",
@@ -1429,7 +1511,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Бабочка",
+    "full_name": "Сведение рук в тренажёре — бабочка"
   },
   {
     "code": "assisted-dip",
@@ -1463,7 +1547,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Брусья в гравитроне",
+    "full_name": "Отжимания на брусьях в гравитроне"
   },
   {
     "code": "overhead-press",
@@ -1499,7 +1585,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Жим штанги стоя",
+    "full_name": "Жим штанги стоя"
   },
   {
     "code": "machine-shoulder-press",
@@ -1533,7 +1621,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Жим от плеч в тренажёре",
+    "full_name": "Жим от плеч в тренажёре"
   },
   {
     "code": "reverse-pec-deck",
@@ -1567,7 +1657,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Обратная бабочка",
+    "full_name": "Разведение рук в тренажёре на задние дельты — обратная бабочка"
   },
   {
     "code": "hammer-curl",
@@ -1601,7 +1693,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Молотки с гантелями",
+    "full_name": "Молотковые сгибания рук с гантелями"
   },
   {
     "code": "overhead-cable-triceps-extension",
@@ -1635,7 +1729,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Канат над головой",
+    "full_name": "Разгибание рук с канатом над головой"
   },
   {
     "code": "cable-crunch",
@@ -1669,7 +1765,9 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Скручивания на блоке",
+    "full_name": "Скручивания на верхнем блоке"
   },
   {
     "code": "plank",
@@ -1703,6 +1801,8 @@
           "url": "https://fitnessprogramer.com/"
         }
       ]
-    }
+    },
+    "short_name": "Планка",
+    "full_name": "Планка"
   }
 ]

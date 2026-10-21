@@ -829,6 +829,7 @@ def app_asset(asset_name: str) -> FileResponse:
         return public_asset(STATIC_DIR.parents[2] / "content" / "article-components" / filename)
     if asset_name not in {
         "dqs-favicon.svg", "strength-favicon.svg", "metabolism-favicon.svg",
+        "strength-journal.css", "strength-journal-model.js",
         "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png", "site-typography.css",
         "content-gallery.js", "public-program-card.css", "public-program-card.js",
         "account-visual.css", "account-legacy-offer.js", "course-visual.css", "calories-course.css",
@@ -1222,9 +1223,9 @@ def empty_strength_state(user_id: uuid.UUID) -> StrengthState:
     return StrengthState(
         user_id=user_id,
         workout_types=[
-            {"workout_type": 1, "title": "Тренировка 1", "active": True, "sort_order": 1},
-            {"workout_type": 2, "title": "Тренировка 2", "active": True, "sort_order": 2},
-            {"workout_type": 3, "title": "Тренировка 3", "active": True, "sort_order": 3},
+            {"workout_type": 1, "title": "Шаблон 1", "active": True, "sort_order": 1},
+            {"workout_type": 2, "title": "Шаблон 2", "active": True, "sort_order": 2},
+            {"workout_type": 3, "title": "Шаблон 3", "active": True, "sort_order": 3},
         ],
         hidden_exercises=[],
         workouts=[],
@@ -1243,6 +1244,8 @@ def strength_account_catalog(db: Session, state: StrengthState) -> list[dict[str
         item["code"]: {
             "exercise_id": item["code"],
             "exercise_name": item["name"],
+            "short_name": item.get("short_name", item["name"]),
+            "full_name": item.get("full_name", item["guide"]["title"]),
             "source": "base",
             "catalog_active": True,
             "muscles": item["muscles"],
@@ -1736,9 +1739,26 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             state.hidden_exercises = settings
             state.version += 1
             payload = {"ok": True, "version": state.version}
+        elif action == "saveWorkoutTypes":
+            from app.strength_templates import normalize_templates
+
+            state = db.scalar(select(StrengthState).where(StrengthState.id == state.id)
+                              .execution_options(populate_existing=True).with_for_update())
+            if state is None:
+                raise ValueError("STRENGTH_STATE_NOT_FOUND")
+            expected_version = body.get("version")
+            if expected_version in (None, ""):
+                raise ValueError("STRENGTH_STATE_VERSION_REQUIRED")
+            if int(expected_version) != int(state.version or 0):
+                raise ValueError("STRENGTH_STATE_CONFLICT")
+            previous = state.workout_types or empty_strength_state(user.id).workout_types
+            state.workout_types = normalize_templates(body.get("workout_types"), previous, state.workouts or [])
+            state.version += 1
+            payload = {"ok": True, "version": state.version, "workout_types": state.workout_types}
         elif action == "saveExerciseCatalog":
             workout_type = int(body.get("workout_type") or 0)
-            if workout_type not in (1, 2, 3):
+            templates = state.workout_types or empty_strength_state(user.id).workout_types
+            if workout_type not in {int(item["workout_type"]) for item in templates if item.get("active") is not False}:
                 raise ValueError("INVALID_WORKOUT_TEMPLATE")
             state = db.scalar(
                 select(StrengthState)
@@ -1855,7 +1875,7 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             payload = {"ok": True, "user": user_payload, "stats": history}
         else:
             payload = error("Unknown action: " + action)
-        if admin_username and action in {"saveSession", "saveExerciseSettings", "saveExerciseCatalog"} and payload.get("ok"):
+        if admin_username and action in {"saveSession", "saveExerciseSettings", "saveExerciseCatalog", "saveWorkoutTypes"} and payload.get("ok"):
             db.add(AdminAppEdit(
                 admin_username=admin_username,
                 target_user_id=user.id,

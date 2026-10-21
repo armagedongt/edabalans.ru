@@ -1450,57 +1450,12 @@ def test_tilda_origin_is_allowed_for_api_preflight() -> None:
     assert "authorization" in response.headers["access-control-allow-headers"].lower()
 
 
-def test_strength_new_user_can_start_and_manage_own_workouts() -> None:
+def test_strength_application_loads_shared_journal_assets() -> None:
     response = client.get("/apps/strength.html")
-    text = response.text.replace("\r\n", "\n")
-
     assert response.status_code == 200
-    assert "В этом шаблоне пока нет упражнений" in text
-    assert "if(!app.isAdmin){\n      return;\n    }\n\n    var catalog =\n      activeCatalog();" not in text
-    assert "body.email =\n      app.email;" in text
-    assert "Редактировать план" in text
-    assert "Начать тренировку" in text
-    assert "Редактировать шаблон '+i+" in text
-    assert "Тренировка №" in text
-    assert "Новая тренировка" in text
-    assert "createNextSession:function" in text
-    assert "number:maxNumber+1" in text
-    assert "date:todayKey()" in text
-    assert "Перенести выбранное в план" in text
-    assert "completeSet:function" in text
-    assert "История упражнения" in text
-    assert "set.completed = false" in text
-    assert "set.completed = true" in text
-    assert "completed:\n          ex.sets[j]" in text
-    assert "var body =\n    sessionSaveBody(" in text
-    assert "persistSessionBody(body)" in text
-    assert "app.saveTimers[timerKey]" in text
-    assert "delete app.saveTimers[timerKey]" in text
-    assert "body.target_user_id || body.email || ''" in text
-    assert "body.session.session_id || body.session.session_number" in text
-    assert "workout_type:\n      workoutType" in text
-    assert "body.target_user_id =\n      targetUserId" in text
-    assert "blank(set.planWeight) || blank(set.planReps)" in text
-    assert "event.target.classList.contains('st-modal-bg')" in text
-    assert "position:sticky;top:0" in text
-    assert "renderEntryControls()+renderJournal()" in text
-    assert "'<button class=\"active train\" onclick=\"ST.finishWorkout()\">Завершить тренировку</button>'" in text
-    assert "function renderActions(){\n  return '';" in text
-    assert "st-finish-bottom\"><button" in text
-    assert "Тренировку 1 и Тренировку 2" not in text
-    assert "Шаблон '+items[i].type+' · тренировка №" in text
-    assert "st-modern-comment" in text
-    assert "field.scrollHeight" in text
-    assert "Как пользоваться" in text
-    assert "Редактировать шаблон '+i+" in text
-    assert "Изменения применяются сразу" in text
-    assert "undoManagerChange:function" in text
-    assert "↶ Отменить" in text
-    assert "saveExerciseCatalog" in text
-    assert "app.managerDraft = copyCatalog" in text
-    assert "queueManagerSave();" in text
-    assert "ST.saveManager()" not in text
-    assert "document.body.style.overflow='hidden'" in text
-    assert "document.body.style.overflow=app.modalScrollState.body" in text
-    assert "Добавить своё" in text
-    assert "openExerciseInfo" in text
+    assert '<div id="strength-app">' in response.text
+    for name, mime in [("strength-journal.css", "text/css"), ("strength-journal-model.js", "javascript")]:
+        assert f'/assets/{name}' in response.text
+        asset = client.get(f"/assets/{name}")
+        assert asset.status_code == 200
+        assert mime in asset.headers["content-type"]
