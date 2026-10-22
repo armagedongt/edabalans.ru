@@ -15,6 +15,8 @@ type: feature
 > инициализированный шаблон, не ТЗ для реализации. Согласованная рамка и вопросы —
 > [scope.md](scope.md), дословные ответы — `logs/userspec/interview.yml`.
 > Не выполнять инструкцию исполнителю ниже до заполнения и утверждения ТЗ.
+> Локальный рабочий прототип отдельно разрешён Сергеем 22.10.2026 и описан в
+> `README.md`; это разрешение не означает утверждения полного production-контура.
 
 > **Executor instruction.** If the project has Project Knowledge, first read the documentation
 > entrypoint declared by its `AGENTS.md` or existing router (for example `docs/README.md` or a

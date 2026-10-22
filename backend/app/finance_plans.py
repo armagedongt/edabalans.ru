@@ -15,6 +15,7 @@ from app.models import ManagedDocumentVersion
 
 DOCUMENT_TYPE = "finance-plan"
 PARAMETERS = set("paid organic conversion cpl minPrice standardPrice consultTariff consultCap minShare standardShare consultShare digitalRate digitalAverage consultRate supportRate supportPrice supportMonths clubEnabled clubRate clubPrice clubMonths opex weeklyCap timeUnit feeRate".split())
+SPLIT_PARAMETERS = {"paidConversion30", "paidConversionLater", "organicConversion30", "organicConversionLater"}
 
 
 class Summary(BaseModel):
@@ -39,7 +40,7 @@ class PlanIn(BaseModel):
     @classmethod
     def validate_parameters(cls, values):
         import math
-        if not isinstance(values, dict) or set(values) != PARAMETERS:
+        if not isinstance(values, dict) or set(values) not in (PARAMETERS, PARAMETERS | SPLIT_PARAMETERS):
             raise ValueError("Нужен полный набор параметров модели")
         for key, value in values.items():
             if key == "clubEnabled":
@@ -47,6 +48,13 @@ class PlanIn(BaseModel):
                     raise ValueError("Неверное состояние клуба")
             elif type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= 1e12:
                 raise ValueError("Неверное числовое значение")
+        if SPLIT_PARAMETERS <= values.keys():
+            for source in ("paid", "organic"):
+                total = values[source + "Conversion30"] + values[source + "ConversionLater"]
+                if total > 100:
+                    raise ValueError("Сумма конверсий не может превышать 100%")
+            if not math.isclose(values["conversion"], values["paidConversion30"] + values["paidConversionLater"], abs_tol=1e-8):
+                raise ValueError("Общая платная конверсия не совпадает с суммой")
         return values
 
 
@@ -88,7 +96,8 @@ def save_plan(body: PlanIn, db: Session = Depends(get_db), admin: str = Depends(
     if body.legacy and (previous := existing()) is not None:
         return {"plan": serialize(previous) if previous.is_active else None}
     row = ManagedDocumentVersion(document_type=DOCUMENT_TYPE, document_key=key,
-        schema_version=1, version_no=1, payload=payload, content_hash=document_hash(payload),
+        schema_version=2 if SPLIT_PARAMETERS <= body.parameters.keys() else 1,
+        version_no=1, payload=payload, content_hash=document_hash(payload),
         created_by=admin, is_active=True, created_at=datetime.now(timezone.utc))
     db.add(row)
     try:

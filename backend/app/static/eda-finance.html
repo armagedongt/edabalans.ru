@@ -9,6 +9,7 @@
   <title>EDA Balance — финансовая модель</title>
   <link rel="icon" type="image/svg+xml" href="/admin/static/admin-favicon.svg">
   <link rel="stylesheet" href="/admin/static/admin-shell.css?v=20261018-brand-hero">
+  <link rel="stylesheet" href="/admin/static/finance-facts.css">
   <style>
     :root{--ink:#15262a;--green:#176a60;--soft:#e5f2ed;--bg:#f4f3ef;--line:#e2dfd8;--muted:#647278;--red:#a23832;--amber:#8a5910}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.35 var(--ed-font-body, Manrope, Arial, sans-serif);color:var(--ink)}main{max-width:1440px;margin:auto;padding:16px}.grid{display:grid;grid-template-columns:370px minmax(0,1fr);gap:16px;align-items:start}.box{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px}h1{margin:0 0 10px;font-size:21px}h2{margin:16px 0 6px;color:var(--green);font-size:12px;letter-spacing:.06em;text-transform:uppercase}.field{display:grid;grid-template-columns:minmax(0,1fr) 88px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid #f0eeeb}.field input{width:88px;padding:7px;border:1px solid #cbd7d3;border-radius:7px;text-align:right;font:inherit;background:#fff}.field input[type=checkbox]{justify-self:end;width:18px;height:18px;accent-color:var(--green)}.q{display:inline-grid;place-items:center;width:16px;height:16px;border:1px solid #86a69e;border-radius:50%;color:#38665e;font:700 11px var(--ed-font-body, Manrope, Arial, sans-serif);cursor:pointer;font-style:normal}.tooltip{position:fixed;z-index:20;max-width:min(280px,calc(100vw - 16px));padding:10px 12px;border-radius:8px;background:#193934;color:#fff;box-shadow:0 5px 18px #15262a3b;font-size:13px;line-height:1.35}.buttons{display:flex;gap:7px;align-items:center;margin:0 0 7px}.buttons button{border:1px solid #7fa69d;background:#fff;color:var(--green);padding:7px 9px;border-radius:7px;font:600 13px var(--ed-font-body, Manrope, Arial, sans-serif);cursor:pointer}.buttons button:first-child{background:var(--green);color:#fff}.saved{color:var(--muted);font-size:12px}.dashboard{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(320px,1.2fr) minmax(260px,.9fr);gap:10px;align-items:start}.summary-stack,.top-side{display:grid;gap:10px}.metric{min-height:76px;display:flex;flex-direction:column;justify-content:space-between;padding:12px;border:1px solid #d5e7e1;border-radius:10px;background:#f6fbf9}.metric.primary{background:var(--soft)}.metric span{display:block;color:var(--muted);font-size:12px}.metric b{display:block;font-size:22px;letter-spacing:-.04em;white-space:nowrap}.blocks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:11px;align-items:start}.months{grid-template-columns:repeat(4,minmax(0,1fr))}.block{border:1px solid var(--line);border-radius:10px;padding:12px}.block h2{margin:0 0 7px}.row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #f0eeeb}.row:last-child{border:0}.row span{min-width:0;color:var(--muted);font-size:13px;overflow-wrap:anywhere}.row b{white-space:nowrap;text-align:right}.months .row{align-items:flex-start;flex-wrap:wrap}.total{margin:5px -3px -3px;padding:8px 3px;background:var(--soft);border-radius:7px}.bad{color:var(--red)}.good{color:var(--green)}.warn{color:var(--amber)}details{margin-top:10px}summary{color:var(--green);cursor:pointer;font-weight:700}.note{margin:12px 0 0;padding:10px;background:#f6f7f5;border-radius:8px;color:#526064;font-size:12px}.reference-panel{margin:12px 0 2px;padding:10px 12px;border:1px solid #cfe2dc;border-radius:10px;background:#f7fbfa}.reference-panel summary{font-size:13px}.reference-intro{margin:8px 0 6px;color:var(--muted);font-size:12px}.reference-group{margin-top:10px}.reference-group h3{margin:0 0 4px;color:var(--ink);font-size:13px}.reference-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:5px 0;border-bottom:1px solid #e4eeeb;font-size:12px}.reference-row:last-child{border:0}.reference-row span{color:var(--muted)}.reference-row b{text-align:right}.reference-source{margin:10px 0 0;padding-top:8px;border-top:1px solid #dce9e5;color:var(--muted);font-size:11px}.hidden{display:none}@media(max-width:1100px){.grid{grid-template-columns:1fr}.dashboard{grid-template-columns:repeat(2,minmax(0,1fr))}.summary-stack{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr))}.blocks{grid-template-columns:repeat(2,minmax(0,1fr))}.months{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:620px){main{padding:10px}.dashboard,.summary-stack,.blocks,.months{grid-template-columns:1fr}.summary-stack{grid-column:auto}.metric{min-height:78px}.reference-row{grid-template-columns:1fr}.reference-row b{text-align:left}}
     .metric.metric-income{border-color:#9fdcff;background:#eaf8ff}.metric.metric-income b{color:#0f8fd8}.metric.metric-consult{border-color:#ffd1b6;background:#fff3ea}.metric.metric-consult b{color:#d8662f}.metric.metric-margin{border-color:#b8e3c7;background:#edf9f1}.metric.metric-margin b{color:#25834d}.metric.metric-turnover{border-color:#d7c9ff;background:#f5f1ff}.metric.metric-turnover b{color:#6f56b5}.metric.metric-margin b.bad,.metric.metric-income b.bad{color:var(--red)}
@@ -72,6 +73,13 @@
 </head>
 <body class="finance-admin-page">
 <main>
+  <div id="preview-banner" class="preview-banner" hidden>Локальный просмотр · демонстрационные данные, реальная база не подключена</div>
+  <nav class="finance-modebar" aria-label="Режим финансов">
+    <button type="button" data-finance-mode="plan" aria-pressed="true">План</button>
+    <button type="button" data-finance-mode="month" aria-pressed="false">Факт · месяц</button>
+    <button type="button" data-finance-mode="all" aria-pressed="false">Факт · всё время</button>
+    <label id="fact-month-control" hidden>Месяц <input id="fact-month" type="month" min="2026-09"></label>
+  </nav>
         <div class="summary-stack finance-summary" aria-label="Результат в устойчивый месяц">
         <div class="metric primary metric-income"><span class="metric-label-full">Общий доход / оборот</span><span class="metric-label-short">Доход / оборот</span><div class="metric-pair"><b id="personal"></b><em>/</em><b id="turnover"></b></div></div>
         <div class="metric metric-margin"><span>Консультации / маржа</span><div class="metric-pair"><b id="consult-income"></b><em>/</em><b id="business-margin"></b></div></div>
@@ -82,15 +90,19 @@
         </div>
 
 
-  <section class="box plans-box">
+  <section class="box plans-box" id="finance-plan-controls">
     <div class="plan-toolbar"><input id="plan-name" class="plan-name" aria-label="Название плана" maxlength="120" placeholder="Название плана"><div class="buttons"><button id="save" type="button" disabled>Сохранить план</button><button id="toggle-plans" type="button" aria-expanded="false" aria-controls="plans-panel">Сохранённые планы <span id="plan-count"></span></button></div><span id="saved" class="saved" role="status" aria-live="polite"></span></div>
     <div id="plans-panel" hidden><div class="plans-scroll"><table class="plans-table"><thead><tr><th>Дата сохранения</th><th>План</th><th>Клуб</th><th>Общий доход</th><th>Маржа</th><th>Реклама</th><th>Постоянные</th><th>Действия</th></tr></thead><tbody id="plans"></tbody></table></div><p id="plans-state" class="saved" role="status">Загрузка планов…</p></div>
   </section>
-  <div class="grid">
+  <div class="grid" id="plan-view">
     <section class="box parameters-box">
       <h1>Параметры</h1>
       <div class="parameters-grid">
-        <section class="parameter-group"><h2>Поток и реклама</h2><div id="main-fields"></div></section>
+        <section class="parameter-group"><h2>Поток и реклама</h2><div id="main-fields"></div>
+          <input id="conversion" type="hidden" value="3">
+          <h3 class="field-subheading">Конверсия в первую покупку</h3><div id="conversion-fields" class="conversion-grid"></div>
+          <p id="conversion-totals" class="saved" role="status"></p>
+        </section>
         <section class="parameter-group"><h2>Входные тарифы</h2><div id="tariff-fields"></div><h3 class="field-subheading">Доли тарифов</h3><div id="tariff-share-fields" class="tariff-shares"></div></section>
         <section class="parameter-group"><h2>Допродажи</h2><div id="funnel-fields"></div><h2 class="separated-heading">Сопровождение</h2><div id="support-fields"></div></section>
         <section class="parameter-group"><h2>Настройки клуба</h2><div id="club-fields"></div><h2 class="separated-heading">Расходы и комиссии</h2><div id="advanced-fields"></div></section>
@@ -120,7 +132,7 @@
       </section>
     </section>
     <section class="box">
-      <h1>Твой результат в устойчивый месяц</h1>
+      <h1>Твой результат в устойчивый месяц</h1><p id="plan-leads-extra" class="saved"></p>
       <div class="results-grid"><div class="block"><h2>Поток и клиент</h2><div class="row"><span>Налоги + эквайринг</span><b id="fees"></b></div><div class="row"><span>Всего покупателей / мес.</span><b id="buyers"></b></div><div class="row"><span>Тариф с консультацией: факт / мес.</span><b id="consult-tariff-sold"></b></div><div class="row"><span>Не купили из-за лимита <i class="q" title="10% спроса сверх лимита тарифа с консультацией выпадает из воронки. Остальные 90% поровну переходят в минимальный и стандартный тариф.">?</i></span><b id="lost-by-cap"></b></div><div class="row"><span>Платных лидов / мес.</span><b id="leads"></b></div><div class="row"><span>CAC</span><b id="cac"></b></div><div class="row"><span>Самостоятельные: cashflow на входе <i class="q" title="Средний платёж самостоятельного покупателя в момент покупки: минимальный или стандартный тариф плюс ожидаемый цифровой доп. Тариф с консультацией, разбор и сопровождение исключены.">?</i></span><b id="self-cashflow"></b></div><div class="row"><span>Самостоятельные: LTV после комиссий <i class="q" title="Весь автоматический LTV самостоятельного покупателя: cashflow на входе и, если включён, ожидаемый клуб. Консультационный тариф, разбор и сопровождение исключены.">?</i></span><b id="self-ltv"></b></div><div class="row"><span>Самостоятельные: после CAC <i class="q" title="Автоматический LTV после комиссий минус CAC. Это вклад одного платного самостоятельного покупателя до постоянных расходов.">?</i></span><b id="self-after-cac"></b></div><div class="row"><span>LTV после комиссий <i class="q" title="Ожидаемая выручка с одного клиента за весь путь, уже после налогов и эквайринга.">?</i></span><b id="ltv"></b></div><div class="row"><span>LTV после найма <i class="q" title="LTV после комиссий минус стоимость консультаций по внутренней ставке. Реклама и постоянные расходы здесь ещё не вычтены.">?</i></span><b id="ltv-after-labor"></b></div></div>      <div class="blocks result-overview"><div class="block"><h2>Консультации на полке</h2><div class="row"><span>Первичные / разовые в неделю</span><b id="primary-week"></b></div><div class="row"><span>Сопровождение в неделю</span><b id="support-week"></b></div><div class="row"><span>Всего в неделю</span><b id="total-week"></b></div></div>
 
         <div class="block"><h2>Клиенты сопровождения</h2><div class="row"><span>Новых / месяц</span><b id="new-support"></b></div><div class="row"><span>Активных на полке</span><b id="active-support"></b></div><div class="row"><span>Выход на полку</span><b id="plateau"></b></div><div class="row"><span>Оборот сопровождения</span><b id="support-revenue"></b></div></div>
@@ -137,6 +149,19 @@
       <p class="note">Поток начинается с платных и органических покупателей. От него считаются тарифы, цифровые допы, разборы, переходы в сопровождение, лиды, реклама и загрузка. «Полка» — момент, когда при одинаковом ежемесячном притоке в сопровождении одновременно находятся все когорты за среднюю длительность работы.</p>
     </section>
   </div>
+  <section id="fact-view" hidden aria-label="Фактические показатели">
+    <div class="box fact-period"><h1 id="fact-title">Факт за месяц</h1><p id="fact-status" class="saved" role="status"></p><button id="fact-retry" type="button" hidden>Повторить загрузку</button></div>
+    <div class="fact-grid">
+      <section class="box"><h2>Деньги периода</h2><div id="fact-money"></div><p class="saved">Поступления по дате оплаты. Конверсии ниже — по месяцу первого появления человека.</p></section>
+      <section class="box"><h2>Люди и первая покупка</h2><div id="fact-cohort"></div><p class="saved">Первая оплата любого продукта. Позже — без ограничения годом. Повторные оплаты увеличивают LTV.</p></section>
+      <section class="box fact-wide"><h2>Конверсия по источнику</h2><div class="plans-scroll"><table class="plans-table"><thead><tr><th>Поток</th><th>Лиды</th><th>За 30 дней</th><th>Позже</th><th>Всего</th></tr></thead><tbody id="fact-conversions"></tbody></table></div></section>
+      <section class="box"><h2>Тарифы и дополнительные покупки</h2><div id="fact-products"></div></section>
+      <section class="box"><h2>Сопровождение и клуб</h2><div id="fact-support"></div><p class="saved">Число оплат сопровождения включает подписку и платежи с подтверждённым назначением. Клуб — источник ещё не подключён.</p></section>
+      <section class="box fact-wide"><h2>Расходы за календарный месяц</h2><form id="fact-expenses" class="expense-form"><label>Реклама, ₽<input id="expense-ads" type="number" min="0" max="1000000000" step="0.01" placeholder="Не внесено"></label><label>Прочие расходы, ₽<input id="expense-opex" type="number" min="0" max="1000000000" step="0.01" placeholder="Не внесено"></label><button type="submit">Сохранить расходы</button><span id="expense-status" class="saved" role="status"></span></form><p id="expense-help" class="saved">Пусто — сумма неизвестна. Ноль — подтверждено, что расходов не было. Здесь ручной учёт; Direct автоматически не добавляется.</p></section>
+      <section class="box fact-wide"><h2>Покупатели и накопленная выручка</h2><div class="plans-scroll"><table class="plans-table"><thead><tr><th>Человек</th><th>Поступило за период</th><th>Получено с 01.09.2026</th><th>Оплат сопровождения с 01.09</th></tr></thead><tbody id="fact-people"></tbody></table></div></section>
+      <section class="box fact-wide"><h2>Откуда берутся данные</h2><div id="fact-coverage"></div></section>
+    </div>
+  </section>
 </main>
 <script src="/admin/static/admin-shell.js"></script>
 <script>
@@ -152,7 +177,8 @@
     clubRate:{step:5,min:0,max:100}, clubPrice:{step:100,min:0}, clubMonths:{step:.5,min:.5}
   };
   const groups = {
-    'main-fields': [['paid','Платных покупателей / месяц','Спрос до лимита консультационного тарифа.'],['organic','Органических покупателей / месяц','Без оплаченных лидов.'],['conversion','Лид → покупатель, %'],['cpl','CPL, ₽']],
+    'main-fields': [['paid','Платных покупателей / месяц','Спрос до лимита консультационного тарифа.'],['organic','Органических покупателей / месяц','Без оплаченных лидов.'],['cpl','CPL, ₽']],
+    'conversion-fields': [['paidConversion30','Платные · за 30 дней, %'],['paidConversionLater','Платные · позже, %'],['organicConversion30','Органика · за 30 дней, %'],['organicConversionLater','Органика · позже, %']],
     'tariff-fields': [['minPrice','Минимальный тариф, ₽'],['standardPrice','Стандарт, ₽'],['consultTariff','Тариф с консультацией, ₽'],['consultCap','Лимит тарифа с консультацией / мес.','0 — без лимита. Из спроса сверх лимита 10% не покупают, остальные 90% поровну переходят в самостоятельные тарифы.'],['timeUnit','Внутренняя стоимость консультации, ₽','Оценка оплаты твоего времени внутри общего дохода. Не цена разового разбора для покупателя.']],
     'tariff-share-fields': [['minShare','Мин., %'],['standardShare','Стандарт, %'],['consultShare','Конс., %']],
     'funnel-fields': [['digitalRate','Покупают цифровой доп, %'],['digitalAverage','Средний чек допа, ₽'],['consultRate','Докупают разбор, %','Разбор приносит 7 500 ₽ и считается одной консультационной единицей.']],
@@ -163,7 +189,9 @@
   const money = value => new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(value))+' ₽';
   const number = value => new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(value);
   const tip = text => text ? ` <i class="q" title="${text}">?</i>` : '';
-  const field = ([id,label,help='',type='number']) => { const options=fieldOptions[id]||{}; return `<div class="field"><label for="${id}">${label}${tip(help)}</label><input id="${id}" type="${type}" ${type==='checkbox' ? '' : `value="${defaults[id]}" step="${options.step ?? .1}"${options.min !== undefined ? ` min="${options.min}"` : ''}${options.max !== undefined ? ` max="${options.max}"` : ''}`}></div>`; };
+  const splitIds=['paidConversion30','paidConversionLater','organicConversion30','organicConversionLater'];
+  splitIds.forEach(id=>fieldOptions[id]={step:.25,min:0,max:100});
+  const field = ([id,label,help='',type='number']) => { const options=fieldOptions[id]||{}; return `<div class="field"><label for="${id}">${label}${tip(help)}</label><input id="${id}" type="${type}" ${type==='checkbox' ? '' : `value="${defaults[id] ?? ''}" step="${options.step ?? .1}"${options.min !== undefined ? ` min="${options.min}"` : ''}${options.max !== undefined ? ` max="${options.max}"` : ''}`}></div>`; };
   Object.entries(groups).forEach(([target, fields]) => document.getElementById(target).innerHTML = fields.map(field).join(''));
   const input = id => document.getElementById(id);
   const value = id => {
@@ -175,7 +203,25 @@
   };
   const set = (id,text,className='') => { const el=input(id); el.textContent=text; el.className=className; };
   // Existing server snapshots require this retired key; it no longer affects the model.
-  const values = () => ({weeklyCap:6,...Object.fromEntries(Object.keys(defaults).map(id => [id,value(id)]))});
+  const splitsComplete=()=>splitIds.every(id=>input(id).value.trim()!=='');
+  const values = () => {
+    const result={weeklyCap:6,...Object.fromEntries(Object.keys(defaults).map(id => [id,value(id)]))};
+    if(splitsComplete()){
+      splitIds.forEach(id=>result[id]=value(id));
+      result.conversion=result.paidConversion30+result.paidConversionLater;
+    }
+    return result;
+  };
+  function conversionError(d){
+    const any=splitIds.some(id=>input(id).value.trim()!=='');
+    if(any&&!splitsComplete()) return 'Заполни все четыре конверсии или оставь все пустыми для прежнего плана.';
+    if(splitsComplete()){
+      if(splitIds.some(id=>value(id)<0||value(id)>100)||d.conversion>100||d.organicConversion30+d.organicConversionLater>100) return 'Сумма конверсий каждого потока должна быть от 0 до 100%.';
+      if(d.organic>0&&d.organicConversion30+d.organicConversionLater===0) return 'При органических покупателях нужна ненулевая органическая конверсия.';
+    }
+    if(d.paid>0&&d.conversion===0) return 'При платных покупателях нужна ненулевая платная конверсия.';
+    return '';
+  }
   const shareIds=['minShare','standardShare','consultShare'];
   function normaliseTariffShares(changedId){
     const changed=Math.min(100,Math.max(0,Math.round(value(changedId)/5)*5));
@@ -189,6 +235,9 @@
   let currentSummary;
   function calculate(){
     const d=values(), demandBuyers=d.paid+d.organic, mix=d.minShare+d.standardShare+d.consultShare || 1;
+    const error=conversionError(d);
+    input('conversion-totals').textContent=error||(splitsComplete()?`Итого: платные ${number(d.conversion)}% · органика ${number(d.organicConversion30+d.organicConversionLater)}%`:`Платные: общий процент ${number(d.conversion)}%. Разделение пока не задано; органические лиды не рассчитаны.`);
+    if(error){currentSummary=null;document.querySelectorAll('.finance-summary b,.results-grid b[id],.months b[id]').forEach(el=>el.textContent='—');return;}
     const intendedMinimum=demandBuyers*d.minShare/mix, intendedStandard=demandBuyers*d.standardShare/mix, intendedConsultTariff=demandBuyers*d.consultShare/mix;
     const excessConsultDemand=d.consultCap > 0 ? Math.max(0,intendedConsultTariff-d.consultCap) : 0;
     const lostByCap=excessConsultDemand*.10, reallocatedByCap=excessConsultDemand*.90;
@@ -200,6 +249,9 @@
     const clubActive=d.clubEnabled ? buyers*d.clubRate/100*d.clubMonths : 0, clubRevenue=clubActive*d.clubPrice;
     const entryRevenue=entry+digital+lateRevenue, turnover=entryRevenue+supportRevenue+clubRevenue, fees=turnover*d.feeRate/100;
     const paidLeads=d.conversion ? d.paid/(d.conversion/100) : 0, ads=paidLeads*d.cpl;
+    const organicConversion=splitsComplete()?d.organicConversion30+d.organicConversionLater:null;
+    const organicLeads=organicConversion===null?null:organicConversion?d.organic/(organicConversion/100):0;
+    input('plan-leads-extra').textContent=organicLeads===null?'Органические и общие лиды: требуется задать органическую конверсию.':`Органических лидов: ${number(organicLeads)} · всего: ${number(paidLeads+organicLeads)} / месяц`;
     const paidActualBuyers=demandBuyers ? d.paid*buyers/demandBuyers : 0;
     const supportUnits=activeSupport*2, consultationIncome=(directUnits+supportUnits)*d.timeUnit;
     const personalIncome=turnover-fees-ads-d.opex, businessMargin=personalIncome-consultationIncome;
@@ -225,7 +277,7 @@
       set(`m${month}-start`,'−'+money(startCost)); set(`m${month}-turnover`,money(monthTurnover)); set(`m${month}-fees`,'−'+money(monthFees)); set(`m${month}-net`,money(net),net<0?'bad':'good');
     }
   }
-  function apply(data){ Object.keys(defaults).forEach(id=>{const el=input(id),saved=data?.[id] ?? defaults[id];if(el.type==='checkbox')el.checked=saved===true;else el.value=(saved === '' || saved === 'undefined') ? defaults[id] : saved;}); normaliseTariffShares('consultShare'); calculate(); }
+  function apply(data){ Object.keys(defaults).forEach(id=>{const el=input(id),saved=data?.[id] ?? defaults[id];if(el.type==='checkbox')el.checked=saved===true;else el.value=(saved === '' || saved === 'undefined') ? defaults[id] : saved;}); splitIds.forEach(id=>input(id).value=data?.[id]??'');normaliseTariffShares('consultShare'); calculate(); }
   function savedLabel(message){ input('saved').textContent=message; }
   const tooltip=document.createElement('div'); tooltip.id='finance-tooltip'; tooltip.className='tooltip hidden'; document.body.append(tooltip);
   const closeTooltip=()=>tooltip.classList.add('hidden');
@@ -242,7 +294,7 @@
     const top=rect.bottom+8+tipRect.height<=window.innerHeight?rect.bottom+8:Math.max(8,rect.top-tipRect.height-8);
     tooltip.style.left=`${left}px`; tooltip.style.top=`${top}px`;
   });
-  document.querySelectorAll('input').forEach(el => el.addEventListener('change',()=>{ if(shareIds.includes(el.id)) normaliseTariffShares(el.id); calculate(); }));
+  document.querySelectorAll('.field input').forEach(el => el.addEventListener('change',()=>{ if(shareIds.includes(el.id)) normaliseTariffShares(el.id); calculate(); }));
   const API='/admin/api/finance/plans';
   let plans=[];
   input('toggle-plans').addEventListener('click',()=>{const panel=input('plans-panel');panel.hidden=!panel.hidden;input('toggle-plans').setAttribute('aria-expanded',String(!panel.hidden));});
@@ -269,6 +321,7 @@
   }
   async function savePlan(legacy=false){
     calculate();
+    if(!currentSummary)throw new Error(input('conversion-totals').textContent);
     const result=await request('',{method:'POST',body:JSON.stringify({name:legacy?'Перенесённый план':input('plan-name').value.trim()||'План',parameters:values(),summary:currentSummary,legacy})});
     return result.plan;
   }
@@ -295,8 +348,10 @@
     }catch(error){input('plans-state').textContent=error.message;savedLabel(error.message);}
     finally{parameterInputs.forEach(el=>el.disabled=false);input('save').disabled=false;}
   }
-  initialize();
+  window.financeModel={values,calculate};
+  initialize().then(()=>document.dispatchEvent(new Event('finance-plan-ready')));
 })();
 </script>
+<script src="/admin/static/finance-facts.js"></script>
 </body>
 </html>

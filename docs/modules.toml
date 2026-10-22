@@ -30,7 +30,7 @@ sources = [
 
 [[modules]]
 id = "platform.crm"
-reads_from = ["messaging.telegram.attribution"]
+reads_from = ["messaging.telegram.attribution", "platform.commerce"]
 admin_catalog = [{ category = "clients", order = 10, url = "/crm", label = "CRM", icon = "👥", description = "Люди, покупки, доступы, теги и заметки." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.crm.md"
@@ -71,6 +71,7 @@ owns_files = [
   "backend/app/checkout_reference.py",
   "backend/app/legal_service.py", "backend/app/pricing_routes.py",
   "backend/app/pricing_service.py", "backend/app/product_identity.py",
+  "backend/app/payment_metrics.py",
   "backend/app/robokassa_routes.py", "backend/app/robokassa_service.py",
   "backend/app/robokassa_subscription_service.py",
   "backend/app/owner_payment_notification_service.py",
@@ -380,6 +381,8 @@ owns_files = [
   "backend/tests/test_admin_apps.py", "backend/tests/test_app_assets.py", "backend/tests/test_eda_finance.py",
   "backend/app/static/apps/recipes-part-1.html", "backend/app/static/apps/recipes-part-2.html",
   "backend/app/static/eda-finance.html", "backend/app/finance_plans.py", "docs/FINANCE_MODEL.md",
+  "backend/app/finance_facts.py", "backend/app/static/finance-facts.js", "backend/app/static/finance-facts.css",
+  "backend/tests/test_finance_facts.py", "backend/tests/browser/finance-facts.e2e.mjs",
   "backend/app/static/embed.js", "backend/app/static/site-footer.js", "backend/app/static/content-gallery.js",
   "backend/app/static/app-shell.css",
   "backend/app/static/account-theme.css", "backend/app/static/account-theme.js",
@@ -394,6 +397,7 @@ owns_files = [
 ]
 owns_routes = [
   "*/apps/*", "*/assets/*", "*/max-app", "*/finance*", "*/admin/api/finance/plans*",
+  "*/admin/api/finance/facts*", "*/admin/api/finance/expenses*",
 ]
 
 [[modules]]

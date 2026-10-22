@@ -889,6 +889,11 @@
         <div><span>Статус и прогресс</span>${previewTrigger("progress", user, `<span class="crm-stage is-${stage.code}">${esc(stage.label)}</span>`)}</div>
         <div><span>Подписка</span><span class="crm-channel-state ${channelState(user).tone}">${channelState(user).label}</span></div>
       </div>
+      <section class="crm-card crm-coaching-payments"><div class="crm-card-title">Оплаченное сопровождение</div>
+        ${user.coaching_payments ? `<div class="crm-row"><strong>${user.coaching_payments.payment_count} оплат · ${money(user.coaching_payments.amount_rub)}</strong></div>
+        <div class="crm-row-meta">По подписке: ${user.coaching_payments.monthly_payments} · Другие оплаты сопровождения: ${user.coaching_payments.other_payments}${user.coaching_payments.unknown_amount_count ? ` · Без подтверждённой суммы в рублях: ${user.coaching_payments.unknown_amount_count}` : ""}</div>` : '<div class="crm-row-meta">Сведения об оплатах сопровождения не загружены.</div>'}
+        <div class="crm-card-sub">Считаются подтверждённые оплаты с назначением «сопровождение». Свободная оплата должна быть связана с человеком и услугой. Число оплат не заменяет даты реально проведённой работы.</div>
+      </section>
       <section class="crm-card crm-note-card"><div class="crm-card-title">Заметки</div>
         <div class="crm-note-layout"><form class="crm-form" id="note-form"><textarea class="crm-textarea" id="note-body" placeholder="Добавить комментарий о клиенте"></textarea><button class="crm-btn small" type="submit">Сохранить заметку</button></form>
         <div class="crm-note-history">${user.notes.slice(0, 3).map((item) => `<div class="crm-row"><div>${esc(item.body)}</div><div class="crm-row-meta">${date(item.created_at, true)} · ${esc(item.author)}</div></div>`).join("") || '<div class="crm-empty">Заметок пока нет</div>'}${user.notes.length > 3 ? `<div class="crm-row-meta">Ещё ${user.notes.length - 3} заметок</div>` : ""}</div></div>

@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import Uuid, bindparam, case, distinct, exists, func, or_, select, text, update
 from sqlalchemy.orm import Session
 from app.browser_journey_service import observed_accounts
+from app.payment_metrics import CONFIRMED_PAYMENT_STATUSES, coaching_payment_summary
 
 from app.models import (
     AttributionEvent,
@@ -48,7 +49,6 @@ from app.masterclass_routes import (
 from app.product_identity import purchased_products, tariff_label
 from app.course_access_service import set_course_unlock_mode
 
-CONFIRMED_PAYMENT_STATUSES = ("paid", "confirmed")
 MOSCOW_TZ = ZoneInfo("Europe/Moscow")
 COURSE_RESOURCE_CODES = (
     "ACCESS_MASTERCLASS",
@@ -722,6 +722,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             for item in phones
         ],
         "purchase_count": len(paid),
+        "coaching_payments": coaching_payment_summary([(p, code) for p, code, _ in payments]),
         "ltv_rub": money(sum((payment.amount for payment in actual_paid if payment.currency == "RUB" and payment.amount is not None), Decimal())),
         "estimated_ltv_rub": money(sum((payment.amount for payment in estimated_paid if payment.currency == "RUB" and payment.amount is not None), Decimal())),
         "total_ltv_rub": money(sum((payment.amount for payment in paid if payment.currency == "RUB" and payment.amount is not None), Decimal())),

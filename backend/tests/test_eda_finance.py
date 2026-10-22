@@ -131,3 +131,18 @@ def test_plan_api_rejects_anonymous_cross_origin_and_incomplete_data(plans_clien
     assert plans_client.delete(ENDPOINT+'/00000000-0000-0000-0000-000000000000',headers=headers).status_code == 403
     body=plan_body(); body['parameters']={'paid':5}
     assert plans_client.post(ENDPOINT,json=body,headers={'X-Finance-Write':'1'}).status_code == 422
+
+
+def test_split_conversions_roundtrip_and_validate_total(plans_client):
+    parameters={**PARAMETERS,'paidConversion30':2,'paidConversionLater':1,
+                'organicConversion30':4,'organicConversionLater':2}
+    body={**plan_body(),'parameters':parameters}
+    headers={'X-Finance-Write':'1'}
+    saved=plans_client.post(ENDPOINT,json=body,headers=headers)
+    assert saved.status_code==200
+    assert saved.json()['plan']['parameters']==parameters
+    for changes in ({'paidConversionLater':99},{'conversion':5},{'organicConversion30':True}):
+        invalid={**body,'parameters':{**parameters,**changes}}
+        assert plans_client.post(ENDPOINT,json=invalid,headers=headers).status_code==422
+    missing={**parameters};missing.pop('organicConversionLater')
+    assert plans_client.post(ENDPOINT,json={**body,'parameters':missing},headers=headers).status_code==422
