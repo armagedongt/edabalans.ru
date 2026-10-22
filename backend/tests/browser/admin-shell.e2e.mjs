@@ -309,7 +309,7 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
   await page.close();
 }
 
-for (const width of [360, 430, 768, 1440]) {
+for (const [width, expectedParameterColumns] of [[360, 1], [430, 1], [760, 2], [768, 1], [1100, 1], [1101, 2], [1279, 2], [1280, 4], [1440, 4]]) {
   const page = await browser.newPage({ viewport: { width, height: 900 } });
   await page.goto(`http://127.0.0.1:${port}/finance`);
   await page.getByRole("link", { name: "Финансовая модель" }).waitFor();
@@ -322,7 +322,7 @@ for (const width of [360, 430, 768, 1440]) {
   const columns = await page.locator("main > .grid").evaluate((node) => getComputedStyle(node).gridTemplateColumns.split(" ").filter(Boolean).length);
   assert.equal(columns, 1, JSON.stringify({width,columns}));
   const parameterColumns = await page.locator(".parameters-grid").evaluate(node => getComputedStyle(node).gridTemplateColumns.split(" ").filter(Boolean).length);
-  assert.equal(parameterColumns, width >= 1280 ? 4 : width > 620 ? 2 : 1);
+  assert.equal(parameterColumns, expectedParameterColumns, `Parameter panels at ${width}px`);
   assert.equal(await page.locator(".finance-mode-note").count(), 0);
   assert.equal(await page.locator(".finance-summary .metric").count(), 6);
   await page.evaluate(() => window.scrollTo(0, 500));
