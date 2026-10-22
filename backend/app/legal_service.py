@@ -39,7 +39,7 @@ LEGAL_DOCUMENTS = (
     },
 )
 
-OFFER_VERSION = "2026-10-21-v2"
+OFFER_VERSION = "2026-10-22-v3"
 
 
 def checkout_legal_snapshot(source: str) -> dict:
