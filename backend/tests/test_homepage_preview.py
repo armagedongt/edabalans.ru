@@ -880,7 +880,7 @@ def test_release_candidate_copy_uses_the_full_content_frame() -> None:
     assert ".anya-story__header p{margin:" in html
     assert ".contact-copy{max-width:640px;" not in html
     assert ".anya-story__header p{max-width:580px;" not in html
-    assert ".action-group{width:min(100%,680px);" in html
+    assert ".action-group{width:100%;" in html
 
 
 def test_release_candidate_meme_trims_transparent_vertical_padding_without_changing_asset() -> None:

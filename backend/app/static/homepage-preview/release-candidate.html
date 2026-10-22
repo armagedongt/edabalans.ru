@@ -808,7 +808,7 @@
     .chain-block--final{margin:0;background:#fff;color:var(--site-ink);font-family:var(--ed-font-body, Manrope, Arial, sans-serif);-webkit-font-smoothing:antialiased}
     .chain-block--final a:focus-visible{outline:3px solid #6ec8ff;outline-offset:4px}
     .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-    .final-section{padding:calc(var(--space-section) - 14px) var(--page-gutter) 0}
+    .final-section{padding:calc(var(--space-section) - 14px) 0 0}
     .final-card{width:var(--content-frame);max-width:100%;margin:0 auto}
     .final-main{display:flex;flex-direction:column;align-items:flex-start;padding:0;text-align:left}
     .sign-sticker{display:inline-block;margin:0 0 24px;padding:9px 16px;color:#fff;background:var(--orange);border:2px solid rgba(255,255,255,.82);border-radius:999px;box-shadow:0 9px 20px -13px rgba(70,20,10,.7);font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-size:11px;font-weight:800;letter-spacing:.04em;transform:rotate(-3deg)}
@@ -818,7 +818,7 @@
     .chain-block--final h1 .question-line{font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-size:.62em;font-weight:600;line-height:1.25;letter-spacing:0}
     .meme-card{position:relative;align-self:center;width:100%;margin:24px auto 0;padding:0;overflow:hidden;border-radius:clamp(12px,2vw,16px);background:transparent}
     .meme-card img{display:block;width:100%;height:auto;margin:0 auto}
-    .action-group{width:min(100%,680px);margin:26px auto 0}
+    .action-group{width:100%;margin:26px auto 0}
     .contact-copy{width:100%;margin:0 0 22px;color:var(--site-text);font-size:var(--type-body);font-weight:var(--ed-public-body-weight,500);line-height:1.62}
     .final-main>.contact-copy{margin-top:22px;margin-bottom:0}
     .social-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
@@ -932,7 +932,7 @@
     .author-section__meme{display:block;overflow:hidden;width:min(100%,760px);aspect-ratio:1434/877;margin:clamp(12px,2vw,18px) auto 0}
     .author-section__meme img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 36%}
     .copy-section p.author-section__after-meme{margin-top:0}
-    .free-intensive{padding-top:18px;padding-bottom:var(--space-section)}
+    .free-intensive{padding:var(--space-section) 0 0}
     .free-intensive h2{text-align:center}
     .free-intensive .approach-article-note{width:100%;margin-top:24px;text-align:left}
     .free-intensive__inline-link{display:inline-flex;align-items:baseline;gap:.28em;color:var(--site-blue);font-weight:800;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:.15em}
@@ -945,16 +945,16 @@
     .reviews-voice .voice-widget + .voice-widget{margin-top:var(--space-element)}
     .anya-story__cta{display:flex;width:var(--content-frame);max-width:calc(100% - var(--page-gutter) - var(--page-gutter));margin:var(--space-related) auto 0}
     @media(min-width:760px){.anya-story__cta{width:var(--content-frame);max-width:calc(100% - var(--page-gutter) - var(--page-gutter));margin-left:auto;margin-right:auto}}
-    .reviews-after-cat{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin:0 auto;padding:var(--space-block) 0 0;color:#16181d}
+    .reviews-after-cat{width:var(--content-frame);max-width:100%;margin:0 auto;padding:var(--space-block) 0 0;color:#16181d}
     .reviews-after-cat h2{margin:0;font-size:var(--type-section);font-weight:800;line-height:1.14;letter-spacing:-.045em;text-wrap:balance}
     .reviews-after-cat p{max-width:var(--content-reading);margin:22px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:var(--ed-public-body-weight,500);line-height:1.62}
-    .reviews-wall-cta{width:var(--content-frame);max-width:100%;margin:0 auto;padding:var(--space-block) 0 18px}
+    .reviews-wall-cta{width:var(--content-frame);max-width:100%;margin:0 auto;padding:var(--space-related) 0 0}
     .reviews-wall-cta__actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
     .reviews-wall-cta__button{display:inline-flex;min-height:54px;align-items:center;justify-content:center;padding:0 22px;border-radius:16px;color:#fff;font-size:16px;font-weight:800;text-decoration:none;box-shadow:0 15px 28px -20px rgba(19,91,137,.6);transition:transform .18s ease,box-shadow .18s ease}
     .reviews-wall-cta__button:hover,.reviews-wall-cta__button:focus-visible{transform:translateY(-2px);box-shadow:0 20px 32px -20px rgba(19,91,137,.7)}
     .reviews-wall-cta__button--pricing{width:100%;background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%);box-shadow:0 16px 30px -17px rgba(221,82,45,.68)}
     .reviews-wall-cta__button--intensive{background:var(--site-blue)}
-    .reviews-wall-cta+.free-intensive{padding-top:18px}
+    .reviews-wall-cta+.free-intensive{padding-top:var(--space-section)}
     .primary-cta,.reviews-wall-cta__button--pricing,.anya-story__cta{min-height:54px;padding:0 22px;border-radius:16px;background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%);box-shadow:0 16px 30px -17px rgba(221,82,45,.68);color:#fff;font:800 16px/1.2 var(--ed-font-body, Manrope, Arial, sans-serif);transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
     .primary-cta:hover,.primary-cta:focus-visible,.reviews-wall-cta__button--pricing:hover,.reviews-wall-cta__button--pricing:focus-visible,.anya-story__cta:hover,.anya-story__cta:focus-visible{background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%);box-shadow:0 20px 32px -15px rgba(221,82,45,.78);color:#fff;filter:saturate(1.08) brightness(1.03);transform:translateY(-2px)}
     .approach-article-note+.chain-block--anya{padding-top:clamp(34px,5vw,56px)}
@@ -1084,10 +1084,11 @@
     #edb-pricing-neurozeh-v1 .edb-preview-toolbar{display:none!important}
     #edb-pricing-neurozeh-v1{padding-top:0!important}
     .chain-block--before-after .wl-masterclass-story{padding:8px 0 24px}
-    [data-edabalans-site-footer]{position:relative;z-index:1;background:transparent;color:#17212b}
+    [data-edabalans-site-footer]{--eb-footer-gutter:0px;position:relative;z-index:1;background:transparent;color:#17212b}
 
     body.reviews-wall--locked{overflow:hidden}
     .reviews-voice{width:100%;margin:0 auto;padding:var(--space-block) 0 0}
+    .reviews-after-cat+.reviews-voice{padding-top:var(--space-related)}
     .voice-widget{width:var(--content-frame);max-width:100%;display:grid;grid-template-columns:46px minmax(0,1fr);align-items:start;gap:10px;margin:0 auto;font-family:var(--ed-font-body, Manrope, Arial, sans-serif);-webkit-user-select:none;user-select:none}
     .voice-widget + .voice-widget{margin-top:var(--space-element)}
     .voice-widget__avatar{position:relative;width:46px;height:46px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;overflow:hidden;background:#e7f3fa;box-shadow:0 2px 3px rgba(41,96,132,.30),0 6px 8px rgba(41,96,132,.28);color:#fff;font-size:17px;font-weight:700;line-height:1}
@@ -1139,7 +1140,7 @@
     .homepage-program + .chain-block--before-after{margin-top:clamp(44px,7vw,76px)}
     .reviews-featured{width:min(calc(100% + 5px),805px);margin:0 auto;padding:var(--space-related) 20px 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:calc(clamp(10px,3vw,18px) + 5px)}
     .reviews-featured__column{display:flex;min-width:0;flex-direction:column;gap:calc(clamp(10px,3vw,18px) + 5px)}
-    .reviews-wall{--reviews-wall-gap:calc(clamp(10px,3vw,18px) + 5px);position:relative;width:min(calc(100% + 5px),805px);margin:0 auto;padding:var(--space-related) 20px var(--space-related);column-gap:var(--reviews-wall-gap)}
+    .reviews-wall{--reviews-wall-gap:calc(clamp(10px,3vw,18px) + 5px);position:relative;width:min(calc(100% + 5px),805px);margin:0 auto;padding:var(--space-related) 20px 0;column-gap:var(--reviews-wall-gap)}
     .reviews-featured__item,.reviews-wall__item{display:block;width:100%;padding:0;border:0;break-inside:avoid;appearance:none;background:transparent;cursor:zoom-in;transform:rotate(var(--tilt));transform-origin:50% 50%;filter:drop-shadow(0 5px 5px rgba(25,73,108,.23))}
     .reviews-featured__item{margin:0}
     .reviews-wall__item{margin:0}
@@ -1198,7 +1199,7 @@
     @media (min-width:768px){
       .reviews-voice{padding:var(--space-block) 0 0}
       .reviews-featured{padding:var(--space-related) 28px 0}
-      .reviews-wall{padding:var(--space-related) 28px var(--space-related)}
+      .reviews-wall{padding:var(--space-related) 28px 0}
       .reviews-featured__item,.reviews-wall__item{filter:drop-shadow(0 7px 7px rgba(25,73,108,.21))}
       .review-lightbox__stage{padding:58px 20px 52px}
       .review-lightbox__prev{left:calc(50% - min(41vw,260px) + 12px)}
@@ -1471,7 +1472,6 @@
       <div class="reviews-featured__column"><button class="reviews-featured__item" type="button" style="--tilt:-1.2deg" data-review-index="1" aria-label="Открыть отзыв Анны"><img src="/media/reviews/site-images-v1/c38a4edda1291814042880b5c97721968dcf02915a2caa8f6b6a455628baadc5.webp" alt="Анна — отзыв о результате Мастер-класса" loading="lazy" decoding="async"></button><button class="reviews-featured__item" type="button" style="--tilt:.7deg" data-review-index="3" aria-label="Открыть отзыв Ани"><img src="/preview/homepage-mobile/anya-before-after.webp?v=1" alt="Аня до и после похудения" loading="lazy" decoding="async"></button><button class="reviews-featured__item" type="button" style="--tilt:.6deg" data-review-index="5" aria-label="Открыть отзыв Анны Вальковской"><img src="/media/reviews/site-images-v1/1cb6fc8a233b592c6d32dedf4d146201c3ec30dee37020bcd1ea541f03d4dcf1.webp" alt="Анна Вальковская — отзыв 64,1 кг" loading="lazy" decoding="async"></button></div>
       <div class="reviews-featured__column"><button class="reviews-featured__item" type="button" style="--tilt:.9deg" data-review-index="2" aria-label="Открыть отзыв Натальи"><img src="/media/reviews/site-images-v1/fb9036e4f2320f749b34c1ddcdbedef219d9fa8f0acf6557db141e1ed7dcbc7c.webp" alt="Наталья — фото до и после" loading="lazy" decoding="async"></button><button class="reviews-featured__item" type="button" style="--tilt:-.5deg" data-review-index="4" aria-label="Открыть отзыв Виктора"><img src="/media/reviews/site-images-v1/1d258e556314eca58109fd32baee33158edad8c98e8b0bc4455399c04b4a3e3d.jpg" alt="Виктор — результат через семь месяцев после Мастер-класса" loading="lazy" decoding="async"></button><button class="reviews-featured__item" type="button" style="--tilt:-1deg" data-review-index="6" aria-label="Открыть отзыв Григория"><img src="/media/reviews/site-images-v1/d0cfc792448a62ffc780bb63a0d820b6096e74f2b253984182638642f238fb4f.webp" alt="Григорий Малышкин — отзыв" loading="lazy" decoding="async"></button></div>
     </section>
-    <p class="reviews-featured__more-note" data-block-width="content"><em>* Больше отзывов — в конце страницы.</em></p>
     <!-- library:reviews-featured:end -->
 
     <section class="chain-block copy-section method-proof" data-homepage-block="method-proof" data-block-width="content" aria-labelledby="method-proof-title">
@@ -3816,6 +3816,7 @@
         </div>
         </template>
         <div class="anya-story__after" data-homepage-block="anya-outro" data-block-width="story"><p data-homepage-field="paragraph-1"><!-- homepage-slot:anya-outro.p-01 --></p><p data-homepage-field="paragraph-2"><!-- homepage-slot:anya-outro.p-02 --></p></div>
+    <p class="reviews-featured__more-note" data-block-width="content"><em>* Больше отзывов — в конце страницы.</em></p>
         <a class="free-intensive__cta anya-story__cta" data-homepage-block="anya-cta" data-homepage-field="cta" data-block-width="story" href="#pricing" data-analytics-cta="pricing_anya_story"><!-- homepage-slot:anya-cta.a-01 --></a>
       </div>
     </section>

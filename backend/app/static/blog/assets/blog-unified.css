@@ -119,3 +119,6 @@ html[data-theme=dark] .starter-fold{background:#213341;border-color:var(--border
 body{--eb-footer-width:1180px;--eb-footer-gutter:40px}
 body:has(.article-shell){--eb-footer-width:760px}
 @media(max-width:640px){body{--eb-footer-gutter:48px}}
+
+/* The shared footer owns the gap after the last public content block. */
+body:has(> [data-edabalans-site-footer]) :is(main.article-shell,main.shell>.articles-section,.article-shell>.related-section){padding-bottom:0}

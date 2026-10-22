@@ -3,7 +3,7 @@
 :root{--header-offset:94px}
 html{background:#fff;color:#17191e}
 body{margin:0;font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
-#article{width:min(700px,calc(100% - 40px));margin:120px auto 100px;font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
+#article{width:min(700px,calc(100% - 40px));margin:120px auto 0;font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
 #article p,#article li{font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}
 #article .intensive-title{margin:0 0 30px;font-family:var(--ed-font-hero, Unbounded, Manrope, Arial, sans-serif);font-size:clamp(23px,6.25vw,52px);font-weight:var(--ed-hero-weight,800);line-height:1.06;letter-spacing:-.05em;text-transform:uppercase}
 #article .intensive-title span{display:block}
@@ -46,7 +46,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #278ddc;outline-offset:4p
 #article .social-max .social-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 @media(max-width:620px){
  :root{--header-offset:82px}
- #article{width:calc(100% - 32px);margin-top:104px;margin-bottom:110px}
+ #article{width:calc(100% - 32px);margin-top:104px;margin-bottom:0}
  #article .intensive-title{font-size:clamp(21px,6.2vw,28px);margin-bottom:24px}
  #article .intensive-title__accent{font-size:clamp(17px,5.15vw,23px)}
  #article h2{margin-top:44px}
@@ -69,3 +69,5 @@ button:focus-visible,a:focus-visible{outline:3px solid #278ddc;outline-offset:4p
 
 body{--eb-footer-width:700px;--eb-footer-gutter:40px}
 @media(max-width:620px){body{--eb-footer-gutter:32px}}
+
+#article>:last-child{margin-bottom:0}
