@@ -1623,6 +1623,7 @@ def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, work
                         "plan_weight", "plan_reps", "fact_weight", "fact_reps", "rpe",
                         "plan_weight_raw", "plan_reps_raw", "fact_weight_raw", "fact_reps_raw", "rpe_raw")},
                     "completed": item.get("completed") is True,
+                    "role": item.get("role", "work"),
                     "source": item.get("source", "app"),
                 })
     types = [{"user_id": str(user_id), **item} for item in (state.workout_types or [])]
@@ -1735,6 +1736,18 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
                     for exercise in (existing or {}).get("exercises", [])
                 }
                 for exercise in item.get("exercises", []):
+                    previous_exercise = previous_exercises.get(str(exercise.get("exercise_id")), {})
+                    previous_sets = {
+                        str(row.get("set_number", index)): row
+                        for index, row in enumerate(previous_exercise.get("sets", []), 1)
+                    }
+                    for index, row in enumerate(exercise.get("sets", []), 1):
+                        if "role" not in row:
+                            # An older client must not erase a manually marked warm-up.
+                            previous_set = previous_sets.get(str(row.get("set_number", index)), {})
+                            row["role"] = previous_set.get("role", "work")
+                        if row["role"] not in ("warmup", "work"):
+                            raise ValueError("INVALID_SET_ROLE")
                     if "coach_note" in exercise:
                         if not isinstance(exercise["coach_note"], str) or len(exercise["coach_note"]) > 20000:
                             raise ValueError("INVALID_COACH_NOTE")

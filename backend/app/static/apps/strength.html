@@ -2383,6 +2383,7 @@ function buildWorkoutModel(raw){
     }
 
     ex.sets.push({
+      role:row.role === 'warmup' ? 'warmup' : 'work',
       set_number:
         Number(
           row.set_number
@@ -2677,6 +2678,7 @@ function sessionPayload(session){
     ){
 
       outEx.sets.push({
+        role:ex.sets[j].role === 'warmup' ? 'warmup' : 'work',
         set_number:
           j+1,
 
@@ -3346,7 +3348,7 @@ window.addEventListener('popstate',function(event){
 function applyJournalWidth(){
   var style=getComputedStyle(root),previous=app.trainingColumnWidth;
   var width=app.journalView==='training' && matchMedia('(max-width:700px)').matches
-    ? root.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight) : 216;
+    ? root.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight) : 232;
   if(previous && previous!==width && app.journalView==='training' && !app.axisTargetSession){
     app.axisTargetSession=app.trainingAnchor;
   }
@@ -3928,7 +3930,8 @@ function renderModernSet(index,exercise,setIndex,set){
   var status=StrengthJournalModel.completion(set),arg=index+',this.dataset.exerciseId,'+setIndex;
   var data=' data-exercise-id="'+esc(exercise.id)+'"';
   function input(field,placeholder,mode){return '<input class="'+(field.indexOf('plan')===0?planFieldTone(index,exercise.id,setIndex,field,set[field]):'')+'"'+data+' data-field="'+field+'" inputmode="'+mode+'" aria-label="'+(field.indexOf('plan')===0?'План':'Факт')+' '+(field.indexOf('Weight')>=0?'вес':'повторения')+'" placeholder="'+placeholder+'" value="'+esc(set[field])+'" onclick="ST.numberClick(event,'+index+','+(field.indexOf('plan')===0)+')" onfocus="ST.numberClick(event,'+index+','+(field.indexOf('plan')===0)+')" onchange="ST.changeField('+arg+',\''+field+'\',this.value)">';}
-  return '<div class="st-grid-set"><span class="st-modern-number">'+(setIndex+1)+'</span>'+input('planWeight','кг','decimal')+input('planReps','раз','numeric')+
+  var warmup=set.role==='warmup',roleLabel='Подход '+(setIndex+1)+': '+(warmup?'разминочный':'рабочий')+'. Изменить тип подхода';
+  return '<div class="st-grid-set"><button class="st-modern-number '+(warmup?'st-warmup':'st-work')+'"'+data+' onclick="ST.toggleSetRole('+arg+')" aria-pressed="'+warmup+'" aria-label="'+roleLabel+'" title="'+roleLabel+'">'+(setIndex+1)+'</button>'+input('planWeight','кг','decimal')+input('planReps','раз','numeric')+
     '<button class="st-set-done '+status+'"'+data+' onclick="ST.completeSet('+arg+')" aria-label="'+({neutral:'Заполнить факт по плану',done:'Выполнено',over:'Перевыполнено',under:'Недовыполнено'}[status])+'" title="'+({neutral:'Заполнить факт по плану',done:'Выполнено',over:'Перевыполнено',under:'Недовыполнено'}[status])+'">✓</button>'+
     input('factWeight','кг','decimal')+input('factReps','раз','numeric')+'<button class="st-rpe-button '+rpeClass(set.rpe)+'"'+data+' onclick="ST.openRpe(event,'+arg+')" aria-label="RPE '+esc(set.rpe)+'">'+(blank(set.rpe)?'—':esc(set.rpe))+'</button></div>';
 }
@@ -6045,6 +6048,14 @@ window.ST = {
   scheduleSave(index);renderWithoutViewportJump();
 },
 
+
+  toggleSetRole:function(index,id,setIndex){
+    var session=currentWorkout().sessions[index],exercise=exerciseForDisplay(session,id);
+    if(!exercise || !exercise.sets[setIndex])return;
+    rememberUndo();materializeExercise(session,exercise);
+    exercise.sets[setIndex].role=exercise.sets[setIndex].role==='warmup'?'work':'warmup';
+    scheduleSave(index);renderWithoutViewportJump();
+  },
 
   addSet:function(id,index){
   index=index===undefined?app.selectedIndex:Number(index);
