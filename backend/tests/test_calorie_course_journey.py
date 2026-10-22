@@ -15,6 +15,7 @@ from sqlalchemy.orm import sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.auth import ADMIN_COOKIE, admin_session_token, require_admin  # noqa: E402
+from app.app_management import require_application_manager  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.account_security import password_hash  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
@@ -55,6 +56,7 @@ def setup(*, course_ready: bool = True, masterclass_completed: bool = True, data
 
     app.dependency_overrides[get_db] = override_db
     app.dependency_overrides[require_admin] = lambda: "test-admin"
+    app.dependency_overrides[require_application_manager] = app.dependency_overrides[require_admin]
     app.dependency_overrides[get_settings] = lambda: Settings(
         database_url="sqlite+pysqlite:///:memory:",
         admin_username="admin@example.test",
