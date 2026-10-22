@@ -10,7 +10,7 @@ const browser=await chromium.launch(),evidence=[];
 try{
 for(const width of [360,430,700,701,768,1440])for(const admin of [false,true]){
  const page=await browser.newPage({viewport:{width,height:900}}),errors=[],writes=[];page.on('pageerror',error=>errors.push(error.message));
- let version=1;const state={sessions:[1,2,3].map(n=>({session_id:'s'+n,session_number:n,workout_type:1,date:'2026-10-'+String(n*7).padStart(2,'0')})),
+ let version=1,moduleHold=null,moduleRelease;const state={sessions:[1,2,3].map(n=>({session_id:'s'+n,session_number:n,workout_type:1,date:'2026-10-'+String(n*7).padStart(2,'0')})),
   workout_types:[{workout_type:1,title:'Верх',sort_order:1,active:true}],
   exercise_catalog:guides.map((g,i)=>({exercise_id:g.code,exercise_name:g.name,short_name:g.short_name,full_name:g.full_name,source:'base',active:i===0,sort_order:i+1,media_url:g.media_url,guide:g.guide,training:g.training})),
   session_exercises:[1,2,3].map(n=>({session_id:'s'+n,exercise_id:'bench-press',exercise_name:'Жим штанги лёжа',sort_order:1})),
@@ -30,6 +30,7 @@ for(const width of [360,430,700,701,768,1440])for(const admin of [false,true]){
    }
    return route.fulfill({json:response});
   }
+  if(url.pathname==='/assets/strength-progression-model.mjs'&&moduleHold)await moduleHold;
   const asset=new URL(url.pathname.replace(/^\/assets\//,''),staticRoot);
   if(!asset.href.startsWith(staticRoot.href))return route.abort();
   try{return route.fulfill({contentType:({'.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.woff2':'font/woff2','.svg':'image/svg+xml','.gif':'image/gif','.png':'image/png'})[path.extname(asset.pathname)]||'application/octet-stream',body:await readFile(asset)});}catch{return route.abort();}
@@ -62,30 +63,46 @@ for(const width of [360,430,700,701,768,1440])for(const admin of [false,true]){
   await page.evaluate(()=>{window.ST.calculateProgression(2,'bench-press');window.ST.applyProgression(2,'bench-press');});
   assert.equal(writes.length,0);
  }else{
+  if(width===430){
+   moduleHold=new Promise(resolve=>{moduleRelease=resolve;});
+   await card().getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();
+   const input=card().locator('[data-field="planReps"]').nth(1);await input.fill('12');await input.dispatchEvent('input');await input.blur();await page.waitForTimeout(850);
+   const before=writes.length;moduleRelease();
+   await card().locator('.st-progression-error').waitFor();
+   assert((await card().locator('.st-progression-error').innerText()).includes('Данные изменились'));
+   await page.waitForTimeout(850);assert.equal(writes.length,before,'editing while the module loads prevents automatic overwrite');
+   await page.getByRole('button',{name:'Отменить действие',exact:true}).click();await page.waitForTimeout(850);
+  }
   for(const view of ['training','exercise']){
    if(view==='exercise')await page.locator('.st-view-toggle').click();
    const control=card().getByRole('button',{name:/Рассчитать прогрессию|Пересчитать прогрессию/});
    const before=writes.length;await control.click();
-   await card().getByRole('button',{name:'Применить в план',exact:true}).waitFor();assert.equal(writes.length,before,'calculation alone does not save');
+   await card().locator('.st-progression-done').waitFor();await page.waitForTimeout(850);
+   assert.equal(writes.length,before+1,'one calculation click fills and saves the plan');
+   assert.equal(await card().getByRole('button',{name:/Применить в план/}).count(),0);
+   const saved=writes.at(-1).session.exercises[0].sets;
+   assert.equal(saved[1].plan_reps,11);assert.equal(saved[1].fact_weight,999);assert.equal(saved[1].fact_reps,8);assert.equal(saved[1].rpe,9);assert.equal(saved[0].role,'warmup');
    const box=await control.boundingBox(),last=await card().locator('.st-grid-set').last().boundingBox();assert(box.y>=last.y+last.height);
    await page.screenshot({path:path.join(output,`${width}-admin-${view}-calculated.png`)});
    if(view==='training'){
-    await card().getByRole('button',{name:'Применить в план',exact:true}).click();await page.waitForTimeout(850);
-    const saved=writes.at(-1).session.exercises[0].sets;
-    assert.equal(saved[1].plan_reps,11);assert.equal(saved[1].fact_weight,999);assert.equal(saved[1].fact_reps,8);assert.equal(saved[1].rpe,9);assert.equal(saved[0].role,'warmup');
     await page.getByRole('button',{name:'Отменить действие',exact:true}).click();await page.waitForTimeout(850);
+    const undone=writes.at(-1).session.exercises[0].sets;
+    assert(undone.every(row=>row.plan_weight===''&&row.plan_reps===''),'undo restores the destination plan before calculation');
+    assert.equal(undone[1].fact_weight,999);assert.equal(undone[1].fact_reps,8);assert.equal(undone[1].rpe,9);
+    assert.equal(await card().locator('[data-field="planReps"]').nth(1).inputValue(),'');
    }else{
+    await card().locator('.st-progression-details > summary').click();
     const step=card().locator('[data-calc-field="load_step"]');await step.fill('0');await control.click();
-    await card().locator('.st-progression-error').waitFor();assert.equal(await card().getByRole('button',{name:'Применить в план',exact:true}).count(),0);
-    await step.fill('2.5');await control.click();await card().getByRole('button',{name:'Применить в план',exact:true}).waitFor();
-    const input=card().locator('[data-field="planReps"]').nth(1);await input.fill('12');await input.dispatchEvent('input');await input.blur();await page.waitForTimeout(850);
-    const savedBeforeStale=writes.length;await card().getByRole('button',{name:'Применить в план',exact:true}).click();
-    assert((await card().locator('.st-progression-error').innerText()).includes('Данные изменились'));await page.waitForTimeout(850);assert.equal(writes.length,savedBeforeStale);
+    await card().locator('.st-progression-error').waitFor();assert((await card().locator('.st-progression-error').innerText()).includes('шаг'));
+    await page.screenshot({path:path.join(output,`${width}-admin-error.png`)});
+    const afterFailure=writes.length;await page.waitForTimeout(850);assert.equal(writes.length,afterFailure);
+    await card().locator('.st-progression-details > summary').click();
+    await step.fill('2.5');await control.click();await card().locator('.st-progression-done').waitFor();
    }
   }
  }
  assert.deepEqual(errors,[]);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
  evidence.push({width,admin,writes:writes.length});await page.close();
 }
-await writeFile(path.join(output,'evidence.json'),JSON.stringify(evidence,null,2));console.log('Progression and guide: admin/user, six widths, preview/apply, fact preservation, stale result and equipment step PASS');
+await writeFile(path.join(output,'evidence.json'),JSON.stringify(evidence,null,2));console.log('Progression and guide: admin/user, six widths, single-click plan fill, fact preservation, in-flight edit and equipment step PASS');
 }finally{await browser.close();}

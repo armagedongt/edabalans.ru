@@ -230,3 +230,5 @@
 .st-progression p{margin:6px 0}.st-progression table{width:100%;border-collapse:collapse;margin:6px 0}.st-progression th,.st-progression td{padding:4px;text-align:left;border-bottom:1px solid #e7e8ec}.st-progression-changed td{background:#e9f3ff}.st-progression-error{color:#af303c}.st-progression-unit{color:#606c78}
 @media(max-width:430px){.st-guide-training dl{grid-template-columns:1fr}}
 @media(max-width:700px){#strength-app[data-journal-view="training"] .st-grid-set,#strength-app[data-journal-view="training"] .st-grid-labels{grid-template-columns:20px minmax(0,1fr) minmax(0,.75fr) 40px minmax(0,1.45fr) minmax(0,1.1fr) minmax(0,.8fr)}}
+
+.st-progression-done{color:#258044}
