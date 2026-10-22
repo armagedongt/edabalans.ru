@@ -585,8 +585,8 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert 'data-edabalans-app="' in account.text
     assert "data-offer-product" in account.text
     assert "/api/masterclass/account-offers" in account.text
-    assert "/api/masterclass/dqs/link-to-telegram" in account.text
-    assert "Отправить ссылку:" in account.text
+    assert "data-dqs-send" not in account.text
+    assert "Отправить ссылку:" not in account.text
     account_css = client.get("/assets/account-visual.css").text
     assert ".account-card.available-card" in account_css
     assert ".account-card.featured" in account_css
@@ -726,7 +726,7 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "canContinue=item.state==='entitled_locked'" in application_renderer
     assert "item.action_label||'Открыть'" in application_renderer
     assert "item.action_label||'Продолжить Мастер-класс'" in application_renderer
-    assert "data-dqs-send" in application_renderer
+    assert "data-dqs-send" not in application_renderer
     assert "applicationIcon(item.code)" in application_renderer
     assert "application-icon-" in account
     icons = dict(re.findall(r"(dqs|strength|recipes|metabolism):'([^']+)'", account))
