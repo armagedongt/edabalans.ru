@@ -38,3 +38,7 @@ html.site-menu-open,html.site-menu-open body{overflow:hidden!important;overscrol
 
 .site-menu-toggle,.site-menu-disclosure>button{font-weight:var(--ed-control-weight,800);font-size:var(--ed-label-size,14px)}
 .site-menu-contents a{font-size:var(--ed-toc-size,14px);line-height:var(--ed-toc-leading,1.4)}
+
+/* Let the menu reach the outer edge while preserving the frozen page width. */
+html.site-menu-open{scrollbar-gutter:auto}
+html.site-menu-open body{max-width:var(--site-menu-page-width)}

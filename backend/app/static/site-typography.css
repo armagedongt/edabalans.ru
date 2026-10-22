@@ -43,6 +43,14 @@
   --ed-article-h3:23px;
 }
 html,body{font-family:var(--ed-font-body);font-size:var(--ed-text-size);font-weight:var(--ed-text-weight);line-height:var(--ed-text-leading)}
+/* Keep the page and public menu at the same native, full scrollbar width.
+   :root overrides older page-local html rules without changing gallery strips. */
+html:root,.site-menu-panel{scrollbar-width:auto;scrollbar-color:#7ed2ff #eefaff}
+html:root{scrollbar-gutter:stable}
+html:root::-webkit-scrollbar,.site-menu-panel::-webkit-scrollbar{width:16px}
+html:root::-webkit-scrollbar-track,.site-menu-panel::-webkit-scrollbar-track{background:#eefaff}
+html:root::-webkit-scrollbar-thumb,.site-menu-panel::-webkit-scrollbar-thumb{border:2px solid #eefaff;border-radius:999px;background:#7ed2ff}
+html:root::-webkit-scrollbar-thumb:hover,.site-menu-panel::-webkit-scrollbar-thumb:hover{background:#42b8f5}
 button,input,select,textarea{font-family:var(--ed-font-body)}
 code,kbd,samp,pre{font-family:var(--ed-font-code)}
 @media(max-width:620px){

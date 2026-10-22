@@ -13,6 +13,9 @@
       }
       var disclosures = panel.querySelectorAll('.site-menu-disclosure > button');
       function setOpen(open) {
+        if (open && !document.documentElement.classList.contains('site-menu-open')) {
+          document.documentElement.style.setProperty('--site-menu-page-width', document.body.getBoundingClientRect().width + 'px');
+        }
         toggle.setAttribute('aria-expanded', String(open));
         toggle.setAttribute('aria-label', open ? 'Закрыть меню' : (toggle.dataset.menuLabel || 'Открыть меню'));
         panel.classList.toggle('is-open', open);
@@ -23,6 +26,7 @@
           if (contents) setDisclosure(contents, true);
           panel.scrollTop = 0;
         } else {
+          document.documentElement.style.removeProperty('--site-menu-page-width');
           disclosures.forEach(function (button) { setDisclosure(button, false); });
           if (panel.contains(document.activeElement)) toggle.focus();
         }
