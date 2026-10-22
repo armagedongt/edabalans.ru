@@ -8,6 +8,7 @@ const guide=JSON.parse(await readFile(new URL('../../app/strength_exercise_guide
 const browser=await chromium.launch();const results=[];
 const cases=[...[360,430,768,1440].flatMap(width=>['direct','cabinet'].map(mode=>[width,mode,''])),...[ 'initial-network','initial-timeout','session-timeout','catalog-failure'].map(failure=>[430,'direct',failure])];
 for(const [width,mode,failure] of cases){
+ console.log('Strength entry case:',JSON.stringify({width,mode,failure}));
  const context=await browser.newContext({viewport:{width,height:900}}),page=await context.newPage();let releaseInitial,releaseCatalog;
  let failedOnce=false,catalogFailures=2;
  const initialGate=new Promise(r=>{releaseInitial=r;}),catalogGate=new Promise(r=>{releaseCatalog=r;});const reads=[],errors=[];
@@ -46,7 +47,13 @@ for(const [width,mode,failure] of cases){
  assert.equal(await page.locator('.standalone-loading').count(),0);
  if(width===430&&!failure)await page.screenshot({path:`${out}/${mode}-shared-loader.png`});
  }
- releaseInitial();await page.locator('.st-history-row').waitFor();await page.locator('.ed-loading-screen').waitFor({state:'detached'});
+ releaseInitial();
+ try{await page.locator('.st-history-row').waitFor();}
+ catch(error){
+  const snapshot=await page.evaluate(()=>({body:document.body.innerText.slice(0,1500),visibility:document.querySelector('#strength-app')?getComputedStyle(document.querySelector('#strength-app')).visibility:null})).catch(()=>null);
+  console.error('Strength entry readiness failure:',JSON.stringify({width,mode,failure,errors,reads,snapshot}));throw error;
+ }
+ await page.locator('.ed-loading-screen').waitFor({state:'detached'});
  assert.equal(await page.locator('.st-type.active').textContent(),'Низ');assert(await page.locator('[data-field=planWeight]').first().isVisible());
  assert.equal(reads.filter(r=>r.initial==='1').length,(failure==='initial-network'||failure==='initial-timeout')?2:1);assert.equal(reads.filter(r=>r.type==='2'&&!r.initial).length,0);
  assert.equal(await page.locator('#strength-app').evaluate(el=>getComputedStyle(el).visibility),'visible');
