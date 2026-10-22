@@ -17,8 +17,7 @@
     .finance-summary{position:sticky;top:0;z-index:30;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;margin:-16px -4px 16px;padding:10px 4px;background:var(--bg);box-shadow:0 8px 12px -12px #15262a80}.finance-summary .metric{min-width:0;min-height:70px;padding:9px}.finance-summary .metric span{font-size:11px}.finance-summary .metric b{font-size:18px}.dashboard{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.dashboard details{margin-top:0}.dashboard summary{font-size:13px;margin-bottom:8px}.blocks{grid-template-columns:repeat(3,minmax(0,1fr))}.months{grid-template-columns:repeat(4,minmax(0,1fr))}
     @media(min-width:1280px){.finance-admin-page .dashboard{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
     @media(max-width:1100px){.finance-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.blocks,.months{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:760px){.finance-summary{padding-left:48px;margin-top:-10px}.finance-summary .metric{padding:7px;min-height:60px}.finance-summary .metric b{font-size:15px}}
-    @media(max-width:620px){.finance-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.finance-summary .metric span{font-size:10px}.finance-summary .metric b{font-size:14px}.dashboard,.blocks,.months{grid-template-columns:1fr}}
+    @media(max-width:620px){.dashboard,.blocks,.months{grid-template-columns:1fr}}
     body.finance-admin-page main>.grid,body.ed-admin-shell.finance-admin-page main>.grid{grid-template-columns:minmax(0,1fr)}.parameters-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}.parameter-group{min-width:0}.parameter-group h2{margin:8px 0}.parameter-group .field{font-size:13px;padding:5px 0;min-height:43px}.parameter-group .field input{font-size:14px;padding:6px}.parameter-settings details{margin:8px 0 12px}.parameter-settings summary{font-size:12px}.plan-toolbar{display:grid;grid-template-columns:auto minmax(180px,300px) auto minmax(0,1fr);gap:10px;align-items:center;margin-bottom:12px}.plan-toolbar label{font-size:13px}.plan-toolbar .plan-name,.plan-toolbar .buttons{margin:0}.plans-box>summary{font-size:14px}.plans-box>summary span{font-weight:400}.plans-box[open]>summary{margin-bottom:10px}.result-overview{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:0}.top-flow{margin:12px 0}.top-flow>.block{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 20px}.top-flow>.block h2{grid-column:1/-1}.tooltip{z-index:40}
     @media(max-width:1279px){.parameters-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.result-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.top-flow>.block{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:1100px){.plan-toolbar{grid-template-columns:minmax(0,1fr) auto}.plan-toolbar label,.plan-toolbar .saved{grid-column:1/-1}}
@@ -26,17 +25,60 @@
     .plans-box .plan-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0}.plan-toolbar .plan-name{flex:1 1 220px;max-width:380px;min-width:0}.plan-toolbar .buttons{flex-wrap:wrap;margin:0}.plan-toolbar .saved{min-width:0;overflow-wrap:anywhere}.plan-toolbar .saved:empty{display:none}#plans-panel{margin-top:12px}.tariff-shares{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.tariff-shares .field{min-width:0;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;border:0;gap:6px}.tariff-shares .field input{width:100%}.tariff-shares label{font-size:11px;min-width:0;overflow-wrap:anywhere}.field-subheading{font-size:12px;font-weight:600;margin:12px 0 0}.parameter-group .separated-heading{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}.reference-panel{margin-top:18px}.reference-panel h2{margin:0}.reference-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.reference-row{grid-template-columns:minmax(0,1fr);gap:2px}.reference-row b{text-align:left}.reference-intro,.reference-source{font-size:11px}.results-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr);gap:16px;align-items:start}.results-grid .result-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.results-grid>.block .row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;min-height:39px}.row b,.metric b{font-variant-numeric:tabular-nums}.results-grid .result-overview .block{margin-top:0}
     @media(max-width:1100px){.results-grid{grid-template-columns:minmax(0,1fr)}.reference-columns{gap:12px}}
     @media(max-width:620px){.reference-columns,.results-grid .result-overview{grid-template-columns:minmax(0,1fr)}.plan-toolbar .plan-name{max-width:none}.plan-toolbar .buttons{width:100%}}
+    .finance-summary .metric .metric-label-short{display:none}
+    @media(max-width:760px){
+      body.ed-admin-shell.finance-admin-page,body.ed-admin-shell.finance-admin-page.admin-shell-collapsed,body.ed-admin-shell.finance-admin-page.admin-shell-hidden{padding-top:0}
+      .finance-admin-page main{padding:8px 8px calc(72px + env(safe-area-inset-bottom,0px))}
+      .finance-summary{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin:-8px -8px 8px;padding:6px 6px 7px}
+      .finance-summary>.metric:nth-child(-n+2){grid-column:span 2}
+      .finance-summary .metric{min-height:46px;padding:5px 6px;border-radius:8px;gap:3px}
+      .finance-summary .metric .metric-label-full{display:none}
+      .finance-summary .metric .metric-label-short{display:block;font-size:10px;line-height:1.15}
+      .finance-summary .metric b{font-size:13px;line-height:1.2}
+      .finance-summary .metric-pair{gap:2px 4px}
+      .finance-summary .metric-pair em{font-size:11px}
+      .finance-admin-page.ed-admin-shell .admin-shell-mobile-open{top:auto;left:12px;right:auto;bottom:calc(12px + env(safe-area-inset-bottom,0px));width:44px;height:44px;border-radius:14px}
+      .finance-admin-page.ed-admin-shell.admin-shell-mobile-opened .admin-shell-mobile-open{top:12px;bottom:auto;right:auto;left:min(calc(86vw - 54px),256px)}
+      .finance-admin-page .box{padding:10px;border-radius:10px}
+      .finance-admin-page .grid{gap:10px}
+      .finance-admin-page h1{font-size:18px;margin-bottom:6px}
+      .plans-box{margin-bottom:10px}
+      .plans-box .plan-toolbar{gap:6px}
+      .plan-toolbar .plan-name{flex-basis:100%;max-width:none;padding:6px 8px;font-size:16px}
+      .plan-toolbar .buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;width:100%}
+      .plan-toolbar .buttons button{min-height:36px;padding:6px;font-size:12px}
+      .parameters-grid{gap:10px}
+      .parameter-group h2{margin:7px 0 3px}
+      .parameter-group .field{min-height:38px;padding:3px 0;font-size:13px;line-height:1.25}
+      .parameter-group .field input{padding:4px 6px;font-size:16px}
+      .parameter-group .separated-heading{margin-top:10px;padding-top:8px}
+      .field-subheading{margin-top:8px}
+      .tariff-shares .field{gap:4px}
+      .reference-panel{margin-top:12px;padding:8px}
+      .reference-columns{gap:4px}
+      .reference-group{margin-top:6px}
+      .reference-row{padding:4px 0}
+      .reference-intro{margin:5px 0}
+      .reference-source{margin-top:6px;padding-top:6px}
+      .results-grid,.results-grid .result-overview{gap:8px}
+      .finance-admin-page .block{padding:9px}
+      .finance-admin-page .block h2{margin-bottom:4px}
+      .results-grid>.block .row{min-height:34px}
+      .row{padding:4px 0}
+      .blocks{gap:8px;margin-top:8px}
+      .note{margin-top:8px;padding:8px}
+    }
   </style>
 </head>
 <body class="finance-admin-page">
 <main>
         <div class="summary-stack finance-summary" aria-label="Результат в устойчивый месяц">
-        <div class="metric primary metric-income"><span>Общий доход / оборот</span><div class="metric-pair"><b id="personal"></b><em>/</em><b id="turnover"></b></div></div>
+        <div class="metric primary metric-income"><span class="metric-label-full">Общий доход / оборот</span><span class="metric-label-short">Доход / оборот</span><div class="metric-pair"><b id="personal"></b><em>/</em><b id="turnover"></b></div></div>
         <div class="metric metric-margin"><span>Консультации / маржа</span><div class="metric-pair"><b id="consult-income"></b><em>/</em><b id="business-margin"></b></div></div>
-        <div class="metric metric-club"><span>Клуб · оборот</span><b id="club-card"></b></div>
-        <div class="metric metric-ads"><span>Расходы на рекламу</span><b id="ads-card"></b></div>
-        <div class="metric metric-opex"><span>Прочие постоянные расходы</span><b id="opex-card"></b></div>
-        <div class="metric metric-buyers"><span>Покупатели: платные / органические</span><div class="metric-pair"><b id="paid-card"></b><em>/</em><b id="organic-card"></b></div></div>
+        <div class="metric metric-club"><span class="metric-label-full">Клуб · оборот</span><span class="metric-label-short">Клуб · оборот</span><b id="club-card"></b></div>
+        <div class="metric metric-ads"><span class="metric-label-full">Расходы на рекламу</span><span class="metric-label-short">Реклама</span><b id="ads-card"></b></div>
+        <div class="metric metric-opex"><span class="metric-label-full">Прочие постоянные расходы</span><span class="metric-label-short">Прочие расходы</span><b id="opex-card"></b></div>
+        <div class="metric metric-buyers"><span class="metric-label-full">Покупатели: платные / органические</span><span class="metric-label-short">Покупатели<br>плат. / орг.</span><div class="metric-pair"><b id="paid-card"></b><em>/</em><b id="organic-card"></b></div></div>
         </div>
 
 
