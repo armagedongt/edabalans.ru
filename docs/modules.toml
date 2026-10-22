@@ -381,6 +381,7 @@ owns_files = [
   "backend/tests/test_admin_apps.py", "backend/tests/test_app_assets.py", "backend/tests/test_eda_finance.py",
   "backend/app/static/apps/recipes-part-1.html", "backend/app/static/apps/recipes-part-2.html",
   "backend/app/static/eda-finance.html", "backend/app/finance_plans.py", "docs/FINANCE_MODEL.md",
+  "docs/plans/FINANCE_ACTUALS_CONTINUATION.md",
   "backend/app/finance_facts.py", "backend/app/static/finance-facts.js", "backend/app/static/finance-facts.css",
   "backend/tests/test_finance_facts.py", "backend/tests/browser/finance-facts.e2e.mjs",
   "backend/app/static/embed.js", "backend/app/static/site-footer.js", "backend/app/static/content-gallery.js",
