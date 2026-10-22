@@ -114,6 +114,7 @@ services:
       - "8000"
     volumes:
       - /srv/sergey-travel/calculator:/srv/sergey-travel/calculator
+      - /srv/edabalans-media/masterclass:/srv/edabalans-media/masterclass:ro
     depends_on:
       postgres:
         condition: service_healthy

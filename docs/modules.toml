@@ -735,7 +735,7 @@ sources = [
 id = "products.masterclass.runtime"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.runtime.md"
-depends_on = ["platform.auth", "platform.commerce", "platform.crm", "products.public-site", "products.dqs", "products.masterclass.messenger-links"]
+depends_on = ["operations", "platform.auth", "platform.commerce", "platform.crm", "products.public-site", "products.dqs", "products.masterclass.messenger-links"]
 events_out = ["messaging.telegram.postpurchase", "messaging.telegram.apps", "messaging.max"]
 owns_files = [
   "backend/app/masterclass_routes.py", "backend/app/static/masterclass.css",

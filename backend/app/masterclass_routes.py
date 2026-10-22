@@ -7,6 +7,7 @@ import hashlib
 import re
 import secrets
 import uuid
+from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -71,6 +72,7 @@ from app.course_structure_service import (
 )
 
 router = APIRouter(prefix="/api/masterclass", tags=["masterclass"])
+COURSE_VIDEO_DIR = Path("/srv/edabalans-media/masterclass")
 
 ONBOARDING_QUESTIONS = [
     ("parameters", "Параметры", "Рост, вес, возраст. Расскажите, как менялся ваш вес за последние шесть месяцев. В каком весе вы хотели бы быть через полгода?"),
@@ -1056,6 +1058,34 @@ def course_state(
     reconcile_course_progress(db, user, context, now)
     db.commit()
     return course_payload(db, user, settings, now, context)
+
+
+@router.api_route("/course/video/{day}.mp4", methods=["GET", "HEAD"])
+def course_video(
+    day: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> FileResponse:
+    user = resolve_masterclass_user(request, db, "", settings)
+    context = course_context_for_member(db, user.id)
+    day_payload = context.days.get(day)
+    if not day_payload or urlsplit(str(day_payload.get("videoId") or "")).path != request.url.path:
+        raise HTTPException(404, "masterclass video not found")
+    can_open, _, _ = course_day_can_open(db, user.id, day, datetime.now(timezone.utc))
+    already_open = day_progress(db, user.id, day) is not None
+    if not day_access_allowed(day_payload, active_resource_codes(db, user.id)) or not (already_open or can_open):
+        raise HTTPException(403, "День пока закрыт")
+    path = COURSE_VIDEO_DIR / f"day-{day:02d}.mp4"
+    if not path.is_file():
+        raise HTTPException(404, "masterclass video not found")
+    # Release the course lock before streaming a long response (including Range requests).
+    db.commit()
+    return FileResponse(
+        path,
+        media_type="video/mp4",
+        headers={"Cache-Control": "private, no-store", "X-Robots-Tag": "noindex"},
+    )
 
 
 @router.get("/course/content/{asset_name}")

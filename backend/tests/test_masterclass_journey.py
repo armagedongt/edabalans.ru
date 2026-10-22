@@ -3567,6 +3567,93 @@ def test_closing_review_sends_one_copy_only_after_submit():
         )) == 1
 
 
+@pytest.mark.parametrize("day", [3, 4, 9])
+def test_course_video_streams_ranges_for_an_unlocked_member(tmp_path, monkeypatch, day):
+    client, factory = setup()
+    monkeypatch.setattr(masterclass_routes_module, "COURSE_VIDEO_DIR", tmp_path)
+    body = b"0123456789abcdef"
+    (tmp_path / f"day-{day:02d}.mp4").write_bytes(body)
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+    assert client.put(
+        f"/admin/api/users/{user_id}/course-policies/ACCESS_MASTERCLASS",
+        json={"unlock_mode": "fully_unlocked"},
+    ).status_code == 200
+    url = f"/api/masterclass/course/video/{day}.mp4"
+    response = client.get(url, headers={"Range": "bytes=4-7"})
+    assert response.status_code == 206
+    assert response.content == body[4:8]
+    assert response.headers["content-range"] == "bytes 4-7/16"
+    assert response.headers["content-type"] == "video/mp4"
+    assert response.headers["cache-control"] == "private, no-store"
+    assert client.get(url, headers={"Range": "bytes=-4"}).content == body[-4:]
+    head = client.head(url)
+    assert head.status_code == 200
+    assert head.content == b""
+    assert head.headers["content-length"] == str(len(body))
+    assert client.get(url).content == body
+    (tmp_path / f"day-{day:02d}.mp4").unlink()
+    assert client.get(url).status_code == 404
+
+
+def test_course_video_opens_on_schedule_and_remains_available_after_opening(tmp_path, monkeypatch):
+    client, factory = setup()
+    monkeypatch.setattr(masterclass_routes_module, "COURSE_VIDEO_DIR", tmp_path)
+    body = b"course video"
+    (tmp_path / "day-03.mp4").write_bytes(body)
+    url = "/api/masterclass/course/video/3.mp4"
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        db.add(MasterclassDayProgress(
+            user_id=user_id, day_number=2,
+            first_opened_at=datetime.now(timezone.utc) - timedelta(days=2),
+            completed_at=datetime.now(timezone.utc) - timedelta(days=1),
+        ))
+        db.commit()
+    assert client.get(url).content == body
+    assert client.post(
+        "/api/masterclass/course/days/3/open", json={"email": "member@example.test"},
+    ).status_code == 200
+    with factory() as db:
+        previous = db.scalar(select(MasterclassDayProgress).where(MasterclassDayProgress.day_number == 2))
+        previous.completed_at = None
+        db.commit()
+    assert client.get(url).content == body
+
+
+def test_course_video_enforces_session_entitlement_day_and_active_source(tmp_path, monkeypatch):
+    client, factory = setup()
+    monkeypatch.setattr(masterclass_routes_module, "COURSE_VIDEO_DIR", tmp_path)
+    (tmp_path / "day-03.mp4").write_bytes(b"private video")
+    url = "/api/masterclass/course/video/3.mp4"
+    assert client.get(url).status_code == 403  # Purchased, but day 3 is still closed.
+    assert client.head(url).status_code == 403
+    assert client.get("/api/masterclass/course/video/999.mp4").status_code == 404
+    assert client.get("/api/masterclass/course/video/1.mp4").status_code == 404
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+    assert client.put(
+        f"/admin/api/users/{user_id}/course-policies/ACCESS_MASTERCLASS",
+        json={"unlock_mode": "fully_unlocked"},
+    ).status_code == 200
+    with factory() as db:
+        from app.course_structure_service import active_course_version, publish_course_structure
+        from copy import deepcopy
+        current = active_course_version(db)
+        manifest = deepcopy(current.payload)
+        next(day for day in manifest["days"] if day["number"] == 3)["videoId"] = ""
+        publish_course_structure(db, manifest=manifest, expected_version=current.version_no, admin="test")
+    assert client.get(url).status_code == 404
+    with factory() as db:
+        access = db.scalar(select(UserAccess).join(Resource).where(Resource.code == "ACCESS_MASTERCLASS"))
+        access.revoked_at = datetime.now(timezone.utc)
+        db.commit()
+    assert client.get(url).status_code == 403
+    client.cookies.clear()
+    assert client.get(url).status_code == 401
+    assert client.head(url).status_code == 401
+
+
 def test_course_content_uses_the_same_member_session():
     client, _ = setup()
     imported = client.get(
