@@ -1745,8 +1745,9 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
                         if "role" not in row:
                             # An older client must not erase a manually marked warm-up.
                             previous_set = previous_sets.get(str(row.get("set_number", index)), {})
-                            row["role"] = previous_set.get("role", "work")
-                        if row["role"] not in ("warmup", "work"):
+                            if "role" in previous_set:
+                                row["role"] = previous_set["role"]
+                        if "role" in row and row["role"] not in ("warmup", "work"):
                             raise ValueError("INVALID_SET_ROLE")
                     if "coach_note" in exercise:
                         if not isinstance(exercise["coach_note"], str) or len(exercise["coach_note"]) > 20000:
