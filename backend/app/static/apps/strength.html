@@ -1573,7 +1573,7 @@
 
 </style>
 
-<link rel="stylesheet" href="/assets/strength-journal.css?v=20261022-stability-plane">
+<link rel="stylesheet" href="/assets/strength-journal.css?v=20261022-scale-select">
 <script src="/assets/strength-journal-model.js?v=20261021-stability-scale"></script>
 <script>
 (function(){
@@ -3243,7 +3243,7 @@ function render(){
 
 
 
-try{var savedScale=Number(localStorage.getItem('edabalans-strength-scale'));if(savedScale>=100 && savedScale<=200 && savedScale%5===0)app.scale=savedScale;}catch(error){}
+try{var savedScale=Number(localStorage.getItem('edabalans-strength-scale'));if(savedScale>=50 && savedScale<=200 && savedScale%5===0)app.scale=Math.min(150,savedScale);}catch(error){}
 
 var screenHistory=null,screenOwner=String(Date.now())+Math.random(),journalWidthObserver=null,resizeJournal=null;
 function screenView(){return {mainTab:app.mainTab,modal:app.modal?cloneValue(app.modal):null};}
@@ -3328,7 +3328,7 @@ function commonHeader(){
   return '<div class="st-card st-header"><div class="st-top">'+
     '<img class="st-app-icon" src="/assets/strength-favicon.svg" alt="Силовые тренировки">'+
     '<span class="st-top-email">'+esc((app.selectedUser || {}).email || app.email)+'</span>'+
-    '<button class="st-scale-button" '+(app.scale>=200?'disabled ':'')+'onclick="ST.increaseScale()" title="Увеличить интерфейс на 5%" aria-label="Масштаб '+app.scale+'%, увеличить на 5%">'+app.scale+'%＋</button>'+
+    '<select class="st-scale-button" onchange="ST.setScale(this.value)" title="Масштаб интерфейса" aria-label="Масштаб интерфейса">'+Array.from({length:21},function(_,index){var value=50+index*5;return '<option value="'+value+'"'+(app.scale===value?' selected':'')+'>'+value+'%</option>';}).join('')+'</select>'+
     '<button class="st-help" onclick="ST.openTutorial()">Как пользоваться</button>'+
     '<button class="st-icon-link" onclick="ST.setMainTab(\'stats\')" aria-label="Статистика" title="Статистика">'+journalIcon('stats')+'</button>'+
     '<a class="st-icon-link ed-app-account-link" href="'+esc(ACCOUNT_URL)+'" aria-label="Личный кабинет" title="Личный кабинет">'+journalIcon('account')+'</a>'+
@@ -5668,9 +5668,10 @@ function showDeliveryNotice(message,error){
 }
 
 window.ST = {
-  increaseScale:function(){
-    if(app.scale>=200)return;
-    app.scale+=5;
+  setScale:function(value){
+    value=Number(value);
+    if(!Number.isFinite(value) || value<50 || value>150 || value%5!==0)return;
+    app.scale=value;
     try{localStorage.setItem('edabalans-strength-scale',String(app.scale));}catch(error){}
     renderWithoutViewportJump();
   },

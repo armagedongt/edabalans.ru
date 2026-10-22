@@ -129,7 +129,7 @@
 #strength-app .st-top-email{font-size:13px!important;line-height:1.35}
 #strength-app .st-help{font-size:12px!important;font-weight:750;min-height:36px}
 #strength-app .st-top .st-icon-link{box-sizing:border-box;width:36px!important;min-width:36px!important;height:36px;border:1px solid #d7c8ed;border-radius:7px;background:#fff;padding:5px}
-#strength-app .st-scale-button{flex:none;min-height:32px;padding:3px 5px;border:1px solid #d7c8ed;border-radius:7px;background:#fff;color:#7040cb;font:750 11px/1.2 var(--ed-font-body,Manrope,Arial,sans-serif)}
+#strength-app .st-scale-button{flex:none;cursor:pointer;min-height:32px;padding:3px 5px;border:1px solid #d7c8ed;border-radius:7px;background:#fff;color:#7040cb;font:750 11px/1.2 var(--ed-font-body,Manrope,Arial,sans-serif)}
 #strength-app .st-scale-button:disabled{opacity:.4}
 #strength-app .st-template-manager-row button{width:36px;min-width:36px;min-height:36px;font-size:17px}
 #strength-app .st-manager-back{min-height:36px!important;font-size:14px!important;font-weight:750}

@@ -648,21 +648,38 @@ for(const width of [360,430,768,1440]){
  await unsaved.context.close();
 }
 // Scaling preserves whole-workout column width, but scales every compact-column proportion.
-for(const width of [360,430,701,1440]){
+for(const width of [360,430,701,768,1440]){
  const scaled=await open(width),page=scaled.page;
  const column=page.locator('.st-history-row article').last();
  const before=await column.boundingBox();const rowBefore=await column.locator('.st-grid-set').first().boundingBox();
- await page.locator('.st-scale-button').click();
+ await page.locator('.st-scale-button').selectOption('105');
  const after=await column.boundingBox();const rowAfter=await column.locator('.st-grid-set').first().boundingBox();
  assert(Math.abs(before.width-after.width)<1,'whole view keeps physical column width at '+width);
  assert(rowAfter.height>rowBefore.height,'whole view gains vertical size');
  await page.screenshot({path:`${out}/scale-training-105-${width}.png`});
  await page.locator('.st-view-toggle').click();const compactBefore=await column.boundingBox();
- await page.locator('.st-scale-button').click();const compactAfter=await column.boundingBox();
+ await page.locator('.st-scale-button').selectOption('110');const compactAfter=await column.boundingBox();
  assert(Math.abs(compactAfter.width/compactBefore.width-110/105)<.01,'compact columns scale proportionally');
- assert.equal(await page.locator('.st-scale-button').textContent(),'110%＋');
+ assert.equal(await page.locator('.st-scale-button').inputValue(),'110');
  await page.screenshot({path:`${out}/scale-packed-110-${width}.png`});
- await page.reload();assert.equal(await page.locator('.st-scale-button').textContent(),'110%＋','scale preference survives reload');
+ await page.reload();assert.equal(await page.locator('.st-scale-button').inputValue(),'110','scale preference survives reload');
+ assert.equal(await page.locator('.st-scale-button option').count(),21);
+ await page.locator('.st-view-toggle').click();
+ const compactAt110=await column.boundingBox();
+ await page.locator('.st-scale-button').selectOption('50');
+ const compactAt50=await column.boundingBox();
+ assert(Math.abs(compactAt50.width/compactAt110.width-50/110)<.01,'compact view really shrinks below100%');
+ await page.screenshot({path:`${out}/scale-packed-before-reload-50-${width}.png`});
+ assert.equal(await page.locator('.st-scale-button').inputValue(),'50');
+ await page.reload();assert.equal(await page.locator('.st-scale-button').inputValue(),'50');
+ const wholeAt50=await column.boundingBox(),rowAt50=await column.locator('.st-grid-set').first().boundingBox();
+ assert(Math.abs(wholeAt50.width-before.width)<1,'shrinking whole view preserves column width');
+ assert(rowAt50.height<rowBefore.height,'whole view really shrinks vertically below100%');
+ await page.screenshot({path:`${out}/scale-packed-50-${width}.png`});
+ await page.locator('.st-scale-button').selectOption('150');
+ assert.equal(await page.locator('.st-scale-button').inputValue(),'150');
+ await page.evaluate(()=>{localStorage.setItem('edabalans-strength-scale','200');});
+ await page.reload();assert.equal(await page.locator('.st-scale-button').inputValue(),'150','old larger scale clamps to supported maximum');
  await page.evaluate(()=>ST.resetScale());
  for(let i=0;i<3;i++){await page.getByRole('button',{name:'Новая тренировка',exact:true}).click();await page.waitForTimeout(150);}
  await page.locator('.st-view-toggle').click();
@@ -688,19 +705,19 @@ for(const failure of ['network','timeout']){
  assert.equal(retry.telegramWrites.length,0);await retry.context.close();
 }
 // At the largest supported scale normal three-digit weights stay readable in the fixed-width view.
-for(const width of [360,430,701,1440]){
+for(const width of [360,430,701,768,1440]){
  const large=await open(width),page=large.page;
- for(let i=0;i<20;i++)await page.locator('.st-scale-button').click();
- assert.equal(await page.locator('.st-scale-button').textContent(),'200%＋');
+ await page.locator('.st-scale-button').selectOption('150');
+ assert.equal(await page.locator('.st-scale-button').inputValue(),'150');
  const input=page.locator('.st-history-row article').last().locator('input[data-field=planWeight]').first();await input.fill('100');
  const fit=await input.evaluate(input=>{const style=getComputedStyle(input),ctx=document.createElement('canvas').getContext('2d');ctx.font=style.font;return input.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)>=ctx.measureText(input.value).width;});
- assert(fit,'three-digit weight fits at200% '+width);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
- await page.screenshot({path:`${out}/scale-training-200-${width}.png`});
+ assert(fit,'three-digit weight fits at150% '+width);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ await page.screenshot({path:`${out}/scale-training-150-${width}.png`});
  await page.locator('.st-view-toggle').click();assert.equal(await page.locator('.st-view-toggle').getAttribute('aria-pressed'),'true','first click after numeric edit must switch view');
- await page.screenshot({path:`${out}/scale-packed-200-${width}.png`});
+ await page.screenshot({path:`${out}/scale-packed-150-${width}.png`});
  const rpe=page.locator('article[data-session-index="0"]').first().locator('.st-rpe-button').first();await rpe.click();
  const popup=await page.locator('.st-rpe-floating').boundingBox();assert(popup.x>=0 && popup.y>=0 && popup.x+popup.width<=width && popup.y+popup.height<=900,'scaled RPE menu stays in viewport');
- await page.screenshot({path:`${out}/scale-rpe-200-${width}.png`});await page.locator('.st-rpe-option').first().click();
+ await page.screenshot({path:`${out}/scale-rpe-150-${width}.png`});await page.locator('.st-rpe-option').first().click();
  await large.context.close();
 }
 
