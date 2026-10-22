@@ -47,6 +47,7 @@ html,body{font-family:var(--ed-font-body);font-size:var(--ed-text-size);font-wei
    :root overrides older page-local html rules without changing gallery strips. */
 html:root,.site-menu-panel{scrollbar-width:auto;scrollbar-color:#7ed2ff #eefaff}
 html:root{scrollbar-gutter:stable}
+html:root.site-menu-open{scrollbar-gutter:auto}
 html:root::-webkit-scrollbar,.site-menu-panel::-webkit-scrollbar{width:16px}
 html:root::-webkit-scrollbar-track,.site-menu-panel::-webkit-scrollbar-track{background:#eefaff}
 html:root::-webkit-scrollbar-thumb,.site-menu-panel::-webkit-scrollbar-thumb{border:2px solid #eefaff;border-radius:999px;background:#7ed2ff}
