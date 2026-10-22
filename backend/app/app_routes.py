@@ -840,7 +840,7 @@ def app_asset(asset_name: str) -> FileResponse:
         return public_asset(STATIC_DIR.parents[2] / "content" / "article-components" / filename)
     if asset_name not in {
         "dqs-favicon.svg", "strength-favicon.svg", "metabolism-favicon.svg",
-        "strength-journal.css", "strength-journal-model.js",
+        "strength-journal.css", "strength-journal-model.js", "strength-progression-model.mjs",
         "strength.webmanifest", "strength-pwa-180.png", "strength-pwa-192.png", "strength-pwa-512.png",
         "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png", "site-typography.css",
         "content-gallery.js", "public-program-card.css", "public-program-card.js",
@@ -1264,6 +1264,7 @@ def strength_account_catalog(db: Session, state: StrengthState) -> list[dict[str
             "tips": item["tips"],
             "media_url": item["media_url"],
             "guide": item["guide"],
+            "training": item.get("training"),
         }
         for item in BASE_STRENGTH_EXERCISES
     }

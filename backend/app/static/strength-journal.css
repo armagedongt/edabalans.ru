@@ -220,4 +220,13 @@
 #strength-app .st-grid-set .st-modern-number.st-warmup{color:#258044}
 #strength-app .st-grid-set .st-modern-number.st-work{color:#bf3946}
 #strength-app .st-grid-set .st-modern-number:focus-visible{outline:2px solid #9771e0;outline-offset:-2px}
+.st-guide-training{max-width:900px;margin:0 auto 18px;padding:12px;border:1px solid #d7e7ef;border-radius:10px;background:#f2faff;font-size:14px;line-height:1.5}
+.st-guide-training dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:12px}.st-guide-training dt{font-size:12px;color:#606c78}.st-guide-training dd{margin:3px 0;font-weight:800}.st-guide-training p{margin:9px 0 0}
+.st-progression{margin:7px 0 3px;font-size:11px;line-height:1.4;color:#303340}
+#strength-app .st-progression button{width:100%;min-height:32px;height:auto;padding:5px 6px;border:1px solid #cbb8ef;border-radius:7px;background:#faf7ff;color:#7040cb;font:700 11px/1.3 var(--ed-font-body,Manrope,Arial,sans-serif)}
+.st-progression-settings{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px}.st-progression-settings label{min-width:0}.st-progression-wide{grid-column:1/-1}
+#strength-app .st-progression-settings input,#strength-app .st-progression-settings select{box-sizing:border-box;width:100%;min-width:0;min-height:30px;height:30px;padding:3px;border:1px solid #d5d8df;border-radius:5px;background:#fff;color:#171717;font:600 12px var(--ed-font-body,Manrope,Arial,sans-serif)}
+.st-progression details{margin-top:7px}.st-progression summary{cursor:pointer}.st-progression-flag{display:flex;align-items:center;gap:5px;margin:5px 0}.st-progression-flag input{flex:none;width:16px;height:16px}
+.st-progression p{margin:6px 0}.st-progression table{width:100%;border-collapse:collapse;margin:6px 0}.st-progression th,.st-progression td{padding:4px;text-align:left;border-bottom:1px solid #e7e8ec}.st-progression-changed td{background:#e9f3ff}.st-progression-error{color:#af303c}.st-progression-unit{color:#606c78}
+@media(max-width:430px){.st-guide-training dl{grid-template-columns:1fr}}
 @media(max-width:700px){#strength-app[data-journal-view="training"] .st-grid-set,#strength-app[data-journal-view="training"] .st-grid-labels{grid-template-columns:20px minmax(0,1fr) minmax(0,.75fr) 40px minmax(0,1.45fr) minmax(0,1.1fr) minmax(0,.8fr)}}
