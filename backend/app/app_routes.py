@@ -768,6 +768,9 @@ def recipes_standalone() -> HTMLResponse:
 
 def standalone_app_page(app_code: str, title: str) -> HTMLResponse:
     template = (STATIC_DIR / "standalone-app.html").read_text(encoding="utf-8")
+    if app_code == "strength":
+        for alphabet in ("cyrillic", "latin"):
+            template = template.replace(f'<link rel="preload" href="/assets/fonts/unbounded-800-{alphabet}-v1.woff2" as="font" type="font/woff2" crossorigin>\n', "")
     favicon_code = "metabolism" if app_code == "metabolism-old" else app_code
     favicon = (
         f"/assets/{favicon_code}-favicon.svg"
@@ -775,7 +778,8 @@ def standalone_app_page(app_code: str, title: str) -> HTMLResponse:
         else "/favicon.png"
     )
     template = (
-        template.replace("{{APP_CODE}}", app_code)
+        template.replace("{{PWA_HEAD}}", '<link rel="manifest" href="/assets/strength.webmanifest"><meta name="theme-color" content="#f5f5f7"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Силовые"><link rel="apple-touch-icon" href="/assets/strength-pwa-180.png">' if app_code == "strength" else "")
+        .replace("{{APP_CODE}}", app_code)
         .replace("{{APP_TITLE}}", title)
         .replace("{{APP_FAVICON}}", favicon)
     )
@@ -825,6 +829,8 @@ def typography_font(font_name: str) -> FileResponse:
 
 @router.get("/assets/{asset_name}", include_in_schema=False)
 def app_asset(asset_name: str) -> FileResponse:
+    if asset_name == "strength.webmanifest":
+        return FileResponse(STATIC_DIR / asset_name, media_type="application/manifest+json", headers={"Cache-Control": "no-cache"})
     if asset_name == "brain-logo.png":
         return public_asset(STATIC_DIR / "homepage-preview" / "favicon-no-outline.png")
     if asset_name in {"article-typography.css", "article-note.css"}:
@@ -833,6 +839,7 @@ def app_asset(asset_name: str) -> FileResponse:
     if asset_name not in {
         "dqs-favicon.svg", "strength-favicon.svg", "metabolism-favicon.svg",
         "strength-journal.css", "strength-journal-model.js",
+        "strength.webmanifest", "strength-pwa-180.png", "strength-pwa-192.png", "strength-pwa-512.png",
         "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png", "site-typography.css",
         "content-gallery.js", "public-program-card.css", "public-program-card.js",
         "account-visual.css", "account-legacy-offer.js", "course-visual.css", "calories-course.css",
@@ -1538,7 +1545,7 @@ def dqs_access_status(request: Request, db: Session = Depends(get_db)) -> dict[s
     }
 
 
-def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, workout_type: int) -> dict[str, Any]:
+def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, workout_type: int, *, catalog_only: bool = False) -> dict[str, Any]:
     catalog = []
     settings = {
         (str(item.get("exercise_id")), int(item.get("workout_type", 0))): item
@@ -1581,7 +1588,7 @@ def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, work
     # Sessions belong to the person, not to a template. `workout_type` remains
     # provenance (and selects the future-plan catalogue above), but never
     # filters the exercise history returned to the client.
-    own_workouts = [w for w in (state.workouts or []) if isinstance(w, dict)]
+    own_workouts = [] if catalog_only else [w for w in (state.workouts or []) if isinstance(w, dict)]
     own_workouts.sort(key=lambda item: int(item.get("session_number") or 0))
     for workout in own_workouts:
         session_id = str(workout.get("session_id") or workout.get("id"))
@@ -1663,7 +1670,14 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
         if action == "openUser":
             payload = {"ok": True, "user": user_payload}
         elif action == "getWorkout":
-            payload = {"ok": True, "user": user_payload, "workout": strength_payload(db, state, user.id, int(body.get("type") or 1))}
+            workout_type = int(body.get("type") or 1)
+            if str(body.get("initial") or "") == "1":
+                active_types = [int(item["workout_type"]) for item in sorted(state.workout_types or [], key=lambda item: int(item.get("sort_order") or 0)) if item.get("active") is not False]
+                latest = max((item for item in state.workouts or [] if int(item.get("workout_type") or 0) in active_types), key=lambda item: int(item.get("session_number") or 0), default={})
+                workout_type = int(latest.get("workout_type") or (active_types[0] if active_types else 1))
+            workout = strength_payload(db, state, user.id, workout_type, catalog_only=str(body.get("catalog_only") or "") == "1")
+            workout["selected_type"] = workout_type
+            payload = {"ok": True, "user": user_payload, "workout": workout}
         elif action == "saveSession":
             workout_type = int(body.get("workout_type") or 0)
             session = body.get("session") or {}
@@ -1900,7 +1914,7 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
                 details={"version_after": state.version},
             ))
         db.commit()
-        return JSONResponse(payload)
+        return JSONResponse(payload, headers={"Cache-Control": "no-store"})
     except (AppAccessError, ValueError, TypeError, json.JSONDecodeError) as exc:
         db.rollback()
         return JSONResponse(error(str(exc)))

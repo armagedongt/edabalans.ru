@@ -194,3 +194,21 @@
  #strength-app[data-journal-view="training"] .st-top .st-icon-link{height:calc(34px * var(--st-scale))}
  #strength-app[data-journal-view="training"] .st-type{padding-top:calc(5px * var(--st-scale));padding-bottom:calc(5px * var(--st-scale));font-size:min(calc(11px * var(--st-scale)),15px)}
 }
+
+/* Mode is visible without increasing the sticky toolbar's height. */
+#strength-app .st-session-sticky{border-bottom:2px solid #83bc83}
+#strength-app[data-journal-view="exercise"] .st-session-sticky{border-bottom-color:#e4a161}
+#strength-app[data-journal-view] .st-top-email{font-size:calc(13px / var(--st-root-zoom,1))!important;line-height:1.35}
+#strength-app .st-help.st-icon-link{text-decoration:none;display:inline-grid;place-items:center;font-size:22px!important;font-weight:800;padding:0}
+#strength-app .st-modal-bg,#strength-app .st-exercise-guide{zoom:calc(1 / var(--st-root-zoom,1));font-family:var(--ed-font-body,Manrope,Arial,sans-serif);font-size:14px}
+#strength-app .st-modal,#strength-app .st-analysis,#strength-app .st-calendar-wrap{font-family:var(--ed-font-body,Manrope,Arial,sans-serif)}
+#strength-app .st-chart text{font-family:var(--ed-font-body,Manrope,Arial,sans-serif)}
+#strength-app .chart-label,#strength-app .chart-value{font-size:12px}
+#strength-app .st-legend-item{font-size:12px}
+#strength-app .st-cal-workout{font-size:11px}
+#strength-app .st-grid-set input.plan-up{background:#e9f3ff!important}
+#strength-app .st-grid-set input.plan-down{background:#eef0f3!important}
+#strength-app .st-template-loading{padding:20px;font-size:14px}
+#strength-app .st-template-loading button{min-height:36px;margin-left:8px}
+
+#strength-app .st-cal-entry{display:inline-block;padding:2px 4px;border-radius:4px;margin-top:2px;color:#17172b}

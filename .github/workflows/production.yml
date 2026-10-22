@@ -138,6 +138,7 @@ jobs:
           npm --prefix backend/tests/browser run test:browser-journey
           npm --prefix backend/tests/browser run test:homepage-checkout
           npm --prefix backend/tests/browser run test:embed-loading
+          QA_OUT=/tmp/strength-entry npm --prefix backend/tests/browser run test:strength-entry
           npm --prefix backend/tests/browser run test:video-player
           node backend/tests/browser/article-audio.e2e.mjs
           npm --prefix backend/tests/browser run test:admin-shell

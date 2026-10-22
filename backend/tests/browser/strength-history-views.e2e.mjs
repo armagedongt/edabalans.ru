@@ -18,7 +18,7 @@ function fixture(manyExercises=false){
 }
 const browser=await chromium.launch();
 const errors=[];let rows=[];
-async function open(width,managed=false,longNotes=false,manyExercises=false,sameNames=false,shortHistory=false,realAdmin=false,historyGaps=false){
+async function open(width,managed=false,longNotes=false,manyExercises=false,sameNames=false,shortHistory=false,realAdmin=false,historyGaps=false,holdCatalogueReads=false){
  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce',hasTouch:width<=700});
  const page=await context.newPage(),state=fixture(manyExercises),writes=[],telegramWrites=[];let active=0,overlap=false,failTemplate=false;let workoutReads=0,deliveryFailure=false,deliveryGate=null,sessionGate=null,failSession=false,transportFailure=false,timeoutSession=false;
  if(sameNames)state.exercise_catalog.forEach(e=>{e.exercise_name=e.short_name='Одинаковое имя <img src=x onerror=alert(1)>';});
@@ -31,7 +31,7 @@ async function open(width,managed=false,longNotes=false,manyExercises=false,same
   state.sets=state.sets.filter(set=>ids.has(set.session_id)&&set.session_id!=='middle-0');
   state.sets.forEach(set=>{if(set.session_id==='middle-2'||(set.session_id==='middle-1'&&set.exercise_id===guide[0].code)){for(const field of ['plan_weight','plan_reps','fact_weight','fact_reps','rpe'])set[field]='';set.completed=false;}});
  }
- const catalogs=new Map([1,2,3].map(id=>[id,structuredClone(state.exercise_catalog)]));let catalogGate=null;
+ const catalogs=new Map([1,2,3].map(id=>[id,structuredClone(state.exercise_catalog)]));let catalogGate=null,releaseCatalogueReads;const catalogueReadsGate=holdCatalogueReads?new Promise(resolve=>{releaseCatalogueReads=resolve;}):null;const readRequests=[];
  page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/*',async route=>{
   const url=new URL(route.request().url());if(url.hostname!=='127.0.0.1')return route.abort();
@@ -58,7 +58,7 @@ async function open(width,managed=false,longNotes=false,manyExercises=false,same
   }
   const data=route.request().method()==='POST'?JSON.parse(route.request().postData()):Object.fromEntries(url.searchParams);
   let reply={ok:true,user:{user_id:'fixture',email:'example@example.test',display_name:''},version:state.version};
-  if(data.action==='getWorkout'){workoutReads++;reply.workout={...structuredClone(state),exercise_catalog:structuredClone(catalogs.get(Number(data.type)) || state.exercise_catalog.map(e=>({...e,active:false})))};}
+  if(data.action==='getWorkout'){readRequests.push({...data});workoutReads++;const type=data.initial==='1'?1:Number(data.type);reply.workout={...structuredClone(state),selected_type:type,exercise_catalog:structuredClone(catalogs.get(type) || state.exercise_catalog.map(e=>({...e,active:false})))};if(data.catalog_only==='1'){reply.workout.sessions=[];reply.workout.session_exercises=[];reply.workout.sets=[];if(catalogueReadsGate)await catalogueReadsGate;}}
   if(route.request().method()==='POST'){
    if(data.action==='saveSession' && (transportFailure || timeoutSession)){
     writes.push(data);if(transportFailure){transportFailure=false;return route.abort('failed');}
@@ -70,14 +70,19 @@ async function open(width,managed=false,longNotes=false,manyExercises=false,same
    else if(failTemplate && data.action==='saveWorkoutTypes'){failTemplate=false;reply={ok:false,error:'NETWORK_TEMPORARY'};}
    else if(data.action==='saveExerciseCatalog'&&!state.workout_types.some(t=>Number(t.workout_type)===data.workout_type&&t.active!==false))reply={ok:false,error:'INVALID_WORKOUT_TEMPLATE'};
    else if(data.version!==state.version)reply={ok:false,error:'STRENGTH_STATE_CONFLICT'};
-   else{reply.version=++state.version;if(data.action==='saveWorkoutTypes')state.workout_types=data.workout_types;if(data.action==='saveExerciseCatalog')catalogs.set(data.workout_type,data.exercises.map(e=>({...state.exercise_catalog.find(item=>item.exercise_id===e.exercise_id),...e})));if(data.session)reply.session={...data.session,session_number:data.session.session_number || 10};}
+   else{reply.version=++state.version;if(data.action==='saveWorkoutTypes')state.workout_types=data.workout_types;if(data.action==='saveExerciseCatalog'){
+    const incoming=data.exercises.map(e=>({...state.exercise_catalog.find(item=>item.exercise_id===e.exercise_id),...e}));
+    catalogs.set(data.workout_type,incoming);
+    for(const [type,existing] of catalogs){if(type===data.workout_type)continue;for(const item of incoming){const shared=existing.find(e=>e.exercise_id===item.exercise_id);if(shared){shared.exercise_name=item.exercise_name;shared.short_name=item.short_name||item.exercise_name;}else if(item.source==='custom')existing.push({...item,active:false});}}
+    for(const item of incoming){if(!state.exercise_catalog.some(e=>e.exercise_id===item.exercise_id))state.exercise_catalog.push({...item});}
+   }if(data.session)reply.session={...data.session,session_number:data.session.session_number || 10};}
    active--;
   }
   await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(reply)});
  });
  await page.goto(base+(realAdmin?'/admin/strength?user=fixture':managed?'/strength-admin-local':'/strength-local'));
  await page.locator('.st-view-toggle').waitFor();await page.evaluate(()=>document.fonts.ready);
- return {context,page,writes,telegramWrites,getOverlap:()=>overlap,getWorkoutReads:()=>workoutReads,state,holdNextCatalog:()=>{let release;catalogGate=new Promise(resolve=>{release=resolve;});return release;},failNextTemplate:()=>{failTemplate=true;},failNextDelivery:()=>{deliveryFailure=true;},holdNextDelivery:()=>{let release;deliveryGate=new Promise(resolve=>{release=resolve;});return release;},holdNextSessionSave:()=>{let release;sessionGate=new Promise(resolve=>{release=resolve;});return release;},failNextSessionSave:()=>{failSession=true;},failNextTransport:()=>{transportFailure=true;},timeoutNextSave:()=>{timeoutSession=true;}};
+ return {context,page,writes,telegramWrites,readRequests,releaseCatalogueReads:()=>releaseCatalogueReads&&releaseCatalogueReads(),getOverlap:()=>overlap,getWorkoutReads:()=>workoutReads,state,holdNextCatalog:()=>{let release;catalogGate=new Promise(resolve=>{release=resolve;});return release;},failNextTemplate:()=>{failTemplate=true;},failNextDelivery:()=>{deliveryFailure=true;},holdNextDelivery:()=>{let release;deliveryGate=new Promise(resolve=>{release=resolve;});return release;},holdNextSessionSave:()=>{let release;sessionGate=new Promise(resolve=>{release=resolve;});return release;},failNextSessionSave:()=>{failSession=true;},failNextTransport:()=>{transportFailure=true;},timeoutNextSave:()=>{timeoutSession=true;}};
 }
 async function assertDatesFollowColumns(page){
  await page.waitForFunction(()=>{const dates=document.querySelectorAll('.st-date-cell'),cards=document.querySelector('.st-history-row').querySelectorAll('article');return [...dates].every((e,i)=>Math.abs(e.getBoundingClientRect().left-cards[i].getBoundingClientRect().left)<1);});
@@ -396,15 +401,15 @@ await reloadPage.goBack();await reloadPage.locator('.st-view-toggle').waitFor();
 await reloadPage.goForward();await reloadPage.getByRole('button',{name:'Вернуться к тренировкам'}).waitFor();
 await reloadPage.getByRole('button',{name:'Вернуться к тренировкам'}).click();await reloadPage.locator('.st-view-toggle').waitFor();
 await reloaded.context.close();
-// Each view retains its own scroll position and never writes just by switching.
+// Switching views always anchors the latest record at the right edge, without writes.
 {
 const viewing=await open(430),vp=viewing.page;
 await vp.locator('[data-axis]').evaluate(e=>e.scrollLeft=221);await vp.waitForTimeout(60);
 const trainingScroll=await vp.locator('[data-axis]').evaluate(e=>e.scrollLeft);
 await vp.locator('.st-view-toggle').click();await vp.locator('[data-axis]').evaluate(e=>e.scrollLeft=442);await vp.waitForTimeout(60);
 const packedScroll=await vp.locator('[data-axis]').evaluate(e=>e.scrollLeft);
-await vp.locator('.st-view-toggle').click();assert.equal(await vp.locator('[data-axis]').evaluate(e=>e.scrollLeft),trainingScroll);
-await vp.locator('.st-view-toggle').click();assert.equal(await vp.locator('[data-axis]').evaluate(e=>e.scrollLeft),packedScroll);
+await vp.locator('.st-view-toggle').click();assert(await vp.locator('[data-axis]').evaluate(e=>Math.abs(e.scrollLeft-e.scrollWidth+e.clientWidth)<1));
+await vp.locator('.st-view-toggle').click();assert(await vp.locator('[data-axis]').evaluate(e=>Math.abs(e.scrollLeft-e.scrollWidth+e.clientWidth)<1));
 assert.equal(viewing.writes.length,0,'view changes never create or rewrite records');
 const foreign=vp.locator('.st-history-row').first().locator('article[data-session-index="1"]');
 const foreignWeight=foreign.locator('input[data-field=planWeight]').first();
@@ -461,7 +466,7 @@ for(const width of [360,430,700,701,768,1440]){
  }
  await desktop.context.close();
  const touch=await open(430),touchField=touch.page.locator('.st-history-row').first().locator('article').last().locator('input[data-field=planWeight]').first();
- await touchField.fill('60');await touchField.tap();await touch.page.waitForTimeout(20);
+ await touchField.fill('60');await touchField.tap();await touch.page.waitForFunction(()=>document.activeElement.selectionStart===2&&document.activeElement.selectionEnd===2);
  assert.deepEqual(await touchField.evaluate(input=>[input.selectionStart,input.selectionEnd]),[2,2],'touch keeps the numeric cursor at the right edge');
  await touch.context.close();
 }
@@ -565,15 +570,16 @@ for(const width of [360,430,700,701,760,761,768,1440]){
   const full=await mp.locator('[data-axis=training]').evaluate(axis=>Math.abs(axis.clientWidth-axis.querySelector('article').getBoundingClientRect().width)<1);
   assert(full,'managed phone uses the same full-width filling layout');
  }
- const reads=managed.getWorkoutReads();
+ const historyReads=()=>managed.readRequests.filter(r=>r.catalog_only!=='1').length;
+ const reads=historyReads();
  await mp.locator('.st-exercise-info').last().click();await mp.goBack();await mp.locator('.st-guide-header').waitFor({state:'detached'});
- assert.equal(managed.getWorkoutReads(),reads,'internal Back never reloads the managed profile');
+ assert.equal(historyReads(),reads,'internal Back never reloads the managed profile');
  if(width===430){
   await mp.getByRole('button',{name:'Статистика',exact:true}).click();await mp.reload();
   await mp.getByRole('button',{name:'Вернуться к тренировкам'}).waitFor();
-  const afterReload=managed.getWorkoutReads();
+  const afterReload=historyReads();
   await mp.goBack();await mp.locator('.st-view-toggle').waitFor();assert(!new URL(mp.url()).searchParams.has('view'));
-  assert.equal(managed.getWorkoutReads(),afterReload,'Back after statistics reload restores the journal internally');
+  assert.equal(historyReads(),afterReload,'Back after statistics reload restores the journal internally');
   await mp.goForward();await mp.getByRole('button',{name:'Вернуться к тренировкам'}).waitFor();
   await mp.getByRole('button',{name:'Вернуться к тренировкам'}).click();await mp.locator('.st-view-toggle').waitFor();
  }
@@ -721,6 +727,99 @@ for(const width of [360,430,701,768,1440]){
  await large.context.close();
 }
 
+// Mobile feedback: secondary screens fill the viewport at every journal scale.
+for(const width of [360,430,700,701,768,1440]){
+ const trial=await open(width),page=trial.page;
+ assert.equal(await page.getByRole('button',{name:'Как пользоваться',exact:true}).textContent(),'?');
+ const emailAt100=await page.locator('.st-top-email').evaluate(el=>parseFloat(getComputedStyle(el).fontSize));
+ for(const scale of [50,80,150]){
+  if(await page.locator('.st-view-toggle').getAttribute('aria-pressed')==='false')await page.locator('.st-view-toggle').click();
+  await page.locator('.st-scale-button').selectOption(String(scale));
+  const effectiveEmail=await page.locator('.st-top-email').evaluate(el=>parseFloat(getComputedStyle(el).fontSize)*Number(el.closest('#strength-app').style.zoom));
+  assert(Math.abs(effectiveEmail-emailAt100)<.1,'email font stays fixed');
+  await page.locator('.st-exercise-info').last().click();
+  const full=await page.locator('.st-exercise-guide').boundingBox();
+  assert(Math.abs(full.x)<1&&Math.abs(full.y)<1&&Math.abs(full.width-width)<1&&Math.abs(full.height-900)<1,'exercise details fill viewport at '+scale+'% '+width);
+  if(width===430&&scale===80)await page.screenshot({path:`${out}/guide-fullscreen-80-430.png`});
+  await page.getByRole('button',{name:'Закрыть информацию об упражнении'}).click();
+  await page.getByRole('button',{name:'Статистика',exact:true}).click();
+  assert.equal(await page.locator('#strength-app').evaluate(el=>Number(el.style.zoom)),1);
+  await page.getByRole('button',{name:'Вернуться к тренировкам'}).click();
+ }
+ await page.locator('.st-scale-button').selectOption('100');
+ await page.screenshot({path:`${out}/header-mobile-${width}.png`});await trial.context.close();
+}
+// A background catalogue cannot delay or overwrite the usable first template.
+{
+ const trial=await open(430,false,false,false,false,false,false,false,true),page=trial.page;
+ assert(await page.locator('.st-history-row').first().isVisible());
+ assert.equal(trial.readRequests.filter(r=>r.initial==='1').length,1);
+ assert.equal(trial.readRequests.filter(r=>r.type==='1'&&!r.initial).length,0,'no repeated first-template request');
+ await page.getByRole('button',{name:'Шаблон 2',exact:true}).click();await page.locator('.st-template-loading').waitFor();
+ trial.releaseCatalogueReads();await page.locator('.st-history-row').first().waitFor();
+ assert(trial.readRequests.filter(r=>r.catalog_only==='1').length>=1);
+ assert.equal(trial.writes.length,0);await trial.context.close();
+}
+// A stale catalogue read is retried after editing the account catalogue in the first template.
+{
+ const trial=await open(430,false,false,false,false,false,false,false,true),page=trial.page;
+ await page.waitForFunction(()=>document.querySelector('.st-history-row'));
+ await page.waitForTimeout(60);
+ await page.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
+ await page.getByRole('button',{name:'Состав упражнений шаблона 1',exact:true}).click();
+ await page.getByPlaceholder('Название своего упражнения').fill('Своё упражнение после старого чтения');
+ await page.getByRole('button',{name:'Добавить своё',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelector('#st-manager-save-state')?.textContent==='Сохранено');
+ assert(trial.writes.some(w=>w.action==='saveExerciseCatalog'));
+ await page.getByRole('button',{name:'Закрыть',exact:true}).click();
+ await page.getByRole('button',{name:'Готово',exact:true}).click();
+ trial.releaseCatalogueReads();
+ await page.getByRole('button',{name:'Шаблон 2',exact:true}).click();
+ await page.locator('.st-template-loading').waitFor({state:'detached'});
+ await page.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
+ await page.getByRole('button',{name:'Состав упражнений шаблона 2',exact:true}).click();
+ assert(await page.locator('.st-manager-row').filter({hasText:'Своё упражнение после старого чтения'}).isVisible());
+ assert(trial.readRequests.filter(r=>r.catalog_only==='1'&&r.type==='2').length>=2,'old snapshot is discarded and re-read');
+ await trial.context.close();
+}
+// Plan field tint compares with the last actual execution across templates, not the old plan.
+{
+ const trial=await open(430),page=trial.page;
+ const previous=trial.state.sets.filter(s=>s.session_id==='two');previous.forEach(s=>{s.fact_weight=70;s.fact_reps=9;});
+ await page.reload();await page.locator('.st-view-toggle').waitFor();
+ const card=page.locator('.st-history-row').first().locator('article').last();
+ const weight=card.locator('[data-field=planWeight]').first(),reps=card.locator('[data-field=planReps]').first();
+ await weight.fill('72');await weight.press('Tab');await page.waitForTimeout(550);
+ await reps.fill('8');await reps.press('Tab');await page.waitForTimeout(550);
+ assert(await weight.evaluate(el=>el.classList.contains('plan-up')));assert(await reps.evaluate(el=>el.classList.contains('plan-down')));
+ assert.equal(await weight.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(233, 243, 255)');assert.equal(await reps.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(238, 240, 243)');
+ await page.locator('.st-app-icon').click();
+ await page.screenshot({path:`${out}/plan-comparison-430.png`});
+ await weight.fill('70');await weight.press('Tab');await page.waitForTimeout(550);assert.equal(await weight.getAttribute('class'),'');
+ await page.evaluate(()=>ST.renameTemplate(1,'Верх'));await page.waitForTimeout(100);await page.evaluate(()=>ST.renameTemplate(2,'Низ'));await page.waitForTimeout(100);
+ await page.getByRole('button',{name:'Статистика',exact:true}).click();
+ const legend=await page.locator('.st-calendar-legend').textContent();assert(legend.includes('Верх')&&legend.includes('Низ'));
+ assert(!/Т[123] №/.test(await page.locator('.st-cal-workout').first().textContent()));
+ await page.screenshot({path:`${out}/calendar-template-names-430.png`});await trial.context.close();
+}
+// Delivery has an explicit cancellable dialog and respects the selected view's scope.
+{
+ const trial=await open(430),page=trial.page;
+ await page.getByRole('button',{name:'Отправить план тренировки №1',exact:true}).click();
+ await page.getByRole('dialog',{name:'Отправка плана'}).waitFor();assert.equal(trial.telegramWrites.length,0);
+ await page.getByRole('button',{name:'Отменить',exact:true}).click();assert.equal(trial.telegramWrites.length,0);
+ await page.locator('.st-view-toggle').click();
+ const card=page.locator('.st-history-row').first().locator('article[data-session-index="0"]');
+ await card.getByRole('button',{name:'Отправить план упражнения',exact:true}).click();
+ await page.screenshot({path:`${out}/confirm-exercise-delivery-430.png`});
+ assert((await page.locator('.st-modal-sub').textContent()).includes(trial.state.exercise_catalog[0].exercise_name));
+ await page.getByRole('button',{name:'Отправить',exact:true}).click();await page.locator('.st-delivery-notice').waitFor();
+ assert.equal(trial.telegramWrites.length,1);assert.equal(trial.telegramWrites[0].exercise_id,trial.state.exercise_catalog[0].exercise_id);
+ assert((await page.locator('.st-delivery-notice').textContent()).includes('План упражнения'));
+ await trial.context.close();
+}
+// End mobile feedback.
+
 // Same renderer and controls for a managed account; selector is outside the mount.
 const plain=await open(768),admin=await open(768,true);
 assert.equal(await plain.page.locator('#strength-app').innerHTML(),await admin.page.locator('#strength-app').innerHTML());
@@ -730,16 +829,17 @@ for(const page of [plain.page,admin.page]){const account=page.getByRole('link',{
 assert.equal(await plain.page.locator('[data-strength-telegram-export]').count(),0);
 assert.equal(await admin.page.locator('[data-strength-telegram-export]').count(),0,'old external export control is replaced');
 
-await admin.page.getByRole('button',{name:'Отправить план тренировки №1',exact:true}).click();await admin.page.locator('.st-delivery-notice').waitFor();
+await admin.page.getByRole('button',{name:'Отправить план тренировки №1',exact:true}).click();await admin.page.getByRole('button',{name:'Отправить',exact:true}).click();await admin.page.locator('.st-delivery-notice').waitFor();
 assert.equal(admin.telegramWrites.length,1);assert.equal(admin.telegramWrites[0].target_user_id,'fixture');assert.equal(admin.telegramWrites[0].session_id,'one');
 assert.equal(await admin.page.locator('.st-session-number[aria-pressed=true]').textContent(),'№9','sending another column does not select or send the last workout');
 
-await plain.page.getByRole('button',{name:'Отправить план тренировки №1',exact:true}).click();await plain.page.locator('.st-delivery-notice').waitFor();
+await plain.page.getByRole('button',{name:'Отправить план тренировки №1',exact:true}).click();await plain.page.getByRole('button',{name:'Отправить',exact:true}).click();await plain.page.locator('.st-delivery-notice').waitFor();
 assert.equal(plain.telegramWrites.length,1);assert.equal(plain.telegramWrites[0].session_id,'one');assert(!('target_user_id' in plain.telegramWrites[0]));
 for(const body of [plain.telegramWrites[0],admin.telegramWrites[0]])assert.match(body.request_id,/^[0-9a-f-]{36}$/);
 const releaseDelivery=plain.holdNextDelivery();plain.failNextDelivery();
 
 await plain.page.getByRole('button',{name:'Отправить план тренировки №1',exact:true}).click();
+await plain.page.getByRole('button',{name:'Отправить',exact:true}).click();
 await plain.page.waitForFunction(()=>[...document.querySelectorAll('[data-strength-send-plan]')].every(button=>button.disabled));
 assert.equal(plain.telegramWrites.length,2);releaseDelivery();
 await plain.page.locator('.st-delivery-notice.error').waitFor();assert.match(await plain.page.locator('.st-delivery-notice.error').textContent(),/Основной мессенджер не подключён/);

@@ -1,3 +1,4 @@
+from uuid import UUID
 from copy import deepcopy
 
 import pytest
@@ -74,3 +75,30 @@ def test_deleted_template_ids_cannot_be_reused_or_history_reassigned():
         normalize_templates([{"workout_type": 2}], previous, [])
     with pytest.raises(ValueError, match="WORKOUT_TEMPLATE_ID_IN_USE"):
         normalize_templates([{"workout_type": 7}], [], [{"workout_type": 7}])
+
+
+def test_initial_journal_chooses_latest_active_template_and_catalog_reads_exclude_history():
+    client, factory = make_client()
+    history = [{"session_id": "one", "session_number": 1, "workout_type": 1, "exercises": []},
+               {"session_id": "two", "session_number": 2, "workout_type": 2, "exercises": []},
+               {"session_id": "inactive", "session_number": 3, "workout_type": 3, "exercises": []}]
+    types = [{"workout_type": 1, "title": "Верх", "active": True}, {"workout_type": 2, "title": "Низ", "active": True}, {"workout_type": 3, "title": "Архив", "active": False}]
+    with factory() as db:
+        user = add_user(db, "bootstrap@example.test", "Bootstrap")
+        uid = str(user.id)
+        db.add(StrengthState(user_id=user.id, version=3, workout_types=types, workouts=deepcopy(history), hidden_exercises=[]))
+        db.commit()
+    params = {"action": "getWorkout", "initial": "1", "target_user_id": uid}
+    assert client.get('/api/apps/strength', params=params).status_code == 401
+    login(client)
+    first_response = client.get('/api/apps/strength', params=params)
+    assert first_response.headers['cache-control'] == 'no-store'
+    first = first_response.json()['workout']
+    assert first['selected_type'] == 2 and len(first['sessions']) == 3
+    catalogue = client.get('/api/apps/strength', params={**params, "initial": "0", "type": "1", "catalog_only": "1"}).json()['workout']
+    assert catalogue['selected_type'] == 1
+    assert catalogue['sessions'] == catalogue['session_exercises'] == catalogue['sets'] == []
+    assert catalogue['version'] == 3 and catalogue['workout_types'] == first['workout_types']
+    with factory() as db:
+        state = db.scalar(select(StrengthState).where(StrengthState.user_id == UUID(uid)))
+        assert state.version == 3 and state.workouts == history

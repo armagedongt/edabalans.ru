@@ -1470,3 +1470,21 @@ def test_strength_sender_mask_uses_a_served_svg() -> None:
         assert response.status_code == 200, path
         assert response.headers["content-type"].startswith("image/svg+xml")
         assert "<path" in response.text
+
+
+def test_strength_install_metadata_uses_existing_training_entry_without_offline_storage():
+    import io
+    from PIL import Image
+    page = client.get('/training')
+    assert 'rel="manifest" href="/assets/strength.webmanifest"' in page.text
+    assert 'rel="apple-touch-icon" href="/assets/strength-pwa-180.png"' in page.text
+    manifest = client.get('/assets/strength.webmanifest')
+    assert manifest.status_code == 200 and 'application/manifest+json' in manifest.headers['content-type']
+    data = manifest.json()
+    assert data['start_url'] == data['id'] == '/training' and data['display'] == 'standalone'
+    assert 'serviceWorker.register' not in page.text
+    for icon in data['icons']:
+        asset = client.get(icon['src'])
+        assert asset.status_code == 200 and 'image/png' in asset.headers['content-type']
+        assert 'x'.join(map(str, Image.open(io.BytesIO(asset.content)).size)) == icon['sizes']
+    assert 'rel="manifest"' not in client.get('/dqs').text

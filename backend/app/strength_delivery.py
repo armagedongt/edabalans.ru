@@ -40,8 +40,9 @@ def html_pieces(value: str, limit: int = 2600) -> list[str]:
     return pieces
 
 
-def plan_messages(workout: dict, title: str, names: dict[str, str]) -> list[str]:
-    heading = f"<b>Для вас подготовлен план тренировки «{escape(title)}»</b>"
+def plan_messages(workout: dict, title: str, names: dict[str, str], *, exercise_only: bool = False) -> list[str]:
+    kind = "упражнения" if exercise_only else "тренировки"
+    heading = f"<b>Для вас подготовлен план {kind} «{escape(title)}»</b>"
     if len(heading.encode("utf-16-le")) // 2 > 700:
         raise ValueError("Слишком длинное название шаблона")
     rows, count = [], 0
@@ -82,6 +83,7 @@ class PlanDeliveryIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
     target_user_id: uuid.UUID | None = None
     session_id: str = Field(min_length=1, max_length=255)
+    exercise_id: str | None = Field(default=None, min_length=1, max_length=255)
     version: int = Field(ge=0)
     request_id: uuid.UUID
 
@@ -148,8 +150,15 @@ def send_plan(body: PlanDeliveryIn, request: Request, db: Session = Depends(get_
     from app.app_routes import strength_account_catalog
     names = {str(item["exercise_id"]): item.get("short_name") or item["exercise_name"] for item in strength_account_catalog(db, state)}
     title = next((str(item["title"]) for item in state.workout_types or [] if item.get("workout_type") == workout.get("workout_type")), f"Шаблон {workout.get('workout_type')}")
+    selected = workout
+    if body.exercise_id is not None:
+        exercise = next((item for item in workout.get("exercises") or [] if str(item.get("exercise_id")) == body.exercise_id), None)
+        if exercise is None:
+            raise HTTPException(404, "Упражнение не найдено в этой тренировке")
+        selected = {**workout, "exercises": [exercise]}
+        title = names.get(body.exercise_id) or str(exercise.get("exercise_name") or "Упражнение")
     try:
-        messages = plan_messages(workout, title, names)
+        messages = plan_messages(selected, title, names, exercise_only=body.exercise_id is not None)
     except (ValueError, TypeError) as exc:
         raise HTTPException(422, "Проверьте заполнение плана тренировки") from None
     result = deliver_plan(settings, {
@@ -157,6 +166,6 @@ def send_plan(body: PlanDeliveryIn, request: Request, db: Session = Depends(get_
     })
     if admin:
         db.add(AdminAppEdit(admin_username=admin, target_user_id=user.id, app_code="strength", action="sendPlan",
-                            details={"session_id": body.session_id, "version": state.version, "platform": result["platform"], "message_ids": result["message_ids"]}))
+                            details={"session_id": body.session_id, "exercise_id": body.exercise_id, "version": state.version, "platform": result["platform"], "message_ids": result["message_ids"]}))
         db.commit()
     return result

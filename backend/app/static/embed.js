@@ -200,8 +200,11 @@
   }
 
   function nativeSession() {
-    return fetch(APP_HOST + '/api/account-auth/session', {credentials: 'include'})
-      .then(function (response) { if (!response.ok) throw new Error('Не удалось проверить вход'); return response.json(); });
+    var controller = new AbortController(), timer = setTimeout(function () { controller.abort(); }, 15000);
+    return fetch(APP_HOST + '/api/account-auth/session', {credentials: 'include', signal: controller.signal})
+      .then(function (response) { if (!response.ok) throw new Error('Не удалось проверить вход'); return response.json(); })
+      .catch(function (error) { if (error.name === 'AbortError') throw new Error('Проверка входа заняла слишком много времени. Повторите загрузку.'); throw error; })
+      .finally(function () { clearTimeout(timer); });
   }
 
   function prefetchAppHtml(appCode) {
@@ -529,6 +532,8 @@
 
   var standaloneBridgeReady = false;
   function boot() {
+    var initialMount = document.querySelector('[data-edabalans-app]:not([data-edabalans-manual="true"])');
+    if (initialMount) beginLoading(initialMount, 'Проверка авторизации');
     if (window.EdabalansStandaloneBridge && !standaloneBridgeReady) {
       return window.EdabalansStandaloneBridge.then(function (ready) {
         standaloneBridgeReady = ready;
