@@ -13,9 +13,16 @@
     return Array.from({length:length},function(_,index){
       var old=existing[index] || {};
       return Object.assign({factWeight:'',factReps:'',rpe:'',completed:false},old,{
-        set_number:index+1,planWeight:source[index] ? source[index].weight : '',planReps:source[index] ? source[index].reps : ''
+        set_number:index+1,planWeight:source[index] ? source[index].weight : '',planReps:source[index] ? source[index].reps : '',
+        role:source[index] ? (source[index].role === 'warmup' ? 'warmup' : 'work') : (old.role === 'warmup' ? 'warmup' : 'work')
       });
     }).filter(function(set,index){return index<source.length || !empty(set.factWeight) || !empty(set.factReps) || !empty(set.rpe) || set.completed;});
+  }
+  function blankSets(source){
+    return Array.from({length:source.length || 4},function(_,index){
+      return {set_number:index+1,role:source[index] && source[index].role === 'warmup' ? 'warmup' : 'work',
+        planWeight:'',planReps:'',factWeight:'',factReps:'',rpe:'',completed:false};
+    });
   }
   function parseRussianDate(value){
     value=String(value || '').trim();
@@ -25,7 +32,7 @@
     var iso=parts[3]+'-'+parts[2]+'-'+parts[1],date=new Date(iso+'T00:00:00Z');
     return !Number.isNaN(date.getTime()) && date.toISOString().slice(0,10)===iso ? iso : null;
   }
-  var api={completion:completion,pastePlan:pastePlan,parseRussianDate:parseRussianDate};
+  var api={completion:completion,pastePlan:pastePlan,blankSets:blankSets,parseRussianDate:parseRussianDate};
   if(typeof module!=='undefined' && module.exports) module.exports=api;
   else root.StrengthJournalModel=api;
 })(typeof window!=='undefined' ? window : globalThis);

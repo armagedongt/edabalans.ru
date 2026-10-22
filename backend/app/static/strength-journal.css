@@ -214,9 +214,10 @@
 #strength-app .st-cal-entry{display:inline-block;padding:2px 4px;border-radius:4px;margin-top:2px;color:#17172b}
 
 /* The set number is the role control; its hit area stays clear of the weight input. */
-#strength-app .st-grid-set,#strength-app .st-grid-labels{grid-template-columns:24px calc(3ch + 12px) calc(2ch + 12px) 24px calc(3.3ch + 13.2px) calc(2.2ch + 13.2px) calc(1ch + 14px)}
-#strength-app .st-grid-set .st-modern-number{display:grid;place-items:center;box-sizing:border-box;width:24px;min-width:24px;height:30px;min-height:30px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;font:800 12px/1 var(--ed-font-body,Manrope,Arial,sans-serif);cursor:pointer}
+#strength-app .st-grid-set,#strength-app .st-grid-labels{grid-template-columns:20px calc(3ch + 12px) calc(2ch + 12px) 24px calc(3.3ch + 13.2px) calc(2.2ch + 13.2px) calc(1ch + 14px)}
+#strength-app .st-grid-set .st-modern-number{position:relative;display:grid;place-items:center;box-sizing:border-box;width:20px;min-width:20px;height:30px;min-height:30px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;font:800 12px/1 var(--ed-font-body,Manrope,Arial,sans-serif);cursor:pointer}
+#strength-app .st-grid-set .st-modern-number::before{content:'';position:absolute;box-sizing:border-box;width:18px;height:18px;border:1px solid currentColor;border-radius:50%;pointer-events:none}
 #strength-app .st-grid-set .st-modern-number.st-warmup{color:#258044}
 #strength-app .st-grid-set .st-modern-number.st-work{color:#bf3946}
 #strength-app .st-grid-set .st-modern-number:focus-visible{outline:2px solid #9771e0;outline-offset:-2px}
-@media(max-width:700px){#strength-app[data-journal-view="training"] .st-grid-set,#strength-app[data-journal-view="training"] .st-grid-labels{grid-template-columns:24px minmax(0,1fr) minmax(0,.75fr) 40px minmax(0,1.45fr) minmax(0,1.1fr) minmax(0,.8fr)}}
+@media(max-width:700px){#strength-app[data-journal-view="training"] .st-grid-set,#strength-app[data-journal-view="training"] .st-grid-labels{grid-template-columns:20px minmax(0,1fr) minmax(0,.75fr) 40px minmax(0,1.45fr) minmax(0,1.1fr) minmax(0,.8fr)}}

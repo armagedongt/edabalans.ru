@@ -12,11 +12,18 @@ for(const width of [360,430,700,701,768,1440]) for(const managed of [false,true]
   page.on('pageerror',error=>console.error('Browser error:',error.message));
   let version=1;
   const state={version:1,workout_types:[{workout_type:1,title:'Верх',active:true,sort_order:1}],
-    exercise_catalog:[{exercise_id:'bench',exercise_name:'Жим штанги лёжа',active:true,sort_order:1,source:'base'}],
-    sessions:[{session_id:'a',session_number:1,workout_type:1,date:'2026-10-14'},{session_id:'b',session_number:2,workout_type:1,date:'2026-10-21'}],
-    session_exercises:['a','b'].map(session_id=>({session_id,exercise_id:'bench',exercise_name:'Жим штанги лёжа',sort_order:1})),
+    exercise_catalog:[{exercise_id:'bench',exercise_name:'Жим штанги лёжа',active:true,sort_order:1,source:'base'},
+      {exercise_id:'new',exercise_name:'Новое упражнение',active:true,sort_order:2,source:'base'}],
+    sessions:[{session_id:'a',session_number:1,workout_type:1,date:'2026-10-14'},{session_id:'b',session_number:2,workout_type:1,date:'2026-10-21'},
+      {session_id:'c',session_number:3,workout_type:2,date:'2026-10-22'},
+      {session_id:'d',session_number:4,workout_type:2,date:'2026-10-23'}],
+    session_exercises:['a','b','c'].map(session_id=>({session_id,exercise_id:'bench',exercise_name:'Жим штанги лёжа',sort_order:1}))
+      .concat({session_id:'d',exercise_id:'other',exercise_name:'Другое упражнение',sort_order:1}),
     sets:['a','b'].flatMap(session_id=>[1,2].map(set_number=>({session_id,exercise_id:'bench',set_number,plan_weight:set_number===1?20:65,
       plan_reps:10,fact_weight:session_id==='a'?(set_number===1?20:60):'',fact_reps:session_id==='a'?10:'',rpe:session_id==='a'?8:'',role:set_number===1?'warmup':'work'})))};
+  state.sets.push(...[1,2,3,4,5].map(set_number=>({session_id:'c',exercise_id:'bench',set_number,
+    plan_weight:30,plan_reps:8,fact_weight:'',fact_reps:'',rpe:'',role:set_number===2?'warmup':'work'})));
+  state.sets.push({session_id:'d',exercise_id:'other',set_number:1,plan_weight:10,plan_reps:10,role:'work'});
   const writes=[];
   await page.route('http://127.0.0.1:8828/**',async route=>{
     const url=new URL(route.request().url());
@@ -28,6 +35,10 @@ for(const width of [360,430,700,701,768,1440]) for(const managed of [false,true]
       if(data.action==='saveSession'){
         writes.push(structuredClone(data));version++;
         const session=data.session;
+        if(!state.sessions.some(row=>row.session_id===session.session_id))state.sessions.push({session_id:session.session_id,
+          session_number:session.session_number,workout_type:data.workout_type,date:session.date});
+        state.session_exercises=state.session_exercises.filter(row=>row.session_id!==session.session_id);
+        for(const exercise of session.exercises)state.session_exercises.push({...exercise,session_id:session.session_id});
         state.sets=state.sets.filter(row=>row.session_id!==session.session_id);
         for(const exercise of session.exercises)for(const row of exercise.sets)state.sets.push({...row,session_id:session.session_id,exercise_id:exercise.exercise_id});
         response.session=session;response.version=version;
@@ -46,11 +57,13 @@ for(const width of [360,430,700,701,768,1440]) for(const managed of [false,true]
     const button=()=>card().locator('.st-modern-number').first();
     assert.equal(await button().getAttribute('aria-pressed'),'true');
     const geometry=await button().evaluate(el=>{
-      const b=el.getBoundingClientRect(),input=el.closest('.st-grid-set').querySelector('input').getBoundingClientRect(),s=getComputedStyle(el);
-      return {width:b.width,height:b.height,right:b.right,inputLeft:input.left,border:s.borderTopWidth,background:s.backgroundColor,weight:s.fontWeight,color:s.color};
+      const b=el.getBoundingClientRect(),input=el.closest('.st-grid-set').querySelector('input').getBoundingClientRect(),s=getComputedStyle(el),circle=getComputedStyle(el,'::before');
+      return {width:b.width,height:b.height,right:b.right,inputLeft:input.left,border:s.borderTopWidth,background:s.backgroundColor,weight:s.fontWeight,color:s.color,
+        circle:{width:circle.width,height:circle.height,border:circle.borderTopWidth,radius:circle.borderRadius,color:circle.borderTopColor}};
     });
-    assert(geometry.width>=23.9&&geometry.height>=29.9);assert(geometry.right<=geometry.inputLeft);
+    assert(geometry.width>=19.9&&geometry.width<=20.1&&geometry.height>=29.9);assert(geometry.right<=geometry.inputLeft);
     assert.equal(geometry.border,'0px');assert.equal(geometry.background,'rgba(0, 0, 0, 0)');assert(Number(geometry.weight)>=800);
+    assert.equal(geometry.circle.border,'1px');assert.equal(geometry.circle.width,geometry.circle.height);assert.equal(geometry.circle.radius,'50%');assert.equal(geometry.circle.color,geometry.color);
     // Use the edge of the invisible target, rather than the glyph itself.
     await button().click({position:{x:2,y:2}});
     await page.waitForFunction(()=>document.querySelector('article[data-session-index="1"] .st-modern-number')?.getAttribute('aria-pressed')==='false');
@@ -70,9 +83,25 @@ for(const width of [360,430,700,701,768,1440]) for(const managed of [false,true]
   }
   await page.reload();await card().waitFor();
   assert.equal(await card().locator('.st-modern-number').first().getAttribute('aria-pressed'),'true','role survives reload');
+  await page.getByRole('button',{name:'Новая тренировка',exact:true}).click();
+  await page.waitForTimeout(850);
+  const created=writes.at(-1).session,createdBench=created.exercises.find(ex=>ex.exercise_id==='bench');
+  assert.equal(created.session_number,5);
+  assert.deepEqual(createdBench.sets.map(row=>row.role),['work','warmup','work','work','work'],'latest same-exercise record across templates, skipping a newer workout without it');
+  assert.equal(created.exercises.find(ex=>ex.exercise_id==='new').sets.length,4,'new exercise default');
+  for(const row of createdBench.sets)for(const key of ['plan_weight','plan_reps','fact_weight','fact_reps','rpe'])assert.equal(row[key],'');
+  const newCard=()=>page.locator('article[data-session-index="4"][data-exercise-id="bench"]');
+  await newCard().waitFor();
+  // Inserting a different older plan replaces the inherited role pattern as well.
+  await card().locator('[aria-label="Скопировать план"]').click();
+  await newCard().getByRole('button',{name:'Вставить',exact:true}).click();
+  await page.waitForTimeout(850);
+  assert.deepEqual(writes.at(-1).session.exercises.find(ex=>ex.exercise_id==='bench').sets.map(row=>row.role),['warmup','work']);
+  await page.reload();await newCard().waitFor();
+  assert.equal(await newCard().locator('.st-modern-number').first().getAttribute('aria-pressed'),'true','pasted role survives reload');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   await page.close();
 }
 await writeFile(path.join(output,'evidence.json'),JSON.stringify(evidence,null,2));
-console.log('Set-role UI: user/admin, both views, 6 widths; save, reload, undo, target and plan colours PASS');
+console.log('Set-role UI: user/admin, both views, 6 widths; inheritance across templates, paste, save, reload, undo, circles and plan colours PASS');
 } finally {await browser.close();}

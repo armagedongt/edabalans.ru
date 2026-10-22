@@ -1573,8 +1573,8 @@
 
 </style>
 
-<link rel="stylesheet" href="/assets/strength-journal.css?v=20261022-mobile-pwa">
-<script src="/assets/strength-journal-model.js?v=20261021-stability-scale"></script>
+<link rel="stylesheet" href="/assets/strength-journal.css?v=20261022-set-role-inheritance">
+<script src="/assets/strength-journal-model.js?v=20261022-set-role-inheritance"></script>
 <script>
 (function(){
 
@@ -3115,6 +3115,15 @@ function materializeExercise(session,exercise){
   return exercise;
 }
 
+function newExerciseSets(id){
+  var sessions=currentWorkout().sessions;
+  for(var i=sessions.length-1;i>=0;i--){
+    var previous=findExercise(sessions[i],id);
+    if(previous && previous.sets.length)return StrengthJournalModel.blankSets(previous.sets);
+  }
+  return StrengthJournalModel.blankSets([]);
+}
+
 
 function previousExercise(
   index,
@@ -3348,7 +3357,7 @@ window.addEventListener('popstate',function(event){
 function applyJournalWidth(){
   var style=getComputedStyle(root),previous=app.trainingColumnWidth;
   var width=app.journalView==='training' && matchMedia('(max-width:700px)').matches
-    ? root.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight) : 232;
+    ? root.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight) : 228;
   if(previous && previous!==width && app.journalView==='training' && !app.axisTargetSession){
     app.axisTargetSession=app.trainingAnchor;
   }
@@ -6011,6 +6020,7 @@ window.ST = {
     materializeExercise(currentWorkout().sessions[app.selectedIndex],exercise);
     exercise.sets = source.exercise.sets.map(function(set,index){
       return {set_number:index+1,
+        role:set.role === 'warmup' ? 'warmup' : 'work',
         planWeight:blank(set.factWeight)?set.planWeight:set.factWeight,
         planReps:blank(set.factReps)?set.planReps:set.factReps,
         factWeight:'',factReps:'',rpe:''};
@@ -6025,7 +6035,7 @@ window.ST = {
   copyExerciseToNext:function(id,index,fromFact){
   var session=currentWorkout().sessions[Number(index)],exercise=session && exerciseForDisplay(session,id);
   if(!exercise)return;
-  app.clipboard={exerciseId:String(id),sessionId:String(session.session_id),fromFact:!!fromFact,sets:exercise.sets.map(function(set){return {weight:fromFact?set.factWeight:set.planWeight,reps:fromFact?set.factReps:set.planReps};})};
+  app.clipboard={exerciseId:String(id),sessionId:String(session.session_id),fromFact:!!fromFact,sets:exercise.sets.map(function(set){return {weight:fromFact?set.factWeight:set.planWeight,reps:fromFact?set.factReps:set.planReps,role:set.role === 'warmup' ? 'warmup' : 'work'};})};
   render();
 },
   pasteExercise:function(id,index){
@@ -6192,18 +6202,7 @@ window.ST = {
     }
 
     var exercises = catalog.map(function(item,index){
-      var sets = [];
-      for(var setIndex=0;setIndex<4;setIndex++){
-        sets.push({
-          set_number:setIndex+1,
-          planWeight:'',
-          planReps:'',
-          factWeight:'',
-          factReps:'',
-          rpe:'',
-          completed:false
-        });
-      }
+      var sets = newExerciseSets(item.exercise_id);
       return {
         id:item.exercise_id,
         name:item.exercise_name,
@@ -6899,16 +6898,7 @@ window.ST = {
 
         note:'',
 
-        sets:[
-          {
-            set_number:1,
-            planWeight:'',
-            planReps:'',
-            factWeight:'',
-            factReps:'',
-            rpe:''
-          }
-        ]
+        sets:newExerciseSets(catalog[i].exercise_id)
       });
 
     }
@@ -6982,6 +6972,7 @@ window.ST = {
 
         ne.sets.push({
           set_number:j+1,
+          role:old.sets[j].role === 'warmup' ? 'warmup' : 'work',
 
           planWeight:
             mode === 'fact'
