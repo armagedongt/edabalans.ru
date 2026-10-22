@@ -69,6 +69,11 @@
       .blocks{gap:8px;margin-top:8px}
       .note{margin-top:8px;padding:8px}
     }
+    .parameters-grid{gap:12px}
+    .parameters-grid>.parameter-group{padding:10px;border:1px solid var(--line);border-radius:10px;background:#f7fbfa}
+    .parameters-grid>.parameter-group>h2:first-child{margin-top:0}
+    @media(min-width:761px) and (max-width:1100px){.parameters-grid{grid-template-columns:minmax(0,1fr)}}
+    @media(max-width:760px){.parameters-grid>.parameter-group{padding:8px}}
   </style>
 </head>
 <body class="finance-admin-page">
