@@ -110,7 +110,7 @@ def test_previously_saved_image_override_renders_without_republication(client, m
 def test_initial_homepage_keeps_the_accepted_html_without_client_content_fetch(client):
     response = client.get("/preview/homepage-release-candidate")
     assert response.status_code == 200
-    # Accepted shell includes analytics and the shared frame for member offers.
+    # Accepted shell includes analytics, shared frames and the reviewed lower-page rhythm.
     assert hashlib.sha256(response.text.encode()).hexdigest() == "0085bc67df5d4ba2e9c62dad36d05edc34faf24d9f66a25feadf947a3267eaf1"
     assert response.text.count('id="reader-channel-homepage"') == 1
     assert "<!-- homepage-slot:" not in response.text
