@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 from app.account_auth_routes import require_native_user
 from app.app_service import AppAccessError, require_user_resource
 from app.application_access_service import application_access_state
-from app.auth import session_admin
+from app.app_management import application_manager
 from app.config import Settings, get_settings
 from app.database import get_db
 from app.models import AdminAppEdit, StrengthState, User
@@ -126,7 +126,7 @@ def send_plan(body: PlanDeliveryIn, request: Request, db: Session = Depends(get_
         raise HTTPException(415, "Требуется application/json")
     admin = None
     if body.target_user_id is not None:
-        admin = session_admin(request)
+        admin = application_manager(request, db)
         if not admin:
             raise HTTPException(401, "Требуется вход администратора")
         user = db.get(User, body.target_user_id)

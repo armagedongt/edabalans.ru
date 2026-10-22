@@ -467,10 +467,24 @@
       });
   }
 
+  var managerContextRequest;
+  function managerContext() {
+    if (!managerContextRequest) {
+      var query = new URLSearchParams(location.search).get('app_user');
+      var controller = new AbortController(), timer = setTimeout(function () { controller.abort(); }, 15000);
+      managerContextRequest = jsonRequest(APP_HOST + '/api/apps/manager/context' + (query ? '?app_user=' + encodeURIComponent(query) : ''), {credentials: 'include', cache: 'no-store', signal: controller.signal})
+        .catch(function (error) { managerContextRequest = null; if (error.name === 'AbortError') throw new Error('Проверка выбора клиента заняла слишком много времени. Повторите загрузку.'); throw error; })
+        .finally(function () { clearTimeout(timer); });
+    }
+    return managerContextRequest;
+  }
+
   function load(mount) {
     ensureAppShellStylesheet();
     var app = String(mount.getAttribute('data-edabalans-app') || '').toLowerCase();
     var adminUser = String(mount.getAttribute('data-edabalans-admin-user') || '');
+    var supportsClientPicker = ['strength', 'dqs', 'metabolism', 'recipes'].indexOf(app) >= 0 && !adminUser;
+    var nativeManager = supportsClientPicker && Boolean(new URLSearchParams(location.search).get('app_user'));
     var placement = String(mount.getAttribute('data-edabalans-placement') || '');
     var placementToken = String(mount.getAttribute('data-edabalans-placement-token') || '');
     var accountOffer = mount.getAttribute('data-edabalans-account-offer') === 'true';
@@ -488,9 +502,10 @@
     }
     beginLoading(mount, 'Загрузка страницы');
     readyRequests.delete(mount);
-    var preflight = app === 'dqs' && !adminUser
-      ? dqsLegalGate(mount)
-      : Promise.resolve();
+    var preflight = nativeManager ? managerContext().then(function (context) {
+      if (!context.can_manage || !context.selected) throw new Error('Выбор клиента доступен только владельцу приложения');
+      adminUser = context.selected.user_id;
+    }) : app === 'dqs' && !adminUser ? dqsLegalGate(mount) : Promise.resolve();
     return preflight.then(function () {
       beginLoading(mount, 'Загрузка страницы');
       return appHtml(app);
@@ -500,6 +515,7 @@
         window.EdabalansAppContext = adminUser
           ? {mode: 'admin', targetUserId: adminUser, app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, purchaseReturnUrl: purchaseReturnUrl, linkToken: linkToken, accountOffer: accountOffer, publicMasterclass: publicMasterclass, focusProductCode: focusProductCode}
           : {mode: 'user', app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, purchaseReturnUrl: purchaseReturnUrl, linkToken: linkToken, accountOffer: accountOffer, publicMasterclass: publicMasterclass, focusProductCode: focusProductCode};
+        window.EdabalansAppContext.nativeManager = Boolean(nativeManager);
         var doc = new DOMParser().parseFromString(html, 'text/html');
         var sourceRoot = doc.getElementById(roots[app]);
         mount.id = roots[app];
@@ -519,7 +535,14 @@
         // App-owned shared styles must also be mounted when HTML is embedded in /lk.
         return prepareAppAssets(doc).then(function () { return executeScripts(doc); }).then(function () {
           return readyRequests.get(mount);
-        }).then(function () { finishLoading(mount); });
+        }).then(function () {
+          finishLoading(mount);
+          if (supportsClientPicker) managerContext().then(function (context) {
+            if (context.can_manage) return import(APP_HOST + '/assets/app-client-picker.mjs?v=20261022-1').then(function (picker) {
+              picker.mount(mount, app, context, APP_HOST);
+            });
+          }).catch(function (error) { console.warn('Выбор клиента:', error.message); });
+        });
       })
       .catch(function (error) {
         failLoading(mount, error, function () { load(mount); });

@@ -423,6 +423,7 @@
       const apiUrl=adminMode?'/admin/api/apps/metabolism/users/'+encodeURIComponent(context.targetUserId)+'/runtime':'/api/apps/metabolism';
       root.querySelector('.mw-account').href=context.accountUrl||'/lk';
       let serverVersion=null,saveTimer,saving=false,dirty=false,blocked=false,editRevision=0;
+      context.canSwitchClient=()=>!dirty&&!saving;
       const status=root.querySelector('[data-status]'),retry=root.querySelector('[data-retry-save]');
       async function request(options){
         const response=await fetch(apiUrl,{credentials:'same-origin',...options}),data=await response.json();

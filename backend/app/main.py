@@ -169,7 +169,7 @@ async def protect_native_account_host(request: Request, call_next):
     path = request.url.path
     protected = path.startswith(("/api/account", "/api/masterclass", "/api/apps", "/api/access"))
     managed_app_request = False
-    if path == "/api/apps/strength":
+    if path in {"/api/apps/strength", "/api/apps/strength/send-plan"} or path.startswith("/api/apps/recipes"):
         managed_app_request = bool(request.query_params.get("target_user_id"))
         if not managed_app_request and request.method == "POST":
             try:

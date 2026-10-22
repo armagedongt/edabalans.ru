@@ -3386,6 +3386,10 @@ function observeJournalWidth(){
   journalWidthObserver.observe(root);
 }
 
+APP_CONTEXT.canSwitchClient = function(){
+  return !app.saving && !app.saveError && !Object.values(app.saveTimers).some(Boolean);
+};
+
 function commonHeader(){
   return '<div class="st-card st-header"><div class="st-top">'+
     '<img class="st-app-icon" src="/assets/strength-favicon.svg" alt="Силовые тренировки">'+

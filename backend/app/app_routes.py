@@ -42,6 +42,8 @@ from app.access_service import course_start_is_open
 from app.application_access_service import application_access_state
 from app.dqs_access_service import require_dqs_revealed
 from app.auth import admin_identity, require_admin, security, session_admin
+from app.account_auth_routes import native_session_user
+from app.app_management import application_manager, require_application_manager, managed_user, client_identity, client_directory
 from app.database import get_db
 from app.homepage_content_service import render_homepage
 from app.legal_service import legal_status_payload
@@ -840,7 +842,7 @@ def app_asset(asset_name: str) -> FileResponse:
         return public_asset(STATIC_DIR.parents[2] / "content" / "article-components" / filename)
     if asset_name not in {
         "dqs-favicon.svg", "strength-favicon.svg", "metabolism-favicon.svg",
-        "strength-journal.css", "strength-journal-model.js", "strength-progression-model.mjs",
+        "strength-journal.css", "strength-journal-model.js", "strength-progression-model.mjs", "app-client-picker.mjs",
         "strength.webmanifest", "strength-pwa-180.png", "strength-pwa-192.png", "strength-pwa-512.png",
         "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png", "site-typography.css",
         "content-gallery.js", "public-program-card.css", "public-program-card.js",
@@ -1505,7 +1507,7 @@ def apply_dqs_action(
 async def admin_dqs_runtime(
     user_id: uuid.UUID,
     request: Request,
-    admin_username: str = Depends(require_admin),
+    admin_username: str = Depends(require_application_manager),
     db: Session = Depends(get_db),
 ) -> JSONResponse:
     user = db.get(User, user_id)
@@ -1651,7 +1653,7 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
         admin_username = None
         target_user_id = body.get("target_user_id")
         if target_user_id:
-            admin_username = session_admin(request)
+            admin_username = application_manager(request, db)
             if not admin_username:
                 raise HTTPException(status_code=401, detail="admin authentication required")
             user = db.get(User, uuid.UUID(str(target_user_id)))
@@ -1998,7 +2000,7 @@ def apply_metabolism_update(state: MetabolismState, body: dict[str, Any]) -> Non
 @router.get("/admin/api/apps/metabolism/users/{user_id}/runtime")
 def admin_metabolism_get(
     user_id: uuid.UUID,
-    _: str = Depends(require_admin),
+    _: str = Depends(require_application_manager),
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
     state = db.scalar(select(MetabolismState).where(MetabolismState.user_id == user_id))
@@ -2016,7 +2018,7 @@ def admin_metabolism_get(
 async def admin_metabolism_put(
     user_id: uuid.UUID,
     request: Request,
-    admin_username: str = Depends(require_admin),
+    admin_username: str = Depends(require_application_manager),
     db: Session = Depends(get_db),
 ) -> JSONResponse:
     state = db.scalar(select(MetabolismState).where(MetabolismState.user_id == user_id))
@@ -2045,6 +2047,23 @@ async def admin_metabolism_put(
     except (ValueError, TypeError) as exc:
         db.rollback()
         return JSONResponse(error(str(exc)), status_code=400)
+
+
+@router.get("/api/apps/manager/context")
+def app_manager_context(request: Request, app_user: str = "", db: Session = Depends(get_db)) -> dict:
+    manager = application_manager(request, db)
+    if not manager:
+        return JSONResponse({"ok": True, "can_manage": False}, headers={"Cache-Control": "no-store"})
+    actor = native_session_user(request, db)
+    return JSONResponse({"ok": True, "can_manage": True,
+            "actor": client_identity(db, actor) if actor else None,
+            "selected": client_identity(db, managed_user(db, app_user)) if app_user else None}, headers={"Cache-Control": "no-store"})
+
+
+@router.get("/api/apps/manager/users")
+def app_manager_users(q: str = Query(default="", max_length=255), offset: int = Query(default=0, ge=0),
+                      _: str = Depends(require_application_manager), db: Session = Depends(get_db)) -> dict:
+    return JSONResponse(client_directory(db, q, offset), headers={"Cache-Control": "no-store"})
 
 
 @router.get("/admin/api/apps/users")
@@ -2233,7 +2252,7 @@ def admin_user_modules(
 def admin_app_user(
     app_code: str,
     user_id: uuid.UUID,
-    _: str = Depends(require_admin),
+    _: str = Depends(require_application_manager),
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
     model = APP_STATE_MODELS.get(app_code)
@@ -2286,7 +2305,7 @@ def admin_state_data(app_code: str, state: Any) -> dict[str, Any]:
 def admin_open_app_user(
     app_code: str,
     user_id: uuid.UUID,
-    admin_username: str = Depends(require_admin),
+    admin_username: str = Depends(require_application_manager),
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
     model = APP_STATE_MODELS.get(app_code)

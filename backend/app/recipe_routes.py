@@ -14,7 +14,8 @@ from app.account_auth_routes import require_native_user
 from app.app_service import AppAccessError, require_user_resource
 from app.database import get_db
 from app.config import get_settings
-from app.models import MasterclassEvent, User
+from app.models import AdminAppEdit, MasterclassEvent, User
+from app.app_management import require_application_manager, managed_user
 from app.recipe_models import NutritionProduct, RecipeBook, RecipeIngredient
 from app.recipe_service import MAX_WEIGHT, assert_recipe_owner, catalog_search, integer, normalize_name, normalized_key, product_payload, product_values, quantity, recipe_payload, validate_ingredients
 from app.recipe_originals import original_records, original_record, original_source
@@ -33,7 +34,21 @@ def _error(exc: Exception, status: int = 400) -> JSONResponse:
 
 
 def _user(request: Request, db: Session):
+    target = request.query_params.get("target_user_id")
+    if target:
+        request.state.app_manager = require_application_manager(request, db)
+        user = managed_user(db, target)
+        request.state.app_target = user.id
+        return user
     return require_user_resource(db, require_native_user(request, db), "recipes")
+
+
+def _commit(request: Request, db: Session) -> None:
+    manager = getattr(request.state, "app_manager", None)
+    if manager:
+        db.add(AdminAppEdit(admin_username=manager, target_user_id=request.state.app_target,
+                            app_code="recipes", action=request.method.lower(), details={"path": request.url.path}))
+    db.commit()
 
 
 async def _body(request: Request) -> dict[str, Any]:
@@ -63,7 +78,7 @@ def recipe_tutorial_complete(request: Request, db: Session = Depends(get_db)) ->
         event = db.scalar(select(MasterclassEvent.id).where(MasterclassEvent.user_id == user.id, MasterclassEvent.event_key == TUTORIAL_EVENT))
         if event is None:
             db.add(MasterclassEvent(user_id=user.id, event_key=TUTORIAL_EVENT, event_type=TUTORIAL_EVENT, placement="recipes", details={}))
-        db.commit()
+        _commit(request, db)
         return JSONResponse({"ok": True, "completed": True})
     except AppAccessError as exc:
         return _error(exc)
@@ -132,7 +147,7 @@ async def product_create(request: Request, db: Session = Depends(get_db)) -> JSO
         exists = db.scalar(select(NutritionProduct.id).where(NutritionProduct.owner_user_id == user.id, NutritionProduct.name_normalized == key, NutritionProduct.is_active.is_(True)))
         if exists: raise ValueError("Такой личный продукт уже есть")
         product = NutritionProduct(owner_user_id=user.id, name=name, name_normalized=key, **product_values(body))
-        db.add(product); db.commit(); db.refresh(product)
+        db.add(product); _commit(request, db); db.refresh(product)
         return JSONResponse({"ok": True, "product": product_payload(product)})
     except (AppAccessError, ValueError) as exc:
         db.rollback(); return _error(exc)
@@ -144,7 +159,7 @@ def product_hide(product_id: uuid.UUID, request: Request, db: Session = Depends(
         user = _user(request, db)
         product = db.scalar(select(NutritionProduct).where(NutritionProduct.id == product_id, NutritionProduct.owner_user_id == user.id, NutritionProduct.is_active.is_(True)))
         if product is None: raise HTTPException(status_code=404, detail="Продукт не найден")
-        product.is_active = False; db.commit()
+        product.is_active = False; _commit(request, db)
         return JSONResponse({"ok": True})
     except AppAccessError as exc: return _error(exc)
 
@@ -159,7 +174,7 @@ async def product_update(product_id: uuid.UUID, request: Request, db: Session = 
         product.name = name; product.name_normalized = normalized_key(name)
         for key, value in values.items():
             setattr(product, key, value)
-        db.commit(); return JSONResponse({"ok": True, "product": product_payload(product)})
+        _commit(request, db); return JSONResponse({"ok": True, "product": product_payload(product)})
     except (AppAccessError, ValueError) as exc:
         db.rollback(); return _error(exc)
 
@@ -195,7 +210,7 @@ async def recipe_create(request: Request, db: Session = Depends(get_db)) -> JSON
     try:
         body = await _body(request); recipe = _save_recipe(db, _user(request, db).id, body)
         payload = recipe_payload(db, recipe)
-        db.commit(); return JSONResponse({"ok": True, "recipe": payload})
+        _commit(request, db); return JSONResponse({"ok": True, "recipe": payload})
     except (AppAccessError, ValueError) as exc: db.rollback(); return _error(exc)
 
 
@@ -204,7 +219,7 @@ async def recipe_update(recipe_id: uuid.UUID, request: Request, db: Session = De
     try:
         body = await _body(request); user = _user(request, db); recipe = _save_recipe(db, user.id, body, assert_recipe_owner(db, recipe_id, user.id))
         payload = recipe_payload(db, recipe)
-        db.commit(); return JSONResponse({"ok": True, "recipe": payload})
+        _commit(request, db); return JSONResponse({"ok": True, "recipe": payload})
     except (AppAccessError, ValueError) as exc: db.rollback(); return _error(exc)
 
 
@@ -214,5 +229,5 @@ def recipe_delete(recipe_id: uuid.UUID, request: Request, db: Session = Depends(
         user = _user(request, db); recipe = assert_recipe_owner(db, recipe_id, user.id)
         used = db.scalar(select(RecipeIngredient.id).join(RecipeBook, RecipeBook.id == RecipeIngredient.recipe_id).where(RecipeIngredient.nested_recipe_id == recipe.id, RecipeBook.deleted_at.is_(None)).limit(1))
         if used: raise ValueError("Это блюдо используется в другом рецепте. Сначала замените его там.")
-        recipe.deleted_at = recipe.updated_at; db.commit(); return JSONResponse({"ok": True})
+        recipe.deleted_at = recipe.updated_at; _commit(request, db); return JSONResponse({"ok": True})
     except (AppAccessError, ValueError) as exc: return _error(exc)
