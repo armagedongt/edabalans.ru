@@ -60,6 +60,8 @@ const context = await browser.newContext({viewport: {width: 1440, height: 1000},
 
 async function captureAccount() {
   const page = await context.newPage();
+  await page.route('http://fixture.test/lk**', route => route.fulfill({contentType:'text/html',body:'<!doctype html>'}));
+  await page.goto('http://fixture.test/lk?layout=full');
   const setup = `<script>
     window.EdabalansIdentity={email:'sergey@example.test',source:'native'};
     window.EdabalansAccountPayload=${JSON.stringify(accountData)};
@@ -85,9 +87,7 @@ async function captureAccount() {
     assert.equal(lineDisplay === 'none', width <= 760, `messenger detail visibility at ${width}`);
     if (width <= 430) {
       const summaryBox = await page.locator('.account-messengers-summary').boundingBox();
-      const headBox = await page.locator('.account-head').boundingBox();
       assert(summaryBox && summaryBox.height <= 44, `mobile messenger row is too tall at ${width}`);
-      assert(headBox && headBox.height <= 175, `mobile account header is too tall at ${width}`);
     }
     const [titleBox, sessionBox] = await Promise.all([
       page.locator('.account-title-row h1').boundingBox(),

@@ -51,7 +51,7 @@ owns_tables = [
 
 [[modules]]
 id = "platform.commerce"
-reads_from = ["platform", "platform.web_design", "messaging.telegram.attribution", "platform.content"]
+reads_from = ["platform", "platform.web_design", "messaging.telegram.attribution", "platform.content", "products.masterclass.runtime"]
 admin_catalog = [{ category = "commerce", order = 20, url = "/admin/pricing", label = "Цены и тарифы", icon = "🏷️", description = "Цены продуктов, тарифы и дополнительные предложения." }, { category = "commerce", order = 40, url = "/finance", label = "Финансовая модель", icon = "📊", description = "Расчёт потока, выручки, рекламы, нагрузки и маржи." }, { category = "commerce", order = 50, url = "/admin/tilda-mailing", label = "Перенос кабинетов — письма", icon = "✉️", description = "Подготовленные письма, правки, исключения и отдельный запуск отправки." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.commerce.md"

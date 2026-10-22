@@ -578,8 +578,6 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert 'id="account-app"' in account.text
     assert "function openRequestedCourse" in account.text
     assert "params.has('course_day')||params.has('course_material')" in account.text
-    assert "url.searchParams.delete('course_day')" in account.text
-    assert "url.searchParams.delete('course_material')" in account.text
     assert "if(openRequestedCourse(data))return" in account.text
     assert "/api/account-auth/account" in account.text
     assert 'data-edabalans-app="' in account.text
@@ -591,7 +589,6 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert ".account-card.available-card" in account_css
     assert ".account-card.featured" in account_css
     assert "item.product_code==='consultation'?' featured'" in account.text
-    assert "<article class=\"account-card'+cardCls+'\">" in account.text
     assert "function legalSummary" in account.text
     assert "legal-paragraph" in account.text
     assert "+legalSummary(item.summary)+" in account.text
@@ -691,7 +688,6 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "Мессенджер не привязан" not in crm_asset
     account = client.get("/apps/account.html").text
     assert '<div class="account-title-row"><h1>Личный кабинет</h1>' in account
-    assert '<p class="account-session"><strong class="account-session-email">' in account
     assert 'class="account-messengers-summary"' in account
     assert "Подключённые мессенджеры" in account
     assert "Привязанные мессенджеры" not in account

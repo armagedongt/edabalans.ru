@@ -210,3 +210,83 @@ html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app
 @media (max-width: 760px) {
 #account-app .account-shell > .account-theme-toggle { top: 20px; right: 16px; }
 }
+
+/* Both views share the same product cards, actions, theme and messenger editor. */
+#account-app .account-view-toggle { display: grid; place-items: center; position: fixed; top: 20px; right: 70px; z-index: 60; width: 44px; height: 44px; margin: 0; padding: 10px; border: 1px solid #a8d7ef; border-radius: 12px; background: #eaf8ff; color: #118ed8; cursor: pointer; }
+#account-app .account-view-toggle svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#account-app .account-view-toggle:hover { background: #d6efff; }
+#account-app .account-view-toggle:focus-visible { outline: 3px solid #f39a2f; outline-offset: 3px; }
+#account-app .account-course-lock { display: inline-flex; flex: 0 0 14px; width: 14px; height: 14px; margin-right: 7px; vertical-align: -2px; }
+#account-app .account-course-lock svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#account-app .account-sale-host { margin: 0; padding: 0; }
+@media (min-width: 481px) {
+#account-app[data-account-layout="full"] .application-card[data-course-closed="true"] .account-open { width: 168px; white-space: normal; line-height: 1.3; }
+}
+#account-app .account-session { position: relative; margin: 0; }
+#account-app .account-profile-toggle { display: inline-flex; align-items: center; gap: 7px; max-width: 100%; min-height: 38px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+#account-app .account-profile-toggle .account-session-email { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#account-app .account-profile-menu { position: absolute; top: 100%; left: 0; z-index: 70; min-width: 150px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); box-shadow: 0 10px 28px #0002; }
+#account-app .account-profile-menu[hidden] { display: none; }
+#account-app .account-profile-menu .account-logout { display: block; min-height: 24px; }
+#account-app .account-messenger-dialog { width: min(520px, calc(100% - 32px)); max-height: calc(100% - 40px); margin: auto; padding: 16px; overflow: auto; color: var(--ink); background: var(--card); border-color: var(--line); }
+#account-app .account-messenger-dialog:not([open]) { display: none; }
+#account-app .account-messenger-dialog::backdrop { background: #172c4566; }
+#account-app:not([data-account-layout="full"]) .account-head h1 { margin: 0; font-size: 15px; line-height: 20px; letter-spacing: -.02em; }
+#account-app:not([data-account-layout="full"]) .account-kicker { height: 24px; min-height: 0; margin: 0; }
+#account-app .account-kicker::after { white-space: nowrap; }
+#account-app:not([data-account-layout="full"]) .account-identity-row { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; max-width: 100%; margin-top: 10px; }
+#account-app:not([data-account-layout="full"]) .account-session { min-width: 0; font-size: 13px; }
+#account-app:not([data-account-layout="full"]) .account-profile-toggle { width: fit-content; }
+#account-app:not([data-account-layout="full"]) .account-messengers:not(dialog) { margin: 0; padding: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; }
+#account-app:not([data-account-layout="full"]) .account-messengers-summary { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 0; border: 0; background: transparent; }
+#account-app:not([data-account-layout="full"]) .account-identity-row :is(.account-profile-toggle,.account-messengers-summary):hover { text-decoration: none; }
+#account-app:not([data-account-layout="full"]) .account-identity-row .account-messengers-heading { margin: 0; font: inherit; color: inherit; }
+#account-app:not([data-account-layout="full"]) .account-messengers-line { display: none; }
+#account-app:not([data-account-layout="full"]) .account-head { margin-bottom: 20px; }
+#account-app:not([data-account-layout="full"]) .account-section { margin-top: 21px; }
+#account-app:not([data-account-layout="full"]) .account-section-head { margin-bottom: 9px; }
+#account-app:not([data-account-layout="full"]) .account-section h2 { font-size: 14px; line-height: 1.4; letter-spacing: 0; }
+#account-app:not([data-account-layout="full"]) .account-section h2::after { content: ":"; }
+#account-app:not([data-account-layout="full"]) .account-grid,
+#account-app:not([data-account-layout="full"]) .application-grid { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; }
+#account-app:not([data-account-layout="full"]) .account-grid > .account-card,
+#account-app:not([data-account-layout="full"]) .application-grid > .application-card { display: block; width: auto; max-width: 100%; min-height: 0; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+#account-app:not([data-account-layout="full"]) .account-grid > .account-card > div,
+#account-app:not([data-account-layout="full"]) .application-card > .application-icon,
+#account-app:not([data-account-layout="full"]) .application-card > div:not(.application-actions) { display: none; }
+#account-app:not([data-account-layout="full"]) .account-grid .account-open,
+#account-app:not([data-account-layout="full"]) .application-grid .account-open { width: auto; max-width: 100%; min-height: 40px; margin: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px; font-weight: 700; line-height: 1.35; white-space: normal; text-align: left; text-decoration: none; box-shadow: none; }
+#account-app:not([data-account-layout="full"]) .account-open:not(:disabled) { background: var(--account-theme-hover,var(--accent-soft)); color: var(--account-theme-blue,#087dbd); }
+#account-app:not([data-account-layout="full"]) .account-open.purchase { border-color: rgba(244,106,53,.32); background: var(--account-theme-card,#fff4ef); color: var(--account-theme-ink,#a94624); }
+html[data-account-theme="dark"] #account-app .account-view-toggle { background: #263442; color: var(--account-theme-blue); border-color: var(--account-theme-border); }
+html[data-account-theme="dark"] #account-app .account-view-toggle:hover { background: #324859; }
+html[data-account-theme="dark"] #account-app:not([data-account-layout="full"]) :is(.account-grid > .account-card,.application-grid > .application-card,.account-messengers:not(dialog)) { background: transparent; }
+@media (max-width: 900px) {
+#account-app .account-view-toggle { position: absolute; top: 34px; right: 74px; }
+#account-app .account-kicker { padding-right: 106px; }
+#account-app .account-kicker::after { font-size: clamp(7.5px,2.5vw,11px); }
+}
+@media (max-width: 760px) {
+#account-app .account-view-toggle { top: 20px; right: 66px; }
+#account-app:not([data-account-layout="full"]) .account-session { font-size: 12px; }
+}
+@media (pointer: coarse) {
+#account-app:not([data-account-layout="full"]) .account-grid .account-open,
+#account-app:not([data-account-layout="full"]) .application-grid .account-open,
+#account-app .account-profile-toggle,
+#account-app:not([data-account-layout="full"]) .account-messengers-summary { min-height: 44px; }
+}
+
+/* The two header menus use the same typography and disclosure marker. */
+#account-app:not([data-account-layout="full"]) .account-identity-row :is(.account-profile-toggle,.account-messengers-summary) { width: fit-content; max-width: 100%; min-height: 26px; gap: 8px; padding: 2px 0; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 12px; font-weight: 600; line-height: 1.35; color: var(--ink); text-decoration: none; }
+#account-app:not([data-account-layout="full"]) .account-identity-row :is(.account-profile-toggle,.account-messengers-summary):hover:not(:disabled) { background: transparent; text-decoration: none; }
+#account-app:not([data-account-layout="full"]) .account-messengers:not(dialog) { font-size: 13px; }
+#account-app:not([data-account-layout="full"]) .account-session-email { overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: anywhere; font-weight: inherit; color: inherit; }
+#account-app:not([data-account-layout="full"]) .account-identity-row :is(.account-profile-chevron,.account-messengers-chevron) { display: block; flex: 0 0 7px; width: 7px; height: 7px; margin: -3px 2px 0 0; border: solid var(--account-theme-blue,#118ed8); border-width: 0 1.5px 1.5px 0; font-size: 0; line-height: 0; transform: rotate(45deg); }
+#account-app:not([data-account-layout="full"]) .account-profile-toggle:focus-visible { outline: 3px solid rgba(17,142,216,.32); outline-offset: -3px; }
+@media (max-width: 760px) {
+#account-app:not([data-account-layout="full"]) .account-messengers:not(dialog) { font-size: 12px; }
+}
+@media (pointer: coarse) {
+#account-app:not([data-account-layout="full"]) .account-identity-row :is(.account-profile-toggle,.account-messengers-summary) { min-height: 32px; }
+}

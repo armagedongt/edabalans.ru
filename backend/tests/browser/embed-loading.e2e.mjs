@@ -261,9 +261,11 @@ try {
   async function nativePage(query, delays) {
     const native = await browser.newPage({viewport:{width:delays.width||1440,height:1000},reducedMotion:'reduce'})
     const requests = {account:0,session:0,step:0,corpus:0,answers:[],submitted:0,completed:0}
+    const checkoutRequests=[]
     const completedSteps=new Set((delays.progress||progress).days[0].completed_steps)
     const questionnaireStepIndex=(delays.manifest||manifest).days[0].steps.findIndex(step=>step.kind==='questionnaire')
     const faults = []
+    let preferredMessenger='telegram'
     await native.addInitScript(()=>{
       window.loaderCounts=[]
       new MutationObserver(()=>loaderCounts.push(document.querySelectorAll('.ed-loading-screen,.ed-loading-inline').length)).observe(document,{childList:true,subtree:true})
@@ -272,7 +274,7 @@ try {
     native.on('console',message=>{if(message.type()==='warning')console.error(message.text())})
     await native.route('**/*', async route => {
       const url = new URL(route.request().url()), path = url.pathname
-      if(path==='/lk')return route.fulfill({contentType:'text/html; charset=utf-8',body:portalHtml})
+      if(path==='/lk'||(delays.path&&path===delays.path))return route.fulfill({contentType:'text/html; charset=utf-8',body:portalHtml})
       if(path==='/embed.js')return route.fulfill({contentType:'application/javascript; charset=utf-8',body:embed})
       if(path==='/apps/account.html'){if(delays.html)delays.html.release();return route.fulfill({contentType:'text/html; charset=utf-8',body:accountHtml})}
       if(path==='/apps/masterclass-course.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:courseHtml})
@@ -285,6 +287,8 @@ try {
       if(path==='/assets/course-visual.css')return route.fulfill({contentType:'text/css',body:visualCss})
       if(path==='/assets/account-theme.css')return route.fulfill({contentType:'text/css',body:accountTheme})
       if(path==='/assets/account-theme.js')return route.fulfill({contentType:'application/javascript',body:accountThemeJs})
+      if(path==='/assets/masterclass.js')return route.fulfill({contentType:'application/javascript',body:questionnaireJs})
+      if(path==='/assets/masterclass.css')return route.fulfill({contentType:'text/css',body:standaloneCss})
       if(path==='/assets/article-typography.css')return route.fulfill({contentType:'text/css',body:articleTypography})
       if(path==='/assets/article-note.css')return route.fulfill({contentType:'text/css',body:articleNote})
       if(url.hostname==='fonts.googleapis.com'){if(delays.fontCss)await delays.fontCss.promise;return route.fulfill({contentType:'text/css',body:''})}
@@ -305,12 +309,17 @@ try {
         return route.fulfill({json:delays.account||account})
       }
       if(path==='/api/account-auth/login')return route.fulfill({json:{ok:true,email:account.email,expires_at:'2026-10-19T00:00:00Z'}})
+      if(path==='/api/payments/robokassa/account-offers/checkout'){checkoutRequests.push(route.request().postDataJSON());return route.fulfill({status:409,json:{detail:'Предложение изменилось'}})}
       if(path==='/api/apps/dqs'){
         const payload={ok:true,email:account.email,startDate:'2026-09-01',needsStartDate:false,days:[]},callback=url.searchParams.get('callback')
         return callback?route.fulfill({contentType:'application/javascript; charset=utf-8',body:callback+'('+JSON.stringify(payload)+')'}):route.fulfill({json:payload})
       }
       if(path==='/api/apps/strength')return route.fulfill({json:{ok:true,user:{user_id:'preview',email:account.email,display_name:'Предпросмотр'},workout:{workout_types:[],exercise_catalog:[],sessions:[],session_exercises:[],sets:[]}}})
-      if(path==='/api/masterclass/account-offers'){if(delays.offers)await delays.offers.promise;return route.fulfill({json:{focusable_product_codes:['calories']}})}
+      if(path==='/api/masterclass/messengers'||path==='/api/masterclass/messengers/preferred'){
+        if(path.endsWith('/preferred'))preferredMessenger=route.request().postDataJSON().platform
+        return route.fulfill({json:{preferred_platform:preferredMessenger,linked:{telegram:{linked:true,preferred:preferredMessenger==='telegram'},max:{linked:true,preferred:preferredMessenger==='max'}}}})
+      }
+      if(path==='/api/masterclass/account-offers'){if(delays.offers)await delays.offers.promise;return route.fulfill({json:{focusable_product_codes:['calories'],product_presentations:{calories:{name:'Калорийный курс',description:'Программа курса',features:[],program:[]}},product_offer_actions:{calories:[{composition:'single',offer_code:'single:calories',title:'Калорийный курс',price:2900}]}}})}
       if(path==='/api/masterclass/course/manifest')return route.fulfill({json:delays.manifest||manifest})
       if(path==='/api/masterclass/course')return route.fulfill({json:delays.progress||progress})
       if(/\/steps\/\d+\/complete$/.test(path)){
@@ -355,9 +364,69 @@ try {
       if(path.startsWith('/api/'))return route.fulfill({json:{ok:true}})
       return route.fulfill({contentType:'application/javascript',body:''})
     })
-    await native.goto(origin+'/lk'+query,{waitUntil:'domcontentloaded'})
-    return {native,requests,faults}
+    await native.goto(origin+(delays.path||'/lk')+query,{waitUntil:'domcontentloaded'})
+    return {native,requests,faults,checkoutRequests}
   }
+  // Density is presentation only: preserve cards/actions, the existing theme and messenger editor.
+  const compact=await nativePage('?layout=rows',{})
+  await waitForReveal(compact.native)
+  assert.equal(await compact.native.locator('#account-app').getAttribute('data-account-layout'),'compact')
+  const initialCards=await compact.native.locator('.account-card').count()
+  await compact.native.locator('.account-messengers-summary').click()
+  await compact.native.locator('#account-messenger-dialog[open]').waitFor()
+  await compact.native.locator('#account-messenger-dialog [data-account-preferred="max"]').click()
+  await compact.native.locator('#account-messenger-dialog .messenger-state.connected').filter({hasText:'MAX — основной'}).waitFor()
+  await compact.native.locator('#account-messenger-dialog [data-messenger-close]').click()
+  await compact.native.locator('#account-messenger-dialog').waitFor({state:'hidden'})
+  await compact.native.locator('.account-messengers-line').filter({hasText:'основной — MAX'}).waitFor({state:'attached'})
+  for(const mode of ['full','compact']){
+    await compact.native.locator('button[data-account-layout]').click()
+    assert.equal(await compact.native.locator('#account-app').getAttribute('data-account-layout'),mode)
+    assert.equal(await compact.native.locator('.account-card').count(),initialCards,'Density must retain the product set')
+    assert.equal(await compact.native.locator('.account-theme-toggle').count(),1,'Reuse the single existing theme control')
+    if(mode==='full'){
+      await compact.native.locator('.account-messengers-summary').click()
+      await compact.native.locator('#account-messengers .messenger-editor').waitFor()
+    }
+    if(mode==='compact'){
+      await compact.native.locator('#account-messengers .account-messengers-summary').waitFor()
+      assert.equal(await compact.native.locator('#account-messengers .messenger-editor').count(),0)
+      await compact.native.locator('.account-messengers-summary').click()
+      await compact.native.locator('#account-messenger-dialog[open]').waitFor()
+      await compact.native.locator('#account-messenger-dialog [data-messenger-close]').click()
+    }
+  }
+  await compact.native.locator('button[data-account-layout]').click()
+  await compact.native.goto(origin+'/lk')
+  await waitForReveal(compact.native)
+  assert.equal(await compact.native.locator('#account-app').getAttribute('data-account-layout'),'full','Remember the selected density')
+  assert.deepEqual(compact.faults,[])
+  await compact.native.close()
+
+  // A cabinet embedded from another app must still own a canonical /lk history entry.
+  const historyFlow=await nativePage('',{path:'/training'})
+  await waitForReveal(historyFlow.native)
+  assert.equal(new URL(historyFlow.native.url()).pathname,'/lk')
+  await historyFlow.native.locator('[data-app="masterclass-course"]').click()
+  await historyFlow.native.locator('#day .topic').first().waitFor({state:'visible'})
+  await historyFlow.native.locator('#day .topic').first().click()
+  await historyFlow.native.locator('#article-view:not([hidden]) #article h1').waitFor()
+  assert.equal(new URL(historyFlow.native.url()).searchParams.has('course_material'),true)
+  assert.equal(await historyFlow.native.locator('#back').textContent(),'← Назад')
+  await historyFlow.native.goBack()
+  await historyFlow.native.locator('#day:not([hidden]) .hero').waitFor()
+  await historyFlow.native.goBack()
+  await historyFlow.native.locator('.account-grid').waitFor()
+  assert.equal(new URL(historyFlow.native.url()).pathname,'/lk')
+  assert.equal(new URL(historyFlow.native.url()).searchParams.has('account_app'),false)
+  await historyFlow.native.goForward()
+  await historyFlow.native.locator('#day .topic').first().waitFor({state:'visible'})
+  await historyFlow.native.goForward()
+  await historyFlow.native.locator('#article-view:not([hidden]) #article h1').waitFor()
+  assert.equal(historyFlow.requests.account,1,'In-cabinet history must not repeat frontend login')
+  assert.deepEqual(historyFlow.faults,[])
+  await historyFlow.native.close()
+
   const loginFlow=await nativePage('',{loginRequired:true})
   await loginFlow.native.locator('#login-form').waitFor({state:'visible'})
   await loginFlow.native.locator('[name="email"]').fill(account.email)
@@ -365,7 +434,7 @@ try {
   await loginFlow.native.getByRole('button',{name:'Войти'}).click()
   await loginFlow.native.locator('.account-card').first().waitFor({state:'visible'})
   assert.equal(loginFlow.requests.account,2,'Login must reload the complete account payload before rendering the dashboard')
-  assert.equal(await loginFlow.native.getByRole('heading',{name:'Мастер-класс',exact:true}).isVisible(),true)
+  assert.equal(await loginFlow.native.getByRole('button',{name:'Мастер-класс',exact:true}).isVisible(),true)
   assert.deepEqual(loginFlow.faults,[])
   await loginFlow.native.close()
 
@@ -379,7 +448,7 @@ try {
   await waitForReveal(dashboard.native)
   assert.equal(await dashboard.native.locator('.account-card').first().isVisible(),true,'Offers and fonts must not delay the first useful screen')
   await dashboard.native.waitForFunction(()=>document.fonts.status==='loading')
-  assert.equal(await dashboard.native.locator('[data-offer-product="calories"]').count(),0)
+  assert.equal(await dashboard.native.locator('[data-product-sale="calories"]').isEnabled(),true,'Course description must not wait for background prices')
   offers.release()
   await dashboard.native.locator('[data-offer-product="calories"]').waitFor()
   assert.equal(await dashboard.native.locator('[data-offer-product="calories"]').isEnabled(),true,'Background offer must remain purchasable')
@@ -388,18 +457,45 @@ try {
   assert.deepEqual(dashboard.faults,[])
   fontCss.release();fontFile.release()
   await dashboard.native.locator('[data-offer-product="calories"]').click()
-  await dashboard.native.locator('#masterclass-offers-app').waitFor({state:'visible'})
-  assert.equal(await dashboard.native.locator('[data-edabalans-focus-product="calories"]').count(),1,'Background Buy must open the requested product')
-  assert.equal(await dashboard.native.locator('[data-edabalans-account-offer="true"]').count(),1,'Background Buy must retain account-offer context')
+  await dashboard.native.locator('.mc-product-overlay__dialog').waitFor({state:'visible'})
+  assert.equal(await dashboard.native.locator('.mc-product-sheet h1').textContent(),'Калорийный курс')
+  assert.equal(await dashboard.native.locator('[data-product-sale="calories"] .account-course-lock').count(),1)
+  assert.equal(await dashboard.native.locator('.account-grid').count(),1,'Sales popup must preserve the cabinet behind it')
+  await dashboard.native.locator('[data-product-buy="single:calories"]').click()
+  await dashboard.native.locator('.mc-native-checkout__dialog').waitFor({state:'visible'})
+  assert.equal(await dashboard.native.locator('.mc-product-overlay').count(),0)
+  await dashboard.native.locator('.mc-native-checkout__submit').click()
+  assert.equal(dashboard.checkoutRequests.length,0,'Payment requires consent')
+  await dashboard.native.locator('.mc-native-checkout input[type="checkbox"]').check()
+  await dashboard.native.locator('.mc-native-checkout__submit').click()
+  await dashboard.native.locator('.mc-native-checkout__error').filter({hasText:'Предложение изменилось'}).waitFor()
+  assert.deepEqual(dashboard.checkoutRequests,[{offer_code:'single:calories',focus_product_code:'calories'}])
+  await dashboard.native.locator('.mc-native-checkout__close').click()
+  assert.equal(await dashboard.native.locator('.account-grid').isVisible(),true)
   assert.deepEqual(dashboard.faults,[])
   await dashboard.native.close()
+
+  const publicEntry=await nativePage('',{account:{...account,courses:[{...account.courses[1],purchase_mode:'public_masterclass_tariffs'}]}})
+  await waitForReveal(publicEntry.native)
+  assert.equal(await publicEntry.native.locator('[data-product-sale]').count(),0)
+  await publicEntry.native.locator('[data-public-masterclass="true"]').click()
+  await publicEntry.native.locator('#masterclass-offers-app[data-edabalans-public-masterclass="true"]').waitFor()
+  await publicEntry.native.close()
+
+  const legacyEntry=await nativePage('',{account:{...account,legacy_portal:{available:true}}})
+  await waitForReveal(legacyEntry.native)
+  await legacyEntry.native.waitForFunction(()=>window.__accountOfferContext?.focusable_product_codes)
+  assert.equal(await legacyEntry.native.locator('[data-product-sale]').count(),0,'Legacy accounts retain their existing upgrade/purchase route')
+  await legacyEntry.native.locator('[data-offer-product="calories"]').click()
+  await legacyEntry.native.locator('#masterclass-offers-app[data-edabalans-account-offer="true"]').waitFor()
+  await legacyEntry.native.close()
 
   const maintenanceAccount={...account,courses:[account.courses[0],
     {code:'calories',product_code:'calories',title:'Калорийный курс',owned:false,ready:false,maintenance:true},
     {code:'recipes',product_code:'recipes',title:'Система рецептов',owned:true,ready:false,maintenance:true},
     {code:'strength',product_code:'training',title:'Курс по тренировкам',owned:false,ready:false}],
     applications:[{code:'recipes',title:'Калькулятор и каталог рецептов',owned:true,ready:false,maintenance:true}]}
-  const maintenance=await nativePage('?calories_stage=1',{account:maintenanceAccount})
+  const maintenance=await nativePage('?calories_stage=1&layout=full',{account:maintenanceAccount})
   await maintenance.native.locator('.account-card').first().waitFor({state:'visible'})
   for(const title of ['Калорийный курс','Система рецептов']){
     const card=maintenance.native.locator('.account-card').filter({has:maintenance.native.getByRole('heading',{name:title,exact:true})})
@@ -411,6 +507,8 @@ try {
   assert.equal(await maintenance.native.locator('[data-app="masterclass-course"]').isEnabled(),true)
   await maintenance.native.waitForFunction(()=>window.__accountOfferContext?.focusable_product_codes)
   assert.equal(await maintenance.native.locator('[data-offer-product="calories"]').count(),0,'Late offers must not enable maintenance purchases')
+  await maintenance.native.locator('button[data-account-layout]').click()
+  for(const title of ['Калорийный курс','Система рецептов'])assert.equal(await maintenance.native.getByRole('button',{name:title+' · На ремонте',exact:true}).isDisabled(),true,'Compact view must preserve maintenance locks')
   await capture(maintenance.native,'account-maintenance')
   await captureSnapshot(maintenance.native,'account-maintenance')
   assert.deepEqual(maintenance.faults,[])

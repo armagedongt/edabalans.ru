@@ -803,3 +803,13 @@ html[data-account-theme="dark"] #masterclass-course-app .course-topbar-brand { c
 #masterclass-course-app .article-head .back { font: 800 14px / 1 var(--ed-font-body, Manrope, Arial, sans-serif) !important; }
 @media (max-width: 900px) { #masterclass-course-app .article-head .back { font-size: 12px !important; } }
 @media (max-width: 430px) { #masterclass-course-app .article-head .back { font-size: 11px !important; } }
+
+/* Keep the return action in the day/material/time metadata row. */
+#masterclass-course-app .article-head { flex-wrap: nowrap !important; align-items: center; gap: 10px; margin-bottom: 10px; }
+#masterclass-course-app .article-head .back { flex: 0 0 auto; min-height: 36px; padding: 8px 11px; }
+#masterclass-course-app .article-head .article-count { min-width: 0; flex: 1; gap: 4px 10px; font-size: 12px; line-height: 1.4; }
+@media (max-width: 430px) {
+#masterclass-course-app .article-head { gap: 8px; }
+#masterclass-course-app .article-head .back { padding-inline: 8px; }
+#masterclass-course-app .article-head .article-count { gap: 2px 7px; font-size: 11px; }
+}

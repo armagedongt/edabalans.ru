@@ -28,57 +28,72 @@
   function openTildaCart(command){var match=/^#order:([^=]+)=(\d+(?:\.\d+)?)$/.exec(String(command||''));if(match&&typeof window.tcart__addProduct==='function'&&typeof window.tcart__openCart==='function'){window.tcart__addProduct({name:match[1],price:Number(match[2]),quantity:1});window.tcart__openCart();return;}location.hash=command;}
   function submitPaymentForm(paymentForm){var form=document.createElement('form');form.method=paymentForm.method||'POST';form.action=paymentForm.action;Object.keys(paymentForm.fields||{}).forEach(function(name){var input=document.createElement('input');input.type='hidden';input.name=name;input.value=String(paymentForm.fields[name]);form.appendChild(input);});document.body.appendChild(form);form.submit();}
   function nativeCheckout(endpoint,body,title,amount){return new Promise(function(resolve,reject){var overlay=document.createElement('div');overlay.className='mc-native-checkout';overlay.innerHTML='<div class="mc-native-checkout__backdrop"></div><section class="mc-native-checkout__dialog" role="dialog" aria-modal="true" aria-label="Переход к оплате"><button type="button" class="mc-native-checkout__close" aria-label="Закрыть">×</button><h2>Переход к оплате</h2><p>'+esc(title)+'</p><p class="mc-native-checkout__amount">'+esc(amount)+'</p><label><input type="checkbox"> Я принимаю <a href="/legal/offer" target="_blank" rel="noopener">публичную оферту</a> и даю <a href="/legal/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a>.</label><p class="mc-native-checkout__error" aria-live="polite"></p><button type="button" class="mc-native-checkout__submit">Перейти к оплате</button></section>';document.body.appendChild(overlay);overlay.querySelector('.mc-native-checkout__close').focus();function close(){overlay.remove();resolve(null)}overlay.querySelector('.mc-native-checkout__close').onclick=close;overlay.querySelector('.mc-native-checkout__backdrop').onclick=close;var consent=overlay.querySelector('input'),error=overlay.querySelector('.mc-native-checkout__error'),submit=overlay.querySelector('.mc-native-checkout__submit');submit.onclick=function(){if(!consent.checked){error.textContent='Подтвердите согласие, чтобы перейти к оплате.';return;}submit.disabled=true;submit.textContent='Создаю счёт…';api(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(result){submitPaymentForm(result.payment_form);}).catch(function(cause){error.textContent=String(cause.message||cause);submit.disabled=false;submit.textContent='Перейти к оплате';reject(cause);});};});}
-  function watchPurchase(code,refresh,peek,account){if(purchasePoll)clearInterval(purchasePoll);var attempts=0;function stop(){clearInterval(purchasePoll);purchasePoll=null;}function check(){attempts+=1;Promise.resolve(peek()).then(function(data){var offerData=data&&data.offer||data,still=offerData&&offerData.offers&&offerData.offers.some(function(item){return item.code===code;});if(!still){stop();if(account&&(ctx.purchaseReturnUrl||ctx.accountUrl))location.assign(ctx.purchaseReturnUrl||ctx.accountUrl);else refresh();}else if(attempts>=120){stop();}}).catch(function(error){if(account&&error&&error.status===409){ctx.focusProductCode='';stop();if(ctx.purchaseReturnUrl||ctx.accountUrl)location.assign(ctx.purchaseReturnUrl||ctx.accountUrl);else refresh();}else if(attempts>=120){stop();}});}purchasePoll=setInterval(check,5000);}
+  function watchPurchase(code,refresh,peek,account,offerContext){var purchaseContext=offerContext||ctx;if(purchasePoll)clearInterval(purchasePoll);var attempts=0;function stop(){clearInterval(purchasePoll);purchasePoll=null;}function check(){attempts+=1;Promise.resolve(peek()).then(function(data){var offerData=data&&data.offer||data,still=offerData&&offerData.offers&&offerData.offers.some(function(item){return item.code===code;});if(!still){stop();if(account&&(purchaseContext.purchaseReturnUrl||purchaseContext.accountUrl))location.assign(purchaseContext.purchaseReturnUrl||purchaseContext.accountUrl);else refresh();}else if(attempts>=120){stop();}}).catch(function(error){if(account&&error&&error.status===409){purchaseContext.focusProductCode='';stop();if(purchaseContext.purchaseReturnUrl||purchaseContext.accountUrl)location.assign(purchaseContext.purchaseReturnUrl||purchaseContext.accountUrl);else refresh();}else if(attempts>=120){stop();}});}purchasePoll=setInterval(check,5000);}
   window.addEventListener('edabalans:app-dispose',function(){if(purchasePoll){clearInterval(purchasePoll);purchasePoll=null;}});
   function offerMarkup(data){var owned='<section class="mc-owned"><span class="mc-owned-title">У вас уже есть</span><ul>'+ownedItems(data).map(function(name){return '<li><span aria-hidden="true">✓</span>'+esc(name)+'</li>';}).join('')+'</ul></section>';var timer=data.expires_at?'<div class="mc-countdown" id="mc-timer" role="timer"></div>':'';var cards=data.offers.length?data.offers.map(function(o){var saving=o.saving>0?'<span class="offer-saving">Выгода '+o.saving_percent+'% · '+money(o.saving)+'</span>':'';var old=o.saving>0?'<span class="offer-old">'+money(o.standard_price)+'</span>':'';var description=o.description?'<p>'+esc(o.description)+'</p>':'';var longText=o.long_description?'<p class="mc-offer-long">'+esc(o.long_description)+'</p>':'';var contents=o.composition==='bundle'?includedItems(o.details):'';var info=o.composition==='single'?productLink(o.items[0]):'',featured=o.code==='single:consultation'?' is-featured':'';return '<article class="mc-offer-card'+featured+'"><div class="mc-offer-copy"><span class="mc-offer-kind">Дополнение к программе</span><h2>'+esc(o.title)+'</h2>'+description+info+longText+contents+'</div><div class="mc-offer-terms"><div class="mc-offer-prices">'+old+'<strong class="offer-price">'+money(o.price)+'</strong></div>'+saving+'<button data-offer="'+esc(o.code)+'" data-offer-title="'+esc(o.title)+'" data-offer-price="'+esc(money(o.price))+'">Купить</button></div></article>';}).join(''):'<section class="mc-card mc-offer-empty"><h2>У вас уже всё открыто</h2><p>Дополнительных предложений сейчас нет.</p></section>';return '<section class="mc-offers"><div class="mc-offer-summary'+(timer?' has-timer':'')+'">'+owned+timer+'</div><div class="offer-grid">'+cards+'</div></section>';}
   function productPresentationMarkup(data,productCode){var product=(data.product_presentations||{})[productCode],actions=(data.product_offer_actions||{})[productCode]||[];if(!product)return '';var features=(product.features||[]).map(function(item){return '<li><strong>'+esc(item.name)+'</strong><span>'+esc(item.description)+'</span></li>';}).join('');var program=(product.program||[]).map(function(item){return '<li><strong>'+esc(item.title)+'</strong><span>'+esc(item.description)+'</span></li>';}).join('');var canonical=product.canonical_html?'<div class="mc-product-section edb-program-card" data-program-card="'+esc(productCode)+'">'+product.canonical_html+'</div>':'<p class="mc-product-intro">'+esc(product.intro)+'</p><section class="mc-product-section"><h2>Что вы получите</h2><ul class="mc-product-features">'+features+'</ul></section><section class="mc-product-section"><h2>Программа</h2><ul class="mc-product-program">'+program+'</ul></section>';var buttons=actions.map(function(action){var note=action.composition==='single'?'Отдельно':'В составе «'+esc(action.title)+'»';var saving=action.saving>0?' <small>вместо '+money(action.standard_price)+' · выгода '+action.saving_percent+'%</small>':'';return '<div class="mc-product-action"><p>'+note+saving+'</p><button type="button" class="mc-product-buy '+(action.composition==='single'?'':'secondary')+'" data-product-buy="'+esc(action.offer_code)+'" data-offer-title="'+esc(action.title)+'" data-offer-price="'+esc(money(action.price))+'">Купить · '+money(action.price)+'</button></div>';}).join('');var timer=data.expires_at?'<div class="mc-countdown mc-product-countdown" role="timer"></div>':'';return '<section class="mc-product-sheet '+(product.canonical_html?'has-canonical-program-card':'')+'"><span class="mc-offer-kind">Дополнение к мастер-классу</span><h1>'+esc(product.name)+'</h1>'+(product.canonical_html?'':'<p class="lead">'+esc(product.description)+'</p>')+canonical+timer+'<section class="mc-product-actions">'+buttons+'</section></section>';}
-  window.EdabalansMasterclassOfferView={markup:offerMarkup,productPresentationMarkup:productPresentationMarkup,headerMarkup:offerPageHeaderMarkup};
-  function checkoutOffer(code,refresh,peek,button){var account=Boolean(ctx.accountOffer),path=account?'/api/masterclass/account-offers/checkout':'/api/masterclass/checkout',body=account?{email:email,offer_code:code,focus_product_code:ctx.focusProductCode}:{email:email,placement:ctx.placement||'offers-hub',placement_token:ctx.placementToken||'',offer_code:code};if(identity.source==='native'){var endpoint=account?'/api/payments/robokassa/account-offers/checkout':'/api/payments/robokassa/course-offers/checkout',nativeBody=account?{offer_code:code,focus_product_code:ctx.focusProductCode||null}:{offer_code:code,placement:body.placement,placement_token:body.placement_token};return nativeCheckout(endpoint,nativeBody,button&&button.dataset.offerTitle||'Дополнение к программе',button&&button.dataset.offerPrice||'').then(function(result){if(result!==null)watchPurchase(code,refresh,peek,account);});}return api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(result){openTildaCart(result.cart_command);watchPurchase(code,refresh,peek,account);});}
+  window.EdabalansMasterclassOfferView={markup:offerMarkup,productPresentationMarkup:productPresentationMarkup,headerMarkup:offerPageHeaderMarkup,showAccountProduct:showAccountProduct};
+  function checkoutOffer(code,refresh,peek,button,offerContext){var checkoutContext=offerContext||ctx,account=Boolean(checkoutContext.accountOffer),path=account?'/api/masterclass/account-offers/checkout':'/api/masterclass/checkout',body=account?{email:email,offer_code:code,focus_product_code:checkoutContext.focusProductCode}:{email:email,placement:checkoutContext.placement||'offers-hub',placement_token:checkoutContext.placementToken||'',offer_code:code};if(identity.source==='native'){var endpoint=account?'/api/payments/robokassa/account-offers/checkout':'/api/payments/robokassa/course-offers/checkout',nativeBody=account?{offer_code:code,focus_product_code:checkoutContext.focusProductCode||null}:{offer_code:code,placement:body.placement,placement_token:body.placement_token};return nativeCheckout(endpoint,nativeBody,button&&button.dataset.offerTitle||'Дополнение к программе',button&&button.dataset.offerPrice||'').then(function(result){if(result!==null)watchPurchase(code,refresh,peek,account,checkoutContext);});}return api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(result){openTildaCart(result.cart_command);watchPurchase(code,refresh,peek,account,checkoutContext);});}
+  function openOfferProduct(data,productCode,opener,options){
+    options=options||{};
+    if(activeProductClose)activeProductClose();
+    var markup=productPresentationMarkup(data,productCode);
+    if(!markup)return;
+    var overlay=document.createElement('div');
+    overlay.className='mc-product-overlay';
+    overlay.innerHTML='<button type="button" class="mc-product-overlay__backdrop" tabindex="-1" aria-label="Закрыть описание"></button><section class="mc-product-overlay__dialog" role="dialog" aria-modal="true" aria-label="'+esc(data.product_presentations[productCode].name)+'"><button type="button" class="mc-product-overlay__close" aria-label="Закрыть описание">×</button>'+markup+'</section>';
+    (options.container||root().querySelector('.mc')).appendChild(overlay);
+    document.documentElement.classList.add('mc-product-overlay-open');
+    var stopTimer=countdown(data.expires_at,overlay.querySelector('.mc-product-countdown'),options.refresh);
+    function close(){
+      if(stopTimer)stopTimer();
+      overlay.remove();
+      document.documentElement.classList.remove('mc-product-overlay-open');
+      document.removeEventListener('keydown',onKeydown);
+      window.removeEventListener('edabalans:app-dispose',close);
+      activeProductClose=null;
+      if(options.onClose)options.onClose();
+      if(opener&&opener.isConnected)opener.focus();
+    }
+    function onKeydown(event){
+      if(event.key==='Escape'){event.preventDefault();close();}
+      if(event.key==='Tab'){
+        var items=Array.prototype.filter.call(overlay.querySelectorAll('.mc-product-overlay__dialog button:not([hidden]), .mc-product-overlay__dialog a[href]'),function(item){return item.getClientRects().length;});
+        if(!items.length)return;
+        if(event.shiftKey&&document.activeElement===items[0]){event.preventDefault();items[items.length-1].focus();}
+        else if(!event.shiftKey&&document.activeElement===items[items.length-1]){event.preventDefault();items[0].focus();}
+      }
+    }
+    activeProductClose=close;
+    document.addEventListener('keydown',onKeydown);
+    window.addEventListener('edabalans:app-dispose',close);
+    overlay.querySelector('.mc-product-overlay__close').onclick=close;
+    overlay.querySelector('.mc-product-overlay__backdrop').onclick=close;
+    overlay.querySelector('.mc-product-overlay__close').focus();
+    var canonical=overlay.querySelector('.edb-program-card');
+    if(canonical&&window.EdabalansProgramCard)window.EdabalansProgramCard.enhance(canonical,productCode);
+    Array.prototype.forEach.call(overlay.querySelectorAll('[data-product-buy]'),function(button){button.onclick=function(){var offerCode=button.dataset.productBuy,title=button.dataset.offerTitle,price=button.dataset.offerPrice;close();options.buy(offerCode,{dataset:{offerTitle:title,offerPrice:price}}).catch(function(){});};});
+  }
+
+  function showAccountProduct(productCode,opener){
+    var accountContext={accountOffer:true,focusProductCode:productCode,accountUrl:'/lk',purchaseReturnUrl:location.href};
+    function peek(){return api('/api/masterclass/account-offers?email='+encodeURIComponent(email)+'&focus_product_code='+encodeURIComponent(productCode))}
+    function refresh(){return showAccountProduct(productCode,opener)}
+    return peek().then(function(data){
+      if(opener&&!opener.isConnected)return;
+      if(!(data.product_presentations||{})[productCode])throw new Error('Описание курса пока недоступно');
+      var container=document.createElement('div');container.className='mc mc-offer-page account-sale-host';
+      document.getElementById('account-app').appendChild(container);
+      openOfferProduct(data,productCode,opener,{container:container,refresh:refresh,onClose:function(){container.remove()},buy:function(code,details){return checkoutOffer(code,refresh,peek,details,accountContext)}});
+    });
+  }
   function offerCards(data,heading,refresh,peek){
     if(activeProductClose)activeProductClose();
     function bind(){
       Array.prototype.forEach.call(root().querySelectorAll('[data-offer]'),function(button){button.onclick=function(){checkoutOffer(button.dataset.offer,refresh,peek,button).catch(function(){});};});
-      Array.prototype.forEach.call(root().querySelectorAll('[data-product-info]'),function(button){button.onclick=function(){openProduct(button.dataset.productInfo,button);};});
+      Array.prototype.forEach.call(root().querySelectorAll('[data-product-info]'),function(button){button.onclick=function(){openOfferProduct(data,button.dataset.productInfo,button,{refresh:refresh,buy:function(code,details){return checkoutOffer(code,refresh,peek,details)}});};});
       var accountBack=root().querySelector('[data-account-back]');
       if(accountBack)accountBack.onclick=function(){location.href=ctx.accountUrl||location.href;};
-    }
-    function openProduct(productCode,opener){
-      if(activeProductClose)activeProductClose();
-      var markup=productPresentationMarkup(data,productCode);
-      if(!markup)return;
-      var overlay=document.createElement('div');
-      overlay.className='mc-product-overlay';
-      overlay.innerHTML='<button type="button" class="mc-product-overlay__backdrop" tabindex="-1" aria-label="Закрыть описание"></button><section class="mc-product-overlay__dialog" role="dialog" aria-modal="true" aria-label="'+esc(data.product_presentations[productCode].name)+'"><button type="button" class="mc-product-overlay__close" aria-label="Закрыть описание">×</button>'+markup+'</section>';
-      root().querySelector('.mc').appendChild(overlay);
-      document.documentElement.classList.add('mc-product-overlay-open');
-      var stopTimer=countdown(data.expires_at,overlay.querySelector('.mc-product-countdown'),refresh);
-      function close(){
-        if(stopTimer)stopTimer();
-        overlay.remove();
-        document.documentElement.classList.remove('mc-product-overlay-open');
-        document.removeEventListener('keydown',onKeydown);
-        window.removeEventListener('edabalans:app-dispose',close);
-        activeProductClose=null;
-        if(opener&&opener.isConnected)opener.focus();
-      }
-      function onKeydown(event){
-        if(event.key==='Escape'){event.preventDefault();close();}
-        if(event.key==='Tab'){
-          var items=Array.prototype.filter.call(overlay.querySelectorAll('.mc-product-overlay__dialog button:not([hidden]), .mc-product-overlay__dialog a[href]'),function(item){return item.getClientRects().length;});
-          if(!items.length)return;
-          if(event.shiftKey&&document.activeElement===items[0]){event.preventDefault();items[items.length-1].focus();}
-          else if(!event.shiftKey&&document.activeElement===items[items.length-1]){event.preventDefault();items[0].focus();}
-        }
-      }
-      activeProductClose=close;
-      document.addEventListener('keydown',onKeydown);
-      window.addEventListener('edabalans:app-dispose',close);
-      overlay.querySelector('.mc-product-overlay__close').onclick=close;
-      overlay.querySelector('.mc-product-overlay__backdrop').onclick=close;
-      overlay.querySelector('.mc-product-overlay__close').focus();
-      var canonical=overlay.querySelector('.edb-program-card');
-      if(canonical&&window.EdabalansProgramCard)window.EdabalansProgramCard.enhance(canonical,productCode);
-      Array.prototype.forEach.call(overlay.querySelectorAll('[data-product-buy]'),function(button){button.onclick=function(){var offerCode=button.dataset.productBuy,title=button.dataset.offerTitle,price=button.dataset.offerPrice;close();checkoutOffer(offerCode,refresh,peek,{dataset:{offerTitle:title,offerPrice:price}}).catch(function(){});};});
     }
     var back=ctx.accountOffer?'<button type="button" class="mc-product-back" data-account-back>← Личный кабинет</button>':'';
     layout(offerPageTitle(heading),offerPageLead(),back+offerMarkup(data));
