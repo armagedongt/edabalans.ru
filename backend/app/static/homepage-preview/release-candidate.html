@@ -1660,15 +1660,22 @@
       display: none !important;
     }
 
+    #edb-pricing-neurozeh-v1 .edb-pricing-phone:has(> .edb-pricing-owned-offers:not([hidden])) {
+      width: var(--content-frame);
+      max-width: 100%;
+      padding: 0;
+    }
+
     #edb-pricing-neurozeh-v1 .edb-pricing-owned-offers {
-      width: min(100%, 980px);
+      width: min(100%, var(--content-frame));
+      min-width: 0;
       margin: 0 auto;
       display: grid;
       gap: clamp(22px, 3vw, 30px);
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-owned-intro {
-      width: min(100%, 760px);
+      width: 100%;
       margin: 0 auto;
       padding: clamp(22px, 4vw, 32px);
       border: 1px solid rgba(38, 175, 255, .3);
@@ -1676,6 +1683,18 @@
       background: rgba(255, 255, 255, .9);
       box-shadow: 0 12px 28px -22px rgba(17, 112, 176, .45);
       text-align: center;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-owned-offers .mc.mc-offer-page {
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+      margin: 0;
+      padding: 0;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-owned-offers .mc-offers {
+      max-width: none;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-owned-intro h3 {
