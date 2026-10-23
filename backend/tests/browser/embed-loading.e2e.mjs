@@ -26,6 +26,7 @@ const dqsRules = await readFile(new URL('../../app/static/apps/dqs-category-rule
 const accountVisual = await readFile(new URL('../../app/static/account-visual.css', import.meta.url), 'utf8')
 const accountTheme = await readFile(new URL('../../app/static/account-theme.css', import.meta.url), 'utf8')
 const accountThemeJs = await readFile(new URL('../../app/static/account-theme.js', import.meta.url), 'utf8')
+const clientPickerJs = await readFile(new URL('../../app/static/app-client-picker.mjs', import.meta.url), 'utf8')
 const articleTypography = await readFile(new URL('../../../content/article-components/typography.css', import.meta.url), 'utf8')
 const articleNote = await readFile(new URL('../../../content/article-components/note.css', import.meta.url), 'utf8')
 const appShellCss = await readFile(new URL('../../app/static/app-shell.css', import.meta.url), 'utf8')
@@ -262,6 +263,7 @@ try {
     const native = await browser.newPage({viewport:{width:delays.width||1440,height:1000},reducedMotion:'reduce'})
     const requests = {account:0,session:0,step:0,corpus:0,answers:[],submitted:0,completed:0}
     const checkoutRequests=[]
+    const accountSelections=[]
     const completedSteps=new Set((delays.progress||progress).days[0].completed_steps)
     const questionnaireStepIndex=(delays.manifest||manifest).days[0].steps.findIndex(step=>step.kind==='questionnaire')
     const faults = []
@@ -287,6 +289,7 @@ try {
       if(path==='/assets/course-visual.css')return route.fulfill({contentType:'text/css',body:visualCss})
       if(path==='/assets/account-theme.css')return route.fulfill({contentType:'text/css',body:accountTheme})
       if(path==='/assets/account-theme.js')return route.fulfill({contentType:'application/javascript',body:accountThemeJs})
+      if(path==='/assets/app-client-picker.mjs')return route.fulfill({contentType:'application/javascript',body:clientPickerJs})
       if(path==='/assets/masterclass.js')return route.fulfill({contentType:'application/javascript',body:questionnaireJs})
       if(path==='/assets/masterclass.css')return route.fulfill({contentType:'text/css',body:standaloneCss})
       if(path==='/assets/article-typography.css')return route.fulfill({contentType:'text/css',body:articleTypography})
@@ -304,10 +307,14 @@ try {
       if(path==='/api/account-auth/session'){requests.session++;return route.fulfill({json:{authenticated:true,email:account.email}})}
       if(path==='/api/account-auth/account'){
         requests.account++
+        const selected=route.request().headers()['x-edabalans-account-user']||''
+        accountSelections.push(selected)
         if(delays.auth)await delays.auth.promise
         if(delays.loginRequired&&requests.account===1)return route.fulfill({status:401,json:{detail:'Требуется вход'}})
+        if(delays.accountManager)return route.fulfill({json:{...account,email:selected?'client@example.test':account.email,account_manager:{can_manage:true,actor:{user_id:'00000000-0000-0000-0000-000000000001',email:account.email,display_name:'Владелец'},selected:selected?{user_id:selected,email:'client@example.test',display_name:'Анна Клиент'}:null}}})
         return route.fulfill({json:delays.account||account})
       }
+      if(path==='/api/apps/manager/users')return route.fulfill({json:{ok:true,more:false,users:[{user_id:'00000000-0000-0000-0000-000000000002',email:'client@example.test',display_name:'Анна Клиент'}]}})
       if(path==='/api/account-auth/login')return route.fulfill({json:{ok:true,email:account.email,expires_at:'2026-10-19T00:00:00Z'}})
       if(path==='/api/payments/robokassa/account-offers/checkout'){checkoutRequests.push(route.request().postDataJSON());return route.fulfill({status:409,json:{detail:'Предложение изменилось'}})}
       if(path==='/api/apps/dqs'){
@@ -365,7 +372,7 @@ try {
       return route.fulfill({contentType:'application/javascript',body:''})
     })
     await native.goto(origin+(delays.path||'/lk')+query,{waitUntil:'domcontentloaded'})
-    return {native,requests,faults,checkoutRequests}
+    return {native,requests,faults,checkoutRequests,accountSelections}
   }
   // Density is presentation only: preserve cards/actions, the existing theme and messenger editor.
   const compact=await nativePage('?layout=rows',{})
@@ -402,6 +409,30 @@ try {
   assert.equal(await compact.native.locator('#account-app').getAttribute('data-account-layout'),'full','Remember the selected density')
   assert.deepEqual(compact.faults,[])
   await compact.native.close()
+
+  const accountPicker=await nativePage('',{accountManager:true})
+  await waitForReveal(accountPicker.native)
+  await accountPicker.native.locator('[data-account-profile]').click()
+  await accountPicker.native.locator('.ed-client-popup[open]').waitFor()
+  await accountPicker.native.getByRole('searchbox',{name:'Имя, фамилия или email'}).fill('Клиент')
+  await accountPicker.native.locator('.ed-client-row').filter({hasText:'client@example.test'}).click()
+  await accountPicker.native.waitForURL('**/lk?account_user=00000000-0000-0000-0000-000000000002')
+  await waitForReveal(accountPicker.native)
+  assert.equal(await accountPicker.native.locator('.account-session-email').textContent(),'client@example.test')
+  assert.equal(accountPicker.accountSelections.at(-1),'00000000-0000-0000-0000-000000000002')
+  await accountPicker.native.locator('[data-app="masterclass-course"]').click()
+  await accountPicker.native.locator('#day .topic').first().waitFor()
+  assert.equal(new URL(accountPicker.native.url()).searchParams.get('account_user'),'00000000-0000-0000-0000-000000000002')
+  await accountPicker.native.goBack()
+  await accountPicker.native.locator('.account-grid').waitFor()
+  await accountPicker.native.locator('[data-account-profile]').click()
+  await accountPicker.native.getByRole('button',{name:'Мой кабинет',exact:true}).click()
+  await accountPicker.native.waitForURL(origin+'/lk')
+  await waitForReveal(accountPicker.native)
+  assert.equal(await accountPicker.native.locator('.account-session-email').textContent(),account.email)
+  assert.equal(accountPicker.accountSelections.at(-1),'')
+  assert.deepEqual(accountPicker.faults,[])
+  await accountPicker.native.close()
 
   // A cabinet embedded from another app must still own a canonical /lk history entry.
   const historyFlow=await nativePage('',{path:'/training'})

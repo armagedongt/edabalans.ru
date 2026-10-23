@@ -2064,6 +2064,10 @@ async def admin_metabolism_put(
 
 @router.get("/api/apps/manager/context")
 def app_manager_context(request: Request, app_user: str = "", db: Session = Depends(get_db)) -> dict:
+    from app.account_auth_routes import ACCOUNT_VIEW_HEADER
+
+    if request.headers.get(ACCOUNT_VIEW_HEADER):
+        return JSONResponse({"ok": True, "can_manage": False}, headers={"Cache-Control": "no-store"})
     manager = application_manager(request, db)
     if not manager:
         return JSONResponse({"ok": True, "can_manage": False}, headers={"Cache-Control": "no-store"})

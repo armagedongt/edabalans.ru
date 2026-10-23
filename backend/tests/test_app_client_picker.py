@@ -179,3 +179,93 @@ def test_native_owner_cannot_mutate_strength_by_cross_site_get(setup):
         row = db.scalar(select(StrengthState).where(StrengthState.user_id == ids[1]))
         assert row.version == 1 and row.hidden_exercises == [{"exercise_id": "bench-press", "workout_type": 1, "active": True}]
         assert db.scalar(select(AdminAppEdit.id)) is None
+
+
+def test_account_selection_is_request_scoped_and_retains_the_real_owner(setup):
+    client, factory, ids, sign_in = setup; sign_in(0)
+    with factory() as db:
+        resource = Resource(code='ACCESS_MASTERCLASS',name='Мастер-класс',status='active'); db.add(resource); db.flush()
+        db.add(UserAccess(user_id=ids[1],resource_id=resource.id,source='test',granted_at=datetime.now(timezone.utc))); db.commit()
+    selected = {'X-Edabalans-Account-User': str(ids[1])}
+    assert client.get('/api/account-auth/session', headers=selected).json()['email'] == 'client@example.test'
+    account = client.get('/api/account-auth/account', headers=selected)
+    assert account.status_code == 200, account.text
+    manager = account.json()['account_manager']
+    assert next(course for course in account.json()['courses'] if course['code']=='masterclass')['owned'] is True
+    own = client.get('/api/account-auth/account').json()
+    assert next(course for course in own['courses'] if course['code']=='masterclass')['owned'] is False
+    assert manager['actor']['user_id'] == str(ids[0]) and manager['selected']['user_id'] == str(ids[1])
+    assert account.headers['cache-control'] == 'no-store'
+    # A different tab's request has no selected-user header and keeps the owner.
+    assert client.get('/api/account-auth/session').json()['email'] == 'armagedongt@gmail.com'
+    assert client.get('/api/apps/manager/context', headers=selected).json()['can_manage'] is False
+    assert client.get('/api/apps/manager/users', headers=selected).status_code == 200
+    assert client.get('/admin/api/apps/users?app_code=dqs', headers=selected).status_code == 401
+    with factory() as db:
+        assert db.scalar(select(AccountSession).where(AccountSession.user_id == ids[0])).revoked_at is None
+
+
+@pytest.mark.parametrize('target', ['owner', 'other'])
+def test_account_selection_cannot_be_forged_by_an_ordinary_user(setup, target):
+    client, _, ids, sign_in = setup; sign_in(1)
+    headers = {'X-Edabalans-Account-User': str(ids[0] if target == 'owner' else ids[2])}
+    for path in ['/api/account-auth/session', '/api/account-auth/account', '/api/apps/manager/users']:
+        assert client.get(path, headers=headers).status_code == 403
+    assert client.get('/api/account-auth/session?account_user='+str(ids[2])).json()['email'] == 'client@example.test'
+    assert 'account_manager' not in client.get('/api/account-auth/account').json()
+
+
+@pytest.mark.parametrize('invalid_session', ['revoked', 'expired', 'password_changed'])
+def test_selected_account_requires_the_owners_live_session(setup, invalid_session):
+    client, factory, ids, sign_in = setup; sign_in(0)
+    with factory() as db:
+        row = db.scalar(select(AccountSession).where(AccountSession.user_id == ids[0]))
+        if invalid_session == 'revoked': row.revoked_at = datetime.now(timezone.utc)
+        elif invalid_session == 'expired': row.expires_at = datetime.now(timezone.utc)-timedelta(seconds=1)
+        else: db.get(AccountCredential, ids[0]).password_version += 1
+        db.commit()
+    assert client.get('/api/account-auth/account', headers={'X-Edabalans-Account-User':str(ids[1])}).status_code == 401
+
+
+def test_selected_account_validates_target_origin_and_sensitive_actions(setup):
+    client, factory, ids, sign_in = setup; sign_in(0)
+    assert client.get('/api/account-auth/session', headers={'X-Edabalans-Account-User':'bad'}).status_code == 422
+    assert client.get('/api/account-auth/session', headers={'X-Edabalans-Account-User':'00000000-0000-0000-0000-000000000000'}).status_code == 404
+    headers = {'X-Edabalans-Account-User':str(ids[1])}
+    assert client.get('/api/account-auth/account', headers={**headers,'Origin':'https://foreign.example'}).status_code == 403
+    for path in ['/api/payments/robokassa/account-offers/checkout','/api/masterclass/checkout','/api/account-auth/legal-acceptances','/api/account/legal-acceptances']:
+        assert client.post(path, headers=headers, json={}).status_code == 403
+    from app.legal_service import current_legal_versions
+    from app.models import UserLegalAcceptance
+    assert client.post('/api/account/legal-acceptances',headers=headers,json={'email':'client@example.test','document_codes':list(current_legal_versions())}).status_code == 403
+    with factory() as db:
+        assert db.scalar(select(UserLegalAcceptance.id).where(UserLegalAcceptance.user_id==ids[1])) is None
+    # A target merged out of CRM cannot keep being selected from an old link.
+    with factory() as db:
+        db.get(User, ids[1]).merged_into_user_id = ids[2]; db.commit()
+    assert client.get('/api/account-auth/account', headers=headers).status_code == 404
+
+
+def test_selected_account_writes_only_its_own_data_and_logs_the_owner(setup):
+    from app.legal_service import accept_current_legal_documents, current_legal_versions
+    client, factory, ids, sign_in = setup; sign_in(0)
+    with factory() as db:
+        resource = Resource(code='recipes',name='Рецепты',status='active'); db.add(resource); db.flush()
+        for user_id in ids:
+            db.add(UserAccess(user_id=user_id,resource_id=resource.id,source='test',granted_at=datetime.now(timezone.utc)))
+            accept_current_legal_documents(db,user_id,list(current_legal_versions()),source='test')
+        db.commit()
+    headers = {'X-Edabalans-Account-User':str(ids[1])}
+    response = client.post('/api/apps/recipes/products',headers=headers,json={'name':'Личный продукт','protein':2,'fat':3,'carbohydrate':4,'calories':50})
+    assert response.status_code == 200, response.text
+    product_id = response.json()['product']['id']
+    assert len(client.get('/api/apps/recipes/products',headers=headers).json()['products']) == 1
+    assert client.get('/api/apps/recipes/products').json()['products'] == []
+    assert client.get('/api/apps/recipes/products',headers={'X-Edabalans-Account-User':str(ids[2])}).json()['products'] == []
+    assert client.delete('/api/apps/recipes/products/'+product_id,headers={'X-Edabalans-Account-User':str(ids[2])}).status_code == 404
+    with factory() as db:
+        product = db.scalar(select(NutritionProduct).where(NutritionProduct.name=='Личный продукт'))
+        assert product.owner_user_id == ids[1]
+        edit = db.scalar(select(AdminAppEdit).where(AdminAppEdit.app_code=='account'))
+        assert edit.target_user_id == ids[1] and edit.admin_username == f'account:{ids[0]}'
+        assert edit.details['path'] == '/api/apps/recipes/products'

@@ -10,19 +10,19 @@ from fastapi.security import HTTPBasicCredentials
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
-from app.account_auth_routes import native_session_user, primary_email
+from app.account_auth_routes import ACCOUNT_MANAGER_EMAIL, native_session_actor, primary_email
 from app.auth import admin_identity, security, session_admin
 from app.database import get_db
 from app.models import User, UserEmail
 
-OWNER_EMAIL = "armagedongt@gmail.com"
+OWNER_EMAIL = ACCOUNT_MANAGER_EMAIL
 
 
 def application_manager(request: Request, db: Session) -> str | None:
     admin = session_admin(request)
     if admin:
         return admin
-    user = native_session_user(request, db)
+    user = native_session_actor(request, db)
     if user is None or primary_email(db, user.id) != OWNER_EMAIL:
         return None
     if request.method == "GET" and request.url.path == "/api/apps/strength" and request.query_params.get("action") not in {"ping", "openUser", "getWorkout", "getStats"}:

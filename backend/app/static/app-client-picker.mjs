@@ -1,5 +1,5 @@
-const supported = new Set(['strength', 'dqs', 'metabolism', 'recipes']);
-const appPaths = {strength: '/training', dqs: '/dqs', metabolism: '/metabolism', recipes: '/recipes'};
+const supported = new Set(['account', 'strength', 'dqs', 'metabolism', 'recipes']);
+const appPaths = {account:'/lk', strength: '/training', dqs: '/dqs', metabolism: '/metabolism', recipes: '/recipes'};
 
 export function mount(root, app, context, host) {
   if (!supported.has(app) || !context.can_manage || root.dataset.clientPicker) return;
@@ -24,6 +24,16 @@ export function mount(root, app, context, host) {
   let dialog, opener;
   function decorate() {
     if (!root.isConnected) { observer.disconnect(); dialog?.remove(); return; }
+    if (app === 'account') {
+      const button = root.querySelector('[data-account-profile]');
+      if (button && !button.dataset.clientPickerBound) {
+        button.dataset.clientPickerBound = 'true';
+        button.setAttribute('aria-haspopup','dialog');
+        button.removeAttribute('aria-expanded');
+        button.onclick = () => open(button);
+      }
+      return;
+    }
     let places = [...root.querySelectorAll(app === 'strength' ? '.st-top-email' : app === 'dqs' ? '.dqs-foot-account' : app === 'metabolism' ? '[data-account-name]' : '.ed-client-recipe')];
     if (app === 'recipes' && !places.length && root.querySelector('.recipe-shell')) {
       const place = document.createElement('div'); place.className = 'ed-client-recipe';
@@ -61,15 +71,23 @@ export function mount(root, app, context, host) {
   function navigate(userId) {
     // /lk does not restore its active embedded application on reload.
     const url = new URL(appPaths[app], location.origin);
-    if (userId) url.searchParams.set('app_user', userId); else url.searchParams.delete('app_user');
+    if (app === 'account') {
+      for (const key of ['layout','theme']) { const value = new URL(location.href).searchParams.get(key); if(value)url.searchParams.set(key,value); }
+      if(userId && userId !== context.actor?.user_id)url.searchParams.set('account_user',userId);
+    } else if (userId) url.searchParams.set('app_user', userId); else url.searchParams.delete('app_user');
     url.hash = '';
     location.assign(url.href);
   }
   async function open(button) {
     dialog?.remove(); opener = button;
     dialog = document.createElement('dialog'); dialog.className = 'ed-client-popup'; dialog.setAttribute('aria-label', 'Выбрать клиента');
+    dialog.dataset.app = app;
     dialog.innerHTML = '<header><strong>Выбрать клиента</strong><button type="button" aria-label="Закрыть">×</button></header><input type="search" aria-label="Имя, фамилия или email" placeholder="Имя, фамилия или email" autocomplete="off"><button class="ed-client-own" type="button">Мои данные</button><p class="ed-client-message" role="status"></p><div class="ed-client-list"></div><button class="ed-client-more" type="button" hidden>Показать ещё</button>';
     document.body.append(dialog);
+    if(app==='account'){
+      dialog.querySelector('.ed-client-own').textContent='Мой кабинет';
+      const logout=document.createElement('button');logout.type='button';logout.className='ed-client-own';logout.textContent='Выйти';logout.onclick=()=>root.querySelector('.account-logout').click();dialog.append(logout);
+    }
     const currentDialog = dialog, list = dialog.querySelector('.ed-client-list'), input = dialog.querySelector('input'), message = dialog.querySelector('[role=status]'), more = dialog.querySelector('.ed-client-more');
     let generation = 0, timer, offset = 0, busy = false;
     function close() { clearTimeout(timer); generation++; currentDialog.close(); currentDialog.remove(); opener?.focus({preventScroll: true}); }
@@ -80,10 +98,11 @@ export function mount(root, app, context, host) {
     currentDialog.querySelector('.ed-client-own').onclick = () => { if (maySwitch()) navigate(''); else message.textContent = 'Сначала сохраните текущие изменения или дождитесь сохранения.'; };
     async function choose(user) {
       if (busy) return;
+      if(app==='account'&&!user.email){message.textContent='У клиента не указан email для входа в кабинет.';return;}
       if (!maySwitch()) { message.textContent = 'Сначала сохраните текущие изменения или дождитесь сохранения.'; return; }
       busy = true; message.textContent = 'Открываю…';
       try {
-        if (app !== 'recipes') {
+        if (app !== 'recipes' && app !== 'account') {
           const base = '/admin/api/apps/' + app + '/users/' + encodeURIComponent(user.user_id);
           const detail = await api(base);
           if (!detail.has_state) await api(base + '/open', {method: 'POST'});

@@ -140,7 +140,7 @@ owns_files = [
 owns_tables = ["account_credentials", "account_sessions"]
 owns_routes = ["*/account-auth/*", "*/app-auth/*", "*/lk", "*/admin/api/login", "*/admin/api/logout", "*/admin/api/session"]
 depends_on = ["platform.crm"]
-reads_from = ["platform.web_design", "platform.commerce", "platform.content"]
+reads_from = ["platform.web_design", "platform.commerce", "platform.content", "products"]
 
 [[modules]]
 id = "platform.content"

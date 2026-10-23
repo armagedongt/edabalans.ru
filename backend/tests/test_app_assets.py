@@ -181,7 +181,7 @@ def test_dqs_and_training_have_standalone_account_aware_pages() -> None:
     assert 'href="/favicon.png"' in client.get("/recipes").text
 
     loader = client.get("/embed.js").text
-    assert "destination += '?next=' + encodeURIComponent(returnTo)" in loader
+    assert "destination += (destination.indexOf('?') >= 0 ? '&' : '?') + 'next=' + encodeURIComponent(returnTo)" in loader
     portal = client.get("/lk?next=/training").text
     assert "function returnTarget()" in portal
     assert "target.origin===location.origin" in portal
@@ -423,7 +423,7 @@ def test_client_apps_share_design_tokens_account_link_and_single_footer(monkeypa
     assert "ensureAppShellStylesheet();" in load_function
     assert "'/assets/app-shell.css'" in loader
     assert "location.hostname === 'app.edabalans.ru' ? PUBLIC_ACCOUNT_URL : '/lk'" in loader
-    assert "var PUBLIC_ACCOUNT_URL = APP_HOST + '/lk';" in loader
+    assert "var PUBLIC_ACCOUNT_URL = APP_HOST + '/lk' + (accountViewUser ? '?account_user=' + encodeURIComponent(accountViewUser) : '');" in loader
     footer = client.get("/site-footer.js").text
     assert "var(--ed-app-muted,#7b8094)" in footer
 

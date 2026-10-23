@@ -6,8 +6,21 @@
   var ownerScript = document.currentScript;
   var APP_HOST = ownerScript && ownerScript.src
     ? new URL(ownerScript.src, location.href).origin : location.origin;
+  var accountViewUser = new URL(location.href).searchParams.get('account_user');
+  if (accountViewUser && location.origin === APP_HOST) {
+    var nativeFetch = window.fetch.bind(window);
+    window.fetch = function (input, options) {
+      var url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url, location.href);
+      var scoped = url.origin === APP_HOST && /^\/api\/(account|masterclass|calories|recipes|apps|access|payments)(\/|-|$)/.test(url.pathname);
+      if (url.pathname.indexOf('/api/account-auth/') === 0 && ['/api/account-auth/session','/api/account-auth/account','/api/account-auth/legal-acceptances'].indexOf(url.pathname) < 0) scoped = false;
+      if (!scoped) return nativeFetch(input, options);
+      var headers = new Headers(options && options.headers || input.headers || {});
+      headers.set('X-Edabalans-Account-User', accountViewUser);
+      return nativeFetch(input, Object.assign({}, options || {}, {headers: headers, cache: 'no-store'}));
+    };
+  }
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
-  var PUBLIC_ACCOUNT_URL = APP_HOST + '/lk';
+  var PUBLIC_ACCOUNT_URL = APP_HOST + '/lk' + (accountViewUser ? '?account_user=' + encodeURIComponent(accountViewUser) : '');
   var appHtmlCache = {};
   var appHtmlRequests = {};
   var stylesheetRequests = {};
@@ -164,7 +177,7 @@
     return stylesheetRequests[url];
   }
   function rememberNative(email) {
-    try {
+    if (!accountViewUser) try {
       localStorage.setItem(STORAGE_IDENTITY, JSON.stringify({
         email: email,
         sessionToken: '',
@@ -184,7 +197,7 @@
     var returnTo = location.pathname + location.search;
     var destination = PUBLIC_ACCOUNT_URL;
     if (returnTo && returnTo.indexOf('/lk') !== 0) {
-      destination += '?next=' + encodeURIComponent(returnTo);
+      destination += (destination.indexOf('?') >= 0 ? '&' : '?') + 'next=' + encodeURIComponent(returnTo);
     }
     window.top.location.replace(destination);
   }
@@ -494,6 +507,7 @@
       mount.getAttribute('data-edabalans-account-url') ||
       (location.hostname === 'app.edabalans.ru' ? PUBLIC_ACCOUNT_URL : '/lk')
     );
+    if (accountViewUser) { var scopedAccountUrl = new URL(accountUrl, APP_HOST); scopedAccountUrl.searchParams.set('account_user', accountViewUser); accountUrl = scopedAccountUrl.href; }
     var purchaseReturnUrl = String(mount.getAttribute('data-edabalans-purchase-return-url') || '');
     var linkToken = String(mount.getAttribute('data-edabalans-link-token') || new URLSearchParams(location.search).get('access_token') || '');
     if (!roots[app]) {

@@ -6,12 +6,14 @@ import json
 import secrets
 import threading
 import time
+import uuid
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from urllib.parse import parse_qsl
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
-from fastapi.responses import FileResponse
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
@@ -34,6 +36,8 @@ from app.models import AccountCredential, AccountSession, MessengerAccount, User
 router = APIRouter(tags=["account-auth"])
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 COOKIE_NAME = "edabalans_account_session"
+ACCOUNT_VIEW_HEADER = "X-Edabalans-Account-User"
+ACCOUNT_MANAGER_EMAIL = "armagedongt@gmail.com"
 MAX_LOGIN_ATTEMPTS = 5
 LOGIN_WINDOW_SECONDS = 15 * 60
 MAX_REGISTRATION_ATTEMPTS = 5
@@ -126,7 +130,7 @@ def _record_registration_attempt(key: str) -> None:
         _registration_attempts[key] = (count + 1, expires)
 
 
-def native_session_user(request: Request, db: Session) -> User | None:
+def native_session_actor(request: Request, db: Session) -> User | None:
     raw_token = request.cookies.get(COOKIE_NAME, "")
     if not raw_token:
         return None
@@ -153,6 +157,25 @@ def native_session_user(request: Request, db: Session) -> User | None:
     if row.last_seen_at is None or now - _aware(row.last_seen_at) >= timedelta(hours=1):
         row.last_seen_at = now
         db.commit()
+    return user
+
+
+def native_session_user(request: Request, db: Session) -> User | None:
+    actor = native_session_actor(request, db)
+    target = request.headers.get(ACCOUNT_VIEW_HEADER)
+    if not target:
+        return actor
+    if actor is None:
+        raise HTTPException(401, "Требуется вход в личный кабинет")
+    if primary_email(db, actor.id) != ACCOUNT_MANAGER_EMAIL:
+        raise HTTPException(403, "Выбор клиента доступен только владельцу")
+    try:
+        target_id = uuid.UUID(target)
+    except ValueError:
+        raise HTTPException(422, "Некорректный идентификатор клиента") from None
+    user = db.get(User, target_id)
+    if user is None or user.merged_into_user_id is not None:
+        raise HTTPException(404, "Клиент не найден")
     return user
 
 
@@ -420,11 +443,11 @@ def max_miniapp_login(
 @router.get("/api/account-auth/session")
 def account_session(request: Request, db: Session = Depends(get_db)) -> dict:
     user = native_session_user(request, db)
-    return {
+    return JSONResponse({
         "ok": True,
         "authenticated": user is not None,
         "email": primary_email(db, user.id) if user else "",
-    }
+    }, headers={"Cache-Control": "no-store"})
 
 
 @router.post("/api/account-auth/logout")
@@ -449,7 +472,17 @@ def account_logout(
 @router.get("/api/account-auth/account")
 def native_account(request: Request, db: Session = Depends(get_db)) -> dict:
     user = require_native_user(request, db)
-    return account_payload(primary_email(db, user.id), db, progress_user_id=user.id)
+    payload = account_payload(primary_email(db, user.id), db, progress_user_id=user.id)
+    actor = native_session_actor(request, db)
+    if actor and primary_email(db, actor.id) == ACCOUNT_MANAGER_EMAIL:
+        from app.app_management import client_identity
+
+        payload["account_manager"] = {
+            "can_manage": True,
+            "actor": client_identity(db, actor),
+            "selected": client_identity(db, user) if user.id != actor.id else None,
+        }
+    return JSONResponse(jsonable_encoder(payload), headers={"Cache-Control": "no-store"})
 
 
 @router.post("/api/account-auth/legal-acceptances")
@@ -461,4 +494,4 @@ def native_legal_acceptances(
     user = require_native_user(request, db)
     accept_current_legal_documents(db, user.id, body.document_codes, source="native_account")
     db.commit()
-    return account_payload(primary_email(db, user.id), db, progress_user_id=user.id)
+    return native_account(request, db)

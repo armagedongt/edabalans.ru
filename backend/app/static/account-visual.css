@@ -290,3 +290,20 @@ html[data-account-theme="dark"] #account-app:not([data-account-layout="full"]) :
 @media (pointer: coarse) {
 #account-app:not([data-account-layout="full"]) .account-identity-row :is(.account-profile-toggle,.account-messengers-summary) { min-height: 32px; }
 }
+@media (min-width: 901px) {
+#account-app[data-account-layout="compact"] .account-shell { width: min(calc(var(--content-frame,760px) + 48px),100%); padding-right: 24px!important; }
+#account-app[data-account-layout="compact"] .account-head { display: grid; grid-template-columns: max-content minmax(0,1fr); align-items: center; column-gap: 22px; }
+#account-app[data-account-layout="compact"] .account-kicker { height: 44px; min-height: 0; margin: 0; }
+#account-app[data-account-layout="compact"] .account-head h1 { font-size: 28px; line-height: 1.15; }
+#account-app[data-account-layout="compact"] .account-identity-row { grid-column: 1/-1; flex-direction: row; align-items: center; gap: 22px; margin-top: 10px; }
+#account-app[data-account-layout="compact"] :is(.account-grid,.application-grid) { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+#account-app[data-account-layout="compact"] :is(.account-grid > .account-card,.application-grid > .application-card) { width: 100%; }
+#account-app[data-account-layout="compact"] :is(.account-grid,.application-grid) .account-open { justify-content: flex-start; width: 100%; }
+}
+.ed-client-popup[data-app="account"] { --ed-app-accent: #118ed8; border-color: var(--account-theme-border,#c7e5f4); border-radius: 12px; background: var(--account-theme-card,#fff); color: var(--account-theme-ink,#17191e); font-family: var(--ed-font-body,Manrope,Arial,sans-serif); }
+.ed-client-popup[data-app="account"] :is(.ed-client-row,.ed-client-own,.ed-client-more,input) { color: inherit; background: var(--account-theme-card,#fff); border-color: var(--account-theme-border,#c7e5f4); }
+.ed-client-popup[data-app="account"] :is(.ed-client-own,.ed-client-more) { color: var(--account-theme-blue,#118ed8); }
+.ed-client-popup[data-app="account"] .ed-client-row:hover,
+.ed-client-popup[data-app="account"] .ed-client-row[aria-current="true"] { background: var(--account-theme-hover,#eef9ff); }
+.ed-client-popup[data-app="account"] :is(.ed-client-row small,.ed-client-message) { color: var(--account-theme-muted,#62677a); }
+.ed-client-popup[data-app="account"] :focus-visible { outline: 3px solid #f39a2f; outline-offset: 3px; }

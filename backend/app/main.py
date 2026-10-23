@@ -19,6 +19,8 @@ from app.tilda_routes import router as tilda_router
 from app.masterclass_routes import router as masterclass_router
 from app.app_auth import router as app_auth_router
 from app.account_auth_routes import (
+    ACCOUNT_VIEW_HEADER,
+    native_session_actor,
     native_session_user,
     primary_email,
     router as account_auth_router,
@@ -167,6 +169,20 @@ async def protect_blog_draft_responses(request: Request, call_next):
 async def protect_native_account_host(request: Request, call_next):
     host = (request.url.hostname or "").casefold()
     path = request.url.path
+    view_actor_id = view_user_id = None
+    if request.headers.get(ACCOUNT_VIEW_HEADER) and path.startswith("/api/"):
+        with SessionLocal() as db:
+            try:
+                actor = native_session_actor(request, db)
+                subject = native_session_user(request, db)
+            except HTTPException as exc:
+                return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
+            view_actor_id, view_user_id = actor.id, subject.id
+        origin = request.headers.get("origin")
+        if origin and (urlsplit(origin).scheme, urlsplit(origin).netloc) != (request.url.scheme, request.url.netloc):
+            return JSONResponse({"detail": "Недопустимый источник запроса"}, status_code=403)
+        if view_actor_id != view_user_id and request.method not in {"GET", "HEAD", "OPTIONS"} and (path.startswith(("/api/payments/", "/api/account-auth/")) or path.endswith(("/checkout", "/legal-acceptances"))):
+            return JSONResponse({"detail": "Оплата и подтверждение личных согласий доступны в собственном кабинете"}, status_code=403)
     protected = path.startswith(("/api/account", "/api/masterclass", "/api/apps", "/api/access"))
     managed_app_request = False
     if path in {"/api/apps/strength", "/api/apps/strength/send-plan"} or path.startswith("/api/apps/recipes"):
@@ -215,7 +231,17 @@ async def protect_native_account_host(request: Request, call_next):
                     {"detail": "Нельзя открыть данные другого личного кабинета"},
                     status_code=status.HTTP_403_FORBIDDEN,
                 )
-    return await call_next(request)
+    response = await call_next(request)
+    if view_actor_id:
+        response.headers["Cache-Control"] = "no-store"
+        if view_actor_id != view_user_id and request.method in {"POST", "PUT", "PATCH", "DELETE"} and response.status_code < 400 and not managed_app_request:
+            from app.models import AdminAppEdit
+
+            with SessionLocal() as db:
+                db.add(AdminAppEdit(admin_username=f"account:{view_actor_id}", target_user_id=view_user_id,
+                                    app_code="account", action=request.method.lower(), details={"path": path}))
+                db.commit()
+    return response
 app.include_router(travel_router)
 app.include_router(marketing_router)
 app.include_router(personal_tracking_router)
