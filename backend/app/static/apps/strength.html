@@ -5243,7 +5243,7 @@ function renderMethod(){
 function renderModal(){
   if(app.modal && app.modal.type==='confirmDelivery'){
     var delivery=app.modal,heading=delivery.exerciseId?'План упражнения':'План всей тренировки';
-    return '<div class="st-modal-bg"><section class="st-modal" role="dialog" aria-modal="true" aria-label="Отправка плана"><div class="st-modal-title">'+heading+'</div><p class="st-modal-sub">Вы собираетесь отправить в прикреплённый мессенджер '+(delivery.exerciseId?'план упражнения «':'план всей тренировки по шаблону «')+esc(delivery.title)+'».</p><div class="st-modal-actions"><button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Отменить</button><button class="st-modal-btn st-modal-save" onclick="ST.confirmPlanDelivery()">Отправить</button></div></section></div>';
+    return '<div class="st-modal-bg"><section class="st-modal" role="dialog" aria-modal="true" aria-label="Отправка плана"><div class="st-modal-title">'+heading+'</div><p class="st-modal-sub">Отправить план '+(delivery.exerciseId?'упражнения «':'тренировки по шаблону «')+esc(delivery.title)+'» в Telegram или MAX, подключённый к этому аккаунту?</p><div class="st-modal-actions"><button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Отменить</button><button class="st-modal-btn st-modal-save" onclick="ST.confirmPlanDelivery()">Отправить</button></div></section></div>';
   }
   if(app.modal && app.modal.type==='templates')return renderTemplateManager();
 
