@@ -4,7 +4,7 @@
   var menu = document.querySelector('[data-site-menu-toggle]');
   var utilities = document.querySelector('.blog-header-utilities');
   var panel = document.querySelector('[data-site-menu]');
-  var compactHeader = window.matchMedia('(max-width: 1000px)');
+  var compactHeader = utilities && menu && panel ? window.matchMedia('(max-width: 1000px)') : null;
   if (utilities && menu && panel) {
     function placeUtilities() {
       if (search) search.open = false;
@@ -16,7 +16,7 @@
   }
   if (search) {
     search.querySelector('summary').addEventListener('click', function () {
-      if (!search.open && menu && !compactHeader.matches && menu.getAttribute('aria-expanded') === 'true') menu.click();
+      if (!search.open && menu && (!compactHeader || !compactHeader.matches) && menu.getAttribute('aria-expanded') === 'true') menu.click();
     });
     search.addEventListener('toggle', function () {
       if (search.open) search.querySelector('input').focus();
