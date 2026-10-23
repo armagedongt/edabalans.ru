@@ -3913,7 +3913,8 @@
       "inline_related": {
         "source_id": "14021584",
         "before_heading": "мораль"
-      }
+      },
+      "document_key": "syrok-i-proteinovye-batonchiki"
     },
     {
       "source_id": "13894066",
@@ -3972,7 +3973,8 @@
       "inline_related": {
         "source_id": "11401696",
         "before_heading": "3-с-чего-начинать-подсчет-калорий"
-      }
+      },
+      "document_key": "kak-nachat-schitat-kalorii"
     },
     {
       "source_id": "12025344",
@@ -4030,7 +4032,8 @@
       "inline_related": {
         "source_id": "14021584",
         "before_heading": "а-вообще-дело-не-только-в-гранатах"
-      }
+      },
+      "document_key": "princip-pitaniya-na-granatah"
     },
     {
       "source_id": "11047083",
@@ -4083,7 +4086,8 @@
       },
       "original_published_at": "2024-01-21T16:32:50+03:00",
       "blog_published_at": "2026-10-23T10:46:09.455595+00:00",
-      "blog_publication_evidence": "Прямая команда владельца «публикуй» 23.10.2026; проверка фактической выдачи выполняется после штатного deploy."
+      "blog_publication_evidence": "Прямая команда владельца «публикуй» 23.10.2026; проверка фактической выдачи выполняется после штатного deploy.",
+      "document_key": "gimalayskaya-sol-i-sahar"
     },
     {
       "source_id": "10715248",
@@ -4139,7 +4143,8 @@
       "original_published_at": "2023-10-07T11:44:30+03:00",
       "blog_published_at": "2026-10-23T10:46:09.455595+00:00",
       "blog_publication_evidence": "Прямая команда владельца «публикуй» 23.10.2026; проверка фактической выдачи выполняется после штатного deploy.",
-      "original_date_evidence": "Самая ранняя подтверждённая публикация семьи:Pikabu10715248 от07.10.2023; выбранная Telegraph-редакция08.10.2023 сохраняется ближайшей основой."
+      "original_date_evidence": "Самая ранняя подтверждённая публикация семьи:Pikabu10715248 от07.10.2023; выбранная Telegraph-редакция08.10.2023 сохраняется ближайшей основой.",
+      "document_key": "limonnaya-voda"
     }
   ],
   "inline_related_pool_source_ids": [
