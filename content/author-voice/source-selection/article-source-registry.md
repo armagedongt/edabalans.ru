@@ -9,9 +9,9 @@
 
 ## Сводка
 
-- В блоге: **62** канонические семьи.
+- В блоге: **67** канонические семьи.
 - В известном внешнем корпусе: **282** проявления — Pikabu 105, Telegraph 163, VC.ru 14.
-- Уже привязано к канонам блога: **96** внешних проявления (по машиночитаемому реестру).
+- Уже привязано к канонам блога: **99** внешних проявления (по машиночитаемому реестру).
 - Дополнительно прочитано статей старого интенсива: **13**; подтверждённые источники канона не создают вторую семью.
 - Отложено как отдельные безопасные семьи до подтверждения дублей: **204** (включая согласованную очередь, банк и учебные материалы; по машиночитаемому реестру).
 - Возможных пар пересечения: **75**; это очередь проверки, а не автоматически склеенные дубли.
@@ -21,6 +21,11 @@
 
 | Статья | Канон | Привязанные внешние проявления | Возможные версии на проверку |
 |---|---|---:|---:|
+| Важнейший принцип питания. Объясняю на гранатах | [blog:princip-pitaniya-na-granatah](https://похудение-это-есть.рф/blog/princip-pitaniya-na-granatah) | 1 | 0 |
+| Как перестать жаловаться и начать считать калории? | [blog:kak-nachat-schitat-kalorii](https://похудение-это-есть.рф/blog/kak-nachat-schitat-kalorii) | 1 | 0 |
+| Лимонная, блин, вода… поговорим о святом! | [blog:limonnaya-voda](https://похудение-это-есть.рф/blog/limonnaya-voda) | 2 | 0 |
+| Похудеть на 2,5 кг и сэкономить 13 000 рублей с помощью глазированного сырка из Пятёрочки | [blog:syrok-i-proteinovye-batonchiki](https://похудение-это-есть.рф/blog/syrok-i-proteinovye-batonchiki) | 1 | 0 |
+| Солим и избавляемся от сахара в крови!!! | [blog:gimalayskaya-sol-i-sahar](https://похудение-это-есть.рф/blog/gimalayskaya-sol-i-sahar) | 1 | 0 |
 | Как на меня напали собаки в лесу | [blog:kak-na-menya-napali-sobaki-v-lesu](https://похудение-это-есть.рф/blog/pokusali-sobaki) | 2 | 0 |
 | 10 дебильных фактов о вредных продуктах для похудения | [blog:10-debilnyh-faktov-o-vrednyh-produktah](https://похудение-это-есть.рф/blog/mify-o-produktah) | 1 | 0 |
 | 12 простых изменений в питании и образе жизни | [blog:12-prostyh-izmeneniy-v-pitanii-i-obraze-zhizni](https://похудение-это-есть.рф/blog/12-prostyh-izmeneniy) | 1 | 0 |
@@ -158,7 +163,6 @@
 | A155 | telegraph | [Как можно на самом деле повлиять на долголетие, а не вот эти все БАДы](https://telegra.ph/Kak-mozhno-na-samom-dele-povliyat-na-dolgoletie-a-ne-vot-ehti-vse-BADy-08-18) | `short_reserve` / `manual_review` | 0 |
 | A115 | telegraph | [Как назначить себе дефицит калорий](https://telegra.ph/111-12-07-34) | `editorial_review` / `educational` | 0 |
 | A027 | pikabu | [Как начать тренироваться и... продолжить!!](https://pikabu.ru/story/kak_nachat_trenirovatsya_i_prodolzhit_10756513) | `short_reserve` | 0 |
-| A100 | pikabu | [Как перестать жаловаться и начать считать калории?](https://pikabu.ru/story/kak_perestat_zhalovatsya_i_nachat_schitat_kalorii_13894066) | `editorial_review` / `bank` | 0 |
 | A240 | telegraph | [Как подготовить хорошие фотографии для вашего отеля на обычный смартфон](https://telegra.ph/photo-05-25-31) | `technical_or_service` | 0 |
 | A157 | telegraph | [Как пользоваться калькулятором и как подобрать себе дефицит калорий](https://telegra.ph/Kak-polzovatsya-kalkulyatorom-i-kak-podobrat-sebe-deficit-kalorij-07-11) | `editorial_review` / `educational` | 0 |
 | A024 | pikabu | [Как правильно взвешиваться?](https://pikabu.ru/story/kak_pravilno_vzveshivatsya_10676580) | `short_reserve` / `manual_review` | 0 |
@@ -179,8 +183,6 @@
 | A122 | telegraph | [Курс "Только Калории" — Урок #3/Часть 1](https://telegra.ph/22222-07-31) | `private_product_material` | 0 |
 | A163 | telegraph | [Кухонные дела](https://telegra.ph/Kuhnya-12-26) | `obsolete_product_archive` / `old_educational` | 0 |
 | A167 | telegraph | [Летом есть две проблемы!](https://telegra.ph/Nabrosok-07-18) | `incomplete_draft` / `manual_review` | 0 |
-| A025 | pikabu | [Лимонная, блин, вода... поговорим о святом!](https://pikabu.ru/story/limonnaya_blin_voda_pogovorim_o_svyatom_10715248) | `short_reserve` / `manual_review` | 1 |
-| A262 | telegraph | [Лимонная, блин, вода... поговорим о святом!⁠⁠](https://telegra.ph/voda-10-08-2) | `short_reserve` / `manual_review` | 1 |
 | A221 | telegraph | [Лучшее время для похудения — ВЧЕРА!](https://telegra.ph/chasiki-tikaut-04-07) | `editorial_review` / `family_review` | 1 |
 | A058 | pikabu | [Лучшие продукты для завтрака](https://pikabu.ru/story/luchshie_produktyi_dlya_zavtraka_11476051) | `short_reserve` / `manual_review` | 0 |
 | A235 | telegraph | [макароны](https://telegra.ph/makarony-08-06) | `short_reserve` / `bank` | 0 |

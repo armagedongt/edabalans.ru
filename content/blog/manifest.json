@@ -3857,6 +3857,289 @@
         "source_basis": "full_source"
       },
       "document_key": "vesy-instrukciya-po-primeneniyu"
+    },
+    {
+      "source_id": "13892134",
+      "slug": "syrok-i-proteinovye-batonchiki",
+      "title": "Похудеть на 2,5 кг и сэкономить 13 000 рублей с помощью глазированного сырка из Пятёрочки",
+      "excerpt": "Сравниваю обычные сырки и протеиновые батончики: калории на порцию, цена и простой способ выбирать сладкое к чаю.",
+      "category": "Калории",
+      "body_file": "syrok-i-proteinovye-batonchiki.md",
+      "hero": {
+        "file": "13892134/card.webp",
+        "alt": "Сравнение упаковок и пищевой ценности трёх глазированных сырков",
+        "provenance": "https://cs18.pikabu.ru/s/2026/04/12/12/4jmre7ml_lg.jpg",
+        "show": false,
+        "fit": "contain"
+      },
+      "card": {
+        "file": "13892134/card.webp",
+        "alt": "Сравнение упаковок и пищевой ценности трёх глазированных сырков",
+        "provenance": "https://cs18.pikabu.ru/s/2026/04/12/12/4jmre7ml_lg.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11989790",
+        "11534645",
+        "11401696"
+      ],
+      "cta": "intensive",
+      "status": "published",
+      "media": [
+        "13892134/01.jpg",
+        "13892134/02.jpg",
+        "13892134/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/kak_pokhudet_na_25_kg_i_syekonomit_13_000_rubley_s_pomoshchyu_glazirovannogo_syirka_iz_pyaterochki_13892134"
+        ],
+        "external_ids": [
+          "13892134"
+        ],
+        "platform": "pikabu",
+        "source_basis": "full_source",
+        "preferred_basis_uri": "content://item/0472e69a-26c8-478d-802a-eafecbc413e9",
+        "retrieved_at": "2026-10-19",
+        "accepted_at": "2026-10-23",
+        "local_original_sha256": "af9288e8f816d51d30be2ecbacb46ba5f7b4b86a2af85aa79cfcbc399b239fb6",
+        "source_html_sha256": "92b312b5a985c7d4f26e8c7b9803b5aab3594ca96aa6c9917529ac56da27dc9a",
+        "published_by_owner_request": "2026-10-23: публикуй",
+        "originals_retained": true
+      },
+      "original_published_at": "2026-04-17T20:38:01+03:00",
+      "blog_published_at": "2026-10-23T10:46:09.455595+00:00",
+      "blog_publication_evidence": "Прямая команда владельца «публикуй» 23.10.2026; проверка фактической выдачи выполняется после штатного deploy.",
+      "inline_related": {
+        "source_id": "14021584",
+        "before_heading": "мораль"
+      }
+    },
+    {
+      "source_id": "13894066",
+      "slug": "kak-nachat-schitat-kalorii",
+      "title": "Как перестать жаловаться и начать считать калории?",
+      "excerpt": "Как посчитать сложное блюдо, нужно ли следить за БЖУ и почему учёт калорий стоит начинать без дефицита.",
+      "category": "Калории",
+      "body_file": "kak-nachat-schitat-kalorii.md",
+      "hero": {
+        "file": "13894066/card.webp",
+        "alt": "Ввод ингредиентов и готового веса чили в приложении",
+        "provenance": "https://cs17.pikabu.ru/s/2026/04/03/20/lenz25v6_lg.jpg",
+        "show": false,
+        "fit": "contain"
+      },
+      "card": {
+        "file": "13894066/card.webp",
+        "alt": "Ввод ингредиентов и готового веса чили в приложении",
+        "provenance": "https://cs17.pikabu.ru/s/2026/04/03/20/lenz25v6_lg.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11401696",
+        "d1baceb9e2b6b72013b6",
+        "14021584"
+      ],
+      "cta": "intensive",
+      "status": "published",
+      "media": [
+        "13894066/01.webp",
+        "13894066/02.webp",
+        "13894066/03.webp",
+        "13894066/04.webp",
+        "13894066/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/kak_perestat_zhalovatsya_i_nachat_schitat_kalorii_13894066"
+        ],
+        "external_ids": [
+          "13894066"
+        ],
+        "platform": "pikabu",
+        "source_basis": "full_source",
+        "preferred_basis_uri": "content://item/5c816d97-11ec-4552-a579-e59ffd4c1e28",
+        "retrieved_at": "2026-10-19",
+        "accepted_at": "2026-10-23",
+        "local_original_sha256": "fc53f38128b0a6b405c6236cf45ab9229c90ba47dc68958dd2e884041a8e3b44",
+        "source_html_sha256": "79ae0a5de23f83f635501a4534a6ffc07b0f68834d63d5d218da02b6c005fb52",
+        "published_by_owner_request": "2026-10-23: публикуй",
+        "originals_retained": true
+      },
+      "original_published_at": "2026-04-18T14:58:55+03:00",
+      "blog_published_at": "2026-10-23T10:46:09.455595+00:00",
+      "blog_publication_evidence": "Прямая команда владельца «публикуй» 23.10.2026; проверка фактической выдачи выполняется после штатного deploy.",
+      "inline_related": {
+        "source_id": "11401696",
+        "before_heading": "3-с-чего-начинать-подсчет-калорий"
+      }
+    },
+    {
+      "source_id": "12025344",
+      "slug": "princip-pitaniya-na-granatah",
+      "title": "Важнейший принцип питания. Объясняю на гранатах",
+      "excerpt": "Почему мы забываем о продуктах, которые любим, и что мешает применять уже знакомые советы о питании. На примере гранатов.",
+      "category": "Пищевые привычки",
+      "body_file": "princip-pitaniya-na-granatah.md",
+      "hero": {
+        "file": "12025344/card.webp",
+        "alt": "Мем: тарелка граната под чай и красные следы на руках",
+        "provenance": "https://cs15.pikabu.ru/post_img/2024/11/15/7/1731666433128258503.jpg",
+        "show": false,
+        "fit": "contain"
+      },
+      "card": {
+        "file": "12025344/card.webp",
+        "alt": "Мем: тарелка граната под чай и красные следы на руках",
+        "provenance": "https://cs15.pikabu.ru/post_img/2024/11/15/7/1731666433128258503.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11401696",
+        "14021584",
+        "11989790"
+      ],
+      "cta": "intensive",
+      "status": "published",
+      "media": [
+        "12025344/01.jpg",
+        "12025344/02.jpg",
+        "12025344/03.jpg",
+        "12025344/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/vazhneyshiy_printsip_pitaniya_obyasnyayu_na_granatakh_12025344"
+        ],
+        "external_ids": [
+          "12025344"
+        ],
+        "platform": "pikabu",
+        "source_basis": "full_source",
+        "preferred_basis_uri": "knowledge://resource/source-pikabu-12025344",
+        "retrieved_at": "2026-10-19",
+        "accepted_at": "2026-10-23",
+        "local_original_sha256": "60c2530eae643816713f35f4ff8e1d7cef1c64fa7285f7cf82c2bb0570f66cf4",
+        "source_html_sha256": "8a70f530f4d3860a2263d3f8dfa8129ed8e552200dad9f6eee6cf71112792dfe",
+        "published_by_owner_request": "2026-10-23: публикуй",
+        "originals_retained": true
+      },
+      "original_published_at": "2024-11-15T17:14:38+03:00",
+      "blog_published_at": "2026-10-23T10:46:09.455595+00:00",
+      "blog_publication_evidence": "Прямая команда владельца «публикуй» 23.10.2026; проверка фактической выдачи выполняется после штатного deploy.",
+      "inline_related": {
+        "source_id": "14021584",
+        "before_heading": "а-вообще-дело-не-только-в-гранатах"
+      }
+    },
+    {
+      "source_id": "11047083",
+      "slug": "gimalayskaya-sol-i-sahar",
+      "title": "Солим и избавляемся от сахара в крови!!!",
+      "excerpt": "Разбираю обещания о гималайской соли: сколько в ней магния и почему его наличие не превращает соль в средство от сахара в крови.",
+      "category": "Ну, типа... ЗОЖ",
+      "body_file": "gimalayskaya-sol-i-sahar.md",
+      "hero": {
+        "file": "11047083/01.webp",
+        "alt": "Содержание магния в образцах соли: значения в мг на килограмм",
+        "provenance": "https://cs13.pikabu.ru/post_img/big/2024/01/21/8/1705842994175742435.jpg",
+        "show": false,
+        "fit": "contain"
+      },
+      "card": {
+        "file": "11047083/01.webp",
+        "alt": "Содержание магния в образцах соли: значения в мг на килограмм",
+        "provenance": "https://cs13.pikabu.ru/post_img/big/2024/01/21/8/1705842994175742435.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "11534645",
+        "11875492",
+        "11833079"
+      ],
+      "cta": "intensive",
+      "status": "published",
+      "media": [
+        "11047083/01.webp",
+        "11047083/02.webp",
+        "11047083/03.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/solim_i_izbavlyaemsya_ot_sakhara_v_krovi_11047083"
+        ],
+        "external_ids": [
+          "11047083"
+        ],
+        "platform": "pikabu",
+        "source_basis": "full_source",
+        "preferred_basis_uri": "content://item/b119279c-8c36-4c80-b7da-2eed79251f9e",
+        "retrieved_at": "2026-10-19",
+        "accepted_at": "2026-10-23",
+        "local_original_sha256": "2e3f82b322337ed851f530fc15bc46d1a2e1d14cfbd4e8304d599ee785e6005d",
+        "source_html_sha256": "f7817aed418381442476008929d40081a3b69b57e062ad90b2f83e4016cc5fd2",
+        "published_by_owner_request": "2026-10-23: публикуй",
+        "originals_retained": true
+      },
+      "original_published_at": "2024-01-21T16:32:50+03:00",
+      "blog_published_at": "2026-10-23T10:46:09.455595+00:00",
+      "blog_publication_evidence": "Прямая команда владельца «публикуй» 23.10.2026; проверка фактической выдачи выполняется после штатного deploy."
+    },
+    {
+      "source_id": "10715248",
+      "slug": "limonnaya-voda",
+      "title": "Лимонная, блин, вода… поговорим о святом!",
+      "excerpt": "Что дают лимонные капли в стакане: витамин С, метаболизм, пищеварение и исследование о камнях в почках.",
+      "category": "Ну, типа... ЗОЖ",
+      "body_file": "limonnaya-voda.md",
+      "hero": {
+        "file": "10715248/01.jpg",
+        "alt": "Авторский коллаж с обещаниями пользы лимонной воды",
+        "provenance": "https://cs13.pikabu.ru/post_img/2023/10/06/9/1696603802175212218.jpg",
+        "show": false,
+        "fit": "contain"
+      },
+      "card": {
+        "file": "10715248/01.jpg",
+        "alt": "Авторский коллаж с обещаниями пользы лимонной воды",
+        "provenance": "https://cs13.pikabu.ru/post_img/2023/10/06/9/1696603802175212218.jpg",
+        "fit": "contain"
+      },
+      "related_source_ids": [
+        "693339",
+        "11269472",
+        "11875492"
+      ],
+      "cta": "intensive",
+      "status": "published",
+      "media": [
+        "10715248/01.jpg",
+        "10715248/02.jpg",
+        "10715248/03.jpg"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://telegra.ph/voda-10-08-2",
+          "https://pikabu.ru/story/limonnaya_blin_voda_pogovorim_o_svyatom_10715248"
+        ],
+        "external_ids": [
+          "10715248",
+          "voda-10-08-2"
+        ],
+        "platform": "telegraph+pikabu",
+        "source_basis": "full_source",
+        "preferred_basis_uri": "content://item/f7183198-bed5-4510-a5f4-0263a50a1a26",
+        "retrieved_at": "2026-10-19",
+        "accepted_at": "2026-10-23",
+        "local_original_sha256": "87203835838c401601add4fb76346d726cca4da5f656fc30ffff5f096854a34c",
+        "source_html_sha256": "e9e26cc88b0cd8c234484129f521f9ce353470552aab9f12ea20e212863aa86e",
+        "published_by_owner_request": "2026-10-23: публикуй",
+        "originals_retained": true
+      },
+      "original_published_at": "2023-10-07T11:44:30+03:00",
+      "blog_published_at": "2026-10-23T10:46:09.455595+00:00",
+      "blog_publication_evidence": "Прямая команда владельца «публикуй» 23.10.2026; проверка фактической выдачи выполняется после штатного deploy.",
+      "original_date_evidence": "Самая ранняя подтверждённая публикация семьи:Pikabu10715248 от07.10.2023; выбранная Telegraph-редакция08.10.2023 сохраняется ближайшей основой."
     }
   ],
   "inline_related_pool_source_ids": [

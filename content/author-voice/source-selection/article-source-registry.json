@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-19",
+  "updated_at": "2026-10-23",
   "owner_review": {
     "schema_version": 1,
     "module_id": "platform.content",
-    "updated_at": "2026-09-26",
+    "updated_at": "2026-10-23",
     "authority": "Прямой поимённый разбор Сергея в задаче блога 26.09.2026. Последнее указание в сообщении имеет приоритет.",
     "execution_gate": "Только каталогизация и подготовка очереди. Не редактировать авторские тексты и не публиковать до следующей команды Сергея.",
     "editing_constraint": "Минимальное удаление площадочных обращений, старой навигации и концовок; допустимая перестановка. Не переписывать и не дописывать нейросетевые абзацы. Исключение для будущей правки растений описано отдельно.",
@@ -21,9 +21,9 @@
     },
     "assignments": {
       "approved_update": "A123 A130 tilda-post:hbfozma3y1 A062 A064 A108",
-      "publish_next": "A191 A002 A043 A049 A037 A019 A183 A210 A076 A217 A071 A034 A236 A102 A083 A184 A016 A117 A031 A161 A281 A021 A195 A082 A078 A091 A012 A156 A085 A056 tilda-post:e4441ism91 tilda-post:amkbo7kgg1",
-      "bank": "A041 A020 A166 A278 A018 A238 A100 A069 A010 A014 A279 A133 A235 A003 A053 A271 A067 A159 tilda-post:jajp12c7j1 tilda-post:m0epglvrp1 tilda-post:5kegfp3o71",
-      "manual_review": "A006 A035 A017 A008 A181 A024 A029 A023 A058 A025 A262 A065 A047 A177 A050 A270 A039 A198 A202 A116 A155 A057 A079 A060 A073 A273 A104 A088 tilda-post:knian4e971 tilda-post:a75rtx6go1 tilda-post:sgpfzdvvy1 tilda-post:pxukhjlca1 tilda-post:7siam7t8k1 A004 A107 A011 A158 A212 A110 A145 A167 A172 A176 A211",
+      "publish_next": "A191 A002 A043 A037 A019 A183 A210 A076 A217 A071 A034 A236 A102 A083 A184 A016 A117 A031 A161 A281 A021 A195 A082 A078 A091 A012 A156 A085 A056 tilda-post:amkbo7kgg1 A100 A025 A262",
+      "bank": "A049 A041 A020 A166 A278 A018 A238 A069 A010 A014 A279 A133 A235 A003 A053 A271 A067 A159 tilda-post:jajp12c7j1 tilda-post:m0epglvrp1 tilda-post:5kegfp3o71",
+      "manual_review": "A006 A035 A017 A008 A181 A024 A029 A023 A058 A065 A047 A177 A050 A270 A039 A198 A202 A116 A155 A057 A079 A060 A073 A273 A104 A088 tilda-post:knian4e971 tilda-post:a75rtx6go1 tilda-post:sgpfzdvvy1 tilda-post:pxukhjlca1 tilda-post:7siam7t8k1 A004 A107 A011 A158 A212 A110 A145 A167 A172 A176 A211 tilda-post:e4441ism91",
       "family_review": "A221 A152 A252 A256 A272 A092 A132 A193",
       "educational": "A237 A113 A115 A157 A136 A185 A232 A144 A135 A222",
       "old_educational": "A137 A139 A140 A246 A247 A231 A248 A171 A223 A138 A228 A266 A267 A142 A124 A163 A203 A255",
@@ -115,7 +115,24 @@
       "A184": "Проверить против уже опубликованного Великого поста: разрешение не означает выпуск дубля.",
       "A110": "Остальные неразобранные черновики владелец попросил отдать на ручной просмотр.",
       "archive_policy": "Последнее уточнение отменяет полный запрет обращаться к четырём старым учебным материалам: хранить как архив, можно извлекать по явной задаче, но не использовать как актуальный канон и не предлагать публичный выпуск."
-    }
+    },
+    "execution_updates": [
+      {
+        "date": "2026-10-23",
+        "authority": "Владелец: «публикуй» в чате локальной подготовки оставшихся материалов",
+        "ids": [
+          "A100",
+          "A025",
+          "A262"
+        ],
+        "action": "Выпуск принятых пяти локальных статей; для лимонной воды ближайшая основаA262 и сохранённая ранняяA025. Новых правок авторского текста не делать.",
+        "previous_decisions": {
+          "A100": "bank",
+          "A025": "manual_review",
+          "A262": "manual_review"
+        }
+      }
+    ]
   },
   "module_id": "platform.content",
   "scope": {
@@ -155,21 +172,21 @@
       "telegraph": 163,
       "vc.ru": 14
     },
-    "canonical_blog_families": 62,
-    "canonical_linked_external_records": 96,
-    "deferred_families": 204,
+    "canonical_blog_families": 67,
+    "canonical_linked_external_records": 99,
+    "deferred_families": 201,
     "deferred_by_kind": {
       "deferred_not_now": 18,
-      "editorial_review": 66,
+      "editorial_review": 65,
       "incomplete_draft": 11,
       "obsolete_product_archive": 4,
       "owner_review_later": 3,
       "private_product_material": 43,
-      "short_reserve": 34,
+      "short_reserve": 32,
       "technical_or_service": 25
     },
     "candidate_duplicate_pairs": 75,
-    "public_blog_articles": 61
+    "public_blog_articles": 66
   },
   "canonical_blog": [
     {
@@ -2647,6 +2664,165 @@
         "full_scientific_pass": false,
         "production_revision": "3ebabf5a265c1c87b76363dd413c07c7b3534b5b"
       }
+    },
+    {
+      "family_id": "blog:princip-pitaniya-na-granatah",
+      "title": "Важнейший принцип питания. Объясняю на гранатах",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "12025344",
+        "slug": "princip-pitaniya-na-granatah",
+        "url": "https://похудение-это-есть.рф/blog/princip-pitaniya-na-granatah",
+        "body_file": "content/blog/articles/princip-pitaniya-na-granatah.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "pikabu:12025344",
+          "source": "pikabu",
+          "external_id": "12025344",
+          "title": "Важнейший принцип питания. Объясняю на гранатах",
+          "url": "https://pikabu.ru/story/vazhneyshiy_printsip_pitaniya_obyasnyayu_na_granatakh_12025344",
+          "published_at": "2024-11-15T17:14:38+03:00",
+          "role": "preferred_basis",
+          "content_item": "knowledge://resource/source-pikabu-12025344",
+          "text_sha256": "d9ed8ff4e00055e577373d72b70720f7834d41e4adda9f2fa41cd9e157a6e62f"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "owner_confirmed",
+      "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:kak-nachat-schitat-kalorii",
+      "title": "Как перестать жаловаться и начать считать калории?",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "13894066",
+        "slug": "kak-nachat-schitat-kalorii",
+        "url": "https://похудение-это-есть.рф/blog/kak-nachat-schitat-kalorii",
+        "body_file": "content/blog/articles/kak-nachat-schitat-kalorii.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A100",
+          "source": "pikabu",
+          "external_id": "13894066",
+          "title": "Как перестать жаловаться и начать считать калории?",
+          "url": "https://pikabu.ru/story/kak_perestat_zhalovatsya_i_nachat_schitat_kalorii_13894066",
+          "published_at": "2026-04-18T14:58:55+03:00",
+          "characters": 5753,
+          "role": "preferred_basis",
+          "provenance": "content://item/5c816d97-11ec-4552-a579-e59ffd4c1e28",
+          "text_sha256": "3bd4a34110cda231ede41f133f64b5ac0f0ae842190bb18a33147461a09558b7"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "owner_confirmed",
+      "owner_source_decisions": {
+        "A100": "publish_next"
+      }
+    },
+    {
+      "family_id": "blog:limonnaya-voda",
+      "title": "Лимонная, блин, вода… поговорим о святом!",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "10715248",
+        "slug": "limonnaya-voda",
+        "url": "https://похудение-это-есть.рф/blog/limonnaya-voda",
+        "body_file": "content/blog/articles/limonnaya-voda.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "A025",
+          "source": "pikabu",
+          "external_id": "10715248",
+          "title": "Лимонная, блин, вода... поговорим о святом!",
+          "url": "https://pikabu.ru/story/limonnaya_blin_voda_pogovorim_o_svyatom_10715248",
+          "published_at": "2023-10-07T11:44:30+03:00",
+          "characters": 3955,
+          "role": "earlier_publication",
+          "provenance": "content://item/b508dd92-2602-458a-9bda-d82572ecee71",
+          "text_sha256": "60fc0db02e27e0054922e3c675bac6bfb7ef695d605fe635c346d5d070dfde27"
+        },
+        {
+          "catalog_id": "A262",
+          "source": "telegraph",
+          "external_id": "voda-10-08-2",
+          "title": "Лимонная, блин, вода... поговорим о святом!⁠⁠",
+          "url": "https://telegra.ph/voda-10-08-2",
+          "published_at": "2023-10-08T08:08:56+0000",
+          "characters": 3373,
+          "role": "preferred_basis",
+          "provenance": "content://item/f7183198-bed5-4510-a5f4-0263a50a1a26",
+          "text_sha256": "70d2197542644eb2dae4695a43760825d3c99e1b3ad49d7399b17a7ae7184bac"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "owner_confirmed",
+      "owner_source_decisions": {
+        "A025": "publish_next",
+        "A262": "publish_next"
+      }
+    },
+    {
+      "family_id": "blog:syrok-i-proteinovye-batonchiki",
+      "title": "Похудеть на 2,5 кг и сэкономить 13 000 рублей с помощью глазированного сырка из Пятёрочки",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "13892134",
+        "slug": "syrok-i-proteinovye-batonchiki",
+        "url": "https://похудение-это-есть.рф/blog/syrok-i-proteinovye-batonchiki",
+        "body_file": "content/blog/articles/syrok-i-proteinovye-batonchiki.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "pikabu:13892134",
+          "source": "pikabu",
+          "external_id": "13892134",
+          "title": "Похудеть на 2,5 кг и сэкономить 13 000 рублей с помощью глазированного сырка из Пятёрочки",
+          "url": "https://pikabu.ru/story/kak_pokhudet_na_25_kg_i_syekonomit_13_000_rubley_s_pomoshchyu_glazirovannogo_syirka_iz_pyaterochki_13892134",
+          "published_at": "2026-04-17T20:38:01+03:00",
+          "role": "preferred_basis",
+          "content_item": "content://item/0472e69a-26c8-478d-802a-eafecbc413e9",
+          "text_sha256": "7288362d25c6ea39fc132d66cdb1c335ceac14720c052dba82da830105032243"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "owner_confirmed",
+      "owner_source_decisions": {}
+    },
+    {
+      "family_id": "blog:gimalayskaya-sol-i-sahar",
+      "title": "Солим и избавляемся от сахара в крови!!!",
+      "disposition": "canonical_blog",
+      "canonical": {
+        "source_id": "11047083",
+        "slug": "gimalayskaya-sol-i-sahar",
+        "url": "https://похудение-это-есть.рф/blog/gimalayskaya-sol-i-sahar",
+        "body_file": "content/blog/articles/gimalayskaya-sol-i-sahar.md",
+        "status": "published"
+      },
+      "members": [
+        {
+          "catalog_id": "pikabu:11047083",
+          "source": "pikabu",
+          "external_id": "11047083",
+          "title": "Солим и избавляемся от сахара в крови!!!",
+          "url": "https://pikabu.ru/story/solim_i_izbavlyaemsya_ot_sakhara_v_krovi_11047083",
+          "published_at": "2024-01-21T16:32:50+03:00",
+          "role": "preferred_basis",
+          "content_item": "content://item/b119279c-8c36-4c80-b7da-2eed79251f9e",
+          "text_sha256": "3911e26ee2c9438dc860329d7061135a411580c3c76ce389e7889cc95dfb2063"
+        }
+      ],
+      "possible_duplicate_catalog_ids": [],
+      "family_evidence": "owner_confirmed",
+      "owner_source_decisions": {}
     }
   ],
   "deferred": [
@@ -4111,32 +4287,6 @@
       "owner_source_decisions": {}
     },
     {
-      "family_id": "deferred:A100",
-      "title": "Как перестать жаловаться и начать считать калории?",
-      "disposition": "deferred",
-      "deferred_kind": "editorial_review",
-      "reason": "Полный материал; нужна редакторская оценка семьи, пользы и актуальности.",
-      "members": [
-        {
-          "catalog_id": "A100",
-          "source": "pikabu",
-          "external_id": "13894066",
-          "title": "Как перестать жаловаться и начать считать калории?",
-          "url": "https://pikabu.ru/story/kak_perestat_zhalovatsya_i_nachat_schitat_kalorii_13894066",
-          "published_at": "2026-04-18T14:58:55+03:00",
-          "characters": 5753,
-          "role": "unmerged_source",
-          "provenance": "content://item/5c816d97-11ec-4552-a579-e59ffd4c1e28",
-          "text_sha256": "3bd4a34110cda231ede41f133f64b5ac0f0ae842190bb18a33147461a09558b7"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A100": "bank"
-      }
-    },
-    {
       "family_id": "deferred:A240",
       "title": "Как подготовить хорошие фотографии для вашего отеля на обычный смартфон",
       "disposition": "deferred",
@@ -4650,62 +4800,6 @@
       "family_evidence": "single_source_pending_family_review",
       "owner_source_decisions": {
         "A167": "manual_review"
-      }
-    },
-    {
-      "family_id": "deferred:A025",
-      "title": "Лимонная, блин, вода... поговорим о святом!",
-      "disposition": "deferred",
-      "deferred_kind": "short_reserve",
-      "reason": "Материал 3000–3999 знаков; сначала оценить самостоятельную пользу.",
-      "members": [
-        {
-          "catalog_id": "A025",
-          "source": "pikabu",
-          "external_id": "10715248",
-          "title": "Лимонная, блин, вода... поговорим о святом!",
-          "url": "https://pikabu.ru/story/limonnaya_blin_voda_pogovorim_o_svyatom_10715248",
-          "published_at": "2023-10-07T11:44:30+03:00",
-          "characters": 3955,
-          "role": "unmerged_source",
-          "provenance": "content://item/b508dd92-2602-458a-9bda-d82572ecee71",
-          "text_sha256": "60fc0db02e27e0054922e3c675bac6bfb7ef695d605fe635c346d5d070dfde27"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A262"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A025": "manual_review"
-      }
-    },
-    {
-      "family_id": "deferred:A262",
-      "title": "Лимонная, блин, вода... поговорим о святом!⁠⁠",
-      "disposition": "deferred",
-      "deferred_kind": "short_reserve",
-      "reason": "Материал 3000–3999 знаков; сначала оценить самостоятельную пользу.",
-      "members": [
-        {
-          "catalog_id": "A262",
-          "source": "telegraph",
-          "external_id": "voda-10-08-2",
-          "title": "Лимонная, блин, вода... поговорим о святом!⁠⁠",
-          "url": "https://telegra.ph/voda-10-08-2",
-          "published_at": "2023-10-08T08:08:56+0000",
-          "characters": 3373,
-          "role": "unmerged_source",
-          "provenance": "content://item/f7183198-bed5-4510-a5f4-0263a50a1a26",
-          "text_sha256": "70d2197542644eb2dae4695a43760825d3c99e1b3ad49d7399b17a7ae7184bac"
-        }
-      ],
-      "possible_duplicate_catalog_ids": [
-        "A025"
-      ],
-      "family_evidence": "single_source_pending_family_review",
-      "owner_source_decisions": {
-        "A262": "manual_review"
       }
     },
     {

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-10-19",
+  "updated_at": "2026-10-23",
   "module_id": "platform.content",
   "purpose": "Канонический редакционный выбор исходной основы и правило перехода семьи под опубликованную статью собственного блога без удаления истории проявлений.",
   "rules": {
@@ -357,6 +357,150 @@
           "text_sha256": "457f4c8a48924fd3109cd16966d0579e45d8e615052efd03b62f1a0f87a0ce2e"
         }
       ]
+    },
+    {
+      "family_id": "blog:syrok-i-proteinovye-batonchiki",
+      "title": "Похудеть на 2,5 кг и сэкономить 13 000 рублей с помощью глазированного сырка из Пятёрочки",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {
+        "source_id": "13892134",
+        "slug": "syrok-i-proteinovye-batonchiki"
+      },
+      "preferred_basis": "pikabu:13892134",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Полная локальная редакция19.10 просмотрена владельцем;23.10 прямая команда публикации. Источники и готовые блоки прочитаны полностью; смысловые версии не объявлены побайтными дублями. Пикадильо и прежний закрытый пакет не затронуты.",
+      "members": [
+        {
+          "catalog_id": "pikabu:13892134",
+          "source": "pikabu",
+          "external_id": "13892134",
+          "title": "Похудеть на 2,5 кг и сэкономить 13 000 рублей с помощью глазированного сырка из Пятёрочки",
+          "url": "https://pikabu.ru/story/kak_pokhudet_na_25_kg_i_syekonomit_13_000_rubley_s_pomoshchyu_glazirovannogo_syirka_iz_pyaterochki_13892134",
+          "published_at": "2026-04-17T20:38:01+03:00",
+          "role": "preferred_basis",
+          "content_item": "content://item/0472e69a-26c8-478d-802a-eafecbc413e9",
+          "text_sha256": "7288362d25c6ea39fc132d66cdb1c335ceac14720c052dba82da830105032243"
+        }
+      ],
+      "history_preserved": true
+    },
+    {
+      "family_id": "blog:kak-nachat-schitat-kalorii",
+      "title": "Как перестать жаловаться и начать считать калории?",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {
+        "source_id": "13894066",
+        "slug": "kak-nachat-schitat-kalorii"
+      },
+      "preferred_basis": "A100",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Полная локальная редакция19.10 просмотрена владельцем;23.10 прямая команда публикации. Источники и готовые блоки прочитаны полностью; смысловые версии не объявлены побайтными дублями. Пикадильо и прежний закрытый пакет не затронуты.",
+      "members": [
+        {
+          "catalog_id": "A100",
+          "source": "pikabu",
+          "external_id": "13894066",
+          "title": "Как перестать жаловаться и начать считать калории?",
+          "url": "https://pikabu.ru/story/kak_perestat_zhalovatsya_i_nachat_schitat_kalorii_13894066",
+          "published_at": "2026-04-18T14:58:55+03:00",
+          "characters": 5753,
+          "role": "preferred_basis",
+          "provenance": "content://item/5c816d97-11ec-4552-a579-e59ffd4c1e28",
+          "text_sha256": "3bd4a34110cda231ede41f133f64b5ac0f0ae842190bb18a33147461a09558b7"
+        }
+      ],
+      "history_preserved": true
+    },
+    {
+      "family_id": "blog:princip-pitaniya-na-granatah",
+      "title": "Важнейший принцип питания. Объясняю на гранатах",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {
+        "source_id": "12025344",
+        "slug": "princip-pitaniya-na-granatah"
+      },
+      "preferred_basis": "pikabu:12025344",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Полная локальная редакция19.10 просмотрена владельцем;23.10 прямая команда публикации. Источники и готовые блоки прочитаны полностью; смысловые версии не объявлены побайтными дублями. Пикадильо и прежний закрытый пакет не затронуты.",
+      "members": [
+        {
+          "catalog_id": "pikabu:12025344",
+          "source": "pikabu",
+          "external_id": "12025344",
+          "title": "Важнейший принцип питания. Объясняю на гранатах",
+          "url": "https://pikabu.ru/story/vazhneyshiy_printsip_pitaniya_obyasnyayu_na_granatakh_12025344",
+          "published_at": "2024-11-15T17:14:38+03:00",
+          "role": "preferred_basis",
+          "content_item": "knowledge://resource/source-pikabu-12025344",
+          "text_sha256": "d9ed8ff4e00055e577373d72b70720f7834d41e4adda9f2fa41cd9e157a6e62f"
+        }
+      ],
+      "history_preserved": true
+    },
+    {
+      "family_id": "blog:gimalayskaya-sol-i-sahar",
+      "title": "Солим и избавляемся от сахара в крови!!!",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {
+        "source_id": "11047083",
+        "slug": "gimalayskaya-sol-i-sahar"
+      },
+      "preferred_basis": "pikabu:11047083",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Полная локальная редакция19.10 просмотрена владельцем;23.10 прямая команда публикации. Источники и готовые блоки прочитаны полностью; смысловые версии не объявлены побайтными дублями. Пикадильо и прежний закрытый пакет не затронуты.",
+      "members": [
+        {
+          "catalog_id": "pikabu:11047083",
+          "source": "pikabu",
+          "external_id": "11047083",
+          "title": "Солим и избавляемся от сахара в крови!!!",
+          "url": "https://pikabu.ru/story/solim_i_izbavlyaemsya_ot_sakhara_v_krovi_11047083",
+          "published_at": "2024-01-21T16:32:50+03:00",
+          "role": "preferred_basis",
+          "content_item": "content://item/b119279c-8c36-4c80-b7da-2eed79251f9e",
+          "text_sha256": "3911e26ee2c9438dc860329d7061135a411580c3c76ce389e7889cc95dfb2063"
+        }
+      ],
+      "history_preserved": true
+    },
+    {
+      "family_id": "blog:limonnaya-voda",
+      "title": "Лимонная, блин, вода… поговорим о святом!",
+      "owner_decision": "published_blog_canon",
+      "blog_canon": {
+        "source_id": "10715248",
+        "slug": "limonnaya-voda"
+      },
+      "preferred_basis": "A262",
+      "preparation_mode": "full_source_light_cleanup",
+      "rationale": "Полная локальная редакция19.10 просмотрена владельцем;23.10 прямая команда публикации. Источники и готовые блоки прочитаны полностью; смысловые версии не объявлены побайтными дублями. Пикадильо и прежний закрытый пакет не затронуты.",
+      "members": [
+        {
+          "catalog_id": "A025",
+          "source": "pikabu",
+          "external_id": "10715248",
+          "title": "Лимонная, блин, вода... поговорим о святом!",
+          "url": "https://pikabu.ru/story/limonnaya_blin_voda_pogovorim_o_svyatom_10715248",
+          "published_at": "2023-10-07T11:44:30+03:00",
+          "characters": 3955,
+          "role": "earlier_publication",
+          "provenance": "content://item/b508dd92-2602-458a-9bda-d82572ecee71",
+          "text_sha256": "60fc0db02e27e0054922e3c675bac6bfb7ef695d605fe635c346d5d070dfde27"
+        },
+        {
+          "catalog_id": "A262",
+          "source": "telegraph",
+          "external_id": "voda-10-08-2",
+          "title": "Лимонная, блин, вода... поговорим о святом!⁠⁠",
+          "url": "https://telegra.ph/voda-10-08-2",
+          "published_at": "2023-10-08T08:08:56+0000",
+          "characters": 3373,
+          "role": "preferred_basis",
+          "provenance": "content://item/f7183198-bed5-4510-a5f4-0263a50a1a26",
+          "text_sha256": "70d2197542644eb2dae4695a43760825d3c99e1b3ad49d7399b17a7ae7184bac"
+        }
+      ],
+      "history_preserved": true
     }
   ],
   "routing_decisions": [
