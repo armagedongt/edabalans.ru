@@ -773,7 +773,7 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert 'id="cookie-settings"' in privacy
     assert "«Робокассу»" in privacy
     assert "Telegram, MAX, сервис электронной почты" not in privacy
-    assert "Действует с" in privacy
+    assert "Опубликовано:" in privacy and "Обновлено:" in privacy
     consent = client.get("/legal/consent.html").text
     assert "отдельное согласие" in consent.lower()
     assert "Публикация конкретного отзыва" in consent
