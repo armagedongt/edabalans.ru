@@ -43,7 +43,7 @@
         if (toggle.getAttribute('aria-expanded') !== 'true') return;
         if (event.key === 'Escape') { setOpen(false); toggle.focus(); }
         if (event.key !== 'Tab') return;
-        var items = [toggle].concat(Array.from(panel.querySelectorAll('a,button')).filter(function (element) { return element.getClientRects().length > 0; }));
+        var items = [toggle].concat(Array.from(panel.querySelectorAll('a,button,input,summary')).filter(function (element) { return !element.disabled && element.getClientRects().length > 0; }));
         var index = items.indexOf(document.activeElement);
         if (event.shiftKey && index <= 0) { event.preventDefault(); items[items.length - 1].focus(); }
         else if (!event.shiftKey && (index < 0 || index === items.length - 1)) { event.preventDefault(); toggle.focus(); }

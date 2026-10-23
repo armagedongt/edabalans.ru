@@ -37,7 +37,7 @@ html.site-menu-open,html.site-menu-open body{overflow:hidden!important;overscrol
 @media(max-width:899px){body:has([data-cookie-notice][data-cookie-ready="true"]:not([hidden])) .site-menu-toggle--article:not([aria-expanded="true"]){bottom:calc(110px + env(safe-area-inset-bottom))}}
 
 .site-menu-toggle,.site-menu-disclosure>button{font-weight:var(--ed-control-weight,800);font-size:var(--ed-label-size,14px)}
-.site-menu-contents a{font-size:var(--ed-toc-size,14px);line-height:var(--ed-toc-leading,1.4)}
+.site-menu-contents a{font-size:var(--ed-toc-size,14px);line-height:var(--ed-toc-leading,1.4);font-weight:var(--ed-toc-weight,400)}
 
 /* Let the menu reach the outer edge while preserving the frozen page width. */
 html.site-menu-open{scrollbar-gutter:auto}

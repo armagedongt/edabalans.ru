@@ -8,4 +8,4 @@ html[data-theme=dark] .reader-bottom button{background:#fafafa;color:#171717}
 @media(max-width:899px){.reader-bottom{bottom:calc(24px + env(safe-area-inset-bottom));right:24px}body:has([data-cookie-notice][data-cookie-ready=true]:not([hidden])) .reader-bottom{bottom:calc(120px + env(safe-area-inset-bottom))}}
 @media(prefers-reduced-motion:reduce){.reader-bottom{transition:none}}
 
-.site-menu-contents a[aria-current=location]{background:var(--cloud);color:var(--blue);box-shadow:inset 2px 0 var(--blue)}
+.site-menu-contents a[aria-current=location]{background:var(--cloud);color:var(--blue)}
