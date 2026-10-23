@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Как пользоваться тренировками</title>
+  <link rel="stylesheet" href="/assets/site-typography.css">
+  <link rel="stylesheet" href="tutorial.css?v=20261023">
+</head>
+<body>
+  <main id="tutorial">
+    <header class="tutorial-header">
+      <button id="previous-top" class="top-arrow" aria-label="Предыдущая страница" disabled>←</button>
+      <div class="tutorial-heading">
+        <span id="counter"></span>
+        <h1 id="lesson-title">Как пользоваться тренировками</h1>
+      </div>
+      <button id="next-top" class="top-arrow" aria-label="Следующая страница" disabled>→</button>
+      <button id="close-tutorial" aria-label="Закрыть справку" hidden>×</button>
+    </header>
+    <p id="tutorial-error" role="status">Загружаю справку…</p>
+    <section id="lesson" aria-live="polite">
+      <div id="lesson-lead" hidden></div>
+      <div id="screenshots"></div>
+      <ol id="lesson-text"></ol>
+    </section>
+    <nav class="tutorial-nav" aria-label="Страницы справки">
+      <button id="previous" disabled>Назад</button>
+      <button id="next" disabled>Далее</button>
+    </nav>
+  </main>
+  <script src="tutorial.js?v=20261023"></script>
+</body>
+</html>

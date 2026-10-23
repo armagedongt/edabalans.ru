@@ -232,3 +232,5 @@
 @media(max-width:700px){#strength-app[data-journal-view="training"] .st-grid-set,#strength-app[data-journal-view="training"] .st-grid-labels{grid-template-columns:20px minmax(0,1fr) minmax(0,.75fr) 40px minmax(0,1.45fr) minmax(0,1.1fr) minmax(0,.8fr)}}
 
 .st-progression-done{color:#258044}
+
+.st-tutorial-frame{position:fixed;inset:0;z-index:1200;background:#fff}.st-tutorial-frame iframe{display:block;width:100%;height:100%;border:0}

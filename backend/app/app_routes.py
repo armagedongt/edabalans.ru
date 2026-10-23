@@ -818,6 +818,19 @@ def strength_exercise_asset(asset_name: str) -> FileResponse:
     return public_asset(STATIC_DIR / "strength-exercises" / asset_name)
 
 
+@router.get("/assets/strength-tutorial/{asset_path:path}", include_in_schema=False)
+def strength_tutorial_asset(asset_path: str) -> FileResponse:
+    pages = {"index.html", "tutorial.css", "tutorial.js", "content.json"}
+    images = {
+        "top", "card", "copy", "paste", "toolbar", "new-date", "templates",
+        "composition", "history-training", "history-exercise", "send-control",
+        "send", "saved", "error",
+    }
+    if asset_path not in pages | {f"images/{name}.png" for name in images}:
+        raise HTTPException(status_code=404, detail="tutorial asset not found")
+    return public_asset(STATIC_DIR / "strength-tutorial" / asset_path)
+
+
 @router.get("/assets/fonts/{font_name}", include_in_schema=False)
 def typography_font(font_name: str) -> FileResponse:
     if font_name not in {
