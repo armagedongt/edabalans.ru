@@ -1149,6 +1149,7 @@ owns_routes = ["*/ready/max"]
 id = "operations.proxy"
 parent = "operations"
 card = "docs/knowledge-base/modules/catalog/operations.proxy.md"
+owns_routes = ["*/sonya-calendar", "*/sonya-calendar/"]
 owns_files = [
   "infra/caddy/**", "infra/telegram-proxy/**", "infra/monitoring/cloudflare-telegram-relay/**",
   "docs/DOMAIN_CUTOVER_RUNBOOK.md",

@@ -20,6 +20,7 @@ services:
       - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - /opt/sherbakova-preview:/srv/sherbakova:ro
       - /srv/edabalans-public/reviews:/srv/edabalans-public/reviews:ro
+      - /srv/sergey-calendar/public:/srv/personal-calendar:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
