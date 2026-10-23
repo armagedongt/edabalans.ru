@@ -2,21 +2,9 @@
   'use strict';
   var search = document.querySelector('.blog-search');
   var menu = document.querySelector('[data-site-menu-toggle]');
-  var utilities = document.querySelector('.blog-header-utilities');
-  var panel = document.querySelector('[data-site-menu]');
-  var compactHeader = utilities && menu && panel ? window.matchMedia('(max-width: 1000px)') : null;
-  if (utilities && menu && panel) {
-    function placeUtilities() {
-      if (search) search.open = false;
-      if (compactHeader.matches) panel.querySelector('.site-menu-brand').after(utilities);
-      else menu.before(utilities);
-    }
-    placeUtilities();
-    compactHeader.addEventListener('change', placeUtilities);
-  }
   if (search) {
     search.querySelector('summary').addEventListener('click', function () {
-      if (!search.open && menu && (!compactHeader || !compactHeader.matches) && menu.getAttribute('aria-expanded') === 'true') menu.click();
+      if (!search.open && menu && menu.getAttribute('aria-expanded') === 'true') menu.click();
     });
     search.addEventListener('toggle', function () {
       if (search.open) search.querySelector('input').focus();
