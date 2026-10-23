@@ -12,9 +12,17 @@
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		X-Content-Type-Options "nosniff"
+		-Server
+	}
+	@standard_page_security {
+		not {
+			host {$SITE_DOMAIN}
+			path /sonya-calendar /sonya-calendar/
+		}
+	}
+	header @standard_page_security {
 		Content-Security-Policy "frame-ancestors 'self' https://{$SITE_DOMAIN}"
 		Referrer-Policy "strict-origin-when-cross-origin"
-		-Server
 	}
 
 	@personal_calendar {
