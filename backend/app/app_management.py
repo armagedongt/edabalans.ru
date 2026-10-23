@@ -59,7 +59,10 @@ def client_identity(db: Session, user: User) -> dict:
 
 
 def client_directory(db: Session, q: str, offset: int) -> dict:
-    query = select(User).where(User.merged_into_user_id.is_(None))
+    query = select(User).where(
+        User.merged_into_user_id.is_(None),
+        User.id.in_(select(UserEmail.user_id).where(UserEmail.email_normalized != "")),
+    )
     if q.strip():
         term = q.strip().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
         emails = select(UserEmail.user_id).where(UserEmail.email_normalized.ilike(f"%{term}%", escape="\\"))

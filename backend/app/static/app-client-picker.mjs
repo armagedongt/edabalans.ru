@@ -103,7 +103,10 @@ export function mount(root, app, context, host) {
         for (const user of data.users) {
           const row = document.createElement('button'); row.type = 'button'; row.className = 'ed-client-row'; row.setAttribute('aria-current', String(user.user_id === identity.user_id));
           const name = document.createElement('strong'), email = document.createElement('small');
-          name.textContent = user.display_name || 'Без имени'; email.textContent = user.email || 'Email не указан'; row.append(name, email); row.onclick = () => choose(user); list.append(row);
+          const displayName = (user.display_name || '').trim();
+          name.textContent = /\p{L}/u.test(displayName) ? displayName : user.email;
+          email.textContent = user.email; row.append(name);
+          if (name.textContent !== user.email) row.append(email); row.onclick = () => choose(user); list.append(row);
         }
         offset += data.users.length; more.hidden = !data.more; message.textContent = list.children.length ? '' : 'Ничего не найдено';
       } catch (error) { if (request === generation && currentDialog.open) message.textContent = error.message; }

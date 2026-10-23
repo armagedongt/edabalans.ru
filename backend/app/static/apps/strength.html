@@ -3838,13 +3838,13 @@ function trainingStepText(training){
   if(training.mode==='duration')return String(training.time_step)+' с';
   if(training.mode==='assisted')return 'Одна ступень уменьшения помощи';
   if(!training.load_step)return 'По ступени вашего тренажёра';
-  return String(training.load_step).replace('.',',')+' кг'+(training.load_unit==='kg_each_dumbbell'?' на каждую гантель':training.load_unit==='kg_total'?' суммарно':training.load_unit==='kg_added'?' дополнительного веса':'');
+  return String(training.load_step).replace('.',',')+' кг';
 }
 function renderTrainingSummary(info){
   var p=info && info.training;if(!p)return '';
   return '<section class="st-guide-training" aria-label="Диапазон и шаг нагрузки"><dl><div><dt>Рабочий диапазон</dt><dd>'+esc(p.rep_range.join('–'))+(p.mode==='duration'?' секунд':' повторений')+'</dd></div>'+
-    '<div><dt>'+(p.mode==='duration'?'Шаг времени':'Минимальная прибавка-ориентир')+'</dt><dd>'+esc(trainingStepText(p))+'</dd></div></dl>'+
-    '<p>'+esc(p.load_label)+'. '+esc(p.step_note)+'</p>'+(p.rep_note?'<p>'+esc(p.rep_note)+'</p>':'')+'<p>Диапазон относится к рабочим подходам. Если в плане назначено иначе, используйте назначение.</p></section>';
+    '<div><dt>'+(p.mode==='duration'?'Шаг времени':'Шаг прибавки веса')+'</dt><dd>'+esc(trainingStepText(p))+'</dd></div></dl>'+
+    '</section>';
 }
 function progressionKey(session,id){return String(session.session_id)+'|'+String(id);}
 function progressionItem(index,id){
@@ -5332,8 +5332,8 @@ function renderModal(){
       var guide = info.guide;
       var guideHtml = '<section class="st-exercise-guide" role="dialog" aria-modal="true" aria-labelledby="st-guide-title">'+
         '<header class="st-guide-header"><h2 id="st-guide-title">'+esc(info.full_name || guide.title || info.exercise_name)+'</h2><button class="st-guide-close" onclick="ST.closeModal()" aria-label="Закрыть информацию об упражнении">×</button></header>'+
-        '<div class="st-guide-body" tabindex="0">'+renderTrainingSummary(info)+
-        '<img class="st-guide-demo" src="'+esc(info.media_url)+'" alt="Демонстрация упражнения">'+
+        '<div class="st-guide-body" tabindex="0">'+
+        '<img class="st-guide-demo" src="'+esc(info.media_url)+'" alt="Демонстрация упражнения">'+renderTrainingSummary(info)+
         '<div class="st-guide-copy"><h3>Положение</h3><p>'+esc(guide.position)+'</p><h3>Движение</h3><p>'+esc(guide.movement)+'</p><h3>Детали</h3><ul>';
       (guide.details || []).forEach(function(detail){ guideHtml += '<li>'+esc(detail)+'</li>'; });
       guideHtml += '</ul>';

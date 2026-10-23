@@ -40,16 +40,18 @@ for(const width of [360,430,700,701,768,1440])for(const admin of [false,true]){
  await card().getByRole('button',{name:'Информация об упражнении',exact:true}).click();
  const dialog=page.getByRole('dialog');await dialog.waitFor();
  await assert.equal(await dialog.locator('.st-guide-training dd').first().textContent(),'6–15 повторений');
- assert((await dialog.locator('.st-guide-training').innerText()).includes('2,5 кг суммарно'));
+ assert((await dialog.locator('.st-guide-training').innerText()).includes('2,5 кг'));
+ assert(await dialog.locator('.st-guide-demo').evaluate(el=>el.nextElementSibling.matches('.st-guide-training')));
+ assert.equal(await dialog.locator('.st-guide-training p').count(),0);
  await page.screenshot({path:path.join(output,`${width}-${admin?'admin':'user'}-guide.png`)});
  assert.equal(await dialog.locator('.st-guide-body').evaluate(el=>el.scrollWidth>el.clientWidth),false);
  await dialog.getByRole('button',{name:'Закрыть информацию об упражнении'}).click();
  if(width===430&&!admin){
   for(const [id,expected] of [
    ['plank',['20–45 секунд','5 с']],
-   ['incline-dumbbell-press',['6–15 повторений','1 кг на каждую гантель']],
+   ['incline-dumbbell-press',['6–15 повторений','1 кг']],
    ['assisted-pull-up',['8–15 повторений','Одна ступень уменьшения помощи']],
-   ['one-arm-dumbbell-row',['Повторы указаны на каждую сторону.']]
+   ['one-arm-dumbbell-row',['8–15 повторений']]
   ]){
    await page.evaluate(value=>window.ST.openExerciseInfo(value),id);
    await dialog.waitFor();const text=await dialog.locator('.st-guide-training').innerText();

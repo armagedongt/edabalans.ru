@@ -135,11 +135,16 @@ def test_owner_write_rejects_foreign_origin(setup):
 def test_directory_lists_all_clients_with_pagination_and_name_or_alias_search(setup):
     client, factory, ids, sign_in = setup; sign_in(0)
     with factory() as db:
-        for i in range(103): db.add(User(display_name=f'Z{i:03}', status='active'))
+        for i in range(103):
+            user = User(display_name=f'Z{i:03}', status='active'); db.add(user); db.flush()
+            db.add(UserEmail(user_id=user.id, email_original=f'z{i}@example.test', email_normalized=f'z{i}@example.test', source='test'))
+        db.add(User(display_name='😀', status='active')); db.add(User(display_name='Без почты', status='active'))
         db.add(UserEmail(user_id=ids[1], email_original='alias@example.test', email_normalized='alias@example.test', is_primary=False, source='test')); db.commit()
     first = client.get('/api/apps/manager/users').json(); second = client.get('/api/apps/manager/users?offset=100').json()
     assert first['more'] is True and len(first['users']) == 100 and second['more'] is False
     assert len({user['user_id'] for user in first['users']+second['users']}) == 106
+    assert all(user['email'] for user in first['users']+second['users'])
+    assert client.get('/api/apps/manager/users', params={'q': 'Без почты'}).json()['users'] == []
     for query in ['Клиент', 'alias@example.test']:
         result = client.get('/api/apps/manager/users', params={'q': query}).json()
         assert str(ids[1]) in {row['user_id'] for row in result['users']}
