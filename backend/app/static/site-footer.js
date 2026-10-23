@@ -26,19 +26,19 @@
     '.eb-footer__inner{container:eb-footer / inline-size;position:relative;width:min(var(--eb-footer-width,var(--content-frame,760px)),calc(100% - var(--eb-footer-gutter,40px)));margin:0 auto;padding:var(--eb-footer-text-gap) 0 24px}',
     '.eb-footer__inner:before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(67,112,140,.25) 12%,rgba(67,112,140,.25) 88%,transparent);pointer-events:none}',
     '.eb-footer__inner:after{content:"";position:absolute;top:1px;left:0;right:0;height:14px;background:radial-gradient(ellipse at 50% 0,rgba(35,77,106,.09),transparent 72%);pointer-events:none}',
-    '.eb-footer__row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:12px 24px;align-items:start}',
+    '.eb-footer__row{display:grid;grid-template-columns:minmax(0,1fr);gap:0;text-align:center;align-items:start}',
     '.eb-footer__owner,.eb-footer__contacts{margin:0;color:inherit}',
-    '.eb-footer__owner p{margin:0}.eb-footer__rights{margin:0;font-size:inherit;opacity:1}.eb-footer__inn{display:block;white-space:nowrap}.eb-footer__inn a{margin-left:12px}',
-    '.eb-footer__contacts{text-align:right}',
+    '.eb-footer__owner p{margin:0}.eb-footer__rights{margin:12px 0 0;font-size:inherit;opacity:1}.eb-footer__inn{display:block;white-space:nowrap}.eb-footer__inn a{margin-left:6px}',
+    '.eb-footer__contacts{margin-top:12px;text-align:center}',
     '.eb-footer__links{display:flex;justify-content:flex-end;gap:7px 16px;flex-wrap:wrap}',
     '.eb-footer__links a{font-weight:600}',
-    '.eb-footer__contact-lines{display:flex;flex-direction:column;gap:3px}.eb-footer__contact-lines p{margin:0}.eb-footer__contact-pair{display:inline-block;white-space:nowrap}.eb-footer__rights{order:1}',
+    '.eb-footer__contact-lines{display:flex;flex-direction:column;gap:3px}.eb-footer__contact-lines p{margin:0}.eb-footer__contact-pair{display:inline-block;white-space:nowrap}',
     '.eb-footer a{color:inherit;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;border:0}',
     '.eb-footer a:hover{opacity:.72}',
     '.eb-footer a:focus-visible{outline:2px solid currentColor;outline-offset:3px}',
-    '.eb-footer__documents{display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin-top:3px;font-size:inherit}.eb-footer__documents a{max-width:100%}',
+    '.eb-footer__documents{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:3px;font-size:inherit}.eb-footer__documents a{max-width:100%}',
     '.eb-footer--private{color:var(--ed-app-muted,#7b8094);font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}',
-    '@container eb-footer (max-width:608px){.eb-footer__row{grid-template-columns:1fr;gap:3px;text-align:center}.eb-footer__owner{display:contents}.eb-footer__owner,.eb-footer__contacts{text-align:center}.eb-footer__contacts{order:1;margin-top:12px}.eb-footer__links{justify-content:center}.eb-footer__documents{order:2;align-items:center;margin-top:12px}.eb-footer__rights{order:-1;margin-bottom:6px}}'
+    '@container eb-footer (min-width:520px){.eb-footer__row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 24px;text-align:left}.eb-footer__contacts{margin-top:0;text-align:right}.eb-footer__rights{margin-top:0}.eb-footer__documents{align-items:flex-end;text-align:right;margin-top:0}}'
   ].join('');
 
   function link(url, text) {
@@ -47,7 +47,6 @@
 
   function contactsMarkup() {
     return '<div class="eb-footer__contacts eb-footer__contact-lines" aria-label="Каналы и личная связь">' +
-      '<p class="eb-footer__rights">Копирование материалов запрещено.</p>' +
       '<p>Читать мой канал: <span class="eb-footer__contact-pair">' + link(LINKS.telegramChannel, 'Telegram') + ' / ' + link(LINKS.maxChannel, 'MAX') + '</span></p>' +
       '<p>Написать мне лично: <span class="eb-footer__contact-pair">' + link(LINKS.telegram, 'Telegram') + ' / ' + link(LINKS.max, 'MAX') + '</span></p></div>';
   }
@@ -57,9 +56,10 @@
       '<div class="eb-footer__inner">' +
         '<div class="eb-footer__row">' +
           '<div class="eb-footer__owner"><p>© ' + new Date().getFullYear() + ' ИП Воронцов Сергей Сергеевич</p><p class="eb-footer__inn">ИНН 230409966750 ' + link(LINKS.offer, 'Оферта') + '</p>' +
-            '<nav class="eb-footer__documents" aria-label="Юридические документы">' + link(LINKS.privacy, 'Политика обработки персональных данных') + '</nav>' +
           '</div>' +
           contactsMarkup() +
+          '<p class="eb-footer__rights">Копирование материалов запрещено.</p>' +
+          '<nav class="eb-footer__documents" aria-label="Юридические документы">' + link(LINKS.privacy, 'Политика обработки персональных данных') + '</nav>' +
         '</div>' +
       '</div>' +
     '</footer>';
@@ -70,9 +70,10 @@
       '<div class="eb-footer__inner">' +
         '<div class="eb-footer__row">' +
           '<div class="eb-footer__owner"><p>© ' + new Date().getFullYear() + ' Воронцов Сергей</p>' +
-            '<nav class="eb-footer__documents" aria-label="Документы личного кабинета">' + link(LINKS.disclaimer, 'Образовательный дисклеймер') + link(LINKS.privacy, 'Политика обработки персональных данных') + '</nav>' +
           '</div>' +
           contactsMarkup() +
+          '<p class="eb-footer__rights">Копирование материалов запрещено.</p>' +
+          '<nav class="eb-footer__documents" aria-label="Документы личного кабинета">' + link(LINKS.disclaimer, 'Образовательный дисклеймер') + link(LINKS.privacy, 'Политика обработки персональных данных') + '</nav>' +
         '</div>' +
       '</div>' +
     '</footer>';
