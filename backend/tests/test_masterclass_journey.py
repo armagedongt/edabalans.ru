@@ -3602,12 +3602,14 @@ def test_course_video_opens_on_schedule_and_remains_available_after_opening(tmp_
     body = b"course video"
     (tmp_path / "day-03.mp4").write_bytes(body)
     url = "/api/masterclass/course/video/3.mp4"
+    # The next local 06:00 must have passed even when CI runs before 06:00 Moscow.
+    now = datetime.now(timezone.utc)
     with factory() as db:
         user_id = db.scalar(select(User.id))
         db.add(MasterclassDayProgress(
             user_id=user_id, day_number=2,
-            first_opened_at=datetime.now(timezone.utc) - timedelta(days=2),
-            completed_at=datetime.now(timezone.utc) - timedelta(days=1),
+            first_opened_at=now - timedelta(days=3),
+            completed_at=now - timedelta(days=2),
         ))
         db.commit()
     assert client.get(url).content == body
