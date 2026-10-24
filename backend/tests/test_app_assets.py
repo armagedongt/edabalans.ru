@@ -300,13 +300,13 @@ def test_stable_site_footer_loader_is_public() -> None:
     private = text[text.index("function privateMarkup"):text.index("function ensureStyle")]
     assert "Оферта" in public
     assert "Образовательный дисклеймер" not in public
-    assert "contactsMarkup()" in public
+    assert "contactsMarkup(" in public
     assert "ИП Воронцов Сергей Сергеевич" in public
     assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in public
     assert "cookie-settings" not in public
     assert "Образовательный дисклеймер" in private
     assert "Оферта" not in private
-    assert "contactsMarkup()" in private
+    assert "contactsMarkup(" in private
     assert "© ' + new Date().getFullYear() + ' Воронцов Сергей" in private
     assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in private
     assert "cookie-settings" not in private
