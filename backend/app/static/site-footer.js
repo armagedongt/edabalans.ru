@@ -37,6 +37,7 @@
     '.eb-footer a:hover{opacity:.72}',
     '.eb-footer a:focus-visible{outline:2px solid currentColor;outline-offset:3px}',
     '.eb-footer__documents{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:3px;font-size:inherit}.eb-footer__documents a{max-width:100%}',
+    '.eb-footer--private .eb-footer__owner{display:flex;flex-direction:column;gap:3px}.eb-footer--private .eb-footer__rights{margin:0}',
     '.eb-footer--private{color:var(--ed-app-muted,#7b8094);font-family:var(--ed-font-body, Manrope, Arial, sans-serif)}',
     '@container eb-footer (min-width:520px){.eb-footer__row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 24px;text-align:left}.eb-footer__contacts{margin-top:0;text-align:right}.eb-footer__rights{margin-top:0}.eb-footer__documents{align-items:flex-end;text-align:right;margin-top:0}}'
   ].join('');
@@ -45,10 +46,10 @@
     return '<a href="' + url + '" target="_blank" rel="noopener">' + text + '</a>';
   }
 
-  function contactsMarkup() {
+  function contactsMarkup(extraLine) {
     return '<div class="eb-footer__contacts eb-footer__contact-lines" aria-label="Каналы и личная связь">' +
       '<p>Читать мой канал: <span class="eb-footer__contact-pair">' + link(LINKS.telegramChannel, 'Telegram') + ' / ' + link(LINKS.maxChannel, 'MAX') + '</span></p>' +
-      '<p>Написать мне лично: <span class="eb-footer__contact-pair">' + link(LINKS.telegram, 'Telegram') + ' / ' + link(LINKS.max, 'MAX') + '</span></p></div>';
+      '<p>Написать мне лично: <span class="eb-footer__contact-pair">' + link(LINKS.telegram, 'Telegram') + ' / ' + link(LINKS.max, 'MAX') + '</span></p>' + (extraLine || '') + '</div>';
   }
 
   function publicMarkup() {
@@ -70,10 +71,9 @@
       '<div class="eb-footer__inner">' +
         '<div class="eb-footer__row">' +
           '<div class="eb-footer__owner"><p>© ' + new Date().getFullYear() + ' Воронцов Сергей</p>' +
-          '</div>' +
-          contactsMarkup() +
           '<p class="eb-footer__rights">Копирование материалов запрещено.</p>' +
-          '<nav class="eb-footer__documents" aria-label="Документы личного кабинета">' + link(LINKS.disclaimer, 'Образовательный дисклеймер') + link(LINKS.privacy, 'Политика обработки персональных данных') + '</nav>' +
+          '<p>' + link(LINKS.privacy, 'Политика обработки персональных данных') + '</p></div>' +
+          contactsMarkup('<p>' + link(LINKS.disclaimer, 'Образовательный дисклеймер') + '</p>') +
         '</div>' +
       '</div>' +
     '</footer>';
