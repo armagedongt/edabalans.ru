@@ -525,6 +525,8 @@ owns_files = [
     "backend/tests/browser/strength-save-queue.e2e.mjs",
     "backend/tests/browser/strength-exercise-guide.e2e.mjs",
   "content/training/reference/**",
+  "docs/knowledge-base/modules/strength/**",
+  "docs/plans/STRENGTH_PROGRESSION_REFINEMENT.md",
 ]
 owns_tables = ["strength_states", "strength_exercises"]
 owns_routes = ["*/apps/strength*", "*/api/apps/strength*", "*/internal/strength-plan", "*/assets/strength-exercises/*", "*/assets/strength-tutorial/*", "*/training", "*/strength"]
