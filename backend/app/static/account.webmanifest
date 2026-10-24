@@ -1,0 +1,15 @@
+{
+  "id": "/lk",
+  "name": "Похудение — это есть.рф",
+  "short_name": "Личный кабинет",
+  "lang": "ru",
+  "start_url": "/lk",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {"src": "/favicon.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/assets/account-pwa-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}

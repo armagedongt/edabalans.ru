@@ -1483,4 +1483,51 @@ def test_strength_install_metadata_uses_existing_training_entry_without_offline_
         asset = client.get(icon['src'])
         assert asset.status_code == 200 and 'image/png' in asset.headers['content-type']
         assert 'x'.join(map(str, Image.open(io.BytesIO(asset.content)).size)) == icon['sizes']
-    assert 'rel="manifest"' not in client.get('/dqs').text
+
+
+def test_account_install_covers_courses_and_apps_with_a_stable_private_entry():
+    import io
+    from html.parser import HTMLParser
+    from urllib.parse import urljoin, urlsplit
+
+    from PIL import Image
+
+    class HeadLinks(HTMLParser):
+        def __init__(self, source):
+            super().__init__()
+            self.links = {}
+            self.meta = {}
+            self.feed(source)
+
+        def handle_starttag(self, tag, attrs):
+            attrs = dict(attrs)
+            if tag == 'link':
+                self.links[attrs.get('rel')] = attrs.get('href')
+            if tag == 'meta':
+                self.meta[attrs.get('name')] = attrs.get('content')
+
+    for path in ('/lk', '/lk/', '/lk?course_day=3&account_user=123', '/dqs', '/metabolism', '/recipes'):
+        page = client.get(path)
+        assert page.status_code == 200, path
+        head = HeadLinks(page.text)
+        manifest = client.get(head.links['manifest'])
+        assert manifest.status_code == 200
+        assert manifest.headers['content-type'].startswith('application/manifest+json')
+        assert manifest.headers['cache-control'] == 'no-cache'
+        data = manifest.json()
+        assert data['start_url'] == data['id'] == '/lk'
+        assert data['display'] == 'standalone'
+        assert head.meta['apple-mobile-web-app-capable'] == 'yes'
+        assert client.get(head.links['apple-touch-icon']).status_code == 200
+        scope = urlsplit(urljoin(str(manifest.url), data['scope']))
+        for route in ('/lk', '/training', '/dqs', '/metabolism', '/recipes'):
+            assert urlsplit(str(client.base_url)).netloc == scope.netloc
+            assert route.startswith(scope.path)
+
+    assert {icon['sizes'] for icon in data['icons']} >= {'192x192', '512x512'}
+    for icon in data['icons']:
+        asset = client.get(icon['src'])
+        assert asset.status_code == 200
+        assert asset.headers['content-type'].startswith('image/png')
+        assert 'x'.join(map(str, Image.open(io.BytesIO(asset.content)).size)) == icon['sizes']
+    assert client.get('/assets/unknown.webmanifest').status_code == 404

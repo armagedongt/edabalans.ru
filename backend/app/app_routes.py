@@ -782,7 +782,7 @@ def standalone_app_page(app_code: str, title: str) -> HTMLResponse:
         else "/favicon.png"
     )
     template = (
-        template.replace("{{PWA_HEAD}}", '<link rel="manifest" href="/assets/strength.webmanifest"><meta name="theme-color" content="#f5f5f7"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Силовые"><link rel="apple-touch-icon" href="/assets/strength-pwa-180.png">' if app_code == "strength" else "")
+        template.replace("{{PWA_HEAD}}", '<link rel="manifest" href="/assets/strength.webmanifest"><meta name="theme-color" content="#f5f5f7"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Силовые"><link rel="apple-touch-icon" href="/assets/strength-pwa-180.png">' if app_code == "strength" else '<link rel="manifest" href="/assets/account.webmanifest"><meta name="theme-color" content="#ffffff"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Личный кабинет"><link rel="apple-touch-icon" href="/apple-touch-icon.png">')
         .replace("{{APP_CODE}}", app_code)
         .replace("{{APP_TITLE}}", title)
         .replace("{{APP_FAVICON}}", favicon)
@@ -846,7 +846,7 @@ def typography_font(font_name: str) -> FileResponse:
 
 @router.get("/assets/{asset_name}", include_in_schema=False)
 def app_asset(asset_name: str) -> FileResponse:
-    if asset_name == "strength.webmanifest":
+    if asset_name in {"strength.webmanifest", "account.webmanifest"}:
         return FileResponse(STATIC_DIR / asset_name, media_type="application/manifest+json", headers={"Cache-Control": "no-cache"})
     if asset_name == "brain-logo.png":
         return public_asset(STATIC_DIR / "homepage-preview" / "favicon-no-outline.png")
@@ -857,6 +857,7 @@ def app_asset(asset_name: str) -> FileResponse:
         "dqs-favicon.svg", "strength-favicon.svg", "metabolism-favicon.svg",
         "strength-journal.css", "strength-journal-model.js", "strength-progression-model.mjs", "app-client-picker.mjs",
         "strength.webmanifest", "strength-pwa-180.png", "strength-pwa-192.png", "strength-pwa-512.png",
+        "account-pwa-512.png",
         "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png", "site-typography.css",
         "content-gallery.js", "public-program-card.css", "public-program-card.js",
         "account-visual.css", "account-legacy-offer.js", "course-visual.css", "calories-course.css",
