@@ -16,6 +16,7 @@
     "test:strength-editor": "node strength-editor.e2e.mjs",
     "test:admin-shell": "node admin-shell.e2e.mjs",
     "test:blog-draft-authoring": "node blog-draft-authoring.e2e.mjs",
+    "test:course-shell": "node course-shell.e2e.mjs",
     "test:account-theme": "node account-theme.e2e.mjs",
     "test:account-offers-layout": "node account-offers-layout.e2e.mjs",
     "test:dqs-access": "node dqs-access.e2e.mjs"

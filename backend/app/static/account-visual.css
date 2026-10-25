@@ -104,7 +104,7 @@
 .legacy-card { display: block; }
 .legacy-link { display: block; margin-top: 14px; text-align: center; }
 }
-html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app):not(:has(#masterclass-course-app)) { background: rgb(255, 255, 255) !important; }
+html:has(#account-app):not(:has(.course-shell)), body:has(#account-app):not(:has(.course-shell)) { background: rgb(255, 255, 255) !important; }
 #account-app { --ink: #17191e; --muted: #3f4b55; --paper: #fff; --card: #fff; --line: rgba(17,142,216,.16); --accent: #27aff5; --accent-soft: #eef9ff; --radius-large: 18px; --radius-small: 14px; --radius-control: 12px; min-height: 100vh; color: var(--ink); font: 500 16px / 1.55 var(--ed-font-body, Manrope, Arial, sans-serif); background: transparent !important; }
 #account-app .account-shell { width: min(1080px, 100%); padding: 34px 24px 80px; }
 #account-app .account-head { max-width: 760px; margin-bottom: 31px; padding-bottom: 0; border-bottom: 0; }

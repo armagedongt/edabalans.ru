@@ -24,7 +24,7 @@ owns_files = [
 owns_routes = ["*/embed.js", "*/site-footer.js", "*/cookie-notice.js", "*/favicon.ico", "*/favicon.png", "*/apple-touch-icon.png"]
 sources = [
   { path = "backend/app/site_links.py", role = "runtime", shared = true, consumers = ["messaging.telegram.attribution", "operations.delivery", "platform.blog", "platform.commerce", "platform.content", "platform.knowledge", "products", "products.calories", "products.intensive", "products.masterclass.course", "products.masterclass.questionnaires", "products.public-site"] },
-  { path = "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.masterclass.runtime", "products.calories", "products.public-site", "products.intensive"] },
+  { path = "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.masterclass.runtime", "products.calories", "products.recipes", "products.public-site", "products.intensive"] },
   { path = "backend/app/static/site-cookie-notice.js", role = "runtime", shared = true, consumers = ["products.public-site", "platform.blog", "products.intensive"] },
 ]
 
@@ -390,6 +390,7 @@ owns_files = [
   "backend/app/static/account-theme.css", "backend/app/static/account-theme.js",
   "backend/app/static/course-product-popup.js", "backend/app/static/course-product-popup.css",
   "backend/tests/browser/account-theme.e2e.mjs",
+  "backend/tests/browser/course-shell.e2e.mjs",
   "backend/tests/browser/account-offers-layout.e2e.mjs",
   "backend/tests/browser/embed-loading.e2e.mjs",
   "work/lk-loading-polish-20260917/**",
@@ -577,7 +578,7 @@ depends_on = [
   "platform.auth", "platform.content", "products.catalog",
   "products.masterclass.course", "products.metabolism", "operations.delivery",
 ]
-reads_from = ["platform.web_design", "platform", "platform.content"]
+reads_from = ["platform.web_design", "platform", "platform.content", "products.masterclass.course"]
 owns_files = [
   "backend/app/calorie_course_routes.py", "backend/app/calorie_course_service.py",
   "backend/app/calorie_course_material_service.py",
@@ -618,7 +619,7 @@ owns_files = [
 owns_tables = ["nutrition_products", "recipe_books", "recipe_ingredients"]
 owns_routes = ["*/apps/recipes*", "*/api/apps/recipes*", "*/api/recipes/course*", "*/recipes", "*/recipe-calculator"]
 depends_on = ["platform.auth", "platform.commerce", "operations.imports", "products.masterclass.course"]
-reads_from = ["platform.web_design", "platform.content", "products.masterclass.runtime"]
+reads_from = ["platform", "products.masterclass.course", "platform.web_design", "platform.content", "products.masterclass.runtime"]
 writes_to = ["platform.content", "products.masterclass.runtime"]
 sources = [
   { path = "backend/app/recipe_originals.py", role = "runtime", shared = true, consumers = ["products.masterclass.course"] },
@@ -734,6 +735,8 @@ owns_routes = [
   "*/recipe-preview/*",
 ]
 sources = [
+  { path = "backend/app/static/masterclass-first-days-preview.html", role = "runtime", shared = true, consumers = ["products", "products.masterclass.runtime", "products.calories", "products.recipes"] },
+  { path = "backend/app/static/course-visual.css", role = "runtime", shared = true, consumers = ["products", "products.masterclass.runtime", "products.calories", "products.recipes"] },
   { path = "content/masterclass/course/course.json", role = "seed", shared = true, consumers = ["products.masterclass.runtime"] },
     { path = "content/masterclass/source-current", role = "copy", shared = true, consumers = ["products.masterclass.runtime"] },
     { path = "backend/app/github_content_editor.py", role = "runtime", shared = true, consumers = ["platform.content", "products.intensive"] },
