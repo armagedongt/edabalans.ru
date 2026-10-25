@@ -34,6 +34,14 @@ try{for(const width of [360,430,768,1440]){
  const input=dialog.getByRole('searchbox');await input.fill('Виктор');await rows.filter({hasText:'viktor@example.test'}).waitFor();assert((await rows.innerText()).includes('Ещё не открывал'));
  await dialog.getByRole('button',{name:'Добавить в избранное: Виктор',exact:true}).click();await dialog.getByRole('button',{name:'Убрать из избранного: Виктор',exact:true}).waitFor();assert.equal(reads,0,'favorite does not open or switch the account');
  await input.fill('');await dialog.getByRole('button',{name:'Уже заходили',exact:true}).click();await page.waitForFunction(()=>document.querySelectorAll('.ed-client-row').length===3);assert((await rows.first().innerText()).includes('Виктор'));
+ const favoritesToggle=dialog.getByRole('button',{name:'Избранное',exact:true}),own=dialog.getByRole('button',{name:'Мои данные',exact:true});
+ const ownBox=await own.boundingBox(),favoritesBox=await favoritesToggle.boundingBox();assert(Math.abs(ownBox.width-favoritesBox.width)<1);assert.equal(ownBox.y,favoritesBox.y);
+ for(const star of await dialog.locator('.ed-client-favorite').all()){const target=await star.boundingBox();assert(target.width>=48&&target.height>=48,'stars are easy to tap');}
+ const identity=rows.filter({hasText:'anna@example.test'}).locator('.ed-client-identity'),activity=rows.filter({hasText:'anna@example.test'}).locator('.ed-client-activity');
+ const identityBox=await identity.boundingBox(),activityBox=await activity.boundingBox();assert(activityBox.y>=identityBox.y+identityBox.height,'date stays on the second line');
+ assert.equal(await identity.evaluate(el=>getComputedStyle(el).whiteSpace),'nowrap');
+ await favoritesToggle.click();assert.equal(await rows.filter({hasText:'viktor@example.test'}).isVisible(),false);assert.equal(await rows.filter({hasText:'anna@example.test'}).isVisible(),true);assert.equal(await rows.filter({hasText:'boris@example.test'}).isVisible(),true);
+ await favoritesToggle.click();await rows.filter({hasText:'viktor@example.test'}).waitFor();
  await page.evaluate(()=>document.fonts.ready);await page.screenshot({path:path.join(output,`${width}-favorites.png`)});
  assert.equal(await dialog.evaluate(el=>el.scrollWidth>el.clientWidth),false);
  const box=await dialog.boundingBox();assert(box.x>=0&&box.y>=0&&box.x+box.width<=width&&box.y+box.height<=900);

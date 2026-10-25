@@ -557,7 +557,7 @@
               headers:{'Content-Type':'application/json'}, body:JSON.stringify({app_code:app})}).catch(function () {});
           }
           if (supportsClientPicker) managerContext().then(function (context) {
-            if (context.can_manage) return import(APP_HOST + '/assets/app-client-picker.mjs?v=20261025-activity').then(function (picker) {
+            if (context.can_manage) return import(APP_HOST + '/assets/app-client-picker.mjs?v=20261026-picker').then(function (picker) {
               picker.mount(mount, app, context, APP_HOST);
             });
           }).catch(function (error) { console.warn('Выбор клиента:', error.message); });

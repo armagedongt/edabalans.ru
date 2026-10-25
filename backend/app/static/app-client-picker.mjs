@@ -16,9 +16,9 @@ export function mount(root, app, context, host) {
       .ed-client-popup[open]{display:flex;flex-direction:column;gap:8px}.ed-client-popup::backdrop{background:transparent}.ed-client-popup header{display:flex;justify-content:space-between;align-items:center;gap:10px}
       .ed-client-popup button,.ed-client-popup input{font:inherit}.ed-client-popup button{cursor:pointer}.ed-client-popup header button{border:0;background:transparent;font-size:22px;min-width:36px;min-height:36px}
       .ed-client-popup input{box-sizing:border-box;width:100%;min-height:40px;padding:8px;border:1px solid #d8d8e4;border-radius:8px}.ed-client-list{overflow:auto;min-height:40px;overscroll-behavior:contain}
-      .ed-client-row{display:block;width:100%;padding:10px 8px;text-align:left;border:0;border-bottom:1px solid #efeff5;background:#fff;color:#17172b}.ed-client-row:hover,.ed-client-row[aria-current=true]{background:#f5f1ff}.ed-client-row strong,.ed-client-row small{display:block;overflow-wrap:anywhere}.ed-client-row small{color:#62677a}.ed-client-more,.ed-client-own{min-height:38px;border:1px solid #e7e7ef;background:#fff;color:#6f3de8;border-radius:8px}.ed-client-message{margin:0;color:#62677a;font-size:13px;overflow-wrap:anywhere}
+      .ed-client-row{display:block;width:100%;min-height:56px;padding:8px;text-align:left;border:0;border-bottom:1px solid #efeff5;background:#fff;color:#17172b}.ed-client-row:hover,.ed-client-row[aria-current=true]{background:#f5f1ff}.ed-client-row small{color:#62677a}.ed-client-identity{display:flex;align-items:baseline;gap:6px;min-width:0;white-space:nowrap}.ed-client-identity strong{flex:0 1 auto;max-width:48%;min-width:0;overflow:hidden;text-overflow:ellipsis}.ed-client-identity small{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:11px}.ed-client-more,.ed-client-own,.ed-client-favorites-toggle{min-height:40px;border:1px solid #e7e7ef;background:#fff;color:#6f3de8;border-radius:8px}.ed-client-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ed-client-favorites-toggle[aria-expanded=true]{background:var(--ed-app-accent-soft,#f5f1ff);border-color:var(--ed-app-accent,#6f3de8)}.ed-client-message{margin:0;color:#62677a;font-size:13px;overflow-wrap:anywhere}
       .ed-client-scopes{display:flex;flex-wrap:wrap;gap:4px}.ed-client-scopes button{flex:1;min-height:38px;padding:5px;border:1px solid var(--ed-app-line,#e7e7ef);border-radius:8px;background:#fff;color:inherit;font-size:12px}.ed-client-scopes button[aria-pressed=true]{background:var(--ed-app-accent-soft,#f5f1ff);border-color:var(--ed-app-accent,#6f3de8)}
-      .ed-client-item{display:grid;grid-template-columns:minmax(0,1fr) 38px;align-items:stretch;border-bottom:1px solid #efeff5}.ed-client-item .ed-client-row{border-bottom:0;min-width:0}.ed-client-favorite{border:0;background:#fff;color:var(--ed-app-accent,#6f3de8);font-size:22px;min-height:40px;padding:0}.ed-client-group{margin:8px 0 3px;font-size:12px;font-weight:700;color:#62677a}.ed-client-row .ed-client-activity{margin-top:4px;font-size:11px;color:#62677a}
+      .ed-client-item{display:grid;grid-template-columns:minmax(0,1fr) 48px;align-items:stretch;border-bottom:1px solid #efeff5}.ed-client-item .ed-client-row{border-bottom:0;min-width:0}.ed-client-popup .ed-client-favorite{border:0;background:#fff;color:var(--ed-app-accent,#6f3de8);font-size:30px;line-height:1;min-width:48px;min-height:48px;padding:0;touch-action:manipulation}.ed-client-group{margin:8px 0 3px;font-size:12px;font-weight:700;color:#62677a}.ed-client-row .ed-client-activity{display:block;margin-top:3px;font-size:10px;line-height:1.2;color:#62677a}
     `;
     document.head.append(style);
   }
@@ -90,13 +90,17 @@ export function mount(root, app, context, host) {
     dialog?.remove(); opener = button;
     dialog = document.createElement('dialog'); dialog.className = 'ed-client-popup'; dialog.setAttribute('aria-label', 'Выбрать клиента');
     dialog.dataset.app = app;
-    dialog.innerHTML = '<header><strong>Выбрать клиента</strong><button type="button" aria-label="Закрыть">×</button></header><div class="ed-client-scopes" role="group" aria-label="Показать клиентов"><button type="button" data-scope="used" aria-pressed="true">Уже заходили</button><button type="button" data-scope="active" aria-pressed="false">Активные · 30 дней</button><button type="button" data-scope="all" aria-pressed="false">Все клиенты</button></div><input type="search" aria-label="Имя, фамилия или email" placeholder="Имя, фамилия или email" autocomplete="off"><button class="ed-client-own" type="button">Мои данные</button><p class="ed-client-message" role="status"></p><div class="ed-client-list"></div><button class="ed-client-more" type="button" hidden>Показать ещё</button>';
+    dialog.innerHTML = '<header><strong>Выбрать клиента</strong><button type="button" aria-label="Закрыть">×</button></header><div class="ed-client-scopes" role="group" aria-label="Показать клиентов"><button type="button" data-scope="used" aria-pressed="true">Уже заходили</button><button type="button" data-scope="active" aria-pressed="false">Активные · 30 дней</button><button type="button" data-scope="all" aria-pressed="false">Все клиенты</button></div><input type="search" aria-label="Имя, фамилия или email" placeholder="Имя, фамилия или email" autocomplete="off"><div class="ed-client-actions"><button class="ed-client-own" type="button">Мои данные</button><button class="ed-client-favorites-toggle" type="button" aria-controls="ed-client-favorites">Избранное</button></div><p class="ed-client-message" role="status"></p><div class="ed-client-list"></div><button class="ed-client-more" type="button" hidden>Показать ещё</button>';
     document.body.append(dialog);
     if(app==='account'){
       dialog.querySelector('.ed-client-own').textContent='Мой кабинет';
       const logout=document.createElement('button');logout.type='button';logout.className='ed-client-own';logout.textContent='Выйти';logout.onclick=()=>root.querySelector('.account-logout').click();dialog.append(logout);
     }
     const currentDialog = dialog, list = dialog.querySelector('.ed-client-list'), input = dialog.querySelector('input'), message = dialog.querySelector('[role=status]'), more = dialog.querySelector('.ed-client-more');
+    const favoritesToggle = dialog.querySelector('.ed-client-favorites-toggle');
+    let favoritesExpanded = favorites.size > 0;
+    favoritesToggle.setAttribute('aria-expanded', String(favoritesExpanded));
+    favoritesToggle.onclick = () => { favoritesExpanded = !favoritesExpanded; renderRows(); };
     let generation = 0, timer, offset = 0, busy = false, scope = 'used', users = [];
     function close() { clearTimeout(timer); generation++; currentDialog.close(); currentDialog.remove(); opener?.focus({preventScroll: true}); }
     currentDialog.querySelector('header button').onclick = close;
@@ -128,15 +132,20 @@ export function mount(root, app, context, host) {
     function renderRows() {
       list.replaceChildren();
       users.sort((a,b) => Number(favorites.has(b.user_id))-Number(favorites.has(a.user_id)) || (Date.parse(b.last_opened_at)||0)-(Date.parse(a.last_opened_at)||0));
-      let group;
+      favoritesToggle.setAttribute('aria-expanded', String(favoritesExpanded));
+      const favoriteList = document.createElement('div'); favoriteList.id = 'ed-client-favorites'; favoriteList.hidden = !favoritesExpanded;
+      list.append(favoriteList);
+      let regularHeading = false;
       for (const user of users) {
-        const favorite = favorites.has(user.user_id), nextGroup = favorite ? 'Избранное' : scope === 'all' ? 'Результаты поиска' : 'Пользовались приложением';
-        if (group !== nextGroup) { const heading = document.createElement('h3'); heading.className = 'ed-client-group'; heading.textContent = nextGroup; list.append(heading); group = nextGroup; }
+        const favorite = favorites.has(user.user_id);
+        if (!favorite && !regularHeading) { const heading = document.createElement('h3'); heading.className = 'ed-client-group'; heading.textContent = scope === 'all' ? 'Результаты поиска' : 'Пользовались приложением'; list.append(heading); regularHeading = true; }
         const item = document.createElement('div'); item.className = 'ed-client-item'; item.dataset.userId = user.user_id;
         const row = document.createElement('button'); row.type = 'button'; row.className = 'ed-client-row'; row.setAttribute('aria-current', String(user.user_id === identity.user_id));
         const name = document.createElement('strong'), email = document.createElement('small'), activity = document.createElement('small');
-        name.textContent = displayName(user); email.textContent = user.email; row.append(name);
-        if (name.textContent !== user.email) row.append(email);
+        const line = document.createElement('span'); line.className = 'ed-client-identity';
+        name.textContent = displayName(user); email.textContent = user.email; line.append(name);
+        if (name.textContent !== user.email) line.append(email); else name.style.maxWidth = '100%';
+        row.append(line); row.title = [...new Set([name.textContent,user.email].filter(Boolean))].join(' · ');
         activity.className = 'ed-client-activity';
         activity.textContent = user.has_opened_app ? 'Открывал' + (user.last_opened_at ? ' · ' + new Date(user.last_opened_at).toLocaleDateString('ru-RU') : '') : 'Ещё не открывал';
         row.append(activity); row.onclick = () => choose(user);
@@ -146,10 +155,12 @@ export function mount(root, app, context, host) {
           const next = new Set(favorites);
           if (next.has(user.user_id)) next.delete(user.user_id); else if (next.size < 100) next.add(user.user_id); else { message.textContent = 'В избранном уже 100 клиентов.'; return; }
           try { localStorage.setItem(favoriteKey, JSON.stringify([...next])); } catch { message.textContent = 'Браузер не разрешил сохранить избранное.'; return; }
+          if (next.has(user.user_id)) favoritesExpanded = true;
           favorites = next; renderRows(); draw(false, true);
         };
-        item.append(row, star); list.append(item);
+        item.append(row, star); (favorite ? favoriteList : list).append(item);
       }
+      if (!favoriteList.childElementCount) { const empty = document.createElement('p'); empty.className = 'ed-client-message'; empty.textContent = 'Пока нет избранных в этом списке.'; favoriteList.append(empty); }
     }
     async function draw(append = false, preserve = false) {
       const request = ++generation;
