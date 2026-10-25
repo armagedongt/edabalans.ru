@@ -16,7 +16,7 @@ from app.account_auth_routes import COOKIE_NAME
 from app.account_security import token_hash
 from app.config import Settings, get_settings
 from app.database import Base, get_db
-from app.models import AccountCredential, AccountSession, AdminAppEdit, DqsState, MetabolismState, StrengthState, User, UserEmail, Resource, UserAccess
+from app.models import AccountCredential, AccountSession, AdminAppEdit, DqsState, MetabolismState, StrengthState, TelegramTrackingEvent, User, UserEmail, Resource, UserAccess
 from app.recipe_models import NutritionProduct
 
 
@@ -60,6 +60,97 @@ def test_owner_session_can_select_client_without_general_admin_access(setup):
     assert response.json()['selected']['user_id'] == str(ids[1])
     assert client.get('/admin/api/apps/users?app_code=strength').status_code == 401
     assert client.get('/api/account-auth/session').json()['email'] == 'armagedongt@gmail.com'
+
+
+def test_app_directory_prioritizes_openings_and_favorites_and_filters_active_30_days(setup):
+    client, factory, ids, sign_in = setup; sign_in(0)
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        for state in db.scalars(select(StrengthState)):
+            state.source = 'google_strength'
+        for index, days in [(1, 2), (2, 45)]:
+            db.add(TelegramTrackingEvent(user_id=ids[index], event_type='application_activity',
+                deduplication_key=f'application_activity:{ids[index]}:strength', occurred_at=now-timedelta(days=days),
+                metadata_json={'app_code':'strength','first_opened_at':(now-timedelta(days=60)).isoformat()}))
+        lead=User(display_name='Лид без входа',status='active');db.add(lead);db.flush();lead_id=str(lead.id)
+        db.add(UserEmail(user_id=lead.id,email_original='lead@example.test',email_normalized='lead@example.test',source='test'))
+        db.commit()
+    params={'app_code':'strength','scope':'used'}
+    used=client.get('/api/apps/manager/users',params=params).json()['users']
+    assert [row['user_id'] for row in used]==[str(ids[1]),str(ids[2])]
+    assert all(row['has_opened_app'] and row['first_opened_at'] for row in used)
+    active=client.get('/api/apps/manager/users',params={**params,'scope':'active'}).json()['users']
+    assert [row['user_id'] for row in active]==[str(ids[1])]
+    pinned=client.get('/api/apps/manager/users',params={**params,'favorite_ids':lead_id}).json()['users']
+    assert pinned[0]['user_id']==lead_id and pinned[0]['has_opened_app'] is False
+    all_users=client.get('/api/apps/manager/users',params={**params,'scope':'all','q':'lead@example.test'}).json()['users']
+    assert [row['user_id'] for row in all_users]==[lead_id]
+    assert client.get('/api/apps/manager/users',params={**params,'app_code':'unknown'}).status_code==422
+    assert client.get('/api/apps/manager/users',params={**params,'favorite_ids':'not-an-id'}).status_code==422
+
+
+def test_activity_is_independent_for_every_application_even_with_recent_shared_session(setup):
+    client,factory,ids,sign_in=setup;sign_in(0)
+    now=datetime.now(timezone.utc)
+    codes=['account','strength','dqs','metabolism','recipes']
+    with factory() as db:
+        for model in [StrengthState,DqsState,MetabolismState]:
+            for state in db.scalars(select(model)):
+                state.source='admin_open'
+        for index,code in enumerate(codes):
+            days=2 if index%2==0 else 45
+            db.add(TelegramTrackingEvent(user_id=ids[1],event_type='application_activity',
+                deduplication_key=f'application_activity:{ids[1]}:{code}',occurred_at=now-timedelta(days=days),
+                metadata_json={'app_code':code,'first_opened_at':(now-timedelta(days=60)).isoformat()}))
+        for path in ['/lk','/training','/dqs','/metabolism','/recipes']:
+            db.add(TelegramTrackingEvent(user_id=ids[2],event_type='browser_page',occurred_at=now,
+                metadata_json={'page_url':'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai'+path}))
+        # Shared native session activity is not evidence of visiting a specific application.
+        db.commit()
+    for index,code in enumerate(codes):
+        params={'app_code':code,'scope':'used'}
+        used=client.get('/api/apps/manager/users',params=params).json()['users']
+        assert [row['user_id'] for row in used]==[str(ids[1])],code
+        assert datetime.fromisoformat(used[0]['last_opened_at'])==now-timedelta(days=2 if index%2==0 else 45),code
+        active=client.get('/api/apps/manager/users',params={**params,'scope':'active'}).json()['users']
+        assert [row['user_id'] for row in active]==([str(ids[1])] if index%2==0 else []),code
+
+
+def test_native_creation_is_evidence_but_import_and_admin_open_are_not(setup):
+    client, factory, ids, sign_in=setup;sign_in(0)
+    old=datetime.now(timezone.utc)-timedelta(days=60)
+    with factory() as db:
+        for index,source in [(0,'google_strength'),(1,'admin_open'),(2,'app')]:
+            state=db.scalar(select(StrengthState).where(StrengthState.user_id==ids[index]))
+            state.source=source;state.created_at=old;state.updated_at=datetime.now(timezone.utc)
+        db.commit()
+    rows=client.get('/api/apps/manager/users',params={'app_code':'strength','scope':'used'}).json()['users']
+    assert [row['user_id'] for row in rows]==[str(ids[2])]
+    assert client.get('/api/apps/manager/users',params={'app_code':'strength','scope':'active'}).json()['users']==[]
+
+
+def test_activity_is_native_self_only_and_keeps_first_and_last_separately(setup):
+    client,factory,ids,sign_in=setup
+    assert client.post('/api/apps/activity',json={'app_code':'account'}).status_code==401
+    sign_in(1)
+    assert client.post('/api/apps/activity',json={'app_code':'strength'}).json()['recorded'] is False
+    assert client.post('/api/apps/activity',json={'app_code':'account','target_user_id':str(ids[2])}).status_code==422
+    assert client.post('/api/apps/activity',json={'app_code':'account'}).json()['recorded'] is True
+    with factory() as db:
+        event=db.scalar(select(TelegramTrackingEvent).where(TelegramTrackingEvent.event_type=='application_activity'))
+        first=event.metadata_json['first_opened_at'];event.occurred_at=datetime.now(timezone.utc)-timedelta(days=2);db.commit()
+    assert client.post('/api/apps/activity',json={'app_code':'account'}).json()['recorded'] is True
+    with factory() as db:
+        events=db.scalars(select(TelegramTrackingEvent).where(TelegramTrackingEvent.event_type=='application_activity')).all()
+        assert len(events)==1 and events[0].user_id==ids[1] and events[0].metadata_json['first_opened_at']==first
+        last=events[0].occurred_at.replace(tzinfo=timezone.utc)
+        assert last>datetime.now(timezone.utc)-timedelta(minutes=1)
+    sign_in(0)
+    for headers in [{'X-Edabalans-Account-User':str(ids[1])},{'Referer':'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/training?app_user='+str(ids[1])}]:
+        assert client.post('/api/apps/activity',json={'app_code':'account'},headers=headers).json()['recorded'] is False
+    assert client.post('/api/apps/activity',json={'app_code':'account'},headers={'Origin':'https://foreign.example'}).status_code==403
+    with factory() as db:
+        assert db.scalar(select(TelegramTrackingEvent).where(TelegramTrackingEvent.user_id==ids[0])) is None
 
 
 def test_other_users_cannot_spoof_owner_or_read_any_managed_app(setup):

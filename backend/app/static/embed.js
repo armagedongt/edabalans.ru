@@ -551,8 +551,13 @@
           return readyRequests.get(mount);
         }).then(function () {
           finishLoading(mount);
+          if (['account','strength','dqs','metabolism','recipes'].indexOf(app) >= 0 && !adminUser && !accountViewUser) {
+            // Successful mounting is a real opening; HTML prefetch and managed previews are not.
+            fetch(APP_HOST + '/api/apps/activity', {method:'POST', credentials:'include',
+              headers:{'Content-Type':'application/json'}, body:JSON.stringify({app_code:app})}).catch(function () {});
+          }
           if (supportsClientPicker) managerContext().then(function (context) {
-            if (context.can_manage) return import(APP_HOST + '/assets/app-client-picker.mjs?v=20261022-2').then(function (picker) {
+            if (context.can_manage) return import(APP_HOST + '/assets/app-client-picker.mjs?v=20261025-activity').then(function (picker) {
               picker.mount(mount, app, context, APP_HOST);
             });
           }).catch(function (error) { console.warn('Выбор клиента:', error.message); });

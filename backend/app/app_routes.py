@@ -10,12 +10,13 @@ import uuid
 from datetime import date, datetime, timezone
 from io import BytesIO
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from xml.sax.saxutils import escape
 
 import qrcode
 import qrcode.image.svg
+from pydantic import BaseModel, ConfigDict
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.security import HTTPBasicCredentials
 from fastapi.responses import (
@@ -2101,8 +2102,39 @@ def app_manager_context(request: Request, app_user: str = "", db: Session = Depe
 
 @router.get("/api/apps/manager/users")
 def app_manager_users(q: str = Query(default="", max_length=255), offset: int = Query(default=0, ge=0),
+                      app_code: Literal["account", "strength", "dqs", "metabolism", "recipes"] = "account",
+                      scope: Literal["all", "used", "active"] = "all",
+                      favorite_ids: list[uuid.UUID] = Query(default=[], max_length=100),
                       _: str = Depends(require_application_manager), db: Session = Depends(get_db)) -> dict:
-    return JSONResponse(client_directory(db, q, offset), headers={"Cache-Control": "no-store"})
+    return JSONResponse(client_directory(db, q, offset, app_code=app_code, scope=scope, favorite_ids=favorite_ids), headers={"Cache-Control": "no-store"})
+
+
+class ApplicationActivityIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    app_code: Literal["account", "strength", "dqs", "metabolism", "recipes"]
+
+
+@router.post("/api/apps/activity")
+def record_app_activity(body: ApplicationActivityIn, request: Request, db: Session = Depends(get_db)) -> dict:
+    from app.account_auth_routes import ACCOUNT_VIEW_HEADER
+    from app.app_management import record_application_open
+    origin = request.headers.get("origin")
+    if origin and (urlsplit(origin).scheme, urlsplit(origin).netloc) != (request.url.scheme, request.url.netloc):
+        raise HTTPException(403, "Недопустимый источник запроса")
+    user = require_native_user(request, db)
+    source = urlsplit(request.headers.get("referer", ""))
+    managed = request.headers.get(ACCOUNT_VIEW_HEADER) or any(key in dict(parse_qsl(source.query)) for key in ("app_user", "account_user"))
+    if managed:
+        return {"ok": True, "recorded": False}
+    if body.app_code in {"dqs", "strength", "metabolism"} and not application_access_state(db, user.id, body.app_code)["start_open"]:
+        return {"ok": True, "recorded": False}
+    if body.app_code == "recipes":
+        from app.course_access_service import active_resource_codes
+        if "recipes" not in active_resource_codes(db, user.id):
+            return {"ok": True, "recorded": False}
+    record_application_open(db, user.id, body.app_code)
+    db.commit()
+    return {"ok": True, "recorded": True}
 
 
 @router.get("/admin/api/apps/users")

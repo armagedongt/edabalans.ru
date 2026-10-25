@@ -1003,6 +1003,7 @@ try {
     console.log('Checking shared loader: '+code)
     const app=await browser.newPage()
     const pending=barrier()
+    const activity=[]
     await app.route(origin+'/**',async route=>{
       const path=new URL(route.request().url()).pathname
       if(path==='/')return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div data-edabalans-app="'+code+'"></div><script src="/embed.js"></script>'})
@@ -1011,6 +1012,7 @@ try {
       if(path==='/api/apps/dqs/access')return route.fulfill({json:{legal:{required:false}}})
       if(path==='/apps/'+code+'.html')return route.fulfill({contentType:'text/html',body:'<div id="'+id+'">Готово</div><script>EdabalansEmbed.waitUntilReady(document.getElementById("'+id+'"),fetch("/api/first-screen"))</script>'})
       if(path==='/api/first-screen'){await pending.promise;return route.fulfill({json:{ok:true}})}
+      if(path==='/api/apps/activity'){activity.push(route.request().postDataJSON());return route.fulfill({json:{ok:true,recorded:true}})}
       return route.fulfill({contentType:'text/css',body:''})
     })
     await app.goto(origin,{waitUntil:'domcontentloaded'})
@@ -1020,9 +1022,16 @@ try {
     })
     assert.equal(await app.locator('.ed-loading-screen').count(),1,code)
     assert.equal(await app.locator('#'+id).isVisible(),false,code)
+    assert.equal(activity.length,0,code+' must wait for first screen')
+    const activityReady=['account','dqs','strength','metabolism','recipes'].includes(code)
+      ? app.waitForResponse(response=>response.url().endsWith('/api/apps/activity')) : null
     pending.release()
     await waitForReveal(app)
     assert.equal(await app.locator('#'+id).isVisible(),true,code)
+    if(['account','dqs','strength','metabolism','recipes'].includes(code)) {
+      await activityReady
+      assert.deepEqual(activity,[{app_code:code}],code+' records its own opening')
+    } else assert.equal(activity.length,0,code)
     await app.close()
   }
 

@@ -370,7 +370,7 @@ owns_routes = ["*/preview/app-visual-catalog*"]
 
 [[modules]]
 id = "products"
-reads_from = ["platform", "platform.crm", "platform.web_design", "products.masterclass.course"]
+reads_from = ["platform", "platform.crm", "platform.web_design", "products.masterclass.course", "messaging.telegram.attribution"]
 card = "docs/knowledge-base/modules/catalog/products.md"
 depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
@@ -392,6 +392,7 @@ owns_files = [
   "backend/tests/browser/account-theme.e2e.mjs",
   "backend/tests/browser/account-offers-layout.e2e.mjs",
   "backend/tests/browser/embed-loading.e2e.mjs",
+  "backend/tests/browser/client-picker-activity.e2e.mjs",
   "work/lk-loading-polish-20260917/**",
   "work/finance-actuals/**",
   "backend/app/importers/google_apps.py", "backend/tests/test_google_apps_import.py",
@@ -399,6 +400,7 @@ owns_files = [
 ]
 owns_routes = [
   "*/apps/*", "*/assets/*", "*/max-app", "*/finance*", "*/admin/api/finance/plans*",
+  "*/api/apps/manager/*", "*/api/apps/activity",
   "*/admin/api/finance/facts*", "*/admin/api/finance/expenses*",
 ]
 
