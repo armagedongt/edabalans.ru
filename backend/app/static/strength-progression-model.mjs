@@ -133,17 +133,17 @@ export function cardRequest(sessions, targetIndex, exerciseId, profile) {
   if (!exercise) throw new Error('В этой тренировке нет сохранённой записи упражнения.');
   const prior = sessions.slice(0, targetIndex).flatMap((session, order) => {
     const item = byExercise(session, exerciseId);
-    return item && item.sets.some(row => filled(row.factWeight) || filled(row.factReps)) ? [{session, exercise:item, order}] : [];
+    return item && item.sets.some(row => row.role !== 'warmup' && (filled(row.factWeight) || filled(row.factReps))) ? [{session, exercise:item, order}] : [];
   });
   if (!prior.length) throw new Error('Нужна хотя бы одна предыдущая запись с фактом этого упражнения.');
   if (prior.some(item => !/^\d{4}-\d{2}-\d{2}$/.test(item.session.date || ''))) throw new Error('Укажите дату в предыдущих тренировках с фактом этого упражнения.');
   const targetDate = target.date || prior.reduce((date,item)=>item.session.date > date ? item.session.date : date,'');
   const comparable = prior.filter(item=>item.session.date<=targetDate).toSorted((a,b)=>a.session.date.localeCompare(b.session.date)||a.order-b.order);
   if (!comparable.length) throw new Error('Нет факта этого упражнения до даты выбранной тренировки.');
-  const latest = comparable.at(-1).exercise, hasPlan = exercise.sets.some(row => filled(row.planWeight) || filled(row.planReps));
+  const latest = comparable.at(-1).exercise, hasPlan = exercise.sets.some(row => row.role !== 'warmup' && (filled(row.planWeight) || filled(row.planReps)));
   if (profile.last_reduced && !hasPlan) throw new Error('После облегчённой тренировки сначала задайте обычный базовый план в этой карточке.');
   const baseline = exercise.sets.map((row, i) => {
-    const source = hasPlan ? row : latest.sets[i] || {};
+    const source = hasPlan || row.role === 'warmup' ? row : latest.sets[i] || {};
     let w = uiNumber(source.planWeight), r = uiNumber(source.planReps);
     if (!hasPlan) {
       if (!filled(w)) w = uiNumber(source.factWeight);

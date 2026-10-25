@@ -1576,20 +1576,26 @@ def create_messenger_link(
     settings: Settings = Depends(get_settings),
 ) -> dict:
     user = resolve_masterclass_user(request, db, body.email, settings)
+    return create_user_messenger_link(db, user, body.platform, settings)
+
+
+def create_user_messenger_link(db: Session, user: User, platform: str, settings: Settings) -> dict:
+    if platform not in {"telegram", "max"}:
+        raise HTTPException(422, "unsupported messenger platform")
     username = (
         settings.account_telegram_bot_username
-        if body.platform == "telegram"
+        if platform == "telegram"
         else settings.account_max_bot_username
     ).strip().lstrip("@")
-    if not username or (body.platform == "telegram" and not re.fullmatch(r"[A-Za-z0-9_]{5,32}", username)):
-        raise HTTPException(503, f"{body.platform.upper()} bot is not configured")
+    if not username or (platform == "telegram" and not re.fullmatch(r"[A-Za-z0-9_]{5,32}", username)):
+        raise HTTPException(503, f"{platform.upper()} bot is not configured")
 
     now = datetime.now(timezone.utc)
     purpose = "link_account"
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     for previous in db.scalars(select(MessengerLinkToken).where(
         MessengerLinkToken.user_id == user.id,
-        MessengerLinkToken.platform == body.platform,
+        MessengerLinkToken.platform == platform,
         MessengerLinkToken.purpose == purpose,
         MessengerLinkToken.consumed_at.is_(None),
         MessengerLinkToken.expires_at > now,
@@ -1602,7 +1608,7 @@ def create_messenger_link(
     expires_at = now + timedelta(minutes=15)
     db.add(MessengerLinkToken(
         user_id=user.id,
-        platform=body.platform,
+        platform=platform,
         purpose=purpose,
         token_hash=hashlib.sha256(payload.encode("ascii")).hexdigest(),
         expires_at=expires_at,
@@ -1610,10 +1616,10 @@ def create_messenger_link(
     db.commit()
     return {
         "ok": True,
-        "platform": body.platform,
+        "platform": platform,
         "deep_link": (
             f"https://t.me/{username}?start={payload}"
-            if body.platform == "telegram"
+            if platform == "telegram"
             else f"https://max.ru/{username}?start={payload}"
         ),
         "expires_at": expires_at.isoformat(),
@@ -1726,19 +1732,25 @@ def set_preferred_messenger(
     settings: Settings = Depends(get_settings),
 ) -> dict:
     user = resolve_masterclass_user(request, db, body.email, settings)
+    return set_user_preferred_messenger(db, user, body.platform)
+
+
+def set_user_preferred_messenger(db: Session, user: User, platform: str) -> dict:
+    if platform not in {"telegram", "max"}:
+        raise HTTPException(422, "unsupported messenger platform")
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     target = db.scalar(
         select(MessengerAccount)
         .where(
             MessengerAccount.user_id == user.id,
-            MessengerAccount.platform == body.platform,
+            MessengerAccount.platform == platform,
             MessengerAccount.linked_at.is_not(None),
             MessengerAccount.is_deliverable.is_(True),
         )
         .order_by(MessengerAccount.linked_at.desc(), MessengerAccount.id.desc())
     )
     if target is None:
-        raise HTTPException(409, f"{body.platform.upper()} ещё не подключён")
+        raise HTTPException(409, f"{platform.upper()} ещё не подключён")
     db.execute(
         update(MessengerAccount)
         .where(MessengerAccount.user_id == user.id)

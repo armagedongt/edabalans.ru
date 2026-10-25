@@ -855,7 +855,7 @@ def app_asset(asset_name: str) -> FileResponse:
         return public_asset(STATIC_DIR.parents[2] / "content" / "article-components" / filename)
     if asset_name not in {
         "dqs-favicon.svg", "strength-favicon.svg", "metabolism-favicon.svg",
-        "strength-journal.css", "strength-journal-model.js", "strength-progression-model.mjs", "app-client-picker.mjs",
+        "strength-journal.css", "strength-journal-model.js", "strength-progression-model.mjs", "app-client-picker.mjs", "messenger-connection.mjs",
         "strength.webmanifest", "strength-pwa-180.png", "strength-pwa-192.png", "strength-pwa-512.png",
         "account-pwa-512.png",
         "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png", "site-typography.css",
@@ -1686,9 +1686,28 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             state = empty_strength_state(user.id)
             db.add(state)
             db.flush()
-        user_payload = {"user_id": str(user.id), "email": primary_email(db, user.id), "display_name": user.display_name or "", "status": user.status}
+        from app.account_auth_routes import ACCOUNT_VIEW_HEADER
+        can_coach = bool(application_manager(request, db)) and not request.headers.get(ACCOUNT_VIEW_HEADER)
+        user_payload = {"user_id": str(user.id), "email": primary_email(db, user.id), "display_name": user.display_name or "", "status": user.status, "can_coach": can_coach, "can_calculate_progression": can_coach}
         if action == "openUser":
             payload = {"ok": True, "user": user_payload}
+        elif action == "messengerState":
+            from app.masterclass_routes import _messenger_state, preferred_messenger_account
+            payload = _messenger_state(db, user.id)
+            destination = preferred_messenger_account(db, user.id)
+            payload["destination"] = destination.platform if destination else None
+            settings = get_settings()
+            payload["bot_links"] = {
+                "telegram": "https://t.me/" + settings.account_telegram_bot_username.strip().lstrip("@"),
+                "max": "https://max.ru/" + settings.account_max_bot_username.strip().lstrip("@"),
+            }
+        elif action in {"createMessengerLink", "preferMessenger"}:
+            if request.method != "POST":
+                raise HTTPException(405, "Требуется POST")
+            from app.masterclass_routes import create_user_messenger_link, set_user_preferred_messenger
+            platform = str(body.get("platform") or "")
+            payload = (create_user_messenger_link(db, user, platform, get_settings())
+                       if action == "createMessengerLink" else set_user_preferred_messenger(db, user, platform))
         elif action == "getWorkout":
             workout_type = int(body.get("type") or 1)
             if str(body.get("initial") or "") == "1":
@@ -1766,7 +1785,9 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
                                 row["role"] = previous_set["role"]
                         if "role" in row and row["role"] not in ("warmup", "work"):
                             raise ValueError("INVALID_SET_ROLE")
-                    if "coach_note" in exercise:
+                    if not can_coach:
+                        exercise["coach_note"] = previous_exercise.get("coach_note", "")
+                    elif "coach_note" in exercise:
                         if not isinstance(exercise["coach_note"], str) or len(exercise["coach_note"]) > 20000:
                             raise ValueError("INVALID_COACH_NOTE")
                     else:

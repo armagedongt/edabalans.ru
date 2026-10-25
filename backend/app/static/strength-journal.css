@@ -234,3 +234,17 @@
 .st-progression-done{color:#258044}
 
 .st-tutorial-frame{position:fixed;inset:0;z-index:1200;background:#fff}.st-tutorial-frame iframe{display:block;width:100%;height:100%;border:0}
+
+/* Actions share the bottom edge of the exercise card in both history views. */
+#strength-app .st-history-column{display:flex;flex-direction:column}
+#strength-app .st-history-column .st-modern-editor{flex:1}
+.st-exercise-actions{margin-top:auto}
+.st-progression-bar{display:flex;align-items:stretch;border:1px solid var(--st-accent-line);border-radius:7px;background:var(--st-accent-soft);overflow:hidden;margin:5px 0 0}
+#strength-app .st-progression-bar button{border:0;border-radius:0;background:transparent}
+#strength-app .st-progression-trigger{flex:1;min-width:0}
+#strength-app .st-progression-bar .st-progression-info{flex:0 0 30px;width:30px;border-left:1px solid var(--st-accent-line)}
+#strength-app .st-note-field textarea{box-sizing:border-box;height:80px;min-height:80px;line-height:20px;overflow:hidden}
+#strength-app .st-note-field textarea[readonly]{cursor:default}
+#st-delivery-messenger .messenger-popup-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+#st-delivery-messenger a{color:var(--st-accent)}
+#st-delivery-messenger .messenger-popup-actions a{padding:9px;border:1px solid var(--st-accent-line);border-radius:7px;background:var(--st-accent-soft);font-size:13px;font-weight:700;text-decoration:none}

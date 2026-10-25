@@ -25,7 +25,7 @@ def application_manager(request: Request, db: Session) -> str | None:
     user = native_session_actor(request, db)
     if user is None or primary_email(db, user.id) != OWNER_EMAIL:
         return None
-    if request.method == "GET" and request.url.path == "/api/apps/strength" and request.query_params.get("action") not in {"ping", "openUser", "getWorkout", "getStats"}:
+    if request.method == "GET" and request.url.path == "/api/apps/strength" and request.query_params.get("action") not in {"ping", "openUser", "getWorkout", "getStats", "messengerState"}:
         raise HTTPException(405, "Изменения клиента принимаются только через POST", headers={"Allow": "POST"})
     # This grants app management only, never a general CRM/admin session.
     origin = request.headers.get("origin")

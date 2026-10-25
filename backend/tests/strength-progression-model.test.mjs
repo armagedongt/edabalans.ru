@@ -177,3 +177,19 @@ test('an RPE9 position cannot use the above-budget real-step exception',()=>{
   c.history.forEach(h=>h.sets=[{w:100,r:15,role:'work',rpe:9},{w:80,r:15,role:'work',rpe:8}]);
   const r=recommend(c);assert.equal(r.granularity,false);assert.equal(r.changed.length,0);
 });
+
+test('empty destination warm-ups remain empty and a workout needs no warm-ups',()=>{
+  const sessions=journal(),profile=benchProfile();
+  const request=cardRequest(sessions,2,'bench-press',profile);
+  assert.deepEqual(request.input.baseline[0],{w:'',r:'',role:'warmup'});
+  const result=recommend(request.input);
+  assert.deepEqual(result.next[0],{w:'',r:'',role:'warmup'});
+  assert.equal(result.next.length,sessions[2].exercises[0].sets.length);
+  sessions[2].exercises[0].sets[0].planWeight=20;
+  sessions[2].exercises[0].sets[0].planReps=99;
+  const warmupOnlyPlan=recommend(cardRequest(sessions,2,'bench-press',profile).input);
+  assert.deepEqual(warmupOnlyPlan.next.slice(1),result.next.slice(1),'warm-up plan does not block the working baseline');
+  sessions.forEach(session=>session.exercises[0].sets=session.exercises[0].sets.filter(row=>row.role!=='warmup'));
+  const allWork=recommend(cardRequest(sessions,2,'bench-press',profile).input);
+  assert.deepEqual(allWork.next,result.next.filter(row=>row.role!=='warmup'));
+});

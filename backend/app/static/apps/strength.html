@@ -2532,6 +2532,8 @@ function loadClient(user){
   var generation=++clientLoadGeneration;
   Object.keys(app.saveTimers).forEach(function(key){clearTimeout(app.saveTimers[key]);});
   app.saveTimers={};app.sessionSaveQueues={};app.managerSavePending=null;app.saving=false;app.creatingSession=false;app.saveError='';
+  app.canCoach=user.can_coach===true;
+  app.canCalculateProgression=user.can_calculate_progression===true;
   app.selectedUser=user;app.mode='loading';app.workouts={};app.templateLoads={};app.templateErrors={};app.progressionPanels={};render();
   return getWorkoutType(user,0,'initial').then(function(first){
     if(generation!==clientLoadGeneration)return;
@@ -3530,11 +3532,14 @@ function renderClient(){
       '<div class="st-history-bottom-bar" aria-label="Прокрутка истории тренировок" tabindex="0"><div style="height:1px"></div></div>';
   }
   html+=renderModal()+renderFloatingRpe();
+  if(app.deliveryDispose){app.deliveryDispose();app.deliveryDispose=null;}
   root.innerHTML=html;
   root.querySelectorAll('button[aria-label],input[aria-label],a[aria-label]').forEach(function(control){
     if(!control.hasAttribute('title'))control.title=control.getAttribute('aria-label');
   });
   renderManagedActions();renderSavingOnly();syncModalLock();bindJournalAxes();
+  root.querySelectorAll('.st-note-field textarea').forEach(function(field){ST.autoGrow(field);});
+  if(app.modal && app.modal.type==='confirmDelivery')mountDeliveryMessenger(app.modal);
   observeJournalWidth();
 }
 
@@ -3576,7 +3581,7 @@ function renderTypes(){
 
 function renderJournalViewToggle(){
   var training=app.journalView==='training';
-  return '<button class="st-icon-link st-view-toggle" onclick="ST.toggleJournalView()" aria-label="'+(training?'Показать историю упражнений':'Показать тренировки целиком')+'" title="'+(training?'По тренировкам':'По упражнениям')+'" aria-pressed="'+(!training)+'">'+journalIcon('eye')+'</button>';
+  return '<button class="st-icon-link st-view-toggle" onclick="ST.toggleJournalView()" aria-label="'+(training?'Показать историю упражнений':'Показать тренировки целиком')+'" title="'+(training?'Нажмите, чтобы показать разбивку по упражнениям':'Нажмите, чтобы показать разбивку по тренировкам')+'" aria-pressed="'+(!training)+'">'+journalIcon('eye')+'</button>';
 }
 
 function renderJournalHeader(){
@@ -3829,9 +3834,8 @@ function renderHistoryExercise(index,item,order,maxSets){
     ((item.source==='base' || item.source==='custom')?'<button class="st-exercise-info"'+data+' onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Информация об упражнении">i</button>':'')+'</div></header>'+
     '<section class="st-modern-editor"><div class="st-grid-labels"><span></span><span class="st-plan-label">'+renderCopyButton(exercise.id,index,false,'',emptyPlan)+'<span>План</span></span><span class="st-fact-label">'+renderCopyButton(exercise.id,index,true,'',!exerciseHasFact(exercise))+'<span>Факт</span></span><span>RPE</span></div>';
   exercise.sets.forEach(function(set,setIndex){html+=renderModernSet(index,exercise,setIndex,set);});
-  html+=renderProgressionControls(index,exercise,item);
   html+='<div class="st-history-set-space" style="height:calc('+Math.max(0,(maxSets-exercise.sets.length)*33)+'px * var(--st-row-scale,1))"></div>'+
-    renderJournalNotes(index,exercise)+'</section></article>';
+    '<div class="st-exercise-actions">'+renderProgressionControls(index,exercise,item)+renderJournalNotes(index,exercise)+'</div></section></article>';
   return html;
 }
 
@@ -3861,19 +3865,23 @@ function progressionItem(index,id){
   var session=currentWorkout().sessions[index],exercise=session && findExercise(session,id);
   return exercise?{session:session,exercise:exercise,key:progressionKey(session,id)}:null;
 }
-function renderProgressionControls(index,exercise,item){
-  if(!MANAGED_TARGET)return '';
+function renderProgressionControls(index,exercise,item,showDetails){
+  if(!app.canCalculateProgression)return '';
   var session=currentWorkout().sessions[index],state=app.progressionPanels[progressionKey(session,exercise.id)];
-  if(!findExercise(session,exercise.id))return '<section class="st-progression"><button disabled>Рассчитать прогрессию</button><p>Добавьте подход в эту запись для расчёта.</p></section>';
   var args=index+',this.dataset.exerciseId',data=' data-exercise-id="'+esc(exercise.id)+'"';
-  var html='<section class="st-progression" aria-label="Расчёт плана упражнения"><button class="st-progression-trigger"'+data+' onclick="ST.calculateProgression('+args+')" '+(state&&state.loading?'disabled':'')+'>'+(state&&state.loading?'Рассчитываю…':'Рассчитать прогрессию')+'</button>';
-  if(!state)return html+'</section>';
+  if(!showDetails){
+    var available=!!findExercise(session,exercise.id);
+    return '<section class="st-progression st-progression-bar" aria-label="Расчёт плана упражнения"><button class="st-progression-trigger"'+data+' onclick="ST.calculateProgression('+args+')" '+(!available?'disabled title="Добавьте подход в эту запись для расчёта"':state&&state.loading?'disabled':'')+'>'+(state&&state.loading?'Рассчитываю…':'Рассчитать прогрессию')+'</button>'+
+      (state?'<button class="st-progression-info"'+data+' onclick="ST.openProgressionInfo('+args+')" aria-label="Информация о расчёте прогрессии" title="Информация о расчёте прогрессии">i</button>':'')+'</section>';
+  }
+  if(!state)return '';
+  var html='<section class="st-progression">';
   var settings=state.settings;
   function field(name,label,value,extra){return '<label>'+label+'<input data-calc-field="'+name+'" inputmode="decimal" value="'+esc(value==null?'':value)+'"'+data+' onchange="ST.progressionSetting('+args+',this.dataset.calcField,this.value,this)" '+(extra||'')+'></label>';}
   if(state.error)html+='<p class="st-progression-error" role="status">'+esc(state.error)+'</p>';
-  else if(state.applied)html+='<p class="st-progression-done" role="status">Расчёт выполнен.</p>';
+
   else if(state.result && state.result.reasons.length)html+='<p role="status">'+esc(state.result.reasons[0])+'</p>';
-  html+='<details class="st-progression-details"><summary>Параметры и последний расчёт</summary><div class="st-progression-settings">';
+  html+='<details open class="st-progression-details"><summary>Параметры и последний расчёт</summary><div class="st-progression-settings">';
   if(!(item && item.training)){
     html+='<label class="st-progression-wide">Тип нагрузки<select'+data+' onchange="ST.progressionSetting('+args+',\'mode\',this.value,this)"><option value="">Выберите тип</option>';
     [['external','Вес снаряда'],['bodyweight','Собственный вес'],['assisted','Вес помощи'],['duration','Время']].forEach(function(pair){html+='<option value="'+pair[0]+'" '+(settings.mode===pair[0]?'selected':'')+'>'+pair[1]+'</option>';});html+='</select></label>';
@@ -3897,6 +3905,24 @@ function renderProgressionControls(index,exercise,item){
     if(settings.mode==='bodyweight'||settings.mode==='assisted')html+='<p>Вес и помощь сохраняются; в этом расчёте меняются повторы.</p>';
   }
   return html+'</div></details></section>';
+}
+
+function mountDeliveryMessenger(pending){
+  var host=root.querySelector('#st-delivery-messenger');
+  import('/assets/messenger-connection.mjs?v=20261025').then(function(component){
+    if(app.modal!==pending || !host.isConnected)return;
+    return component.mount(host,{
+      state:function(){return getApi({action:'messengerState'});},
+      link:function(platform){return postApi({action:'createMessengerLink',platform:platform});},
+      prefer:function(platform){return postApi({action:'preferMessenger',platform:platform});},
+      onState:function(summary){
+        if(app.modal!==pending || !host.isConnected)return;
+        pending.destination=summary.destination;
+        var button=root.querySelector('[data-confirm-delivery]');
+        if(button){button.disabled=!summary.destination;button.hidden=!summary.destination;}
+      }
+    }).then(function(dispose){if(host.isConnected)app.deliveryDispose=dispose;else dispose();});
+  }).catch(function(error){if(host.isConnected)host.textContent=error.message;});
 }
 
 function rememberAxisPositions(){
@@ -3930,8 +3956,7 @@ function bindJournalAxes(){
     if(target>=0)axis.scrollLeft=target*(width+gap)+width-axis.clientWidth;
   }
   axes.forEach(function(axis){
-    axis.scrollLeft=app.axisResetRight || app.axisPositions[axis.dataset.axis]===undefined?axis.scrollWidth:app.axisPositions[axis.dataset.axis];
-    alignTraining(axis);
+    axis.scrollLeft=axis.scrollWidth;
     axis.addEventListener('pointerdown',function(){app.activeAxis=axis.dataset.axis;syncBar(axis);});
     axis.addEventListener('scroll',function(){app.axisPositions[axis.dataset.axis]=axis.scrollLeft;app.activeAxis=axis.dataset.axis;rememberTrainingAnchor(axis);syncDate(axis);if(!syncing)syncBar(axis);},{passive:true});
     app.trainingViewportWidth=axis.clientWidth;rememberTrainingAnchor(axis);
@@ -3941,7 +3966,7 @@ function bindJournalAxes(){
   resizeJournal=function(){
     applyJournalWidth();
     axes.forEach(function(axis){
-      alignTraining(axis);app.axisPositions[axis.dataset.axis]=axis.scrollLeft;
+      axis.scrollLeft=axis.scrollWidth;app.axisPositions[axis.dataset.axis]=axis.scrollLeft;
       app.trainingViewportWidth=axis.clientWidth;rememberTrainingAnchor(axis);syncDate(axis);
     });
     app.axisTargetSession=null;syncBar(activeAxis());
@@ -5251,9 +5276,16 @@ function renderMethod(){
 ========================================================= */
 
 function renderModal(){
+  if(app.modal && app.modal.type==='progression'){
+    var target=progressionItem(app.modal.sessionIndex,app.modal.exerciseId);
+    if(!target)return '';
+    return '<div class="st-modal-bg"><section class="st-modal" role="dialog" aria-modal="true" aria-label="Информация о расчёте прогрессии"><div class="st-modal-title">'+esc(target.exercise.name)+'</div>'+renderProgressionControls(app.modal.sessionIndex,target.exercise,catalogItemById(target.exercise.id),true)+'<div class="st-modal-actions"><button class="st-modal-btn" onclick="ST.calculateProgression('+app.modal.sessionIndex+',this.dataset.exerciseId)" data-exercise-id="'+esc(target.exercise.id)+'">Рассчитать прогрессию</button><button class="st-modal-btn" onclick="ST.closeModal()">Закрыть</button></div></section></div>';
+  }
+
   if(app.modal && app.modal.type==='confirmDelivery'){
     var delivery=app.modal,heading=delivery.exerciseId?'План упражнения':'План всей тренировки';
-    return '<div class="st-modal-bg"><section class="st-modal" role="dialog" aria-modal="true" aria-label="Отправка плана"><div class="st-modal-title">'+heading+'</div><p class="st-modal-sub">Отправить план '+(delivery.exerciseId?'упражнения «':'тренировки по шаблону «')+esc(delivery.title)+'» в Telegram или MAX, подключённый к этому аккаунту?</p><div class="st-modal-actions"><button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Отменить</button><button class="st-modal-btn st-modal-save" onclick="ST.confirmPlanDelivery()">Отправить</button></div></section></div>';
+    return '<div class="st-modal-bg"><section class="st-modal" role="dialog" aria-modal="true" aria-label="Отправка плана"><div class="st-modal-title">'+heading+'</div><p class="st-modal-sub">'+esc(delivery.title)+'</p><div id="st-delivery-messenger"></div><div class="st-modal-actions"><button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Отменить</button><button class="st-modal-btn st-modal-save" data-confirm-delivery disabled onclick="ST.confirmPlanDelivery()">Отправить</button></div></section></div>';
+
   }
   if(app.modal && app.modal.type==='templates')return renderTemplateManager();
 
@@ -5306,8 +5338,8 @@ function renderModal(){
           '<div class="st-modal-title">'+
             esc(ex.name)+
           '</div>'+
-          '<label class="st-note-field st-coach-note">Комментарий тренера<textarea id="st-coach-note-text" class="st-modal-textarea" maxlength="20000" aria-label="Комментарий тренера">'+esc(ex.coachNote || '')+'</textarea></label>'+
-          '<label class="st-note-field st-user-note">Ваш комментарий<textarea id="st-note-text" class="st-modal-textarea" aria-label="Ваш комментарий">'+esc(ex.note || '')+'</textarea></label>'+
+          '<label class="st-note-field st-coach-note">Комментарий тренера<textarea id="st-coach-note-text" class="st-modal-textarea" rows="3" oninput="ST.autoGrow(this)" '+(app.canCoach?'':'readonly')+' maxlength="20000" aria-label="Комментарий тренера">'+esc(ex.coachNote || '')+'</textarea></label>'+
+          '<label class="st-note-field st-user-note">Ваш комментарий<textarea id="st-note-text" class="st-modal-textarea" rows="3" oninput="ST.autoGrow(this)" aria-label="Ваш комментарий">'+esc(ex.note || '')+'</textarea></label>'+
           '<div class="st-modal-actions">'+
             '<button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Закрыть</button>'+
             '<button class="st-modal-btn st-modal-save" onclick="ST.saveNote()">Сохранить</button>'+
@@ -5835,7 +5867,7 @@ window.ST = {
   },
   confirmPlanDelivery:async function(){
     var pending=app.modal;
-    if(!pending || pending.type!=='confirmDelivery')return;
+    if(!pending || pending.type!=='confirmDelivery' || !pending.destination)return;
     var index=pending.index,session=currentWorkout().sessions[index];
     if(telegramExportBlocked(index) || !session || session.session_id!==pending.sessionId)return;
     var exerciseId=pending.exerciseId;
@@ -6140,8 +6172,12 @@ window.ST = {
     scheduleSave(index);renderWithoutViewportJump();
   },
 
+  openProgressionInfo:function(index,id){
+    if(!app.canCalculateProgression)return;
+    app.modal={type:'progression',sessionIndex:index,exerciseId:id};renderWithoutViewportJump();
+  },
   progressionSetting:function(index,id,field,value,element){
-    if(!MANAGED_TARGET)return;
+    if(!app.canCalculateProgression)return;
     var target=progressionItem(index,id);if(!target)return;
     var state=app.progressionPanels[target.key];if(!state)return;
     if(field==='min'||field==='max')state.settings.rep_range[field==='min'?0:1]=Number(String(value).replace(',','.'));
@@ -6150,10 +6186,9 @@ window.ST = {
     else return;
     state.result=null;state.applied=false;state.error='Параметры изменены. Нажмите «Рассчитать прогрессию».';
     if(field==='mode'||!element)renderWithoutViewportJump();
-    else element.closest('.st-progression').querySelector('.st-progression-result').textContent=state.error;
   },
   calculateProgression:function(index,id){
-    if(!MANAGED_TARGET)return;
+    if(!app.canCalculateProgression)return;
     var target=progressionItem(index,id);if(!target)return;
     var item=catalogItemById(id),state=app.progressionPanels[target.key];
     if(!state)state=app.progressionPanels[target.key]={settings:item && item.training?cloneValue(item.training):{mode:'',rep_range:['',''],load_step:'',time_step:5}};
@@ -6168,11 +6203,16 @@ window.ST = {
       state.canApply=['configuration','unsupported','no-history','no-work','conditions','invalid-rpe','context','coach'].indexOf(state.result.code)<0 || (state.result.code==='coach' && state.settings.hold);
       if(state.canApply)ST.applyProgression(currentIndex,id);
     }).catch(function(error){state.error=error.message || 'Не удалось выполнить расчёт. Повторите.';}).finally(function(){
-      state.loading=false;renderWithoutViewportJump();
+      state.loading=false;
+      if(app.progressionPanels[target.key]!==state)return;
+      var currentIndex=currentWorkout().sessions.findIndex(function(session){return session.session_id===target.session.session_id;});
+      if(currentIndex<0)return;
+      if(state.error || !state.applied)app.modal={type:'progression',sessionIndex:currentIndex,exerciseId:id};
+      renderWithoutViewportJump();
     });
   },
   applyProgression:function(index,id){
-    if(!MANAGED_TARGET)return;
+    if(!app.canCalculateProgression)return;
     var target=progressionItem(index,id);if(!target)return;
     var state=app.progressionPanels[target.key];if(!state || !state.result || !state.canApply)return;
     try{
@@ -6181,7 +6221,7 @@ window.ST = {
       catch(error){throw new Error('Данные изменились после расчёта. Пересчитайте прогрессию.');}
       if(request.fingerprint!==state.request.fingerprint)throw new Error('Данные изменились после расчёта. Пересчитайте прогрессию.');
       rememberUndo();
-      target.exercise.sets.forEach(function(set,i){set.planWeight=state.result.next[i].w;set.planReps=state.result.next[i].r;});
+      target.exercise.sets.forEach(function(set,i){if(set.role==='warmup')return;set.planWeight=state.result.next[i].w;set.planReps=state.result.next[i].r;});
       state.applied=true;scheduleSave(index);renderWithoutViewportJump();
     }catch(error){state.result=null;state.error=error.message;renderWithoutViewportJump();}
   },
@@ -6209,7 +6249,7 @@ window.ST = {
 
   autoGrow:function(field){
     field.style.height = 'auto';
-    field.style.height = Math.max(34,field.scrollHeight)+'px';
+    field.style.height = Math.max(field.closest('.st-note-field')?80:34,field.scrollHeight)+'px';
   },
 
   openExerciseHistory:function(id){
@@ -6635,7 +6675,7 @@ window.ST = {
       :
       '';
 
-    ex.coachNote=document.getElementById('st-coach-note-text').value;
+    if(app.canCoach)ex.coachNote=document.getElementById('st-coach-note-text').value;
 
     var index =
       app.modal

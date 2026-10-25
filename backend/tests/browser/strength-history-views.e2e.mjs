@@ -54,10 +54,11 @@ async function open(width,managed=false,longNotes=false,manyExercises=false,same
   if(url.pathname!=='/api/apps/strength'){
     const asset=new URL(url.pathname.replace(/^\/(assets\/|admin\/static\/)?/,''),staticRoot);
     if(!asset.href.startsWith(staticRoot.href))return route.abort();
-    try{return route.fulfill({contentType:({'.html':'text/html','.css':'text/css','.js':'text/javascript','.woff2':'font/woff2','.gif':'image/gif','.png':'image/png','.svg':'image/svg+xml'})[path.extname(asset.pathname)] || 'application/octet-stream',body:await readFile(asset)});}catch{return route.abort();}
+    try{return route.fulfill({contentType:({'.html':'text/html','.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.woff2':'font/woff2','.gif':'image/gif','.png':'image/png','.svg':'image/svg+xml'})[path.extname(asset.pathname)] || 'application/octet-stream',body:await readFile(asset)});}catch{return route.abort();}
   }
   const data=route.request().method()==='POST'?JSON.parse(route.request().postData()):Object.fromEntries(url.searchParams);
-  let reply={ok:true,user:{user_id:'fixture',email:'example@example.test',display_name:''},version:state.version};
+  let reply={ok:true,user:{user_id:'fixture',email:'example@example.test',display_name:'',can_coach:managed,can_calculate_progression:managed},version:state.version};
+  if(data.action==='messengerState')return route.fulfill({json:{ok:true,destination:managed?'max':'telegram',linked:{telegram:{linked:!managed},max:{linked:managed}},bot_links:{telegram:'https://t.me/test_bot',max:'https://max.ru/test_bot'}}});
   if(data.action==='getWorkout'){readRequests.push({...data});workoutReads++;const type=data.initial==='1'?1:Number(data.type);reply.workout={...structuredClone(state),selected_type:type,exercise_catalog:structuredClone(catalogs.get(type) || state.exercise_catalog.map(e=>({...e,active:false})))};if(data.catalog_only==='1'){reply.workout.sessions=[];reply.workout.session_exercises=[];reply.workout.sets=[];if(catalogueReadsGate)await catalogueReadsGate;}}
   if(route.request().method()==='POST'){
    if(data.action==='saveSession' && (transportFailure || timeoutSession)){
@@ -374,7 +375,7 @@ await navigationInfo.scrollIntoViewIfNeeded();
 const originalAxis=await bp.locator('[data-axis]').evaluate(e=>e.scrollLeft);
 await navigationInfo.click();await bp.goBack();
 await bp.locator('.st-guide-header').waitFor({state:'detached'});
-assert.equal(await bp.locator('[data-axis]').evaluate(e=>e.scrollLeft),originalAxis);
+assert(await bp.locator('[data-axis]').evaluate(e=>Math.abs(e.scrollWidth-e.clientWidth-e.scrollLeft)<2));
 await bp.screenshot({path:`${out}/back-restored.png`});
 await bp.goForward();await bp.locator('.st-guide-header').waitFor();
 await bp.getByRole('button',{name:'Закрыть информацию об упражнении'}).click();
@@ -536,7 +537,7 @@ for(const width of [430,1440]){
  assert.deepEqual(await page.locator('.st-history-row').first().locator('article').evaluateAll(cards=>cards.map(card=>Number(card.dataset.sessionIndex))),[0,1,2,3,4,7,8],'zero weight, fact-only, RPE-only, completed-only, note-only and repetition-only records survive; blanks and whitespace do not');
  assert.equal(visibility.writes.length,0);await visibility.context.close();
 }
-// Mobile full-width filling survives rotation without replacing a draft or changing the workout.
+// Rotation returns to the latest workout while preserving drafts in older records.
 {
  const responsive=await open(430),page=responsive.page;
  await page.getByRole('button',{name:'Выбрать тренировку №4',exact:true}).click();
@@ -545,7 +546,7 @@ for(const width of [430,1440]){
  await draft.focus();await draft.evaluate(()=>new Promise(resolve=>setTimeout(resolve,0)));await draft.fill('92');
  for(const width of [360,700,701,430]){
   await page.setViewportSize({width,height:900});
-  await page.waitForFunction(({width})=>{const axis=document.querySelector('[data-axis=training]'),card=axis.querySelector('article[data-session-index="3"]').getBoundingClientRect(),box=axis.getBoundingClientRect();return width<=700?Math.abs(card.width-box.width)<1&&Math.abs(card.left-box.left)<1:card.left>=box.left-1&&card.right<=box.right+1;},{width});
+  await page.waitForFunction(({width})=>{const axis=document.querySelector('[data-axis=training]'),card=axis.querySelector('.st-history-row article:last-child').getBoundingClientRect(),box=axis.getBoundingClientRect();return width<=700?Math.abs(card.width-box.width)<1&&Math.abs(card.left-box.left)<1:card.left>=box.left-1&&card.right<=box.right+1;},{width});
   assert.equal(await draft.inputValue(),'92','rotation preserves the in-progress value at '+width);
   await assertDatesFollowColumns(page);
  }
@@ -590,7 +591,7 @@ for(const width of [360,430,700,701,760,761,768,1440]){
 }
 // Both comment categories use one shared pop-up and independent persisted fields.
 for(const width of [360,430,768,1440]){
- const comments=await open(width,width===430),page=comments.page;
+ const comments=await open(width,true),page=comments.page;
  const card=page.locator('.st-history-row').first().locator('article').last();
  const note=card.getByRole('button',{name:'Примечание к упражнению'});
  assert.equal((await note.innerText()).trim(),'Добавить примечание');
@@ -739,7 +740,8 @@ for(const width of [360,430,700,701,768,1440]){
   assert(Math.abs(effectiveEmail-emailAt100)<.1,'email font stays fixed');
   await page.locator('.st-exercise-info').last().click();
   const full=await page.locator('.st-exercise-guide').boundingBox();
-  assert(Math.abs(full.x)<1&&Math.abs(full.y)<1&&Math.abs(full.width-width)<1&&Math.abs(full.height-900)<1,'exercise details fill viewport at '+scale+'% '+width);
+  const layoutWidth=await page.evaluate(()=>document.body.clientWidth);
+  assert(Math.abs(full.x)<1&&Math.abs(full.y)<1&&Math.abs(full.width-layoutWidth)<1&&Math.abs(full.height-900)<1,'exercise details fill the layout viewport, excluding a reserved scrollbar, at '+scale+'% '+width);
   if(width===430&&scale===80)await page.screenshot({path:`${out}/guide-fullscreen-80-430.png`});
   await page.getByRole('button',{name:'Закрыть информацию об упражнении'}).click();
   await page.getByRole('button',{name:'Статистика',exact:true}).click();
@@ -820,9 +822,11 @@ for(const width of [360,430,700,701,768,1440]){
 }
 // End mobile feedback.
 
-// Same renderer and controls for a managed account; selector is outside the mount.
+// Shared journal, with coach controls only for the managed account; selector stays outside.
 const plain=await open(768),admin=await open(768,true);
-assert.equal(await plain.page.locator('#strength-app').innerHTML(),await admin.page.locator('#strength-app').innerHTML());
+assert.equal(await plain.page.locator('.st-history-row article').count(),await admin.page.locator('.st-history-row article').count());
+assert.equal(await plain.page.locator('.st-progression-trigger').count(),0);
+assert((await admin.page.locator('.st-progression-trigger').count())>0);
 assert.equal(await admin.page.locator('#strength-app .preview-account').count(),0);
 assert.equal(await admin.page.locator('.preview-account').count(),1);
 for(const page of [plain.page,admin.page]){const account=page.getByRole('link',{name:'Личный кабинет',exact:true});assert.equal(await account.getAttribute('href'),'/lk');assert.equal(await account.locator('svg').count(),1,'shared account control uses the standard icon');}

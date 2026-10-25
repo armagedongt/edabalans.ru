@@ -495,7 +495,7 @@ reads_from = ["platform.web_design"]
 admin_catalog = [{ category = "applications", order = 20, url = "/admin/strength", label = "Силовые", icon = "💪", description = "Приложение силовых тренировок клиентов." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.strength.md"
-depends_on = ["platform.auth", "platform.commerce", "messaging.telegram.engine"]
+depends_on = ["platform.auth", "platform.commerce", "messaging.telegram.engine", "products.masterclass.messenger-links"]
 owns_files = [
   "backend/app/static/apps/strength.html", "legacy/google/strength/**",
   "backend/app/static/strength-journal.css", "backend/app/static/strength-journal-model.js",
@@ -505,7 +505,7 @@ owns_files = [
   "backend/app/static/strength.webmanifest", "backend/app/static/strength-pwa-180.png", "backend/app/static/strength-pwa-192.png", "backend/app/static/strength-pwa-512.png",
   "backend/tests/browser/strength-entry-loading.e2e.mjs",
   "backend/app/strength_templates.py",
-    "backend/tests/test_strength_templates.py", "backend/tests/test_strength_comments.py", "backend/tests/test_strength_set_roles.py", "backend/tests/strength-journal-model.test.cjs",
+    "backend/tests/test_strength_templates.py", "backend/tests/test_strength_comments.py", "backend/tests/test_strength_coach_permissions.py", "backend/tests/test_strength_set_roles.py", "backend/tests/strength-journal-model.test.cjs",
   "backend/tests/browser/strength-set-roles.e2e.mjs",
   "backend/tests/browser/strength-progression.e2e.mjs", "backend/tests/strength-progression-model.test.mjs",
   "backend/tests/fixtures/strength-progression-cases.mjs", "backend/tests/test_strength_training_reference.py",
@@ -804,7 +804,7 @@ sources = [
 id = "products.masterclass.messenger-links"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.messenger-links.md"
-owns_files = ["backend/migrations/versions/20260823_0016_messenger_link_tokens.py"]
+owns_files = ["backend/migrations/versions/20260823_0016_messenger_link_tokens.py", "backend/app/static/messenger-connection.mjs"]
 owns_tables = ["messenger_link_tokens"]
 owns_routes = ["*/api/masterclass/*messenger*", "*/api/masterclass/*telegram*"]
 depends_on = ["messaging.telegram.engine", "platform.auth", "platform.commerce", "platform.crm"]
