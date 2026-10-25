@@ -23,6 +23,7 @@ from app.temporary_entry import BLOCKED_STATUSES, entry_decision, temporary_resp
 from app.app_menu import APPS_PAYLOAD, app_request, send_menu
 from app.content_formatting import content_body_for_telegram, replace_template_values
 from app.customer_lifecycle import stop_presale_runs_for_user, stop_runs_for_contact
+from app.masterclass_link import can_reassign_link_identity
 from app.intensive_access import (
     create_intensive_access_link,
     intensive_token,
@@ -782,19 +783,6 @@ def _ensure_identity(session: Session, user: dict[str, Any]) -> tuple[CrmMesseng
     return account, created
 
 
-def _is_disposable_identity(session: Session, user_id: str) -> bool:
-    counts = session.execute(
-        text(
-            "SELECT "
-            "(SELECT count(*) FROM user_emails WHERE user_id=:user_id) + "
-            "(SELECT count(*) FROM user_accesses WHERE user_id=:user_id) + "
-            "(SELECT count(*) FROM payments WHERE user_id=:user_id)"
-        ),
-        {"user_id": user_id},
-    ).scalar_one()
-    return int(counts or 0) == 0
-
-
 def _existing_password_hint(credential: AccountCredential) -> str:
     created_at = credential.created_at or datetime.now(UTC)
     if created_at.tzinfo is None:
@@ -841,7 +829,7 @@ def _consume_account_link(
         return "Данные для входа уже выданы в выбранном мессенджере. Если вы их потеряли, напишите мне."
     if session.bind is not None and session.bind.dialect.name == "postgresql":
         session.execute(text("SELECT id FROM users WHERE id=:user_id FOR UPDATE"), {"user_id": token.user_id})
-    if account.user_id != token.user_id and not _is_disposable_identity(session, account.user_id):
+    if account.user_id != token.user_id and not can_reassign_link_identity(session, account, token.user_id):
         return "Этот аккаунт уже связан с другим личным кабинетом. Если это ошибка, напишите мне."
 
     account.user_id = token.user_id
