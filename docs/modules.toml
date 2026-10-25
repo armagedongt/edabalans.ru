@@ -804,6 +804,7 @@ sources = [
 
 [[modules]]
 id = "products.masterclass.messenger-links"
+reads_from = ["messaging.telegram.engine"]
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.messenger-links.md"
 owns_files = ["backend/migrations/versions/20260823_0016_messenger_link_tokens.py", "backend/app/static/messenger-connection.mjs"]
@@ -1046,6 +1047,7 @@ depends_on = ["platform.crm", "platform.commerce"]
 sources = [
   { path = "telegram-bot/service/app/main.py", role = "runtime", shared = true, consumers = ["messaging.max", "operations.health"] },
   { path = "telegram-bot/service/app/config.py", role = "config", shared = true, consumers = ["messaging.max"] },
+  { path = "telegram-bot/service/app/masterclass_link.py", role = "runtime", shared = true, consumers = ["messaging.max", "products.masterclass.messenger-links"] },
 ]
 
 [[modules]]

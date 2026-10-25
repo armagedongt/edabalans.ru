@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import re
+import pytest
 from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import select, text
@@ -364,3 +365,52 @@ def test_existing_password_hint_points_to_the_original_issue_date():
     assert "Пароль уже приходил" in reply
     assert "06.09.2026" in reply
     assert "Пароль:" not in reply
+
+
+@pytest.mark.parametrize('platform', ['telegram', 'max'])
+@pytest.mark.parametrize('protection', ['historical_payments', 'historical_access', 'email', 'credential', 'deliverable', 'preferred', 'native', 'other_confirmed', 'other_confirmed_inactive', 'unknown_source'])
+def test_link_claims_only_unconfirmed_legacy_identity_for_both_messengers(tmp_path, platform, protection):
+    from app.max import _consume_account_link
+    engine = make_engine(f"sqlite:///{tmp_path / 'legacy-link.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        for ddl in ('CREATE TABLE user_emails (id TEXT, user_id TEXT)',
+                    'CREATE TABLE user_accesses (id TEXT, user_id TEXT)',
+                    'CREATE TABLE payments (id TEXT, user_id TEXT)'):
+            session.execute(text(ddl))
+        target = CrmUser(display_name='Member', status='active', data_origin='native')
+        old = CrmUser(display_name='Imported contact', status='active', data_origin='legacy_import')
+        bot = BotInstance(code='main', username='test', display_name='Test', token_env_name='TOKEN', is_active=True)
+        session.add_all([target, old, bot]); session.flush()
+        contact = Contact(bot_instance_id=bot.id, user_id=old.id, telegram_user_id='42', chat_id='42', status='active')
+        account = CrmMessengerAccount(user_id=old.id, platform=platform, platform_user_id='42', source='google_clients_legacy',
+                                      is_deliverable=False, is_preferred=False, linked_at=datetime(2025,1,1,tzinfo=UTC))
+        session.add_all([contact, account])
+        session.execute(text("INSERT INTO payments VALUES ('p1',:uid),('p2',:uid)"), {'uid':old.id})
+        if protection == 'historical_access':session.execute(text("INSERT INTO user_accesses VALUES ('a1',:uid)"), {'uid':old.id})
+        if protection == 'email':session.execute(text("INSERT INTO user_emails VALUES ('e1',:uid)"), {'uid':old.id})
+        if protection == 'credential':session.add(AccountCredential(user_id=old.id,password_hash='hash',password_version=1,issued_via='admin'))
+        if protection == 'deliverable':account.is_deliverable=True
+        if protection == 'preferred':account.is_preferred=True
+        if protection == 'native':old.data_origin='native'
+        if protection == 'unknown_source':account.source='telegram_bot'
+        if protection == 'other_confirmed':session.add(CrmMessengerAccount(user_id=old.id,platform='max' if platform=='telegram' else 'telegram',platform_user_id='99',source='masterclass_link',is_deliverable=True,is_preferred=True,linked_at=datetime.now(UTC)))
+        if protection == 'other_confirmed_inactive':session.add(CrmMessengerAccount(user_id=old.id,platform='max' if platform=='telegram' else 'telegram',platform_user_id='99',source='masterclass_link',is_deliverable=False,is_preferred=False,linked_at=datetime.now(UTC)))
+        payload='Mlegacy-link'
+        token=MessengerLinkToken(user_id=target.id,platform=platform,purpose='link_account',token_hash=hashlib.sha256(payload.encode()).hexdigest(),expires_at=datetime.now(UTC)+timedelta(minutes=5))
+        session.add(token);session.commit()
+        old_id,target_id=old.id,target.id
+        if platform=='telegram':
+            handled,reply=consume_masterclass_link(session,contact,{'id':42,'username':'test'},payload)
+            assert handled is True
+        else:
+            reply=_consume_account_link(session,account,payload,app_auth_secret='test-secret',account_url='https://похудение-это-есть.рф/lk')
+        session.commit()
+        permitted=protection in ('historical_payments','historical_access')
+        assert ('подключён' in reply) is permitted
+        assert account.user_id == (target_id if permitted else old_id)
+        assert (token.consumed_at is not None) is permitted
+        assert account.is_deliverable is (permitted or protection=='deliverable')
+        if platform=='telegram':assert contact.user_id == (target_id if permitted else old_id)
+        assert session.execute(text('SELECT count(*) FROM payments WHERE user_id=:uid'),{'uid':old_id}).scalar_one()==2
+        assert session.scalar(select(MasterclassNotification.id)) is None

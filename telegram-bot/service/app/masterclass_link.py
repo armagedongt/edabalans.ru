@@ -15,23 +15,52 @@ from app.models import (
     AccountOnboarding,
     Contact,
     CrmMessengerAccount,
+    CrmUser,
     MasterclassNotification,
     MessengerLinkToken,
     TrackingEvent,
 )
 
 
-def _is_disposable_identity(session: Session, user_id: str) -> bool:
+LEGACY_IDENTITY_SOURCES = {"google_clients_legacy", "leadteh_legacy", "tilda_members_legacy"}
+
+
+def can_reassign_link_identity(session: Session, account: CrmMessengerAccount, target_user_id: str) -> bool:
+    session.refresh(account, with_for_update=True)
+    if account.user_id == target_user_id:
+        return True
+    user_id = account.user_id
+    login_count = session.execute(text(
+        "SELECT count(*) FROM user_emails WHERE user_id=:user_id"
+    ), {"user_id": user_id}).scalar_one()
+    if login_count or session.get(AccountCredential, user_id) is not None:
+        return False
     counts = session.execute(
         text(
             "SELECT "
-            "(SELECT count(*) FROM user_emails WHERE user_id=:user_id) + "
             "(SELECT count(*) FROM user_accesses WHERE user_id=:user_id) + "
             "(SELECT count(*) FROM payments WHERE user_id=:user_id)"
         ),
         {"user_id": user_id},
     ).scalar_one()
-    return int(counts or 0) == 0
+    if int(counts or 0) == 0:
+        return True
+    user = session.get(CrmUser, user_id)
+    # Imported purchase facts are not proof that this dormant channel was linked
+    # to a separate login. The current bot identity and one-time link prove control.
+    if (user is None or user.data_origin != "legacy_import" or user.merged_into_user_id
+            or account.source not in LEGACY_IDENTITY_SOURCES
+            or account.is_deliverable or account.is_preferred):
+        return False
+    other_confirmed = session.scalar(select(CrmMessengerAccount.id).where(
+        CrmMessengerAccount.user_id == user_id,
+        CrmMessengerAccount.id != account.id,
+        (CrmMessengerAccount.is_deliverable.is_(True)
+         | CrmMessengerAccount.is_preferred.is_(True)
+         | (CrmMessengerAccount.linked_at.is_not(None)
+            & CrmMessengerAccount.source.not_in(LEGACY_IDENTITY_SOURCES))),
+    ).limit(1))
+    return other_confirmed is None
 
 
 def _queue_link_messages(
@@ -126,7 +155,7 @@ def consume_masterclass_link(
     )
     if not account:
         return True, "Не удалось определить Telegram-аккаунт. Попробуйте открыть ссылку ещё раз."
-    if account.user_id != token.user_id and not _is_disposable_identity(session, account.user_id):
+    if account.user_id != token.user_id and not can_reassign_link_identity(session, account, token.user_id):
         session.add(
             TrackingEvent(
                 contact_id=contact.id,
