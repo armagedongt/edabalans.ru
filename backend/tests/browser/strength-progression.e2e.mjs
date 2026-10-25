@@ -45,6 +45,25 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
  });
  await page.goto('http://127.0.0.1:8828/strength-progression-local');
  const card=()=>page.locator('article[data-session-index="2"][data-exercise-id="bench-press"]');await card().waitFor();
+ if(role==='owner'){
+  for(const view of ['training','exercise']){
+   if(await page.locator('#strength-app').getAttribute('data-journal-view')!==view)await page.locator('.st-view-toggle').click();
+   const sizes=[];
+   for(const scale of [50,100,150]){
+    await page.locator('.st-scale-button').selectOption(String(scale));
+    const trigger=card().getByRole('button',{name:'Рассчитать прогрессию',exact:true});
+    sizes.push(await trigger.evaluate(el=>{const r=el.getBoundingClientRect(),root=el.closest('#strength-app');return {width:r.width,height:r.height,font:parseFloat(getComputedStyle(el).fontSize)*Number(root.style.zoom||1),clipped:el.scrollWidth>el.clientWidth};}));
+    assert.equal(sizes.at(-1).clipped,false,'progression label fits at '+scale+'% in '+view);
+    await card().screenshot({path:path.join(output,`${width}-scale-${view}-${scale}.png`)});
+    await card().locator('.st-exercise-actions').screenshot({path:path.join(output,`${width}-actions-${view}-${scale}.png`)});
+   }
+   assert(sizes[0].height<sizes[1].height&&sizes[1].height<sizes[2].height,'progression button height follows '+view+' scale');
+   assert(sizes[0].font<sizes[1].font&&sizes[1].font<sizes[2].font,'progression label follows '+view+' scale');
+   if(view==='training')assert(Math.abs(sizes[0].width-sizes[2].width)<1,'whole-workout action keeps its column width');
+   else for(const [index,factor] of [[0,.5],[2,1.5]])for(const dimension of ['height','font','width'])assert(Math.abs(sizes[index][dimension]/sizes[1][dimension]-factor)<.02,'compact progression '+dimension+' scales once');
+  }
+  await page.locator('.st-view-toggle').click();await page.locator('.st-scale-button').selectOption('100');
+ }
  if(admin)assert.equal(await page.locator('article[data-session-index="2"][data-exercise-id="'+guides[1].code+'"]').getByRole('button',{name:'Рассчитать прогрессию',exact:true}).isDisabled(),true,'virtual historical exercise does not offer a silent no-op calculation');
 
  if(role==='deleted'){

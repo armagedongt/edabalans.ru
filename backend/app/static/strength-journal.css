@@ -241,6 +241,9 @@
 .st-exercise-actions{margin-top:auto}
 .st-progression-bar{display:flex;align-items:stretch;border:1px solid var(--st-accent-line);border-radius:7px;background:var(--st-accent-soft);overflow:hidden;margin:5px 0 0}
 #strength-app .st-progression-bar button{border:0;border-radius:0;background:transparent}
+/* Journal additions must use --st-row-scale: whole-workout rows scale here,
+   compact history already scales through root zoom and keeps this factor at 1. */
+#strength-app .st-progression-bar button{min-height:calc(32px * var(--st-row-scale,1));padding-block:calc(5px * var(--st-row-scale,1));font-size:min(calc(11px * var(--st-row-scale,1)),15px)}
 #strength-app .st-progression-trigger{flex:1;min-width:0}
 #strength-app .st-progression-bar .st-progression-info{flex:0 0 30px;width:30px;border-left:1px solid var(--st-accent-line)}
 #strength-app .st-note-field textarea{box-sizing:border-box;height:80px;min-height:80px;line-height:20px;overflow:hidden}
