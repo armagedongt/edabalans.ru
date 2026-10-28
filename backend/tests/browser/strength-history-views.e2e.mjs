@@ -268,6 +268,8 @@ assert.equal(scale.writes.filter(w=>w.action==='saveSession').at(-1).session.exe
 await rpeSource.click();await sp.getByRole('button',{name:'RPE — без оценки',exact:true}).click();await sp.waitForTimeout(550);
 assert.equal(await rpeSource.textContent(),'—');
 assert.equal(scale.writes.filter(w=>w.action==='saveSession').at(-1).session.exercises[0].sets.at(-1).rpe,'','dash saves an absent rating, not zero');
+const savedRpeSession=scale.writes.filter(w=>w.action==='saveSession').at(-1).session;
+for(const exercise of savedRpeSession.exercises)for(const set of exercise.sets){const stored=scale.state.sets.find(row=>row.session_id===savedRpeSession.session_id&&row.exercise_id===exercise.exercise_id&&row.set_number===set.set_number);if(stored)stored.rpe=set.rpe;}
 await sp.reload();await rpeSource.waitFor();assert.equal(await rpeSource.textContent(),'—','cleared rating survives reloading');
 await scale.context.close();
 // Re-rendering rows with expanded notes must not move the viewport on +/- sets.
