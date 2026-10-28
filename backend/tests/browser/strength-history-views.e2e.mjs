@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile,mkdir,writeFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 import path from 'node:path';
-const {chromium}=await import(process.env.PLAYWRIGHT_MODULE_URL || (process.env.CODEX_NODE_MODULES?pathToFileURL(path.join(process.env.CODEX_NODE_MODULES,'playwright/index.mjs')).href:'playwright'));
+const {[process.env.QA_BROWSER || 'chromium']:chromium}=await import(process.env.PLAYWRIGHT_MODULE_URL || (process.env.CODEX_NODE_MODULES?pathToFileURL(path.join(process.env.CODEX_NODE_MODULES,'playwright/index.mjs')).href:'playwright'));
 const base=process.env.QA_BASE_URL || 'http://127.0.0.1:8823';
 assert.equal(new URL(base).hostname,'127.0.0.1');
 const out=process.env.QA_OUT || process.env.STRENGTH_EVIDENCE_DIR;assert(out,'Set QA_OUT for browser evidence');await mkdir(out,{recursive:true});
@@ -95,6 +95,43 @@ async function entryGeometry(page){
   return {fields,doneWidth:done.width,leftGap:done.left-row.querySelector('[data-field=planReps]').getBoundingClientRect().right,rightGap:row.querySelector('[data-field=factWeight]').getBoundingClientRect().left-done.right,rpeWidth:rpe.getBoundingClientRect().width,rpeFont:parseFloat(getComputedStyle(rpe).fontSize)};
  });
 }
+if(process.env.QA_FOCUS==='date'){
+ for(const width of [360,430,700,701,768,1440])for(const view of ['training','exercise']){
+  const trial=await open(width),page=trial.page;
+  if(view==='exercise')await page.locator('.st-view-toggle').click();
+  await page.evaluate(()=>{HTMLInputElement.prototype.showPicker=function(){throw new Error('Calendar unavailable');};});
+  const field=page.locator(view==='training'?'.st-date-cell':'.st-history-date').last(),dialog=page.getByRole('dialog',{name:'Дата тренировки',exact:true});
+  const activate=async locator=>width<=700?locator.tap():locator.click();
+  await activate(field.locator('.st-journal-date-text'));await dialog.waitFor();
+  await page.locator('#st-session-date-text').fill('31.02.2026');await dialog.getByRole('button',{name:'Сохранить',exact:true}).click();
+  assert(await page.locator('#st-session-date-error').innerText());assert.equal(trial.writes.length,0,'invalid date is not saved');
+  await page.locator('.st-session-date-calendar').evaluate(el=>el.setCustomValidity('Incomplete optional calendar'));
+  await page.locator('#st-session-date-text').fill('28.02.2026');await dialog.getByRole('button',{name:'Сохранить',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelector('.st-saving')?.textContent.includes('Сохранено'));
+  const saved=trial.writes.filter(w=>w.action==='saveSession').at(-1).session;assert.equal(saved.date,'2026-02-28');assert.equal(await field.locator('.st-journal-date-text').inputValue(),'28.02.2026');
+  const dateIndex=await field.getAttribute('data-session-index'),card=page.locator('article[data-session-index="'+dateIndex+'"]').last(),fact=card.locator('[data-field="factWeight"]').first();
+  await fact.fill('42');await fact.press('Tab');await page.waitForTimeout(550);
+  assert.equal(await page.locator('.st-modal-bg').count(),0,'date unlocks fact entry');assert.equal(trial.writes.filter(w=>w.action==='saveSession').at(-1).session.session_id,saved.session_id,'fact belongs to the newly dated session');assert(trial.writes.filter(w=>w.action==='saveSession').at(-1).session.exercises.some(e=>e.sets.some(s=>s.fact_weight===42)));
+  await activate(field.locator('.st-date-picker'));await dialog.waitFor();
+  await page.locator('.st-session-date-calendar').fill('2026-03-01');assert.equal(await page.locator('#st-session-date-text').inputValue(),'01.03.2026');
+  await page.screenshot({path:`${out}/date-${process.env.QA_BROWSER || 'chromium'}-${view}-${width}.png`});
+  const writes=trial.writes.length;await dialog.getByRole('button',{name:'Отменить',exact:true}).click();assert.equal(trial.writes.length,writes);assert.equal(await field.locator('.st-journal-date-text').inputValue(),'28.02.2026');
+  trial.state.sessions.find(s=>s.session_id===saved.session_id).date=saved.date;
+  await page.reload();await page.locator('.st-view-toggle').waitFor();assert.equal(await page.locator('.st-date-cell').last().locator('.st-journal-date-text').inputValue(),'28.02.2026','saved date survives reload');
+  if(view==='exercise')await page.locator('.st-view-toggle').click();
+  const releaseCreation=trial.holdNextSessionSave(),creationRequest=page.waitForRequest(request=>request.method()==='POST'&&request.postDataJSON()?.action==='saveSession');
+  await page.getByRole('button',{name:'Новая тренировка',exact:true}).click();await creationRequest;
+  await activate(field.locator('.st-journal-date-text'));await page.locator('#st-session-date-text').fill('01.04.2026');
+  releaseCreation();await page.waitForFunction(()=>document.querySelector('.st-saving')?.textContent.includes('Сохранено'));
+  assert.equal(await page.locator('#st-session-date-text').inputValue(),'01.04.2026','server response cannot erase an in-progress date');
+  await page.goBack();await dialog.waitFor({state:'detached'});
+  await page.goForward();await dialog.waitFor();assert.equal(await page.locator('#st-session-date-text').inputValue(),'01.04.2026','date edits are one screen and retain the draft');
+  await dialog.getByRole('button',{name:'Сохранить',exact:true}).click();await page.waitForTimeout(550);
+  assert.equal(trial.writes.filter(w=>w.action==='saveSession').at(-1).session.date,'2026-04-01');
+  await trial.context.close();
+ }
+ assert.deepEqual(errors,[]);await browser.close();console.log('PASS: date entry with unavailable native picker, invalid date, save, fact entry, cancel and reload on mobile/desktop');process.exit(0);
+}
 for(const width of [360,430,700,701,768,1440]){
  const {context,page}=await open(width);
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
@@ -183,14 +220,12 @@ await last.locator('input[data-field=factWeight]').first().click();
 assert(await p.locator('.st-modal-bg').isVisible(),'fact without date is blocked');
 await p.getByRole('button',{name:'Понятно',exact:true}).click();
 assert.equal(await p.locator('.st-date-cell').last().locator('.st-journal-date-text').getAttribute('readonly'),'');
-await p.evaluate(()=>{window.__calendarOpens=0;const original=HTMLInputElement.prototype.showPicker;HTMLInputElement.prototype.showPicker=function(){window.__calendarOpens++;return original.call(this);};});
 await p.locator('.st-date-cell').last().locator('.st-journal-date-text').click();
-assert.equal(await p.evaluate(()=>window.__calendarOpens),1,'date text activates the native calendar');await p.keyboard.press('Escape');
+await p.getByRole('dialog',{name:'Дата тренировки',exact:true}).waitFor();await p.getByRole('button',{name:'Отменить',exact:true}).click();
 await p.locator('.st-date-cell').last().locator('.st-date-picker').click();
-assert.equal(await p.evaluate(()=>window.__calendarOpens),2,'calendar icon activates the native calendar');await p.keyboard.press('Escape');
-await p.locator('.st-date-cell').last().locator('.st-date-picker').fill('2026-10-21');await p.waitForTimeout(550);
+await p.locator('.st-session-date-calendar').fill('2026-10-21');await p.getByRole('button',{name:'Сохранить',exact:true}).click();await p.waitForTimeout(550);
 assert.equal(run.writes.filter(w=>w.action==='saveSession').at(-1).session.date,'2026-10-21','calendar date is persisted as ISO');
-await p.locator('.st-date-cell').last().locator('.st-date-picker').fill('2026-10-22');await p.waitForTimeout(550);
+await p.locator('.st-date-cell').last().locator('.st-date-picker').click();await p.locator('#st-session-date-text').fill('22.10.2026');await p.getByRole('button',{name:'Сохранить',exact:true}).click();await p.waitForTimeout(550);
 assert.equal(await p.locator('.st-date-cell').last().locator('.st-journal-date-text').inputValue(),'22.10.2026','native calendar updates Russian display');
 assert.equal(run.writes.filter(w=>w.action==='saveSession').at(-1).session.date,'2026-10-22');
 const source=p.locator('.st-history-row').first().locator('.st-history-column').first();
@@ -442,9 +477,8 @@ for(const width of [360,430,700,701,768,1440]){
  await gp.screenshot({path:`${out}/five-packed-${width}.png`});
  if(width===430){
   const second=gp.locator('.st-history-row').nth(1).locator('article').last(),date=second.locator('.st-history-date');
-  await gp.evaluate(()=>{window.__pickedIndex=null;const original=HTMLInputElement.prototype.showPicker;HTMLInputElement.prototype.showPicker=function(){window.__pickedIndex=this.closest('[data-session-index]').dataset.sessionIndex;return original.call(this);};});
-  await date.locator('.st-journal-date-text').click();assert.equal(await gp.evaluate(()=>window.__pickedIndex),'4');await gp.keyboard.press('Escape');
-  await date.locator('.st-date-picker').fill('2026-10-20');await gp.waitForTimeout(550);
+  await date.locator('.st-journal-date-text').click();await gp.getByRole('dialog',{name:'Дата тренировки',exact:true}).waitFor();
+  await gp.locator('#st-session-date-text').fill('20.10.2026');await gp.getByRole('button',{name:'Сохранить',exact:true}).click();await gp.waitForTimeout(550);
   assert.equal(gaps.writes.filter(w=>w.action==='saveSession').at(-1).session.session_id,'middle-3');
   assert.equal(gaps.writes.filter(w=>w.action==='saveSession').at(-1).session.date,'2026-10-20');
   await second.locator('input[data-field=planWeight]').first().fill('77');await second.locator('input[data-field=planWeight]').first().press('Tab');await gp.waitForTimeout(550);

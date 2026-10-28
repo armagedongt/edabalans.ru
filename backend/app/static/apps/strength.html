@@ -1575,7 +1575,7 @@
 
 </style>
 
-<link rel="stylesheet" href="/assets/strength-journal.css?v=20261026-progression-scale">
+<link rel="stylesheet" href="/assets/strength-journal.css?v=20261028-date-entry">
 <script src="/assets/strength-journal-model.js?v=20261022-set-role-inheritance"></script>
 <script>
 (function(){
@@ -3313,7 +3313,10 @@ try{var savedScale=Number(localStorage.getItem('edabalans-strength-scale'));if(s
 
 var screenHistory=null,screenOwner=String(Date.now())+Math.random(),journalWidthObserver=null,resizeJournal=null;
 function screenView(){return {mainTab:app.mainTab,modal:app.modal?cloneValue(app.modal):null};}
-function screenKey(view){return JSON.stringify(view);}
+function screenKey(view){
+  if(view.modal && view.modal.type==='sessionDate')return JSON.stringify({mainTab:view.mainTab,modal:{type:'sessionDate',sessionIndex:view.modal.sessionIndex}});
+  return JSON.stringify(view);
+}
 function screenUrl(view){
   var url=new URL(location.href);
   if(view.mainTab==='stats')url.searchParams.set('view','stats');else url.searchParams.delete('view');
@@ -3330,7 +3333,7 @@ function syncScreenHistory(){
   }
   if(screenHistory.restoring || screenHistory.pending)return;
   var current=screenHistory.entries[screenHistory.position];
-  if(screenKey(current.view)===key)return;
+  if(screenKey(current.view)===key){current.view=view;return;}
   current.scrollY=window.scrollY;
   var previous=-1;
   for(var i=screenHistory.position-1;i>=0;i--){if(screenKey(screenHistory.entries[i].view)===key){previous=i;break;}}
@@ -3804,7 +3807,7 @@ function journalDate(index,session,className,exerciseId){
     '<button class="st-session-number" onclick="ST.selectSession('+index+')" aria-label="Выбрать тренировку №'+esc(session.number)+'" aria-pressed="'+(index===app.selectedIndex)+'">№'+esc(session.number)+'</button>';
   return '<div class="'+className+'" data-session-index="'+index+'">'+number+
     '<span class="st-date-field"><input class="st-journal-date-text" type="text" lang="ru" placeholder="дд.мм.гггг" maxlength="10" aria-label="Дата тренировки №'+esc(session.number)+'" value="'+esc(formatDate(session.date) || '')+'" readonly onclick="ST.openDatePicker('+index+',event)">'+
-    '<input class="st-date-picker" type="date" lang="ru" aria-label="Календарь тренировки №'+esc(session.number)+'" value="'+esc(session.date || '')+'" onclick="ST.openDatePicker('+index+',event)" onchange="ST.setDate('+index+',this.value)"></span>'+
+    '<button class="st-date-picker" type="button" aria-label="Календарь тренировки №'+esc(session.number)+'" onclick="ST.openDatePicker('+index+',event)">▦</button></span>'+
     '<button class="st-toolbar-delete" onclick="ST.deleteSession('+index+')" aria-label="Удалить тренировку №'+esc(session.number)+'" title="Удалить всю тренировку №'+esc(session.number)+'">×</button>'+
     '<button class="st-send-plan" data-strength-send-plan data-session-index="'+index+'" data-send-exercise="'+esc(exerciseId || '')+'" onclick="ST.sendTelegram('+index+',this.dataset.sendExercise)" aria-label="Отправить план '+(exerciseId?'упражнения':'тренировки №'+esc(session.number))+'" title="Отправить план в мессенджер"><span class="st-send-plane" aria-hidden="true"></span></button></div>';
 }
@@ -5276,6 +5279,11 @@ function renderMethod(){
 ========================================================= */
 
 function renderModal(){
+  if(app.modal && app.modal.type==='sessionDate'){
+    var dateSession=currentWorkout().sessions[app.modal.sessionIndex];
+    if(!dateSession)return '';
+    return '<div class="st-modal-bg"><form novalidate class="st-modal st-date-modal" role="dialog" aria-modal="true" aria-label="Дата тренировки" onsubmit="ST.saveDate(event)"><div class="st-modal-title">Дата тренировки №'+esc(dateSession.number)+'</div><label class="st-note-field">Дата — дд.мм.гггг<input id="st-session-date-text" type="text" inputmode="text" autocomplete="off" maxlength="10" placeholder="дд.мм.гггг" value="'+esc(app.modal.dateDraft||'')+'" oninput="ST.changeDateDraft(this.value)"></label><label class="st-note-field">Или выберите в календаре<input class="st-session-date-calendar" type="date" value="'+esc(StrengthJournalModel.parseRussianDate(app.modal.dateDraft)||'')+'" oninput="ST.syncDateCalendar(this.value)" onchange="ST.syncDateCalendar(this.value)"></label><p id="st-session-date-error" class="st-progression-error" role="alert">'+esc(app.modal.dateError||'')+'</p><div class="st-modal-actions"><button type="button" class="st-modal-btn" onclick="ST.closeModal()">Отменить</button><button type="submit" class="st-modal-btn st-modal-save">Сохранить</button></div></form></div>';
+  }
   if(app.modal && app.modal.type==='progression'){
     var target=progressionItem(app.modal.sessionIndex,app.modal.exerciseId);
     if(!target)return '';
@@ -5904,13 +5912,25 @@ window.ST = {
     app.rpeMenu=null;app.axisResetRight=true;app.axisTargetSession=null;render();
   },
   openDatePicker:function(index,event){
-    var field=event && event.currentTarget.closest('.st-date-cell,.st-history-date');
-    var picker=(field || root.querySelector('.st-date-cell[data-session-index="'+Number(index)+'"],.st-history-date[data-session-index="'+Number(index)+'"]'));
-    picker=picker && picker.querySelector('.st-date-picker');
-    if(picker){
-      if(picker.showPicker)picker.showPicker();
-      else{picker.focus();if(!event || event.currentTarget!==picker)picker.click();}
-    }
+    if(event)event.preventDefault();
+    if(!currentWorkout().sessions[index])return;
+    app.rpeMenu=null;app.modal={type:'sessionDate',sessionIndex:index,dateDraft:formatDate(currentWorkout().sessions[index].date)||''};renderWithoutViewportJump();
+  },
+  changeDateDraft:function(value){
+    if(!app.modal || app.modal.type!=='sessionDate')return;
+    app.modal.dateDraft=value;app.modal.dateError='';
+    document.getElementById('st-session-date-error').textContent='';
+  },
+  syncDateCalendar:function(value){
+    var field=document.getElementById('st-session-date-text');
+    if(field){field.value=formatDate(value)||'';ST.changeDateDraft(field.value);}
+  },
+  saveDate:function(event){
+    event.preventDefault();
+    if(!app.modal || app.modal.type!=='sessionDate')return;
+    var field=document.getElementById('st-session-date-text'),value=StrengthJournalModel.parseRussianDate(field.value);
+    if(value===null){app.modal.dateError='Введите существующую дату в формате дд.мм.гггг';document.getElementById('st-session-date-error').textContent=app.modal.dateError;field.focus();return;}
+    var index=app.modal.sessionIndex;app.modal=null;ST.setDate(index,value);
   },
   openTemplates:function(){app.modal={type:'templates'};render();},
   renameTemplate:function(id,value){var t=app.templates.find(function(t){return Number(t.workout_type)===id;});if(t){t.title=String(value).trim().slice(0,120) || 'Шаблон '+id;queueTemplateSave();}},
