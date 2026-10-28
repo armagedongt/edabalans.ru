@@ -249,22 +249,26 @@ await hp.waitForTimeout(550);
 assert.equal(history.writes.filter(w=>w.action==='saveSession'&&w.session.deleted).at(-1).session.session_id,'one');
 assert.equal(await hp.locator('.st-date-cell[data-session-index] .st-toolbar-delete').count(),8,'one button per remaining workout date');
 await history.context.close();
-// RPE choices start at five and retain a uniform foreground through selection.
+// RPE can be cleared without assigning zero, followed by ratings five to ten.
 const scale=await open(430),sp=scale.page;
 await sp.setViewportSize({width:430,height:500});
 const rpeSource=sp.locator('.st-history-row').first().locator('article').first().locator('.st-rpe-button').last();
 await rpeSource.click();
-assert.deepEqual(await sp.locator('.st-rpe-option').allTextContents(),['5','6','7','8','9','10']);
+assert.deepEqual(await sp.locator('.st-rpe-option').allTextContents(),['—','5','6','7','8','9','10']);
 const foregrounds=await sp.locator('.st-rpe-option').evaluateAll(es=>es.map(e=>getComputedStyle(e).color));
 assert.equal(new Set(foregrounds).size,1);
 const rpeBox=await rpeSource.boundingBox(),pickerBox=await sp.locator('.st-rpe-floating').boundingBox();
-assert(pickerBox.y<rpeBox.y&&rpeBox.y-(pickerBox.y+pickerBox.height)<8,'six-choice picker remains next to the source above it');
+assert(pickerBox.y<rpeBox.y&&rpeBox.y-(pickerBox.y+pickerBox.height)<8,'seven-choice picker remains next to the source above it');
 await sp.getByRole('button',{name:'RPE 5',exact:true}).click();await sp.waitForTimeout(550);
 assert.equal(scale.writes.filter(w=>w.action==='saveSession').at(-1).session.exercises[0].sets.at(-1).rpe,5);
 await rpeSource.click();
 await sp.getByRole('button',{name:'RPE 10',exact:true}).click();await sp.waitForTimeout(550);
 assert.equal(await rpeSource.textContent(),'10','RPE ten is a number in the filled cell too');
 assert.equal(scale.writes.filter(w=>w.action==='saveSession').at(-1).session.exercises[0].sets.at(-1).rpe,10);
+await rpeSource.click();await sp.getByRole('button',{name:'RPE — без оценки',exact:true}).click();await sp.waitForTimeout(550);
+assert.equal(await rpeSource.textContent(),'—');
+assert.equal(scale.writes.filter(w=>w.action==='saveSession').at(-1).session.exercises[0].sets.at(-1).rpe,'','dash saves an absent rating, not zero');
+await sp.reload();await rpeSource.waitFor();assert.equal(await rpeSource.textContent(),'—','cleared rating survives reloading');
 await scale.context.close();
 // Re-rendering rows with expanded notes must not move the viewport on +/- sets.
 const stable=await open(430,false,true),vp=stable.page;await vp.setViewportSize({width:430,height:400});
