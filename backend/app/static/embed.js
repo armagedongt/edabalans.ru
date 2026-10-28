@@ -533,6 +533,7 @@
         var doc = new DOMParser().parseFromString(html, 'text/html');
         var sourceRoot = doc.getElementById(roots[app]);
         mount.id = roots[app];
+        mount.classList.toggle('course-shell', Boolean(sourceRoot && sourceRoot.classList.contains('course-shell')));
         mount.innerHTML = sourceRoot ? sourceRoot.innerHTML : '';
         Array.prototype.forEach.call(doc.querySelectorAll('style'), function (style) {
           var key = 'edabalans-style-' + app;
