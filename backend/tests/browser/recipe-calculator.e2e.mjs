@@ -213,7 +213,7 @@ try {
   for (const kind of ['all', 'per100', 'perPortion']) for (const k of keys) assert.equal(math.format(projection[kind][k], k).replace(',', '.'), saved.totals[kind][k])
   await assertCaesarRows()
   assert.equal(await page.locator('.recipe-heading-title').innerText(), vectors[0].name); assert.equal(await page.locator('.recipe-table-title').innerText(), 'Продукты')
-  assert.equal(await page.locator('.recipe-notes-view a').getAttribute('href'), 'https://edabalans.ru/recipes?original=caesar')
+  assert.equal(await page.locator('.recipe-notes-view a').getAttribute('href'), 'https://похудение-это-есть.рф/recipes?original=caesar')
   assert.equal(await page.locator('.finish-edit').count(), 0)
   assert.ok(await page.locator('.recipe-add-area').evaluate(n => n.previousElementSibling.className === 'recipe-rows' && n.nextElementSibling.className === 'recipe-totals'))
   for (const [i, ingredient] of saved.ingredients.entries()) for (const k of keys) {
@@ -491,7 +491,7 @@ try {
   const popupPromise = page.waitForEvent('popup')
   await page.locator('.recipe-notes-view a').click()
   const popup = await popupPromise; await popup.waitForLoadState()
-  assert.equal(popup.url(), originalLink)
+  assert.equal(popup.url(), new URL(originalLink).href)
   assert.equal(await page.locator('.recipe-notes').isVisible(), false, 'a link click opens the recipe without entering note editing')
   await popup.close(); await context.unroute(originalLink)
   await page.locator('.recipe-notes-view').click({ position: { x: 8, y: 8 } })
@@ -533,6 +533,7 @@ try {
   await page.getByRole('button', { name: 'Сохранить', exact: true }).click(); await postBegun
   await setTitle('Личная версия оригинала + правки')
   releasePost(); await status('Изменено после сохранения'); await page.unroute('**/api/apps/recipes')
+  assert.equal(await page.locator('.recipe-notes-view a').getAttribute('href'), 'https://похудение-это-есть.рф/recipes', 'saved links update while newer title edits are preserved')
   const personalCopy = (await request('/api/apps/recipes')).recipes.find(r => r.title === 'Личная версия оригинала')
   assert.ok(personalCopy)
   const copied = (await request('/api/apps/recipes/' + personalCopy.id)).recipe

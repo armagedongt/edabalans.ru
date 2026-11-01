@@ -500,6 +500,35 @@ def test_original_copy_is_exact_private_and_independent_of_later_original_edits(
     assert client.get("/api/apps/recipes/originals").json() == originals
 
 
+@pytest.mark.parametrize("origin", ["https://edabalans.ru", "https://app.edabalans.ru", "http://www.edabalans.ru"])
+def test_saved_recipe_notes_use_current_site_without_rewriting_stored_text(recipe_client, origin):
+    client, factory = recipe_client
+    suffix = "/lk?open=recipes:day-15-recipe-synthetic&x=1#ingredients"
+    unchanged = "\nhttps://example.test/recipe\nhttps://old.похудение-это-есть.рф/recipe\nhttps://edabalans.ru.evil.test/lk"
+    notes = "Подробный рецепт: " + origin + suffix + unchanged
+    notes = notes.ljust(10000, "!")
+    product = add_product(client)
+    response = client.post("/api/apps/recipes", json={**recipe_body(product), "notes": notes})
+    assert response.status_code == 200, response.text
+    saved = response.json()["recipe"]
+    expected_links = {origin + suffix: "https://похудение-это-есть.рф" + suffix}
+    assert saved["notes"] == notes
+    assert saved["notesLinks"] == expected_links
+    reopened = client.get(f"/api/apps/recipes/{saved['id']}").json()["recipe"]
+    assert reopened["notes"] == notes and reopened["notesLinks"] == expected_links
+    with factory() as db:
+        import uuid
+        stored = db.get(RecipeBook, uuid.UUID(saved["id"]))
+        assert stored.notes == notes
+        assert stored.version == saved["version"]
+    updated = client.put(f"/api/apps/recipes/{saved['id']}", json={
+        **recipe_body(product), "title": "Другое название", "notes": reopened["notes"],
+        "version": reopened["version"],
+    })
+    assert updated.status_code == 200, updated.text
+    assert updated.json()["recipe"]["notes"] == notes
+
+
 def test_recipe_notes_validation_and_tutorial_completion_are_native_and_idempotent(recipe_client):
     client, factory = recipe_client
     with factory() as db:

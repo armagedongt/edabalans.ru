@@ -6,12 +6,15 @@ from copy import deepcopy
 from decimal import Decimal, ROUND_HALF_UP
 from fractions import Fraction
 from typing import Any
+from urllib.parse import urljoin
 
 from fastapi import HTTPException
 from sqlalchemy import case, select
 from sqlalchemy.orm import Session
 
 from app.recipe_models import NutritionProduct, RecipeBook, RecipeIngredient
+from app.config import get_settings
+from app.site_links import relative_site_url
 
 INTEGER_RE = re.compile(r"^[0-9]+$")
 NUTRITION_RE = re.compile(r"^[0-9]+(?:[.,][0-9]{1,3})?$")
@@ -183,6 +186,16 @@ def contribution_ranks(values: list[dict[str, Fraction]]) -> list[dict[str, int 
     return [{key: ranks[key].get(row[key]) for key in NUTRIENTS} for row in values]
 
 
+def _notes_links(value: str) -> dict[str, str]:
+    links = {}
+    for match in re.finditer(r"https?://[^\s<>\"']+", value):
+        url = match[0]
+        path = relative_site_url(url)
+        if path != url:
+            links[url] = urljoin(get_settings().account_public_url, path)
+    return links
+
+
 def recipe_payload(db: Session, recipe: RecipeBook) -> dict[str, Any]:
     totals = _recipe_totals(db, recipe)
     if totals["weight"] <= 0 or recipe.yield_g <= 0:
@@ -198,7 +211,8 @@ def recipe_payload(db: Session, recipe: RecipeBook) -> dict[str, Any]:
             "exact": _exact_payload(row["values"], "1e-5"), "ranks": rank,
         })
     return {
-        "id": str(recipe.id), "title": recipe.title, "notes": recipe.notes, "yield": quantity_payload(recipe.yield_g),
+        "id": str(recipe.id), "title": recipe.title, "notes": recipe.notes,
+        "notesLinks": _notes_links(recipe.notes), "yield": quantity_payload(recipe.yield_g),
         "portion": quantity_payload(recipe.portion_g), "version": recipe.version, "ingredients": rows,
         "totals": {
             "weight": str(totals["weight"]), "yield": str(quantity_payload(recipe.yield_g)), "portion": str(quantity_payload(recipe.portion_g)),

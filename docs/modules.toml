@@ -23,7 +23,7 @@ owns_files = [
 ]
 owns_routes = ["*/embed.js", "*/site-footer.js", "*/cookie-notice.js", "*/favicon.ico", "*/favicon.png", "*/apple-touch-icon.png"]
 sources = [
-  { path = "backend/app/site_links.py", role = "runtime", shared = true, consumers = ["messaging.telegram.attribution", "operations.delivery", "platform.blog", "platform.commerce", "platform.content", "platform.knowledge", "products", "products.calories", "products.intensive", "products.masterclass.course", "products.masterclass.questionnaires", "products.public-site"] },
+  { path = "backend/app/site_links.py", role = "runtime", shared = true, consumers = ["messaging.telegram.attribution", "operations.delivery", "platform.blog", "platform.commerce", "platform.content", "platform.knowledge", "products", "products.calories", "products.intensive", "products.masterclass.course", "products.masterclass.questionnaires", "products.public-site", "products.recipes"] },
   { path = "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.masterclass.runtime", "products.calories", "products.recipes", "products.public-site", "products.intensive"] },
   { path = "backend/app/static/site-cookie-notice.js", role = "runtime", shared = true, consumers = ["products.public-site", "platform.blog", "products.intensive"] },
 ]
