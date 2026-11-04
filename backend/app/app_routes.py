@@ -817,7 +817,10 @@ def strength_exercise_asset(asset_name: str) -> FileResponse:
     }
     if asset_name not in allowed:
         raise HTTPException(status_code=404, detail="exercise asset not found")
-    return public_asset(STATIC_DIR / "strength-exercises" / asset_name)
+    response = public_asset(STATIC_DIR / "strength-exercises" / asset_name)
+    if asset_name.endswith(".webp"):
+        response.headers["Content-Type"] = "image/webp"
+    return response
 
 
 @router.get("/assets/strength-tutorial/{asset_path:path}", include_in_schema=False)
