@@ -18,6 +18,30 @@ NAMES = {
 }
 
 
+def test_optimized_exercise_media_keeps_original_urls_available():
+    from pathlib import Path
+    from app.app_routes import BASE_STRENGTH_EXERCISES, strength_exercise_asset
+
+    originals = [url for item in BASE_STRENGTH_EXERCISES for url in item.get("legacy_asset_urls", [])]
+    retained = {
+        "/assets/strength-exercises/629277bb0155927bc9c9.gif",
+        "/assets/strength-exercises/697fa4cc026fbac70308.png",
+    }
+    assert retained.issubset(originals)
+    for url in retained:
+        response = strength_exercise_asset(url.rsplit("/", 1)[-1])
+        assert Path(response.path).is_file()
+
+
+def test_exercise_media_rejects_unknown_asset():
+    from fastapi import HTTPException
+    from app.app_routes import strength_exercise_asset
+
+    with pytest.raises(HTTPException) as error:
+        strength_exercise_asset("unknown.webp")
+    assert error.value.status_code == 404
+
+
 def session(number, exercise_id, note=""):
     return {"session_number": number, "session_id": f"session-{number}",
             "workout_type": 1, "date": "", "status": "filled",

@@ -812,7 +812,8 @@ def strength_exercise_asset(asset_name: str) -> FileResponse:
     allowed = {
         url.rsplit("/", 1)[-1]
         for item in BASE_STRENGTH_EXERCISES
-        for url in (item["media_url"], item["guide"]["muscle_image_url"])
+        for url in (item["media_url"], item["guide"]["muscle_image_url"], *item.get("legacy_asset_urls", []))
+        if url.startswith("/assets/strength-exercises/")
     }
     if asset_name not in allowed:
         raise HTTPException(status_code=404, detail="exercise asset not found")
