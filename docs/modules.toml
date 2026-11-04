@@ -272,7 +272,7 @@ owns_routes = ["*/admin/api/content*", "*/admin/api/editorial/service-emails*", 
 sources = [
   { path = "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md", role = "rule", shared = true, consumers = ["platform.knowledge", "operations.imports"] },
   { path = "docs/knowledge-base/USER_NOTIFICATIONS.md", role = "rule", shared = true, consumers = ["platform.auth", "platform.commerce", "messaging.telegram.engine"] },
-  { path = "docs/IMAGE_CATALOG.md", role = "rule", shared = true, consumers = ["platform.knowledge", "platform.blog", "platform.web_design", "platform", "products.public-site", "products.intensive", "products.masterclass.course", "products.calories", "products.recipes"] },
+  { path = "docs/IMAGE_CATALOG.md", role = "rule", shared = true, consumers = ["platform.knowledge", "platform.blog", "platform.web_design", "platform", "products.public-site", "products.intensive", "products.masterclass.course", "products.calories", "products.recipes", "products.strength"] },
   { path = "content/author-voice/source-selection/ARTICLE_SOURCE_LINKING.md", role = "rule", shared = true, consumers = ["platform.blog", "platform.knowledge", "messaging.telegram", "messaging.max"] },
     { path = "docs/knowledge-base/EDITORIAL_VAULT.md", role = "rule", shared = true, consumers = ["products.catalog", "platform.commerce", "products.masterclass.course", "products.calories", "messaging.telegram.engine"] },
     { path = "content/author-voice/recipe-authoring-v1.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.recipes"] },
@@ -494,7 +494,7 @@ owns_routes = ["*/apps/dqs*", "*/api/apps/dqs*", "*/dqs"]
 
 [[modules]]
 id = "products.strength"
-reads_from = ["platform.web_design"]
+reads_from = ["platform.web_design", "platform.content"]
 admin_catalog = [{ category = "applications", order = 20, url = "/admin/strength", label = "Силовые", icon = "💪", description = "Приложение силовых тренировок клиентов." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.strength.md"
