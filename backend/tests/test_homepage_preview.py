@@ -617,11 +617,11 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     ]
     wall_sources = parser.block_image_source_order["reviews-wall"]
     promo_sources = [
-        "/preview/homepage-mobile/reviews-promo-before-after.jpg?v=1",
+        "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/media/reviews/site-images-remaining-v1/53bf73845c9e30d56de3fabec906b8bdaf7066f4915b0849f2b986bbd74ed596.webp",
         "/preview/homepage-mobile/reviews-promo-can-dont-want.jpg?v=1",
         "/preview/homepage-mobile/reviews-promo-cant-do.jpg?v=1",
         "/preview/homepage-mobile/reviews-promo-hudet-budem.jpg?v=1",
-        "/preview/homepage-mobile/reviews-promo-time-cat.png?v=1",
+        "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/media/reviews/site-images-remaining-v1/6c823768417a1e6ca57ce31ebdc4e0520f667235f5dfdf23367e15f11eb0fdb5.webp",
     ]
     assert [wall_sources[index] for index in (2, 7, 12, 17, 22)] == promo_sources
     assert [
@@ -1138,11 +1138,11 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
     assert parser.block_image_source_order["reviews-featured"] == expected_featured_sources
     wall_sources = parser.block_image_source_order["reviews-wall"]
     promo_sources = [
-        "/preview/homepage-mobile/reviews-promo-before-after.jpg?v=1",
+        "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/media/reviews/site-images-remaining-v1/53bf73845c9e30d56de3fabec906b8bdaf7066f4915b0849f2b986bbd74ed596.webp",
         "/preview/homepage-mobile/reviews-promo-can-dont-want.jpg?v=1",
         "/preview/homepage-mobile/reviews-promo-cant-do.jpg?v=1",
         "/preview/homepage-mobile/reviews-promo-hudet-budem.jpg?v=1",
-        "/preview/homepage-mobile/reviews-promo-time-cat.png?v=1",
+        "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/media/reviews/site-images-remaining-v1/6c823768417a1e6ca57ce31ebdc4e0520f667235f5dfdf23367e15f11eb0fdb5.webp",
     ]
     assert [wall_sources[index] for index in (2, 7, 12, 17, 22)] == promo_sources
     actual_tilda_asset_ids = [

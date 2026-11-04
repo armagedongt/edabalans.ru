@@ -920,7 +920,11 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     calories_html = client.get("/apps/calories-course.html").text
     assert "COURSE_APP_REVEALS=false" in calories_html
     assert "dqs-material-actions" in course_html
-    assert "DQS_for_print.png" in course_html
+    assert re.search(
+        r'id="dqs-print" href="https://xn-----jlceacr3bggd8ajed5a6kl\.xn--p1ai'
+        r'/media/reviews/site-images-remaining-v1/[a-f0-9]{64}\.webp"',
+        course_html,
+    )
     assert "mobile-article-toc-button" in course_html
     assert "article-toc-button" in course_html
     assert "Содержание" in course_html

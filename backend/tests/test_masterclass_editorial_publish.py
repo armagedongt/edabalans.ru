@@ -532,8 +532,8 @@ def test_editorial_body_rewrites_obsidian_visible_article_images_to_public_media
         "telegram-channel-collage-2026-09-20.webp)"
     ) in body
     assert (
-        "](/course-assets/masterclass/media/01-food-diary/"
-        "max-channel-collage-2026-09-20.png)"
+        "](https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/media/reviews/site-images-remaining-v1/"
+        "fe2068f69642391b2d0d7db00b67f0810a3ec274e9097b0d24ae0b4beca6a10b.webp)"
     ) in body
 
 
