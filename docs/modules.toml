@@ -144,7 +144,7 @@ reads_from = ["platform.web_design", "platform.commerce", "platform.content", "p
 
 [[modules]]
 id = "platform.content"
-reads_from = ["platform", "platform.web_design", "products.masterclass.course", "platform.commerce", "platform.auth", "messaging.telegram.engine"]
+reads_from = ["platform", "platform.web_design", "products.masterclass.course", "platform.commerce", "platform.auth", "messaging.telegram.engine", "operations.health"]
 writes_to = ["platform.commerce", "platform.knowledge"]
 admin_catalog = [{ category = "marketing", order = 20, url = "/admin/content", label = "Каталог материалов", icon = "🗂️", description = "Материалы Telegram, Pikabu и рабочий каталог контента." }]
 parent = "platform"
@@ -1148,6 +1148,8 @@ depends_on = ["operations.database", "operations.proxy", "messaging.telegram.eng
 reads_from = ["messaging.telegram.engine", "messaging.max"]
 owns_files = [
   "docs/runtime-health/**", "infra/network/**",
+  { path = "tools/edabalans_direct_ssh.py", role = "runtime", shared = true, consumers = ["platform.content"] },
+  "tools/tests/test_edabalans_direct_ssh.py",
   "infra/monitoring/cloudflare-watchdog/**",
   "infra/monitoring/edabalans-telegram-watchdog", "infra/monitoring/test-telegram-watchdog.sh",
   "infra/systemd/edabalans-telegram-watchdog.*",

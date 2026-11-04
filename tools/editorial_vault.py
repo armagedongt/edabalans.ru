@@ -99,7 +99,8 @@ class API:
             raise VaultError("Недопустимый путь API")
         username = os.getenv("EDABALANS_ADMIN_USERNAME") or os.getenv("EDABALANS_ADMIN_USER")
         password = os.getenv("EDABALANS_ADMIN_PASSWORD")
-        if username and password:
+        direct_ssh = os.getenv("EDABALANS_SSH_DIRECT") == "1"
+        if username and password and not direct_ssh:
             origin = os.getenv("EDABALANS_API_URL", "https://edabalans.ru")
             if not origin.startswith("https://"):
                 raise VaultError("Для пароля администратора нужен HTTPS")
@@ -127,7 +128,13 @@ except urllib.error.HTTPError as error:
 """
         encoded = base64.b64encode(script.encode()).decode()
         command = "cd /opt/edabalans && docker compose exec -T backend python -c \"import base64;exec(base64.b64decode('" + encoded + "'))\""
-        result = subprocess.run(["ssh", "-o", "BatchMode=yes", "edabalans-prod", command],
+        ssh_command = ["ssh", "-o", "BatchMode=yes"]
+        if direct_ssh:
+            proxy_command = subprocess.list2cmdline([
+                sys.executable, str(Path(__file__).with_name("edabalans_direct_ssh.py")), "%h", "%p",
+            ])
+            ssh_command.extend(["-o", "ProxyCommand=" + proxy_command])
+        result = subprocess.run([*ssh_command, "edabalans-prod", command],
                                 input=json.dumps({"method": method, "path": path, "payload": payload}),
                                 capture_output=True, text=True, encoding="utf-8", timeout=65)
         if result.returncode:
