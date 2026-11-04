@@ -1,4 +1,5 @@
 import os
+import re
 import uuid
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -694,13 +695,18 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
         guide = item["guide"]
         assert guide["position"] and guide["movement"] and guide["details"]
         assert guide["target_muscles"] and guide["auxiliary_muscles"]
-        demo = client.get(item["media_url"])
-        assert demo.status_code == 200
-        assert demo.headers["content-type"].startswith("image/gif")
-        assert demo.content.startswith((b"GIF87a", b"GIF89a"))
-        muscles = client.get(guide["muscle_image_url"])
-        assert muscles.status_code == 200
-        assert muscles.headers["content-type"].startswith("image/")
+        # The common media mount belongs to Caddy, outside this ASGI client.
+        # Release checks verify its delivered bytes, frames, and content type.
+        for url, animated in ((item["media_url"], True), (guide["muscle_image_url"], False)):
+            if url.startswith("/media/reviews/"):
+                assert re.fullmatch(r"/media/reviews/site-images-remaining-v1/[a-f0-9]{64}\.webp", url)
+                continue
+            response = client.get(url)
+            assert response.status_code == 200
+            assert response.headers["content-type"].startswith("image/")
+            if animated:
+                assert response.headers["content-type"].startswith("image/gif")
+                assert response.content.startswith((b"GIF87a", b"GIF89a"))
     assert client.get("/assets/strength-exercises/not-allowlisted.gif").status_code == 404
     assert client.get("/assets/strength-exercises/%2e%2e%2fstrength.html").status_code == 404
     assert next(item for item in first if item["exercise_id"] == "legacy-cable-row")["active"] is True
