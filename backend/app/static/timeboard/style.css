@@ -1,0 +1,52 @@
+*{box-sizing:border-box}
+:root{font-family:Arial,"Segoe UI",sans-serif;color:#242424;background:#fff;font-synthesis:none}
+body{margin:0;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,main:focus-visible{outline:2px solid #555;outline-offset:2px}
+.toolbar{flex-shrink:0;display:flex;align-items:center;gap:10px;min-height:58px;padding:12px 18px;border-bottom:1px solid #ddd}
+h1{font-size:16px;font-weight:600;margin:0 12px 0 0}
+button{background:#fff;border:1px solid #ddd;border-radius:3px;padding:7px 10px;font-size:12px}
+button:hover{background:#f3f3f3}
+.primary{background:#292929;color:#fff;border-color:#292929}
+.primary:hover{background:#454545}
+.toolbar input{width:170px;border:1px solid #ddd;border-radius:3px;padding:7px 9px;font-size:12px}
+#save-status{font-size:11px;color:#777;margin-left:auto}
+.board-scroll{overflow-x:auto;overflow-y:hidden;flex:1;min-height:0;position:relative;overscroll-behavior-x:contain;scrollbar-color:#bbb #f4f4f4;scrollbar-width:auto}
+.board{display:flex;height:100%;width:max-content;position:relative}
+.day-column{width:260px;flex-shrink:0;border-right:1px solid #e5e5e5;display:flex;flex-direction:column;min-height:0}
+.day-head{height:58px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #eee}
+h2{font-size:14px;font-weight:500;margin:0}
+.weekday{font-size:11px;color:#888}
+.today .day-head{border-bottom:2px solid #555}
+.today h2{font-weight:700}
+.day-list{padding:12px;overflow-y:auto;flex:1;min-height:0;scrollbar-width:thin}
+.add-entry{border:0;width:100%;text-align:left;color:#888;font-size:12px;padding:10px 5px;background:none}
+.add-entry:hover{color:#333;background:#f6f6f6}
+.card{padding:12px 10px;border:1px solid #e2e2e2;border-radius:3px;background:#fff;margin-bottom:9px;cursor:grab}
+.card:hover{border-color:#bbb}
+.card-line{display:flex;align-items:flex-start;gap:8px}
+.card-check{margin:3px 0 0;flex-shrink:0;accent-color:#555;cursor:pointer}
+.card-title{padding:0;border:0;border-radius:0;background:none;text-align:left;font-size:13px;line-height:1.5;overflow-wrap:anywhere;min-width:0}
+.card-title:hover{background:none;text-decoration:underline}
+.card-meta{font-size:10px;color:#888;line-height:1.5;margin-top:9px;padding-left:21px}
+.card-notes{font-size:12px;color:#666;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;margin:9px 0 0;padding-left:21px}
+.card.done .card-title{text-decoration:line-through;color:#999}
+.card.done .card-meta,.card.done .card-notes{color:#aaa}
+.drag-over{background:#f3f3f3;box-shadow:inset 0 0 0 1px #bbb}
+dialog{width:440px;max-width:calc(100vw - 28px);max-height:calc(100dvh - 28px);overflow-y:auto;border:1px solid #ccc;border-radius:5px;padding:24px}
+dialog::backdrop{background:#0004}
+.dialog-head{display:flex;align-items:center;justify-content:space-between;font-size:15px;font-weight:600;margin-bottom:24px}
+.icon-button{font-size:18px;padding:2px 9px}
+form label{display:flex;flex-direction:column;gap:7px;font-size:12px;margin-bottom:15px}
+form input,form select,form textarea{width:100%;border:1px solid #ccc;border-radius:3px;padding:9px;background:#fff;font-size:13px;min-width:0}
+form textarea{resize:vertical}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.completed-label{flex-direction:row;align-items:center}
+.completed-label input{width:auto}
+.dialog-actions{display:flex;gap:8px;align-items:center;margin-top:22px}
+.dialog-actions .secondary{margin-left:auto}
+.danger{background:none;border:0;color:#a44;padding-left:0}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#333;color:#fff;border-radius:3px;padding:12px 18px;z-index:10;font-size:12px;max-width:calc(100vw - 24px)}
+[hidden]{display:none!important}
+@media(max-width:600px){.toolbar{gap:6px;flex-wrap:wrap;padding:10px;min-height:58px}.toolbar h1{margin-right:auto}.toolbar input{order:2;width:100%;flex:1;min-width:120px}.toolbar button{padding:8px;font-size:12px}#save-status{order:3;font-size:10px;margin-left:0}.day-column{width:240px}.day-head{height:52px}.day-list{padding:10px}}

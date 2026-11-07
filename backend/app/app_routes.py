@@ -237,6 +237,31 @@ def personal_couple_game() -> FileResponse:
     )
 
 
+TIMEBOARD_DIR = STATIC_DIR / "timeboard"
+TIMEBOARD_HEADERS = {
+    "Cache-Control": "no-store",
+    "X-Robots-Tag": "noindex, nofollow, noarchive",
+    "Referrer-Policy": "no-referrer",
+}
+
+
+@router.get("/timeboard", include_in_schema=False)
+def timeboard_redirect() -> RedirectResponse:
+    return RedirectResponse("/timeboard/", status_code=307, headers=TIMEBOARD_HEADERS)
+
+
+@router.get("/timeboard/", include_in_schema=False)
+def timeboard_page() -> FileResponse:
+    return FileResponse(TIMEBOARD_DIR / "index.html", headers=TIMEBOARD_HEADERS)
+
+
+@router.get("/timeboard/{asset_name}", include_in_schema=False)
+def timeboard_asset(asset_name: str) -> FileResponse:
+    if asset_name not in {"app.js", "style.css"}:
+        raise HTTPException(status_code=404, detail="asset not found")
+    return FileResponse(TIMEBOARD_DIR / asset_name, headers=TIMEBOARD_HEADERS)
+
+
 def homepage_library_fragment(source: str, name: str) -> str:
     start_marker = f"<!-- library:{name}:start -->"
     end_marker = f"<!-- library:{name}:end -->"

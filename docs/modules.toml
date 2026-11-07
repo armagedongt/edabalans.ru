@@ -1074,9 +1074,10 @@ owns_files = [
   "backend/tests/browser/admin-loading.e2e.mjs",
   "backend/app/static/max-logo.png", "prototypes/private-weather/**", "backend/tests/test_weather_page.py",
   "backend/app/static/private-game/**", "backend/tests/test_game_page.py",
+  "backend/app/static/timeboard/**", "backend/tests/test_timeboard_page.py",
 ]
 owns_routes = [
-  "*/control", "*/admin", "*/admin/*", "*/crm*", "*/weather*", "*/game*", "*/admin/api/crm*", "*/admin/api/users*",
+  "*/control", "*/admin", "*/admin/*", "*/crm*", "*/weather*", "*/game*", "*/timeboard*", "*/admin/api/crm*", "*/admin/api/users*",
   "*/admin/api/summary", "*/admin/api/tags*", "*/admin/api/audit/*",
 ]
 depends_on = ["platform.auth", "platform.crm"]
