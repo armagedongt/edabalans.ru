@@ -1373,6 +1373,13 @@ def strength_account_catalog(db: Session, state: StrengthState) -> list[dict[str
     return list(items.values())
 
 
+def strength_exercise_display_names(db: Session, state: StrengthState) -> dict[str, str]:
+    return {
+        str(item["exercise_id"]): item.get("full_name") or item["exercise_name"]
+        for item in strength_account_catalog(db, state)
+    }
+
+
 APP_STATE_MODELS = {
     "dqs": DqsState,
     "strength": StrengthState,

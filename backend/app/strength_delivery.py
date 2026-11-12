@@ -147,8 +147,8 @@ def send_plan(body: PlanDeliveryIn, request: Request, db: Session = Depends(get_
     workout = next((item for item in state.workouts or [] if str(item.get("session_id")) == body.session_id), None)
     if workout is None:
         raise HTTPException(404, "Тренировка не найдена")
-    from app.app_routes import strength_account_catalog
-    names = {str(item["exercise_id"]): item.get("short_name") or item["exercise_name"] for item in strength_account_catalog(db, state)}
+    from app.app_routes import strength_exercise_display_names
+    names = strength_exercise_display_names(db, state)
     title = next((str(item["title"]) for item in state.workout_types or [] if item.get("workout_type") == workout.get("workout_type")), f"Шаблон {workout.get('workout_type')}")
     selected = workout
     if body.exercise_id is not None:

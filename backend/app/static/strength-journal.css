@@ -38,7 +38,7 @@
 .st-history-column.ex0{--st-ex-bg:var(--ex1);--st-ex-line:#cdd9ef}.st-history-column.ex1{--st-ex-bg:var(--ex2);--st-ex-line:#d8cdef}.st-history-column.ex2{--st-ex-bg:var(--ex3);--st-ex-line:#c7dfce}.st-history-column.ex3{--st-ex-bg:var(--ex4);--st-ex-line:#ead6b8}.st-history-column.ex4{--st-ex-bg:var(--ex5);--st-ex-line:#e8cad7}.st-history-column.ex5{--st-ex-bg:var(--ex6);--st-ex-line:#c5e0dc}
 #strength-app .st-modern-head{min-height:35px;padding:4px 5px;gap:4px;background:var(--st-ex-bg,#eff2ff);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--st-ex-line,#d4dcf2)}
 #strength-app .st-modern-title{min-width:0;gap:4px;display:flex;align-items:center}
-#strength-app .st-modern-title strong{font-size:11px;line-height:1.15;font-weight:750;white-space:normal}
+#strength-app .st-modern-title strong{min-width:0;font-size:11px;line-height:1.15;font-weight:750;white-space:normal;overflow-wrap:anywhere}
 #strength-app .st-exercise-number{display:grid;place-items:center;flex:0 0 23px;width:23px;min-width:23px;height:24px;padding:0;background:transparent;border:0;border-radius:0;color:#171717;font-size:15px;font-weight:850;line-height:1}
 #strength-app .st-modern-tools{display:flex;flex:none;gap:2px}
 #strength-app .st-modern-tools button{height:24px;min-height:24px;width:23px;min-width:23px;padding:0;font-size:14px;border:1px solid var(--st-accent-line);border-radius:6px;background:#fff;color:var(--st-accent)}

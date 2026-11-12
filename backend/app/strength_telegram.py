@@ -41,7 +41,8 @@ def split_text(text: str, limit: int) -> list[str]:
     return chunks
 
 
-def workout_messages(user_name: str, workout: dict) -> list[str]:
+def workout_messages(user_name: str, workout: dict, names: dict[str, str] | None = None) -> list[str]:
+    names = names or {}
     exercises = workout.get("exercises") or []
     fact = any(has_fact(item) for exercise in exercises for item in exercise.get("sets", []))
     heading = (
@@ -75,7 +76,8 @@ def workout_messages(user_name: str, workout: dict) -> list[str]:
             sets.append(row)
         if sets:
             count += len(sets)
-            lines.append(str(exercise.get("exercise_name") or exercise.get("exercise_id") or "Упражнение"))
+            code = str(exercise.get("exercise_id") or "")
+            lines.append(str(names.get(code) or exercise.get("exercise_name") or code or "Упражнение"))
             lines.extend(sets)
             if exercise.get("note"):
                 lines.append(str(exercise["note"]))
@@ -153,7 +155,8 @@ def export_workout(
     if workout is None:
         raise HTTPException(404, "Тренировка не найдена")
     try:
-        messages = workout_messages(user.display_name or "Профиль", workout)
+        from app.app_routes import strength_exercise_display_names
+        messages = workout_messages(user.display_name or "Профиль", workout, strength_exercise_display_names(db, state))
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from None
     message_ids = send_workout(settings, messages)

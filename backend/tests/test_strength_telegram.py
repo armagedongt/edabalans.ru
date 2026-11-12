@@ -93,14 +93,20 @@ def api(monkeypatch):
 
 def test_admin_sends_saved_profile_to_fixed_owner_and_records_audit(api):
     client, factory, settings, sent, body = api
+    saved_workout = workout()
+    saved_workout["exercises"][0]["exercise_id"] = "close-grip-bench-press"
+    with factory() as db:
+        db.scalar(select(StrengthState)).workouts = [saved_workout]
+        db.commit()
     body["chat_id"] = "99999"
     response = client.post("/admin/api/apps/strength/telegram", json=body, auth=("owner", "test-password"))
     assert response.status_code == 200 and response.json()["message_ids"] == [77]
     assert len(sent) == 1 and sent[0]["chat_id"] == "10001"
     assert "Синтетический профиль" in sent[0]["text"] and "parse_mode" not in sent[0]
+    assert "Жим штанги лёжа узким хватом" in sent[0]["text"]
     with factory() as db:
         state = db.scalar(select(StrengthState))
-        assert state.workouts == [workout()] and state.version == 3
+        assert state.workouts == [saved_workout] and state.version == 3
         audit = db.scalar(select(AdminAppEdit))
         assert audit.action == "sendTelegram" and audit.details["message_ids"] == [77]
 

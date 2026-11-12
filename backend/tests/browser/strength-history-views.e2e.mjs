@@ -21,7 +21,7 @@ const errors=[];let rows=[];
 async function open(width,managed=false,longNotes=false,manyExercises=false,sameNames=false,shortHistory=false,realAdmin=false,historyGaps=false,holdCatalogueReads=false){
  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce',hasTouch:width<=700});
  const page=await context.newPage(),state=fixture(manyExercises),writes=[],telegramWrites=[];let active=0,overlap=false,failTemplate=false;let workoutReads=0,deliveryFailure=false,deliveryGate=null,sessionGate=null,failSession=false,transportFailure=false,timeoutSession=false;
- if(sameNames)state.exercise_catalog.forEach(e=>{e.exercise_name=e.short_name='Одинаковое имя <img src=x onerror=alert(1)>';});
+ if(sameNames)state.exercise_catalog.forEach(e=>{e.exercise_name=e.short_name=e.full_name='Одинаковое имя <img src=x onerror=alert(1)>';});
  if(longNotes)state.session_exercises[0].note='Примечание с несколькими строками для проверки сохранения позиции при изменении подходов. '.repeat(14);
  if(shortHistory){state.sets=state.sets.filter(set=>set.set_number<=2);state.session_exercises=state.session_exercises.filter(ex=>!(ex.session_id==='one'&&ex.exercise_id===guide[0].code));state.sets=state.sets.filter(set=>!(set.session_id==='one'&&set.exercise_id===guide[0].code));}
  if(historyGaps){
@@ -135,6 +135,7 @@ if(process.env.QA_FOCUS==='date'){
 for(const width of [360,430,700,701,768,1440]){
  const {context,page}=await open(width);
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ assert.equal(await page.locator('.st-history-row').nth(1).locator('.st-modern-title strong').last().innerText(),guide[1].full_name);
  assert.equal(await page.locator('.st-session-sticky .st-view-toggle').count(),1,'view switch belongs to workout toolbar');
  assert.equal(await page.locator('.st-view-toggle').getAttribute('aria-pressed'),'false','unpressed eye is whole workouts');
  assert.equal(await page.locator('.st-template-composition').count(),0,'composition is inside template management');
@@ -345,7 +346,7 @@ assert.deepEqual(catalogSave.exercises.filter(e=>e.active).map(e=>e.exercise_id)
 await cp.reload();await cp.getByRole('button',{name:'Шаблон 4',exact:true}).click();
 await cp.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
 await cp.getByRole('button',{name:'Состав упражнений шаблона 4',exact:true}).click();
-assert.deepEqual(await cp.locator('.st-manager-row.in-template .st-manager-name').allTextContents(),[guide[1].name,guide[0].name]);
+assert.deepEqual(await cp.locator('.st-manager-row.in-template .st-manager-name').allTextContents(),[guide[1].full_name,guide[0].full_name]);
 assert.equal(composition.writes.some(w=>w.action==='saveSession'),false,'composition edits never rewrite workout history');
 assert.equal(JSON.stringify([composition.state.sessions,composition.state.session_exercises,composition.state.sets]),historyBefore);
 await composition.context.close();
@@ -389,14 +390,26 @@ await pp.getByRole('button',{name:'Шаблон 2',exact:true}).click();
 const otherTones=await pp.locator('.st-history-row').evaluateAll(es=>es.map(e=>getComputedStyle(e.querySelector('.st-modern-head')).backgroundColor));
 assert.notDeepEqual(otherTones,tones,'same exercise IDs get palette of current template positions');
 await pp.screenshot({path:`${out}/palette-template2.png`});await palette.context.close();
-// Approved names use the compact label in the journal and full name in information.
+// Both journal views and the guide use the full catalogue name.
 const names=await open(430),np=names.page;
 const namedRow=np.locator('.st-history-row').nth(1);
-assert.equal(await namedRow.locator('.st-modern-title strong').last().innerText(),guide[1].short_name);
+assert.equal(await namedRow.locator('.st-modern-title strong').last().innerText(),guide[1].full_name);
+await np.locator('.st-view-toggle').click();
+assert.equal(await namedRow.locator('.st-modern-title strong').last().innerText(),guide[1].full_name);
 await namedRow.locator('.st-exercise-info').last().click();
 assert.equal(await np.locator('#st-guide-title').innerText(),guide[1].full_name);
 await np.screenshot({path:`${out}/exercise-full-name.png`});
-await np.getByRole('button',{name:'Закрыть информацию об упражнении',exact:true}).click();await names.context.close();
+await np.getByRole('button',{name:'Закрыть информацию об упражнении',exact:true}).click();
+await np.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
+await np.getByRole('button',{name:'Состав упражнений шаблона 1',exact:true}).click();
+await np.locator('.st-manager-row.in-template').filter({hasText:guide[1].full_name}).getByRole('button',{name:'Убрать',exact:true}).click();
+await np.waitForFunction(()=>document.querySelector('#st-manager-save-state').textContent==='Сохранено');
+await np.getByRole('button',{name:'← Назад к шаблонам',exact:true}).click();
+await np.getByRole('button',{name:'Готово',exact:true}).click();
+await np.getByRole('button',{name:'Статистика',exact:true}).click();
+await np.getByRole('button',{name:'Анализ',exact:true}).click();
+assert.equal(await np.locator('.st-select option').filter({hasText:guide[1].full_name}).count(),1);
+await names.context.close();
 // Same labels cannot merge histories or inject markup into exercise cards.
 const identities=await open(430,false,false,false,true),ip=identities.page;
 assert.equal(await ip.locator('.st-history-row').count(),2);
@@ -838,6 +851,8 @@ for(const width of [360,430,700,701,768,1440]){
  await page.locator('.st-app-icon').click();
  await page.screenshot({path:`${out}/plan-comparison-430.png`});
  await weight.fill('70');await weight.press('Tab');await page.waitForTimeout(550);assert.equal(await weight.getAttribute('class'),'');
+ await page.clock.setFixedTime(new Date(2026,9,28,12));
+ await page.reload();await page.locator('.st-view-toggle').waitFor();
  await page.evaluate(()=>ST.renameTemplate(1,'Верх'));await page.waitForTimeout(100);await page.evaluate(()=>ST.renameTemplate(2,'Низ'));await page.waitForTimeout(100);
  await page.getByRole('button',{name:'Статистика',exact:true}).click();
  const legend=await page.locator('.st-calendar-legend').textContent();assert(legend.includes('Верх')&&legend.includes('Низ'));
@@ -851,12 +866,12 @@ for(const width of [360,430,700,701,768,1440]){
  await page.getByRole('dialog',{name:'Отправка плана'}).waitFor();assert.equal(trial.telegramWrites.length,0);
  await page.getByRole('button',{name:'Отменить',exact:true}).click();assert.equal(trial.telegramWrites.length,0);
  await page.locator('.st-view-toggle').click();
- const card=page.locator('.st-history-row').first().locator('article[data-session-index="0"]');
+ const card=page.locator('.st-history-row').nth(1).locator('article[data-session-index="0"]');
  await card.getByRole('button',{name:'Отправить план упражнения',exact:true}).click();
  await page.screenshot({path:`${out}/confirm-exercise-delivery-430.png`});
- assert((await page.locator('.st-modal-sub').textContent()).includes(trial.state.exercise_catalog[0].exercise_name));
+ assert.equal(await page.getByRole('dialog',{name:'Отправка плана'}).locator('.st-modal-sub').textContent(),guide[1].full_name);
  await page.getByRole('button',{name:'Отправить',exact:true}).click();await page.locator('.st-delivery-notice').waitFor();
- assert.equal(trial.telegramWrites.length,1);assert.equal(trial.telegramWrites[0].exercise_id,trial.state.exercise_catalog[0].exercise_id);
+ assert.equal(trial.telegramWrites.length,1);assert.equal(trial.telegramWrites[0].exercise_id,guide[1].code);
  assert((await page.locator('.st-delivery-notice').textContent()).includes('План упражнения'));
  await trial.context.close();
 }

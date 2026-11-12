@@ -1575,7 +1575,7 @@
 
 </style>
 
-<link rel="stylesheet" href="/assets/strength-journal.css?v=20261028-date-entry">
+<link rel="stylesheet" href="/assets/strength-journal.css?v=20261113-full-names">
 <script src="/assets/strength-journal-model.js?v=20261022-set-role-inheritance"></script>
 <script>
 (function(){
@@ -3198,8 +3198,12 @@ function catalogItemById(id){
 }
 
 
-function exerciseNameHtml(item,name){
-  return esc(name)+(item && item.source === 'custom' ? ' <span title="Личное упражнение" aria-label="Личное упражнение">★</span>' : '');
+function exerciseDisplayName(item, fallback){
+  return (item && (item.full_name || item.exercise_name)) || fallback || '';
+}
+
+function exerciseNameHtml(item, fallback){
+  return esc(exerciseDisplayName(item, fallback))+(item && item.source === 'custom' ? ' <span title="Личное упражнение" aria-label="Личное упражнение">★</span>' : '');
 }
 
 
@@ -3726,7 +3730,7 @@ function renderJournal(){
   rows.forEach(function(row){
     html+='<div class="st-history-row">';
     row.indices.forEach(function(index){html+=renderHistoryExercise(index,row.item,row.order,row.maxSets);});
-    if(!row.indices.length)html+='<div class="st-empty">'+esc(row.item.exercise_name)+' — пока нет тренировок</div>';
+    if(!row.indices.length)html+='<div class="st-empty">'+esc(exerciseDisplayName(row.item))+' — пока нет тренировок</div>';
     html+='</div>';
   });
   return html+'</div></div>';
@@ -3832,7 +3836,7 @@ function renderHistoryExercise(index,item,order,maxSets){
   var emptyPlan=!exercise.sets.some(function(set){return !blank(set.planWeight)||!blank(set.planReps);});
   var html='<article style="'+journalExerciseTone(order)+'" class="st-modern-exercise st-history-column" data-session-index="'+index+'" data-exercise-id="'+id+'">';
   if(app.journalView==='exercise')html+=journalDate(index,session,'st-history-date',exercise.id);
-  html+='<header class="st-modern-head"><div class="st-modern-title"><span class="st-exercise-number">'+(order+1)+'</span><strong>'+exerciseNameHtml(item,item.short_name || item.exercise_name || exercise.name)+'</strong></div><div class="st-modern-tools">'+
+  html+='<header class="st-modern-head"><div class="st-modern-title"><span class="st-exercise-number">'+(order+1)+'</span><strong>'+exerciseNameHtml(item,exercise.name)+'</strong></div><div class="st-modern-tools">'+
     '<button'+data+' onclick="ST.addSet('+args+')" aria-label="Добавить подход">＋</button><button'+data+' onclick="ST.removeSet('+args+')" aria-label="Убрать подход">−</button>'+
     ((item.source==='base' || item.source==='custom')?'<button class="st-exercise-info"'+data+' onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Информация об упражнении">i</button>':'')+'</div></header>'+
     '<section class="st-modern-editor"><div class="st-grid-labels"><span></span><span class="st-plan-label">'+renderCopyButton(exercise.id,index,false,'',emptyPlan)+'<span>План</span></span><span class="st-fact-label">'+renderCopyButton(exercise.id,index,true,'',!exerciseHasFact(exercise))+'<span>Факт</span></span><span>RPE</span></div>';
@@ -4230,7 +4234,7 @@ function analysisExercises(){
     (session.exercises || []).forEach(function(exercise){
       var id = String(exercise.id || '');
       if(id && !byId[id]){
-        byId[id] = {exercise_id:id,exercise_name:exercise.name,sort_order:999,active:true};
+        byId[id] = {exercise_id:id,exercise_name:exerciseDisplayName(catalogItemById(id), exercise.name),sort_order:999,active:true};
       }
     });
   });
@@ -4969,10 +4973,7 @@ function renderAnalysis(){
         ''
       )+
       '>'+
-        esc(
-          catalog[i]
-            .exercise_name
-        )+
+        esc(exerciseDisplayName(catalog[i]))+
       '</option>';
 
   }
@@ -5287,7 +5288,7 @@ function renderModal(){
   if(app.modal && app.modal.type==='progression'){
     var target=progressionItem(app.modal.sessionIndex,app.modal.exerciseId);
     if(!target)return '';
-    return '<div class="st-modal-bg"><section class="st-modal" role="dialog" aria-modal="true" aria-label="Информация о расчёте прогрессии"><div class="st-modal-title">'+esc(target.exercise.name)+'</div>'+renderProgressionControls(app.modal.sessionIndex,target.exercise,catalogItemById(target.exercise.id),true)+'<div class="st-modal-actions"><button class="st-modal-btn" onclick="ST.calculateProgression('+app.modal.sessionIndex+',this.dataset.exerciseId)" data-exercise-id="'+esc(target.exercise.id)+'">Рассчитать прогрессию</button><button class="st-modal-btn" onclick="ST.closeModal()">Закрыть</button></div></section></div>';
+    return '<div class="st-modal-bg"><section class="st-modal" role="dialog" aria-modal="true" aria-label="Информация о расчёте прогрессии"><div class="st-modal-title">'+esc(exerciseDisplayName(catalogItemById(target.exercise.id), target.exercise.name))+'</div>'+renderProgressionControls(app.modal.sessionIndex,target.exercise,catalogItemById(target.exercise.id),true)+'<div class="st-modal-actions"><button class="st-modal-btn" onclick="ST.calculateProgression('+app.modal.sessionIndex+',this.dataset.exerciseId)" data-exercise-id="'+esc(target.exercise.id)+'">Рассчитать прогрессию</button><button class="st-modal-btn" onclick="ST.closeModal()">Закрыть</button></div></section></div>';
   }
 
   if(app.modal && app.modal.type==='confirmDelivery'){
@@ -5344,7 +5345,7 @@ function renderModal(){
       '<div class="st-modal-bg">'+
         '<div class="st-modal">'+
           '<div class="st-modal-title">'+
-            esc(ex.name)+
+            esc(exerciseDisplayName(catalogItemById(ex.id), ex.name))+
           '</div>'+
           '<label class="st-note-field st-coach-note">Комментарий тренера<textarea id="st-coach-note-text" class="st-modal-textarea" rows="3" oninput="ST.autoGrow(this)" '+(app.canCoach?'':'readonly')+' maxlength="20000" aria-label="Комментарий тренера">'+esc(ex.coachNote || '')+'</textarea></label>'+
           '<label class="st-note-field st-user-note">Ваш комментарий<textarea id="st-note-text" class="st-modal-textarea" rows="3" oninput="ST.autoGrow(this)" aria-label="Ваш комментарий">'+esc(ex.note || '')+'</textarea></label>'+
@@ -5400,7 +5401,7 @@ function renderModal(){
       return guideHtml;
     }
     var infoTips = info && Array.isArray(info.tips) ? info.tips : [];
-    var infoHtml = '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal"><div class="st-modal-title">'+esc(info ? info.exercise_name : 'Об упражнении')+'</div>';
+    var infoHtml = '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal"><div class="st-modal-title">'+esc(exerciseDisplayName(info, 'Об упражнении'))+'</div>';
     infoHtml += '<div class="st-exercise-info-media">'+(info && info.media_url ? '<img src="'+esc(info.media_url)+'" alt="Техника упражнения">' : 'Демонстрация движения появится после утверждения каталога медиа')+'</div>';
     if(info && info.muscles){ infoHtml += '<div class="st-modal-sub" style="margin-top:12px"><strong>Включённые мышцы:</strong> '+esc(info.muscles)+'</div>'; }
     if(infoTips.length){ infoHtml += '<ul class="st-exercise-info-list">'; for(var ti=0;ti<infoTips.length;ti++){ infoHtml += '<li>'+esc(infoTips[ti])+'</li>'; } infoHtml += '</ul>'; }
@@ -5423,7 +5424,7 @@ function renderModal(){
     }
     if(!items.length){ historyHtml += '<div class="st-history-empty">Истории пока нет</div>'; }
     historyHtml += '</div>';
-    return '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal st-history-modal"><div class="st-modal-title">'+esc(currentExercise ? currentExercise.name : 'История упражнения')+'</div><div class="st-modal-sub">История упражнения</div>'+historyHtml+'<div class="st-modal-actions"><button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Закрыть</button></div></div></div>';
+    return '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal st-history-modal"><div class="st-modal-title">'+esc(currentExercise ? exerciseDisplayName(catalogItemById(currentExercise.id), currentExercise.name) : 'История упражнения')+'</div><div class="st-modal-sub">История упражнения</div>'+historyHtml+'<div class="st-modal-actions"><button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Закрыть</button></div></div></div>';
   }
 
   if(app.modal.type === 'removeExercise'){
@@ -5872,7 +5873,7 @@ window.ST = {
     if(telegramExportBlocked(index) || !session)return;
     var exercise=exerciseId?findExercise(session,exerciseId):null;
     if(exerciseId && !exercise){showDeliveryNotice('В этой записи ещё нет сохранённого упражнения.',true);return;}
-    app.modal={type:'confirmDelivery',index:index,sessionId:session.session_id,exerciseId:exerciseId || '',title:exercise?exercise.name:templateTitle(session.workoutType)};
+    app.modal={type:'confirmDelivery',index:index,sessionId:session.session_id,exerciseId:exerciseId || '',title:exercise?exerciseDisplayName(catalogItemById(exercise.id), exercise.name):templateTitle(session.workoutType)};
     renderWithoutViewportJump();
   },
   confirmPlanDelivery:async function(){

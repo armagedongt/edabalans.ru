@@ -152,15 +152,17 @@ def test_exercise_delivery_is_scoped_to_own_saved_session(api):
     with factory() as db:
         state = db.scalar(select(StrengthState).where(StrengthState.user_id == UUID(uid)))
         source = deepcopy(state.workouts)
+        source[0]["exercises"][0]["exercise_id"] = "close-grip-bench-press"
         source[0]["exercises"].append({"exercise_id": "other-exercise", "exercise_name": "НЕ ОТПРАВЛЯТЬ", "sets": [{"plan_weight": 80, "plan_reps": 10}]})
         state.workouts = source
         db.commit()
-    response = client.post('/api/apps/strength/send-plan', json={**body, "exercise_id": "press"})
+    response = client.post('/api/apps/strength/send-plan', json={**body, "exercise_id": "close-grip-bench-press"})
     assert response.status_code == 200
     message = "\n".join(sent[0]["messages"])
-    assert "план упражнения" in message and "Жим" in message
+    assert "план упражнения «Жим штанги лёжа узким хватом»" in message
+    assert "1️⃣ Жим штанги лёжа узким хватом" in message
     assert "НЕ ОТПРАВЛЯТЬ" not in message and "80 кг" not in message
     rejected = client.post('/api/apps/strength/send-plan', json={**body, "exercise_id": "not-in-this-session"})
     assert rejected.status_code == 404 and len(sent) == 1
-    assert client.post('/api/apps/strength/send-plan', json={**body, "exercise_id": "press", "target_user_id": other}).status_code == 401
+    assert client.post('/api/apps/strength/send-plan', json={**body, "exercise_id": "close-grip-bench-press", "target_user_id": other}).status_code == 401
     assert len(sent) == 1
