@@ -29,8 +29,11 @@ from app.intensive_web_access import (
 )
 from app.models import OfferCheckout, PricingVersion, User
 from app.pricing_service import (
+    CONSULT_TARIFF_CODE,
+    COURSE_SUPPORT_AMOUNT_KEY,
     active_pricing_version,
     amount_value,
+    course_support_amount,
     create_draft,
     check_draft_base,
     lock_active,
@@ -60,6 +63,7 @@ class PriceEntryUpdate(BaseModel):
     compare_at_amount: Decimal | None = Field(ge=0, le=10_000_000, decimal_places=2)
     sale_amount: Decimal = Field(ge=0, le=10_000_000, decimal_places=2)
     enabled: StrictBool
+    course_support_amount: Decimal | None = Field(default=None, gt=0, le=10_000_000, decimal_places=2)
 
     @model_validator(mode="after")
     def validate_prices(self):
@@ -196,6 +200,8 @@ def admin_update_pricing_draft(
     for item in body.entries:
         if not PRICE_CODE.match(item.code):
             raise HTTPException(422, f"Некорректный код цены: {item.code}")
+        if "course_support_amount" in item.model_fields_set and item.code != CONSULT_TARIFF_CODE:
+            raise HTTPException(422, "Доплата за поддержку доступна только для тарифа с консультацией")
     # Validate every row before changing any value.
     for item in body.entries:
         row = rows[item.code]
@@ -203,6 +209,13 @@ def admin_update_pricing_draft(
         row.compare_at_amount = item.compare_at_amount
         row.sale_amount = item.sale_amount
         row.enabled = item.enabled
+        if "course_support_amount" in item.model_fields_set:
+            metadata = dict(row.metadata_json or {})
+            if item.course_support_amount is None:
+                metadata.pop(COURSE_SUPPORT_AMOUNT_KEY, None)
+            else:
+                metadata[COURSE_SUPPORT_AMOUNT_KEY] = format(item.course_support_amount, ".2f")
+            row.metadata_json = metadata
     version.name = body.name.strip()
     version.note = (body.note or "").strip() or None
     try:
@@ -265,6 +278,9 @@ def site_pricing_payload(
             continue
         catalog_tariff = tariff_public(db, entry.product_code or "")
         serialized = serialize_entry(entry)
+        support_amount = course_support_amount(entry)
+        if support_amount is not None:
+            serialized["course_support_amount"] = amount_value(support_amount)
         if discount:
             serialized["personal_sale_amount"] = amount_value(
                 site_tariff_amount(entry, personal_discount=discount)

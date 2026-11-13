@@ -2786,7 +2786,8 @@
     #edb-pricing-neurozeh-v1 .edb-pricing-button:focus-visible { transform:rotate(-1deg) translateY(-2px); }
 
     #edb-pricing-neurozeh-v1 .edb-checkout-modal[hidden] { display:none; }
-    html.edb-checkout--locked .cookie-notice { display:none; }
+    html.edb-checkout--locked .cookie-notice,
+    html.edb-checkout--locked .site-menu-toggle { display:none; }
     #edb-pricing-neurozeh-v1 .edb-checkout-modal {
       position:fixed;
       z-index:100000;
@@ -2807,6 +2808,8 @@
     #edb-pricing-neurozeh-v1 .edb-checkout-dialog {
       position:relative;
       width:min(100%,460px);
+      max-height:calc(100dvh - 40px);
+      overflow-y:auto;
       padding:30px;
       border:1px solid rgba(22,143,211,.16);
       border-radius:24px;
@@ -2886,7 +2889,20 @@
       cursor:pointer;
       box-shadow:0 14px 28px rgba(255,106,42,.24);
     }
-    #edb-pricing-neurozeh-v1 .edb-checkout-submit:disabled { opacity:.62; cursor:wait; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-submit:disabled { background:#dce3e9; color:#677787; box-shadow:none; cursor:not-allowed; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-dialog:has(.edb-checkout-support:not([hidden])) .edb-checkout-summary { margin-bottom:14px; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-support[hidden],
+    #edb-pricing-neurozeh-v1 [data-course-support-included][hidden] { display:none; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-support { margin:16px 0 0; padding:0; border:0; min-width:0; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-support legend { padding:0; font-size:16px; font-weight:800; line-height:1.3; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-support p { margin:8px 0; font-size:13px; line-height:1.45; color:#536b7f; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-support .edb-checkout-support-cost { color:#173f70; font-weight:800; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-support-choices { display:flex; gap:10px; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-support-choice { flex:1; display:grid; place-items:center; position:relative; min-height:var(--ed-control-height,48px); border:1px solid #bdd8ea; border-radius:var(--ed-control-radius,12px); background:#f2f7fa; color:#536b7f; font-size:var(--ed-control-size,14px); font-weight:var(--ed-control-weight,800); cursor:pointer; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-support-choice:has(:checked) { background:#ff6a2a; border-color:#ff6a2a; color:#fff; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-support-choice:has(:focus-visible) { outline:3px solid #168fe8; outline-offset:3px; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-support-choice input { position:absolute; opacity:0; width:100%; height:100%; margin:0; cursor:pointer; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-support-hint { font-size:12px; }
     #edb-pricing-neurozeh-v1 .edb-checkout-note {
       margin:13px 0 0;
       color:#687b8c;
@@ -2914,7 +2930,7 @@
 
     @media (max-width: 480px) {
       #edb-pricing-neurozeh-v1 .edb-checkout-modal { align-items:end; padding:10px; }
-      #edb-pricing-neurozeh-v1 .edb-checkout-dialog { padding:26px 20px 22px; border-radius:22px; }
+      #edb-pricing-neurozeh-v1 .edb-checkout-dialog { padding:26px 20px 22px; border-radius:22px; max-height:calc(100dvh - 20px); }
     }
 
     @media (max-width: 350px) {
@@ -3123,7 +3139,7 @@
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-book"></use></svg></span><span>Основная программа Мастер-класса</span></li>
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-pot"></use></svg></span><span>Система рецептов</span></li>
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-grid"></use></svg></span><span>Каталог приёмов пищи</span></li>
-          <li class="edb-pricing-premium-item"><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-chat"></use></svg></span><span><strong>Ответы на вопросы</strong> во время прохождения программы</span></li>
+          <li data-course-support-included class="edb-pricing-premium-item"><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-chat"></use></svg></span><span><strong>Ответы на вопросы</strong> во время прохождения программы</span></li>
           <li class="edb-pricing-premium-item"><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-clipboard"></use></svg></span><span><strong>Индивидуальная консультация и разбор дневника питания</strong></span></li>
           <li class="edb-pricing-premium-item"><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-gift"></use></svg></span><span>Теплые слова поддержки в подарок</span></li>
         </ul>
@@ -3200,6 +3216,16 @@
       <form class="edb-checkout-form" novalidate>
         <label class="edb-checkout-label" for="edb-checkout-email">Электронная почта</label>
         <input class="edb-checkout-email" id="edb-checkout-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="320" required placeholder="primer@pochta.ru">
+        <fieldset class="edb-checkout-support" hidden disabled>
+          <legend>Хотите проходить программу с моей поддержкой?</legend>
+          <p>Я буду на связи каждый день. Отвечу на вопросы по Мастер-классу и вашему дневнику питания, подскажу, что поправить по ходу программы. В конце — индивидуальная консультация.</p>
+          <p class="edb-checkout-support-cost">Стоимость: +<span></span></p>
+          <div class="edb-checkout-support-choices">
+            <label class="edb-checkout-support-choice"><input type="radio" name="course_support" value="true" required><span>Да</span></label>
+            <label class="edb-checkout-support-choice"><input type="radio" name="course_support" value="false" required><span>Нет</span></label>
+          </div>
+          <p class="edb-checkout-support-hint">Выберите «Да» или «Нет», чтобы продолжить.</p>
+        </fieldset>
         <p class="edb-checkout-error" role="alert" hidden></p>
         <label class="edb-checkout-consent">
           <input name="accept_offer" type="checkbox" required>
@@ -3263,6 +3289,10 @@
       const checkoutSummary = root.querySelector('.edb-checkout-summary');
       const checkoutError = root.querySelector('.edb-checkout-error');
       const checkoutSubmit = root.querySelector('.edb-checkout-submit');
+      const checkoutSupport = root.querySelector('.edb-checkout-support');
+      const checkoutSupportHint = root.querySelector('.edb-checkout-support-hint');
+      let pricingTariffs = {};
+      let checkoutSubmitting = false;
       // This is also the key used by homepage.js in the Tilda mount. Keeping one
       // browser record makes the offer survive ordinary revisits for its full window.
       const offerStorageKey = 'edabalans_intensive_offer_v1';
@@ -3334,10 +3364,13 @@
 
       function renderPricingCatalog(catalog, source) {
         const byCode = Object.fromEntries((catalog.tariffs || []).map((tariff) => [tariff.code, tariff]));
+        pricingTariffs = byCode;
         plans.forEach((plan) => {
           const tariff = byCode[plan.dataset.priceCode];
           plan.hidden = !tariff;
           if (!tariff) return;
+          const includedSupport = plan.querySelector('[data-course-support-included]');
+          if (includedSupport) includedSupport.hidden = Number(tariff.course_support_amount) > 0;
           plan.querySelector('[data-price-field="name"]').textContent = tariff.name;
           plan.querySelector('[data-price-field="sale"]').textContent = formatPrice(tariff.sale_amount);
           const personalSale = Number(tariff.personal_sale_amount);
@@ -3597,25 +3630,46 @@
       function openCheckout(plan, trigger) {
         selectedPlan = plan;
         checkoutTrigger = trigger;
+        const tariff = pricingTariffs[plan.dataset.priceCode];
+        const supportAmount = Number(tariff.course_support_amount || 0);
+        checkoutSupport.hidden = !(plan.dataset.priceCode === 'site.masterclass.consult' && supportAmount > 0);
+        checkoutSupport.disabled = checkoutSupport.hidden;
+        checkoutSupport.querySelectorAll('input').forEach(input => { input.checked = false; });
+        checkoutSupport.querySelector('.edb-checkout-support-cost span').textContent = formatPrice(supportAmount);
         const name = plan.querySelector('[data-price-field="name"]').textContent;
-        const personalPrice = plan.querySelector('[data-price-field="personal-sale"]');
-        const price = personalPrice.classList.contains('is-visible')
-          ? personalPrice.textContent.replace(/^Для вас ещё дешевле:\s*/, '')
-          : plan.querySelector('[data-price-field="sale"]').textContent;
         const amount = document.createElement('span');
         amount.className = 'edb-checkout-amount';
-        amount.textContent = price;
+        amount.setAttribute('aria-live', 'polite');
         checkoutSummary.replaceChildren(
           document.createTextNode(`${name} · `),
           amount,
           document.createTextNode('. Укажите email, к которому будет привязана покупка после подтверждения оплаты.')
         );
         checkoutError.hidden = true;
+        checkoutSubmitting = false;
+        checkoutSubmit.textContent = 'Перейти к оплате';
+        updateCheckoutChoice();
         checkoutModal.hidden = false;
         document.documentElement.classList.add('edb-product-overlay--locked');
         document.documentElement.classList.add('edb-checkout--locked');
         window.setTimeout(() => checkoutEmail.focus(), 0);
       }
+
+      function updateCheckoutChoice() {
+        if (!selectedPlan || checkoutSubmitting) return;
+        const needsChoice = !checkoutSupport.hidden;
+        const choice = checkoutForm.querySelector('input[name="course_support"]:checked');
+        const tariff = pricingTariffs[selectedPlan.dataset.priceCode];
+        const baseAmount = Number(tariff.personal_sale_amount ?? tariff.sale_amount);
+        const supportAmount = Number(tariff.course_support_amount || 0);
+        checkoutSummary.querySelector('.edb-checkout-amount').textContent = formatPrice(
+          baseAmount + (needsChoice && choice?.value === 'true' ? supportAmount : 0)
+        );
+        checkoutSupportHint.hidden = Boolean(choice);
+        checkoutSubmit.disabled = needsChoice && (!choice || !checkoutEmail.validity.valid || !checkoutOffer.checked || !checkoutConsent.checked);
+      }
+      checkoutForm.addEventListener('input', updateCheckoutChoice);
+      checkoutForm.addEventListener('change', updateCheckoutChoice);
 
       function submitPaymentForm(paymentForm) {
         const form = document.createElement('form');
@@ -3672,7 +3726,7 @@
       root.querySelector('.edb-checkout-backdrop').addEventListener('click', closeCheckout);
       checkoutDialog.addEventListener('keydown', (event) => {
         if (event.key !== 'Tab') return;
-        const focusable = [...checkoutDialog.querySelectorAll('button,input,a[href]')].filter((item) => !item.disabled);
+        const focusable = [...checkoutDialog.querySelectorAll('button,input,a[href]')].filter((item) => !item.matches(':disabled') && item.getClientRects().length);
         if (!focusable.length) return;
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
@@ -3686,6 +3740,14 @@
       checkoutForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         checkoutError.hidden = true;
+        if (!selectedPlan || checkoutSubmitting) return;
+        const supportChoice = checkoutForm.querySelector('input[name="course_support"]:checked');
+        if (!checkoutSupport.hidden && !supportChoice) {
+          checkoutError.textContent = 'Выберите «Да» или «Нет», чтобы продолжить.';
+          checkoutError.hidden = false;
+          checkoutSupport.querySelector('input').focus();
+          return;
+        }
         if (!checkoutEmail.validity.valid) {
           checkoutError.textContent = 'Укажите корректный email.';
           checkoutError.hidden = false;
@@ -3698,9 +3760,11 @@
           checkoutConsent.focus();
           return;
         }
+        checkoutSubmitting = true;
+        checkoutSupport.disabled = true;
         checkoutSubmit.disabled = true;
         checkoutSubmit.textContent = 'Создаю счёт…';
-        await window.EdabalansBrowserJourney?.ready;
+        const amountLabel = checkoutSummary.querySelector('.edb-checkout-amount');
         const paymentStart = document.createElement('form');
         paymentStart.method = 'POST';
         paymentStart.action = root.dataset.checkoutEndpoint;
@@ -3710,13 +3774,16 @@
           accept_offer: String(checkoutOffer.checked),
           data_consent: String(checkoutConsent.checked),
           intensive_offer: activeOfferToken || '',
-          source_context: activeSourceContext || '',
-          browser_context: window.EdabalansBrowserJourney?.context() || ''
+          source_context: activeSourceContext || ''
         };
+        if (!checkoutSupport.hidden) values.course_support = supportChoice.value;
         const query = new URLSearchParams(window.location.search);
         ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid'].forEach(key => {
           if (query.get(key)) values[key] = query.get(key);
         });
+        await window.EdabalansBrowserJourney?.ready;
+        if (checkoutModal.hidden || !checkoutSummary.contains(amountLabel)) return;
+        values.browser_context = window.EdabalansBrowserJourney?.context() || '';
         Object.entries(values).forEach(([name, value]) => {
           const input = document.createElement('input');
           input.type = 'hidden'; input.name = name; input.value = String(value);

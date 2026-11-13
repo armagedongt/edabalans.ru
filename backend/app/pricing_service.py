@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from copy import deepcopy
 import hashlib
 import json
@@ -15,6 +15,8 @@ from sqlalchemy.orm import Session
 from app.models import PriceEntry, PricingVersion
 
 AUTHORING_METADATA = "_editorial_pricing"
+CONSULT_TARIFF_CODE = "site.masterclass.consult"
+COURSE_SUPPORT_AMOUNT_KEY = "course_support_amount"
 
 
 def site_tariff_amount(
@@ -22,6 +24,22 @@ def site_tariff_amount(
 ) -> Decimal:
     """Return the payable amount used by both the storefront and checkout."""
     return max(Decimal("0"), entry.sale_amount - personal_discount)
+
+
+def course_support_amount(entry: PriceEntry) -> Decimal | None:
+    """Optional course support is priced in the versioned consultation entry."""
+    if entry.code != CONSULT_TARIFF_CODE or entry.section != "site_tariffs":
+        return None
+    value = (entry.metadata_json or {}).get(COURSE_SUPPORT_AMOUNT_KEY)
+    if value is None:
+        return None
+    try:
+        amount = Decimal(str(value))
+        if not amount.is_finite() or not 0 < amount <= 10_000_000 or amount != amount.quantize(Decimal("0.01")):
+            raise ValueError
+    except (InvalidOperation, ValueError) as exc:
+        raise ValueError("Некорректная стоимость поддержки в каталоге цен") from exc
+    return amount
 
 
 def amount_value(value: Decimal | None) -> int | float | None:

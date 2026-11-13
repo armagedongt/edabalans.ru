@@ -132,6 +132,7 @@ def require_account_consent(db: Session, user_id: uuid.UUID) -> None:
 
 
 class RobokassaCheckoutIn(ExternalLegalIn):
+    course_support: bool | None = Field(default=None, strict=True)
     price_code: str = Field(min_length=3, max_length=120)
     email: str = Field(min_length=3, max_length=320)
     intensive_offer: str | None = Field(default=None, max_length=1024)
@@ -539,6 +540,7 @@ def robokassa_checkout(
             source_context=body.source_context,
             browser_context=body.browser_context,
             acquisition_query=body.acquisition_query,
+            course_support=body.course_support,
             legal_acceptance=checkout_legal_snapshot("public_checkout"),
         )
         payment = db.scalar(select(Payment).where(
@@ -593,7 +595,11 @@ async def robokassa_first_party_start(
         raise HTTPException(413, "Форма оплаты слишком большая")
     try:
         form = {key: values[-1] for key, values in parse_qs(raw_body.decode(), keep_blank_values=True).items()}
+        support_choice = form.get("course_support")
+        if support_choice is not None and support_choice not in {"true", "false"}:
+            raise ValueError("Invalid course support choice")
         body = RobokassaCheckoutIn(
+            course_support=None if support_choice is None else support_choice == "true",
             price_code=form.get("price_code", ""),
             email=form.get("email", ""),
             accept_offer=form.get("accept_offer") == "true",
@@ -623,6 +629,8 @@ async def robokassa_first_party_start(
             source_context=body.source_context,
             browser_context=body.browser_context,
             acquisition_query=body.acquisition_query,
+            course_support=body.course_support,
+            require_course_support_choice=True,
             legal_acceptance=checkout_legal_snapshot("public_checkout"),
         )
         payment = db.scalar(select(Payment).where(

@@ -693,3 +693,25 @@ def test_intensive_offer_discounts_checkout_but_binds_access_to_payer_email() ->
     )
     assert used_offer.status_code == 409
     app.dependency_overrides.clear()
+
+
+def test_publish_consultation_price_and_support_in_one_pricing_revision():
+    client, factory = make_client(enabled=True)
+    try:
+        active = active_with_disabled_original(client, factory)
+        draft = create_pricing_draft(client).json()["version"]
+        update = source_update(draft["source"])
+        consult = next(row for row in update["entries"] if row["code"] == "site.masterclass.consult")
+        consult.update(regular_amount=22500, compare_at_amount=22500, sale_amount=16800, course_support_amount=3000)
+        response = client.put(f"/admin/api/pricing/versions/{draft['id']}", json={
+            **pricing_guards(client, draft["id"]), **update,
+        })
+        assert response.status_code == 200, response.text
+        assert client.get("/api/pricing/site").json()["version"] == active["version_number"]
+        assert publish_pricing(client, draft["id"]).status_code == 200
+        tariffs = client.get("/api/pricing/site").json()["tariffs"]
+        public = next(row for row in tariffs if row["code"] == "site.masterclass.consult")
+        assert (public["compare_at_amount"], public["sale_amount"], public["course_support_amount"]) == (22500, 16800, 3000)
+        assert all("course_support_amount" not in row for row in tariffs if row is not public)
+    finally:
+        app.dependency_overrides.clear()

@@ -1,3 +1,6 @@
+import assert from 'node:assert/strict'
+import { join } from 'node:path'
+
 const playwrightModule = process.env.PLAYWRIGHT_MODULE_URL || 'playwright'
 const { chromium } = await import(playwrightModule)
 
@@ -134,9 +137,19 @@ try {
     throw new Error('Direct Robokassa email modal did not open after an expired offer')
   }
 
+  const consultCatalog = {
+    ...catalog,
+    tariffs: [...catalog.tariffs, {
+      code: 'site.masterclass.consult',
+      name: 'С консультацией',
+      sale_amount: 16800,
+      compare_at_amount: 22500,
+      course_support_amount: 3000,
+    }],
+  }
   await page.route('**/api/pricing/site/preview**', route => route.fulfill({
     contentType: 'application/json',
-    body: JSON.stringify(catalog),
+    body: JSON.stringify(consultCatalog),
   }))
   await page.goto(`${baseUrl}/preview/homepage-release-candidate`, { waitUntil: 'domcontentloaded' })
   const standaloneButton = page.locator('[data-price-code="site.masterclass.basic"] .edb-pricing-button')
@@ -145,6 +158,78 @@ try {
   if (!(await page.locator('.edb-checkout-modal').isVisible())) {
     throw new Error('Direct Robokassa email modal did not open in standalone mode')
   }
+  assert.equal(await page.locator('.edb-checkout-support').isVisible(), false)
+  await page.keyboard.press('Escape')
+
+  const consultCard = page.locator('[data-price-code="site.masterclass.consult"]')
+  assert.match(await consultCard.locator('[data-price-field="sale"]').textContent(), /16\s800 ₽/)
+  assert.match(await consultCard.locator('[data-price-field="discount"] strong').textContent(), /−25%/)
+  assert.equal(await consultCard.getByText('Ответы на вопросы').isVisible(), false)
+  const dialog = page.getByRole('dialog', { name: 'Переход к оплате' })
+  const amount = dialog.locator('.edb-checkout-amount')
+  const submit = dialog.getByRole('button', { name: 'Перейти к оплате' })
+  const yes = dialog.getByRole('radio', { name: 'Да', exact: true })
+  const no = dialog.getByRole('radio', { name: 'Нет', exact: true })
+  await page.route(`${baseUrl}/api/payments/robokassa/start`, route => route.fulfill({
+    status: 204,
+  }))
+  const openConsult = () => consultCard.getByRole('button', { name: 'Начать прямо сейчас' }).click()
+  const evidenceDir = process.env.CHECKOUT_EVIDENCE_DIR
+  for (const width of [360, 430, 480, 481, 768, 1440, 1628]) {
+    await page.setViewportSize({ width, height: 760 })
+    await openConsult()
+    assert.equal(await yes.isChecked(), false)
+    assert.equal(await no.isChecked(), false)
+    assert.equal(await submit.isDisabled(), true)
+    assert.match(await amount.textContent(), /16\s800 ₽/)
+    const box = await dialog.boundingBox()
+    assert(box && box.x >= 0 && box.x + box.width <= width && box.y >= 0 && box.y + box.height <= 760,
+      `Checkout dialog does not fit at ${width}px: ${JSON.stringify(box)}`)
+    assert.equal(await dialog.evaluate(node => node.scrollWidth > node.clientWidth), false)
+    if (evidenceDir) await dialog.screenshot({ path: join(evidenceDir, `checkout-${width}-unselected.png`) })
+    await yes.check()
+    assert.match(await amount.textContent(), /19\s800 ₽/)
+    await dialog.getByRole('textbox', { name: 'Электронная почта' }).fill('test@example.test')
+    await dialog.locator('input[name="accept_offer"]').check()
+    await dialog.locator('input[name="data_consent"]').check()
+    assert.equal(await submit.isEnabled(), true)
+    if (evidenceDir) await dialog.screenshot({ path: join(evidenceDir, `checkout-${width}-yes.png`) })
+    await no.check()
+    assert.match(await amount.textContent(), /16\s800 ₽/)
+    if (evidenceDir) await dialog.screenshot({ path: join(evidenceDir, `checkout-${width}-no.png`) })
+    await page.keyboard.press('Escape')
+  }
+  for (const [radio, value] of [[no, 'false'], [yes, 'true']]) {
+    await page.evaluate(() => {
+      const ready = new Promise(resolve => { window.finishCheckoutJourney = resolve })
+      window.EdabalansBrowserJourney = { ready, context: () => '' }
+    })
+    await openConsult()
+    await radio.check()
+    const request = page.waitForRequest(req => req.method() === 'POST' && req.url() === `${baseUrl}/api/payments/robokassa/start`)
+    await submit.click()
+    assert.equal(await yes.isDisabled(), true)
+    assert.equal(await no.isDisabled(), true)
+    await page.evaluate(() => window.finishCheckoutJourney())
+    const form = new URLSearchParams((await request).postData())
+    assert.equal(form.get('course_support'), value)
+    assert.equal(form.get('price_code'), 'site.masterclass.consult')
+    assert.equal(form.get('accept_offer'), 'true')
+    assert.equal(form.get('data_consent'), 'true')
+    assert.equal(form.has('amount'), false)
+    await page.keyboard.press('Escape')
+  }
+  await page.route('**/api/pricing/site/preview?intensive_offer=support-offer', route => route.fulfill({
+    json: { ...consultCatalog, tariffs: consultCatalog.tariffs.map(tariff => ({
+      ...tariff, personal_sale_amount: tariff.sale_amount - 1000,
+    })) },
+  }))
+  await page.goto(`${baseUrl}/preview/homepage-release-candidate?intensive_offer=support-offer`, { waitUntil: 'domcontentloaded' })
+  await openConsult()
+  await yes.check()
+  assert.match(await amount.textContent(), /18\s800 ₽/)
+  await no.check()
+  assert.match(await amount.textContent(), /15\s800 ₽/)
 } finally {
   await browser.close()
 }

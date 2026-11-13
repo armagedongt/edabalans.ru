@@ -2552,3 +2552,76 @@ def test_manual_payment_footer_follows_both_checkout_steps() -> None:
     client = TestClient(app, base_url='https://app.edabalans.ru')
     page = client.get('/pay').text
     assert page.index('id="details-step"') < page.index('<div data-edabalans-site-footer>')
+
+
+@pytest.mark.parametrize("support_choice, expected_amount", [("false", "16800.00"), ("true", "19800.00"), (None, None), ("3000", None)])
+def test_homepage_consultation_checkout_prices_explicit_support_choice(support_choice, expected_amount):
+    client, factory, key = make_client()
+    seed_catalog(factory)
+    try:
+        with factory() as db:
+            db.add(Resource(code="ACCESS_CONSULTATION", name="Индивидуальная консультация"))
+            version = db.scalar(select(PricingVersion).where(PricingVersion.status == "active"))
+            db.add(PriceEntry(
+                version_id=version.id,
+                code="site.masterclass.consult",
+                section="site_tariffs",
+                name="С консультацией",
+                product_code="MASTERCLASS_CONSULT",
+                resource_codes=["ACCESS_MASTERCLASS", "ACCESS_CONSULTATION"],
+                sale_amount=Decimal("16800"),
+                compare_at_amount=Decimal("22500"),
+                metadata_json={"course_support_amount": 3000},
+                enabled=True,
+                sort_order=30,
+            ))
+            db.commit()
+        pricing = client.get("/api/pricing/site/preview").json()
+        consult = next(row for row in pricing["tariffs"] if row["code"] == "site.masterclass.consult")
+        assert (consult["sale_amount"], consult["course_support_amount"]) == (16800, 3000)
+        form = {
+            "price_code": "site.masterclass.consult",
+            "email": "buyer@example.test",
+            "accept_offer": "true",
+            "data_consent": "true",
+            "amount": "1",
+        }
+        if support_choice is not None:
+            form["course_support"] = support_choice
+        response = client.post("/api/payments/robokassa/start", data=form,
+                               headers={"Origin": "https://app.edabalans.ru"})
+        with factory() as db:
+            payment = db.scalar(select(Payment))
+            if expected_amount is None:
+                assert response.status_code == 422
+                assert payment is None
+                return
+            assert response.status_code == 200, response.text
+            assert f'name="OutSum" value="{expected_amount}"' in response.text
+            assert 'name="Recurring"' not in response.text
+            assert payment.amount == Decimal(expected_amount)
+            assert payment.raw_payload["course_support"] == {
+                "selected": support_choice == "true",
+                "amount": 3000 if support_choice == "true" else 0,
+            }
+            assert ("с поддержкой во время программы" in payment.product_name_raw) == (support_choice == "true")
+            checkout = db.scalar(select(OfferCheckout))
+            assert checkout.amount == payment.amount
+            assert checkout.items == ["ACCESS_MASTERCLASS", "ACCESS_CONSULTATION"]
+        callback = client.post("/integrations/robokassa/result2", content=signed_result(
+            key, payment.external_order_id, expected_amount,
+        ))
+        assert callback.status_code == 200, callback.text
+        with factory() as db:
+            confirmed = db.get(Payment, payment.id)
+            assert confirmed.payment_status == "test_paid"
+            assert confirmed.raw_payload["course_support"] == payment.raw_payload["course_support"]
+        if support_choice == "false":
+            legacy = client.post("/api/payments/robokassa/checkout", json={
+                "price_code": "site.masterclass.consult", "email": "legacy@example.test",
+                "accept_offer": True, "data_consent": True,
+            }, headers={"Origin": "https://app.edabalans.ru"})
+            assert legacy.status_code == 200, legacy.text
+            assert legacy.json()["amount"] == 16800
+    finally:
+        app.dependency_overrides.clear()

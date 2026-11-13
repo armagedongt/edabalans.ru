@@ -1029,7 +1029,7 @@ def test_release_candidate_keeps_a_valid_intensive_offer_for_catalog_and_checkou
     assert "function readActiveOfferToken()" in response.text
     assert "function saveActiveOfferExpiry(offer)" in response.text
     assert "intensive_offer: activeOfferToken || null" in response.text
-    assert "personalPrice.textContent.replace(/^Для вас ещё дешевле:" in response.text
+    assert "tariff.personal_sale_amount ?? tariff.sale_amount" in response.text
 
 
 def test_release_candidate_keeps_source_context_separate_from_intensive_offer() -> None:

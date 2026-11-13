@@ -35,7 +35,7 @@ from app.models import (
     TelegramTrackingEvent,
     User,
 )
-from app.pricing_service import amount_value, pricing_entry_map, site_tariff_amount
+from app.pricing_service import amount_value, course_support_amount, pricing_entry_map, site_tariff_amount
 from app.product_catalog_service import tariff_public
 from app.tilda_service import (
     TildaPayloadError,
@@ -305,6 +305,8 @@ def create_payment(
     price_code: str,
     email_original: str,
     *,
+    course_support: bool | None = None,
+    require_course_support_choice: bool = False,
     offer_user_id: uuid.UUID | None = None,
     account_user: User | None = None,
     source_context: str | None = None,
@@ -347,12 +349,24 @@ def create_payment(
         raise RobokassaError("Тариф недоступен")
     catalog_tariff = tariff_public(db, entry.product_code or "")
     title = catalog_tariff["name"] if catalog_tariff else entry.name
+    try:
+        support_amount = course_support_amount(entry)
+    except ValueError as exc:
+        raise RobokassaError(str(exc)) from exc
+    if require_course_support_choice and support_amount is not None and course_support is None:
+        raise RobokassaError("Выберите, нужна ли поддержка во время программы")
+    if course_support is not None and support_amount is None:
+        raise RobokassaError("Поддержка недоступна для этого тарифа")
+    if course_support:
+        title += " · с поддержкой во время программы"
     now = datetime.now(timezone.utc)
     offer = offer_for_user(db, offer_user_id) if offer_user_id else None
     amount = site_tariff_amount(
         entry,
         personal_discount=Decimal(OFFER_DISCOUNT) if offer else Decimal("0"),
     )
+    if course_support and support_amount is not None:
+        amount += support_amount
     expires_at = now + timedelta(hours=2)
     if offer and offer.expires_at:
         offer_expires_at = offer.expires_at
@@ -411,6 +425,11 @@ def create_payment(
         "account_purchase": account_user is not None,
         "purchase_place": "account" if account_user is not None else "homepage",
     }
+    if course_support is not None:
+        payment.raw_payload["course_support"] = {
+            "selected": course_support,
+            "amount": amount_value(support_amount) if course_support else 0,
+        }
     if source_snapshot is not None:
         payment.raw_payload["trusted_source_snapshot"] = source_snapshot
     if query and trusted and trusted.get("status") == "verified":
@@ -956,6 +975,8 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         "integration": {"test_mode": is_test_payment},
         "notification": payload,
     }
+    if "course_support" in checkout_metadata:
+        payment.raw_payload["course_support"] = checkout_metadata["course_support"]
     if personal_link is not None:
         payment.raw_payload["personal_access_link_id"] = str(personal_link.id)
     trusted_snapshot = checkout_metadata.get("trusted_source_snapshot")
