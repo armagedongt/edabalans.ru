@@ -166,15 +166,19 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
  }
 
  if(width===430&&role==='owner'){
-  state.sets.find(row=>row.session_id==='s2'&&row.set_number===4).fact_reps='';
+  const missing=state.sets.find(row=>row.session_id==='s2'&&row.set_number===4);
+  missing.fact_reps=missing.plan_reps='';
+  for(const row of state.sets.filter(row=>row.session_id==='s3'))row.plan_weight=row.plan_reps='';
   await page.reload();
   const before=writes.length;
   await card().getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();
-  await dialog.getByText(/заполнены не все рабочие подходы/).waitFor();
-  assert.equal(await dialog.locator('.st-progression-error').count(),0);
-  assert(await dialog.getByRole('table').isVisible());
+  await page.waitForFunction(()=>document.querySelector('article[data-session-index="2"][data-exercise-id="bench-press"] .st-progression-info'));
   await page.waitForTimeout(850);
-  assert.equal(writes.length,before,'partial fact leaves the plan unchanged');
+  assert.equal(writes.length,before+1,'partial fact writes a useful plan');
+  const partialPlan=writes.at(-1).session.exercises[0].sets;
+  assert.equal(partialPlan.filter(row=>row.plan_reps===11).length,1);
+  assert.equal(partialPlan[3].plan_weight,'','incomplete pair is not written');
+  assert.equal(partialPlan[3].plan_reps,'','missing repetition is not invented');
   failModule=true;
   await page.reload();
   await card().getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();

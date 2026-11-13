@@ -47,12 +47,14 @@ test('card request excludes later dates and planned-only empty records',()=>{
 test('a partly entered destination plan is not silently completed from history',()=>{
   const sessions=journal();sessions[2].exercises[0].sets[1].planWeight=80;
   const r=recommend(cardRequest(sessions,2,'bench-press',benchProfile()).input);
-  assert.equal(r.code,'configuration');assert.equal(r.next[1].w,80);assert.equal(r.next[1].r,'');
+  assert.equal(r.code,'partial');assert.equal(r.next[1].w,80);assert.equal(r.next[1].r,'');
 });
 
 test('equipment step and special conditions are explicit rather than inferred from comments',()=>{
   const sessions=journal(),profile=benchProfile();profile.load_step=0;
-  assert.equal(recommend(cardRequest(sessions,2,'bench-press',profile).input).code,'configuration');
+  const request=cardRequest(sessions,2,'bench-press',profile), result=recommend(request.input);
+  assert.equal(result.changed.length,1);
+  assert(result.next.every((row,i)=>row.w===request.input.baseline[i].w));
   profile.load_step=2.5;profile.last_reduced=true;
   assert.equal(recommend(cardRequest(sessions,2,'bench-press',profile).input).code,'configuration');
   profile.last_reduced=false;profile.changed_conditions=true;
@@ -78,9 +80,9 @@ test('range conflicts are explicit while an underperformed fact remains valid in
   const sessions=journal(),profile=benchProfile();
   const source=sessions[1].exercises[0].sets;
   source[1].planReps=source[1].factReps=25;
-  assert.equal(recommend(cardRequest(sessions,2,'bench-press',profile).input).code,'range');
+  assert(!recommend(cardRequest(sessions,2,'bench-press',profile).input).changed.includes(1));
   source[1].planReps=15;
-  assert.equal(recommend(cardRequest(sessions,2,'bench-press',profile).input).code,'range');
+  assert(!recommend(cardRequest(sessions,2,'bench-press',profile).input).changed.includes(1));
   source[1].factReps=5;
   assert.doesNotThrow(()=>cardRequest(sessions,2,'bench-press',profile));
   source[0].planReps=source[0].factReps=99;
@@ -126,7 +128,7 @@ test('unknown effort has a two-success gate and adds one rep to only one working
   assert.equal(recommend(sample('leg-curl')).code,'no-rpe-history');
 });
 test('partial, intentionally reduced and changed conditions never invent facts or erase baseline',()=>{
-  for(const [id,code] of [['leg-extension','partial'],['abduction','reduced'],['pulldown','conditions']]){
+  for(const [id,code] of [['abduction','reduced'],['pulldown','conditions']]){
     const c=sample(id),r=recommend(c);assert.equal(r.code,code);assert.deepEqual(r.next,c.baseline);
   }
 });
@@ -167,10 +169,9 @@ test('duration needs a configured step and a ready position, not a different rea
 });
 test('repetition counts are whole numbers rather than fractional targets',()=>{
   const c=sample('bench');c.baseline[1].r=10.5;c.history.at(-1).sets[1].r=10.5;
-  assert.equal(recommend(c).code,'configuration');
+  assert(!recommend(c).changed.includes(1));
   const badFact=sample('bench');badFact.history.at(-1).sets[1].r=10.5;
-  assert.equal(recommend(badFact).code,'partial','a valid integer baseline must not mask invalid factual repetitions');
-  assert.equal(recommend(badFact).changed.length,0);
+  assert(!recommend(badFact).changed.includes(1),'a valid integer baseline must not mask invalid factual repetitions');
 });
 test('an RPE9 position cannot use the above-budget real-step exception',()=>{
   const c=sample('squat');c.profile.loads=[80,100,110];c.profile.range=[8,15];
@@ -212,4 +213,59 @@ test('undated history never blocks dated records or silently replaces a more rec
   assert.equal(result.code,'no-history');
   assert.deepEqual(result.changed,[]);
   assert.deepEqual([result.next[1].w,result.next[1].r],[75,10]);
+});
+
+test('partial fact adds one repeat, keeps missing rows and does not add again from the same fact',()=>{
+  const c=sample('bench');
+  for(const h of c.history)h.sets[3]={...h.sets[3],r:''};
+  const last=c.history.at(-1);
+  last.sets[1].rpe=8;last.sets[2].rpe=7;
+  const result=recommend(c);
+  assert.deepEqual(result.changed,[2]);
+  assert.equal(result.next[2].r,c.baseline[2].r+1);
+  assert.deepEqual(result.next[3],c.baseline[3]);
+  assert.deepEqual(recommend({...c,baseline:result.next}).changed,[]);
+});
+test('two severe misses block a partial result even when another approach is ready',()=>{
+  const c=sample('bench');
+  c.baseline.push({...c.baseline[1]});
+  const latest=c.history.at(-1);
+  latest.sets[1].r=7;latest.sets[2].r=7;
+  latest.sets.push({...latest.sets[3],r:''});
+  assert.equal(recommend(c).changed.length,0);
+});
+
+test('stable shorter history cannot crash on additional destination sets',()=>{
+  const c=sample('bench');
+  c.history=c.history.map(h=>({...h,sets:h.sets.slice(0,2)}));
+  c.history.unshift({...structuredClone(c.history[0]),id:'first',date:'2020-01-01'});
+  const result=recommend(c);
+  assert.equal(result.next.length,c.baseline.length);
+  assert.deepEqual(result.next.slice(2),c.baseline.slice(2));
+});
+test('complete history preserves progression from accomplished repetitions',()=>{
+  const c=sample('bench');
+  c.baseline=[{w:50,r:10,role:'work'}];
+  c.history.forEach(h=>h.sets=[{w:50,r:12,role:'work',rpe:7}]);
+  c.profile.range=[8,12];c.profile.loads=[50,52.5];
+  const result=recommend(c);
+  assert.deepEqual([result.next[0].w,result.next[0].r],[52.5,11]);
+});
+
+test('first exercise offers a repetition draft without inventing an external weight',()=>{
+  const profile=benchProfile();
+  const result=recommend(cardRequest(journal().slice(-1),0,'bench-press',profile).input);
+  assert.equal(result.code,'no-history');
+  assert.deepEqual(result.next[1],{w:'',r:profile.rep_range[0],role:'work'});
+  assert.deepEqual(result.changed,[]);
+  assert.equal(result.next[0].r,'');
+});
+
+test('missing equipment step and unknown effort together do not justify a repeat increase',()=>{
+  const c=sample('bench');
+  delete c.profile.loads;
+  c.history.forEach(h=>h.sets.forEach(row=>{row.rpe='';}));
+  const r=recommend(c);
+  assert.deepEqual(r.changed,[]);
+  assert.deepEqual(r.next,c.baseline);
 });
