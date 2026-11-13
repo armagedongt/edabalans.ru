@@ -762,6 +762,14 @@ def app_fragment(app_code: str) -> Response:
     return public_asset(STATIC_DIR / "apps" / f"{app_code}.html")
 
 
+@router.get("/lk/install", include_in_schema=False)
+def account_install_guide() -> FileResponse:
+    return FileResponse(
+        STATIC_DIR / "account-install.html",
+        headers={"Cache-Control": "no-cache", "X-Robots-Tag": "noindex, nofollow"},
+    )
+
+
 @router.get("/training", include_in_schema=False)
 @router.get("/training/", include_in_schema=False)
 @router.get("/strength", include_in_schema=False)

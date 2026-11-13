@@ -377,7 +377,8 @@ owns_files = [
   "docs/APPLICATION_PLATFORM.md", "docs/APPLICATION_BACKLOG.md",
   "backend/app/app_routes.py", "backend/app/app_service.py", "backend/app/app_management.py",
   "backend/app/static/standalone-app.html", "backend/app/static/max-app.html",
-    "backend/app/static/account.webmanifest", "backend/app/static/account-pwa-512.png",
+  "backend/app/static/account.webmanifest", "backend/app/static/account-pwa-512.png",
+  "backend/app/static/account-install.html",
   "backend/app/static/dqs-favicon.svg", "backend/app/static/strength-favicon.svg", "backend/app/static/metabolism-favicon.svg",
   "backend/tests/test_admin_apps.py", "backend/tests/test_app_client_picker.py", "backend/tests/test_app_assets.py", "backend/tests/test_eda_finance.py",
   "backend/app/static/apps/recipes-part-1.html", "backend/app/static/apps/recipes-part-2.html",
@@ -400,7 +401,7 @@ owns_files = [
   "legacy/google/SOURCES.md",
 ]
 owns_routes = [
-  "*/apps/*", "*/assets/*", "*/max-app", "*/finance*", "*/admin/api/finance/plans*",
+  "*/apps/*", "*/assets/*", "*/lk/install", "*/max-app", "*/finance*", "*/admin/api/finance/plans*",
   "*/api/apps/manager/*", "*/api/apps/activity",
   "*/admin/api/finance/facts*", "*/admin/api/finance/expenses*",
 ]
