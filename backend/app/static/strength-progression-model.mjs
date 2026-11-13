@@ -20,6 +20,7 @@ export function recommend(input) {
   const result = {version: VERSION, code: 'hold', next: base, changed: [], used: records.map(h => h.id),
     reasons: [], formulas: [], budget: 0, granularity: false};
   const hold = (code, reason) => { result.code = code; result.reasons.push(reason); return result; };
+  if (input.limitation) return hold(input.limitation.code, input.limitation.reason);
   if (!['external', 'bodyweight', 'assisted', 'duration'].includes(mode)) return hold('unsupported', 'Нужна настройка типа упражнения.');
   if (!work.length) return hold('no-work', 'Нет отмеченных рабочих подходов.');
   const [lo, hi] = mode === 'duration' ? p.timeRange || [] : p.range || [];
@@ -38,7 +39,7 @@ export function recommend(input) {
   const ordinary = records.filter(h => !h.reduced && !h.changedConditions && !h.hold && !h.pain && !h.techniqueIssue);
   const a = ordinary.at(-1), b = ordinary.at(-2);
   if (!a || a !== latest) return hold('context', 'Последнюю запись нельзя молча заменить более удобной старой.');
-  if (work.some(i => !complete(a.sets[i], mode))) return hold('partial', 'Последний факт неполный; пустые строки не считаются нулём или выполненным планом.');
+  if (work.some(i => !complete(a.sets[i], mode))) return hold('partial', 'В последней тренировке заполнены не все рабочие подходы. Прибавку пока не предлагаем.');
   if (work.some(i => a.sets[i].role !== 'work' || a.sets[i].w !== base[i].w)) return hold('conditions', 'Изменены роль или принятая базовая пара веса: требуется подтверждение тренера.');
   if (work.some(i => effort(a.sets[i]) !== null && (effort(a.sets[i]) < 5 || effort(a.sets[i]) > 10))) return hold('invalid-rpe', 'RPE должен быть пустым либо от 5 до 10.');
 
@@ -135,46 +136,51 @@ export function cardRequest(sessions, targetIndex, exerciseId, profile) {
     const item = byExercise(session, exerciseId);
     return item && item.sets.some(row => row.role !== 'warmup' && (filled(row.factWeight) || filled(row.factReps))) ? [{session, exercise:item, order}] : [];
   });
-  if (!prior.length) throw new Error('Нужна хотя бы одна предыдущая запись с фактом этого упражнения.');
-  if (prior.some(item => !/^\d{4}-\d{2}-\d{2}$/.test(item.session.date || ''))) throw new Error('Укажите дату в предыдущих тренировках с фактом этого упражнения.');
-  const targetDate = target.date || prior.reduce((date,item)=>item.session.date > date ? item.session.date : date,'');
-  const comparable = prior.filter(item=>item.session.date<=targetDate).toSorted((a,b)=>a.session.date.localeCompare(b.session.date)||a.order-b.order);
-  if (!comparable.length) throw new Error('Нет факта этого упражнения до даты выбранной тренировки.');
-  const latest = comparable.at(-1).exercise, hasPlan = exercise.sets.some(row => row.role !== 'warmup' && (filled(row.planWeight) || filled(row.planReps)));
-  if (profile.last_reduced && !hasPlan) throw new Error('После облегчённой тренировки сначала задайте обычный базовый план в этой карточке.');
+  const dated = prior.filter(item => /^\d{4}-\d{2}-\d{2}$/.test(item.session.date || ''));
+  const targetDate = target.date || dated.reduce((date,item)=>item.session.date > date ? item.session.date : date,'');
+  const comparable = dated.filter(item=>item.session.date<=targetDate).toSorted((a,b)=>a.session.date.localeCompare(b.session.date)||a.order-b.order);
+  const latest = comparable.at(-1)?.exercise;
+  const hasPlan = exercise.sets.some(row => row.role !== 'warmup' && (filled(row.planWeight) || filled(row.planReps)));
+  let limitation;
+  const limit = (code, reason) => { limitation ??= {code,reason}; };
+  if (!comparable.length) limit('no-history', 'Для прибавки пока нет предыдущего результата с датой.');
+  if (comparable.length && prior.some(item => item.order > comparable.at(-1).order && !dated.includes(item))) limit('undated', 'У более свежего результата нет даты. Оставляем план без прибавки.');
+  if (profile.last_reduced && !hasPlan) limit('configuration', 'После облегчённого занятия нужен обычный план. Прибавку пока не предлагаем.');
   const baseline = exercise.sets.map((row, i) => {
-    const source = hasPlan || row.role === 'warmup' ? row : latest.sets[i] || {};
+    const source = hasPlan || row.role === 'warmup' ? row : latest?.sets[i] || {};
     let w = uiNumber(source.planWeight), r = uiNumber(source.planReps);
     if (!hasPlan) {
       if (!filled(w)) w = uiNumber(source.factWeight);
       if (!filled(r)) r = uiNumber(source.factReps);
     }
     if (!filled(w) && ['bodyweight','duration'].includes(profile.mode)) w = 0;
-    return {w,r,role:row.role === 'warmup' ? 'warmup' : 'work'};
+    return {w:Number.isFinite(w) && w >= 0 ? w : '',r:Number.isFinite(r) && r > 0 ? r : '',role:row.role === 'warmup' ? 'warmup' : 'work'};
   });
   // The policy sorts ties by id. Supply journal order rather than random UUID order.
   const history = comparable.map(({session,exercise:item,order}) => ({id:String(order).padStart(12,'0'),date:session.date,
     sets:item.sets.map(row => ({w:!filled(row.factWeight) && ['bodyweight','duration'].includes(profile.mode) ? 0 : uiNumber(row.factWeight),
       r:uiNumber(row.factReps),rpe:uiNumber(row.rpe),role:row.role === 'warmup' ? 'warmup' : 'work'}))}));
-  Object.assign(history.at(-1),{reduced:!!profile.last_reduced,changedConditions:!!profile.changed_conditions,hold:!!profile.hold});
+  if (history.length) Object.assign(history.at(-1),{reduced:!!profile.last_reduced,changedConditions:!!profile.changed_conditions,hold:!!profile.hold});
   const [lo,hi] = profile.rep_range || [];
   if (lo > 0 && hi >= lo) {
     const work = baseline.flatMap((row,i)=>row.role==='work'?[i]:[]), latestFact=history.at(-1);
     if (work.some(i=>filled(baseline[i].r) && (baseline[i].r < lo || baseline[i].r > hi)) ||
-        work.some(i=>latestFact.sets[i]?.role==='work' && filled(latestFact.sets[i].r) && latestFact.sets[i].r > hi)) {
-      throw new Error('Базовый план или последний рабочий факт выходит за выбранный диапазон. Уточните диапазон или базовый план перед расчётом.');
+        work.some(i=>latestFact?.sets[i]?.role==='work' && filled(latestFact.sets[i].r) && latestFact.sets[i].r > hi)) {
+      limit('range', 'Повторы выходят за выбранный диапазон. Можно оставить текущие значения или изменить диапазон и пересчитать.');
     }
   }
   const p = {mode:profile.mode,range:profile.rep_range,timeRange:profile.rep_range,timeStep:profile.time_step};
   if (p.mode === 'external') {
     const step = Number(profile.load_step), weights = baseline.filter(row => row.role === 'work').map(row => row.w);
-    if (!(step > 0 && Number.isFinite(step))) throw new Error('Укажите фактический положительный шаг прибавки веса вашего оборудования.');
-    if (weights.some(w => !filled(w) || !Number.isFinite(w) || w <= 0)) throw new Error('Нужен заполненный базовый план рабочих подходов.');
-    const min = Math.min(...weights);
-    if (weights.some(w => Math.abs((w-min)/step-Math.round((w-min)/step)) > 1e-7)) throw new Error('Рабочие веса не совпадают с указанной ступенью. Проверьте шаг оборудования и базовый план.');
-    p.loads = [...new Set(weights.flatMap(w => [w,Number((w+step).toFixed(6))]))].sort((a,b)=>a-b);
+    if (!(step > 0 && Number.isFinite(step))) limit('configuration', 'Шаг оборудования не указан. Вес пока не повышаем.');
+    else if (weights.some(w => !filled(w) || !Number.isFinite(w) || w <= 0)) limit('configuration', 'Не во всех рабочих подходах указан вес. Оставляем только известные значения.');
+    else {
+      const min = Math.min(...weights);
+      if (weights.some(w => Math.abs((w-min)/step-Math.round((w-min)/step)) > 1e-7)) limit('configuration', 'Указанный шаг не совпадает с рабочими весами. Вес пока не повышаем.');
+      p.loads = [...new Set(weights.flatMap(w => [w,Number((w+step).toFixed(6))]))].sort((a,b)=>a-b);
+    }
   }
-  const input = {profile:p,baseline,history,targetDate};
+  const input = {profile:p,baseline,history,targetDate,limitation};
   return {input,sourceIds:comparable.slice(-2).map(item=>({number:item.session.number,date:item.session.date})),
     fingerprint:JSON.stringify({targetId:target.session_id,targetDate:target.date,sets:exercise.sets,input})};
 }

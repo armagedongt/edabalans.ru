@@ -46,14 +46,15 @@ test('card request excludes later dates and planned-only empty records',()=>{
 
 test('a partly entered destination plan is not silently completed from history',()=>{
   const sessions=journal();sessions[2].exercises[0].sets[1].planWeight=80;
-  assert.throws(()=>cardRequest(sessions,2,'bench-press',benchProfile()),/базовый план/);
+  const r=recommend(cardRequest(sessions,2,'bench-press',benchProfile()).input);
+  assert.equal(r.code,'configuration');assert.equal(r.next[1].w,80);assert.equal(r.next[1].r,'');
 });
 
 test('equipment step and special conditions are explicit rather than inferred from comments',()=>{
   const sessions=journal(),profile=benchProfile();profile.load_step=0;
-  assert.throws(()=>cardRequest(sessions,2,'bench-press',profile),/шаг/);
+  assert.equal(recommend(cardRequest(sessions,2,'bench-press',profile).input).code,'configuration');
   profile.load_step=2.5;profile.last_reduced=true;
-  assert.throws(()=>cardRequest(sessions,2,'bench-press',profile),/базовый план/);
+  assert.equal(recommend(cardRequest(sessions,2,'bench-press',profile).input).code,'configuration');
   profile.last_reduced=false;profile.changed_conditions=true;
   assert.equal(recommend(cardRequest(sessions,2,'bench-press',profile).input).code,'conditions');
   profile.changed_conditions=false;profile.hold=true;
@@ -77,9 +78,9 @@ test('range conflicts are explicit while an underperformed fact remains valid in
   const sessions=journal(),profile=benchProfile();
   const source=sessions[1].exercises[0].sets;
   source[1].planReps=source[1].factReps=25;
-  assert.throws(()=>cardRequest(sessions,2,'bench-press',profile),/диапазон/);
+  assert.equal(recommend(cardRequest(sessions,2,'bench-press',profile).input).code,'range');
   source[1].planReps=15;
-  assert.throws(()=>cardRequest(sessions,2,'bench-press',profile),/диапазон/);
+  assert.equal(recommend(cardRequest(sessions,2,'bench-press',profile).input).code,'range');
   source[1].factReps=5;
   assert.doesNotThrow(()=>cardRequest(sessions,2,'bench-press',profile));
   source[0].planReps=source[0].factReps=99;
@@ -192,4 +193,23 @@ test('empty destination warm-ups remain empty and a workout needs no warm-ups',(
   sessions.forEach(session=>session.exercises[0].sets=session.exercises[0].sets.filter(row=>row.role!=='warmup'));
   const allWork=recommend(cardRequest(sessions,2,'bench-press',profile).input);
   assert.deepEqual(allWork.next,result.next.filter(row=>row.role!=='warmup'));
+});
+
+
+test('undated history never blocks dated records or silently replaces a more recent fact',()=>{
+  const sessions=journal(),profile=benchProfile();
+  sessions[0].date='';
+  let request=cardRequest(sessions,2,'bench-press',profile);
+  assert.deepEqual(request.sourceIds.map(row=>row.number),[2]);
+  assert(recommend(request.input).changed.length>0);
+  sessions[0].date=sessions[1].date;sessions[1].date='';
+  request=cardRequest(sessions,2,'bench-press',profile);
+  assert.equal(recommend(request.input).code,'undated');
+  sessions[0].date='';
+  sessions[2].exercises[0].sets[1].planWeight=75;
+  sessions[2].exercises[0].sets[1].planReps=10;
+  const result=recommend(cardRequest(sessions,2,'bench-press',profile).input);
+  assert.equal(result.code,'no-history');
+  assert.deepEqual(result.changed,[]);
+  assert.deepEqual([result.next[1].w,result.next[1].r],[75,10]);
 });

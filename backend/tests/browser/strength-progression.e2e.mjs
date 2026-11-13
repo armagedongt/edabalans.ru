@@ -13,7 +13,7 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
  const page=await browser.newPage({viewport:{width,height:900}}),errors=[],writes=[];page.on('pageerror',error=>errors.push(error.message));
  let linkedPlatform=null,failState=false,deliveryCount=0,linkRequests=0,reads=0,oldRelease;
  const oldGate=new Promise(resolve=>{oldRelease=resolve;});
- let version=1,moduleHold=null,moduleRelease;const state={sessions:[1,2,3].map(n=>({session_id:'s'+n,session_number:n,workout_type:1,date:'2026-10-'+String(n*7).padStart(2,'0')})),
+ let version=1,moduleHold=null,moduleRelease,failModule=false;const state={sessions:[1,2,3].map(n=>({session_id:'s'+n,session_number:n,workout_type:1,date:'2026-10-'+String(n*7).padStart(2,'0')})),
   workout_types:[{workout_type:1,title:'Верх',sort_order:1,active:true}],
   exercise_catalog:guides.map((g,i)=>({exercise_id:g.code,exercise_name:g.name,short_name:g.short_name,full_name:g.full_name,source:'base',active:i<2,sort_order:i+1,media_url:g.media_url,guide:g.guide,training:g.training})),
   session_exercises:[1,2,3].map(n=>({session_id:'s'+n,exercise_id:'bench-press',exercise_name:'Жим штанги лёжа',sort_order:1})),
@@ -38,7 +38,10 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
    return route.fulfill({json:response});
   }
   if(url.pathname==='/api/apps/strength/send-plan'){deliveryCount++;return route.fulfill({json:{ok:true,platform:linkedPlatform,message_ids:['synthetic']}});}
-  if(url.pathname==='/assets/strength-progression-model.mjs'&&moduleHold)await moduleHold;
+  if(url.pathname==='/assets/strength-progression-model.mjs'){
+   if(failModule)return route.abort();
+   if(moduleHold)await moduleHold;
+  }
   const asset=new URL(url.pathname.replace(/^\/assets\//,''),staticRoot);
   if(!asset.href.startsWith(staticRoot.href))return route.abort();
   try{return route.fulfill({contentType:({'.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.woff2':'font/woff2','.svg':'image/svg+xml','.gif':'image/gif','.png':'image/png'})[path.extname(asset.pathname)]||'application/octet-stream',body:await readFile(asset)});}catch{return route.abort();}
@@ -120,8 +123,8 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
    await card().getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();
    const input=card().locator('[data-field="planReps"]').nth(1);await input.fill('12');await input.dispatchEvent('input');await input.blur();await page.waitForTimeout(850);
    const before=writes.length;moduleRelease();
-   await dialog.locator('.st-progression-error').waitFor();
-   assert((await dialog.locator('.st-progression-error').innerText()).includes('Данные изменились'));
+   await dialog.getByRole('status').filter({hasText:'данные изменились'}).waitFor();
+   assert.equal(await dialog.locator('.st-progression-error').count(),0);
    await page.waitForTimeout(850);assert.equal(writes.length,before,'editing while the module loads prevents automatic overwrite');
    await dialog.getByRole('button',{name:'Закрыть',exact:true}).click();
    await page.getByRole('button',{name:'Отменить действие',exact:true}).click();await page.waitForTimeout(850);
@@ -150,7 +153,10 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
     await card().getByRole('button',{name:'Информация о расчёте прогрессии',exact:true}).click();
     assert.equal(await card().locator('.st-progression-details').count(),0,'details do not expand the exercise card');
     const step=dialog.locator('[data-calc-field="load_step"]');await step.fill('0');await dialog.getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();
-    await dialog.locator('.st-progression-error').waitFor();assert((await dialog.locator('.st-progression-error').innerText()).includes('шаг'));
+    await dialog.getByRole('status').filter({hasText:'Без прибавки'}).waitFor();
+    assert.equal(await dialog.locator('.st-progression-error').count(),0);
+    assert((await dialog.locator('.st-progression-result').innerText()).includes('Шаг оборудования'));
+    assert(await dialog.getByRole('table').isVisible());
     await page.screenshot({path:path.join(output,`${width}-${role}-error.png`)});
     const afterFailure=writes.length;await page.waitForTimeout(850);assert.equal(writes.length,afterFailure);
     await step.fill('2.5');await dialog.getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();await page.waitForTimeout(850);
@@ -159,6 +165,22 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
   }
  }
 
+ if(width===430&&role==='owner'){
+  state.sets.find(row=>row.session_id==='s2'&&row.set_number===4).fact_reps='';
+  await page.reload();
+  const before=writes.length;
+  await card().getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();
+  await dialog.getByText(/заполнены не все рабочие подходы/).waitFor();
+  assert.equal(await dialog.locator('.st-progression-error').count(),0);
+  assert(await dialog.getByRole('table').isVisible());
+  await page.waitForTimeout(850);
+  assert.equal(writes.length,before,'partial fact leaves the plan unchanged');
+  failModule=true;
+  await page.reload();
+  await card().getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();
+  await dialog.locator('.st-progression-error').getByText(/Не удалось выполнить расчёт/).waitFor();
+  await dialog.getByRole('button',{name:'Закрыть',exact:true}).click();
+ }
 
  if(role==='user'){
   await page.evaluate(()=>ST.sendTelegram(0,''));

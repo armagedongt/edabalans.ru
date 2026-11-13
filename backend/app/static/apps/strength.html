@@ -3887,7 +3887,8 @@ function renderProgressionControls(index,exercise,item,showDetails){
   function field(name,label,value,extra){return '<label>'+label+'<input data-calc-field="'+name+'" inputmode="decimal" value="'+esc(value==null?'':value)+'"'+data+' onchange="ST.progressionSetting('+args+',this.dataset.calcField,this.value,this)" '+(extra||'')+'></label>';}
   if(state.error)html+='<p class="st-progression-error" role="status">'+esc(state.error)+'</p>';
 
-  else if(state.result && state.result.reasons.length)html+='<p role="status">'+esc(state.result.reasons[0])+'</p>';
+  else if(state.notice)html+='<p role="status">'+esc(state.notice)+'</p>';
+  else if(state.result && !state.applied)html+='<p role="status">'+(state.result.next.some(function(row){return row.role==='work' && !blank(row.r);})?'Без прибавки — план не изменён.':'Пока нет базы для нового плана.')+'</p>';
   html+='<details open class="st-progression-details"><summary>Параметры и последний расчёт</summary><div class="st-progression-settings">';
   if(!(item && item.training)){
     html+='<label class="st-progression-wide">Тип нагрузки<select'+data+' onchange="ST.progressionSetting('+args+',\'mode\',this.value,this)"><option value="">Выберите тип</option>';
@@ -3902,7 +3903,7 @@ function renderProgressionControls(index,exercise,item,showDetails){
   [['last_reduced','Прошлая тренировка была облегчённой'],['changed_conditions','Изменились условия выполнения'],['hold','Повторить без прибавки']].forEach(function(pair){html+='<label class="st-progression-flag"><input type="checkbox" '+(settings[pair[0]]?'checked':'')+data+' onchange="ST.progressionSetting('+args+',\''+pair[0]+'\',this.checked,this)">'+pair[1]+'</label>';});
   html+='</details><div class="st-progression-result" aria-live="polite">';
   if(state.result){
-    html+='<p>Основа: '+state.request.sourceIds.map(function(source){return '№'+esc(source.number)+' · '+esc(formatDate(source.date));}).join('; ')+'</p><table><thead><tr><th>Подход</th><th>Следующий план</th></tr></thead><tbody>';
+    html+=(state.request.sourceIds.length?'<p>Предыдущие записи: '+state.request.sourceIds.map(function(source){return '№'+esc(source.number)+' · '+esc(formatDate(source.date));}).join('; ')+'</p>':'')+'<table><thead><tr><th>Подход</th><th>Следующий план</th></tr></thead><tbody>';
     state.result.next.forEach(function(row,i){
       var value=settings.mode==='duration'?(blank(row.r)?'—':row.r)+' с':(settings.mode==='bodyweight'&&Number(row.w)===0?'Свой вес':(blank(row.w)?'—':row.w)+(settings.mode==='assisted'?' помощи':''))+' × '+(blank(row.r)?'—':row.r);
       html+='<tr'+(state.result.changed.indexOf(i)>=0?' class="st-progression-changed"':'')+'><td>'+(i+1)+(row.role==='warmup'?' · разм.':'')+'</td><td>'+esc(value)+'</td></tr>';
@@ -6207,7 +6208,7 @@ window.ST = {
     else if(['load_step','time_step'].indexOf(field)>=0)state.settings[field]=Number(String(value).replace(',','.'));
     else if(['mode','last_reduced','changed_conditions','hold'].indexOf(field)>=0)state.settings[field]=value;
     else return;
-    state.result=null;state.applied=false;state.error='Параметры изменены. Нажмите «Рассчитать прогрессию».';
+    state.result=null;state.applied=false;state.error='';state.notice='Параметры изменены. Нажмите «Рассчитать прогрессию».';
     if(field==='mode'||!element)renderWithoutViewportJump();
   },
   calculateProgression:function(index,id){
@@ -6217,15 +6218,20 @@ window.ST = {
     if(!state)state=app.progressionPanels[target.key]={settings:item && item.training?cloneValue(item.training):{mode:'',rep_range:['',''],load_step:'',time_step:5}};
     if(state.loading)return;
     var sessionsAtStart=cloneValue(currentWorkout().sessions),settingsAtStart=cloneValue(state.settings);
-    state.loading=true;state.error='';state.applied=false;state.result=null;renderWithoutViewportJump();
-    import('/assets/strength-progression-model.mjs?v=20261022-guide-calc').then(function(model){
+    state.loading=true;state.error='';state.notice='';state.applied=false;state.canApply=false;state.result=null;renderWithoutViewportJump();
+    import('/assets/strength-progression-model.mjs?v=20261113-plan-result').then(function(model){
       var currentIndex=currentWorkout().sessions.findIndex(function(session){return session.session_id===target.session.session_id;});
       if(currentIndex<0 || app.progressionPanels[target.key]!==state)return;
       state.request=model.cardRequest(sessionsAtStart,index,id,settingsAtStart);
+      var currentRequest=model.cardRequest(currentWorkout().sessions,currentIndex,id,state.settings);
+      if(currentRequest.fingerprint!==state.request.fingerprint){
+        state.notice='Пока шёл расчёт, данные изменились. План не записан. Нажмите «Рассчитать прогрессию» ещё раз.';
+        return;
+      }
       state.result=model.recommend(state.request.input);state.model=model;
-      state.canApply=['configuration','unsupported','no-history','no-work','conditions','invalid-rpe','context','coach'].indexOf(state.result.code)<0 || (state.result.code==='coach' && state.settings.hold);
+      state.canApply=['configuration','unsupported','no-history','no-work','conditions','invalid-rpe','context','range','partial','undated','coach'].indexOf(state.result.code)<0 || (state.result.code==='coach' && state.settings.hold);
       if(state.canApply)ST.applyProgression(currentIndex,id);
-    }).catch(function(error){state.error=error.message || 'Не удалось выполнить расчёт. Повторите.';}).finally(function(){
+    }).catch(function(error){state.error='Не удалось выполнить расчёт. Попробуйте ещё раз.';}).finally(function(){
       state.loading=false;
       if(app.progressionPanels[target.key]!==state)return;
       var currentIndex=currentWorkout().sessions.findIndex(function(session){return session.session_id===target.session.session_id;});
@@ -6239,10 +6245,12 @@ window.ST = {
     var target=progressionItem(index,id);if(!target)return;
     var state=app.progressionPanels[target.key];if(!state || !state.result || !state.canApply)return;
     try{
-      var request;
-      try{request=state.model.cardRequest(currentWorkout().sessions,index,id,state.settings);}
-      catch(error){throw new Error('Данные изменились после расчёта. Пересчитайте прогрессию.');}
-      if(request.fingerprint!==state.request.fingerprint)throw new Error('Данные изменились после расчёта. Пересчитайте прогрессию.');
+      var request=state.model.cardRequest(currentWorkout().sessions,index,id,state.settings);
+      if(request.fingerprint!==state.request.fingerprint){
+        state.result=null;state.canApply=false;
+        state.notice='Пока шёл расчёт, данные изменились. План не записан. Нажмите «Рассчитать прогрессию» ещё раз.';
+        return;
+      }
       rememberUndo();
       target.exercise.sets.forEach(function(set,i){if(set.role==='warmup')return;set.planWeight=state.result.next[i].w;set.planReps=state.result.next[i].r;});
       state.applied=true;scheduleSave(index);renderWithoutViewportJump();
