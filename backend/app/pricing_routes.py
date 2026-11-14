@@ -10,7 +10,7 @@ import uuid
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt
 from sqlalchemy import delete, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -69,15 +69,6 @@ class PriceEntryUpdate(BaseModel):
     sale_amount: Decimal = Field(ge=0, le=10_000_000, decimal_places=2)
     enabled: StrictBool
     course_support_amount: Decimal | None = Field(default=None, gt=0, le=10_000_000, decimal_places=2)
-
-    @model_validator(mode="after")
-    def validate_prices(self):
-        if self.compare_at_amount is not None and self.compare_at_amount < self.sale_amount:
-            raise ValueError("compare_at_amount cannot be below sale_amount")
-        if self.regular_amount is not None and self.regular_amount < self.sale_amount:
-            raise ValueError("regular_amount cannot be below sale_amount")
-        return self
-
 
 class PricingRevision(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -205,6 +196,12 @@ def admin_update_pricing_draft(
     for item in body.entries:
         if not PRICE_CODE.match(item.code):
             raise HTTPException(422, f"Некорректный код цены: {item.code}")
+        row = rows[item.code]
+        for field in ("compare_at_amount", "regular_amount"):
+            amount = getattr(item, field)
+            unchanged = amount == getattr(row, field) and item.sale_amount == row.sale_amount
+            if not unchanged and amount is not None and amount < item.sale_amount:
+                raise HTTPException(422, f"{item.code}: {field} не может быть меньше цены продажи")
         if "group_start_date" in item.model_fields_set and item.code != STANDARD_TARIFF_CODE:
             raise HTTPException(422, "Дата группы доступна только для среднего тарифа")
         if "course_support_amount" in item.model_fields_set and item.code != CONSULT_TARIFF_CODE:
