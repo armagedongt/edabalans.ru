@@ -1179,6 +1179,7 @@ card = "docs/knowledge-base/modules/catalog/operations.backup.md"
 owns_files = [
   "infra/scripts/backup-postgres.sh", "infra/scripts/test-restore-postgres.sh",
   "infra/scripts/upload-author-memory-backup.sh", "infra/systemd/edabalans-backup.*",
+  "infra/scripts/backup-site-recovery.py", "infra/systemd/edabalans-site-recovery*",
 ]
 
 [[modules]]

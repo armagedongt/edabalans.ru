@@ -1,0 +1,14 @@
+[Unit]
+Description=Back up Edabalans site recovery files (%i)
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/root/.config/edabalans/s3.env
+ExecStart=/usr/bin/flock /run/lock/edabalans-site-recovery.lock /usr/bin/python3 /opt/edabalans/infra/scripts/backup-site-recovery.py %i
+StateDirectory=edabalans-site-recovery
+StateDirectoryMode=0700
+UMask=0077
+Nice=10

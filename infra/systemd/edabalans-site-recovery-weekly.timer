@@ -1,0 +1,10 @@
+[Unit]
+Description=Weekly backup of Edabalans images and design
+
+[Timer]
+OnCalendar=Sun *-*-* 05:00:00 Europe/Moscow
+Persistent=true
+Unit=edabalans-site-recovery@weekly.service
+
+[Install]
+WantedBy=timers.target

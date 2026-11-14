@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily backup of Edabalans source and skills
+
+[Timer]
+OnCalendar=*-*-* 04:00:00 Europe/Moscow
+Persistent=true
+Unit=edabalans-site-recovery@daily.service
+
+[Install]
+WantedBy=timers.target

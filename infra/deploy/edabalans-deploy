@@ -294,5 +294,21 @@ EDABALANS_WATCHDOG_LOCK_FILE=/run/edabalans-telegram-watchdog-deploy-verify.lock
     /usr/local/sbin/edabalans-telegram-watchdog
 systemctl is-active --quiet edabalans-telegram-watchdog.timer
 
+site_recovery_first_install=false
+if ! systemctl is-enabled --quiet edabalans-site-recovery-daily.timer ||
+   ! systemctl is-enabled --quiet edabalans-site-recovery-weekly.timer; then
+    site_recovery_first_install=true
+fi
+for unit in edabalans-site-recovery@.service edabalans-site-recovery-{daily,weekly}.timer; do
+    install -m 0644 "${APP_DIR}/infra/systemd/${unit}" "/etc/systemd/system/${unit}"
+done
+systemctl daemon-reload
+systemctl enable --now edabalans-site-recovery-{daily,weekly}.timer
+systemctl is-active --quiet edabalans-site-recovery-daily.timer
+systemctl is-active --quiet edabalans-site-recovery-weekly.timer
+if [[ "${site_recovery_first_install}" == true ]]; then
+    systemctl start --no-block edabalans-site-recovery@{daily,weekly}.service
+fi
+
 deployment_succeeded=true
 echo "Production deployed successfully: ${TARGET_SHA}"
