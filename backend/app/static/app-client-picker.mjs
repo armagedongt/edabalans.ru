@@ -18,7 +18,11 @@ export function mount(root, app, context, host, admin) {
       #account-app .ed-app-switch-bar .account-session{min-width:0}
       .ed-app-switch-button{flex:none;min-height:32px;margin-left:auto;padding:3px 8px;border:1px solid #addcf4;border-radius:8px;background:#fff;color:#087aad;font:inherit;cursor:pointer}
       #strength-app .ed-app-switch-button{font-size:12px}
-      @media(max-width:700px){#strength-app .ed-app-switch-button{font-size:10px;padding:3px 4px}}
+      @media(max-width:700px){
+        #strength-app .st-top:has(>.ed-app-switch-button){flex-wrap:wrap}
+        #strength-app .st-top:has(>.ed-app-switch-button)>.st-top-email{flex:1 1 50%}
+        #strength-app .ed-app-switch-button{order:1;font-size:11px;margin-left:auto}
+      }
       .ed-app-switch-drawer{position:fixed;inset:0 0 0 auto;margin:0;width:min(350px,100vw);height:100dvh;max-height:100dvh;padding:16px;border:0;border-radius:14px 0 0 14px;background:#fff;color:#273b50;box-sizing:border-box;box-shadow:0 0 36px #22375025;font:14px/1.4 var(--ed-font-body,Manrope,Arial,sans-serif)}
       .ed-app-switch-drawer::backdrop{background:#17314930}.ed-app-switch-drawer header{display:flex;align-items:center;justify-content:space-between}.ed-app-switch-drawer header button{border:0;background:transparent;font-size:24px;min-width:36px;cursor:pointer}
       .ed-app-switch-drawer nav{display:grid;gap:5px;margin-top:12px}.ed-app-switch-drawer nav a{display:block;padding:10px;border:1px solid #dce9f1;border-radius:8px;color:#087aad;text-decoration:none}
