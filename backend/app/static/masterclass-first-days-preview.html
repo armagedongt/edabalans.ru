@@ -356,8 +356,11 @@ function buildFromManifest(manifest){courseManifest=manifest;document.querySelec
       var time=start.toLocaleTimeString('ru-RU',Object.assign({hour:'2-digit',minute:'2-digit'},moscow));
       document.querySelector('#sidebar').style.display='none';
       courseRoot.style.gridTemplateColumns='minmax(0, 1fr)';
+      courseRoot.querySelector('.main').style.marginLeft='0';
       document.querySelector('#menu').style.display='none';
-      document.querySelector('#day').innerHTML='<section class="next-day"><div class="next-copy"><strong>Материалы Мастер-класса откроются '+esc(date)+' в '+esc(time)+' мск.</strong><p>Личный кабинет и предложения со скидками уже доступны.</p><a class="next-button ready" href="/lk">В личный кабинет</a></div></section>';
+      var day=document.querySelector('#day');
+      day.innerHTML='<section class="next-day"><div class="next-copy"><strong>Материалы Мастер-класса откроются '+esc(date)+' в '+esc(time)+' мск.</strong><p>Личный кабинет и предложения со скидками уже доступны.</p><a class="next-button ready" href="/lk">В личный кабинет</a></div></section>';
+      day.firstElementChild.style.gridTemplateColumns='minmax(0, 1fr)';
       var refresh=setTimeout(function(){if(courseRoot.isConnected)location.reload()},Math.min(2147483647,Math.max(1000,start-Date.parse(serverNow)+1000)));
       window.addEventListener('edabalans:app-dispose',function(){clearTimeout(refresh)},{once:true});
     }
