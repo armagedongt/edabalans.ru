@@ -26,7 +26,7 @@ def test_user_cannot_change_coach_comment_even_with_direct_request(native):
         state = db.scalar(select(StrengthState).where(StrengthState.user_id == UUID(uid)))
         session = deepcopy(state.workouts[0])
         original = session["exercises"][0]["coach_note"]
-    session["exercises"][0].update(coach_note="Подмена", note="Мой комментарий")
+    session["exercises"][0].update(coach_note="Подмена", note="Мой комментарий", progression_evidence="facts-v1:abc")
     response = client.post('/api/apps/strength', json={"action":"saveSession", "version":4,
                             "workout_type":2, "session":session})
     assert response.json()["ok"] is True
@@ -34,6 +34,7 @@ def test_user_cannot_change_coach_comment_even_with_direct_request(native):
         saved = db.scalar(select(StrengthState).where(StrengthState.user_id == UUID(uid))).workouts[0]["exercises"][0]
         assert saved["coach_note"] == original
         assert saved["note"] == "Мой комментарий"
+        assert "progression_evidence" not in saved
 
 
 def test_server_capability_and_client_picker_for_user_and_owner(native):

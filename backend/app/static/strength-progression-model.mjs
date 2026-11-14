@@ -1,4 +1,4 @@
-export const VERSION = 'policy-0.5.0';
+export const VERSION = 'policy-0.5.1';
 const copy = value => structuredClone(value);
 const known = value => value !== '' && value !== null && value !== undefined && Number.isFinite(Number(value));
 const number = value => known(value) ? Number(value) : null;
@@ -19,7 +19,13 @@ export function recommend(input) {
   const allWork = base.flatMap((row, i) => row.role === 'warmup' ? [] : [i]);
   const result = {version: VERSION, code: 'hold', next: base, changed: [], used: records.map(h => h.id),
     reasons: [], formulas: [], budget: 0, granularity: false};
-  const hold = (code, reason) => { result.code = code; result.reasons.push(reason); return result; };
+  const hold = (code, reason) => {
+    result.next = copy(input.baseline);
+    result.code = code;
+    result.reasons.push(reason);
+    return result;
+  };
+  if (input.alreadyApplied) return hold('already-applied', 'По этим результатам план уже рассчитан. Новую прибавку не добавляем.');
   if (input.limitation) {
     const {code, reason} = input.limitation;
     if (code === 'no-history' && input.offerStarter && ['external','bodyweight','assisted','duration'].includes(mode)) {
@@ -27,7 +33,9 @@ export function recommend(input) {
       if (Number.isFinite(min) && Number.isFinite(max) && min > 0 && max >= min &&
           (mode === 'duration' || Number.isInteger(min) && Number.isInteger(max))) {
         for (const i of allWork) base[i].r = min;
-        return hold(code, 'Черновик с нижней границы диапазона. Подходящую нагрузку выберите на тренировке; план не записан.');
+        result.code = code;
+        result.reasons.push('Черновик с нижней границы диапазона. Подходящую нагрузку выберите на тренировке; план не записан.');
+        return result;
       }
     }
     return hold(code, reason);
@@ -63,8 +71,7 @@ export function recommend(input) {
       (rpe === null || rpe >= 5 && rpe <= 10);
   });
   if (!work.length && comparableWork.some(i => base[i].r < lo || base[i].r > hi || a.sets[i].r > hi)) {
-    for (const i of comparableWork) if (a.sets[i].r > hi) base[i].r = a.sets[i].r;
-    return hold('range', 'Факт вне выбранного диапазона. Можно повторить последние значения или уточнить диапазон.');
+    return hold('range', 'Факт вне выбранного диапазона. Уточните диапазон, если хотите учесть эти повторы.');
   }
   if (!work.length) return hold('partial', 'Нет сопоставимых рабочих подходов для прибавки. Проверьте вес, повторы и диапазон.');
   const partial = work.length !== allWork.length;
@@ -110,6 +117,7 @@ export function recommend(input) {
     const delta = mode === 'duration' ? p.timeStep : 1;
     base[i].r = Math.min(hi, base[i].r + delta);
     result.code = 'conservative-reps'; result.changed = [i];
+    result.next = input.baseline.map((row,j)=>j===i?base[i]:copy(row));
     result.reasons.push('Два выполнения без RPE: один небольшой шаг в одной неизвестной строке, вес неизменен.');
     return result;
   }
@@ -121,6 +129,7 @@ export function recommend(input) {
     const i = ready.find(i => effort(a.sets[i]) <= 8 && attained(a.sets[i], base[i], mode) && base[i].r < hi);
     if (i === undefined) return hold('no-candidate', 'Время повторить: готовой позиции до верхней границы нет.');
     base[i].r = Math.min(hi, base[i].r + p.timeStep); result.changed = [i]; result.code = 'time';
+    result.next = input.baseline.map((row,j)=>j===i?base[i]:copy(row));
     result.reasons.push('Один настроенный шаг времени; формула Epley не применяется.'); return result;
   }
   const previousInformative = !partial && b && work.every(i => complete(b.sets[i], mode) && b.sets[i].role === 'work');
@@ -159,6 +168,7 @@ export function recommend(input) {
     result.formulas.push({set: exception.i + 1, capacity: capacity(a.sets[exception.i]), weight: exception.candidate.w, reps: exception.candidate.r});
   }
   result.budget = totalCost(base);
+  result.next = input.baseline.map((row,i)=>result.changed.includes(i)?base[i]:copy(row));
   result.code = result.changed.length ? result.granularity ? 'one-real-step' : 'progress' : 'no-candidate';
   result.reasons.push(result.changed.length ? result.granularity ? 'Одна реальная ступень выше условного бюджета; без остальных новых прибавок.'
     : 'Рост в готовых рабочих позициях; готовность важнее очереди, при равенстве — предпоследний, последний, остальные.'
@@ -175,6 +185,7 @@ export function cardRequest(sessions, targetIndex, exerciseId, profile) {
   const target = sessions[targetIndex], exercise = target && byExercise(target, exerciseId);
   if (!exercise) throw new Error('В этой тренировке нет сохранённой записи упражнения.');
   const prior = sessions.slice(0, targetIndex).flatMap((session, order) => {
+    if (session.source === 'model_example_at_owner_request') return [];
     const item = byExercise(session, exerciseId);
     return item && item.sets.some(row => row.role !== 'warmup' && (filled(row.factWeight) || filled(row.factReps))) ? [{session, exercise:item, order}] : [];
   });
@@ -213,7 +224,17 @@ export function cardRequest(sessions, targetIndex, exerciseId, profile) {
       }
     }
   }
-  const input = {profile:p,baseline,history,targetDate,limitation,offerStarter:!hasPlan && !profile.last_reduced && !profile.changed_conditions && !profile.hold && !prior.length};
-  return {input,sourceIds:comparable.slice(-2).map(item=>({number:item.session.number,date:item.session.date})),
-    fingerprint:JSON.stringify({targetId:target.session_id,targetDate:target.date,sets:exercise.sets,input})};
+  // A collision can only suppress an extra suggestion, never authorize one.
+  const facts = JSON.stringify(comparable.slice(-5).map(({session,exercise:item}) => [
+    session.session_id,
+    item.sets.map(row => row.role === 'warmup' ? null : [
+      uiNumber(row.factWeight), uiNumber(row.factReps), uiNumber(row.rpe),
+    ]),
+  ]));
+  let signature = 2166136261;
+  for (let i=0; i<facts.length; i++) signature = Math.imul(signature ^ facts.charCodeAt(i), 16777619);
+  const evidence = 'facts-v1:' + (signature >>> 0).toString(16);
+  const input = {profile:p,baseline,history,targetDate,limitation,alreadyApplied:exercise.progressionEvidence===evidence,offerStarter:!hasPlan && !profile.last_reduced && !profile.changed_conditions && !profile.hold && !prior.length};
+  return {input,evidence,sourceIds:comparable.slice(-2).map(item=>({number:item.session.number,date:item.session.date})),
+    fingerprint:JSON.stringify({targetId:target.session_id,targetDate:target.date,sets:exercise.sets,input,profile,evidence})};
 }

@@ -13,7 +13,7 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
  const page=await browser.newPage({viewport:{width,height:900}}),errors=[],writes=[];page.on('pageerror',error=>errors.push(error.message));
  let linkedPlatform=null,failState=false,deliveryCount=0,linkRequests=0,reads=0,oldRelease;
  const oldGate=new Promise(resolve=>{oldRelease=resolve;});
- let version=1,moduleHold=null,moduleRelease,failModule=false;const state={sessions:[1,2,3].map(n=>({session_id:'s'+n,session_number:n,workout_type:1,date:'2026-10-'+String(n*7).padStart(2,'0')})),
+ let version=1,moduleHold=null,moduleRelease,failModule=false,saveHold=null,saveRelease,failSave=false;const state={sessions:[1,2,3].map(n=>({session_id:'s'+n,session_number:n,workout_type:1,date:'2026-10-'+String(n*7).padStart(2,'0')})),
   workout_types:[{workout_type:1,title:'Верх',sort_order:1,active:true}],
   exercise_catalog:guides.map((g,i)=>({exercise_id:g.code,exercise_name:g.name,short_name:g.short_name,full_name:g.full_name,source:'base',active:i<2,sort_order:i+1,media_url:g.media_url,guide:g.guide,training:g.training})),
   session_exercises:[1,2,3].map(n=>({session_id:'s'+n,exercise_id:'bench-press',exercise_name:'Жим штанги лёжа',sort_order:1})),
@@ -30,10 +30,16 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
    if(data.action==='createMessengerLink'){linkRequests++;return route.fulfill({json:{ok:true,deep_link:'https://'+(data.platform==='telegram'?'t.me':'max.ru')+'/test_bot?start=synthetic',expires_at:new Date(Date.now()+900000).toISOString()}});}
    if(data.action==='getWorkout')response.workout={...structuredClone(state),selected_type:1,version};
    if(data.action==='saveSession'){
+    if(saveHold)await saveHold;
+    if(failSave){failSave=false;return route.fulfill({json:{ok:false,error:'SYNTHETIC_SAVE_ERROR'}});}
     writes.push(structuredClone(data));version++;response.version=version;response.session=data.session;
     state.sets=state.sets.filter(row=>row.session_id!==data.session.session_id);
     if(data.session.deleted)state.sessions=state.sessions.filter(row=>row.session_id!==data.session.session_id);
-    for(const ex of (data.session.exercises||[]))for(const row of ex.sets)state.sets.push({...row,session_id:data.session.session_id,exercise_id:ex.exercise_id});
+    for(const ex of (data.session.exercises||[])){
+     const stored=state.session_exercises.find(row=>row.session_id===data.session.session_id&&row.exercise_id===ex.exercise_id);
+     if(stored)Object.assign(stored,{plan_cleared:ex.plan_cleared,progression_evidence:ex.progression_evidence});
+     for(const row of ex.sets)state.sets.push({...row,session_id:data.session.session_id,exercise_id:ex.exercise_id});
+    }
    }
    return route.fulfill({json:response});
   }
@@ -131,9 +137,20 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
   }
   for(const view of ['training','exercise']){
    if(view==='exercise')await page.locator('.st-view-toggle').click();
+   const checkSaveStatus=width===430&&role==='owner'&&view==='training';
+   if(checkSaveStatus)saveHold=new Promise(resolve=>{saveRelease=resolve;});
    const control=card().getByRole('button',{name:/Рассчитать прогрессию|Пересчитать прогрессию/});
    const before=writes.length;await control.click();
-   await card().locator('.st-progression-info').waitFor();await page.waitForTimeout(850);
+   await card().locator('.st-progression-info').waitFor();
+   if(checkSaveStatus){
+    await card().getByRole('button',{name:'Информация о расчёте прогрессии',exact:true}).click();
+    await dialog.getByRole('columnheader',{name:'В плане, сохраняется'}).waitFor();
+    assert.equal(writes.length,before);
+    failSave=true;saveRelease();saveHold=null;
+    await dialog.getByRole('columnheader',{name:'В плане, сохранение не подтверждено'}).waitFor();
+    await dialog.getByRole('columnheader',{name:'Сохранено в плане'}).waitFor();
+    await dialog.getByRole('button',{name:'Закрыть',exact:true}).click();
+   }else await page.waitForTimeout(850);
    assert.equal(writes.length,before+1,'one calculation click fills and saves the plan');
    assert.equal(await card().getByRole('button',{name:/Применить в план/}).count(),0);
    const saved=writes.at(-1).session.exercises[0].sets;
@@ -153,9 +170,9 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
     await card().getByRole('button',{name:'Информация о расчёте прогрессии',exact:true}).click();
     assert.equal(await card().locator('.st-progression-details').count(),0,'details do not expand the exercise card');
     const step=dialog.locator('[data-calc-field="load_step"]');await step.fill('0');await dialog.getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();
-    await dialog.getByRole('status').filter({hasText:'Без прибавки'}).waitFor();
+    await dialog.getByRole('status').filter({hasText:'План не изменён'}).waitFor();
     assert.equal(await dialog.locator('.st-progression-error').count(),0);
-    assert((await dialog.locator('.st-progression-result').innerText()).includes('Шаг оборудования'));
+    assert((await dialog.locator('.st-progression-result').innerText()).includes('уже рассчитан'));
     assert(await dialog.getByRole('table').isVisible());
     await page.screenshot({path:path.join(output,`${width}-${role}-error.png`)});
     const afterFailure=writes.length;await page.waitForTimeout(850);assert.equal(writes.length,afterFailure);
@@ -166,6 +183,42 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
  }
 
  if(width===430&&role==='owner'){
+  await page.reload();
+  const control=card().getByRole('button',{name:'Рассчитать прогрессию',exact:true});
+  const beforeRepeat=writes.length;
+  await control.click();
+  await dialog.getByText(/уже рассчитан/).waitFor();
+  assert(await dialog.getByRole('columnheader',{name:'Расчёт — не записан'}).isVisible());
+  assert.equal(writes.length,beforeRepeat);
+  await dialog.getByRole('button',{name:'Закрыть',exact:true}).click();
+  await card().getByRole('button',{name:'Очистить план упражнения'}).click();
+  await page.waitForTimeout(850);
+  const cleared=writes.at(-1).session.exercises[0];
+  assert.equal(cleared.plan_cleared,true);
+  assert(cleared.sets.every(row=>row.plan_weight===''&&row.plan_reps===''));
+  assert.equal(cleared.sets[1].fact_weight,999);
+  assert.equal(cleared.sets[1].rpe,9);
+  await page.getByRole('button',{name:'Отменить действие',exact:true}).click();
+  await page.waitForTimeout(850);
+  const restored=writes.at(-1).session.exercises[0];
+  assert.equal(restored.plan_cleared,false);
+  assert.equal(restored.sets[1].plan_reps,11);
+  await page.reload();
+  assert.equal(await card().locator('[data-field="planReps"]').nth(1).inputValue(),'11');
+  const clearable=page.locator('article[data-session-index="0"][data-exercise-id="bench-press"]');
+  // Simulate an unperformed older exercise with a plan.
+  state.sets.filter(row=>row.session_id==='s1').forEach(row=>{row.fact_weight=row.fact_reps=row.rpe='';row.completed=false;});
+  await page.reload();
+  if(await page.locator('#strength-app').getAttribute('data-journal-view')!=='training')await page.locator('.st-view-toggle').click();
+  await clearable.getByRole('button',{name:'Очистить план упражнения'}).click();
+  await page.waitForTimeout(850);
+  assert(await clearable.isVisible());
+  await clearable.locator('.st-ex-tools, [data-field="planReps"]').first().scrollIntoViewIfNeeded();
+  await page.screenshot({path:path.join(output,'430-owner-cleared-training.png')});
+  await page.locator('.st-view-toggle').click();
+  assert.equal(await clearable.count(),0);
+  await page.screenshot({path:path.join(output,'430-owner-cleared-exercise.png')});
+  state.session_exercises.find(row=>row.session_id==='s3').progression_evidence='';
   const missing=state.sets.find(row=>row.session_id==='s2'&&row.set_number===4);
   missing.fact_reps=missing.plan_reps='';
   for(const row of state.sets.filter(row=>row.session_id==='s3'))row.plan_weight=row.plan_reps='';

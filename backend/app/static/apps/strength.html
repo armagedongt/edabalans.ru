@@ -1575,7 +1575,7 @@
 
 </style>
 
-<link rel="stylesheet" href="/assets/strength-journal.css?v=20261113-full-names">
+<link rel="stylesheet" href="/assets/strength-journal.css?v=20261114-clear-plan">
 <script src="/assets/strength-journal-model.js?v=20261022-set-role-inheritance"></script>
 <script>
 (function(){
@@ -2264,6 +2264,9 @@ function buildWorkoutModel(raw){
       status:
         row.status || '',
 
+      source:row.source || '',
+      exampleRestoreToken:row.example_restore_token || '',
+
       workoutType:
         Number(row.workout_type || 1),
 
@@ -2336,6 +2339,8 @@ function buildWorkoutModel(raw){
         row.note || '',
 
       coachNote:row.coach_note || '',
+      planCleared:row.plan_cleared === true,
+      progressionEvidence:row.progression_evidence || '',
 
       sets:[]
     };
@@ -2643,6 +2648,7 @@ function sessionPayload(session){
 
     exercises:[]
   };
+  if(session.exampleRestoreToken)result.example_restore_token=session.exampleRestoreToken;
 
   var i;
   var j;
@@ -2673,6 +2679,8 @@ function sessionPayload(session){
         ex.note || '',
 
       coach_note:ex.coachNote || '',
+      plan_cleared:ex.planCleared === true,
+      progression_evidence:ex.progressionEvidence || '',
 
       sets:[]
     };
@@ -3017,10 +3025,17 @@ function saveErrorText(){
   return hasSaveConflict() ? 'Данные изменились в другой вкладке. Загрузите актуальную версию перед продолжением.' : app.saveError;
 }
 
+function progressionSaveLabel(){
+  if(app.saveError)return 'В плане, сохранение не подтверждено';
+  return app.saving?'В плане, сохраняется':'Сохранено в плане';
+}
+
 function renderSavingOnly(){
   flushTemplateSave();
 
   updateTelegramButton();
+  var progressionLabel=root.querySelector('[data-progression-save]');
+  if(progressionLabel)progressionLabel.textContent=progressionSaveLabel();
 
   var el =
     document.getElementById(
@@ -3720,7 +3735,12 @@ function renderJournal(){
   var latestIndex=indices.length?indices[indices.length-1]:-1;
   if(app.journalView==='training' && !indices.length)return '';
   var rows=exercises.map(function(item,order){
-    var id=String(item.exercise_id),ownIndices=app.journalView==='training'?indices:sessions.map(function(_,index){return index;}).filter(function(index){return index===latestIndex || (Number(sessions[index].workoutType)===Number(app.workoutType) && (!sessionHasRecord(sessions[index]) || (sessions[index].status==='planned' && !sessions[index].exercises.some(exerciseHasFact)))) || exerciseHasRecord(findExercise(sessions[index],id));});
+    var id=String(item.exercise_id),ownIndices=app.journalView==='training'?indices:sessions.map(function(_,index){return index;}).filter(function(index){
+      var session=sessions[index],ex=findExercise(session,id);
+      if(ex && ex.planCleared && !exerciseHasNumbers(ex))return false;
+      return index===latestIndex || (Number(session.workoutType)===Number(app.workoutType) &&
+        (!sessionHasRecord(session) || (session.status==='planned' && !session.exercises.some(exerciseHasFact)))) || exerciseHasRecord(ex);
+    });
     var maxSets=sessions.reduce(function(max,session){var ex=findExercise(session,id);return Math.max(max,ex?ex.sets.length:0);},1);
     maxSets=ownIndices.reduce(function(max,index){var ex=exerciseForDisplay(sessions[index],id);return Math.max(max,ex?ex.sets.length:0);},maxSets);
     return {item:item,order:order,indices:ownIndices,maxSets:maxSets};
@@ -3838,6 +3858,7 @@ function renderHistoryExercise(index,item,order,maxSets){
   if(app.journalView==='exercise')html+=journalDate(index,session,'st-history-date',exercise.id);
   html+='<header class="st-modern-head"><div class="st-modern-title"><span class="st-exercise-number">'+(order+1)+'</span><strong>'+exerciseNameHtml(item,exercise.name)+'</strong></div><div class="st-modern-tools">'+
     '<button'+data+' onclick="ST.addSet('+args+')" aria-label="Добавить подход">＋</button><button'+data+' onclick="ST.removeSet('+args+')" aria-label="Убрать подход">−</button>'+
+    '<button type="button" class="st-clear-exercise-plan"'+data+' onclick="ST.clearExercisePlan('+args+')" aria-label="Очистить план упражнения" title="Очистить план упражнения" '+(emptyPlan?'disabled':'')+'>×</button>'+
     ((item.source==='base' || item.source==='custom')?'<button class="st-exercise-info"'+data+' onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Информация об упражнении">i</button>':'')+'</div></header>'+
     '<section class="st-modern-editor"><div class="st-grid-labels"><span></span><span class="st-plan-label">'+renderCopyButton(exercise.id,index,false,'',emptyPlan)+'<span>План</span></span><span class="st-fact-label">'+renderCopyButton(exercise.id,index,true,'',!exerciseHasFact(exercise))+'<span>Факт</span></span><span>RPE</span></div>';
   exercise.sets.forEach(function(set,setIndex){html+=renderModernSet(index,exercise,setIndex,set);});
@@ -3883,12 +3904,14 @@ function renderProgressionControls(index,exercise,item,showDetails){
   }
   if(!state)return '';
   var html='<section class="st-progression">';
+  var stale=state.applied && state.appliedSets!==JSON.stringify(exercise.sets);
+  if(stale)return html+'<p role="status">Подходы изменились после расчёта. Пересчитайте план.</p></section>';
   var settings=state.settings;
   function field(name,label,value,extra){return '<label>'+label+'<input data-calc-field="'+name+'" inputmode="decimal" value="'+esc(value==null?'':value)+'"'+data+' onchange="ST.progressionSetting('+args+',this.dataset.calcField,this.value,this)" '+(extra||'')+'></label>';}
   if(state.error)html+='<p class="st-progression-error" role="status">'+esc(state.error)+'</p>';
 
   else if(state.notice)html+='<p role="status">'+esc(state.notice)+'</p>';
-  else if(state.result && !state.applied)html+='<p role="status">'+(state.result.next.some(function(row){return row.role==='work' && !blank(row.r);})?'Без прибавки — план не изменён.':'Пока нет базы для нового плана.')+'</p>';
+  else if(state.result && !state.applied)html+='<p role="status">'+(state.result.next.some(function(row){return row.role==='work' && !blank(row.r);})?'План не изменён.':'Пока нет базы для нового плана.')+'</p>';
   html+='<details open class="st-progression-details"><summary>Параметры и последний расчёт</summary><div class="st-progression-settings">';
   if(!(item && item.training)){
     html+='<label class="st-progression-wide">Тип нагрузки<select'+data+' onchange="ST.progressionSetting('+args+',\'mode\',this.value,this)"><option value="">Выберите тип</option>';
@@ -3903,7 +3926,7 @@ function renderProgressionControls(index,exercise,item,showDetails){
   [['last_reduced','Прошлая тренировка была облегчённой'],['changed_conditions','Изменились условия выполнения'],['hold','Повторить без прибавки']].forEach(function(pair){html+='<label class="st-progression-flag"><input type="checkbox" '+(settings[pair[0]]?'checked':'')+data+' onchange="ST.progressionSetting('+args+',\''+pair[0]+'\',this.checked,this)">'+pair[1]+'</label>';});
   html+='</details><div class="st-progression-result" aria-live="polite">';
   if(state.result){
-    html+=(state.request.sourceIds.length?'<p>Предыдущие записи: '+state.request.sourceIds.map(function(source){return '№'+esc(source.number)+' · '+esc(formatDate(source.date));}).join('; ')+'</p>':'')+'<table><thead><tr><th>Подход</th><th>Следующий план</th></tr></thead><tbody>';
+    html+=(state.request.sourceIds.length?'<p>Предыдущие записи: '+state.request.sourceIds.map(function(source){return '№'+esc(source.number)+' · '+esc(formatDate(source.date));}).join('; ')+'</p>':'')+'<table><thead><tr><th>Подход</th>'+(state.applied?'<th data-progression-save>'+progressionSaveLabel()+'</th>':'<th>Расчёт — не записан</th>')+'</tr></thead><tbody>';
     state.result.next.forEach(function(row,i){
       var value=settings.mode==='duration'?(blank(row.r)?'—':row.r)+' с':(settings.mode==='bodyweight'&&Number(row.w)===0?'Свой вес':(blank(row.w)?'—':row.w)+(settings.mode==='assisted'?' помощи':''))+' × '+(blank(row.r)?'—':row.r);
       html+='<tr'+(state.result.changed.indexOf(i)>=0?' class="st-progression-changed"':'')+'><td>'+(i+1)+(row.role==='warmup'?' · разм.':'')+'</td><td>'+esc(value)+'</td></tr>';
@@ -4208,11 +4231,16 @@ function renderExerciseRows(
 }
 
 
-function exerciseHasRecord(exercise){
-  return !!exercise && (!!String(exercise.note || '').trim() || !!String(exercise.coachNote || '').trim() || (exercise.sets || []).some(function(set){
+function exerciseHasNumbers(exercise){
+  return !!exercise && (exercise.sets || []).some(function(set){
     return ['planWeight','planReps','factWeight','factReps','rpe'].some(function(field){return !blank(set[field]);}) || !!set.completed;
-  }));
+  });
 }
+
+function exerciseHasRecord(exercise){
+  return !!exercise && (exerciseHasNumbers(exercise) || !!String(exercise.note || '').trim() || !!String(exercise.coachNote || '').trim());
+}
+
 
 function exerciseHasFact(exercise){
   return (exercise.sets || []).some(function(set){
@@ -6219,7 +6247,7 @@ window.ST = {
     if(state.loading)return;
     var sessionsAtStart=cloneValue(currentWorkout().sessions),settingsAtStart=cloneValue(state.settings);
     state.loading=true;state.error='';state.notice='';state.applied=false;state.canApply=false;state.result=null;renderWithoutViewportJump();
-    import('/assets/strength-progression-model.mjs?v=20261114-progressive-plan').then(function(model){
+    import('/assets/strength-progression-model.mjs?v=20261114-progression-clear-plan').then(function(model){
       var currentIndex=currentWorkout().sessions.findIndex(function(session){return session.session_id===target.session.session_id;});
       if(currentIndex<0 || app.progressionPanels[target.key]!==state)return;
       state.request=model.cardRequest(sessionsAtStart,index,id,settingsAtStart);
@@ -6229,7 +6257,7 @@ window.ST = {
         return;
       }
       state.result=model.recommend(state.request.input);state.model=model;
-      state.canApply=['configuration','unsupported','no-history','no-work','conditions','invalid-rpe','context','range','partial','existing-target','undated','coach'].indexOf(state.result.code)<0 || (state.result.code==='coach' && state.settings.hold);
+      state.canApply=state.result.changed.length>0;
       if(state.canApply)ST.applyProgression(currentIndex,id);
     }).catch(function(error){state.error='Не удалось выполнить расчёт. Попробуйте ещё раз.';}).finally(function(){
       state.loading=false;
@@ -6257,8 +6285,22 @@ window.ST = {
         if(set.role==='warmup' || blank(row.w) || blank(row.r))return;
         set.planWeight=row.w;set.planReps=row.r;
       });
-      state.applied=true;scheduleSave(index);renderWithoutViewportJump();
+      target.exercise.progressionEvidence=state.request.evidence;
+      target.exercise.planCleared=false;
+      state.appliedSets=JSON.stringify(target.exercise.sets);
+      state.applied=true;state.canApply=false;scheduleSave(index);renderWithoutViewportJump();
     }catch(error){state.result=null;state.error=error.message;renderWithoutViewportJump();}
+  },
+
+  clearExercisePlan:function(id,index){
+    var target=progressionItem(index,id);
+    if(!target || !target.exercise.sets.some(function(set){return !blank(set.planWeight)||!blank(set.planReps);}))return;
+    rememberUndo();
+    target.exercise.sets.forEach(function(set){set.planWeight='';set.planReps='';});
+    target.exercise.planCleared=true;
+    delete app.progressionPanels[target.key];
+    scheduleSave(index);
+    renderWithoutViewportJump();
   },
 
   addSet:function(id,index){

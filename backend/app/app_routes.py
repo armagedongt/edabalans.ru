@@ -3,6 +3,8 @@ from __future__ import annotations
 from app.site_menu import render_homepage_menu
 from app.site_links import public_site_origin
 
+import hashlib
+import hmac
 import json
 import math
 import re
@@ -1609,6 +1611,15 @@ def dqs_access_status(request: Request, db: Session = Depends(get_db)) -> dict[s
     }
 
 
+def strength_example_restore_token(user_id: uuid.UUID, session_id: str, number: int) -> str:
+    settings = get_settings()
+    secret = settings.app_auth_secret or settings.admin_password
+    if not secret:
+        return ""
+    payload = json.dumps(["strength-example-restore", str(user_id), session_id, number])
+    return hmac.new(secret.encode(), payload.encode(), hashlib.sha256).hexdigest()
+
+
 def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, workout_type: int, *, catalog_only: bool = False) -> dict[str, Any]:
     catalog = []
     settings = {
@@ -1667,6 +1678,8 @@ def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, work
             "date_inferred": workout.get("date_inferred") is True,
             "date_unknown": workout.get("date_unknown") is True,
         })
+        if workout.get("source") == "model_example_at_owner_request":
+            sessions[-1]["example_restore_token"] = strength_example_restore_token(user_id, session_id, number)
         for ex_index, exercise in enumerate(workout.get("exercises", []), 1):
             session_exercises.append({
                 "session_id": session_id, "user_id": str(user_id), "workout_type": session_workout_type,
@@ -1674,6 +1687,8 @@ def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, work
                 "exercise_name": exercise.get("exercise_name", ""),
                 "sort_order": exercise.get("sort_order", ex_index), "note": exercise.get("note", ""),
                 "coach_note": exercise.get("coach_note", ""),
+                "plan_cleared": exercise.get("plan_cleared") is True,
+                "progression_evidence": exercise.get("progression_evidence", ""),
                 "source": exercise.get("source", "app"),
             })
             for set_index, item in enumerate(exercise.get("sets", []), 1):
@@ -1811,7 +1826,13 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
                     else:
                         number = max(all_numbers, default=0) + 1
                 now = datetime.now(timezone.utc).isoformat()
-                item = {**(existing or {}), **session, "session_id": session_id, "workout_type": workout_type, "session_number": number, "updated_at": now, "created_at": (existing or {}).get("created_at") or now, "source": (existing or {}).get("source") or "app"}
+                source = (existing or {}).get("source") or "app"
+                restore_token = session.pop("example_restore_token", None)
+                if existing is None and body.get("restore_session_number") is True and isinstance(restore_token, str):
+                    expected = strength_example_restore_token(user.id, session_id, number)
+                    if expected and re.fullmatch(r"[0-9a-f]{64}", restore_token) and hmac.compare_digest(expected, restore_token):
+                        source = "model_example_at_owner_request"
+                item = {**(existing or {}), **session, "session_id": session_id, "workout_type": workout_type, "session_number": number, "updated_at": now, "created_at": (existing or {}).get("created_at") or now, "source": source}
                 previous_exercises = {
                     str(exercise.get("exercise_id")): exercise
                     for exercise in (existing or {}).get("exercises", [])
@@ -1830,6 +1851,13 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
                                 row["role"] = previous_set["role"]
                         if "role" in row and row["role"] not in ("warmup", "work"):
                             raise ValueError("INVALID_SET_ROLE")
+                    evidence = exercise.get("progression_evidence")
+                    if not can_coach or not isinstance(evidence, str) or (evidence and not re.fullmatch(r"facts-v1:[0-9a-f]{1,8}", evidence)):
+                        exercise.pop("progression_evidence", None)
+                        if "progression_evidence" in previous_exercise:
+                            exercise["progression_evidence"] = previous_exercise["progression_evidence"]
+                    if "plan_cleared" not in exercise and "plan_cleared" in previous_exercise:
+                        exercise["plan_cleared"] = previous_exercise["plan_cleared"]
                     if not can_coach:
                         exercise["coach_note"] = previous_exercise.get("coach_note", "")
                     elif "coach_note" in exercise:

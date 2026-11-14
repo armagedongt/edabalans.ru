@@ -250,3 +250,5 @@
 #st-delivery-messenger .messenger-popup-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
 #st-delivery-messenger a{color:var(--st-accent)}
 #st-delivery-messenger .messenger-popup-actions a{padding:9px;border:1px solid var(--st-accent-line);border-radius:7px;background:var(--st-accent-soft);font-size:13px;font-weight:700;text-decoration:none}
+
+#strength-app .st-modern-tools .st-clear-exercise-plan:disabled{opacity:.4;cursor:default}

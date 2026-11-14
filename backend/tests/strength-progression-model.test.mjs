@@ -88,6 +88,17 @@ test('range conflicts are explicit while an underperformed fact remains valid in
   source[0].planReps=source[0].factReps=99;
   assert.doesNotThrow(()=>cardRequest(sessions,2,'bench-press',profile));
 });
+
+test('fact above the range leaves the current plan intact in the report',()=>{
+  const input=sample('squat');
+  input.profile.range=[8,12];
+  input.baseline=[{w:50,r:10,role:'work'}];
+  input.history.forEach(row=>row.sets=[{w:50,r:15,rpe:7,role:'work'}]);
+  const result=recommend(input);
+  assert.equal(result.code,'range');
+  assert.deepEqual(result.next,input.baseline);
+  assert.deepEqual(result.changed,[]);
+});
 test('all 20 experiments are deterministic, immutable and preserve warm-ups and set count',()=>{
   for(const input of createCases()){
     const before=structuredClone(input),a=recommend(input),b=recommend(input);
@@ -268,4 +279,28 @@ test('missing equipment step and unknown effort together do not justify a repeat
   const r=recommend(c);
   assert.deepEqual(r.changed,[]);
   assert.deepEqual(r.next,c.baseline);
+});
+
+test('same evidence across reload cannot add a second increment to a complete plan',()=>{
+  const sessions=journal(),target=sessions[2].exercises[0],profile=benchProfile();
+  const first=cardRequest(sessions,2,'bench-press',profile),result=recommend(first.input);
+  assert(result.changed.length>0);
+  target.sets.forEach((row,i)=>{row.planWeight=result.next[i].w;row.planReps=result.next[i].r;});
+  target.progressionEvidence=first.evidence;
+  assert.equal(recommend(cardRequest(structuredClone(sessions),2,'bench-press',profile).input).code,'already-applied');
+  sessions[1].exercises[0].sets[1].factReps++;
+  assert.notEqual(cardRequest(sessions,2,'bench-press',profile).evidence,first.evidence);
+});
+test('repeating a high effort plan never silently raises planned repetitions',()=>{
+  const c=sample('bench');
+  c.history.forEach(h=>h.sets.forEach(row=>{if(row.role==='work'){row.r=12;row.rpe=9;}}));
+  const r=recommend(c);
+  assert.equal(r.code,'all-high-rpe');
+  assert.deepEqual(r.next,c.baseline);
+  assert.deepEqual(r.changed,[]);
+});
+test('dated illustrative records do not count as real exercise history',()=>{
+  const sessions=journal();
+  sessions[1].source='model_example_at_owner_request';
+  assert.deepEqual(cardRequest(sessions,2,'bench-press',benchProfile()).sourceIds.map(x=>x.number),[1]);
 });

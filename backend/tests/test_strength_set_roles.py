@@ -65,3 +65,56 @@ def test_invalid_set_role_does_not_write(invalid):
         state = db.scalar(select(StrengthState))
         assert state.version == 1
         assert state.workouts == [before]
+
+
+def test_progression_and_clear_plan_metadata_round_trip_and_survive_old_client():
+    client, _, user_id, old_client = setup_history()
+    session = deepcopy(old_client)
+    exercise = session["exercises"][0]
+    exercise.update(plan_cleared=True, progression_evidence="facts-v1:abc123")
+    for row in exercise["sets"]:
+        row.update(plan_weight="", plan_reps="")
+    assert save(client, user_id, session, 1)["ok"]
+    def load():
+        return client.get("/api/apps/strength", params={
+            "action": "getWorkout", "type": 1, "target_user_id": user_id,
+        }).json()["workout"]
+
+    assert all(row["plan_weight"] == row["plan_reps"] == "" for row in load()["sets"])
+    assert save(client, user_id, old_client, 2)["ok"]
+    workout = load()
+    loaded = workout["session_exercises"][0]
+    assert loaded["plan_cleared"] is True
+    assert loaded["progression_evidence"] == "facts-v1:abc123"
+    assert workout["sets"][1]["fact_reps"] == 8
+    assert workout["sets"][1]["rpe"] == 8
+
+
+def test_delete_undo_preserves_example_source():
+    client, factory, user_id, session = setup_history()
+    session["source"] = "model_example_at_owner_request"
+    with factory() as db:
+        state = db.scalar(select(StrengthState))
+        state.workouts = [deepcopy(session)]
+        db.commit()
+    workout = client.get("/api/apps/strength", params={
+        "action": "getWorkout", "type": 1, "target_user_id": user_id,
+    }).json()["workout"]
+    session["example_restore_token"] = workout["sessions"][0]["example_restore_token"]
+    assert save(client, user_id, {"session_id": session["session_id"], "deleted": True}, 1)["ok"]
+    restored = client.post("/api/apps/strength", json={
+        "action": "saveSession", "target_user_id": user_id, "workout_type": 1,
+        "session": session, "version": 2, "restore_session_number": True,
+    }).json()
+    assert restored["ok"]
+    assert restored["session"]["source"] == session["source"]
+    assert "example_restore_token" not in restored["session"]
+    edited = save(client, user_id, {**session, "source": "app"}, 3)
+    assert edited["session"]["source"] == session["source"]
+    forged = client.post("/api/apps/strength", json={
+        "action": "saveSession", "target_user_id": user_id, "workout_type": 1,
+        "session": {**session, "session_id": "another-session", "session_number": 2},
+        "version": 4, "restore_session_number": True,
+    }).json()
+    assert forged["ok"]
+    assert forged["session"]["source"] == "app"
