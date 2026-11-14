@@ -11,6 +11,9 @@
   <link rel="stylesheet" href="/assets/account-theme.css?v=20261026-course-shell">
   <style>
     .account-install { max-width: 836px; margin-inline: auto; }
+    .account-install .content { padding-bottom: 0; }
+    .account-install #article > :last-child { margin-bottom: 0; }
+    .account-install [data-edabalans-site-footer] { --eb-footer-gutter: 0px; }
     .account-install .article-view { padding-inline: 0; }
     .account-install .back { display: inline-flex; align-items: center; text-decoration: none; }
   </style>
@@ -66,7 +69,7 @@
           <p>Откройте кабинет по значку. Если появится форма входа, войдите в свой аккаунт. Дальше открывайте нужный курс или приложение из кабинета. Для работы нужен интернет.</p>
           <p><a href="/lk">Открыть личный кабинет →</a></p>
         </article>
-        <div class="course-legal" data-edabalans-footer="public"></div>
+        <div data-edabalans-site-footer></div>
       </div>
     </div>
   </main>

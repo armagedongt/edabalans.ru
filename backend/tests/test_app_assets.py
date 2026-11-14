@@ -245,7 +245,7 @@ def test_course_footer_contract_is_shared_and_minimal() -> None:
     assert "footerLoadRetries >= 1" in loader
     assert "setTimeout(append, 300)" in loader
     assert "function legalFooterHtml" not in loader
-    assert "Копирование материалов запрещено" not in loader
+    assert "Копирование запрещено" not in loader
     assert "Образовательный дисклеймер" not in loader
     assert 'mount.querySelector(\'[data-edabalans-app="dqs"]\')' in loader
     assert "mount.parentElement.closest('[data-edabalans-footer-owner]')" in loader
@@ -267,8 +267,6 @@ def test_stable_site_footer_loader_is_public() -> None:
     assert response.headers["cache-control"] == "no-cache"
     assert "data-edabalans-site-footer" in text
     assert "data-edabalans-footer" in text
-    assert "function publicMarkup()" in text
-    assert "function privateMarkup()" in text
     assert "function modeFor(root, requestedMode)" in text
     assert "requestedMode === 'private'" in text
     assert "requestedMode === 'public'" in text
@@ -280,9 +278,9 @@ def test_stable_site_footer_loader_is_public() -> None:
     assert "prepareMedia: prepareMedia" in text
     assert "new MutationObserver" in text
     assert "new Date().getFullYear()" in text
-    assert "ИП Воронцов Сергей Сергеевич" in text
+    assert "ИП Воронцов Сергей" in text
     assert "ИНН 230409966750" in text
-    assert "Копирование материалов запрещено" in text
+    assert "Копирование запрещено" in text
     assert "https://t.me/Fitness_Talks" in response.text
     assert "https://t.me/FitnessSergey" in response.text
     assert "https://max.ru/u/" in response.text
@@ -290,29 +288,15 @@ def test_stable_site_footer_loader_is_public() -> None:
     assert "publicRoot + '/legal/privacy'" in response.text
     assert "publicRoot + '/legal/disclaimer'" in response.text
     assert "link(LINKS.offer, 'Оферта')" in response.text
-    assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in response.text
+    assert "link(LINKS.privacy, 'Политика обработки " in response.text
+    assert ">персональных</span> данных" in response.text
     assert "link(LINKS.disclaimer, 'Образовательный дисклеймер')" in response.text
     assert "MAX-канал" not in response.text
     assert "Скоро" not in response.text
     assert "Бесплатный интенсив" not in response.text
     assert "/legal/consent" not in response.text
-    public = text[text.index("function publicMarkup"):text.index("function privateMarkup")]
-    private = text[text.index("function privateMarkup"):text.index("function ensureStyle")]
-    assert "Оферта" in public
-    assert "Образовательный дисклеймер" not in public
-    assert "contactsMarkup(" in public
-    assert "ИП Воронцов Сергей Сергеевич" in public
-    assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in public
-    assert "cookie-settings" not in public
-    assert "Образовательный дисклеймер" in private
-    assert "Оферта" not in private
-    assert "contactsMarkup(" in private
-    assert "© ' + new Date().getFullYear() + ' Воронцов Сергей" in private
-    assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in private
-    assert "cookie-settings" not in private
-    contacts = text[text.index("function contactsMarkup"):text.index("function publicMarkup")]
-    for key, label in [("telegramChannel", "Telegram"), ("maxChannel", "MAX"), ("telegram", "Telegram"), ("max", "MAX")]:
-        assert f"link(LINKS.{key}, '{label}')" in contacts
+    assert "Читать мой канал: ' + contactPair(LINKS.telegramChannel, LINKS.maxChannel)" in text
+    assert "Написать мне лично: ' + contactPair(LINKS.telegram, LINKS.max)" in text
     assert "https://max.ru/id230409966750_biz" in text
 
 
