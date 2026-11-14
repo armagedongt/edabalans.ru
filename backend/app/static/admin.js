@@ -4,7 +4,8 @@
   const root = document.getElementById("admin-content");
   const title = document.getElementById("admin-title");
   const kicker = document.getElementById("admin-kicker");
-  const labels = { dqs: "DQS", strength: "Силовые", metabolism: "Метаболизм" };
+  const labels = { dqs: "DQS", strength: "Силовые", metabolism: "Калькулятор метаболизма" };
+  const clientApps = { "client-diary": "Дашборд", ...labels };
   const descriptions = {
     dqs: "30-дневный дневник качества рациона",
     strength: "Тренировочные сессии, упражнения и прогресс",
@@ -14,7 +15,13 @@
   const strengthMobileMode = location.pathname === "/admin/strength" && pageParams.get("mobile") === "1";
   if (strengthMobileMode) document.body.classList.add("strength-mobile-admin");
   if (location.pathname === "/admin/strength" && pageParams.has("user")) document.body.classList.add("admin-strength-managed");
-  const dqsCategories = (window.EdabalansDqsCategoryRows || []).map(({ label, scores }) => [label, scores]);
+  const dqsCategories = (window.EdabalansDqsCategoryRows || []).map(({ label, scores, icon, group, id }) => [label, scores, icon, group, id]);
+  // Representative serving sizes from the app's DQS category help.
+  const diaryServingSizes = {
+    fruit: 180, vegetables: 120, greens: 20, meat: 80, dairy: 130, cheese: 30, nuts: 10,
+    oil: 10, "whole-grains": 95, legumes: 125, potatoes: 215, "other-garnishes": 95,
+    sweets: 70, drinks: 375, alcohol: 112.5, fried: 90, "processed-meat": 90
+  };
 
   function esc(value) {
     return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
@@ -196,9 +203,10 @@
   }
 
   function applicationUserHref(code, userId) {
-    const params = new URLSearchParams({ user: userId });
+    const params = new URLSearchParams();
+    if (userId) params.set("user", userId);
     if (code === "strength" && strengthMobileMode) params.set("mobile", "1");
-    return `/admin/${code}?${params}`;
+    return `/admin/${code}${params.size ? "?" + params : ""}`;
   }
 
   function applicationUserStatus(code, user) {
@@ -207,12 +215,12 @@
     return "нет доступа и данных";
   }
 
-  function applicationUserRows(code, users, compact = false) {
+  function applicationUserRows(code, users) {
     return users.map((user) => `
       <button class="admin-app-person ${user.has_state ? "started" : ""}" type="button" data-user-id="${esc(user.user_id)}">
         <span class="admin-app-person-copy"><strong>${esc(user.display_name || user.email || "Без имени")}</strong><small>${esc(user.email || "email не указан")}</small></span>
         <span class="admin-app-person-state">${esc(applicationUserStatus(code, user))}</span>
-        ${compact ? "" : `<span class="admin-app-person-open">Открыть →</span>`}
+        <span class="admin-app-person-open">Открыть →</span>
       </button>`).join("") || '<div class="admin-empty compact">Ничего не найдено</div>';
   }
 
@@ -222,67 +230,53 @@
     }));
   }
 
-  async function openApplicationUserPicker(code) {
-    document.getElementById("admin-app-picker")?.remove();
-    const overlay = document.createElement("div");
-    overlay.id = "admin-app-picker";
-    overlay.className = "admin-app-picker";
-    overlay.innerHTML = `
-      <section class="admin-app-picker-card" role="dialog" aria-modal="true" aria-labelledby="admin-app-picker-title">
-        <header><div><small>${esc(labels[code])}</small><h2 id="admin-app-picker-title">Сменить профиль</h2></div><button type="button" class="admin-app-picker-close" aria-label="Закрыть">×</button></header>
-        <label class="admin-app-picker-search"><span>Имя или email</span><input type="search" autocomplete="off" placeholder="Начните вводить имя или email"></label>
-        <p class="admin-app-picker-hint">Сначала показаны люди с данными, затем с доступом. Остальных можно найти поиском.</p>
-        <div class="admin-app-picker-list"><div class="admin-empty compact">Загружаю…</div></div>
+  function managedApplicationToolbar(code, user = {}) {
+    const label = user.email || user.display_name || "Выбрать клиента";
+    return `
+      <section class="admin-managed-toolbar admin-client-toolbar ${code === "strength" ? "admin-strength-toolbar" : ""}" aria-label="Клиент и приложение">
+        <button class="ed-client-button" id="admin-managed-person" type="button" aria-haspopup="dialog" aria-label="Выбрать клиента" title="${esc(user.display_name || label)}"><span>${esc(label)}</span></button>
+        <button class="ed-client-button admin-client-app-button" id="admin-managed-app" type="button" aria-haspopup="dialog" aria-label="Выбрать приложение" title="${esc(clientApps[code])}"><span>${esc(code === "metabolism" ? "Метаболизм" : clientApps[code])}</span></button>
+        <dialog class="admin-client-apps" aria-label="Приложения">
+          <header><strong>Приложения</strong><button type="button" aria-label="Закрыть" autofocus>×</button></header>
+          <nav>${Object.entries(clientApps).map(([key, name]) => `<a href="${applicationUserHref(key, user.id)}"${key === code ? ' aria-current="page"' : ""}>${esc(name)}</a>`).join("")}
+          ${user.id ? `<a href="/crm?user=${encodeURIComponent(user.id)}">CRM</a>` : ""}
+          ${code === "strength" && user.id ? '<a class="admin-managed-back" href="/admin/strength">Все клиенты в «Силовых»</a>' : ""}
+          </nav><p role="status"></p>
+        </dialog>
       </section>`;
-    document.body.appendChild(overlay);
-    document.body.classList.add("admin-app-picker-open");
-    const input = overlay.querySelector("input");
-    const list = overlay.querySelector(".admin-app-picker-list");
-    let requestNumber = 0;
-    let timer = null;
-    const close = () => {
-      overlay.remove();
-      document.body.classList.remove("admin-app-picker-open");
-    };
-    const draw = async () => {
-      const currentRequest = ++requestNumber;
-      const q = input.value.trim();
-      list.innerHTML = '<div class="admin-empty compact">Загружаю…</div>';
-      try {
-        const result = await api(`/admin/api/apps/users?app_code=${code}${q ? `&q=${encodeURIComponent(q)}` : ""}`);
-        if (currentRequest !== requestNumber) return;
-        list.innerHTML = applicationUserRows(code, result.users || [], true);
-        bindApplicationUserRows(list, code);
-      } catch (error) {
-        if (currentRequest === requestNumber) list.innerHTML = `<div class="admin-error">${esc(error.message)}</div>`;
-      }
-    };
-    overlay.addEventListener("click", (event) => { if (event.target === overlay) close(); });
-    overlay.querySelector(".admin-app-picker-close").addEventListener("click", close);
-    input.addEventListener("input", () => {
-      clearTimeout(timer);
-      timer = setTimeout(draw, 220);
-    });
-    await draw();
-    input.focus({ preventScroll: true });
   }
 
-  function managedApplicationToolbar(code, detail) {
-    const user = detail.user;
-    const email = user.email || "email не указан";
-    if (code === "strength") return `
-      <section class="admin-managed-toolbar admin-strength-toolbar" aria-label="Выбранный пользователь">
-        <button class="admin-managed-person" id="admin-managed-person" type="button" aria-label="Сменить пользователя" title="Сменить пользователя" aria-haspopup="dialog"><strong>${esc(email)}</strong></button>
-        <a class="admin-managed-back" href="/admin/strength">Назад</a>
-      </section>`;
-    return `
-      <section class="admin-managed-toolbar" aria-label="Административный режим">
-        <button class="admin-managed-person" id="admin-managed-person" type="button" aria-haspopup="dialog">
-          <span><small>АДМИНИСТРАТИВНЫЙ РЕЖИМ · СМЕНИТЬ ПРОФИЛЬ</small><strong>${esc(user.display_name || email || "Без имени")}</strong></span>
-          <em>${esc(email)}</em>
-        </button>
-        <label class="admin-managed-app-select"><span>Сменить приложение</span><select id="admin-managed-app">${["client-diary", "dqs", "strength", "metabolism"].map((item) => `<option value="${item}" ${item === code ? "selected" : ""}>${esc(labels[item] || "Дневник")}</option>`).join("")}</select></label>
-      </section>`;
+  function bindManagedToolbar(code, user = {}, maySwitch = () => window.EdabalansAppContext?.canSwitchClient?.() !== false) {
+    const toolbar = root.querySelector(".admin-client-toolbar");
+    const dialog = toolbar.querySelector("dialog");
+    const button = toolbar.querySelector("#admin-managed-person");
+    toolbar.querySelector("#admin-managed-app").onclick = () => dialog.showModal();
+    dialog.querySelector("button").onclick = () => dialog.close();
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog && event.clientX < dialog.getBoundingClientRect().left) dialog.close();
+      if (event.target.closest("a") && !maySwitch()) {
+        event.preventDefault();
+        dialog.querySelector("[role=status]").textContent = "Сначала сохраните текущие изменения.";
+      }
+    });
+    button.onclick = async () => {
+      if (button.disabled) return;
+      button.disabled = true;
+      try {
+        const { mount } = await import("/assets/app-client-picker.mjs?v=20261114-admin");
+        if (!button.isConnected) return;
+        mount(toolbar, code === "client-diary" ? "dashboard" : code, {
+          can_manage: true, selected: { user_id: user.id }
+        }, location.origin, {
+          button, maySwitch, navigate: (id) => location.assign(applicationUserHref(code, id))
+        });
+        button.disabled = false;
+        button.click();
+      } catch {
+        button.disabled = false;
+        window.alert("Не удалось открыть список клиентов. Попробуйте ещё раз.");
+      }
+    };
   }
 
   async function managedApplicationPerson(id, code) {
@@ -292,11 +286,8 @@
     const stage = detail.has_state
       ? `<div class="admin-managed-app" data-edabalans-app="${code}" data-edabalans-admin-user="${esc(detail.user.id)}" data-edabalans-account-url="${esc(applicationUserHref(code, detail.user.id))}"><div class="admin-empty">Загружаю приложение…</div></div>`
       : `<section class="admin-managed-empty"><strong>${esc(labels[code])} ещё не открывался</strong><p>${detail.has_access ? "Доступ у человека есть. Начальное состояние появится только после явного открытия." : "У человека нет действующего доступа к этому приложению."}</p>${detail.has_access ? '<button class="admin-action" id="admin-open-app" type="button">Открыть приложение</button>' : ""}</section>`;
-    root.innerHTML = `${managedApplicationToolbar(code, detail)}${stage}`;
-    document.getElementById("admin-managed-person").addEventListener("click", () => openApplicationUserPicker(code));
-    document.getElementById("admin-managed-app")?.addEventListener("change", (event) => {
-      location.href = applicationUserHref(event.target.value, detail.user.id);
-    });
+    root.innerHTML = `${managedApplicationToolbar(code, detail.user)}${stage}`;
+    bindManagedToolbar(code, detail.user);
     const openButton = document.getElementById("admin-open-app");
     if (openButton) openButton.addEventListener("click", async () => {
       openButton.disabled = true;
@@ -321,9 +312,11 @@
     loading();
     const result = await api(`/admin/api/apps/users?app_code=${code}`);
     root.innerHTML = `
+      ${managedApplicationToolbar(code)}
       <div class="admin-app-directory-head"><h1>${esc(labels[code])}</h1><label><input id="admin-app-directory-search" type="search" aria-label="Поиск человека" placeholder="Имя или email"></label></div>
       <div class="admin-app-directory-list">${applicationUserRows(code, result.users || [])}</div>`;
     const list = root.querySelector(".admin-app-directory-list");
+    bindManagedToolbar(code);
     const input = document.getElementById("admin-app-directory-search");
     let requestNumber = 0;
     let timer = null;
@@ -927,7 +920,8 @@
     const selected = pageParams.get("user") || "";
     setHeading("Дневник клиента", "CRM");
     if (!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(selected)) {
-      root.innerHTML = '<div class="admin-empty">Выбери клиента в <a href="/crm">CRM</a>.</div>';
+      root.innerHTML = `${managedApplicationToolbar("client-diary")}<div class="admin-empty">Выберите клиента.</div>`;
+      bindManagedToolbar("client-diary");
       return;
     }
     loading();
@@ -955,7 +949,7 @@
     for (const [key, entry] of Object.entries(source?.days || {})) {
       const index = Number(key);
       if (!Number.isInteger(index) || index < 1 || index > 30 || !Array.isArray(entry?.p)) continue;
-      if (!entry.p.some(p => Number(p) > 0) && !entry.d?.some?.(value => value === true)) continue;
+      if (!entry.updated && !entry.p.some(p => Number(p) > 0) && !entry.d?.some?.(value => value === true)) continue;
       const date = dqsEntryDate(source.start_date, index);
       if (date) day(date).dqs = entry;
     }
@@ -969,28 +963,66 @@
       (item.notes ??= []).unshift(dated.text);
     }
     [...notes].reverse().forEach(addDailyNote);
-    const list = [...rows].sort(([a], [b]) => b.localeCompare(a));
-    const entries = list.filter(([, item]) => item.dqs).map(([, item]) => item.dqs);
-    const number = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 });
-    const avg = (values) => number.format(values.reduce((sum, value) => sum + value, 0) / values.length);
-    function dailyTable() {
-      const table = [...rows].sort(([a], [b]) => b.localeCompare(a)).map(([date, item]) => `<tr><th scope="row">${esc(date.split("-").reverse().join("."))}</th><td>${item.dqs ? number.format(dqsDayScore(item.dqs)) : "—"}</td><td>${item.workouts || "—"}</td><td>${item.dqs ? esc(dqsCategories.map(([label], i) => Number(item.dqs.p[i]) > 0 ? `${label} ${number.format(Number(item.dqs.p[i]))}` : "").filter(Boolean).join(" · ")) : "—"}</td><td class="diary-day-note">${item.notes ? esc(item.notes.join("\n\n")) : "—"}</td></tr>`).join("");
-      return table ? `<div class="diary-grid" tabindex="0" aria-label="Данные по дням"><table><thead><tr><th>Дата</th><th>DQS</th><th>Тренировок</th><th>Порции по категориям</th><th>Заметка</th></tr></thead><tbody>${table}</tbody></table></div>` : "<p>Нет записей по дням.</p>";
+    const number = new Intl.NumberFormat("ru-RU", { minimumFractionDigits: 1, maximumFractionDigits: 2 });
+    const avg = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
+    function categoryMark(group, id, value) {
+      if (group === "plants" || group === "proteins" || group === "garnishes" && id !== "other-garnishes") {
+        return value === 0 ? "zero" : value <= 1.5 ? "low" : "";
+      }
+      if (id === "nuts") return value === 0 ? "zero" : value > 2 ? "high" : "";
+      return (group === "harmful" || id === "other-garnishes") && value > 2.5 ? "high" : "";
     }
-    root.innerHTML = `<div class="client-diary"><h1 class="client-diary-name">${esc(name)}</h1>
-      <nav aria-label="Профиль клиента"><span aria-current="page">Дневник</span>
-      ${["dqs", "strength", "metabolism"].map(code => `<a href="${applicationUserHref(code, selected)}">${labels[code]}</a>`).join("")}
-      <a href="/crm?user=${selected}">CRM</a></nav>
-      <section><h2>По дням</h2><div data-diary-days>${dailyTable()}</div>
-      ${entries.length ? `<details><summary>Средний DQS: ${avg(entries.map(dqsDayScore))} · Дней: ${entries.length}</summary><div class="diary-grid"><table><thead><tr><th>Категория</th><th>Порции в день</th><th>Баллы в день</th></tr></thead><tbody>${dqsCategories.map(([label], index) => `<tr><th scope="row">${esc(label)}</th><td>${avg(entries.map(entry => Number(entry.p[index]) || 0))}</td><td>${avg(entries.map(entry => dqsCategoryScore(entry, index)))}</td></tr>`).join("")}</tbody></table></div></details>` : ""}</section>
+    function dailyTable() {
+      const table = [...rows].sort(([a], [b]) => a.localeCompare(b)).map(([date, item], index) => {
+        const diversity = item.dqs?.d?.filter(value => value === true).length;
+        const categories = dqsCategories.map(([, , , group, id], i) => {
+          const value = item.dqs?.p?.[i];
+          const mark = value == null ? "" : categoryMark(group, id, Number(value));
+          return `<td class="diary-category"><span class="${mark}">${value == null ? "" : number.format(value)}</span></td>`;
+        }).join("");
+        return `<tr><td>${index + 1}</td><th scope="row">${esc(date.split("-").reverse().join("."))}</th>
+          <td>${item.dqs ? number.format(dqsDayScore(item.dqs)) : ""}</td><td><span class="${diversity === 0 ? "diversity-low" : ""}">${diversity ?? ""}</span></td>
+          ${categories}<td class="diary-divider">${item.workouts || ""}</td><td class="diary-day-note">${esc(item.notes?.join("\n\n") || "")}</td></tr>`;
+      }).join("");
+      return table ? `<div class="diary-grid" tabindex="0" aria-label="Данные по дням"><table><thead><tr>
+        <th>№</th><th>Дата</th><th>DQS</th><th>Разнообразие</th>
+        ${dqsCategories.map(([label, , icon]) => `<th class="diary-category" title="${esc(label)}">${esc(icon)} ${esc(label)}</th>`).join("")}
+        <th class="diary-divider">Тренировки</th><th>Заметка</th></tr></thead><tbody>${table}</tbody></table></div>` : "<p>Нет записей по дням.</p>";
+    }
+    function nutritionSummary() {
+      const entries = [...rows.values()].flatMap(item => item.dqs ? [item.dqs] : []);
+      if (!entries.length) return "";
+      const scores = dqsCategories.map((_, i) => avg(entries.map(entry => dqsCategoryScore(entry, i))));
+      const scale = Math.max(1, ...scores.map(Math.abs));
+      return `<section class="diary-summary"><h2>Система оценки качества питания</h2><p>Среднее за день · DQS ${number.format(avg(entries.map(dqsDayScore)))}</p>
+        <div class="diary-grid" tabindex="0" aria-label="Среднее за день"><table><thead><tr><th>Категория</th><th>Порции</th><th>≈ г / мл</th><th colspan="2">Баллы</th></tr></thead>
+        <tbody>${dqsCategories.map(([label, , icon, , id], i) => {
+          const portions = avg(entries.map(entry => Number(entry.p[i]) || 0));
+          const score = scores[i];
+          const tone = score < 0 ? "negative" : score > 0 ? "positive" : "";
+          return `<tr><th scope="row">${esc(icon)} ${esc(label)}</th><td>${number.format(portions)}</td><td>${diaryServingSizes[id] == null ? "" : number.format(portions * diaryServingSizes[id])}</td>
+            <td>${number.format(score)}</td><td class="diary-bar"><span class="${tone}" style="width:${Math.abs(score) * 100 / scale}%"></span></td></tr>`;
+        }).join("")}</tbody></table></div></section>`;
+    }
+    root.innerHTML = `${managedApplicationToolbar("client-diary", dqs.user)}<div class="client-diary">
+      ${nutritionSummary()}
+      <section><div class="diary-heading"><h2>По дням</h2><button type="button" data-diary-categories aria-expanded="true">Скрыть категории</button></div><div data-diary-days>${dailyTable()}</div></section>
       <section><h2>Заметки</h2><form><label>Дата <input type="date" name="day"></label><textarea name="body" rows="4" maxlength="9985" required aria-label="Заметка" placeholder="Заметка к разбору"></textarea><button>Сохранить заметку</button><p role="status"></p></form>
       <div data-diary-notes></div></section></div>`;
     const noteList = root.querySelector("[data-diary-notes]");
+    const categoryToggle = root.querySelector("[data-diary-categories]");
+    categoryToggle.onclick = () => {
+      const hidden = root.querySelector(".client-diary").classList.toggle("diary-categories-hidden");
+      categoryToggle.setAttribute("aria-expanded", String(!hidden));
+      categoryToggle.textContent = hidden ? "Показать категории" : "Скрыть категории";
+    };
     function showNotes() {
       noteList.innerHTML = notes.map(note => `<div class="diary-note"><small>${date(note.created_at)}</small><p>${esc(note.body)}</p></div>`).join("");
     }
     showNotes();
     const form = root.querySelector(".client-diary form");
+    bindManagedToolbar("client-diary", dqs.user, () => !form.elements.body.disabled &&
+      (!form.elements.body.value.trim() || window.confirm("Уйти со страницы без сохранения заметки?")));
     const status = form.querySelector("[role=status]");
     form.onsubmit = async (event) => {
       event.preventDefault();

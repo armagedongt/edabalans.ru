@@ -14,6 +14,7 @@ import app.main as main_module
 from app.main import app
 from app.account_auth_routes import COOKIE_NAME
 from app.account_security import token_hash
+from app.auth import ADMIN_COOKIE, admin_session_token
 from app.config import Settings, get_settings
 from app.database import Base, get_db
 from app.models import AccountCredential, AccountSession, AdminAppEdit, DqsState, MetabolismState, StrengthState, TelegramTrackingEvent, User, UserEmail, Resource, UserAccess
@@ -114,6 +115,17 @@ def test_activity_is_independent_for_every_application_even_with_recent_shared_s
         assert datetime.fromisoformat(used[0]['last_opened_at'])==now-timedelta(days=2 if index%2==0 else 45),code
         active=client.get('/api/apps/manager/users',params={**params,'scope':'active'}).json()['users']
         assert [row['user_id'] for row in active]==([str(ids[1])] if index%2==0 else []),code
+    params = {'app_code': 'dashboard', 'scope': 'active'}
+    assert client.get('/admin/api/apps/client-directory', params=params).status_code == 401
+    with factory() as db:
+        db.add(TelegramTrackingEvent(user_id=ids[2], event_type='application_activity', occurred_at=now,
+            metadata_json={'app_code': 'strength'}))
+        db.commit()
+    token = admin_session_token("admin", int((now + timedelta(hours=1)).timestamp()))
+    response = client.get('https://admin.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/admin/api/apps/client-directory',
+        params=params, headers={'Cookie': f'{ADMIN_COOKIE}={token}'})
+    assert response.status_code == 200
+    assert {row['user_id'] for row in response.json()['users']} == {str(ids[1]), str(ids[2])}
 
 
 def test_native_creation_is_evidence_but_import_and_admin_open_are_not(setup):

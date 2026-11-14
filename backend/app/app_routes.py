@@ -46,7 +46,7 @@ from app.application_access_service import application_access_state
 from app.dqs_access_service import require_dqs_revealed
 from app.auth import admin_identity, require_admin, security, session_admin
 from app.account_auth_routes import native_session_user
-from app.app_management import application_manager, require_application_manager, managed_user, client_identity, client_directory
+from app.app_management import application_manager, require_application_manager, managed_user, client_identity, client_directory, record_application_open
 from app.database import get_db
 from app.homepage_content_service import render_homepage
 from app.legal_service import legal_status_payload
@@ -1440,6 +1440,9 @@ def dqs_legacy_get(
         user = require_user_resource(db, require_native_user(request, db), "dqs")
         require_dqs_revealed(db, user.id)
         payload = apply_dqs_action(db, user, action, startDate, day, data)
+        from app.account_auth_routes import ACCOUNT_VIEW_HEADER
+        if action == "saveDay" and not request.headers.get(ACCOUNT_VIEW_HEADER) and request.headers.get("sec-fetch-site") != "cross-site":
+            record_application_open(db, user.id, "dqs")
         db.commit()
         return jsonp(payload, callback)
     except (AppAccessError, ValueError, TypeError, json.JSONDecodeError) as exc:
@@ -2048,6 +2051,9 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
                 action=action,
                 details={"version_after": state.version},
             ))
+        if (not admin_username and not request.headers.get(ACCOUNT_VIEW_HEADER)
+                and request.headers.get("sec-fetch-site") != "cross-site" and action == "saveSession" and payload.get("ok")):
+            record_application_open(db, user.id, "strength")
         db.commit()
         return JSONResponse(payload, headers={"Cache-Control": "no-store"})
     except (AppAccessError, ValueError, TypeError, json.JSONDecodeError) as exc:
@@ -2081,6 +2087,9 @@ async def metabolism_put(request: Request, db: Session = Depends(get_db)) -> JSO
             db.add(state)
             db.flush()
         apply_metabolism_update(state, body)
+        from app.account_auth_routes import ACCOUNT_VIEW_HEADER
+        if not request.headers.get(ACCOUNT_VIEW_HEADER):
+            record_application_open(db, user.id, "metabolism")
         db.commit()
         return JSONResponse({"ok": True, "version": state.version})
     except (AppAccessError, ValueError, TypeError) as exc:
@@ -2189,6 +2198,20 @@ def app_manager_users(q: str = Query(default="", max_length=255), offset: int = 
     return JSONResponse(client_directory(db, q, offset, app_code=app_code, scope=scope, favorite_ids=favorite_ids), headers={"Cache-Control": "no-store"})
 
 
+@router.get("/admin/api/apps/client-directory")
+def admin_client_directory(
+    app_code: Literal["strength", "dqs", "metabolism", "dashboard"],
+    q: str = Query(default="", max_length=255),
+    offset: int = Query(default=0, ge=0),
+    scope: Literal["all", "used", "active"] = "active",
+    favorite_ids: list[uuid.UUID] = Query(default=[], max_length=100),
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    return JSONResponse(client_directory(db, q, offset, app_code=app_code, scope=scope, favorite_ids=favorite_ids,
+        include_without_email=True), headers={"Cache-Control": "no-store"})
+
+
 class ApplicationActivityIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
     app_code: Literal["account", "strength", "dqs", "metabolism", "recipes"]
@@ -2197,7 +2220,6 @@ class ApplicationActivityIn(BaseModel):
 @router.post("/api/apps/activity")
 def record_app_activity(body: ApplicationActivityIn, request: Request, db: Session = Depends(get_db)) -> dict:
     from app.account_auth_routes import ACCOUNT_VIEW_HEADER
-    from app.app_management import record_application_open
     origin = request.headers.get("origin")
     if origin and (urlsplit(origin).scheme, urlsplit(origin).netloc) != (request.url.scheme, request.url.netloc):
         raise HTTPException(403, "Недопустимый источник запроса")

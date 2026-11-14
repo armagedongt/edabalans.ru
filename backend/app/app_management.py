@@ -82,26 +82,29 @@ def record_application_open(db: Session, user_id: uuid.UUID, app_code: str) -> N
 
 def _activity_query(app_code: str):
     event = TelegramTrackingEvent
+    codes = ("dqs", "strength", "metabolism") if app_code == "dashboard" else (app_code,)
     first = func.replace(func.coalesce(event.metadata_json["first_opened_at"].as_string(), cast(event.occurred_at, String)), " ", "T")
     summaries = select(event.user_id.label("user_id"), first.label("first_opened_at"), event.occurred_at.label("last_opened_at")).where(
-        event.event_type == "application_activity", event.metadata_json["app_code"].as_string() == app_code)
+        event.event_type == "application_activity", event.metadata_json["app_code"].as_string().in_(codes))
     # Historical page URLs cannot distinguish denied or managed visits after query removal.
     sources = [summaries]
-    state = {"dqs": DqsState, "strength": StrengthState, "metabolism": MetabolismState}.get(app_code)
-    if state is not None:
-        sources.append(select(state.user_id.label("user_id"), func.replace(cast(state.created_at, String), " ", "T").label("first_opened_at"), state.created_at.label("last_opened_at")).where(state.source == "app"))
+    for code in codes:
+        state = {"dqs": DqsState, "strength": StrengthState, "metabolism": MetabolismState}.get(code)
+        if state is not None:
+            sources.append(select(state.user_id.label("user_id"), func.replace(cast(state.created_at, String), " ", "T").label("first_opened_at"), state.created_at.label("last_opened_at")).where(state.source == "app"))
     history = union_all(*sources).subquery()
     return select(history.c.user_id, func.min(history.c.first_opened_at).label("first_opened_at"),
                   func.max(history.c.last_opened_at).label("last_opened_at")).group_by(history.c.user_id).subquery()
 
 
-def client_directory(db: Session, q: str, offset: int, *, app_code: str = "account", scope: str = "all", favorite_ids: list[uuid.UUID] | None = None) -> dict:
+def client_directory(db: Session, q: str, offset: int, *, app_code: str = "account", scope: str = "all", favorite_ids: list[uuid.UUID] | None = None, include_without_email: bool = False) -> dict:
     activity = _activity_query(app_code)
     favorites = favorite_ids or []
     query = select(User, activity.c.first_opened_at, activity.c.last_opened_at).outerjoin(activity, activity.c.user_id == User.id).where(
         User.merged_into_user_id.is_(None),
-        User.id.in_(select(UserEmail.user_id).where(UserEmail.email_normalized != "")),
     )
+    if not include_without_email:
+        query = query.where(User.id.in_(select(UserEmail.user_id).where(UserEmail.email_normalized != "")))
     if scope != "all":
         used = activity.c.first_opened_at.is_not(None)
         if scope == "active":

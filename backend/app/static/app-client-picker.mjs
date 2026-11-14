@@ -1,8 +1,8 @@
 const supported = new Set(['account', 'strength', 'dqs', 'metabolism', 'recipes']);
 const appPaths = {account:'/lk', strength: '/training', dqs: '/dqs', metabolism: '/metabolism', recipes: '/recipes'};
 
-export function mount(root, app, context, host) {
-  if (!supported.has(app) || !context.can_manage || root.dataset.clientPicker) return;
+export function mount(root, app, context, host, admin) {
+  if ((!supported.has(app) && !(admin && app === 'dashboard')) || !context.can_manage || root.dataset.clientPicker) return;
   root.dataset.clientPicker = 'true';
   if (!document.getElementById('app-client-picker-style')) {
     const style = document.createElement('style');
@@ -32,6 +32,10 @@ export function mount(root, app, context, host) {
   let dialog, opener;
   function decorate() {
     if (!root.isConnected) { observer.disconnect(); dialog?.remove(); return; }
+    if (admin) {
+      admin.button.onclick = () => open(admin.button);
+      return;
+    }
     if (app === 'account') {
       const button = root.querySelector('[data-account-profile]');
       if (button && !button.dataset.clientPickerBound) {
@@ -73,10 +77,12 @@ export function mount(root, app, context, host) {
     } finally { clearTimeout(timer); }
   }
   function maySwitch() {
+    if (admin) return admin.maySwitch();
     const check = window.EdabalansAppContext?.canSwitchClient;
     return !check || check();
   }
   function navigate(userId) {
+    if (admin) { admin.navigate(userId); return; }
     // /lk does not restore its active embedded application on reload.
     const url = new URL(appPaths[app], location.origin);
     if (app === 'account') {
@@ -92,6 +98,7 @@ export function mount(root, app, context, host) {
     dialog.dataset.app = app;
     dialog.innerHTML = '<header><strong>Выбрать клиента</strong><button type="button" aria-label="Закрыть">×</button></header><div class="ed-client-scopes" role="group" aria-label="Показать клиентов"><button type="button" data-scope="used" aria-pressed="true">Уже заходили</button><button type="button" data-scope="active" aria-pressed="false">Активные · 30 дней</button><button type="button" data-scope="all" aria-pressed="false">Все клиенты</button></div><input type="search" aria-label="Имя, фамилия или email" placeholder="Имя, фамилия или email" autocomplete="off"><div class="ed-client-actions"><button class="ed-client-own" type="button">Мои данные</button><button class="ed-client-favorites-toggle" type="button" aria-controls="ed-client-favorites">Избранное</button></div><p class="ed-client-message" role="status"></p><div class="ed-client-list"></div><button class="ed-client-more" type="button" hidden>Показать ещё</button>';
     document.body.append(dialog);
+    if (admin) dialog.querySelector('.ed-client-own').hidden = true;
     if(app==='account'){
       dialog.querySelector('.ed-client-own').textContent='Мой кабинет';
       const logout=document.createElement('button');logout.type='button';logout.className='ed-client-own';logout.textContent='Выйти';logout.onclick=()=>root.querySelector('.account-logout').click();dialog.append(logout);
@@ -101,7 +108,7 @@ export function mount(root, app, context, host) {
     let favoritesExpanded = favorites.size > 0;
     favoritesToggle.setAttribute('aria-expanded', String(favoritesExpanded));
     favoritesToggle.onclick = () => { favoritesExpanded = !favoritesExpanded; renderRows(); };
-    let generation = 0, timer, offset = 0, busy = false, scope = 'used', users = [];
+    let generation = 0, timer, offset = 0, busy = false, scope = admin ? 'active' : 'used', users = [];
     function close() { clearTimeout(timer); generation++; currentDialog.close(); currentDialog.remove(); opener?.focus({preventScroll: true}); }
     currentDialog.querySelector('header button').onclick = close;
     currentDialog.addEventListener('cancel', event => { event.preventDefault(); close(); });
@@ -112,6 +119,7 @@ export function mount(root, app, context, host) {
       if (busy) return;
       if(app==='account'&&!user.email){message.textContent='У клиента не указан email для входа в кабинет.';return;}
       if (!maySwitch()) { message.textContent = 'Сначала сохраните текущие изменения или дождитесь сохранения.'; return; }
+      if (admin) { navigate(user.user_id); return; }
       busy = true; message.textContent = 'Открываю…';
       try {
         if (app !== 'recipes' && app !== 'account') {
@@ -127,7 +135,7 @@ export function mount(root, app, context, host) {
     }
     function displayName(user) {
       const name = (user.display_name || '').trim();
-      return /\p{L}/u.test(name) ? name : user.email;
+      return /\p{L}/u.test(name) ? name : user.email || name || 'Без имени';
     }
     function renderRows() {
       list.replaceChildren();
@@ -144,10 +152,10 @@ export function mount(root, app, context, host) {
         const name = document.createElement('strong'), email = document.createElement('small'), activity = document.createElement('small');
         const line = document.createElement('span'); line.className = 'ed-client-identity';
         name.textContent = displayName(user); email.textContent = user.email; line.append(name);
-        if (name.textContent !== user.email) line.append(email); else name.style.maxWidth = '100%';
+        if (user.email && name.textContent !== user.email) line.append(email); else name.style.maxWidth = '100%';
         row.append(line); row.title = [...new Set([name.textContent,user.email].filter(Boolean))].join(' · ');
         activity.className = 'ed-client-activity';
-        activity.textContent = user.has_opened_app ? 'Открывал' + (user.last_opened_at ? ' · ' + new Date(user.last_opened_at).toLocaleDateString('ru-RU') : '') : 'Ещё не открывал';
+        activity.textContent = user.has_opened_app ? (admin ? 'Активность' : 'Открывал') + (user.last_opened_at ? ' · ' + new Date(user.last_opened_at).toLocaleDateString('ru-RU') : '') : admin ? 'Нет активности' : 'Ещё не открывал';
         row.append(activity); row.onclick = () => choose(user);
         const star = document.createElement('button'); star.type = 'button'; star.className = 'ed-client-favorite'; star.textContent = favorite ? '★' : '☆'; star.setAttribute('aria-pressed', String(favorite));
         star.title = (favorite ? 'Убрать из избранного: ' : 'Добавить в избранное: ') + displayName(user); star.setAttribute('aria-label', star.title);
@@ -170,17 +178,22 @@ export function mount(root, app, context, host) {
       try {
         const params = new URLSearchParams({q:input.value.trim(), offset:String(offset), app_code:app, scope});
         for (const id of favorites) params.append('favorite_ids', id);
-        const data = await api('/api/apps/manager/users?' + params);
+        const endpoint = admin ? '/admin/api/apps/client-directory' : '/api/apps/manager/users';
+        const data = await api(endpoint + '?' + params);
         if (generation !== request || !currentDialog.open) return;
         users = [...new Map([...(append ? users : []), ...data.users].map(user => [user.user_id, user])).values()]; renderRows();
         offset += data.users.length; more.hidden = !data.more; message.textContent = users.length ? '' : scope === 'all' ? 'Ничего не найдено' : 'Пока нет пользователей. Найдите клиента во вкладке «Все клиенты».';
       } catch (error) { if (request === generation && currentDialog.open) message.textContent = error.message; }
     }
-    for (const button of currentDialog.querySelectorAll('[data-scope]')) button.onclick = () => {
-      generation++; clearTimeout(timer); scope = button.dataset.scope;
-      currentDialog.querySelectorAll('[data-scope]').forEach(tab => tab.setAttribute('aria-pressed', String(tab === button)));
-      draw();
-    };
+    for (const button of currentDialog.querySelectorAll('[data-scope]')) {
+      button.setAttribute('aria-pressed', String(button.dataset.scope === scope));
+      if (admin && button.dataset.scope === 'used') button.textContent = 'Была активность';
+      button.onclick = () => {
+        generation++; clearTimeout(timer); scope = button.dataset.scope;
+        currentDialog.querySelectorAll('[data-scope]').forEach(tab => tab.setAttribute('aria-pressed', String(tab === button)));
+        draw();
+      };
+    }
     input.oninput = () => { generation++; clearTimeout(timer); timer = setTimeout(() => draw(), 220); };
     more.onclick = () => draw(true);
     currentDialog.showModal();
@@ -190,5 +203,7 @@ export function mount(root, app, context, host) {
     else { currentDialog.style.bottom = Math.max(12, innerHeight - rect.top + 6) + 'px'; currentDialog.style.top = 'auto'; }
     input.focus(); await draw();
   }
-  const observer = new MutationObserver(decorate); observer.observe(root, {childList: true, subtree: true}); decorate();
+  const observer = new MutationObserver(decorate);
+  if (!admin) observer.observe(root, {childList: true, subtree: true});
+  decorate();
 }

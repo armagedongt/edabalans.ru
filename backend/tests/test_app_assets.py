@@ -216,8 +216,7 @@ def test_admin_apps_use_same_managed_frontend_and_highlight_started_profiles() -
 
     assert 'data-edabalans-admin-user="${esc(detail.user.id)}"' in source
     assert "managedApplicationPerson(selected, code)" in source
-    assert "СМЕНИТЬ ПРОФИЛЬ" in source
-    assert "Сначала показаны люди с данными, затем с доступом" in source
+    assert 'id="admin-managed-person"' in source
     assert 'id="admin-managed-app"' in source
     assert "Начальное состояние появится только после явного открытия" in source
     assert "/admin/static/admin.css" in page
