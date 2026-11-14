@@ -14,6 +14,13 @@
   <link rel="stylesheet" href="/admin/static/marketing.css?v=20261018-typography">
   <link rel="stylesheet" href="/admin/static/admin-session.css">
   <style>
+    .client-diary{--diary-blue:#0879b3;--diary-soft:#edf8ff;--diary-line:#b9dff3;color:#17172b;font:14px var(--ed-font-body,Manrope,Arial,sans-serif)}
+    .client-diary-name{margin:0 0 12px;color:#075f8d;font-size:20px;overflow-wrap:anywhere}
+    .client-diary td.diary-day-note{min-width:12ch;white-space:pre-wrap;overflow-wrap:anywhere}
+    .client-diary details th{white-space:normal}
+    body:has(.client-diary) #admin-title,body:has(.client-diary) #admin-kicker{display:none}
+    .client-diary nav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}.client-diary nav a,.client-diary nav span{padding:8px 12px;border:1px solid var(--diary-line);border-radius:9px;color:#075f8d;background:white}.client-diary nav span{background:var(--diary-soft);font-weight:800}
+    .client-diary section{padding:14px;margin-bottom:12px;border-radius:16px;background:white;box-shadow:0 5px 18px #14142814;min-width:0}.client-diary h2{margin:0 0 10px;font-size:16px;color:#075f8d}.client-diary .diary-grid{overflow:auto}.client-diary table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}.client-diary th,.client-diary td{padding:8px 10px;border-bottom:1px solid #e8eef2;text-align:left;white-space:nowrap}.client-diary thead{background:var(--diary-soft);color:#075f8d}.client-diary td small{color:#545969}.client-diary details{margin:8px 0}.client-diary summary{cursor:pointer;color:#075f8d}.client-diary p{margin:0 0 8px;overflow-wrap:anywhere}.client-diary form{display:grid;gap:8px}.client-diary textarea{width:100%;padding:10px;font:inherit;resize:vertical;border:1px solid var(--diary-line);border-radius:9px}.client-diary form button{justify-self:start;background:var(--diary-blue);color:white;border:0;border-radius:9px;padding:9px 13px;cursor:pointer;font:inherit}.client-diary .diary-note{padding:8px 0;white-space:pre-wrap}.client-diary a:focus-visible,.client-diary summary:focus-visible,.client-diary button:focus-visible{outline:2px solid #075f8d;outline-offset:2px}
     .admin-empty.compact{margin-bottom:12px;padding:20px}.admin-help{margin:9px 0 0;color:var(--muted);font-size:11px}
     .dqs-admin-periods{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:12px}.dqs-admin-periods button,.dqs-admin-periods input{height:34px;border:1px solid var(--line);border-radius:9px;padding:0 10px;background:#fff;color:var(--muted)}.dqs-admin-periods button{cursor:pointer}.dqs-admin-periods button.active{border-color:var(--green);background:var(--soft);color:var(--green)}
     .dqs-admin-title{margin:18px 0 9px}.dqs-admin-chart{display:flex;align-items:end;gap:4px;min-height:128px;padding:12px;border-radius:12px;background:#f7f8f6;overflow-x:auto}.dqs-admin-bar{display:grid;align-items:end;justify-items:center;gap:4px;min-width:18px}.dqs-admin-bar i{display:block;width:10px;border-radius:5px 5px 2px 2px;background:var(--green)}.dqs-admin-bar small{color:var(--muted);font-size:8px}
@@ -40,6 +47,7 @@
   </main>
   <script src="/embed.js" defer></script>
   <script src="/admin/static/admin-shell.js" defer></script>
+  <script src="/apps/dqs-category-rules.js" defer></script>
   <script src="/admin/static/admin.js" defer></script>
 </body>
 </html>

@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path as ApiPath, Query, R
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.security import HTTPBasicCredentials
 from pydantic import BaseModel, Field
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.auth import (
@@ -54,6 +55,7 @@ from app.crm_service import (
 from app.application_access_service import set_manual_application_start
 from app.account_onboarding_service import direct_credential_email_configuration_error, queue_admin_message_email
 from app.database import get_db
+from app.models import ClientNote, User
 from scripts.generate_masterclass_offer_simulator import render_simulator_page
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -283,7 +285,7 @@ def admin_section(
     section: str,
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> Response:
-    if section not in {"dqs", "strength", "metabolism", "messaging", "content", "pricing"}:
+    if section not in {"client-diary", "dqs", "strength", "metabolism", "messaging", "content", "pricing"}:
         raise HTTPException(status_code=404, detail="Административный раздел не найден")
     if not admin_identity(request, credentials):
         return protected_file("admin-login.html")
@@ -419,6 +421,26 @@ def admin_add_note(
     if note is None:
         raise HTTPException(status_code=404, detail="user not found")
     return {"id": str(note.id), "status": "saved"}
+
+
+@router.get("/admin/api/users/{user_id}/notes")
+def admin_list_notes(
+    user_id: uuid.UUID,
+    response: Response,
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> list[dict]:
+    user = db.get(User, user_id)
+    if user is None or user.merged_into_user_id is not None:
+        raise HTTPException(status_code=404, detail="user not found")
+    response.headers["Cache-Control"] = "no-store"
+    notes = db.scalars(
+        select(ClientNote)
+        .where(ClientNote.user_id == user_id)
+        .order_by(ClientNote.created_at.desc(), ClientNote.id)
+        .limit(100)
+    )
+    return [{"body": note.body, "created_at": note.created_at} for note in notes]
 
 
 @router.post("/admin/api/users/{user_id}/tags", status_code=201)

@@ -14,14 +14,7 @@
   const strengthMobileMode = location.pathname === "/admin/strength" && pageParams.get("mobile") === "1";
   if (strengthMobileMode) document.body.classList.add("strength-mobile-admin");
   if (location.pathname === "/admin/strength" && pageParams.has("user")) document.body.classList.add("admin-strength-managed");
-  const dqsCategories = [
-    ["Фрукты", [2,2,2,1,0,0,0,-1]], ["Овощи", [2,2,2,1,0,0,0,-1]], ["Зелень", [2,2,2,1,0,0,0,-1]],
-    ["Мясо", [2,2,1,0,0,-1,-2,-2]], ["Молочка", [2,2,1,0,-1,-2,-2,-2]], ["Сыры", [2,0,-1,-2,-2,-2,-2,-2]],
-    ["Орехи", [2,0,-1,-2,-2,-2,-2,-2]], ["Масло", [1,0,0,-1,-2,-2,-2,-2]], ["ЦЗ", [2,2,1,0,-1,-1,-1,-2]],
-    ["Бобовые", [2,2,1,0,-1,-1,-1,-2]], ["Картофель", [2,2,1,0,-1,-1,-1,-2]], ["Др. гарниры", [0,-1,-2,-2,-2,-2,-2,-2]],
-    ["Сладости", [-2,-2,-2,-2,-2,-2,-2,-2]], ["Напитки", [-2,-2,-2,-2,-2,-2,-2,-2]], ["Алкоголь", [-2,-2,-2,-2,-2,-2,-2,-2]],
-    ["Жареное", [-2,-2,-2,-2,-2,-2,-2,-2]], ["Типа мясо", [-2,-2,-2,-2,-2,-2,-2,-2]]
-  ];
+  const dqsCategories = (window.EdabalansDqsCategoryRows || []).map(({ label, scores }) => [label, scores]);
 
   function esc(value) {
     return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
@@ -288,7 +281,7 @@
           <span><small>АДМИНИСТРАТИВНЫЙ РЕЖИМ · СМЕНИТЬ ПРОФИЛЬ</small><strong>${esc(user.display_name || email || "Без имени")}</strong></span>
           <em>${esc(email)}</em>
         </button>
-        <label class="admin-managed-app-select"><span>Сменить приложение</span><select id="admin-managed-app">${["dqs", "strength", "metabolism"].map((item) => `<option value="${item}" ${item === code ? "selected" : ""}>${esc(labels[item])}</option>`).join("")}</select></label>
+        <label class="admin-managed-app-select"><span>Сменить приложение</span><select id="admin-managed-app">${["client-diary", "dqs", "strength", "metabolism"].map((item) => `<option value="${item}" ${item === code ? "selected" : ""}>${esc(labels[item] || "Дневник")}</option>`).join("")}</select></label>
       </section>`;
   }
 
@@ -433,7 +426,8 @@
     const value = Math.max(0, Number(portions || 0));
     const whole = Math.floor(value);
     let total = 0;
-    for (let position = 1; position <= whole; position += 1) total += scores[Math.min(position, scores.length) - 1];
+    for (let position = 1; position <= Math.min(whole, scores.length); position += 1) total += scores[position - 1];
+    total += Math.max(0, whole - scores.length) * scores.at(-1);
     const fraction = value - whole;
     if (fraction) total += fraction * scores[Math.min(whole + 1, scores.length) - 1];
     return total;
@@ -450,8 +444,9 @@
 
   function dqsEntryDate(startDate, dayNumber) {
     if (!startDate) return "";
-    const value = new Date(`${startDate}T00:00:00`);
-    value.setDate(value.getDate() + dayNumber - 1);
+    const value = new Date(`${startDate}T00:00:00Z`);
+    if (!Number.isFinite(value.getTime())) return "";
+    value.setUTCDate(value.getUTCDate() + dayNumber - 1);
     return value.toISOString().slice(0, 10);
   }
 
@@ -928,9 +923,109 @@
     root.querySelector('#channel-report-form').onsubmit=event=>{event.preventDefault();location.href='/admin/channel-links?'+new URLSearchParams(new FormData(event.currentTarget));};
   }
 
+  async function clientDiary() {
+    const selected = pageParams.get("user") || "";
+    setHeading("Дневник клиента", "CRM");
+    if (!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(selected)) {
+      root.innerHTML = '<div class="admin-empty">Выбери клиента в <a href="/crm">CRM</a>.</div>';
+      return;
+    }
+    loading();
+    const [dqs, strength, notes] = await Promise.all([
+      api(`/admin/api/apps/dqs/users/${selected}`, { cache: "no-store" }),
+      api(`/admin/api/apps/strength/users/${selected}`, { cache: "no-store" }),
+      api(`/admin/api/users/${selected}/notes`, { cache: "no-store" })
+    ]);
+    if (!dqsCategories.length && dqs.has_state) throw new Error("Не загрузились правила DQS");
+    const name = dqs.user.display_name || dqs.user.email || "Дневник клиента";
+    setHeading(name, "Дневник");
+    const source = dqs.state?.data;
+    const parseDailyNote = (body) => {
+      const lines = body.trim().split(/\r?\n/);
+      const first = lines.shift() || "";
+      const match = /^(\d{4}-\d{2}-\d{2})\s*(?:[—:]\s*)?(.*)$/.exec(first);
+      if (!match || dqsEntryDate(match[1], 1) !== match[1]) return null;
+      return { date: match[1], text: [match[2], ...lines].filter(Boolean).join("\n") };
+    };
+    const rows = new Map();
+    function day(date) {
+      if (!rows.has(date)) rows.set(date, { workouts: 0 });
+      return rows.get(date);
+    }
+    for (const [key, entry] of Object.entries(source?.days || {})) {
+      const index = Number(key);
+      if (!Number.isInteger(index) || index < 1 || index > 30 || !Array.isArray(entry?.p)) continue;
+      if (!entry.p.some(p => Number(p) > 0) && !entry.d?.some?.(value => value === true)) continue;
+      const date = dqsEntryDate(source.start_date, index);
+      if (date) day(date).dqs = entry;
+    }
+    for (const session of strength.state?.data?.workouts ?? []) {
+      if (session?.status === "filled" && typeof session.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(session.date)) day(session.date).workouts++;
+    }
+    function addDailyNote(note) {
+      const dated = parseDailyNote(note.body);
+      if (!dated?.text) return;
+      const item = day(dated.date);
+      (item.notes ??= []).unshift(dated.text);
+    }
+    [...notes].reverse().forEach(addDailyNote);
+    const list = [...rows].sort(([a], [b]) => b.localeCompare(a));
+    const entries = list.filter(([, item]) => item.dqs).map(([, item]) => item.dqs);
+    const number = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 });
+    const avg = (values) => number.format(values.reduce((sum, value) => sum + value, 0) / values.length);
+    function dailyTable() {
+      const table = [...rows].sort(([a], [b]) => b.localeCompare(a)).map(([date, item]) => `<tr><th scope="row">${esc(date.split("-").reverse().join("."))}</th><td>${item.dqs ? number.format(dqsDayScore(item.dqs)) : "—"}</td><td>${item.workouts || "—"}</td><td>${item.dqs ? esc(dqsCategories.map(([label], i) => Number(item.dqs.p[i]) > 0 ? `${label} ${number.format(Number(item.dqs.p[i]))}` : "").filter(Boolean).join(" · ")) : "—"}</td><td class="diary-day-note">${item.notes ? esc(item.notes.join("\n\n")) : "—"}</td></tr>`).join("");
+      return table ? `<div class="diary-grid" tabindex="0" aria-label="Данные по дням"><table><thead><tr><th>Дата</th><th>DQS</th><th>Тренировок</th><th>Порции по категориям</th><th>Заметка</th></tr></thead><tbody>${table}</tbody></table></div>` : "<p>Нет записей по дням.</p>";
+    }
+    root.innerHTML = `<div class="client-diary"><h1 class="client-diary-name">${esc(name)}</h1>
+      <nav aria-label="Профиль клиента"><span aria-current="page">Дневник</span>
+      ${["dqs", "strength", "metabolism"].map(code => `<a href="${applicationUserHref(code, selected)}">${labels[code]}</a>`).join("")}
+      <a href="/crm?user=${selected}">CRM</a></nav>
+      <section><h2>По дням</h2><div data-diary-days>${dailyTable()}</div>
+      ${entries.length ? `<details><summary>Средний DQS: ${avg(entries.map(dqsDayScore))} · Дней: ${entries.length}</summary><div class="diary-grid"><table><thead><tr><th>Категория</th><th>Порции в день</th><th>Баллы в день</th></tr></thead><tbody>${dqsCategories.map(([label], index) => `<tr><th scope="row">${esc(label)}</th><td>${avg(entries.map(entry => Number(entry.p[index]) || 0))}</td><td>${avg(entries.map(entry => dqsCategoryScore(entry, index)))}</td></tr>`).join("")}</tbody></table></div></details>` : ""}</section>
+      <section><h2>Заметки</h2><form><label>Дата <input type="date" name="day"></label><textarea name="body" rows="4" maxlength="9985" required aria-label="Заметка" placeholder="Заметка к разбору"></textarea><button>Сохранить заметку</button><p role="status"></p></form>
+      <div data-diary-notes></div></section></div>`;
+    const noteList = root.querySelector("[data-diary-notes]");
+    function showNotes() {
+      noteList.innerHTML = notes.map(note => `<div class="diary-note"><small>${date(note.created_at)}</small><p>${esc(note.body)}</p></div>`).join("");
+    }
+    showNotes();
+    const form = root.querySelector(".client-diary form");
+    const status = form.querySelector("[role=status]");
+    form.onsubmit = async (event) => {
+      event.preventDefault();
+      const message = form.elements.body.value.trim();
+      if (!message) return;
+      const day = form.elements.day.value;
+      const body = day ? `${day} — ${message}` : message;
+      const button = form.querySelector("button");
+      button.disabled = true;
+      form.elements.day.disabled = form.elements.body.disabled = true;
+      status.textContent = "";
+      try {
+        await api(`/admin/api/users/${selected}/notes`, {
+          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ body })
+        });
+        const note = { body, created_at: new Date().toISOString() };
+        notes.unshift(note);
+        addDailyNote(note);
+        root.querySelector("[data-diary-days]").innerHTML = dailyTable();
+        showNotes();
+        form.reset();
+        status.textContent = "Сохранено";
+      } catch {
+        status.textContent = "Не удалось сохранить заметку. Текст остался в поле.";
+      } finally {
+        button.disabled = false;
+        form.elements.day.disabled = form.elements.body.disabled = false;
+      }
+    };
+  }
+
   async function run() {
     const active = section();
     selectNavigation(active);
+    if (active === "client-diary") return clientDiary();
     if (["dqs", "strength", "metabolism"].includes(active)) return application(active);
     if (active === "users") return users();
     if (active === "content") return contentCatalog();

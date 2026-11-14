@@ -877,6 +877,7 @@
       </div>
       <section class="crm-card crm-apps-card"><div class="crm-card-title">Человек в системе</div>
         <div class="crm-app-links">
+          <a class="crm-app-link available" href="/admin/client-diary?user=${user.id}"><strong>Дневник</strong><span>открыть разбор</span></a>
           <a class="crm-app-link ${modules.dqs.exists || modules.dqs.has_access ? "available" : "disabled"}" href="${modules.dqs.exists || modules.dqs.has_access ? `/admin/dqs?user=${user.id}` : "#"}"><strong>DQS</strong><span>${modules.dqs.exists ? "открыть аналитику" : modules.dqs.has_access ? "доступ есть, данных нет" : "нет доступа"}</span></a>
           <a class="crm-app-link ${modules.strength.exists || modules.strength.has_access ? "available" : "disabled"}" href="${modules.strength.exists || modules.strength.has_access ? `/admin/strength?user=${user.id}` : "#"}"><strong>Силовые</strong><span>${modules.strength.exists ? "открыть тренировки" : modules.strength.has_access ? "открыть приложение" : "нет доступа"}</span></a>
           <a class="crm-app-link ${modules.metabolism.exists || modules.metabolism.has_access ? "available" : "disabled"}" href="${modules.metabolism.exists || modules.metabolism.has_access ? `/admin/metabolism?user=${user.id}` : "#"}"><strong>Метаболизм</strong><span>${modules.metabolism.exists ? "открыть расчёт" : modules.metabolism.has_access ? "открыть приложение" : "нет доступа"}</span></a>
