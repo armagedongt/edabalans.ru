@@ -21,11 +21,12 @@
     p { margin: 0 0 24px; }
     #status { margin: 16px 0 0; font-size: 14px; color: var(--tg-theme-hint-color, #5d6b78); }
     #status:empty { display: none; }
-    a { display: block; padding: 13px 18px; border-radius: 12px; text-align: center; text-decoration: none; background: var(--tg-theme-button-color, #229ed9); color: var(--tg-theme-button-text-color, #fff); font-weight: 600; }
+    #open-post { display: block; padding: 13px 18px; border-radius: 12px; text-align: center; text-decoration: none; background: var(--tg-theme-button-color, #229ed9); color: var(--tg-theme-button-text-color, #fff); font-weight: 600; }
   </style>
   <script id="destination" type="application/json">{{DESTINATION_JSON}}</script>
   <script defer src="https://telegram.org/js/telegram-web-app.js"></script>
   <script defer src="/apps/channel-bridge/bridge.js"></script>
+  <script defer src="/site-footer.js"></script>
 </head>
 <body>
   <main>
@@ -41,5 +42,6 @@
     <a id="open-post" href="{{DESTINATION_URL}}">Открыть канал</a>
     <p id="status" role="status" aria-live="polite"></p>
   </main>
+  <div data-edabalans-site-footer style="--eb-footer-gutter:0px"></div>
 </body>
 </html>

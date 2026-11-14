@@ -316,7 +316,8 @@ def personal_access_payment_page(token: str, db: Session = Depends(get_db)) -> H
     return HTMLResponse(
         '<!doctype html><html lang="ru"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
-        '<title>Персональное предложение</title><link rel="stylesheet" href="/legal/legal.css">'
+        '<title>Персональное предложение</title><link rel="stylesheet" href="/assets/site-typography.css?v=20261018-brand-hero">'
+        '<link rel="stylesheet" href="/legal/legal.css">'
         '</head><body><main class="legal-page"><h1>Персональное предложение</h1>'
         f'<p>К оплате: {escape(str(link.final_amount))} ₽.</p>'
         '<p>Состав и условия покупки согласованы с Исполнителем в личной переписке.</p>'
@@ -327,7 +328,8 @@ def personal_access_payment_page(token: str, db: Session = Depends(get_db)) -> H
         '<p><label><input type="checkbox" name="data_consent" value="true" required> '
         'Даю <a href="/legal/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a>. '
         '<a href="/legal/privacy" target="_blank" rel="noopener">Политика обработки данных</a>.</label></p>'
-        '<button type="submit">Перейти к оплате</button></form></main></body></html>',
+        '<button type="submit">Перейти к оплате</button></form></main>'
+        '<div data-edabalans-site-footer></div><script src="/site-footer.js" defer></script></body></html>',
         headers={"Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow", "Referrer-Policy": "no-referrer"},
     )
 

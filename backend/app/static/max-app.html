@@ -9,12 +9,14 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Приложение · Похудение — это есть!</title>
   <script src="https://st.max.ru/js/max-web-app.js" defer></script>
+  <script src="/site-footer.js" defer></script>
   <style>
     :root{font-family:var(--ed-font-body, Manrope, Arial, sans-serif);color:#1f2937;background:#f4f4f6}
     *{box-sizing:border-box}
     html,body{margin:0;min-height:100%;background:#f4f4f6}
     .max-app-loading{min-height:100vh;display:grid;place-items:center;padding:22px;color:#64748b;text-align:center;font:600 15px/1.4 var(--ed-font-body, Manrope, Arial, sans-serif)}
-    .max-app-home{min-height:100vh;padding:28px 18px 36px}
+    body:has(.max-app-home){display:grid;min-height:100svh;grid-template-rows:1fr auto}
+    .max-app-home{padding:28px 18px 0}
     .max-app-home__inner{width:min(100%,520px);margin:0 auto}
     .max-app-home h1{margin:0;color:#172033;font-size:28px;line-height:1.15}
     .max-app-home__intro{margin:10px 0 22px;color:#64748b;font-size:16px;line-height:1.45}
@@ -28,6 +30,7 @@
 </head>
 <body>
   <main id="max-app-root" class="max-app-loading">Открываю приложение…</main>
+  <div id="max-entry-footer" data-edabalans-site-footer hidden></div>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var allowed = {
@@ -39,6 +42,7 @@
         recipes: 'recipes'
       };
       var bridge = window.WebApp;
+      var entryFooter = document.getElementById('max-entry-footer');
       var query = new URLSearchParams(location.search);
       var payload = String(
         bridge && bridge.initDataUnsafe && bridge.initDataUnsafe.start_param ||
@@ -47,6 +51,7 @@
         ''
       );
       if (/^(?:U[A-Za-z0-9_-]+|site|ig|yt|th|pk|dz|vk|tt|ya|[a-z0-9]{6})$/.test(payload) && !allowed[payload.toLowerCase()] && !query.get('app')) {
+        entryFooter.hidden = false;
         var channelLoader = document.createElement('script');
         channelLoader.src = '/apps/channel-bridge/max.js';
         document.body.appendChild(channelLoader);
@@ -56,6 +61,7 @@
       var appCode = allowed[payload] || allowed[String(query.get('app') || '').toLowerCase()];
       var root = document.getElementById('max-app-root');
       if (!appCode) {
+        entryFooter.hidden = false;
         root.className = 'max-app-home';
         root.innerHTML = [
           '<div class="max-app-home__inner">',

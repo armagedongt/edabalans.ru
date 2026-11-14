@@ -85,9 +85,10 @@
   #edb-direct-intensive-v1 .edb-di-qr-option:not([aria-selected="true"]) .edb-di-qr-code{filter:blur(4px) grayscale(1) contrast(.72);opacity:.68}
   #edb-direct-intensive-v1 .edb-di-qr-cover{position:absolute;inset:0;display:grid;place-items:center;padding:28px;background:rgba(244,250,254,.36);color:#233947;font:800 20px/1.25 var(--ed-font-body, Manrope, Arial, sans-serif);text-align:center;text-wrap:balance;backdrop-filter:blur(.5px);transition:opacity .18s ease}
   #edb-direct-intensive-v1 .edb-di-qr-option[aria-selected="true"] .edb-di-qr-cover{opacity:0;pointer-events:none}
-  #edb-direct-intensive-v1 .edb-di-legal{display:block;margin:16px 0 0;padding-top:0;color:#73828d;font-size:clamp(6.8px,2.08vw,9px);line-height:1.2;text-align:center;white-space:nowrap}
-  #edb-direct-intensive-v1 .edb-di-legal a{color:inherit;text-underline-offset:2px}
-  #edb-direct-intensive-v1 .edb-di-legal-line{display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap}
+  #edb-direct-intensive-v1 .edb-di-disclaimer{margin:16px 0 0;text-align:center;font-size:var(--ed-label-size,14px)}
+  #edb-direct-intensive-v1 [data-edabalans-site-footer]{--eb-footer-gutter:calc(var(--edb-page-gutter) * 2)}
+
+
   @media (min-width:560px){#edb-direct-intensive-v1 .edb-di-shell{padding-top:34px;padding-bottom:30px}#edb-direct-intensive-v1 .edb-di-actions{gap:12px;align-items:start}#edb-direct-intensive-v1 .edb-di-item{padding:15px 17px 15px 56px}#edb-direct-intensive-v1 .edb-di-item::before{left:16px}}
   @media (max-width:559px){#edb-direct-intensive-v1 .edb-di-list--checks .edb-di-item-result{white-space:nowrap}}
   @media (max-width:899px){#edb-direct-intensive-v1{padding-bottom:calc(70px + env(safe-area-inset-bottom))}#edb-direct-intensive-v1 .edb-di-shell{padding-bottom:5px}#edb-direct-intensive-v1 .edb-di-actions--inline{display:none}#edb-direct-intensive-v1 .edb-di-sticky-actions{position:fixed;z-index:1000;right:0;bottom:0;left:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:8px;padding:8px max(12px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));border-top:1px solid rgba(22,87,128,.13);background:rgba(239,249,255,.92);box-shadow:0 -12px 30px -25px rgba(0,46,78,.78);backdrop-filter:blur(14px)}#edb-direct-intensive-v1 .edb-di-sticky-actions .edb-di-button{height:54px;border-radius:13px}}
@@ -177,7 +178,7 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
     telegramLabel:'Telegram',
     maxLabel:'MAX',
     telegramNote:'Только с VPN',
-    legal:{business:'ИП Воронцов',inn:'ИНН 230409966750',privacyLabel:'Политика ПД',privacyUrl:appOrigin+'/legal/privacy',disclaimer:'Не медицинская услуга'},
+
     links:{telegramAlias:'ya',maxAlias:'BMB6Y',apiUrl:appOrigin+'/api/messaging/start-link',telegramUrl:'https://t.me/Fitness_Talks_bot/channel?startapp=ya',maxUrl:'https://max.ru/id230409966750_bot?start=BMB6Y'},
     analytics:{counterId:97331502,viewEvent:'direct_intensive_view',telegramClickEvent:'intensive_telegram_click',maxClickEvent:'intensive_max_click',qrShownEvent:'direct_intensive_qr_shown',qrSelectedEvent:'direct_intensive_qr_selected'}
   };
@@ -219,7 +220,7 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
   const inlineTelegramNote=usesOriginalInlineActions?'только с VPN':CONTENT.telegramNote;
   root.dataset.landingVariant=ACTIVE_VARIANT;
   root.dataset.actionsMode=CONTENT.actionsMode||'sticky';
-  root.innerHTML=`<main class="edb-di-shell"><section class="edb-di-hero-stage">${openingHtml}${(CONTENT.body||[]).map(item=>paragraph(item,'edb-di-offer')).join('')}${paragraph(CONTENT.offer,'edb-di-offer')}${finalCta}</section>${pointList}${afterList}${ctaLead}<div class="edb-di-actions edb-di-actions--inline">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,inlineTelegramNote,'primary',usesOriginalInlineActions?'below':'inside')}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl)}</div><section class="edb-di-qr" aria-label="QR-коды мессенджеров"><p class="edb-di-qr-intro">Если на компьютере нет мессенджера, отсканируйте QR-код телефоном.</p><div class="edb-di-qr-options" role="listbox" aria-label="Выберите мессенджер">${qrOption('telegram',CONTENT.telegramLabel,true)}${qrOption('max',CONTENT.maxLabel,false)}</div></section><footer class="edb-di-legal"><span class="edb-di-legal-line"><span>${esc(CONTENT.legal.business)} · ${esc(CONTENT.legal.inn)}</span><span aria-hidden="true">·</span><a href="${esc(CONTENT.legal.privacyUrl)}" target="_blank" rel="noopener noreferrer">${esc(CONTENT.legal.privacyLabel)}</a><span aria-hidden="true">·</span><span>${esc(CONTENT.legal.disclaimer)}</span></span></footer></main><nav class="edb-di-sticky-actions" aria-label="Открыть интенсив в мессенджере">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,CONTENT.telegramNote,'sticky')}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl,'','sticky')}</nav>`;
+  root.innerHTML=`<main class="edb-di-shell"><section class="edb-di-hero-stage">${openingHtml}${(CONTENT.body||[]).map(item=>paragraph(item,'edb-di-offer')).join('')}${paragraph(CONTENT.offer,'edb-di-offer')}${finalCta}</section>${pointList}${afterList}${ctaLead}<div class="edb-di-actions edb-di-actions--inline">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,inlineTelegramNote,'primary',usesOriginalInlineActions?'below':'inside')}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl)}</div><section class="edb-di-qr" aria-label="QR-коды мессенджеров"><p class="edb-di-qr-intro">Если на компьютере нет мессенджера, отсканируйте QR-код телефоном.</p><div class="edb-di-qr-options" role="listbox" aria-label="Выберите мессенджер">${qrOption('telegram',CONTENT.telegramLabel,true)}${qrOption('max',CONTENT.maxLabel,false)}</div></section><p class="edb-di-disclaimer">Не медицинская услуга</p></main><div data-edabalans-site-footer></div><nav class="edb-di-sticky-actions" aria-label="Открыть интенсив в мессенджере">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,CONTENT.telegramNote,'sticky')}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl,'','sticky')}</nav>`;
 
   let robots=document.head&&document.head.querySelector('meta[name="robots"]');
   if(!robots&&document.head){robots=document.createElement('meta');robots.name='robots';document.head.appendChild(robots)}
@@ -377,5 +378,12 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
   else if(typeof desktopQr.addListener==='function')desktopQr.addListener(trackQrVisibility);
   trackQrVisibility();
   emit(CONTENT.analytics.viewEvent);
+  if (window.EdabalansFooter) {
+    window.EdabalansFooter.boot(root);
+  } else {
+    const footerScript = document.createElement('script');
+    footerScript.src = appOrigin + '/site-footer.js';
+    document.head.appendChild(footerScript);
+  }
 })();
 </script>

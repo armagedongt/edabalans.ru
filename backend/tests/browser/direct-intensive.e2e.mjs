@@ -225,12 +225,13 @@ try {
 
   for (const width of [360, 430, 768, 1440]) {
     const { context, page } = await landing({ viewport: { width, height: width < 900 ? 900 : 1000 } })
+    await page.locator('.eb-footer').waitFor()
     const fit = await page.evaluate(() => {
       const root = document.querySelector('#edb-direct-intensive-v1')
       const accent = document.querySelector('.edb-di-hero-accent')
       const rootRect = root.getBoundingClientRect()
       const accentRect = accent?.getBoundingClientRect()
-      const legalRect = document.querySelector('.edb-di-legal-line').getBoundingClientRect()
+      const legalRect = document.querySelector('.eb-footer__inner').getBoundingClientRect()
       return {
         rootOverflow: root.scrollWidth - root.clientWidth,
         accentLeft: accentRect ? accentRect.left - rootRect.left : 0,
@@ -279,7 +280,6 @@ try {
       const arrows = cta?.querySelector('.edb-di-cta-arrows')
       const inlineActions = document.querySelector('.edb-di-actions--inline')
       const stickyActions = document.querySelector('.edb-di-sticky-actions')
-      const legal = document.querySelector('.edb-di-legal')
       const checkPairs = [...document.querySelectorAll('.edb-di-list--checks .edb-di-item')].map(item => ({
         prefixTop: item.querySelector('.edb-di-item-prefix').getBoundingClientRect().top,
         resultTop: item.querySelector('.edb-di-item-result').getBoundingClientRect().top,
@@ -296,7 +296,6 @@ try {
         inlineButtonRadius: getComputedStyle(inlineActions.querySelector('.edb-di-button')).borderRadius,
         inlineVpnNote: inlineActions.querySelector('.edb-di-note')?.textContent?.trim(),
         inlineButtonVpnNote: inlineActions.querySelector('.edb-di-button-note')?.textContent?.trim(),
-        legalBottomGap: window.innerHeight - legal.getBoundingClientRect().bottom,
         firstCheckStaysInline: checkPairs.length ? Math.abs(checkPairs[0].prefixTop - checkPairs[0].resultTop) < 1 : true,
         wrappedCheckCount: checkPairs.filter(pair => pair.resultTop - pair.prefixTop > 1).length,
       }
@@ -308,7 +307,7 @@ try {
     }
     const expectsInlineActions = variant === 'instead' || variant.startsWith('motivation')
     if (expectsInlineActions && (fit.inlineActionsDisplay !== 'grid' || fit.stickyActionsDisplay !== 'none' || fit.inlineButtonHeight !== 54 || fit.inlineButtonRadius !== '13px' || fit.inlineVpnNote !== 'только с VPN' || fit.inlineButtonVpnNote)) {
-      throw new Error(`Inline actions or footer are misplaced for ${variant}: ${JSON.stringify(fit)}`)
+      throw new Error(`Inline actions are misplaced for ${variant}: ${JSON.stringify(fit)}`)
     }
     if (variant.startsWith('instead') && (!fit.firstCheckStaysInline || fit.wrappedCheckCount < 1)) {
       throw new Error(`Instead list must wrap only when its content needs it: ${JSON.stringify(fit)}`)

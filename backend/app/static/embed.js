@@ -210,6 +210,7 @@
       '<p style="margin:0 0 18px">' + escapeHtml(message) + '</p>' +
       '<a href="' + escapeHtml(PUBLIC_ACCOUNT_URL) + '" style="display:block;padding:13px 18px;border-radius:12px;background:#239fe9;color:#fff;text-align:center;text-decoration:none;font-weight:700">Войти в личный кабинет</a>' +
       '</div></div>';
+    ensureLegalFooter(mount);
   }
 
   function nativeSession() {
@@ -344,6 +345,7 @@
   }
 
   function ensureLegalFooter(mount) {
+    if (mount.hasAttribute('data-edabalans-footer-owner')) return;
     if (mount.parentElement && mount.parentElement.closest('[data-edabalans-footer-owner]')) return;
     mount.setAttribute('data-edabalans-footer-owner', 'true');
     var footerLoadRetries = 0;
@@ -448,6 +450,7 @@
             '<div class="edabalans-dqs-legal-list">' + cards + '</div>' +
             '<button class="edabalans-dqs-legal-action" type="button" disabled>Принять и продолжить</button>' +
             '<p class="edabalans-dqs-legal-error" aria-live="polite"></p></div></section>';
+          if (mount.getAttribute('data-edabalans-inline') !== 'true') ensureLegalFooter(mount);
           var boxes = Array.prototype.slice.call(mount.querySelectorAll('[data-edabalans-dqs-legal]'));
           var button = mount.querySelector('.edabalans-dqs-legal-action');
           var error = mount.querySelector('.edabalans-dqs-legal-error');

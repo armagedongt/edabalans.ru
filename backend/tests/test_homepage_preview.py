@@ -1653,11 +1653,9 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert "В нём вы узнаете:" not in response.text
     assert "Вы узнаете:" not in response.text
     assert "Не медицинская услуга" in response.text
-    assert "business:'ИП Воронцов'" in response.text
-    assert "Политика ПД" in response.text
-    assert "privacyUrl:appOrigin+'/legal/privacy'" in response.text
+    assert "data-edabalans-site-footer" in response.text
+    assert "footerScript.src = appOrigin + '/site-footer.js'" in response.text
     assert "telegramNote:'Только с VPN'" in response.text
-    assert 'class="edb-di-legal-line"' in response.text
     assert "edb-di-mobile-vpn-note" not in response.text
     assert "© 2026 Сергей Воронцов" not in response.text
     assert "https://go.похудение-это-есть.рф/legal/privacy" not in response.text
@@ -1860,7 +1858,6 @@ def test_direct_intensive_preview_uses_one_responsive_content_grid() -> None:
     assert "padding-bottom:calc(70px + env(safe-area-inset-bottom))" in response.text
     assert "font-size:clamp(15.8px,5.3vw,32px)" in response.text
     assert 'class="edb-di-button-note"' in response.text
-    assert "font-size:clamp(6.8px,2.08vw,9px)" in response.text
     assert ".edb-di-qr{display:none" in response.text
     assert "@media (min-width:900px)" in response.text
     assert ".edb-di-qr{display:block" in response.text

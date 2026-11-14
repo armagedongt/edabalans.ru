@@ -2,7 +2,7 @@
 <style>
 
 .ed-moved{--blue:#27aff5;--deep:#118ed8;--ink:#17191e;--muted:#58616c;box-sizing:border-box;min-height:100svh;color:var(--ink);font-family:var(--ed-font-body, Manrope, Arial, sans-serif);background-color:#f5fbff;overflow-wrap:anywhere}
-.ed-moved *{box-sizing:border-box}.ed-moved__shell{width:min(1020px,100%);margin:auto;padding:30px 28px 56px}
+.ed-moved *{box-sizing:border-box}.ed-moved__shell{width:min(1020px,100%);margin:auto;padding:30px 28px 0}
 .ed-moved__card{margin-top:0;padding:clamp(28px,5vw,60px);border:1px solid #cdeafb;border-radius:30px;background:#ffffffed;box-shadow:0 24px 70px #168bc51a;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:clamp(28px,5vw,64px);align-items:center}
 .ed-moved__badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 18px;padding:8px 12px;border-radius:999px;background:#e4f6ff;color:#1178b4;font-size:13px;font-weight:800}.ed-moved__badge::before{content:'✓';display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--blue);color:white;font-size:13px}
 .ed-moved h1{margin:0 0 20px;font-family:var(--ed-font-body, Manrope, Arial, sans-serif);font-size:clamp(30px,4.4vw,52px);line-height:1.08;letter-spacing:-.045em}.ed-moved__lead{margin:0 0 24px;color:var(--muted);font-size:clamp(17px,2vw,20px);line-height:1.58}
@@ -11,7 +11,7 @@
 .ed-moved__primary:focus-visible,.ed-moved__contact:focus-visible{outline:3px solid #0b79bb;outline-offset:4px}
 .ed-moved__help{padding:26px;border:1px solid #d8edf8;border-radius:22px;background:#f7fcff}.ed-moved__help h2{margin:0 0 12px;font-size:22px;line-height:1.25;letter-spacing:-.025em}.ed-moved__help p{margin:0 0 20px;color:var(--muted);font-size:15px;line-height:1.58}
 .ed-moved__contacts{display:grid;gap:10px}.ed-moved__contact{display:flex;align-items:center;justify-content:space-between;min-height:52px;padding:13px 16px;border:1px solid #cce8f7;border-radius:14px;background:white;color:#116da7;text-decoration:none;font-size:14px;font-weight:800;transition:background .15s,border-color .15s}.ed-moved__contact::after{content:'→';font-size:18px}.ed-moved__contact:hover{background:#eaf8ff;border-color:#8ed5f8}
-@media(max-width:760px){.ed-moved__shell{padding:20px 16px 38px}.ed-moved__card{margin-top:0;padding:26px 20px;border-radius:22px;grid-template-columns:1fr;gap:24px}.ed-moved h1{font-size:32px}.ed-moved__lead{font-size:17px}.ed-moved__primary{width:100%}.ed-moved__help{padding:21px}.ed-moved__help h2{font-size:20px}}
+@media(max-width:760px){.ed-moved__shell{padding:20px 16px 0}.ed-moved__card{margin-top:0;padding:26px 20px;border-radius:22px;grid-template-columns:1fr;gap:24px}.ed-moved h1{font-size:32px}.ed-moved__lead{font-size:17px}.ed-moved__primary{width:100%}.ed-moved__help{padding:21px}.ed-moved__help h2{font-size:20px}}
 @media(prefers-reduced-motion:reduce){.ed-moved__primary,.ed-moved__contact{transition:none}.ed-moved__primary:hover{transform:none}}
 </style>
 <link rel="stylesheet" href="/public-site-assets/soft-sky-sunrise-background.css">
@@ -34,5 +34,7 @@
         </div>
       </aside>
     </section>
+    <div data-edabalans-site-footer style="--eb-footer-width:100%;--eb-footer-gutter:0px"></div>
   </main>
 </div>
+<script src="/site-footer.js" defer></script>
