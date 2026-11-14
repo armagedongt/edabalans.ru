@@ -259,6 +259,7 @@ html:has(#account-app):not(:has(.course-shell)), body:has(#account-app):not(:has
 #account-app:not([data-account-layout="full"]) .account-open:not(:disabled) { background: var(--account-theme-hover,var(--accent-soft)); color: var(--account-theme-blue,#087dbd); }
 #account-app:not([data-account-layout="full"]) .account-open.purchase { border-color: rgba(244,106,53,.32); background: var(--account-theme-card,#fff4ef); color: var(--account-theme-ink,#a94624); }
 #account-app .account-app-emoji { display: inline-block; margin-inline-end: 6px; font-size: 1.2em; line-height: 1; }
+#account-app .account-install-link { display: inline-block; color: var(--account-theme-blue,#0874ad); font-size: 14px; font-weight: 700; text-underline-offset: 3px; }
 html[data-account-theme="dark"] #account-app .account-view-toggle { background: #263442; color: var(--account-theme-blue); border-color: var(--account-theme-border); }
 html[data-account-theme="dark"] #account-app .account-view-toggle:hover { background: #324859; }
 html[data-account-theme="dark"] #account-app:not([data-account-layout="full"]) :is(.account-grid > .account-card,.application-grid > .application-card,.account-messengers:not(dialog)) { background: transparent; }

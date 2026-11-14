@@ -772,6 +772,14 @@ def account_install_guide() -> FileResponse:
     )
 
 
+@router.get("/lk/install/v1", include_in_schema=False)
+def account_install_guide_v1() -> FileResponse:
+    return FileResponse(
+        STATIC_DIR / "account-install-v1.html",
+        headers={"Cache-Control": "no-cache", "X-Robots-Tag": "noindex, nofollow"},
+    )
+
+
 @router.get("/training", include_in_schema=False)
 @router.get("/training/", include_in_schema=False)
 @router.get("/strength", include_in_schema=False)
