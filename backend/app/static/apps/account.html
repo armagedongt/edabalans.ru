@@ -41,7 +41,13 @@
       }
     });
   }
-  function bindProfileMenu(data){var button=root.querySelector('[data-account-profile]'),menu=root.querySelector('.account-profile-menu');if(!button||!menu)return;if(data.account_manager&&data.account_manager.can_manage){var picker;button.setAttribute('aria-haspopup','dialog');button.onclick=function(){if(!picker)picker=import(host+'/assets/app-client-picker.mjs?v=20261026-picker').then(function(module){module.mount(root,'account',data.account_manager,host)}).catch(function(error){picker=null;throw error});picker.then(function(){button.click()}).catch(function(){window.alert('Не удалось открыть список клиентов. Попробуйте ещё раз.')})};return}button.onclick=function(){menu.hidden=!menu.hidden;button.setAttribute('aria-expanded',String(!menu.hidden))}}
+  function bindProfileMenu(data){
+    var button=root.querySelector('[data-account-profile]'),menu=root.querySelector('.account-profile-menu');if(!button||!menu)return;
+    button.onclick=function(){menu.hidden=!menu.hidden;button.setAttribute('aria-expanded',String(!menu.hidden))};
+    if(data.account_manager?.can_manage)import(host+'/assets/app-client-picker.mjs?v=20261114-app-switch')
+      .then(function(module){if(button.isConnected)module.mount(root,'account',data.account_manager,host)})
+      .catch(function(error){console.warn('Выбор клиента:',error.message)});
+  }
   root.addEventListener('click',function(event){var menu=root.querySelector('.account-profile-menu'),button=root.querySelector('[data-account-profile]');if(menu&&button&&!event.target.closest('.account-session')){menu.hidden=true;button.setAttribute('aria-expanded','false')}});
   root.addEventListener('keydown',function(event){if(event.key==='Escape'){var menu=root.querySelector('.account-profile-menu'),button=root.querySelector('[data-account-profile]');if(menu&&button&&!menu.hidden){menu.hidden=true;button.setAttribute('aria-expanded','false');button.focus()}}});
   function esc(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
@@ -65,7 +71,10 @@
   function openAccountApp(app,restoring){
     currentApp=app;
     if(!restoring){var url=new URL(accountBaseUrl());url.searchParams.set('account_app',app);history.pushState(Object.assign({},history.state,{edabalansAccountApp:app}),'',url.pathname+url.search)}
-    root.innerHTML='<div class="account-course" data-edabalans-app="'+esc(app)+'" data-edabalans-account-url="'+esc(accountBaseUrl())+'"></div>';nestedLoad=window.EdabalansEmbed.load(root.firstElementChild);return nestedLoad;
+    root.innerHTML='<div class="account-course" data-edabalans-app="'+esc(app)+'" data-edabalans-account-url="'+esc(accountBaseUrl())+'"></div>';
+    var mount=root.firstElementChild;
+    mount.edabalansManagerContext=accountData?.account_manager;
+    nestedLoad=window.EdabalansEmbed.load(mount);return nestedLoad;
   }
   function openRequestedCourse(data){var app=requestedCourseApp();if(!app||data.state!=='ready'||(data.legal&&data.legal.required))return false;var available=(data.courses||[]).concat(data.applications||[]).some(function(item){return item.app===app&&item.owned&&item.ready&&!item.maintenance});if(!available)return false;openAccountApp(app,true);return true}
   window.addEventListener('popstate',function(){

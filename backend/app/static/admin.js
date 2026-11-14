@@ -14,6 +14,7 @@
   const pageParams = new URLSearchParams(location.search);
   const strengthMobileMode = location.pathname === "/admin/strength" && pageParams.get("mobile") === "1";
   if (strengthMobileMode) document.body.classList.add("strength-mobile-admin");
+  if (pageParams.get("view") === "apps" && location.pathname === "/admin/client-diary") document.body.classList.add("client-diary-app-view");
   if (location.pathname === "/admin/strength" && pageParams.has("user")) document.body.classList.add("admin-strength-managed");
   const dqsCategories = (window.EdabalansDqsCategoryRows || []).map(({ label, scores, icon, group, id }) => [label, scores, icon, group, id]);
   // Representative serving sizes from the app's DQS category help.
@@ -205,8 +206,15 @@
   function applicationUserHref(code, userId) {
     const params = new URLSearchParams();
     if (userId) params.set("user", userId);
+    if (pageParams.get("view") === "apps") params.set("view", "apps");
     if (code === "strength" && strengthMobileMode) params.set("mobile", "1");
     return `/admin/${code}${params.size ? "?" + params : ""}`;
+  }
+
+  function standaloneApplicationHref(code, userId) {
+    const url = new URL({strength: "/training", dqs: "/dqs", metabolism: "/metabolism", recipes: "/recipes", account: "/lk"}[code], document.body.dataset.publicSite || location.origin);
+    if (userId) url.searchParams.set(code === "account" ? "account_user" : "app_user", userId);
+    return esc(url.href);
   }
 
   function applicationUserStatus(code, user) {
@@ -232,13 +240,20 @@
 
   function managedApplicationToolbar(code, user = {}) {
     const label = user.email || user.display_name || "Выбрать клиента";
+    const applicationsMode = pageParams.get("view") === "apps";
     return `
       <section class="admin-managed-toolbar admin-client-toolbar ${code === "strength" ? "admin-strength-toolbar" : ""}" aria-label="Клиент и приложение">
         <button class="ed-client-button" id="admin-managed-person" type="button" aria-haspopup="dialog" aria-label="Выбрать клиента" title="${esc(user.display_name || label)}"><span>${esc(label)}</span></button>
         <button class="ed-client-button admin-client-app-button" id="admin-managed-app" type="button" aria-haspopup="dialog" aria-label="Выбрать приложение" title="${esc(clientApps[code])}"><span>${esc(code === "metabolism" ? "Метаболизм" : clientApps[code])}</span></button>
         <dialog class="admin-client-apps" aria-label="Приложения">
           <header><strong>Приложения</strong><button type="button" aria-label="Закрыть" autofocus>×</button></header>
-          <nav>${Object.entries(clientApps).map(([key, name]) => `<a href="${applicationUserHref(key, user.id)}"${key === code ? ' aria-current="page"' : ""}>${esc(name)}</a>`).join("")}
+          <nav>${Object.entries(clientApps).map(([key, name]) => {
+            const useStandalone = applicationsMode && key !== "client-diary" && key !== code;
+            const href = useStandalone ? standaloneApplicationHref(key, user.id) : applicationUserHref(key, user.id);
+            return `<a href="${href}"${key === code ? ' aria-current="page"' : ""}${useStandalone && user.id ? ` data-open-app="${key}"` : ""}>${esc(name)}</a>`;
+          }).join("")}
+          <a href="${standaloneApplicationHref("recipes", user.id)}">Рецепты</a>
+          <a href="${standaloneApplicationHref("account", user.id)}">Личный кабинет</a>
           ${user.id ? `<a href="/crm?user=${encodeURIComponent(user.id)}">CRM</a>` : ""}
           ${code === "strength" && user.id ? '<a class="admin-managed-back" href="/admin/strength">Все клиенты в «Силовых»</a>' : ""}
           </nav><p role="status"></p>
@@ -250,13 +265,30 @@
     const toolbar = root.querySelector(".admin-client-toolbar");
     const dialog = toolbar.querySelector("dialog");
     const button = toolbar.querySelector("#admin-managed-person");
+    const status = dialog.querySelector("[role=status]");
+    let opening = false;
     toolbar.querySelector("#admin-managed-app").onclick = () => dialog.showModal();
     dialog.querySelector("button").onclick = () => dialog.close();
-    dialog.addEventListener("click", (event) => {
+    dialog.addEventListener("click", async (event) => {
       if (event.target === dialog && event.clientX < dialog.getBoundingClientRect().left) dialog.close();
-      if (event.target.closest("a") && !maySwitch()) {
+      const link = event.target.closest("a");
+      if (!link) return;
+      if (opening || !maySwitch()) {
         event.preventDefault();
-        dialog.querySelector("[role=status]").textContent = "Сначала сохраните текущие изменения.";
+        if (!opening) status.textContent = "Сначала сохраните текущие изменения.";
+        return;
+      }
+      if (link.dataset.openApp && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) {
+        event.preventDefault();
+        opening = true;
+        status.textContent = "Открываю…";
+        const path = `/admin/api/apps/${link.dataset.openApp}/users/${encodeURIComponent(user.id)}`;
+        try {
+          const detail = await api(path, {cache: "no-store"});
+          if (!detail.has_state) await api(path + "/open", {method: "POST"});
+          if (dialog.open && maySwitch()) location.assign(link.href);
+        } catch (error) { status.textContent = error.message; }
+        finally { opening = false; }
       }
     });
     button.onclick = async () => {

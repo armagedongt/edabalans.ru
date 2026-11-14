@@ -2195,6 +2195,7 @@ def app_manager_context(request: Request, app_user: str = "", db: Session = Depe
         return JSONResponse({"ok": True, "can_manage": False}, headers={"Cache-Control": "no-store"})
     actor = native_session_user(request, db)
     return JSONResponse({"ok": True, "can_manage": True,
+            "dashboard_url": "/admin/client-diary",
             "actor": client_identity(db, actor) if actor else None,
             "selected": client_identity(db, managed_user(db, app_user)) if app_user else None}, headers={"Cache-Control": "no-store"})
 

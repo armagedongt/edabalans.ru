@@ -69,6 +69,9 @@ body.admin-strength-managed .admin-managed-app .ed-app-account-link{display:inli
 .admin-client-toolbar #admin-managed-person{max-width:calc(60% - 8px)}
 .admin-client-toolbar .ed-client-button::after{content:'▾';color:#6f3de8}
 .admin-client-toolbar .admin-client-app-button{max-width:45%;color:#087aad;border-color:#addcf4}
+body.ed-admin-shell.client-diary-app-view{padding:0}
+.client-diary-app-view .admin-sidebar,.client-diary-app-view .admin-shell-open,.client-diary-app-view .admin-shell-mobile-open{display:none!important}
+.client-diary-app-view #admin-content{max-width:1480px;margin:auto;--admin-client-toolbar-top:0px}
 .admin-client-apps{position:fixed;inset:0 0 0 auto;margin:0;width:min(350px,100vw);height:100dvh;max-height:100dvh;box-sizing:border-box;padding:18px;border:0;border-radius:14px 0 0 14px;background:white;color:#273b50;box-shadow:0 0 36px #22375025}
 .admin-client-apps::backdrop{background:#17314930}
 .admin-client-apps header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}

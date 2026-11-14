@@ -501,6 +501,15 @@
     var adminUser = String(mount.getAttribute('data-edabalans-admin-user') || '');
     var supportsClientPicker = ['strength', 'dqs', 'metabolism', 'recipes'].indexOf(app) >= 0 && !adminUser;
     var nativeManager = supportsClientPicker && Boolean(new URLSearchParams(location.search).get('app_user'));
+    function attachClientPicker(surface) {
+      if (!supportsClientPicker) return;
+      var contextRequest = mount.edabalansManagerContext ? Promise.resolve(mount.edabalansManagerContext) : managerContext();
+      return contextRequest.then(function (context) {
+        if (context.can_manage && surface.isConnected) return import(APP_HOST + '/assets/app-client-picker.mjs?v=20261114-app-switch').then(function (picker) {
+          if (surface.isConnected) picker.mount(surface, app, context, APP_HOST);
+        });
+      }).catch(function (error) { console.warn('Выбор клиента:', error.message); });
+    }
     var placement = String(mount.getAttribute('data-edabalans-placement') || '');
     var placementToken = String(mount.getAttribute('data-edabalans-placement-token') || '');
     var accountOffer = mount.getAttribute('data-edabalans-account-offer') === 'true';
@@ -563,15 +572,14 @@
             fetch(APP_HOST + '/api/apps/activity', {method:'POST', credentials:'include',
               headers:{'Content-Type':'application/json'}, body:JSON.stringify({app_code:app})}).catch(function () {});
           }
-          if (supportsClientPicker) managerContext().then(function (context) {
-            if (context.can_manage) return import(APP_HOST + '/assets/app-client-picker.mjs?v=20261026-picker').then(function (picker) {
-              picker.mount(mount, app, context, APP_HOST);
-            });
-          }).catch(function (error) { console.warn('Выбор клиента:', error.message); });
+          attachClientPicker(mount);
         });
       })
       .catch(function (error) {
         failLoading(mount, error, function () { load(mount); });
+        var failed = loadingScreens.get(mount);
+        var overlay = failed && failed.shared.overlay;
+        if (overlay) attachClientPicker(overlay.firstElementChild);
       });
   }
 

@@ -1465,6 +1465,7 @@ def test_strength_install_metadata_uses_existing_training_entry_without_offline_
     assert manifest.status_code == 200 and 'application/manifest+json' in manifest.headers['content-type']
     data = manifest.json()
     assert data['start_url'] == data['id'] == '/training' and data['display'] == 'standalone'
+    assert data['scope'] == '/'
     assert 'serviceWorker.register' not in page.text
     for icon in data['icons']:
         asset = client.get(icon['src'])

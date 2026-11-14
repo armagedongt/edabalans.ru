@@ -25,6 +25,7 @@ from app.auth import (
 )
 from app.config import Settings, get_settings
 from app.admin_assets import admin_file, version_admin_html
+from app.site_links import public_site_origin
 from app.crm_service import (
     add_note,
     add_tag,
@@ -289,13 +290,11 @@ def admin_section(
         raise HTTPException(status_code=404, detail="Административный раздел не найден")
     if not admin_identity(request, credentials):
         return protected_file("admin-login.html")
-    if section in {"dqs", "strength", "metabolism"}:
+    if section in {"client-diary", "dqs", "strength", "metabolism"}:
         source = (STATIC_DIR / "admin.html").read_text(encoding="utf-8")
-        source = source.replace(
-            "/admin/static/admin-favicon.svg",
-            f"/assets/{section}-favicon.svg",
-            1,
-        )
+        source = source.replace("<body>", f'<body data-public-site="{public_site_origin()}">', 1)
+        if section != "client-diary":
+            source = source.replace("/admin/static/admin-favicon.svg", f"/assets/{section}-favicon.svg", 1)
         return HTMLResponse(version_admin_html(source), headers={"Cache-Control": "no-store"})
     return protected_file("admin.html")
 

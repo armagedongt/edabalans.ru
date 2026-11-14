@@ -479,6 +479,7 @@ def native_account(request: Request, db: Session = Depends(get_db)) -> dict:
 
         payload["account_manager"] = {
             "can_manage": True,
+            "dashboard_url": "/admin/client-diary",
             "actor": client_identity(db, actor),
             "selected": client_identity(db, user) if user.id != actor.id else None,
         }

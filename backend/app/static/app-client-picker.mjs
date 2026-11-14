@@ -1,8 +1,9 @@
 const supported = new Set(['account', 'strength', 'dqs', 'metabolism', 'recipes']);
 const appPaths = {account:'/lk', strength: '/training', dqs: '/dqs', metabolism: '/metabolism', recipes: '/recipes'};
+const appLabels = {account:'Личный кабинет', strength:'Силовые', dqs:'DQS', metabolism:'Калькулятор метаболизма', recipes:'Рецепты'};
 
 export function mount(root, app, context, host, admin) {
-  if ((!supported.has(app) && !(admin && app === 'dashboard')) || !context.can_manage || root.dataset.clientPicker) return;
+  if (!root.isConnected || (!supported.has(app) && !(admin && app === 'dashboard')) || !context.can_manage || root.dataset.clientPicker) return;
   root.dataset.clientPicker = 'true';
   if (!document.getElementById('app-client-picker-style')) {
     const style = document.createElement('style');
@@ -11,7 +12,17 @@ export function mount(root, app, context, host, admin) {
       .ed-client-button{display:inline-flex;align-items:center;gap:5px;max-width:100%;min-height:32px;padding:2px 6px;border:1px solid var(--ed-app-line,#e7e7ef);border-radius:8px;background:#fff;color:inherit;font:inherit;cursor:pointer;text-align:left}
       .ed-client-button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}.ed-client-button:after{content:'▾';flex:none;color:var(--ed-app-accent,#6f3de8)}
       .ed-client-button:focus-visible,.ed-client-popup :focus-visible{outline:2px solid #6f3de8;outline-offset:2px}
-      .ed-client-recipe{padding:0 12px 8px;font-size:13px;color:#62677a}
+      .ed-app-switch-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px;padding:8px;border:1px solid #dce9f1;border-radius:12px;background:#fff}
+      .ed-app-switch-bar .ed-client-button{min-width:0;max-width:60%}
+      #account-app .ed-app-switch-bar{width:100%;box-sizing:border-box;margin:0}
+      #account-app .ed-app-switch-bar .account-session{min-width:0}
+      .ed-app-switch-button{flex:none;min-height:32px;margin-left:auto;padding:3px 8px;border:1px solid #addcf4;border-radius:8px;background:#fff;color:#087aad;font:inherit;cursor:pointer}
+      #strength-app .ed-app-switch-button{font-size:12px}
+      @media(max-width:700px){#strength-app .ed-app-switch-button{font-size:10px;padding:3px 4px}}
+      .ed-app-switch-drawer{position:fixed;inset:0 0 0 auto;margin:0;width:min(350px,100vw);height:100dvh;max-height:100dvh;padding:16px;border:0;border-radius:14px 0 0 14px;background:#fff;color:#273b50;box-sizing:border-box;box-shadow:0 0 36px #22375025;font:14px/1.4 var(--ed-font-body,Manrope,Arial,sans-serif)}
+      .ed-app-switch-drawer::backdrop{background:#17314930}.ed-app-switch-drawer header{display:flex;align-items:center;justify-content:space-between}.ed-app-switch-drawer header button{border:0;background:transparent;font-size:24px;min-width:36px;cursor:pointer}
+      .ed-app-switch-drawer nav{display:grid;gap:5px;margin-top:12px}.ed-app-switch-drawer nav a{display:block;padding:10px;border:1px solid #dce9f1;border-radius:8px;color:#087aad;text-decoration:none}
+      .ed-app-switch-drawer nav a[aria-current],.ed-app-switch-drawer nav a:hover{background:#e9f5fc;border-color:#addcf4}
       .ed-client-popup{box-sizing:border-box;position:fixed;margin:0;padding:12px;width:min(400px,calc(100vw - 24px));max-height:65dvh;border:1px solid #e7e7ef;border-radius:var(--ed-app-radius-large,16px);background:#fff;color:#17172b;box-shadow:0 10px 35px #17172b22;font:14px/1.4 var(--ed-font-body,Manrope,Arial,sans-serif)}
       .ed-client-popup[open]{display:flex;flex-direction:column;gap:8px}.ed-client-popup::backdrop{background:transparent}.ed-client-popup header{display:flex;justify-content:space-between;align-items:center;gap:10px}
       .ed-client-popup button,.ed-client-popup input{font:inherit}.ed-client-popup button{cursor:pointer}.ed-client-popup header button{border:0;background:transparent;font-size:22px;min-width:36px;min-height:36px}
@@ -29,9 +40,86 @@ export function mount(root, app, context, host, admin) {
     const saved = JSON.parse(localStorage.getItem(favoriteKey) || '[]');
     if (Array.isArray(saved)) favorites = new Set(saved.slice(0,100).filter(id => typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)));
   } catch {}
-  let dialog, opener;
+  let dialog, opener, drawer;
+  function destination(code, userId) {
+    const url = new URL(appPaths[code], host);
+    if (userId) url.searchParams.set(code === 'account' ? 'account_user' : 'app_user', userId);
+    return url;
+  }
+  function appSwitchButton() {
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = 'ed-app-switch-button';
+    button.setAttribute('aria-label', 'Выбрать приложение');
+    button.setAttribute('aria-haspopup', 'dialog');
+    button.textContent = 'Приложения ▾';
+    button.onclick = () => {
+      if (!drawer) {
+        drawer = document.createElement('dialog');
+        drawer.className = 'ed-app-switch-drawer';
+        drawer.setAttribute('aria-label', 'Приложения');
+        drawer.innerHTML = '<header><strong>Приложения</strong><button type="button" aria-label="Закрыть" autofocus>×</button></header><nav></nav><p role="status"></p>';
+        const nav = drawer.querySelector('nav'), status = drawer.querySelector('[role=status]');
+        const add = (label, url, current = false) => {
+          const link = document.createElement('a');
+          link.href = url.href; link.textContent = label;
+          if (current) link.setAttribute('aria-current', 'page');
+          nav.append(link); return link;
+        };
+        const userId = context.selected?.user_id;
+        if (context.dashboard_url) {
+          const dashboard = new URL(context.dashboard_url, host);
+          dashboard.searchParams.set('view', 'apps');
+          if (identity.user_id) dashboard.searchParams.set('user', identity.user_id);
+          add('Дашборд клиента', dashboard);
+        }
+        for (const [code, label] of Object.entries(appLabels)) {
+          const url = destination(code, userId);
+          const link = add(label, url, code === app);
+          if (userId && code !== app && ['strength', 'dqs', 'metabolism'].includes(code)) link.dataset.appCode = code;
+        }
+        drawer.querySelector('header button').onclick = () => drawer.close();
+        let opening = false;
+        drawer.addEventListener('click', async event => {
+          if (event.target === drawer && event.clientX < drawer.getBoundingClientRect().left) drawer.close();
+          const link = event.target.closest('a');
+          if (link?.hasAttribute('aria-current') || link && !maySwitch()) {
+            event.preventDefault();
+            if (link.hasAttribute('aria-current')) drawer.close();
+            else status.textContent = 'Сначала сохраните текущие изменения или дождитесь сохранения.';
+            return;
+          }
+          if (!link) return;
+          if (opening) { event.preventDefault(); return; }
+          if (link.dataset.appCode && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) {
+            event.preventDefault();
+            opening = true;
+            status.textContent = 'Открываю…';
+            try {
+              await ensureState(link.dataset.appCode, userId);
+              if (drawer.open && maySwitch()) location.assign(link.href);
+              else status.textContent = 'Сначала сохраните текущие изменения.';
+            } catch (error) { status.textContent = error.message; }
+            finally { opening = false; }
+          }
+        });
+        document.body.append(drawer);
+      }
+      drawer.querySelector('[role=status]').textContent = '';
+      drawer.showModal();
+    };
+    return button;
+  }
+  function clientButton() {
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = 'ed-client-button';
+    button.setAttribute('aria-label', 'Выбрать клиента'); button.setAttribute('aria-haspopup', 'dialog');
+    const label = document.createElement('span'); label.textContent = identity.email || identity.display_name || 'Выбрать клиента'; button.append(label);
+    button.title = [identity.display_name, identity.email].filter(Boolean).join(' · ');
+    button.onclick = () => open(button);
+    return button;
+  }
   function decorate() {
-    if (!root.isConnected) { observer.disconnect(); dialog?.remove(); return; }
+    if (!root.isConnected) { observer.disconnect(); dialog?.remove(); drawer?.remove(); return; }
     if (admin) {
       admin.button.onclick = () => open(admin.button);
       return;
@@ -41,28 +129,34 @@ export function mount(root, app, context, host, admin) {
       if (button && !button.dataset.clientPickerBound) {
         button.dataset.clientPickerBound = 'true';
         button.setAttribute('aria-haspopup','dialog');
+        button.setAttribute('aria-label','Выбрать клиента');
         button.removeAttribute('aria-expanded');
         button.onclick = () => open(button);
+        const session = button.closest('.account-session');
+        if (session) {
+          const bar = document.createElement('div');
+          bar.className = 'ed-app-switch-bar';
+          session.before(bar); bar.append(session, appSwitchButton());
+        }
       }
       return;
     }
-    let places = [...root.querySelectorAll(app === 'strength' ? '.st-top-email' : app === 'dqs' ? '.dqs-foot-account' : app === 'metabolism' ? '[data-account-name]' : '.ed-client-recipe')];
-    if (app === 'recipes' && !places.length && root.querySelector('.recipe-shell')) {
-      const place = document.createElement('div'); place.className = 'ed-client-recipe';
-      root.querySelector('.recipe-shell').prepend(place); places = [place];
+    const strengthHeaders = app === 'strength' ? root.querySelectorAll('.st-top-email') : [];
+    if (strengthHeaders.length) {
+      root.querySelector(':scope > .ed-app-switch-bar')?.remove();
+      for (const place of strengthHeaders) {
+        if (!place.querySelector('.ed-client-button')) place.replaceChildren(clientButton());
+        const header = place.closest('.st-top');
+        if (header && !header.querySelector('.ed-app-switch-button')) header.append(appSwitchButton());
+      }
+      return;
     }
-    for (const place of places) {
-      if (place.querySelector('.ed-client-button')) continue;
-      const button = document.createElement('button'); button.type = 'button'; button.className = 'ed-client-button';
-      button.setAttribute('aria-label', 'Выбрать клиента'); button.setAttribute('aria-haspopup', 'dialog');
-      const label = document.createElement('span'); label.textContent = identity.email || identity.display_name || 'Выбрать клиента'; button.append(label);
-      button.title = [identity.display_name, identity.email].filter(Boolean).join(' · ');
-      if (app === 'dqs') {
-        for (const node of [...place.childNodes]) if (node.nodeType === Node.TEXT_NODE && node.textContent.includes('@')) node.textContent = ' · ';
-        place.prepend(button);
-      } else place.replaceChildren(button);
-      button.onclick = () => open(button);
-    }
+    const selector = {dqs: '.dqs-sticky', metabolism: '.mw-window', recipes: '.recipe-shell'}[app];
+    const surface = selector && root.querySelector(selector) || root;
+    if (surface !== root) root.querySelector(':scope > .ed-app-switch-bar')?.remove();
+    if (surface.querySelector(':scope > .ed-app-switch-bar')) return;
+    const bar = document.createElement('div');
+    bar.className = 'ed-app-switch-bar'; bar.append(clientButton(), appSwitchButton()); surface.prepend(bar);
   }
   async function api(path, options = {}) {
     const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 15000);
@@ -80,6 +174,11 @@ export function mount(root, app, context, host, admin) {
     if (admin) return admin.maySwitch();
     const check = window.EdabalansAppContext?.canSwitchClient;
     return !check || check();
+  }
+  async function ensureState(code, userId) {
+    const base = '/admin/api/apps/' + code + '/users/' + encodeURIComponent(userId);
+    const detail = await api(base);
+    if (!detail.has_state) await api(base + '/open', {method: 'POST'});
   }
   function navigate(userId) {
     if (admin) { admin.navigate(userId); return; }
@@ -122,11 +221,7 @@ export function mount(root, app, context, host, admin) {
       if (admin) { navigate(user.user_id); return; }
       busy = true; message.textContent = 'Открываю…';
       try {
-        if (app !== 'recipes' && app !== 'account') {
-          const base = '/admin/api/apps/' + app + '/users/' + encodeURIComponent(user.user_id);
-          const detail = await api(base);
-          if (!detail.has_state) await api(base + '/open', {method: 'POST'});
-        }
+        if (app !== 'recipes' && app !== 'account') await ensureState(app, user.user_id);
         // Inputs may have changed while the state request was running.
         if (!currentDialog.open) return;
         if (maySwitch()) navigate(user.user_id); else message.textContent = 'Сначала дождитесь сохранения текущих изменений.';

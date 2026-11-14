@@ -13,7 +13,7 @@ try{for(const width of [360,430,768,1440]){
  page.on('pageerror',e=>errors.push(e.message));
  await page.route('http://127.0.0.1:8828/**',async route=>{
   const url=new URL(route.request().url());
-  if(url.pathname==='/training')return route.fulfill({contentType:'text/html',body:'<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/assets/site-typography.css"><style>body{margin:0;padding:14px;background:#f5f5f7;font:14px var(--ed-font-body,Arial)}.st-top-email{display:inline-block}</style><div id="strength-app"><span class="st-top-email">owner@example.test</span></div><script type="module">import {mount} from "/assets/app-client-picker.mjs";window.canSwitch=true;window.EdabalansAppContext={canSwitchClient:()=>window.canSwitch};mount(document.querySelector("#strength-app"),"strength",{can_manage:true,actor:{user_id:"owner",email:"owner@example.test"}},location.origin);</script></html>'});
+  if(url.pathname==='/training')return route.fulfill({contentType:'text/html',body:'<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/assets/site-typography.css"><style>body{margin:0;padding:14px;background:#f5f5f7;font:14px var(--ed-font-body,Arial)}.st-top{display:flex;align-items:center}</style><div id="strength-app"><div class="st-top"><span class="st-top-email">owner@example.test</span></div></div><script type="module">import {mount} from "/assets/app-client-picker.mjs";const selected=new URL(location.href).searchParams.get("app_user");window.canSwitch=true;window.EdabalansAppContext={canSwitchClient:()=>window.canSwitch};mount(document.querySelector("#strength-app"),"strength",{can_manage:true,actor:{user_id:"owner",email:"owner@example.test"},selected:selected?{user_id:selected,email:"anna@example.test"}:null,dashboard_url:location.origin+"/admin/client-diary"},location.origin);</script></html>'});
   if(url.pathname==='/assets/app-client-picker.mjs')return route.fulfill({contentType:'text/javascript',body:module});
   if(url.pathname==='/api/apps/manager/users'){
    const params=url.searchParams,scope=params.get('scope'),q=params.get('q').toLowerCase(),favorites=params.getAll('favorite_ids');requests.push({scope,q,app:params.get('app_code')});
@@ -21,7 +21,10 @@ try{for(const width of [360,430,768,1440]){
    const users=clients.filter(u=>(scope==='all'||favorites.includes(u.user_id)||(u.has_opened_app&&(scope!=='active'||Date.parse(u.last_opened_at)>=Date.now()-30*86400000)))&&(!q||(u.display_name+' '+u.email).toLowerCase().includes(q))).sort((a,b)=>Number(favorites.includes(b.user_id))-Number(favorites.includes(a.user_id))||(Date.parse(b.last_opened_at)||0)-(Date.parse(a.last_opened_at)||0));
    return route.fulfill({json:{ok:true,users,more:false}});
   }
-  if(url.pathname.startsWith('/admin/api/apps/strength/')){reads++;return route.fulfill({json:{has_state:true}});}
+  if(url.pathname===`/admin/api/apps/strength/users/${ids[0]}`){reads++;return route.fulfill({json:{has_state:true}});}
+  if(url.pathname===`/admin/api/apps/dqs/users/${ids[0]}`){reads++;return route.fulfill({json:{has_state:false}});}
+  if(url.pathname===`/admin/api/apps/dqs/users/${ids[0]}/open`&&route.request().method()==='POST'){reads++;return route.fulfill({json:{ok:true}});}
+  if(url.pathname==='/dqs')return route.fulfill({body:'DQS'});
   const asset=new URL(url.pathname.replace('/assets/',''),root);if(!asset.href.startsWith(root.href))return route.abort();
   try{return route.fulfill({contentType:path.extname(asset.pathname)==='.css'?'text/css':'font/woff2',body:await readFile(asset)});}catch{return route.abort();}
  });
@@ -51,6 +54,19 @@ try{for(const width of [360,430,768,1440]){
  lateGate=new Promise(resolve=>{lateRelease=resolve;});await dialog.getByRole('button',{name:'Все клиенты',exact:true}).click();await input.fill('Поздний');await page.waitForRequest(r=>r.url().includes('q=')&&decodeURIComponent(r.url()).includes('Поздний'));
  await dialog.getByRole('button',{name:'Уже заходили',exact:true}).click();await input.fill('');await rows.filter({hasText:'anna@example.test'}).waitFor();lateRelease();await page.waitForTimeout(80);assert.equal(await rows.filter({hasText:'late@example.test'}).count(),0);
  await page.evaluate(()=>window.canSwitch=true);await rows.filter({hasText:'anna@example.test'}).click();await page.waitForURL('**/training?app_user='+ids[0]);assert.equal(reads,1);
+ await page.getByRole('button',{name:'Выбрать приложение'}).click();
+ const apps=page.getByRole('dialog',{name:'Приложения'});
+ const appBox=await apps.boundingBox();assert(appBox.width<=width&&appBox.x+appBox.width<=width);
+ const dashboard=new URL(await apps.getByRole('link',{name:'Дашборд клиента'}).getAttribute('href'));
+ assert.equal(dashboard.origin,new URL(page.url()).origin);
+ assert.equal(dashboard.searchParams.get('user'),ids[0]);
+ assert.equal(dashboard.searchParams.get('view'),'apps');
+ assert.equal(new URL(await apps.getByRole('link',{name:'Личный кабинет'}).getAttribute('href')).searchParams.get('account_user'),ids[0]);
+ await page.screenshot({path:path.join(output,`${width}-applications.png`)});
+ await page.evaluate(()=>window.canSwitch=false);await apps.getByRole('link',{name:'DQS',exact:true}).click();
+ assert.equal(reads,1);
+ await page.evaluate(()=>window.canSwitch=true);await apps.getByRole('link',{name:'DQS',exact:true}).click();
+ await page.waitForURL('**/dqs?app_user='+ids[0]);assert.equal(reads,3);
  assert.deepEqual(errors,[]);evidence.push({width,requests:requests.length});await page.close();
 }await writeFile(path.join(output,'evidence.json'),JSON.stringify(evidence,null,2));console.log('Client picker: real usage, active30, separate global search, persistent favorites, stale requests and unsaved guard PASS');}
 finally{await browser.close();}
