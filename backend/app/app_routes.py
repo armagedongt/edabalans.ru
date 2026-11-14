@@ -2125,18 +2125,28 @@ def apply_metabolism_update(state: MetabolismState, body: dict[str, Any]) -> Non
 @router.get("/admin/api/apps/metabolism/users/{user_id}/runtime")
 def admin_metabolism_get(
     user_id: uuid.UUID,
+    request: Request,
+    preview_empty: bool = False,
+    credentials: HTTPBasicCredentials | None = Depends(security),
     _: str = Depends(require_application_manager),
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
+    parameters = {}
+    if preview_empty:
+        require_admin(request, credentials)
+        managed_user(db, user_id)
+        parameters = {"personParameters": person_parameters(db, user_id)}
     state = db.scalar(select(MetabolismState).where(MetabolismState.user_id == user_id))
-    if state is None:
+    if state is None and not preview_empty:
         raise HTTPException(status_code=404, detail="application state not found")
-    return {
+    payload = {
         "ok": True,
-        "variants": state.variants,
-        "activeVariant": state.active_variant,
-        "version": state.version,
+        "variants": state.variants if state else {},
+        "activeVariant": state.active_variant if state else 1,
+        "version": state.version if state else None,
+        **parameters,
     }
+    return JSONResponse(payload, headers={"Cache-Control": "no-store"}) if preview_empty else payload
 
 
 @router.put("/admin/api/apps/metabolism/users/{user_id}/runtime")

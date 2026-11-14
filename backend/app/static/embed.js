@@ -533,6 +533,9 @@
           ? {mode: 'admin', targetUserId: adminUser, app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, purchaseReturnUrl: purchaseReturnUrl, linkToken: linkToken, accountOffer: accountOffer, publicMasterclass: publicMasterclass, focusProductCode: focusProductCode}
           : {mode: 'user', app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, purchaseReturnUrl: purchaseReturnUrl, linkToken: linkToken, accountOffer: accountOffer, publicMasterclass: publicMasterclass, focusProductCode: focusProductCode};
         window.EdabalansAppContext.nativeManager = Boolean(nativeManager);
+        if (app === 'metabolism' && adminUser && mount.hasAttribute('data-diary-metabolism')) {
+          window.EdabalansAppContext.previewEmptyMetabolism = true;
+        }
         var doc = new DOMParser().parseFromString(html, 'text/html');
         var sourceRoot = doc.getElementById(roots[app]);
         mount.id = roots[app];

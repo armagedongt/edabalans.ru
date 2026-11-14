@@ -954,7 +954,7 @@
       if (date) day(date).dqs = entry;
     }
     for (const session of strength.state?.data?.workouts ?? []) {
-      if (session?.status === "filled" && typeof session.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(session.date)) day(session.date).workouts++;
+      if (session?.status === "filled" && dqsEntryDate(session.date, 1) === session.date && session.date) day(session.date).workouts++;
     }
     function addDailyNote(note) {
       const dated = parseDailyNote(note.body);
@@ -965,6 +965,39 @@
     [...notes].reverse().forEach(addDailyNote);
     const number = new Intl.NumberFormat("ru-RU", { minimumFractionDigits: 1, maximumFractionDigits: 2 });
     const avg = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
+    const dayLabel = (date) => date.split("-").reverse().join(".");
+    const alcoholIndex = dqsCategories.findIndex(([, , , , id]) => id === "alcohol");
+    const metrics = [
+      ["weight", "Вес", "кг", 7, "Нет взвешиваний"],
+      ["score", "DQS", "баллы", 5, "Нет записей DQS"],
+      ["steps", "Шаги", "шагов", 5, "Нет данных о шагах"],
+      ["kcal", "Калорийность", "ккал", 5, "Нет выгрузки калорий"]
+    ];
+    function chartContent(key, title, unit, windowSize, missing, from, to) {
+      const points = [...rows].sort(([a], [b]) => a.localeCompare(b)).flatMap(([date, row]) => {
+        const value = key === "score" && row.dqs ? dqsDayScore(row.dqs) : row[key];
+        return Number.isFinite(value) ? [{ date, value }] : [];
+      });
+      const shown = points.map((point, i) => ({
+        ...point,
+        mean: i + 1 >= windowSize ? avg(points.slice(i + 1 - windowSize, i + 1).map(item => item.value)) : null
+      })).filter(({ date }) => (!from || date >= from) && (!to || date <= to));
+      if (!shown.length) return `<p class="diary-chart-empty">${missing}</p>`;
+      const values = shown.flatMap(({ value, mean }) => mean === null ? [value] : [value, mean]);
+      const low = Math.min(...values), high = Math.max(...values);
+      const first = Date.parse(shown[0].date), duration = Date.parse(shown.at(-1).date) - first;
+      const x = (date) => duration ? 8 + (Date.parse(date) - first) / duration * 384 : 200;
+      const y = (value) => high === low ? 50 : 88 - (value - low) / (high - low) * 76;
+      const line = (field) => shown.filter(item => item[field] !== null).map(item => `${x(item.date)},${y(item[field])}`).join(" ");
+      const last = shown.at(-1);
+      return `<div class="diary-chart-caption"><span>${number.format(last.value)} ${unit}</span><span>SMA ${windowSize}: ${last.mean === null ? "мало замеров" : number.format(last.mean)}</span></div>
+        <svg viewBox="0 0 400 100" preserveAspectRatio="none" role="img" aria-label="${title}, исходные значения и SMA">
+          <path class="diary-chart-gridlines" d="M8 12H392 M8 50H392 M8 88H392"/>
+          <polyline class="diary-chart-raw" points="${line("value")}"/>
+          <polyline class="diary-chart-mean" points="${line("mean")}"/>
+          ${shown.map(({ date, value }) => `<circle cx="${x(date)}" cy="${y(value)}" r="2.8"><title>${dayLabel(date)} · ${number.format(value)} ${unit}</title></circle>`).join("")}
+        </svg><div class="diary-chart-caption"><span>${dayLabel(shown[0].date)}</span><span>${dayLabel(last.date)}</span></div>`;
+    }
     function categoryMark(group, id, value) {
       if (group === "plants" || group === "proteins" || group === "garnishes" && id !== "other-garnishes") {
         return value === 0 ? "zero" : value <= 1.5 ? "low" : "";
@@ -980,17 +1013,23 @@
           const mark = value == null ? "" : categoryMark(group, id, Number(value));
           return `<td class="diary-category"><span class="${mark}">${value == null ? "" : number.format(value)}</span></td>`;
         }).join("");
-        return `<tr><td>${index + 1}</td><th scope="row">${esc(date.split("-").reverse().join("."))}</th>
+        return `<tr><td>${index + 1}</td><th class="diary-date" scope="row">${dayLabel(date)}</th>
           <td>${item.dqs ? number.format(dqsDayScore(item.dqs)) : ""}</td><td><span class="${diversity === 0 ? "diversity-low" : ""}">${diversity ?? ""}</span></td>
-          ${categories}<td class="diary-divider">${item.workouts || ""}</td><td class="diary-day-note">${esc(item.notes?.join("\n\n") || "")}</td></tr>`;
+          ${categories}<td class="diary-divider"></td><td class="diary-separator"></td><td class="diary-divider"></td>${'<td class="diary-calorie-detail"></td>'.repeat(7)}
+          <td class="diary-divider"></td><td class="diary-divider">${item.workouts || ""}</td><td></td><td></td>
+          <td class="diary-divider">${item.dqs?.p?.[alcoholIndex] > 0 ? "Да" : item.dqs?.p?.[alcoholIndex] === 0 ? "Нет" : ""}</td>
+          <td class="diary-day-note">${esc(item.notes?.join("\n\n") || "")}</td></tr>`;
       }).join("");
-      return table ? `<div class="diary-grid" tabindex="0" aria-label="Данные по дням"><table><thead><tr>
-        <th>№</th><th>Дата</th><th>DQS</th><th>Разнообразие</th>
-        ${dqsCategories.map(([label, , icon]) => `<th class="diary-category" title="${esc(label)}">${esc(icon)} ${esc(label)}</th>`).join("")}
-        <th class="diary-divider">Тренировки</th><th>Заметка</th></tr></thead><tbody>${table}</tbody></table></div>` : "<p>Нет записей по дням.</p>";
+      return `<div class="diary-grid diary-daily-grid" tabindex="0" aria-label="Данные по дням"><table><thead><tr>
+        <th>№</th><th class="diary-date">Дата</th><th>DQS</th><th title="Разнообразие">Разн.</th>
+        ${dqsCategories.map(([label, , icon]) => `<th class="diary-category" aria-label="${esc(label)}" title="${esc(label)}">${esc(icon)}</th>`).join("")}
+        <th class="diary-divider">Вес</th><th class="diary-separator">SMA 7</th><th class="diary-divider">Ккал</th>
+        ${["Белки", "Жиры", "Углеводы", "Расход", "Цель", "Дефицит", "SMA 5"].map(label => `<th class="diary-calorie-detail">${label}</th>`).join("")}
+        <th class="diary-divider">Шаги</th><th class="diary-divider">Тренировок</th><th>Ккал трен.</th><th>Тренировка</th>
+        <th class="diary-divider">Алк.</th><th>Заметка</th></tr></thead><tbody>${table}</tbody></table></div>${table ? "" : "<p>Нет записей по дням.</p>"}`;
     }
-    function nutritionSummary() {
-      const entries = [...rows.values()].flatMap(item => item.dqs ? [item.dqs] : []);
+    function nutritionSummary(from, to) {
+      const entries = [...rows].flatMap(([date, item]) => item.dqs && (!from || date >= from) && (!to || date <= to) ? [item.dqs] : []);
       if (!entries.length) return "";
       const scores = dqsCategories.map((_, i) => avg(entries.map(entry => dqsCategoryScore(entry, i))));
       const scale = Math.max(1, ...scores.map(Math.abs));
@@ -1005,11 +1044,48 @@
         }).join("")}</tbody></table></div></section>`;
     }
     root.innerHTML = `${managedApplicationToolbar("client-diary", dqs.user)}<div class="client-diary">
-      ${nutritionSummary()}
-      <section><div class="diary-heading"><h2>По дням</h2><button type="button" data-diary-categories aria-expanded="true">Скрыть категории</button></div><div data-diary-days>${dailyTable()}</div></section>
-      <section><h2>Заметки</h2><form><label>Дата <input type="date" name="day"></label><textarea name="body" rows="4" maxlength="9985" required aria-label="Заметка" placeholder="Заметка к разбору"></textarea><button>Сохранить заметку</button><p role="status"></p></form>
+      <div data-diary-summary></div>
+      <section><div class="diary-heading"><h2>По дням</h2><div class="diary-controls"><button type="button" data-diary-categories aria-expanded="true">Скрыть категории</button><button type="button" data-diary-calories aria-expanded="false">Детали калорий</button></div></div><div data-diary-days>${dailyTable()}</div>
+        <ul class="diary-legend" aria-label="Цвета таблицы"><li class="diversity-low">Низкое разнообразие</li><li class="zero">0 порций</li><li class="low">Мало порций</li><li class="high">Много порций</li></ul></section>
+      <section><div class="diary-heading"><h2>Динамика</h2><div class="diary-controls"><label>С <input type="date" data-diary-from></label><label>По <input type="date" data-diary-to></label></div></div>
+        <div class="diary-charts">${metrics.map(([key, title, , windowSize]) => `<article data-diary-chart="${key}"><div class="diary-heading"><h3>${title}</h3><div class="diary-controls"><label>SMA <select aria-label="Период SMA: ${title}">${[3,5,7,10,14,21,30].map(n => `<option${n === windowSize ? " selected" : ""}>${n}</option>`).join("")}</select></label><button type="button" aria-label="Развернуть график: ${title}" title="На весь экран">⛶</button></div></div><div data-chart-plot></div></article>`).join("")}</div>
+      </section>
+      <section aria-label="Калькулятор метаболизма"><div class="admin-managed-app" data-diary-metabolism data-edabalans-app="metabolism" data-edabalans-inline="true" data-edabalans-admin-user="${esc(selected)}" data-edabalans-account-url="${esc(applicationUserHref("metabolism", selected))}"><div class="admin-empty">Загружаю калькулятор…</div></div></section>
+      <section><h2>Калории по приёмам пищи</h2><div class="diary-grid" tabindex="0" aria-label="Калории по приёмам пищи"><table><thead><tr>${["Дата", "Приёмов пищи", "Завтрак", "Обед", "Ужин", "Перекусы", "Итого, ккал"].map(label => `<th>${label}</th>`).join("")}</tr></thead><tbody><tr><td colspan="7">Выгрузка калорий пока не загружена</td></tr></tbody></table></div></section>
+      <section><h2>Заметки</h2><form class="diary-notes-form"><label>Дата <input type="date" name="day"></label><textarea name="body" rows="4" maxlength="9985" required aria-label="Заметка" placeholder="Заметка к разбору"></textarea><button>Сохранить заметку</button><p role="status"></p></form>
       <div data-diary-notes></div></section></div>`;
     const noteList = root.querySelector("[data-diary-notes]");
+    const wrapper = root.querySelector(".client-diary");
+    wrapper.classList.add("diary-calories-collapsed");
+    const calorieToggle = root.querySelector("[data-diary-calories]");
+    calorieToggle.onclick = () => {
+      const collapsed = wrapper.classList.toggle("diary-calories-collapsed");
+      calorieToggle.setAttribute("aria-expanded", String(!collapsed));
+    };
+    const from = root.querySelector("[data-diary-from]"), to = root.querySelector("[data-diary-to]");
+    function drawChart(metric) {
+      const card = root.querySelector(`[data-diary-chart="${metric[0]}"]`);
+      const [key, title, unit, , missing] = metric;
+      card.querySelector("[data-chart-plot]").innerHTML = chartContent(key, title, unit, Number(card.querySelector("select").value), missing, from.value, to.value);
+    }
+    function drawPeriod() {
+      from.max = to.value;
+      to.min = from.value;
+      root.querySelector("[data-diary-summary]").innerHTML = nutritionSummary(from.value, to.value);
+      metrics.forEach(drawChart);
+    }
+    for (const metric of metrics) {
+      const card = root.querySelector(`[data-diary-chart="${metric[0]}"]`);
+      card.querySelector("select").onchange = () => drawChart(metric);
+      card.querySelector("button").onclick = () => {
+        const request = document.fullscreenElement === card ? document.exitFullscreen() : card.requestFullscreen();
+        request.catch(() => {});
+      };
+    }
+    from.onchange = to.onchange = drawPeriod;
+    drawPeriod();
+    const calculator = root.querySelector("[data-diary-metabolism]");
+    window.EdabalansEmbed?.load(calculator);
     const categoryToggle = root.querySelector("[data-diary-categories]");
     categoryToggle.onclick = () => {
       const hidden = root.querySelector(".client-diary").classList.toggle("diary-categories-hidden");
@@ -1020,8 +1096,8 @@
       noteList.innerHTML = notes.map(note => `<div class="diary-note"><small>${date(note.created_at)}</small><p>${esc(note.body)}</p></div>`).join("");
     }
     showNotes();
-    const form = root.querySelector(".client-diary form");
-    bindManagedToolbar("client-diary", dqs.user, () => !form.elements.body.disabled &&
+    const form = root.querySelector(".diary-notes-form");
+    bindManagedToolbar("client-diary", dqs.user, () => window.EdabalansAppContext?.canSwitchClient?.() !== false && !form.elements.body.disabled &&
       (!form.elements.body.value.trim() || window.confirm("Уйти со страницы без сохранения заметки?")));
     const status = form.querySelector("[role=status]");
     form.onsubmit = async (event) => {

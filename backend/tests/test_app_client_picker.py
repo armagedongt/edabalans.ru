@@ -60,6 +60,7 @@ def test_owner_session_can_select_client_without_general_admin_access(setup):
     assert response.json()['actor']['email'] == 'armagedongt@gmail.com'
     assert response.json()['selected']['user_id'] == str(ids[1])
     assert client.get('/admin/api/apps/users?app_code=strength').status_code == 401
+    assert client.get(f'/admin/api/apps/metabolism/users/{ids[1]}/runtime?preview_empty=true').status_code == 401
     assert client.get('/api/account-auth/session').json()['email'] == 'armagedongt@gmail.com'
 
 

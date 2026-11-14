@@ -362,7 +362,8 @@
         return{protein,fat,carbs:carbCalories>=0?carbCalories/4:null,sugars:carbCalories>=0?Math.min(eat*sugarShare/100,carbCalories)/4:null};
       }
 
-      function mobile(){return design.view==='Телефон'||innerWidth<=720}
+      function compactHost(){return root.hasAttribute('data-diary-metabolism')&&root.clientWidth<=720}
+      function mobile(){return design.view==='Телефон'||innerWidth<=720||compactHost()}
       function renderEnergy(r){
         const node=root.querySelector('[data-energy]');
         if(!r||r.balance<=0||[r.bmr,r.neat,r.train,r.tef].some(x=>!Number.isFinite(x)||x<0)){node.innerHTML='<p class="mw-note">Заполните параметры, чтобы увидеть состав расхода.</p>';return}
@@ -401,7 +402,7 @@
         root.querySelector('[data-comparison]').innerHTML=[['Шаги / день',x=>fmt(x.steps),'steps'],['Тренировки, ккал/нед',x=>fmt(x.train_week),'train_week'],['Дефицит, ккал/день',x=>fmt((calc(x)||{}).deficit),'deficit'],['Энергобаланс, ккал',x=>fmt((calc(x)||{}).balance),'balance'],['Потребление, ккал/день',x=>fmt((calc(x)||{}).eat),'eat'],['Скорость, г/нед',x=>fmt((calc(x)||{}).speed),'speed'],['Срок, дней',x=>fmt(x.time),'time'],['За срок, кг',x=>fmt((calc(x)||{}).loss,1),'loss']].map(([l,f,id])=>'<tr><td>'+helpLabel(l,id)+'</td>'+variants.map((x,i)=>'<td class="'+(i===active?'mw-selected':'')+'">'+f(x)+'</td>').join('')+'</tr>').join('');
         root.querySelectorAll('[data-section]').forEach(x=>x.dataset.mobileHidden=String(tab==='compare'?x.dataset.section!=='compare':x.dataset.section==='compare'));
         root.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.tab===tab)));
-        win.classList.toggle('mw-phone',design.view==='Телефон');win.style.setProperty('--mw-left',design.width+'px');
+        win.classList.toggle('mw-phone',design.view==='Телефон'||compactHost());win.style.setProperty('--mw-left',design.width+'px');
         if(design.view!=='Телефон'&&innerWidth>720)root.querySelector('.mw-workspace').style.gridTemplateColumns=design.width+'px minmax(0,1fr)';else root.querySelector('.mw-workspace').style.gridTemplateColumns='';
         root.querySelector('[data-view]').textContent=design.view==='ПК'?'Телефон':'ПК';
       }
@@ -426,7 +427,8 @@
       context.canSwitchClient=()=>!dirty&&!saving;
       const status=root.querySelector('[data-status]'),retry=root.querySelector('[data-retry-save]');
       async function request(options){
-        const response=await fetch(apiUrl,{credentials:'same-origin',...options}),data=await response.json();
+        const url=apiUrl+(context.previewEmptyMetabolism&&!options?'?preview_empty=true':'');
+        const response=await fetch(url,{credentials:'same-origin',...options}),data=await response.json();
         if(!response.ok||!data.ok){const error=new Error(data.error||data.detail||'Не удалось загрузить данные');error.status=response.status;throw error}
         return data;
       }
@@ -470,7 +472,7 @@
         let account=root.querySelector('[data-account-name]');
         if(!account){account=document.createElement('p');account.className='mw-caption';account.dataset.accountName='';root.querySelector('.mw-heading').append(account)}
         account.textContent=[data.name,data.email].filter(Boolean).join(' · ');
-        renderFields();update();status.textContent='Данные загружены';
+        renderFields();update();status.textContent=serverVersion===null?'Расчёт без сохранения': 'Данные загружены';
       }
       const ready=request().then(hydrate);
       if(window.EdabalansEmbed)window.EdabalansEmbed.waitUntilReady(root,ready);

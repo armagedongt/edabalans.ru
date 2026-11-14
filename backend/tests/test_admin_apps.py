@@ -160,11 +160,18 @@ def test_admin_can_open_metabolism_with_calories_course_access():
         db.commit()
         user_id = user.id
 
+    runtime = f"/admin/api/apps/metabolism/users/{user_id}/runtime"
+    assert client.get(runtime, params={"preview_empty": "true"}).status_code == 401
     login(client)
     detail = client.get(f"/admin/api/apps/metabolism/users/{user_id}")
     assert detail.status_code == 200
     assert detail.json()["has_access"] is True
     assert detail.json()["has_state"] is False
+    assert client.get(runtime).status_code == 404
+    preview = client.get(runtime, params={"preview_empty": "true"})
+    assert preview.status_code == 200
+    assert preview.json()["version"] is None
+    assert preview.json()["variants"] == {}
 
     opened = client.post(f"/admin/api/apps/metabolism/users/{user_id}/open")
     assert opened.status_code == 200
