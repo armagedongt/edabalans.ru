@@ -54,6 +54,19 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
  });
  await page.goto('http://127.0.0.1:8828/strength-progression-local');
  const card=()=>page.locator('article[data-session-index="2"][data-exercise-id="bench-press"]');await card().waitFor();
+ if(role==='user'){
+  for(const view of ['training','exercise']){
+   if(await page.locator('#strength-app').getAttribute('data-journal-view')!==view)await page.locator('.st-view-toggle').click();
+   const row=await card().locator('.st-exercise-action-row').boundingBox();
+   const add=await card().getByRole('button',{name:'Добавить подход',exact:true}).boundingBox();
+   const remove=await card().getByRole('button',{name:'Убрать подход',exact:true}).boundingBox();
+   assert.equal(add.x,row.x);
+   assert(Math.abs(remove.x+remove.width-row.x-row.width)<1,'set controls span the row without progression');
+   assert.equal(add.y,remove.y);
+   await card().screenshot({path:path.join(output,`${width}-user-${view}-actions.png`)});
+  }
+  await page.locator('.st-view-toggle').click();
+ }
  if(role==='owner'){
   for(const view of ['training','exercise']){
    if(await page.locator('#strength-app').getAttribute('data-journal-view')!==view)await page.locator('.st-view-toggle').click();
@@ -63,13 +76,15 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
     const trigger=card().getByRole('button',{name:'Рассчитать прогрессию',exact:true});
     sizes.push(await trigger.evaluate(el=>{const r=el.getBoundingClientRect(),root=el.closest('#strength-app');return {width:r.width,height:r.height,font:parseFloat(getComputedStyle(el).fontSize)*Number(root.style.zoom||1),clipped:el.scrollWidth>el.clientWidth};}));
     assert.equal(sizes.at(-1).clipped,false,'progression label fits at '+scale+'% in '+view);
+    const calculate=await trigger.boundingBox();
+    const add=await card().getByRole('button',{name:'Добавить подход',exact:true}).boundingBox();
+    assert(calculate.x+calculate.width<=add.x&&Math.abs(calculate.y-add.y)<=2,'set controls sit to the right of progression');
     await card().screenshot({path:path.join(output,`${width}-scale-${view}-${scale}.png`)});
     await card().locator('.st-exercise-actions').screenshot({path:path.join(output,`${width}-actions-${view}-${scale}.png`)});
    }
    assert(sizes[0].height<sizes[1].height&&sizes[1].height<sizes[2].height,'progression button height follows '+view+' scale');
    assert(sizes[0].font<sizes[1].font&&sizes[1].font<sizes[2].font,'progression label follows '+view+' scale');
-   if(view==='training')assert(Math.abs(sizes[0].width-sizes[2].width)<1,'whole-workout action keeps its column width');
-   else for(const [index,factor] of [[0,.5],[2,1.5]])for(const dimension of ['height','font','width'])assert(Math.abs(sizes[index][dimension]/sizes[1][dimension]-factor)<.02,'compact progression '+dimension+' scales once');
+   if(view==='exercise')for(const [index,factor] of [[0,.5],[2,1.5]])for(const dimension of ['height','font','width'])assert(Math.abs(sizes[index][dimension]/sizes[1][dimension]-factor)<.02,'compact progression '+dimension+' scales once');
   }
   await page.locator('.st-view-toggle').click();await page.locator('.st-scale-button').selectOption('100');
  }
@@ -152,6 +167,12 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
     await dialog.getByRole('button',{name:'Закрыть',exact:true}).click();
    }else await page.waitForTimeout(850);
    assert.equal(writes.length,before+1,'one calculation click fills and saves the plan');
+   if(width===701&&role==='owner'&&view==='training'){
+    await page.locator('.st-scale-button').selectOption('150');
+    assert.equal(await control.evaluate(el=>el.scrollWidth>el.clientWidth),false,'progression text still fits with the result info button');
+    await card().locator('.st-exercise-actions').screenshot({path:path.join(output,'701-owner-training-result-150.png')});
+    await page.locator('.st-scale-button').selectOption('100');
+   }
    assert.equal(await card().getByRole('button',{name:/Применить в план/}).count(),0);
    const saved=writes.at(-1).session.exercises[0].sets;
    assert.equal(saved[1].plan_reps,11);assert.equal(saved[1].fact_weight,999);assert.equal(saved[1].fact_reps,8);assert.equal(saved[1].rpe,9);assert.equal(saved[0].role,'warmup');
@@ -191,7 +212,12 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
   assert(await dialog.getByRole('columnheader',{name:'Расчёт — не записан'}).isVisible());
   assert.equal(writes.length,beforeRepeat);
   await dialog.getByRole('button',{name:'Закрыть',exact:true}).click();
-  await card().getByRole('button',{name:'Очистить план упражнения'}).click();
+  const clearPlan=card().getByRole('button',{name:'Очистить план упражнения'});
+  const clearBox=await clearPlan.boundingBox();
+  const setNumber=await card().locator('.st-modern-number').first().boundingBox();
+  assert(Math.abs(clearBox.x+clearBox.width/2-setNumber.x-setNumber.width/2)<1,'clear button aligns with set numbers');
+  assert(clearBox.y+clearBox.height<=setNumber.y,'clear button sits above the set numbers');
+  await clearPlan.click();
   await page.waitForTimeout(850);
   const cleared=writes.at(-1).session.exercises[0];
   assert.equal(cleared.plan_cleared,true);

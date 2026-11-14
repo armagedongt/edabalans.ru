@@ -237,13 +237,17 @@
 #strength-app .st-history-column{display:flex;flex-direction:column}
 #strength-app .st-history-column .st-modern-editor{flex:1}
 .st-exercise-actions{margin-top:auto}
-.st-progression-bar{display:flex;align-items:stretch;border:1px solid var(--st-accent-line);border-radius:7px;background:var(--st-accent-soft);overflow:hidden;margin:5px 0 0}
+.st-exercise-action-row{display:flex;gap:4px;margin-top:5px}
+.st-progression-bar{display:flex;flex:1;min-width:0;align-items:stretch;margin:0;border:1px solid var(--st-accent-line);border-radius:7px;background:var(--st-accent-soft);overflow:hidden}
 #strength-app .st-progression-bar button{border:0;border-radius:0;background:transparent}
 /* Journal additions must use --st-row-scale: whole-workout rows scale here,
    compact history already scales through root zoom and keeps this factor at 1. */
 #strength-app .st-progression-bar button{min-height:calc(32px * var(--st-row-scale,1));padding-block:calc(5px * var(--st-row-scale,1));font-size:min(calc(11px * var(--st-row-scale,1)),15px)}
-#strength-app .st-progression-trigger{flex:1;min-width:0}
+#strength-app .st-progression-trigger{flex:1;min-width:0;overflow-wrap:anywhere}
 #strength-app .st-progression-bar .st-progression-info{flex:0 0 30px;width:30px;border-left:1px solid var(--st-accent-line)}
+.st-set-actions{display:flex;flex:1;gap:4px}
+.st-progression-bar + .st-set-actions{flex:none}
+#strength-app .st-set-actions button{flex:1;min-width:0;width:calc(34px * var(--st-row-scale,1));min-height:calc(34px * var(--st-row-scale,1));padding:0;border:1px solid var(--st-accent-line);border-radius:7px;background:#fff;color:var(--st-accent);font-size:17px}
 #strength-app .st-note-field textarea{box-sizing:border-box;height:80px;min-height:80px;line-height:20px;overflow:hidden}
 #strength-app .st-note-field textarea[readonly]{cursor:default}
 #strength-app .st-date-modal input{box-sizing:border-box;display:block;width:100%;min-width:0;min-height:44px;margin-top:5px;padding:8px;border:1px solid var(--st-accent-line);border-radius:7px;background:#fff;color:var(--st-text);font:400 16px/1.4 var(--ed-font-body,Manrope,Arial,sans-serif)}
@@ -251,4 +255,5 @@
 #st-delivery-messenger a{color:var(--st-accent)}
 #st-delivery-messenger .messenger-popup-actions a{padding:9px;border:1px solid var(--st-accent-line);border-radius:7px;background:var(--st-accent-soft);font-size:13px;font-weight:700;text-decoration:none}
 
-#strength-app .st-modern-tools .st-clear-exercise-plan:disabled{opacity:.4;cursor:default}
+#strength-app .st-grid-labels .st-clear-exercise-plan{grid-column:1;justify-self:center;width:20px;min-width:0;color:#bf3946}
+#strength-app .st-grid-labels .st-clear-exercise-plan:disabled{opacity:.4;cursor:default}

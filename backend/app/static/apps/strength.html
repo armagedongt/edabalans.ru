@@ -1575,7 +1575,7 @@
 
 </style>
 
-<link rel="stylesheet" href="/assets/strength-journal.css?v=20261114-clear-plan">
+<link rel="stylesheet" href="/assets/strength-journal.css?v=20261114-exercise-actions">
 <script src="/assets/strength-journal-model.js?v=20261022-set-role-inheritance"></script>
 <script>
 (function(){
@@ -3857,13 +3857,16 @@ function renderHistoryExercise(index,item,order,maxSets){
   var html='<article style="'+journalExerciseTone(order)+'" class="st-modern-exercise st-history-column" data-session-index="'+index+'" data-exercise-id="'+id+'">';
   if(app.journalView==='exercise')html+=journalDate(index,session,'st-history-date',exercise.id);
   html+='<header class="st-modern-head"><div class="st-modern-title"><span class="st-exercise-number">'+(order+1)+'</span><strong>'+exerciseNameHtml(item,exercise.name)+'</strong></div><div class="st-modern-tools">'+
-    '<button'+data+' onclick="ST.addSet('+args+')" aria-label="Добавить подход">＋</button><button'+data+' onclick="ST.removeSet('+args+')" aria-label="Убрать подход">−</button>'+
-    '<button type="button" class="st-clear-exercise-plan"'+data+' onclick="ST.clearExercisePlan('+args+')" aria-label="Очистить план упражнения" title="Очистить план упражнения" '+(emptyPlan?'disabled':'')+'>×</button>'+
     ((item.source==='base' || item.source==='custom')?'<button class="st-exercise-info"'+data+' onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Информация об упражнении">i</button>':'')+'</div></header>'+
-    '<section class="st-modern-editor"><div class="st-grid-labels"><span></span><span class="st-plan-label">'+renderCopyButton(exercise.id,index,false,'',emptyPlan)+'<span>План</span></span><span class="st-fact-label">'+renderCopyButton(exercise.id,index,true,'',!exerciseHasFact(exercise))+'<span>Факт</span></span><span>RPE</span></div>';
+    '<section class="st-modern-editor"><div class="st-grid-labels">'+
+    '<button type="button" class="st-clear-exercise-plan"'+data+' onclick="ST.clearExercisePlan('+args+')" aria-label="Очистить план упражнения" title="Очистить план упражнения" '+(emptyPlan?'disabled':'')+'>×</button>'+
+    '<span class="st-plan-label">'+renderCopyButton(exercise.id,index,false,'',emptyPlan)+'<span>План</span></span><span class="st-fact-label">'+renderCopyButton(exercise.id,index,true,'',!exerciseHasFact(exercise))+'<span>Факт</span></span><span>RPE</span></div>';
   exercise.sets.forEach(function(set,setIndex){html+=renderModernSet(index,exercise,setIndex,set);});
   html+='<div class="st-history-set-space" style="height:calc('+Math.max(0,(maxSets-exercise.sets.length)*33)+'px * var(--st-row-scale,1))"></div>'+
-    '<div class="st-exercise-actions">'+renderProgressionControls(index,exercise,item)+renderJournalNotes(index,exercise)+'</div></section></article>';
+    '<div class="st-exercise-actions"><div class="st-exercise-action-row">'+renderProgressionControls(index,exercise,item)+
+    '<div class="st-set-actions" role="group" aria-label="Подходы"><button type="button"'+data+' onclick="ST.addSet('+args+')" aria-label="Добавить подход" title="Добавить подход">＋</button>'+
+    '<button type="button"'+data+' onclick="ST.removeSet('+args+')" aria-label="Убрать подход" title="Убрать подход">−</button></div></div>'+
+    renderJournalNotes(index,exercise)+'</div></section></article>';
   return html;
 }
 
