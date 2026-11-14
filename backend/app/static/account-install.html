@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-account-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -7,114 +7,81 @@
   <title>Как установить личный кабинет</title>
   <link rel="preload" href="/assets/fonts/manrope-cyrillic-v1.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/manrope-latin-v1.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/assets/site-typography.css">
-  <link rel="stylesheet" href="/assets/article-typography.css">
+  <link rel="stylesheet" href="/assets/site-typography.css?v=20261018-brand-hero">
+  <link rel="stylesheet" href="/assets/article-typography.css?v=20261018-typography">
+  <link rel="stylesheet" href="/assets/course-visual.css">
+  <link rel="stylesheet" href="/assets/account-theme.css?v=20261026-course-shell">
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    body { margin: 0; background: #fff; color: #17191e; font: 400 var(--ed-text-size,16px)/1.55 var(--ed-font-body,Manrope,Arial,sans-serif); }
-    .install-guide { width: min(760px, calc(100% - 32px)); margin: 0 auto; padding-top: clamp(24px,5vw,48px); }
-    .guide-back { display: inline-block; margin-bottom: 20px; color: #0874ad; font-weight: 700; }
-    .guide-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 22px 28px; }
-    #article .guide-nav a { padding: 8px 12px; border: 1px solid #c6e4f6; border-radius: 8px; background: #eef9ff; color: #09618f; text-decoration: none; }
-    #article section h2 { margin-top: 0; }
-    .guide-section { padding-block: 24px; border-top: 1px solid #dceaf2; }
-    #article .guide-steps { margin-block: 12px 16px; }
-    #article .guide-figure { max-width: 460px; margin: 18px 0 14px; }
-    .guide-demo { display: grid; gap: 8px; padding: clamp(10px,2.7vw,18px); border: 1px solid #c9e1f0; border-radius: 14px; background: #f3faff; color: #173f57; }
-    .guide-demo-bar, .guide-demo-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; background: #fff; font-size: 14px; font-weight: 700; line-height: 1.35; }
-    .guide-demo-address { flex: 1; min-width: 0; overflow-wrap: anywhere; }
-    .guide-demo-action { justify-self: end; max-width: 100%; border: 2px solid #0b70ae; color: #075b8e; }
-    .guide-demo-number { display: grid; place-items: center; flex: 0 0 22px; height: 22px; border-radius: 50%; background: #086da8; color: #fff; font-size: 12px; }
-    .guide-demo-icon { font-size: 21px; line-height: 1; }
-    .guide-share-icon, .guide-install-icon { position: relative; flex: 0 0 15px; height: 13px; border: 1.5px solid currentColor; border-radius: 3px; }
-    .guide-share-icon::before, .guide-install-icon::before { position: absolute; left: 50%; translate: -50%; padding-inline: 1px; background: #fff; font: 700 16px/1 Arial,sans-serif; }
-    .guide-share-icon::before { content: "\2191"; top: -8px; }
-    .guide-install-icon::before { content: "\2193"; top: -5px; }
-    .guide-caption { margin-top: 6px; color: #4c5e6a; font-size: 13px; }
+    .account-install { max-width: 836px; margin-inline: auto; }
+    .account-install .content { padding-bottom: 0; }
+    .account-install #article > :last-child { margin-bottom: 0; }
+    .account-install [data-edabalans-site-footer] { --eb-footer-gutter: 0px; }
+    .account-install .article-view { padding-inline: 0; }
+    .account-install .back { display: inline-flex; align-items: center; text-decoration: none; }
     .guide-options { margin-block: 14px 0; }
     .guide-options div { display: grid; grid-template-columns: minmax(130px, 1fr) 2.3fr; gap: 4px 12px; padding: 9px 0; border-bottom: 1px solid #e7eff4; }
     .guide-options dt { font-weight: 800; }
     .guide-options dd { margin: 0; }
-    #article .guide-open { display: inline-flex; align-items: center; justify-content: center; min-height: var(--ed-cta-height,54px); padding: 10px 20px; border-radius: var(--ed-cta-radius,16px); background: #086da8; color: #fff; font-size: var(--ed-cta-size,16px); font-weight: var(--ed-control-weight,800); text-align: center; text-decoration: none; }
-    #article .guide-open:hover { background: #075b8e; }
-    #article .guide-open:focus-visible { outline: 2px solid #075b8e; outline-offset: 3px; }
-    .install-guide [data-edabalans-site-footer] { --eb-footer-gutter: 0px; --eb-footer-width: 760px; }
     @media (max-width: 520px) { .guide-options div { grid-template-columns: 1fr; } }
   </style>
   <script src="/site-footer.js" defer></script>
 </head>
 <body>
-  <main class="install-guide">
-    <a class="guide-back" href="/lk">← Личный кабинет</a>
-    <article id="article">
-      <h1>Как установить личный кабинет</h1>
-      <p>Добавьте значок кабинета на экран телефона или на компьютер. По нему откроется весь кабинет — с доступными вам курсами и приложениями.</p>
-      <nav class="guide-nav" aria-label="Выберите устройство">
-        <a href="#iphone">iPhone и iPad</a><a href="#android">Android</a><a href="#computer">Компьютер</a>
-      </nav>
-      <p>Перед установкой откройте <a href="/lk">главную личного кабинета</a> в браузере. Если ссылка открылась внутри мессенджера, выберите «Открыть в браузере».</p>
+  <main class="course-shell account-install">
+    <div class="content">
+      <div class="article-view">
+        <div class="article-head"><a class="back" href="/lk">← Личный кабинет</a></div>
+        <article class="article" id="article">
+          <h1>Как установить личный кабинет</h1>
+          <p>Добавьте значок кабинета на экран телефона или на компьютер. По нему откроется весь кабинет — с доступными вам курсами и приложениями.</p>
+          <nav aria-label="Выберите устройство">
+            <ul>
+              <li><a href="#iphone">iPhone и iPad</a></li>
+              <li><a href="#android">Android</a></li>
+              <li><a href="#computer">Компьютер</a></li>
+            </ul>
+          </nav>
+          <p>Перед установкой откройте <a href="/lk">главную личного кабинета</a> в браузере. Если ссылка открылась внутри мессенджера, выберите «Открыть в браузере».</p>
 
-      <section class="guide-section" aria-labelledby="iphone">
-        <h2 id="iphone">iPhone и iPad</h2>
-        <ol class="guide-steps">
-          <li>В Safari нажмите «Поделиться» — значок квадрата со стрелкой вверх.</li>
-          <li>Выберите «На экран “Домой”». Если пункта нет, поищите его в «Редактировать действия».</li>
-          <li>Если есть переключатель «Открывать как веб-приложение», оставьте его включённым. Нажмите «Добавить».</li>
-        </ol>
-        <figure class="guide-figure">
-          <div class="guide-demo" aria-hidden="true">
-            <div class="guide-demo-bar"><span class="guide-demo-address">Личный кабинет</span><span class="guide-demo-number">1</span><span class="guide-share-icon"></span> Поделиться</div>
-            <div class="guide-demo-row guide-demo-action"><span class="guide-demo-number">2</span>На экран «Домой»</div>
-            <div class="guide-demo-row guide-demo-action"><span class="guide-demo-number">3</span>Добавить</div>
-          </div>
-          <figcaption class="guide-caption">Схема меню Safari. Кнопка «Поделиться» может быть сверху или снизу.</figcaption>
-        </figure>
-      </section>
+          <section aria-labelledby="iphone">
+            <h2 id="iphone">iPhone и iPad</h2>
+            <ol>
+              <li>В Safari нажмите «Поделиться» — значок квадрата со стрелкой вверх.</li>
+              <li>Выберите «На экран “Домой”». Если пункта нет, поищите его в «Редактировать действия».</li>
+              <li>Если есть переключатель «Открывать как веб-приложение», оставьте его включённым. Нажмите «Добавить».</li>
+            </ol>
+          </section>
 
-      <section class="guide-section" aria-labelledby="android">
-        <h2 id="android">Android</h2>
-        <ol class="guide-steps">
-          <li>В Chrome нажмите ⋮ рядом с адресной строкой.</li>
-          <li>Выберите «Установить и создать ярлык», затем «Установить».</li>
-          <li>Откройте кабинет по значку на главном экране или в списке приложений.</li>
-        </ol>
-        <figure class="guide-figure">
-          <div class="guide-demo" aria-hidden="true">
-            <div class="guide-demo-bar"><span class="guide-demo-address">Личный кабинет</span><span class="guide-demo-number">1</span><span class="guide-demo-icon">⋮</span></div>
-            <div class="guide-demo-row guide-demo-action"><span class="guide-demo-number">2</span>Установить и создать ярлык</div>
-            <div class="guide-demo-row guide-demo-action">Установить</div>
-          </div>
-          <figcaption class="guide-caption">Схема меню Chrome на Android.</figcaption>
-        </figure>
-      </section>
+          <section aria-labelledby="android">
+            <h2 id="android">Android</h2>
+            <ol>
+              <li>В Chrome нажмите ⋮ рядом с адресной строкой.</li>
+              <li>Выберите «Установить и создать ярлык», затем «Установить».</li>
+              <li>Откройте кабинет по значку на главном экране или в списке приложений.</li>
+            </ol>
+          </section>
 
-      <section class="guide-section" aria-labelledby="computer">
-        <h2 id="computer">Компьютер</h2>
-        <p>Откройте кабинет в привычном браузере. Найдите команду установки, подтвердите её и запускайте кабинет по новому значку.</p>
-        <figure class="guide-figure">
-          <div class="guide-demo" aria-hidden="true">
-            <div class="guide-demo-bar"><span class="guide-demo-address">Личный кабинет</span><span class="guide-demo-number">1</span><span class="guide-install-icon"></span> Установка</div>
-            <div class="guide-demo-row guide-demo-action"><span class="guide-demo-number">2</span>Установить</div>
-          </div>
-          <figcaption class="guide-caption">Схема на примере Chrome: ищите значок установки справа от адреса.</figcaption>
-        </figure>
-        <dl class="guide-options">
-          <div><dt>Chrome</dt><dd>Значок установки справа от адреса. Если его нет: ⋮ → «Транслировать, сохранить, поделиться» → «Установить страницу как приложение».</dd></div>
-          <div><dt>Яндекс Браузер</dt><dd>Откройте меню в Умной строке → «Установить как приложение». Выберите отдельное окно.</dd></div>
-          <div><dt>Safari на Mac</dt><dd>«Файл» → «Добавить в Dock». Нужно macOS Sonoma 14 или новее.</dd></div>
-          <div><dt>Edge</dt><dd>Значок установки у адреса или ⋯ → «Другие инструменты» → «Приложения» → «Установить этот сайт как приложение».</dd></div>
-          <div><dt>Firefox на Windows</dt><dd>Нажмите значок веб-приложения в адресной строке, если он есть. Кабинет появится на панели задач.</dd></div>
-        </dl>
-        <p>Чтобы вынести значок на рабочий стол, в Chrome откройте <code>chrome://apps</code>, нажмите на кабинет правой кнопкой и выберите «Создать ярлык». В Яндекс Браузере откройте настройки установленного приложения на боковой панели и выберите «Добавить ярлык».</p>
-      </section>
+          <section aria-labelledby="computer">
+            <h2 id="computer">Компьютер</h2>
+            <p>Откройте кабинет в привычном браузере. Найдите команду установки, подтвердите её и запускайте кабинет по новому значку.</p>
+            <dl class="guide-options">
+              <div><dt>Chrome</dt><dd>Значок установки справа от адреса. Если его нет: ⋮ → «Транслировать, сохранить, поделиться» → «Установить страницу как приложение».</dd></div>
+              <div><dt>Яндекс Браузер</dt><dd>Откройте меню в Умной строке → «Установить как приложение». Выберите отдельное окно.</dd></div>
+              <div><dt>Safari на Mac</dt><dd>«Файл» → «Добавить в Dock». Нужно macOS Sonoma 14 или новее.</dd></div>
+              <div><dt>Edge</dt><dd>Значок установки у адреса или ⋯ → «Другие инструменты» → «Приложения» → «Установить этот сайт как приложение».</dd></div>
+              <div><dt>Firefox на Windows</dt><dd>Нажмите значок веб-приложения в адресной строке, если он есть. Кабинет появится на панели задач.</dd></div>
+            </dl>
+            <p>Чтобы вынести значок на рабочий стол, в Chrome откройте <code>chrome://apps</code>, нажмите на кабинет правой кнопкой и выберите «Создать ярлык». В Яндекс Браузере откройте настройки установленного приложения на боковой панели и выберите «Добавить ярлык».</p>
+          </section>
 
-      <section class="guide-section">
-        <h2>После установки</h2>
-        <p>Откройте значок и войдите, если кабинет попросит. Для работы нужен интернет. Если браузер не предлагает установку, добавьте кабинет в закладки и открывайте его во вкладке.</p>
-        <a class="guide-open" href="/lk">Открыть личный кабинет →</a>
-      </section>
-    </article>
-    <div data-edabalans-site-footer></div>
+          <section>
+            <h2>После установки</h2>
+            <p>Откройте значок и войдите, если кабинет попросит. Для работы нужен интернет. Если браузер не предлагает установку, добавьте кабинет в закладки и открывайте его во вкладке.</p>
+          </section>
+        </article>
+        <div data-edabalans-site-footer></div>
+      </div>
+    </div>
   </main>
 </body>
 </html>
