@@ -866,7 +866,7 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     assert "if(!step.hidden&&step.contentAsset)" in course_html
     assert "loadPublishedMaterials" not in course_html
     assert "'&step_id='+encodeURIComponent(step.id)" in course_html
-    assert "var bundled=SERVER_MODE?Promise.resolve():loadManifestContent(result[0])" in course_html
+    assert "var bundled=SERVER_MODE?Promise.resolve():loadManifestContent(manifest)" in course_html
     assert "function ensureStepContent(step)" in course_html
     assert "if(contentRequests[asset])return contentRequests[asset]" in course_html
     assert "EdabalansEmbed.loadingHtml('Загрузка материала')" in course_html
