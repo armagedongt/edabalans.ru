@@ -70,6 +70,7 @@ export function mount(root, app, context, host, admin) {
           const dashboard = new URL(context.dashboard_url, host);
           dashboard.searchParams.set('view', 'apps');
           if (identity.user_id) dashboard.searchParams.set('user', identity.user_id);
+          if (!context.selected && identity.user_id) dashboard.searchParams.set('own', '1');
           add('Дашборд клиента', dashboard);
         }
         for (const [code, label] of Object.entries(appLabels)) {
@@ -78,7 +79,8 @@ export function mount(root, app, context, host, admin) {
           if (userId && code !== app && ['strength', 'dqs', 'metabolism'].includes(code)) link.dataset.appCode = code;
         }
         drawer.querySelector('header button').onclick = () => drawer.close();
-        let opening = false;
+        let opening = false, revision = 0;
+        drawer.addEventListener('close', () => { revision++; });
         drawer.addEventListener('click', async event => {
           if (event.target === drawer && event.clientX < drawer.getBoundingClientRect().left) drawer.close();
           const link = event.target.closest('a');
@@ -93,11 +95,14 @@ export function mount(root, app, context, host, admin) {
           if (link.dataset.appCode && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) {
             event.preventDefault();
             opening = true;
+            const started = revision;
             status.textContent = 'Открываю…';
             try {
               await ensureState(link.dataset.appCode, userId);
-              if (drawer.open && maySwitch()) location.assign(link.href);
-              else status.textContent = 'Сначала сохраните текущие изменения.';
+              if (drawer.open && started === revision) {
+                if (maySwitch()) location.assign(link.href);
+                else status.textContent = 'Сначала сохраните текущие изменения.';
+              }
             } catch (error) { status.textContent = error.message; }
             finally { opening = false; }
           }

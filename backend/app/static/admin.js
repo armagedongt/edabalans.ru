@@ -241,6 +241,7 @@
   function managedApplicationToolbar(code, user = {}) {
     const label = user.email || user.display_name || "Выбрать клиента";
     const applicationsMode = pageParams.get("view") === "apps";
+    const standaloneUser = applicationsMode && pageParams.get("own") === "1" ? undefined : user.id;
     return `
       <section class="admin-managed-toolbar admin-client-toolbar ${code === "strength" ? "admin-strength-toolbar" : ""}" aria-label="Клиент и приложение">
         <button class="ed-client-button" id="admin-managed-person" type="button" aria-haspopup="dialog" aria-label="Выбрать клиента" title="${esc(user.display_name || label)}"><span>${esc(label)}</span></button>
@@ -249,11 +250,11 @@
           <header><strong>Приложения</strong><button type="button" aria-label="Закрыть" autofocus>×</button></header>
           <nav>${Object.entries(clientApps).map(([key, name]) => {
             const useStandalone = applicationsMode && key !== "client-diary" && key !== code;
-            const href = useStandalone ? standaloneApplicationHref(key, user.id) : applicationUserHref(key, user.id);
-            return `<a href="${href}"${key === code ? ' aria-current="page"' : ""}${useStandalone && user.id ? ` data-open-app="${key}"` : ""}>${esc(name)}</a>`;
+            const href = useStandalone ? standaloneApplicationHref(key, standaloneUser) : applicationUserHref(key, user.id);
+            return `<a href="${href}"${key === code ? ' aria-current="page"' : ""}${useStandalone && standaloneUser ? ` data-open-app="${key}"` : ""}>${esc(name)}</a>`;
           }).join("")}
-          <a href="${standaloneApplicationHref("recipes", user.id)}">Рецепты</a>
-          <a href="${standaloneApplicationHref("account", user.id)}">Личный кабинет</a>
+          <a href="${standaloneApplicationHref("recipes", standaloneUser)}">Рецепты</a>
+          <a href="${standaloneApplicationHref("account", standaloneUser)}">Личный кабинет</a>
           ${user.id ? `<a href="/crm?user=${encodeURIComponent(user.id)}">CRM</a>` : ""}
           ${code === "strength" && user.id ? '<a class="admin-managed-back" href="/admin/strength">Все клиенты в «Силовых»</a>' : ""}
           </nav><p role="status"></p>
@@ -266,7 +267,8 @@
     const dialog = toolbar.querySelector("dialog");
     const button = toolbar.querySelector("#admin-managed-person");
     const status = dialog.querySelector("[role=status]");
-    let opening = false;
+    let opening = false, revision = 0;
+    dialog.addEventListener("close", () => { revision++; });
     toolbar.querySelector("#admin-managed-app").onclick = () => dialog.showModal();
     dialog.querySelector("button").onclick = () => dialog.close();
     dialog.addEventListener("click", async (event) => {
@@ -281,12 +283,13 @@
       if (link.dataset.openApp && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) {
         event.preventDefault();
         opening = true;
+        const started = revision;
         status.textContent = "Открываю…";
         const path = `/admin/api/apps/${link.dataset.openApp}/users/${encodeURIComponent(user.id)}`;
         try {
           const detail = await api(path, {cache: "no-store"});
           if (!detail.has_state) await api(path + "/open", {method: "POST"});
-          if (dialog.open && maySwitch()) location.assign(link.href);
+          if (dialog.open && started === revision && maySwitch()) location.assign(link.href);
         } catch (error) { status.textContent = error.message; }
         finally { opening = false; }
       }
