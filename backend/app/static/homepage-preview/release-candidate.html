@@ -517,8 +517,8 @@
     .hero-guarantee{position:relative;overflow:hidden;margin:22px 0 0;padding:17px 19px 17px 22px;border:1px solid rgba(243,154,47,.24);border-radius:clamp(12px,2vw,16px);background:rgba(255,255,255,.82);box-shadow:0 9px 17px -11px rgba(166,99,20,.5);color:var(--site-text);font-size:clamp(14px,1.65vw,16px);font-style:italic;font-weight:400;line-height:1.55}
     .hero-guarantee p+p{margin-top:10px}
     .hero-guarantee::before{position:absolute;top:0;bottom:0;left:0;width:5px;background:#f39a2f;content:""}
-    .hero-pricing-cta{display:flex;width:max-content;max-width:100%;min-height:54px;align-items:center;justify-content:center;margin:28px auto 0;padding:0 22px;border-radius:16px;background:linear-gradient(100deg,#2f78ef 0%,#635cf7 55%,#b35fab 100%);box-shadow:0 10px 18px -9px rgba(79,78,213,.82);color:#fff;font:800 16px/1.2 var(--ed-font-body, Manrope, Arial, sans-serif);text-align:center;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;animation:none}
-    .hero-pricing-cta:hover,.hero-pricing-cta:focus-visible{background:linear-gradient(100deg,#2f78ef 0%,#635cf7 55%,#b35fab 100%);box-shadow:0 12px 20px -9px rgba(79,78,213,.88);filter:saturate(1.05) brightness(1.03);transform:translateY(-2px)}
+    .hero-pricing-cta{display:flex;width:max-content;max-width:100%;min-height:54px;align-items:center;justify-content:center;margin:28px auto 0;padding:0 22px;border-radius:16px;background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%);box-shadow:0 10px 18px -9px rgba(221,82,45,.68);color:#fff;font:800 16px/1.2 var(--ed-font-body, Manrope, Arial, sans-serif);text-align:center;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;animation:none}
+    .hero-pricing-cta:hover,.hero-pricing-cta:focus-visible{background:linear-gradient(135deg,#ff4745 0%,#ff6940 52%,#f4bd36 100%);box-shadow:0 12px 20px -9px rgba(221,82,45,.78);filter:saturate(1.05) brightness(1.03);transform:translateY(-2px)}
     .site-outro .hero-pricing-note{display:block;width:max-content;max-width:100%;margin:18px auto 0;color:#63717a;font-size:13px;font-style:italic;font-weight:var(--ed-public-body-weight,500);line-height:1.4;text-align:center;text-decoration:none;white-space:nowrap}
     a.hero-pricing-note:hover,a.hero-pricing-note:focus-visible{color:var(--site-blue);text-decoration:underline;text-underline-offset:3px}
 
@@ -2785,6 +2785,48 @@
     #edb-pricing-neurozeh-v1 .edb-pricing-button:hover,
     #edb-pricing-neurozeh-v1 .edb-pricing-button:focus-visible { transform:rotate(-1deg) translateY(-2px); }
 
+      #edb-pricing-neurozeh-v1 .tariff-title-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+      #edb-pricing-neurozeh-v1 .tariff-title-row .edb-pricing-ribbon{margin:0 0 0 auto;white-space:nowrap}
+      #edb-pricing-neurozeh-v1 .tariff-title-row .edb-pricing-plan-name{font:800 21px/1.1 var(--ed-font-body);letter-spacing:0;word-spacing:.08em}
+      #edb-pricing-neurozeh-v1 .tariff-currency{font:600 .78em/1 var(--ed-font-body);letter-spacing:0}
+      #pricing .tariff-help{display:inline-grid;place-items:center;flex:none;width:22px;height:22px;padding:0;border-radius:50%;border:0;background:rgba(39,175,245,.15);color:inherit;font:800 14px/1 var(--ed-font-body,Arial);cursor:pointer}
+      #pricing .tariff-capacity{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0 0;color:#ffda84;font-size:13px;font-weight:750;text-align:center}
+      #pricing .tariff-capacity .tariff-help,#pricing .edb-pricing-plan-consult .tariff-help{background:#ffda84;color:#242019}
+      #pricing .edb-pricing-plan-featured .tariff-help{background:#fff;color:#0876bd;opacity:.82}
+      #pricing .tariff-help:disabled{opacity:.62;cursor:default}
+      #edb-pricing-neurozeh-v1 .edb-pricing-list .edb-pricing-plan{padding-bottom:16px}
+      #edb-pricing-neurozeh-v1 .edb-pricing-list .edb-pricing-button{box-shadow:0 10px 18px -13px rgb(17 108 165 / .55)}
+      #edb-pricing-neurozeh-v1 .edb-pricing-list .edb-pricing-plan-consult .edb-pricing-button{box-shadow:0 10px 18px -13px rgb(244 197 106 / .62)}
+      #edb-pricing-neurozeh-v1 .edb-pricing-button:disabled{opacity:.65;cursor:not-allowed;transform:none}
+      #edb-pricing-neurozeh-v1 .pricing-group-cta{padding:12px 8px;font-size:15px;white-space:nowrap}
+      #edb-pricing-neurozeh-v1 .tariff-capacity[hidden],#edb-pricing-neurozeh-v1 .tariff-footnote[hidden]{display:none}
+      #pricing .tariff-footnote{margin:12px 0 0;text-align:center;font-size:13px;font-weight:700;color:inherit}
+      @media(max-width:430px){
+        #edb-pricing-neurozeh-v1 .tariff-title-row{column-gap:6px}
+      }
+      @media(max-width:380px){
+        #edb-pricing-neurozeh-v1 .tariff-title-row .edb-pricing-ribbon{padding-inline:7px}
+        #edb-pricing-neurozeh-v1 .tariff-title-row .edb-pricing-plan-name{letter-spacing:-.035em}
+        #edb-pricing-neurozeh-v1 .tariff-title-row .tariff-help{width:18px;height:18px}
+        #edb-pricing-neurozeh-v1 .tariff-title-row{column-gap:4px}
+      }
+      @media(max-width:600px){
+        .hero-pricing-cta,
+        .anya-story__cta,
+        .primary-cta[href="#pricing"],
+        .reviews-wall-cta__button--pricing,
+        #edb-pricing-neurozeh-v1 .edb-pricing-list .edb-pricing-button{border-radius:var(--ed-control-radius,12px)}
+        #edb-pricing-neurozeh-v1 .edb-pricing-list .edb-pricing-plan{border-radius:18px}
+      }
+      #edb-pricing-neurozeh-v1 .tariff-info:not([open]){display:none}
+      #edb-pricing-neurozeh-v1 .tariff-info{position:fixed;inset:0;margin:auto;width:min(460px,calc(100% - 32px));padding:22px 24px;color:var(--ed-color-text);font:var(--ed-text-weight) var(--ed-text-size)/var(--ed-text-leading) var(--ed-font-body)}
+      #edb-pricing-neurozeh-v1 .tariff-info::backdrop{background:rgba(10,35,64,.56);backdrop-filter:blur(5px)}
+      #edb-pricing-neurozeh-v1 .tariff-info p{margin:0}
+      #edb-pricing-neurozeh-v1 .tariff-info p:first-child{padding-right:32px}
+      #edb-pricing-neurozeh-v1 .tariff-info p + p{margin-top:10px}
+      #edb-pricing-neurozeh-v1 .tariff-info .edb-product-overlay-close{top:12px;right:12px;width:32px;height:32px;font-size:22px}
+      @media(max-width:600px){#edb-pricing-neurozeh-v1 .tariff-info{padding:18px 20px}}
+
     #edb-pricing-neurozeh-v1 .edb-checkout-modal[hidden] { display:none; }
     html.edb-checkout--locked .cookie-notice,
     html.edb-checkout--locked .site-menu-toggle { display:none; }
@@ -2899,7 +2941,8 @@
     #edb-pricing-neurozeh-v1 .edb-checkout-support .edb-checkout-support-cost { color:#173f70; font-weight:800; }
     #edb-pricing-neurozeh-v1 .edb-checkout-support-choices { display:flex; gap:10px; }
     #edb-pricing-neurozeh-v1 .edb-checkout-support-choice { flex:1; display:grid; place-items:center; position:relative; min-height:var(--ed-control-height,48px); border:1px solid #bdd8ea; border-radius:var(--ed-control-radius,12px); background:#f2f7fa; color:#536b7f; font-size:var(--ed-control-size,14px); font-weight:var(--ed-control-weight,800); cursor:pointer; }
-    #edb-pricing-neurozeh-v1 .edb-checkout-support-choice:has(:checked) { background:#ff6a2a; border-color:#ff6a2a; color:#fff; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-support-choice:has([value="true"]:checked) { background:#dff8e7; border-color:#8fceaa; color:#18733a; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-support-choice:has([value="false"]:checked) { background:#e1e6ec; border-color:#9baab8; color:#334657; }
     #edb-pricing-neurozeh-v1 .edb-checkout-support-choice:has(:focus-visible) { outline:3px solid #168fe8; outline-offset:3px; }
     #edb-pricing-neurozeh-v1 .edb-checkout-support-choice input { position:absolute; opacity:0; width:100%; height:100%; margin:0; cursor:pointer; }
     #edb-pricing-neurozeh-v1 .edb-checkout-support-hint { font-size:12px; }
@@ -3217,7 +3260,7 @@
         <label class="edb-checkout-label" for="edb-checkout-email">Электронная почта</label>
         <input class="edb-checkout-email" id="edb-checkout-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="320" required placeholder="primer@pochta.ru">
         <fieldset class="edb-checkout-support" hidden disabled>
-          <legend>Хотите проходить программу с моей поддержкой?</legend>
+          <legend>Хотите проходить программу с моей поддержкой с самого начала?</legend>
           <p>Я буду на связи каждый день. Отвечу на вопросы по Мастер-классу и вашему дневнику питания, подскажу, что поправить по ходу программы. В конце — индивидуальная консультация.</p>
           <p class="edb-checkout-support-cost">Стоимость: +<span></span></p>
           <div class="edb-checkout-support-choices">
@@ -3292,6 +3335,8 @@
       const checkoutSupport = root.querySelector('.edb-checkout-support');
       const checkoutSupportHint = root.querySelector('.edb-checkout-support-hint');
       let pricingTariffs = {};
+      let renderedPricingVersion = null;
+      let placesRefresh = null;
       let checkoutSubmitting = false;
       // This is also the key used by homepage.js in the Tilda mount. Keeping one
       // browser record makes the offer survive ordinary revisits for its full window.
@@ -3362,17 +3407,131 @@
         try { window.localStorage.removeItem(offerStorageKey); } catch (_error) {}
       }
 
+      const placesInfo = document.createElement('dialog');
+      placesInfo.className = 'tariff-info edb-product-overlay-dialog';
+      placesInfo.setAttribute('aria-label', 'О местах на консультацию');
+      placesInfo.innerHTML = '<form method="dialog"><button class="edb-product-overlay-close" aria-label="Закрыть">×</button></form><div><p>Часть моего времени занята работой с клиентами, которых я уже сопровождаю.</p><p>Поэтому на первые консультации я могу взять ограниченное число новых клиентов. Здесь указано, сколько человек я могу принять в ближайшее время.</p></div>';
+      placesInfo.addEventListener('click', event => { if (event.target === placesInfo) placesInfo.close(); });
+      root.append(placesInfo);
+
+      const tariffDetails = new Map();
+      for (const plan of plans) {
+        const heading = plan.querySelector('h3');
+        const header = document.createElement('div');
+        header.className = 'tariff-title-row';
+        const help = document.createElement('button');
+        help.type = 'button';
+        help.className = 'tariff-help';
+        help.disabled = true;
+        help.textContent = '?';
+        heading.before(header);
+        header.append(heading, help);
+        const button = plan.querySelector('.edb-pricing-button');
+        const note = document.createElement('div');
+        note.className = 'tariff-footnote';
+        button.after(note);
+        const ribbon = plan.querySelector('.edb-pricing-ribbon');
+        const list = plan.querySelector('ul');
+        const catalogItem = ribbon ? list.lastElementChild : null;
+        const chat = catalogItem?.cloneNode(true);
+        if (chat) {
+          chat.querySelector('use').setAttribute('href', '#edb-icon-chat');
+          chat.querySelector(':scope > span:last-child').textContent =
+            'Общий чат участников — лично отвечаю на вопросы каждый день';
+        }
+        if (plan.dataset.priceCode === 'site.masterclass.consult') {
+          const text = [...list.querySelectorAll('li strong')].find(item => item.textContent.startsWith('Индивидуальная консультация'));
+          if (text) text.textContent = 'Индивидуальная консультация и разбор дневника в конце программы';
+        }
+        tariffDetails.set(plan, { header, button, note, ribbon, list, catalogItem, chat });
+      }
+
+      function groupDateLabel(day) {
+        return new Intl.DateTimeFormat('ru-RU', {day:'numeric', month:'short', timeZone:'UTC'})
+          .format(new Date(day + 'T00:00:00Z')).replace(/\.$/, '') + '.';
+      }
+
+      function renderTariffDetails(plan, tariff) {
+        const { header, button, note, ribbon, list, catalogItem, chat } = tariffDetails.get(plan);
+        const group = tariff.group_start_date;
+        button.disabled = Boolean(tariff.sales_closed);
+        button.textContent = group
+          ? (tariff.sales_closed ? 'Набор завершён' : 'Старт ' + groupDateLabel(group) + ' — Забронировать!')
+          : (tariff.sales_closed ? 'Пока нет свободных мест' : 'Начать прямо сейчас!');
+        button.classList.toggle('pricing-group-cta', Boolean(group));
+        note.replaceChildren();
+        if (ribbon) {
+          ribbon.textContent = group ? 'В группе' : 'Выбирают чаще';
+          if (group) header.append(ribbon); else header.before(ribbon);
+          list.append(group ? chat : catalogItem);
+          (group ? catalogItem : chat).remove();
+          note.textContent = group ? 'Места ограничены' : 'Самый выгодный тариф';
+        } else if (tariff.code === 'site.masterclass.basic') {
+          note.textContent = 'Самостоятельно, в своём темпе';
+        } else if (Number.isInteger(tariff.available_places)) {
+          const count = tariff.available_places;
+          const countText = ['Пока нет свободных мест', 'Сейчас доступно ещё одно место',
+            'Сейчас доступно ещё два места', 'Сейчас доступно ещё три места', 'Сейчас доступно ещё четыре места'];
+          note.className = 'tariff-capacity';
+          const question = document.createElement('button');
+          question.type = 'button';
+          question.className = 'tariff-help';
+          question.textContent = '?';
+          question.setAttribute('aria-label', 'Почему количество мест ограничено');
+          question.addEventListener('click', () => placesInfo.showModal());
+          note.append(countText[count], question);
+        }
+        note.hidden = !note.textContent;
+      }
+
+      async function refreshConsultationPlaces() {
+        if (document.hidden || !checkoutModal.hidden || pricingList.hidden) return;
+        try {
+          const response = await fetch(root.dataset.pricingEndpoint, {credentials:'omit', cache:'no-store'});
+          if (!response.ok) return;
+          const catalog = await response.json();
+          if (catalog.version !== renderedPricingVersion) return;
+          const tariff = catalog.tariffs.find(item => item.code === 'site.masterclass.consult');
+          const plan = [...plans].find(item => item.dataset.priceCode === 'site.masterclass.consult');
+          if (!tariff || !plan || tariff.available_places === pricingTariffs[tariff.code].available_places) return;
+          pricingTariffs[tariff.code] = {...pricingTariffs[tariff.code], available_places:tariff.available_places};
+          renderTariffDetails(plan, tariff);
+        } catch (_) {
+          // The checkout verifies availability even if the background refresh fails.
+        }
+      }
+
       function renderPricingCatalog(catalog, source) {
         const byCode = Object.fromEntries((catalog.tariffs || []).map((tariff) => [tariff.code, tariff]));
         pricingTariffs = byCode;
+        renderedPricingVersion = catalog.version;
+        const group = byCode['site.masterclass.recipes']?.group_start_date;
+        for (const paragraph of document.querySelectorAll('[data-homepage-block="hero-outro"] p, [data-homepage-block="pricing-trust"] li span')) {
+          if (!paragraph.dataset.originalStartCopy && /Старт (?:— )?сразу после оплаты/.test(paragraph.textContent)) {
+            paragraph.dataset.originalStartCopy = paragraph.textContent;
+          }
+          if (paragraph.dataset.originalStartCopy) {
+            paragraph.textContent = group
+              ? 'Самостоятельные тарифы стартуют сразу после оплаты. Старт в группе — '
+                + groupDateLabel(group) + ' Доступ к материалам и обновлениям — навсегда!'
+              : paragraph.dataset.originalStartCopy;
+          }
+        }
         plans.forEach((plan) => {
           const tariff = byCode[plan.dataset.priceCode];
           plan.hidden = !tariff;
           if (!tariff) return;
           const includedSupport = plan.querySelector('[data-course-support-included]');
           if (includedSupport) includedSupport.hidden = Number(tariff.course_support_amount) > 0;
-          plan.querySelector('[data-price-field="name"]').textContent = tariff.name;
-          plan.querySelector('[data-price-field="sale"]').textContent = formatPrice(tariff.sale_amount);
+          renderTariffDetails(plan, tariff);
+          const heading = plan.querySelector('[data-price-field="name"]');
+          heading.textContent = tariff.name;
+          heading.nextElementSibling.setAttribute('aria-label', 'Подробнее о тарифе «' + tariff.name + '»');
+          const price = plan.querySelector('[data-price-field="sale"]');
+          const currency = document.createElement('span');
+          currency.className = 'tariff-currency';
+          currency.textContent = '₽';
+          price.replaceChildren(formatPrice(tariff.sale_amount).replace(/\s*₽$/, ''), ' ', currency);
           const personalSale = Number(tariff.personal_sale_amount);
           const personalPrice = plan.querySelector('[data-price-field="personal-sale"]');
           const hasPersonalPrice = Number.isFinite(personalSale) && personalSale >= 0 && personalSale < Number(tariff.sale_amount || 0);
@@ -3405,6 +3564,9 @@
         pricingAssurances.hidden = !hasTariffs;
         pricingDetails.hidden = !hasTariffs;
         renderIntensiveOffer(catalog.intensive_offer || null);
+        if (Number.isInteger(byCode['site.masterclass.consult']?.available_places) && !placesRefresh) {
+          placesRefresh = window.setInterval(refreshConsultationPlaces, 60000);
+        }
       }
 
       function showPublicPricingLoading() {
@@ -3643,7 +3805,9 @@
         checkoutSummary.replaceChildren(
           document.createTextNode(`${name} · `),
           amount,
-          document.createTextNode('. Укажите email, к которому будет привязана покупка после подтверждения оплаты.')
+          document.createTextNode((tariff.group_start_date
+            ? '. Старт группы ' + groupDateLabel(tariff.group_start_date) + ' в 06:00 мск'
+            : '') + '. Укажите email, к которому будет привязана покупка после подтверждения оплаты.')
         );
         checkoutError.hidden = true;
         checkoutSubmitting = false;
@@ -3770,6 +3934,7 @@
         paymentStart.action = root.dataset.checkoutEndpoint;
         const values = {
           price_code: selectedPlan.dataset.priceCode,
+          pricing_version: renderedPricingVersion ?? '',
           email: checkoutEmail.value,
           accept_offer: String(checkoutOffer.checked),
           data_consent: String(checkoutConsent.checked),

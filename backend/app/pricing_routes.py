@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 import re
 from threading import Lock
@@ -9,7 +9,7 @@ from urllib.parse import urlsplit
 import uuid
 from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, model_validator
 from sqlalchemy import delete, select
 from sqlalchemy.exc import IntegrityError
@@ -30,6 +30,10 @@ from app.intensive_web_access import (
 from app.models import OfferCheckout, PricingVersion, User
 from app.pricing_service import (
     CONSULT_TARIFF_CODE,
+    STANDARD_TARIFF_CODE,
+    GROUP_START_KEY,
+    group_start_at,
+    group_start_date,
     COURSE_SUPPORT_AMOUNT_KEY,
     active_pricing_version,
     amount_value,
@@ -57,6 +61,7 @@ _preview_checkout_rate_state: dict[str, tuple[float, int]] = {}
 
 
 class PriceEntryUpdate(BaseModel):
+    group_start_date: date | None = None
     model_config = ConfigDict(extra="forbid")
     code: str = Field(min_length=3, max_length=120)
     regular_amount: Decimal | None = Field(ge=0, le=10_000_000, decimal_places=2)
@@ -200,6 +205,8 @@ def admin_update_pricing_draft(
     for item in body.entries:
         if not PRICE_CODE.match(item.code):
             raise HTTPException(422, f"Некорректный код цены: {item.code}")
+        if "group_start_date" in item.model_fields_set and item.code != STANDARD_TARIFF_CODE:
+            raise HTTPException(422, "Дата группы доступна только для среднего тарифа")
         if "course_support_amount" in item.model_fields_set and item.code != CONSULT_TARIFF_CODE:
             raise HTTPException(422, "Доплата за поддержку доступна только для тарифа с консультацией")
     # Validate every row before changing any value.
@@ -209,6 +216,13 @@ def admin_update_pricing_draft(
         row.compare_at_amount = item.compare_at_amount
         row.sale_amount = item.sale_amount
         row.enabled = item.enabled
+        if "group_start_date" in item.model_fields_set:
+            metadata = dict(row.metadata_json or {})
+            if item.group_start_date is None:
+                metadata.pop(GROUP_START_KEY, None)
+            else:
+                metadata[GROUP_START_KEY] = item.group_start_date.isoformat()
+            row.metadata_json = metadata
         if "course_support_amount" in item.model_fields_set:
             metadata = dict(row.metadata_json or {})
             if item.course_support_amount is None:
@@ -271,6 +285,7 @@ def site_pricing_payload(
     user_id: uuid.UUID | None = None,
 ) -> dict:
     entries = []
+    now = datetime.now(timezone.utc)
     offer = offer_for_user(db, user_id) if user_id else None
     discount = Decimal(OFFER_DISCOUNT) if offer else Decimal("0")
     for entry in pricing_entry_map(db, version).values():
@@ -278,9 +293,17 @@ def site_pricing_payload(
             continue
         catalog_tariff = tariff_public(db, entry.product_code or "")
         serialized = serialize_entry(entry)
+        starts = group_start_at(entry)
+        if starts is not None:
+            serialized["group_start_date"] = group_start_date(entry).isoformat()
+            serialized["sales_closed"] = now >= starts
+
         support_amount = course_support_amount(entry)
         if support_amount is not None:
+            from app.consultation_capacity import available_consultations
             serialized["course_support_amount"] = amount_value(support_amount)
+            serialized["available_places"] = available_consultations(db, now)
+            serialized["sales_closed"] = serialized["available_places"] == 0
         if discount:
             serialized["personal_sale_amount"] = amount_value(
                 site_tariff_amount(entry, personal_discount=discount)
@@ -311,6 +334,7 @@ def site_pricing_payload(
 
 @router.get("/api/pricing/site")
 def public_site_pricing(
+    response: Response,
     intensive_offer: str | None = Query(default=None, max_length=1024),
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
@@ -325,11 +349,13 @@ def public_site_pricing(
         user_id = offer_user_id(db, intensive_offer)
         if user_id is None:
             raise HTTPException(403, "Персональная скидка истекла или недействительна")
+    response.headers["Cache-Control"] = "no-store"
     return site_pricing_payload(db, version, user_id=user_id)
 
 
 @router.get("/api/pricing/site/preview")
 def public_site_pricing_preview(
+    response: Response,
     intensive_offer: str | None = Query(default=None, max_length=1024),
     db: Session = Depends(get_db),
 ) -> dict:
@@ -342,6 +368,7 @@ def public_site_pricing_preview(
         user_id = offer_user_id(db, intensive_offer)
         if user_id is None:
             raise HTTPException(403, "Персональная скидка истекла или недействительна")
+    response.headers["Cache-Control"] = "no-store"
     return site_pricing_payload(db, version, user_id=user_id)
 
 
@@ -398,6 +425,8 @@ def create_site_checkout(
     entry = pricing_entry_map(db, version).get(price_code)
     if entry is None or entry.section != "site_tariffs" or not entry.enabled:
         raise HTTPException(404, "Тариф недоступен")
+    if group_start_date(entry) is not None or course_support_amount(entry) is not None:
+        raise HTTPException(409, "Выберите тариф на главной странице")
     catalog_tariff = tariff_public(db, entry.product_code or "")
     display_name = catalog_tariff["name"] if catalog_tariff else entry.name
     now = datetime.now(timezone.utc)

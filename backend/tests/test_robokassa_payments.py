@@ -2625,3 +2625,100 @@ def test_homepage_consultation_checkout_prices_explicit_support_choice(support_c
             assert legacy.json()["amount"] == 16800
     finally:
         app.dependency_overrides.clear()
+
+
+def test_consultation_capacity_changes_only_after_payment_and_reopens_places():
+    from app.consultation_capacity import available_consultations
+
+    client, factory, key = make_client(test_mode=False)
+    seed_catalog(factory)
+    try:
+        with factory() as db:
+            db.add(Resource(code="ACCESS_CONSULTATION", name="Индивидуальная консультация"))
+            version = db.scalar(select(PricingVersion))
+            db.add(PriceEntry(
+                version_id=version.id, code="site.masterclass.consult", section="site_tariffs",
+                name="С консультацией", product_code="MASTERCLASS_CONSULT", enabled=True,
+                sale_amount=Decimal("16800"), resource_codes=["ACCESS_MASTERCLASS", "ACCESS_CONSULTATION"],
+                metadata_json={"course_support_amount": 3000},
+            ))
+            db.commit()
+
+        def places():
+            rows = client.get("/api/pricing/site/preview").json()["tariffs"]
+            return next(row["available_places"] for row in rows if row["code"] == "site.masterclass.consult")
+
+        def book(email):
+            return client.post("/api/payments/robokassa/checkout", json={
+                "price_code": "site.masterclass.consult", "email": email,
+                "accept_offer": True, "data_consent": True, "course_support": False,
+            }, headers={"Origin": "https://app.edabalans.ru"})
+
+        assert places() == 2
+        one = book("first@example.test").json()
+        two = book("second@example.test").json()
+        assert places() == 2
+        for invoice, expected in ((one, 1), (one, 1), (two, 0)):
+            paid = client.post("/integrations/robokassa/result2", content=signed_result(
+                key, invoice["invoice_id"], "16800.00", operation_id=invoice["invoice_id"],
+            ))
+            assert paid.status_code == 200, paid.text
+            assert places() == expected
+        assert book("third@example.test").status_code == 422
+        now = datetime.now(timezone.utc)
+        with factory() as db:
+            assert available_consultations(db, now + timedelta(minutes=4)) == 0
+            assert available_consultations(db, now + timedelta(minutes=5)) == 1
+            assert available_consultations(db, now + timedelta(minutes=34)) == 1
+            assert available_consultations(db, now + timedelta(minutes=35)) == 2
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_group_checkout_keeps_purchased_start_when_catalog_switches_back():
+    from app.masterclass_routes import course_day_can_open, purchased_group_start
+    from app.pricing_service import group_start_at
+
+    client, factory, key = make_client(test_mode=False)
+    seed_catalog(factory)
+    start_date = (datetime.now(timezone.utc) + timedelta(days=10)).date()
+    try:
+        with factory() as db:
+            db.add(Resource(code="ACCESS_RECIPES", name="Система рецептов"))
+            version = db.scalar(select(PricingVersion))
+            entry = PriceEntry(
+                version_id=version.id, code="site.masterclass.recipes", section="site_tariffs",
+                name="Стандартный", product_code="MASTERCLASS_RECIPES", enabled=True,
+                sale_amount=Decimal("12800"), compare_at_amount=Decimal("15800"),
+                resource_codes=["ACCESS_MASTERCLASS", "ACCESS_RECIPES"],
+                metadata_json={"group_start_date": start_date.isoformat()},
+            )
+            db.add(entry)
+            db.commit()
+            starts = group_start_at(entry)
+            assert starts == datetime.combine(start_date, datetime.min.time(), timezone.utc) + timedelta(hours=3)
+
+        checkout = client.post("/api/payments/robokassa/checkout", json={
+            "price_code": "site.masterclass.recipes", "email": "group@example.test",
+            "accept_offer": True, "data_consent": True,
+        }, headers={"Origin": "https://app.edabalans.ru"})
+        assert checkout.status_code == 200, checkout.text
+        assert checkout.json()["amount"] == 12800
+        with factory() as db:
+            entry = db.scalar(select(PriceEntry).where(PriceEntry.code == "site.masterclass.recipes"))
+            entry.metadata_json = {}
+            entry.sale_amount = Decimal("9800")
+            db.commit()
+        paid = client.post("/integrations/robokassa/result2", content=signed_result(
+            key, checkout.json()["invoice_id"], "12800.00",
+        ))
+        assert paid.status_code == 200, paid.text
+        with factory() as db:
+            payment = db.scalar(select(Payment))
+            assert purchased_group_start(db, payment.user_id, starts - timedelta(seconds=1)) == starts
+            assert course_day_can_open(db, payment.user_id, 1, starts - timedelta(seconds=1)) == (False, "timer", starts)
+            assert course_day_can_open(db, payment.user_id, 1, starts)[0] is True
+            checkout = db.scalar(select(OfferCheckout))
+            assert "ACCESS_RECIPES" in checkout.items
+    finally:
+        app.dependency_overrides.clear()

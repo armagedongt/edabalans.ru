@@ -12,6 +12,7 @@ from app.access_service import course_start_is_open
 from app.app_service import AppAccessError, require_user_resource
 from app.database import get_db
 from app.course_structure_lock import StructureAction, check_structure
+from app.masterclass_routes import purchased_group_start
 from app.models import CourseStepProgress, User
 from app.recipe_course_service import COURSE_CODE, RESOURCE_CODE, course_manifest, course_material
 
@@ -32,6 +33,10 @@ def resolve_course_user(request: Request, db: Session) -> User:
         raise HTTPException(403, str(exc)) from exc
     if not course_start_is_open(db, user.id, RESOURCE_CODE):
         raise HTTPException(403, "Курс пока закрыт по условиям доступа")
+    now = datetime.now(timezone.utc)
+    starts = purchased_group_start(db, user.id, now, (RESOURCE_CODE,))
+    if starts is not None and now < starts:
+        raise HTTPException(403, detail={"reason": "group_not_started", "unlock_at": starts.isoformat()})
     lock_course(db, "masterclass-21")
     return user
 

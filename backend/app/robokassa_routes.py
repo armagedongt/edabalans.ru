@@ -619,6 +619,9 @@ async def robokassa_first_party_start(
     version = active_pricing_version(db)
     if version is None:
         raise HTTPException(503, "Активная версия цен не опубликована")
+    displayed_version = form.get("pricing_version")
+    if displayed_version and displayed_version != str(version.version_number):
+        raise HTTPException(409, "Тарифы изменились. Обновите главную страницу и выберите тариф заново.")
     discount_user_id = offer_user_id(db, body.intensive_offer) if body.intensive_offer else None
     if body.intensive_offer and discount_user_id is None:
         raise HTTPException(403, "Персональная скидка истекла или недействительна")

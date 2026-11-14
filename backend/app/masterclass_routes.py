@@ -34,7 +34,7 @@ from app.models import (
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification, MasterclassTestProfile,
     MasterclassStepProgress, MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage,
     QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail, UserOffer,
-    UserCoursePolicy,
+    UserCoursePolicy, Payment,
 )
 from app.masterclass_feedback import KINDS, eligible_payment, pending_pulse, should_block_completion, store_feedback, validated_answers
 from app.masterclass_offer_catalog import (
@@ -311,6 +311,8 @@ def resolve_masterclass_user(
     db: Session,
     email: str,
     settings: Settings,
+    *,
+    allow_before_group_start: bool = False,
 ) -> User:
     from app.course_structure_lock import lock_course
     lock_course(db, "masterclass-21")
@@ -325,6 +327,11 @@ def resolve_masterclass_user(
             raise AppAccessError("Мастер-класс пока закрыт по условиям доступа")
         # Updating the native session may commit and release the first transaction lock.
         lock_course(db, "masterclass-21")
+        if not allow_before_group_start:
+            now = datetime.now(timezone.utc)
+            starts = purchased_group_start(db, user.id, now)
+            if starts is not None and now < starts:
+                raise HTTPException(403, detail={"reason": "group_not_started", "unlock_at": starts.isoformat()})
         return user
     except AppAccessError as exc:
         raise HTTPException(403, str(exc)) from exc
@@ -550,11 +557,34 @@ def day_progress(
     )
 
 
+def purchased_group_start(
+    db: Session, user_id: uuid.UUID, now: datetime,
+    resource_codes: tuple[str, ...] = ("ACCESS_MASTERCLASS", "ACCESS_MASTERCLASS_LEGACY"),
+) -> datetime | None:
+    sources = list(db.execute(
+        select(UserAccess.id, Payment.raw_payload)
+        .join(Resource, Resource.id == UserAccess.resource_id)
+        .outerjoin(Payment, Payment.id == UserAccess.source_payment_id)
+        .where(UserAccess.user_id == user_id,
+               Resource.code.in_(resource_codes),
+               Resource.status == "active", UserAccess.revoked_at.is_(None),
+               UserAccess.paused_at.is_(None),
+               UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now))
+    ))
+    dates = []
+    for _, payload in sources:
+        starts = (payload or {}).get("group_start_at")
+        if not starts:
+            return None
+        dates.append(datetime.fromisoformat(starts))
+    return min(dates, default=None)
+
+
 def course_day_unlock_at(
     db: Session, user_id: uuid.UUID, day: int, now: datetime
 ) -> datetime | None:
     if day == 1:
-        return None
+        return purchased_group_start(db, user_id, now)
     previous = day_progress(db, user_id, day - 1)
     if not previous:
         return None
@@ -564,6 +594,9 @@ def course_day_unlock_at(
 def course_day_can_open(
     db: Session, user_id: uuid.UUID, day: int, now: datetime
 ) -> tuple[bool, str | None, datetime | None]:
+    starts = purchased_group_start(db, user_id, now) if day == 1 or masterclass_fully_unlocked(db, user_id) else None
+    if starts is not None and now < starts:
+        return False, "timer", starts
     if masterclass_fully_unlocked(db, user_id):
         return True, None, None
     day_payload = course_context(db).days.get(day, {})
@@ -1043,9 +1076,12 @@ def course_state(
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> dict:
-    user = resolve_masterclass_user(request, db, email, settings)
+    user = resolve_masterclass_user(request, db, email, settings, allow_before_group_start=True)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
+    starts = purchased_group_start(db, user.id, now)
+    if starts is not None and now < starts:
+        return {"ok": True, "group_start_at": starts.isoformat(), "server_now": now.isoformat()}
     context = course_context_for_member(db, user.id)
     open_course_day(db, user, context, 1, now, timezone_name)
     course_event(
@@ -2081,6 +2117,10 @@ def timeline_stage(
 
 def offer_stage(db: Session, user: User, placement: str, *, readonly: bool = False) -> tuple[OfferStage, UserOffer | None]:
     now = datetime.now(timezone.utc)
+    if placement == "offers-hub":
+        starts = purchased_group_start(db, user.id, now)
+        if starts is not None and now < starts:
+            return configured_offer_stage(db, "early"), None
     order = ["early", "second", "review", "last_week", "standard"]
     # Serialize the first opening of a checkpoint. UserOffer has an additional
     # unique constraint, but the user row lock keeps concurrent requests from
@@ -2568,7 +2608,7 @@ def account_offers(
     settings: Settings = Depends(get_settings),
 ) -> dict:
     """Read-only offers entry from the Tilda Members Area course dashboard."""
-    user = resolve_masterclass_user(request, db, email, settings)
+    user = resolve_masterclass_user(request, db, email, settings, allow_before_group_start=True)
     return build_offers(
         db,
         user,
@@ -2606,7 +2646,7 @@ def account_offer_checkout(
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> dict:
-    user = resolve_masterclass_user(request, db, body.email, settings)
+    user = resolve_masterclass_user(request, db, body.email, settings, allow_before_group_start=True)
     payload = build_offers(
         db,
         user,

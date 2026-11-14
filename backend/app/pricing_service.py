@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import date, datetime, time, timezone
 from decimal import Decimal, InvalidOperation
 from copy import deepcopy
 import hashlib
 import json
 import re
 import uuid
+from zoneinfo import ZoneInfo
 
 from fastapi import HTTPException
 from sqlalchemy import func, select
@@ -17,6 +18,23 @@ from app.models import PriceEntry, PricingVersion
 AUTHORING_METADATA = "_editorial_pricing"
 CONSULT_TARIFF_CODE = "site.masterclass.consult"
 COURSE_SUPPORT_AMOUNT_KEY = "course_support_amount"
+STANDARD_TARIFF_CODE = "site.masterclass.recipes"
+GROUP_START_KEY = "group_start_date"
+
+
+def group_start_date(entry: PriceEntry) -> date | None:
+    value = (entry.metadata_json or {}).get(GROUP_START_KEY)
+    if entry.code != STANDARD_TARIFF_CODE or not value:
+        return None
+    return date.fromisoformat(value)
+
+
+def group_start_at(entry: PriceEntry) -> datetime | None:
+    day = group_start_date(entry)
+    if day is None:
+        return None
+    return datetime.combine(day, time(6), ZoneInfo("Europe/Moscow")).astimezone(timezone.utc)
+
 
 
 def site_tariff_amount(

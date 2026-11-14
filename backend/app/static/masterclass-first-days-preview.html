@@ -350,7 +350,25 @@ function buildFromManifest(manifest){courseManifest=manifest;document.querySelec
     window.addEventListener('edabalans:app-completed',function(event){if(!event.detail||event.detail.app!=='dqs'||event.detail.completion!=='tutorial')return;var d=days[state.day-1];if(d.steps[currentStep]&&d.steps[currentStep].kind==='dqs'){markStep(d,currentStep).catch(showActionError)}});
     document.querySelector('#days').onclick=function(e){var material=e.target.closest('[data-material-index]');if(material){openMenuMaterial(material);return}var b=e.target.closest('[data-day]');if(!b)return;var n=+b.dataset.day;closeMenu();if(!unlocked(n)||n>days.length)return;var remote=serverDay(n);if(SERVER_MODE&&remote&&!remote.opened){api('/api/masterclass/course/days/'+n+'/open',{method:'POST',body:courseActionBody()}).then(function(payload){applyCourse(payload);state.day=n;save();renderMenu();renderDay()}).catch(showActionError);return}state.day=n;if(!state.openedAt[n])state.openedAt[n]=nowMs();save();renderMenu();renderDay()};
     window.addEventListener('popstate',function(){if(courseRoot.isConnected&&courseReady)restoreCourseRoute(false)});
-    var courseStartup=Promise.all([manifestFetch(),SERVER_MODE?api('/api/masterclass/course?email='+encodeURIComponent(identity.email)+'&timezone_name='+encodeURIComponent(timezoneName())):Promise.resolve(null)]).then(function(result){var bundled=SERVER_MODE?Promise.resolve():loadManifestContent(result[0]);return bundled.then(function(){buildFromManifest(result[0]);if(result[1])applyCourse(result[1],hasSavedDay);courseReady=true;var routeReady=Promise.resolve(restoreCourseRoute(true)).then(function(){if(innerWidth<=900&&!new URL(location.href).searchParams.get('course_material'))openMenu();if(result[1]&&window.MasterclassFeedback)window.MasterclassFeedback.sync(result[1])});var courseTicker=setInterval(function(){if(!courseRoot.isConnected){clearInterval(courseTicker);return}update()},1000);return routeReady})});
+    function renderGroupWait(startAt,serverNow){
+      var start=new Date(startAt),moscow={timeZone:'Europe/Moscow'};
+      var date=start.toLocaleDateString('ru-RU',Object.assign({day:'numeric',month:'long'},moscow));
+      var time=start.toLocaleTimeString('ru-RU',Object.assign({hour:'2-digit',minute:'2-digit'},moscow));
+      document.querySelector('#sidebar').hidden=true;
+      courseRoot.style.gridTemplateColumns='minmax(0, 1fr)';
+      document.querySelector('#menu').hidden=true;
+      document.querySelector('#day').innerHTML='<section class="next-day"><div class="next-copy"><strong>Материалы Мастер-класса откроются '+esc(date)+' в '+esc(time)+' мск.</strong><p>Личный кабинет и предложения со скидками уже доступны.</p><a class="next-button ready" href="/lk">В личный кабинет</a></div></section>';
+      var refresh=setTimeout(function(){if(courseRoot.isConnected)location.reload()},Math.min(2147483647,Math.max(1000,start-Date.parse(serverNow)+1000)));
+      window.addEventListener('edabalans:app-dispose',function(){clearTimeout(refresh)},{once:true});
+    }
+    var initialCourse=SERVER_MODE?api('/api/masterclass/course?email='+encodeURIComponent(identity.email)+'&timezone_name='+encodeURIComponent(timezoneName())):Promise.resolve(null);
+    var courseStartup=initialCourse.then(function(payload){
+      if(payload&&payload.group_start_at){renderGroupWait(payload.group_start_at,payload.server_now);return}
+      return manifestFetch().then(function(manifest){
+        var bundled=SERVER_MODE?Promise.resolve():loadManifestContent(manifest);
+        return bundled.then(function(){buildFromManifest(manifest);if(payload)applyCourse(payload,hasSavedDay);courseReady=true;var routeReady=Promise.resolve(restoreCourseRoute(true)).then(function(){if(innerWidth<=900&&!new URL(location.href).searchParams.get('course_material'))openMenu();if(payload&&window.MasterclassFeedback)window.MasterclassFeedback.sync(payload)});var courseTicker=setInterval(function(){if(!courseRoot.isConnected){clearInterval(courseTicker);return}update()},1000);return routeReady});
+      });
+    });
     if(window.EdabalansEmbed)window.EdabalansEmbed.waitUntilReady(document.getElementById('masterclass-course-app'),courseStartup);
     else courseStartup.catch(function(e){console.error('Masterclass load failed',e);document.querySelector('#day').innerHTML='<div class="hero"><h1>Не удалось загрузить программу</h1><p>Обновите страницу. Если ошибка повторится, напишите мне.</p></div>'});
   }());

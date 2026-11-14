@@ -636,6 +636,8 @@
           <div class="pricing-cell"><label>БАЗОВАЯ<input class="pricing-input" data-field="regular_amount" type="number" min="0" step="0.01" value="${esc(pricingAmount(entry.regular_amount))}"></label></div>
           <div class="pricing-cell"><label>ЗАЧЁРКНУТАЯ<input class="pricing-input" data-field="compare_at_amount" type="number" min="0" step="0.01" value="${esc(pricingAmount(entry.compare_at_amount))}"></label></div>
           <div class="pricing-cell"><label>ЦЕНА ПРОДАЖИ<input class="pricing-input" data-field="sale_amount" type="number" min="0" step="0.01" value="${esc(pricingAmount(entry.sale_amount))}"></label></div>
+          ${entry.code === 'site.masterclass.recipes' ? `<div class="pricing-cell"><label>СТАРТ ГРУППЫ<input class="pricing-input" data-field="group_start_date" type="date" value="${esc(entry.metadata?.group_start_date || '')}"></label><small>Пусто — обычный тариф</small></div>` : ''}
+          ${entry.code === 'site.masterclass.consult' ? `<div class="pricing-cell"><label>ДОПЛАТА ЗА ПОДДЕРЖКУ<input class="pricing-input" data-field="course_support_amount" type="number" min="0.01" step="0.01" value="${esc(pricingAmount(entry.metadata?.course_support_amount))}"></label></div>` : ''}
           <label class="pricing-check"><input data-field="enabled" type="checkbox" ${entry.enabled ? "checked" : ""}> Показывать</label>
         </div>`).join("")}
       </div></section>`).join("");
@@ -659,7 +661,13 @@
       regular_amount: row.querySelector('[data-field="regular_amount"]').value === "" ? null : row.querySelector('[data-field="regular_amount"]').value,
       compare_at_amount: row.querySelector('[data-field="compare_at_amount"]').value === "" ? null : row.querySelector('[data-field="compare_at_amount"]').value,
       sale_amount: row.querySelector('[data-field="sale_amount"]').value,
-      enabled: row.querySelector('[data-field="enabled"]').checked
+      enabled: row.querySelector('[data-field="enabled"]').checked,
+      ...(row.dataset.priceCode === 'site.masterclass.recipes' ? {
+        group_start_date: row.querySelector('[data-field="group_start_date"]').value || null
+      } : {}),
+      ...(row.dataset.priceCode === 'site.masterclass.consult' ? {
+        course_support_amount: row.querySelector('[data-field="course_support_amount"]').value || null
+      } : {})
     }));
     const currentForm = () => JSON.stringify({ name: document.getElementById("pricing-name").value, note: document.getElementById("pricing-note").value, entries: collect() });
     const savedForm = currentForm();

@@ -1149,6 +1149,43 @@ def setup(*, base_url="https://edabalans.ru"):
     return client, factory
 
 
+def test_group_purchase_keeps_account_offers_open_and_locks_course_until_six_moscow():
+    client, factory = setup()
+    email = "member@example.test"
+    start = (datetime.now(timezone.utc) + timedelta(days=2)).replace(hour=3, minute=0, second=0, microsecond=0)
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        payment.raw_payload = {"group_start_at": start.isoformat()}
+        access = db.scalar(select(UserAccess))
+        access.source_payment_id = payment.id
+        db.commit()
+
+    entry = client.get("/api/masterclass/course", params={"email": email})
+    assert entry.status_code == 200
+    assert entry.json()["group_start_at"] == start.isoformat()
+    assert "days" not in entry.json()
+    for endpoint in (
+        "/course/manifest", "/course/materials", "/course/video/3.mp4",
+        "/course/content/34-five-tastes.md", "/questionnaires/onboarding",
+    ):
+        response = client.get("/api/masterclass" + endpoint, params={"email": email})
+        assert response.status_code == 403, endpoint
+        assert response.json()["detail"]["reason"] == "group_not_started"
+    response = client.post("/api/masterclass/course/days/1/open", json={"email": email})
+    assert response.status_code == 403
+    offers = client.get("/api/masterclass/account-offers", params={"email": email})
+    assert offers.status_code == 200
+    assert offers.json()["stage"] == "early"
+    with factory() as db:
+        assert db.scalar(select(MasterclassDayProgress)) is None
+        payment = db.scalar(select(Payment))
+        payment.raw_payload = {"group_start_at": (start - timedelta(days=3)).isoformat()}
+        db.commit()
+    opened = client.get("/api/masterclass/course", params={"email": email})
+    assert opened.status_code == 200
+    assert opened.json()["days"][0]["opened"] is True
+
+
 def test_feedback_day_five_waits_for_real_answers_then_completes_once():
     client, factory = setup()
     assert client.get("/assets/masterclass-feedback.js").status_code == 200

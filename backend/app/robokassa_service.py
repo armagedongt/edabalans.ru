@@ -18,6 +18,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.config import Settings
+from app.consultation_capacity import available_consultations, confirm_consultation
 from app.intensive_web_access import (
     OFFER_CODE,
     OFFER_DISCOUNT,
@@ -35,7 +36,7 @@ from app.models import (
     TelegramTrackingEvent,
     User,
 )
-from app.pricing_service import amount_value, course_support_amount, pricing_entry_map, site_tariff_amount
+from app.pricing_service import amount_value, course_support_amount, group_start_at, pricing_entry_map, site_tariff_amount
 from app.product_catalog_service import tariff_public
 from app.tilda_service import (
     TildaPayloadError,
@@ -360,6 +361,12 @@ def create_payment(
     if course_support:
         title += " · с поддержкой во время программы"
     now = datetime.now(timezone.utc)
+    group_start = group_start_at(entry)
+    if group_start is not None and group_start <= now:
+        raise RobokassaError("Набор в группу завершён. Обновите страницу с тарифами.")
+    limited_consultation = support_amount is not None and not settings.robokassa_test_mode
+    if limited_consultation and available_consultations(db, now, commit=False) == 0:
+        raise RobokassaError("Пока нет свободных мест на консультацию. Попробуйте чуть позже.")
     offer = offer_for_user(db, offer_user_id) if offer_user_id else None
     amount = site_tariff_amount(
         entry,
@@ -368,6 +375,8 @@ def create_payment(
     if course_support and support_amount is not None:
         amount += support_amount
     expires_at = now + timedelta(hours=2)
+    if group_start is not None:
+        expires_at = min(expires_at, group_start)
     if offer and offer.expires_at:
         offer_expires_at = offer.expires_at
         if offer_expires_at.tzinfo is None:
@@ -425,6 +434,10 @@ def create_payment(
         "account_purchase": account_user is not None,
         "purchase_place": "account" if account_user is not None else "homepage",
     }
+    if group_start is not None:
+        payment.raw_payload["group_start_at"] = group_start.isoformat()
+    if limited_consultation:
+        payment.raw_payload["consultation_place"] = True
     if course_support is not None:
         payment.raw_payload["course_support"] = {
             "selected": course_support,
@@ -975,8 +988,11 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         "integration": {"test_mode": is_test_payment},
         "notification": payload,
     }
-    if "course_support" in checkout_metadata:
-        payment.raw_payload["course_support"] = checkout_metadata["course_support"]
+    for key in ("course_support", "group_start_at", "consultation_place"):
+        if key in checkout_metadata:
+            payment.raw_payload[key] = checkout_metadata[key]
+    if not is_test_payment and checkout_metadata.get("consultation_place") is True:
+        confirm_consultation(db, datetime.now(timezone.utc))
     if personal_link is not None:
         payment.raw_payload["personal_access_link_id"] = str(personal_link.id)
     trusted_snapshot = checkout_metadata.get("trusted_source_snapshot")
