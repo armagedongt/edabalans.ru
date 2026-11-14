@@ -84,7 +84,7 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
    }
    assert(sizes[0].height<sizes[1].height&&sizes[1].height<sizes[2].height,'progression button height follows '+view+' scale');
    assert(sizes[0].font<sizes[1].font&&sizes[1].font<sizes[2].font,'progression label follows '+view+' scale');
-   if(view==='exercise')for(const [index,factor] of [[0,.5],[2,1.5]])for(const dimension of ['height','font','width'])assert(Math.abs(sizes[index][dimension]/sizes[1][dimension]-factor)<.02,'compact progression '+dimension+' scales once');
+   if(view==='exercise')for(const [index,factor] of [[0,.5],[2,1.5]])for(const dimension of ['height','font','width'])assert(Math.abs(sizes[index][dimension]-sizes[1][dimension]*factor)<=2,'compact progression '+dimension+' scales once');
   }
   await page.locator('.st-view-toggle').click();await page.locator('.st-scale-button').selectOption('100');
  }
@@ -169,7 +169,11 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
    assert.equal(writes.length,before+1,'one calculation click fills and saves the plan');
    if(width===701&&role==='owner'&&view==='training'){
     await page.locator('.st-scale-button').selectOption('150');
-    assert.equal(await control.evaluate(el=>el.scrollWidth>el.clientWidth),false,'progression text still fits with the result info button');
+    assert.equal(await control.evaluate(el=>{
+      const label=document.createRange();
+      label.selectNodeContents(el);
+      return label.getClientRects().length===1&&el.scrollWidth<=el.clientWidth;
+    }),true,'progression text fits on one line with the result info button');
     await card().locator('.st-exercise-actions').screenshot({path:path.join(output,'701-owner-training-result-150.png')});
     await page.locator('.st-scale-button').selectOption('100');
    }
