@@ -100,24 +100,40 @@ def test_existing_reserved_links_keep_edits_and_legacy_catalog_rows(entry):
         assert db.scalar(select(TelegramTrackingLink.name).where(TelegramTrackingLink.token=='BOLD')) == 'Старая ссылка'
 
 
-def test_threads_short_alias_uses_configured_link_and_attribution(entry):
+@pytest.mark.parametrize(
+    ('code', 'configured_permission', 'expected_permission'),
+    [('t', True, True), ('t', False, False), ('n', True, False)],
+)
+def test_threads_short_alias_uses_configured_link_and_attribution(
+    entry, code, configured_permission, expected_permission,
+):
     client, engine, _ = entry
     links = client.get('/admin/api/channel-links').json()['links']
     threads = next(row for row in links if row['code'] == 'th')
     post = 'https://t.me/Fitness_Talks/123'
     updated = client.put('/admin/api/channel-links/' + threads['id'], json={
         'name': 'Threads', 'platform': 'threads', 'destination': post,
-        'request_write_access': False, 'expected_version': threads['version'],
+        'request_write_access': configured_permission, 'expected_version': threads['version'],
     })
     assert updated.status_code == 200, updated.text
 
-    response = client.post('/apps/channel-bridge/verify', json={'init_data': signed_data(entry_code='t')})
+    data = signed_data(entry_code=code)
+    response = client.post('/apps/channel-bridge/verify', json={'init_data': data})
     assert response.status_code == 200
-    assert response.json() == {'destination': post, 'source': 'threads', 'request_write_access': False}
+    assert response.json() == {
+        'destination': post, 'source': 'threads', 'request_write_access': expected_permission,
+    }
+    click = client.post('/apps/channel-bridge/event', json={
+        'init_data': data, 'event': 'channel_open_requested',
+    })
+    assert click.status_code == 204
     with Session(engine) as db:
-        event = db.scalars(select(TelegramTrackingEvent)).one()
-        assert event.tracking_link_id == threads['id']
-        assert event.metadata_json['code'] == 'th'
+        events = db.scalars(select(TelegramTrackingEvent)).all()
+        assert {event.event_type for event in events} == {'channel_entry_open', 'channel_open_requested'}
+        for event in events:
+            assert event.tracking_link_id == threads['id']
+            assert event.metadata_json['code'] == 'th'
+            assert event.metadata_json['request_write_access'] is expected_permission
 
 
 def test_events_require_signature_opening_and_deduplicate_without_starting_bot(entry):

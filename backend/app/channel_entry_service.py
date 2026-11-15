@@ -179,7 +179,8 @@ def known_bot_contact(db: Session, telegram_id: str, username: str, messenger: s
 def record_observation(db: Session, *, init_data: str, telegram_id: str, kind: str,
                        granted: bool | None = None, username: str = "Fitness_Talks_bot", messenger: str = "telegram") -> dict:
     code = dict(parse_qsl(init_data)).get("start_param", "")
-    if messenger == "telegram" and code == "t":
+    skip_threads_permission = messenger == "telegram" and code == "n"
+    if messenger == "telegram" and code in {"t", "n"}:
         code = "th"
     visit = hashlib.sha256(((messenger + ":") if messenger != "telegram" else "").encode() + init_data.encode()).hexdigest()
     dedup = f"channel-entry:{visit}:{kind}"
@@ -197,6 +198,7 @@ def record_observation(db: Session, *, init_data: str, telegram_id: str, kind: s
         row, config = resolve_entry(db, code)
         if messenger == "max":
             config["destination"] = config.get("max_destination", MAX_DESTINATION)
+        if messenger == "max" or skip_threads_permission:
             config["request_write_access"] = False
         if config.get("journey_id"):
             db.get(TelegramTrackingSession, config["journey_id"]).consumed_at = datetime.now(timezone.utc)
