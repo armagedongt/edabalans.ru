@@ -53,6 +53,12 @@ python3 /opt/edabalans/infra/caddy/calendar/render.py \
 Внешний mount добавляется штатным выпуском Compose/Caddy; база и backend-API
 для календаря не меняются.
 
+## Записи конференции «Абрикос»
+
+Сервис `abricos-recordings` подключён к Docker-сети `edabalans_edge` без опубликованного порта. Caddy передаёт ограниченный набор API по префиксу `/abricos-access` только на основном HTTPS-домене. Сам интерфейс публикуется на Tilda «Абрикоса».
+
+Исходники развёрнутого сервиса, ключи сопоставления S3 и зависимости лежат в `/srv/abricos-recordings/app`. Секреты хранятся в `/srv/abricos-recordings/service.env` (0600). Авторизация хранит SQLite в `/srv/abricos-recordings/state/access.sqlite3`, резерв исходного реестра — в `/srv/abricos-recordings/backups/access.sqlite3`. При восстановлении сервиса из образа сохранить отдельный bind mount `state` и UID 10151. Для отката маршрута вернуть предыдущую конфигурацию Caddy, а данные сервиса оставить на диске.
+
 ## Учебные видео Мастер-класса на сервере
 
 С 22.10.2026 MP4 дней 3/4/9 размещаются вне Git и образов в

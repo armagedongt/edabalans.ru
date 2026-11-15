@@ -25,6 +25,18 @@
 		Referrer-Policy "strict-origin-when-cross-origin"
 	}
 
+	@abricos_recordings {
+		host {$SITE_DOMAIN}
+		path /abricos-access/api/login /abricos-access/api/logout /abricos-access/api/me /abricos-access/api/years/* /abricos-access/api/videos/*
+	}
+	handle @abricos_recordings {
+		request_body {
+			max_size 8KB
+		}
+		uri strip_prefix /abricos-access
+		reverse_proxy abricos-recordings:8000
+	}
+
 	@personal_calendar {
 		host {$SITE_DOMAIN}
 		path /sonya-calendar /sonya-calendar/
