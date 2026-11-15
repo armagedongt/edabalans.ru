@@ -953,6 +953,7 @@
 
   async function clientDiary() {
     const selected = pageParams.get("user") || "";
+    const history = location.pathname === "/admin/client-diary/history";
     setHeading("Дневник клиента", "CRM");
     if (!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(selected)) {
       root.innerHTML = `${managedApplicationToolbar("client-diary")}<div class="admin-empty">Выберите клиента.</div>`;
@@ -960,14 +961,16 @@
       return;
     }
     loading();
-    const [dqs, strength, notes] = await Promise.all([
+    const [dqs, strength, diary] = await Promise.all([
       api(`/admin/api/apps/dqs/users/${selected}`, { cache: "no-store" }),
       api(`/admin/api/apps/strength/users/${selected}`, { cache: "no-store" }),
-      api(`/admin/api/users/${selected}/notes`, { cache: "no-store" })
+      api(`/admin/api/users/${selected}/diary${history ? "?history=true" : ""}`, { cache: "no-store" })
     ]);
+    const { imported, notes, history_available: historyAvailable } = diary;
+    const oldCategories = imported?.categories ?? [];
     if (!dqsCategories.length && dqs.has_state) throw new Error("Не загрузились правила DQS");
     const name = dqs.user.display_name || dqs.user.email || "Дневник клиента";
-    setHeading(name, "Дневник");
+    setHeading(name, history ? "Исторический дневник" : "Дневник");
     const source = dqs.state?.data;
     const parseDailyNote = (body) => {
       const lines = body.trim().split(/\r?\n/);
@@ -991,6 +994,8 @@
     for (const session of strength.state?.data?.workouts ?? []) {
       if (session?.status === "filled" && dqsEntryDate(session.date, 1) === session.date && session.date) day(session.date).workouts++;
     }
+    for (const record of imported?.days ?? []) Object.assign(day(record.date), record);
+    const showNativeDqs = !oldCategories.length || [...rows.values()].some(item => item.dqs);
     function addDailyNote(note) {
       const dated = parseDailyNote(note.body);
       if (!dated?.text) return;
@@ -1004,13 +1009,17 @@
     const alcoholIndex = dqsCategories.findIndex(([, , , , id]) => id === "alcohol");
     const metrics = [
       ["weight", "Вес", "кг", 7, "Нет взвешиваний"],
-      ["score", "DQS", "баллы", 5, "Нет записей DQS"],
+      ...(oldCategories.length ? [["old-score", "DQS · старая шкала", "баллы", 5, "Нет записей старого DQS"]] : []),
+      ...(showNativeDqs ? [["score", "DQS", "баллы", 5, "Нет записей DQS"]] : []),
       ["steps", "Шаги", "шагов", 5, "Нет данных о шагах"],
       ["kcal", "Калорийность", "ккал", 5, "Нет выгрузки калорий"]
     ];
     function chartContent(key, title, unit, windowSize, missing, from, to) {
       const points = [...rows].sort(([a], [b]) => a.localeCompare(b)).flatMap(([date, row]) => {
-        const value = key === "score" && row.dqs ? dqsDayScore(row.dqs) : row[key];
+        let value = row[key];
+        if (key === "score" && row.dqs) value = dqsDayScore(row.dqs);
+        if (key === "old-score") value = row.legacy_dqs?.total;
+        if (key === "steps" && row.steps_qualifier) value = null;
         return Number.isFinite(value) ? [{ date, value }] : [];
       });
       const shown = points.map((point, i) => ({
@@ -1041,27 +1050,58 @@
       return (group === "harmful" || id === "other-garnishes") && value > 2.5 ? "high" : "";
     }
     function dailyTable() {
-      const table = [...rows].sort(([a], [b]) => a.localeCompare(b)).map(([date, item], index) => {
+      const daily = [...rows].sort(([a], [b]) => a.localeCompare(b));
+      const weights = [];
+      const metricText = value => Number.isFinite(value) ? number.format(value) : "";
+      const stepNumber = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 0 });
+      const table = daily.map(([date, item], index) => {
         const diversity = item.dqs?.d?.filter(value => value === true).length;
         const categories = dqsCategories.map(([, , , group, id], i) => {
           const value = item.dqs?.p?.[i];
           const mark = value == null ? "" : categoryMark(group, id, Number(value));
           return `<td class="diary-category"><span class="${mark}">${value == null ? "" : number.format(value)}</span></td>`;
         }).join("");
+        const legacy = item.legacy_dqs;
+        const legacyCells = oldCategories.map((_, i) => {
+          const category = legacy?.categories[i];
+          return `<td class="diary-category">${category ? `${metricText(category.portions)} порц.<br><small class="diary-category-score">${metricText(category.score)} б.</small>` : ""}</td>`;
+        }).join("");
+        if (Number.isFinite(item.weight)) weights.push(item.weight);
+        const weightMean = Number.isFinite(item.weight) && weights.length >= 7 ? avg(weights.slice(-7)) : null;
+        const steps = Number.isFinite(item.steps) ? [item.steps_qualifier, stepNumber.format(item.steps)].filter(Boolean).join(" ") : "";
+        const alcohol = item.alcohol ?? (item.dqs?.p?.[alcoholIndex] > 0 ? "Да" : item.dqs?.p?.[alcoholIndex] === 0 ? "Нет" : null);
         return `<tr><td>${index + 1}</td><th class="diary-date" scope="row">${dayLabel(date)}</th>
-          <td>${item.dqs ? number.format(dqsDayScore(item.dqs)) : ""}</td><td><span class="${diversity === 0 ? "diversity-low" : ""}">${diversity ?? ""}</span></td>
-          ${categories}<td class="diary-divider"></td><td class="diary-separator"></td><td class="diary-divider"></td>${'<td class="diary-calorie-detail"></td>'.repeat(7)}
-          <td class="diary-divider"></td><td class="diary-divider">${item.workouts || ""}</td><td></td><td></td>
-          <td class="diary-divider">${item.dqs?.p?.[alcoholIndex] > 0 ? "Да" : item.dqs?.p?.[alcoholIndex] === 0 ? "Нет" : ""}</td>
+          ${oldCategories.length ? `<td>${metricText(legacy?.total)}</td><td>${legacy?.categories.filter(category => category.variety === true).length ?? ""}</td>${legacyCells}` : ""}
+          ${showNativeDqs ? `<td>${item.dqs ? number.format(dqsDayScore(item.dqs)) : ""}</td><td><span class="${diversity === 0 ? "diversity-low" : ""}">${diversity ?? ""}</span></td>${categories}` : ""}
+          <td class="diary-divider">${metricText(item.weight)}</td><td class="diary-separator">${metricText(weightMean)}</td><td class="diary-divider">${metricText(item.kcal)}</td>${'<td class="diary-calorie-detail"></td>'.repeat(7)}
+          <td class="diary-divider">${esc(steps)}</td><td class="diary-divider">${item.workouts || ""}</td><td></td><td class="diary-activity">${esc(item.activity === "" && !item.workouts ? "Нет" : item.activity ?? "")}</td>
+          <td class="diary-divider">${esc(alcohol === "" ? "Нет" : alcohol ?? "")}</td>
           <td class="diary-day-note">${esc(item.notes?.join("\n\n") || "")}</td></tr>`;
       }).join("");
       return `<div class="diary-grid diary-daily-grid" tabindex="0" aria-label="Данные по дням"><table><thead><tr>
-        <th>№</th><th class="diary-date">Дата</th><th>DQS</th><th title="Разнообразие">Разн.</th>
-        ${dqsCategories.map(([label, , icon]) => `<th class="diary-category" aria-label="${esc(label)}" title="${esc(label)}">${esc(icon)}</th>`).join("")}
+        <th>№</th><th class="diary-date">Дата</th>
+        ${oldCategories.length ? `<th>DQS (стар.)</th><th title="Разнообразие">Разн.</th>${oldCategories.map(label => `<th class="diary-category">${esc(label)}</th>`).join("")}` : ""}
+        ${showNativeDqs ? `<th>DQS</th><th title="Разнообразие">Разн.</th>${dqsCategories.map(([label, , icon]) => `<th class="diary-category" aria-label="${esc(label)}" title="${esc(label)}">${esc(icon)}</th>`).join("")}` : ""}
         <th class="diary-divider">Вес</th><th class="diary-separator">SMA 7</th><th class="diary-divider">Ккал</th>
         ${["Белки", "Жиры", "Углеводы", "Расход", "Цель", "Дефицит", "SMA 5"].map(label => `<th class="diary-calorie-detail">${label}</th>`).join("")}
         <th class="diary-divider">Шаги</th><th class="diary-divider">Тренировок</th><th>Ккал трен.</th><th>Тренировка</th>
         <th class="diary-divider">Алк.</th><th>Заметка</th></tr></thead><tbody>${table}</tbody></table></div>${table ? "" : "<p>Нет записей по дням.</p>"}`;
+    }
+    function historicalNutritionSummary(from, to) {
+      const entries = [...rows].flatMap(([date, item]) => item.legacy_dqs && (!from || date >= from) && (!to || date <= to) ? [item.legacy_dqs] : []);
+      if (!entries.length) return "";
+      const scores = oldCategories.map((_, i) => avg(entries.map(entry => entry.categories[i].score)));
+      const scale = Math.max(1, ...scores.map(Math.abs));
+      return `<section class="diary-summary"><h2>Система оценки качества питания · старая шкала</h2>
+        <p>${entries.length} дн. · средний DQS ${number.format(avg(entries.map(entry => entry.total)))}</p>
+        <div class="diary-grid" tabindex="0" aria-label="Средние показатели по старым категориям"><table><thead>
+        <tr><th>Категория</th><th>Порций в день</th><th colspan="2">Баллов в день</th></tr></thead>
+        <tbody>${oldCategories.map((category, i) => {
+          const portions = avg(entries.map(entry => entry.categories[i].portions));
+          const tone = scores[i] < 0 ? "negative" : "positive";
+          return `<tr><th scope="row">${esc(category)}</th><td>${number.format(portions)}</td>
+            <td>${number.format(scores[i])}</td><td class="diary-bar"><span class="${tone}" style="width:${Math.abs(scores[i]) * 100 / scale}%"></span></td></tr>`;
+        }).join("")}</tbody></table></div></section>`;
     }
     function nutritionSummary(from, to) {
       const entries = [...rows].flatMap(([date, item]) => item.dqs && (!from || date >= from) && (!to || date <= to) ? [item.dqs] : []);
@@ -1078,10 +1118,14 @@
             <td>${number.format(score)}</td><td class="diary-bar"><span class="${tone}" style="width:${Math.abs(score) * 100 / scale}%"></span></td></tr>`;
         }).join("")}</tbody></table></div></section>`;
     }
+    const diaryLink = history || historyAvailable
+      ? `<div class="admin-actions"><a class="admin-action alt" href="/admin/client-diary${history ? "" : "/history"}?user=${selected}">${history ? "Обычный дневник" : "Исторический дневник"}</a></div>`
+      : "";
     root.innerHTML = `${managedApplicationToolbar("client-diary", dqs.user)}<div class="client-diary">
+      ${diaryLink}
       <div data-diary-summary></div>
       <section><div class="diary-heading"><h2>По дням</h2><div class="diary-controls"><button type="button" data-diary-categories aria-expanded="true">Скрыть категории</button><button type="button" data-diary-calories aria-expanded="false">Детали калорий</button></div></div><div data-diary-days>${dailyTable()}</div>
-        <ul class="diary-legend" aria-label="Цвета таблицы"><li class="diversity-low">Низкое разнообразие</li><li class="zero">0 порций</li><li class="low">Мало порций</li><li class="high">Много порций</li></ul></section>
+        ${showNativeDqs ? '<ul class="diary-legend" aria-label="Цвета таблицы"><li class="diversity-low">Низкое разнообразие</li><li class="zero">0 порций</li><li class="low">Мало порций</li><li class="high">Много порций</li></ul>' : ""}</section>
       <section><div class="diary-heading"><h2>Динамика</h2><div class="diary-controls"><label>С <input type="date" data-diary-from></label><label>По <input type="date" data-diary-to></label></div></div>
         <div class="diary-charts">${metrics.map(([key, title, , windowSize]) => `<article data-diary-chart="${key}"><div class="diary-heading"><h3>${title}</h3><div class="diary-controls"><label>SMA <select aria-label="Период SMA: ${title}">${[3,5,7,10,14,21,30].map(n => `<option${n === windowSize ? " selected" : ""}>${n}</option>`).join("")}</select></label><button type="button" aria-label="Развернуть график: ${title}" title="На весь экран">⛶</button></div></div><div data-chart-plot></div></article>`).join("")}</div>
       </section>
@@ -1106,7 +1150,7 @@
     function drawPeriod() {
       from.max = to.value;
       to.min = from.value;
-      root.querySelector("[data-diary-summary]").innerHTML = nutritionSummary(from.value, to.value);
+      root.querySelector("[data-diary-summary]").innerHTML = historicalNutritionSummary(from.value, to.value) + nutritionSummary(from.value, to.value);
       metrics.forEach(drawChart);
     }
     for (const metric of metrics) {

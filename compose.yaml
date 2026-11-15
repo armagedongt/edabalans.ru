@@ -116,6 +116,7 @@ services:
     volumes:
       - /srv/sergey-travel/calculator:/srv/sergey-travel/calculator
       - /srv/edabalans-media/masterclass:/srv/edabalans-media/masterclass:ro
+      - /var/lib/edabalans/client-diaries:/var/lib/edabalans/client-diaries:ro
     depends_on:
       postgres:
         condition: service_healthy

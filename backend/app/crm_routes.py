@@ -1,15 +1,17 @@
 from __future__ import annotations
 
+import logging
 import uuid
 import time
 from datetime import date, datetime
 from pathlib import Path
+from typing import Literal
 from urllib.parse import urlencode
 
 from fastapi import APIRouter, Depends, HTTPException, Path as ApiPath, Query, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.security import HTTPBasicCredentials
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError, model_validator
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -60,7 +62,9 @@ from app.models import ClientNote, User
 from scripts.generate_masterclass_offer_simulator import render_simulator_page
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+PRIVATE_DIARY_DIR = Path("/var/lib/edabalans/client-diaries")
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 class UserUpdate(BaseModel):
@@ -69,6 +73,49 @@ class UserUpdate(BaseModel):
 
 class NoteCreate(BaseModel):
     body: str = Field(min_length=1, max_length=10_000)
+
+
+class DiaryCategory(BaseModel):
+    portions: float = Field(ge=0, allow_inf_nan=False)
+    score: float = Field(allow_inf_nan=False)
+    variety: bool | None
+
+
+class DiaryOldDqs(BaseModel):
+    total: float = Field(allow_inf_nan=False)
+    categories: list[DiaryCategory]
+
+
+class ImportedDiaryDay(BaseModel):
+    date: date
+    weight: float = Field(gt=0, allow_inf_nan=False)
+    steps: int = Field(ge=0)
+    steps_qualifier: Literal["", ">", "≥"]
+    activity: str
+    alcohol: str
+    legacy_dqs: DiaryOldDqs | None
+
+
+class ImportedDiary(BaseModel):
+    categories: list[str]
+    days: list[ImportedDiaryDay]
+
+    @model_validator(mode="after")
+    def check_days(self) -> ImportedDiary:
+        if len({day.date for day in self.days}) != len(self.days):
+            raise ValueError("duplicate diary dates")
+        if any(day.legacy_dqs and len(day.legacy_dqs.categories) != len(self.categories) for day in self.days):
+            raise ValueError("diary category count does not match the import")
+        return self
+
+
+class PrivateDiarySnapshot(BaseModel):
+    data: ImportedDiary
+    prior_note_ids: list[uuid.UUID]
+
+
+def _private_diary_path(user_id: uuid.UUID) -> Path:
+    return PRIVATE_DIARY_DIR / f"{user_id}.json"
 
 
 class TagCreate(BaseModel):
@@ -280,6 +327,19 @@ def legacy_admin_users(request: Request, credentials: HTTPBasicCredentials | Non
     return RedirectResponse(f"/crm{suffix}", status_code=303)
 
 
+@router.get("/admin/client-diary/history", include_in_schema=False)
+def admin_client_diary_history(
+    request: Request,
+    user: uuid.UUID | None = None,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> Response:
+    if not admin_identity(request, credentials):
+        return protected_file("admin-login.html")
+    if user is None or not _private_diary_path(user).is_file():
+        raise HTTPException(status_code=404, detail="diary snapshot not found")
+    return admin_section(request, "client-diary", credentials)
+
+
 @router.get("/admin/{section}", include_in_schema=False)
 def admin_section(
     request: Request,
@@ -433,13 +493,45 @@ def admin_list_notes(
     if user is None or user.merged_into_user_id is not None:
         raise HTTPException(status_code=404, detail="user not found")
     response.headers["Cache-Control"] = "no-store"
-    notes = db.scalars(
-        select(ClientNote)
-        .where(ClientNote.user_id == user_id)
-        .order_by(ClientNote.created_at.desc(), ClientNote.id)
-        .limit(100)
-    )
+    return _client_notes(db, user_id)
+
+
+def _client_notes(db: Session, user_id: uuid.UUID, excluded: list[uuid.UUID] | None = None) -> list[dict]:
+    query = select(ClientNote).where(ClientNote.user_id == user_id)
+    if excluded:
+        query = query.where(ClientNote.id.not_in(excluded))
+    notes = db.scalars(query.order_by(ClientNote.created_at.desc(), ClientNote.id).limit(100))
     return [{"body": note.body, "created_at": note.created_at} for note in notes]
+
+
+@router.get("/admin/api/users/{user_id}/diary")
+def admin_client_diary(
+    user_id: uuid.UUID,
+    response: Response,
+    history: bool = False,
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    user = db.get(User, user_id)
+    if user is None or user.merged_into_user_id is not None:
+        raise HTTPException(status_code=404, detail="user not found")
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        snapshot = PrivateDiarySnapshot.model_validate_json(_private_diary_path(user_id).read_bytes())
+    except FileNotFoundError:
+        snapshot = None
+    except (OSError, ValidationError) as exc:
+        logger.error("Private diary snapshot unavailable (%s)", type(exc).__name__)
+        if history:
+            raise HTTPException(status_code=503, detail="diary snapshot unavailable") from None
+        snapshot = None
+    if history and snapshot is None:
+        raise HTTPException(status_code=404, detail="diary snapshot not found")
+    return {
+        "history_available": snapshot is not None,
+        "imported": snapshot.data if history and snapshot else None,
+        "notes": _client_notes(db, user_id, snapshot.prior_note_ids if snapshot else None),
+    }
 
 
 @router.post("/admin/api/users/{user_id}/tags", status_code=201)

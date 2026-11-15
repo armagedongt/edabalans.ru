@@ -112,6 +112,8 @@ body.ed-admin-shell.client-diary-app-view{padding:0}
 .diary-daily-grid td span[class]{padding:2px 1px;min-height:1.45em}
 .diary-grid .diary-separator{border-left:1px solid #dce9f1}
 .diary-grid .diary-day-note{max-width:280px}
+.diary-grid .diary-activity{max-width:220px;white-space:normal;text-align:left}
+.diary-category-score{font-size:inherit;color:#47677a}
 .diary-calories-collapsed .diary-calorie-detail{display:none}
 .diary-controls{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .diary-controls input,.diary-controls select{max-width:100%;padding:3px;border:1px solid #dbe5ef;border-radius:5px;background:#fff;color:inherit;font:inherit}
