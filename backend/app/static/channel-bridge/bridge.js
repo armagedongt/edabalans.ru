@@ -36,21 +36,18 @@
     }
   }
 
-  function openPost(event) {
-    if (!app || !app.initData || typeof app.openTelegramLink !== 'function') return;
-    if (event) event.preventDefault();
+  function openPost() {
+    if (typeof app.openTelegramLink !== 'function') return;
     try {
       // Android guards SDK link commands without a recent in-app tap. Its
       // WebView handles ordinary t.me navigation through the native client.
-      if (!event && (app.platform === 'android' || app.platform === 'android_x')) {
+      if (app.platform === 'android' || app.platform === 'android_x') {
         window.location.replace(target);
       } else {
         app.openTelegramLink(target);
       }
     } catch (_) {
       status.textContent = 'Если канал не открылся, нажмите «Открыть канал».';
-      // Keep a normal link when this client cannot handle the SDK command.
-      button.removeEventListener('click', openPost);
       return;
     }
     navigationRequested = true;
@@ -62,10 +59,14 @@
     }
   }
 
-  button.addEventListener('click', openPost);
   if (!app || !app.initData) {
     return;
   }
+  button.addEventListener('click', function () {
+    // Let the link navigate even if the Telegram SDK silently ignores a command.
+    navigationRequested = true;
+    record('channel_open_requested');
+  });
   app.ready();
 
   const controller = new AbortController();

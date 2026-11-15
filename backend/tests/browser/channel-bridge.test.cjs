@@ -89,26 +89,26 @@ test('verifies before opening the fixed post, then closes the Mini App', async (
   const options = result.calls[1][2];
   assert.equal(options.credentials, 'omit');
   assert.equal(JSON.parse(options.body).init_data, 'signed-input');
-  result.listeners.click({ preventDefault() {} });
-  assert.equal(result.calls.filter(x => x === 'close').length, 2);
+  result.listeners.click({ preventDefault() { assert.fail('Manual link was intercepted'); } });
+  assert.equal(result.calls.filter(x => x === 'close').length, 1);
 });
 
 test('Android automatically uses native URL navigation after verification and never closes the fallback', async () => {
   const result = await run({ platform: 'android' });
   assert.deepEqual(result.calls.map(x => Array.isArray(x) ? x[0] : x), ['ready', 'verify', 'navigate']);
   assert.equal(result.calls.at(-1)[1], target);
-  // A silently ignored native command must not disable the manual escape.
-  result.listeners.click({ preventDefault() {} });
-  assert.equal(result.calls.at(-1)[0], 'open');
+  result.listeners.click({ preventDefault() { assert.fail('Manual link was intercepted'); } });
+  assert.deepEqual(result.calls.at(-1), ['navigate', target]);
+  assert.equal(result.button.href, target);
   assert.equal(result.calls.includes('close'), false);
 });
 
-test('Android verification failure keeps a user-initiated SDK link without closing', async () => {
+test('Android verification failure keeps the ordinary post link', async () => {
   const result = await run({ platform: 'android', verify: 'network' });
   assert.equal(result.calls.some(x => Array.isArray(x) && x[0] === 'navigate'), false);
-  result.listeners.click({ preventDefault() {} });
-  assert.equal(result.calls.at(-1)[0], 'open');
-  assert.equal(result.calls.includes('close'), false);
+  result.listeners.click({ preventDefault() { assert.fail('Manual link was intercepted'); } });
+  assert.equal(result.button.href, target);
+  assert.equal(result.calls.some(x => Array.isArray(x) && x[0] === 'open'), false);
 });
 
 test('iOS keeps automatic SDK navigation without an immediate close', async () => {
@@ -128,15 +128,16 @@ for (const verify of ['network', 'unauthorized', 'wrong-target']) {
     const result = await run({ verify });
     assert.equal(result.calls.some(x => Array.isArray(x) && x[0] === 'open'), false);
     assert.match(result.status.textContent, /Открыть канал/);
-    result.listeners.click({ preventDefault() {} });
-    assert.equal(result.calls.at(-1), 'close');
+    result.listeners.click({ preventDefault() { assert.fail('Manual link was intercepted'); } });
+    assert.equal(result.button.href, target);
+    assert.equal(result.calls.includes('close'), false);
   });
 }
 
 test('SDK navigation failure keeps a usable ordinary link and does not close the screen', async () => {
   const result = await run({ navigationError: true });
   assert.equal(result.calls.includes('close'), false);
-  assert.equal(result.listeners.click, undefined);
+  result.listeners.click({ preventDefault() { assert.fail('Manual link was intercepted'); } });
   assert.equal(result.button.href, target);
 });
 
@@ -158,4 +159,15 @@ test('verified constructor post replaces fallback and remains the manual destina
   assert.deepEqual(result.calls.at(-1),['navigate',post]);
   assert.equal(result.button.href,post);
   assert.deepEqual(result.observations.map(e=>e.event),['channel_open_requested']);
+});
+
+test('manual post link remains usable while the permission callback is pending', async () => {
+  const result = await run({ platform: 'android', requestWriteAccess: true });
+  result.listeners.click({ preventDefault() { assert.fail('Manual link was intercepted'); } });
+  assert.equal(result.button.href, target);
+  result.answerPermission(false);
+  assert.equal(result.calls.at(-1), 'permission');
+  assert.deepEqual(result.observations.map(e => e.event), [
+    'channel_permission_requested', 'channel_open_requested', 'channel_permission_result'
+  ]);
 });

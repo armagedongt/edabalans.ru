@@ -179,6 +179,8 @@ def known_bot_contact(db: Session, telegram_id: str, username: str, messenger: s
 def record_observation(db: Session, *, init_data: str, telegram_id: str, kind: str,
                        granted: bool | None = None, username: str = "Fitness_Talks_bot", messenger: str = "telegram") -> dict:
     code = dict(parse_qsl(init_data)).get("start_param", "")
+    if messenger == "telegram" and code == "t":
+        code = "th"
     visit = hashlib.sha256(((messenger + ":") if messenger != "telegram" else "").encode() + init_data.encode()).hexdigest()
     dedup = f"channel-entry:{visit}:{kind}"
     opening = db.scalar(select(TelegramTrackingEvent).where(

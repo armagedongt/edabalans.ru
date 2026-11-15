@@ -100,6 +100,26 @@ def test_existing_reserved_links_keep_edits_and_legacy_catalog_rows(entry):
         assert db.scalar(select(TelegramTrackingLink.name).where(TelegramTrackingLink.token=='BOLD')) == 'Старая ссылка'
 
 
+def test_threads_short_alias_uses_configured_link_and_attribution(entry):
+    client, engine, _ = entry
+    links = client.get('/admin/api/channel-links').json()['links']
+    threads = next(row for row in links if row['code'] == 'th')
+    post = 'https://t.me/Fitness_Talks/123'
+    updated = client.put('/admin/api/channel-links/' + threads['id'], json={
+        'name': 'Threads', 'platform': 'threads', 'destination': post,
+        'request_write_access': False, 'expected_version': threads['version'],
+    })
+    assert updated.status_code == 200, updated.text
+
+    response = client.post('/apps/channel-bridge/verify', json={'init_data': signed_data(entry_code='t')})
+    assert response.status_code == 200
+    assert response.json() == {'destination': post, 'source': 'threads', 'request_write_access': False}
+    with Session(engine) as db:
+        event = db.scalars(select(TelegramTrackingEvent)).one()
+        assert event.tracking_link_id == threads['id']
+        assert event.metadata_json['code'] == 'th'
+
+
 def test_events_require_signature_opening_and_deduplicate_without_starting_bot(entry):
     client, engine, _ = entry
     row = create(client)
