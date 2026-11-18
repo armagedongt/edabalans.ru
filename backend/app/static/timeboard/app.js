@@ -134,10 +134,15 @@ function column(key,cat,isExpanded) {
       button(safe(first.title),attrs+' title="'+safe(first.title)+'"','read-cell')+count+'</div>' : '')+'</div>';
   }
   const flag = first?.flag || '';
+  const remove = first ? removeButton(first,'cell-remove') : '';
   return '<div><div class="cell flag-'+flag+'"><input data-inline data-key="'+key+'" data-cat="'+cat+'" data-id="'+(first?.id||'')+
     '" data-current-flag="'+flag+'" maxlength="160" aria-label="'+label+'" placeholder="Введите текст" value="'+safe(first?.title)+'">'+
     '<label class="cell-color" title="Цвет важности"><span aria-hidden="true"></span><select data-inline-flag aria-label="Цвет важности · '+label+'">'+
-    selectOptions(flags,flag)+'</select></label>'+count+'</div></div>';
+    selectOptions(flags,flag)+'</select></label>'+remove+count+'</div></div>';
+}
+
+function removeButton(entry,cls='') {
+  return button('×','data-remove="'+entry.id+'" title="Удалить запись" aria-label="Удалить запись · '+safe(entry.title)+'"','remove-record '+cls);
 }
 
 function entryCard(entry,showCategory=true) {
@@ -146,7 +151,7 @@ function entryCard(entry,showCategory=true) {
     'data-flag="'+color+'" data-id="'+entry.id+'" aria-label="'+label+'" aria-pressed="'+(entry.flag===color)+'"',
     'swatch flag-'+color)).join('');
   const actions = canEdit ? '<div class="record-actions">'+button('Изменить','data-edit="'+entry.id+'"')+
-    '<div class="palette" role="group" aria-label="Цвет записи">'+palette+'</div></div>' : '';
+    '<div class="palette" role="group" aria-label="Цвет записи">'+palette+'</div>'+removeButton(entry)+'</div>' : '';
   return '<article class="record flag-'+entry.flag+'">'+(showCategory?'<small>'+safe(state.categories[entry.cat])+'</small>':'')+
     '<p>'+safe(entry.title)+(entry.done?' ✓':'')+'</p>'+(timing?'<small>'+safe(timing)+'</small>':'')+
     (entry.note?'<p>'+safe(entry.note)+'</p>':'')+
@@ -387,7 +392,8 @@ root.addEventListener('click',event=>{
   } else if (canEdit && 'flag' in d) {
     run(()=>apply([{op:'update',id:d.id,flag:d.flag}]));
   } else if (canEdit && d.remove) {
-    if (confirm('Удалить запись?')) run(()=>apply([{op:'remove',id:d.remove}],null,true));
+    if (confirm('Удалить запись?')) run(()=>apply([{op:'remove',id:d.remove}],null,!!$('#entry-form')));
+    else b.closest('.cell')?.querySelector('[data-inline]')?.focus();
   } else if (canEdit && 'import' in d) {
     openImport();
   } else if ('paste' in d) {
