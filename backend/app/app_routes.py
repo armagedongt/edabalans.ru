@@ -90,10 +90,12 @@ from app.models import (
 
 from app.finance_plans import router as finance_plans_router
 from app.finance_facts import router as finance_facts_router
+from app.timeboard import router as timeboard_router
 
 router = APIRouter()
 router.include_router(finance_plans_router)
 router.include_router(finance_facts_router)
+router.include_router(timeboard_router)
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 PUBLIC_SITE_ASSETS_DIR = STATIC_DIR / "public-site-assets"
 HOMEPAGE_VERSIONS_DIR = STATIC_DIR / "homepage-preview" / "versions"

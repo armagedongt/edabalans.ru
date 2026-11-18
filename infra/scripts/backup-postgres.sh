@@ -33,6 +33,26 @@ trap cleanup EXIT
 
 cd "${PROJECT_DIR}"
 
+upload_backup() {
+    local prefix="$1" backup_name="$2" file
+    (
+        cd "${BACKUP_DIR}"
+        sha256sum "${backup_name}" > "${backup_name}.sha256"
+    )
+    for file in "${backup_name}" "${backup_name}.sha256"; do
+        docker run --rm \
+            -e AWS_ACCESS_KEY_ID \
+            -e AWS_SECRET_ACCESS_KEY \
+            -e AWS_DEFAULT_REGION \
+            -v "${BACKUP_DIR}:/backup:ro" \
+            amazon/aws-cli:latest \
+            --endpoint-url "${S3_ENDPOINT}" \
+            s3 cp "/backup/${file}" "s3://${BACKUP_BUCKET}/${prefix}/${file}" \
+            --only-show-errors
+    done
+    echo "Backup uploaded: s3://${BACKUP_BUCKET}/${prefix}/${backup_name}"
+}
+
 for database in "${DATABASES[@]}"; do
     backup_name="${database}-${timestamp}.dump"
     backup_path="${BACKUP_DIR}/${backup_name}"
@@ -44,23 +64,16 @@ for database in "${DATABASES[@]}"; do
         > "${backup_path}"
 
     test -s "${backup_path}"
-    (
-        cd "${BACKUP_DIR}"
-        sha256sum "${backup_name}" > "${backup_name}.sha256"
-    )
-
-    for file in "${backup_path}" "${checksum_path}"; do
-        docker run --rm \
-            -e AWS_ACCESS_KEY_ID \
-            -e AWS_SECRET_ACCESS_KEY \
-            -e AWS_DEFAULT_REGION \
-            -v "${BACKUP_DIR}:/backup:ro" \
-            amazon/aws-cli:latest \
-            --endpoint-url "${S3_ENDPOINT}" \
-            s3 cp "/backup/$(basename "${file}")" \
-            "s3://${BACKUP_BUCKET}/postgres/$(basename "${file}")" \
-            --only-show-errors
-    done
-
-    echo "Backup uploaded: s3://${BACKUP_BUCKET}/postgres/${backup_name}"
+    upload_backup postgres "${backup_name}"
 done
+
+backend_snapshot="$(docker compose exec -T backend sh -c 'if test -f /app/backend/app/timeboard_snapshot.py; then echo yes; fi')"
+if [[ "${backend_snapshot}" == yes ]]; then
+    backup_name="timeboard-${timestamp}.sqlite3"
+    backup_path="${BACKUP_DIR}/${backup_name}"
+    created_files+=("${backup_path}" "${backup_path}.sha256")
+    docker compose exec -T backend python -m app.timeboard_snapshot > "${backup_path}"
+    if [[ -s "${backup_path}" ]]; then
+        upload_backup postgres/timeboard "${backup_name}"
+    fi
+fi

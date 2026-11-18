@@ -1,5 +1,7 @@
 import os
+from concurrent.futures import ThreadPoolExecutor
 from html.parser import HTMLParser
+from threading import Barrier, BrokenBarrierError
 
 import pytest
 from fastapi.testclient import TestClient
@@ -11,6 +13,8 @@ from app.config import get_settings
 get_settings.cache_clear()
 
 from app.main import app
+from app import timeboard
+from app.timeboard_snapshot import snapshot
 
 
 class PageResources(HTMLParser):
@@ -39,12 +43,13 @@ def test_timeboard_redirect_and_page_resources_work_without_a_session() -> None:
     assert page.headers["referrer-policy"] == "no-referrer"
     resources = PageResources()
     resources.feed(page.text)
-    assert len(resources.urls) == 2
+    assert sorted(resources.urls) == ["/assets/site-typography.css", "app.js", "style.css"]
     for url in resources.urls:
-        response = client.get(f"/timeboard/{url}")
+        response = client.get(url if url.startswith("/") else f"/timeboard/{url}")
         assert response.status_code == 200
-        assert response.headers["cache-control"] == "no-store"
-        assert response.headers["x-robots-tag"] == "noindex, nofollow, noarchive"
+        if not url.startswith("/"):
+            assert response.headers["cache-control"] == "no-store"
+            assert response.headers["x-robots-tag"] == "noindex, nofollow, noarchive"
         assert response.headers["content-type"].startswith(
             "text/css" if url.endswith(".css") else ("text/javascript", "application/javascript")
         )
@@ -55,6 +60,77 @@ def test_timeboard_cannot_serve_unlisted_files(name: str) -> None:
     assert TestClient(app).get(f"/timeboard/{name}").status_code == 404
 
 
-def test_timeboard_has_no_server_write_endpoint() -> None:
-    response = TestClient(app).post("/timeboard/", json={"title": "must stay in the browser"})
-    assert response.status_code == 405
+def test_timeboard_public_read_and_atomic_admin_import(tmp_path, monkeypatch) -> None:
+    monkeypatch.setenv("TIMEBOARD_DB", str(tmp_path / "board.sqlite3"))
+    monkeypatch.setenv("ADMIN_USERNAME", "board-owner")
+    monkeypatch.setenv("ADMIN_PASSWORD", "test-timeboard-password")
+    get_settings.cache_clear()
+    client = TestClient(app)
+    auth = ("board-owner", "test-timeboard-password")
+    headers = {"X-Timeboard-Request": "1"}
+    api = "/timeboard/api/"
+    operation = {"op": "add", "date": "2026-11-19", "cat": "training", "title": "Растяжка"}
+    packet = {"v": 1, "baseRevision": 0, "ops": [operation]}
+    try:
+        assert client.get(api + "state").json()["entries"] == []
+        assert client.get(api + "session").json() == {"canEdit": False}
+        assert client.get(api + "session", auth=auth).json() == {"canEdit": True}
+        assert client.post(api + "apply", json=packet, headers=headers).status_code == 401
+        assert client.post(api + "preview", json=packet, headers=headers).status_code == 401
+        assert client.post(api + "apply", json=packet, auth=auth).status_code == 403
+
+        preview = client.post(api + "preview", json=packet, auth=auth, headers=headers)
+        assert preview.status_code == 200
+        assert preview.json()["changes"][0]["after"]["title"] == operation["title"]
+        assert client.get(api + "state").json()["entries"] == []
+
+        invalid = {**packet, "ops": [operation, {"op": "update", "id": "missing", "title": "Чужая запись"}]}
+        assert client.post(api + "apply", json=invalid, auth=auth, headers=headers).status_code == 422
+        assert client.get(api + "state").json()["revision"] == 0
+        credentials_in_url = {**packet, "ops": [{**operation, "url": "https://:demo@example.org/"}]}
+        assert client.post(api + "apply", json=credentials_in_url, auth=auth, headers=headers).status_code == 422
+
+        result = client.post(api + "apply", json=packet, auth=auth, headers=headers)
+        assert result.json() == {"revision": 1, "applied": 1}
+        assert client.post(api + "apply", json=packet, auth=auth, headers=headers).status_code == 409
+        anonymous = TestClient(app).get(api + "state")
+        assert anonymous.headers["cache-control"] == "no-store"
+        entry = anonymous.json()["entries"][0]
+        assert entry["title"] == operation["title"]
+
+        update = {**packet, "baseRevision": 1, "ops": [{"op": "update", "id": entry["id"], "flag": "blue"}]}
+        assert client.post(api + "apply", json=update, auth=auth, headers=headers).json()["revision"] == 2
+        assert client.get(api + "state").json()["entries"][0] == {**entry, "flag": "blue"}
+        remove = {**packet, "baseRevision": 2, "ops": [{"op": "remove", "id": entry["id"]}]}
+        assert client.post(api + "apply", json=remove, auth=auth, headers=headers).json()["revision"] == 3
+        assert client.get(api + "state").json()["entries"] == []
+
+        gate = Barrier(2)
+        prepare = timeboard.prepare
+
+        def hold_first_revision(packet, revision, entries):
+            checked = prepare(packet, revision, entries)
+            try:
+                gate.wait(timeout=0.4)
+            except BrokenBarrierError:
+                pass
+            return checked
+
+        monkeypatch.setattr(timeboard, "prepare", hold_first_revision)
+
+        def write(title):
+            body = {**packet, "baseRevision": 3, "ops": [{**operation, "title": title}]}
+            return TestClient(app).post(api + "apply", json=body, auth=auth, headers=headers).status_code
+
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            assert sorted(pool.map(write, ["Первая запись", "Вторая запись"])) == [200, 409]
+        final_state = client.get(api + "state").json()
+        assert final_state["revision"] == 4
+        assert len(final_state["entries"]) == 1
+        backup = tmp_path / "restored.sqlite3"
+        with backup.open("wb") as output:
+            snapshot(tmp_path / "board.sqlite3", output)
+        monkeypatch.setenv("TIMEBOARD_DB", str(backup))
+        assert client.get(api + "state").json() == final_state
+    finally:
+        get_settings.cache_clear()

@@ -30,7 +30,7 @@ COPY content/public-site /app/content/public-site
 COPY content/service-messages /app/content/service-messages
 COPY prototypes/private-weather /app/prototypes/private-weather
 
-RUN chmod -R a+rX /app
+RUN chmod -R a+rX /app && install -d -o app -g app -m 0700 /var/lib/timeboard
 
 USER app
 
