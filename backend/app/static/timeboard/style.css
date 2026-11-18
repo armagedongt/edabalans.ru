@@ -10,8 +10,8 @@
 #week-board-final .toolbar,#week-board-final .group,#week-board-final .view-options{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 #week-board-final .toolbar{justify-content:space-between;margin-bottom:12px}
 #week-board-final .toolbar strong{margin-right:6px}
-#week-board-final .scroll{overflow-x:auto}
-#week-board-final .sheet{width:100%;min-width:800px}
+#week-board-final .scroll{overflow:visible}
+#week-board-final .sheet{width:100%;min-width:1000px}
 #week-board-final .head,#week-board-final .row{display:grid;grid-template-columns:58px 58px var(--columns);border-bottom:1px solid var(--line)}
 #week-board-final .head{background:var(--soft);color:var(--muted);font-size:12px}
 #week-board-final .head>div{position:relative;min-width:0;padding:7px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -87,13 +87,13 @@
 #week-board-final .import-preview{overflow-wrap:anywhere}
 :root{scrollbar-gutter:auto}
 body{margin:0;background:#fff}
-#week-board-final{padding:12px 18px;height:100dvh;display:flex;flex-direction:column}
-#week-board-final .scroll{min-height:0;flex:1;overflow:auto}
+#week-board-final{padding:0 18px 12px}
+#week-board-final .board-top{position:sticky;top:0;z-index:5;padding-top:12px;background:var(--paper)}
+#week-board-final .column-heads .head{min-width:1000px}
 #week-board-final header a{font-size:13px;color:inherit}
 #week-board-final .status{min-height:1.4em;margin:0 0 6px;font-size:13px;color:#606369}
 #week-board-final .note{font-size:12px;color:#606369;margin:6px 0}
 #week-board-final .pager{flex-wrap:nowrap}
-#week-board-final .head{position:sticky;top:0;z-index:1}
 #week-board-final .heart{font-variant-emoji:text}
 #week-board-final .record small{display:block}
 #week-board-final .notice{margin:8px 0;font-size:13px}
@@ -105,7 +105,7 @@ body{margin:0;background:#fff}
 #week-board-final dialog::backdrop{background:#2225}
 #week-board-final .category-title{font-weight:600}
 #week-board-final .details-empty{color:#606369}
-#week-board-final .row{scroll-margin-top:43px}
+#week-board-final .row{scroll-margin-top:calc(var(--board-top-height,110px) + 4px)}
 #week-board-final .sonya-schedule h3{margin:12px 0 6px;font-size:14px}
 #week-board-final .sonya-schedule .record{overflow-wrap:anywhere}
 #week-board-final .expanded>div{align-items:flex-start}
@@ -120,4 +120,4 @@ body{margin:0;background:#fff}
 #week-board-final .record .remove-record{margin-left:auto;min-width:28px;min-height:28px;padding:0 5px;font-size:22px;text-decoration:none;color:var(--muted)}
 #week-board-final .remove-record:hover{color:#a33b48}
 #week-board-final .cell:has(input:placeholder-shown):not(:focus-within) .cell-color{visibility:hidden}
-@media(max-width:600px){#week-board-final{padding:8px}#week-board-final .toolbar{gap:10px}}
+@media(max-width:600px){#week-board-final{padding:0 8px 8px}#week-board-final .board-top{padding-top:8px}#week-board-final .toolbar{gap:10px}}

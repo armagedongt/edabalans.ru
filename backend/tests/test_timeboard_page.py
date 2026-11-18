@@ -124,8 +124,13 @@ def test_timeboard_public_read_and_atomic_admin_import(tmp_path, monkeypatch) ->
         invalid_marker = {**duplicate, "ops": [marker]}
         assert client.post(api + "apply", json=invalid_marker, auth=auth, headers=headers).status_code == 422
         schedule = {**operation, "cat": "sonya", "sonyaRole": "weekly"}
-        popup_packet = {**duplicate, "ops": [schedule, {**marker, "phase": "period"}]}
+        competition = {**operation, "cat": "competitions", "title": "Вариант старта"}
+        popup_packet = {**duplicate, "ops": [schedule, {**marker, "phase": "period"}, competition]}
         assert client.post(api + "apply", json=popup_packet, auth=auth, headers=headers).status_code == 200
+        assert any(
+            e["cat"] == "competitions" and e["title"] == competition["title"]
+            for e in client.get(api + "state").json()["entries"]
+        )
         assert {e["sonyaRole"]: e["phase"] for e in client.get(api + "state").json()["entries"]} == {
             "": "", "weekly": "", "indicator": "period",
         }
@@ -151,7 +156,7 @@ def test_timeboard_public_read_and_atomic_admin_import(tmp_path, monkeypatch) ->
             assert sorted(pool.map(write, ["Первая запись", "Вторая запись"])) == [200, 409]
         final_state = client.get(api + "state").json()
         assert final_state["revision"] == 6
-        assert len(final_state["entries"]) == 4
+        assert len(final_state["entries"]) == 5
         backup = tmp_path / "restored.sqlite3"
         with backup.open("wb") as output:
             snapshot(tmp_path / "board.sqlite3", output)

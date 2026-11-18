@@ -3,7 +3,7 @@ const $ = selector => root.querySelector(selector);
 const sheet = $('.sheet');
 const dialog = $('.editor');
 const content = $('.editor-content');
-const icons = {outside:'📍',training:'🏋️',work:'💼',posts:'✍️',finance:'💳',history:'📓'};
+const icons = {outside:'📍',training:'🏋️',competitions:'🏁',work:'💼',posts:'✍️',finance:'💳',history:'📓'};
 const flags = {'':'Без цвета',blue:'Синий',green:'Зелёный',red:'Красный'};
 const weekdays = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
 const fields = {date:'Дата',cat:'Категория',title:'Действие',time:'Время',duration:'Минуты',note:'Комментарий',url:'Ссылка',flag:'Цвет',phase:'Цикл',sonyaRole:'Тип записи Сони',done:'Выполнено'};
@@ -20,8 +20,9 @@ const weekday = key => (dateAt(key).getUTCDay()+6)%7;
 
 let state = {revision:0,categories:{},entries:[]};
 let canEdit = false;
-let mode = matchMedia('(max-width:800px)').matches ? 'compact' : 'table';
+let mode = matchMedia('(max-width:1100px)').matches ? 'compact' : 'table';
 let expanded = null;
+let showPast = false;
 let columns = Object.keys(icons);
 let widths = Object.fromEntries(columns.map(key=>[key,1]));
 let drag;
@@ -79,11 +80,15 @@ function boardDates() {
 }
 
 function scrollToDate(key) {
+  if (key<todayKey() && !showPast) {
+    showPast = true;
+    render();
+  }
   sheet.querySelector('[data-row="'+key+'"]')?.scrollIntoView({block:'nearest'});
 }
 
 function setWidths() {
-  sheet.style.setProperty('--columns',columns.map(key=>'minmax(0,'+widths[key]+'fr)').join(' '));
+  root.style.setProperty('--columns',columns.map(key=>'minmax(0,'+widths[key]+'fr)').join(' '));
 }
 
 function header() {
@@ -185,7 +190,11 @@ function render() {
   $('.scroll').classList.toggle('compact',mode==='compact');
   $('[data-reset]').hidden = mode==='compact';
   root.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
-  sheet.innerHTML = (mode==='table'?header():'')+boardDates().map(row).join('');
+  const pastButton = $('[data-past]');
+  pastButton.textContent = showPast ? 'Скрыть прошедшее' : 'Прошедшее';
+  pastButton.setAttribute('aria-expanded',String(showPast));
+  $('.column-heads').innerHTML = mode==='table'?header():'';
+  sheet.innerHTML = boardDates().filter(key=>showPast || key>=todayKey()).map(row).join('');
   setWidths();
 }
 
@@ -346,7 +355,14 @@ async function run(task) {
   }
 }
 
-$('#today').onclick = ()=>scrollToDate(todayKey());
+$('#today').onclick = ()=>{
+  showPast = false;
+  render();
+  scrollToDate(todayKey());
+};
+new ResizeObserver(entries=>{
+  root.style.setProperty('--board-top-height',entries[0].borderBoxSize[0].blockSize+'px');
+}).observe($('.board-top'));
 dialog.addEventListener('cancel',event=>{
   if (submitting) event.preventDefault();
 });
@@ -369,6 +385,11 @@ root.addEventListener('click',event=>{
   if (d.mode) {
     mode = d.mode;
     render();
+  } else if ('past' in d) {
+    showPast = !showPast;
+    render();
+    if (showPast) sheet.querySelector('.row')?.scrollIntoView({block:'start'});
+    else scrollToDate(todayKey());
   } else if ('reset' in d) {
     widths = Object.fromEntries(columns.map(key=>[key,1]));
     setWidths();
@@ -496,7 +517,7 @@ function moveColumn(from,to) {
   $('[data-column="'+to+'"]').focus({preventScroll:true});
 }
 
-sheet.addEventListener('keydown',event=>{
+root.addEventListener('keydown',event=>{
   const d = event.target.dataset;
   if ('inline' in d && event.key==='Enter') event.target.blur();
   if ('inline' in d && event.key==='Escape') {
@@ -517,7 +538,7 @@ sheet.addEventListener('keydown',event=>{
   }
 });
 
-sheet.addEventListener('pointerdown',event=>{
+root.addEventListener('pointerdown',event=>{
   if (event.button!==0) return;
   const handle = event.target.closest('[data-resize]');
   const column = event.target.closest('[data-column]');
@@ -531,25 +552,25 @@ sheet.addEventListener('pointerdown',event=>{
   }
 });
 
-sheet.addEventListener('pointermove',event=>{
+root.addEventListener('pointermove',event=>{
   if (!drag) return;
   if ('resize' in drag) {
     resize(drag.resize,drag.start+(event.clientX-drag.x)*columns.length/columnAreaWidth());
     return;
   }
   const target = document.elementFromPoint(event.clientX,event.clientY)?.closest('[data-column]');
-  sheet.querySelector('.is-target')?.classList.remove('is-target');
+  root.querySelector('.is-target')?.classList.remove('is-target');
   drag.target = target && Math.abs(event.clientX-drag.x)>4 ? Number(target.dataset.column) : null;
   if (drag.target!==null && drag.target!==drag.column) target.classList.add('is-target');
 });
 
-sheet.addEventListener('pointerup',()=>{
+root.addEventListener('pointerup',()=>{
   if (drag && 'column' in drag && drag.target!==null) moveColumn(drag.column,drag.target);
   drag = null;
 });
-sheet.addEventListener('lostpointercapture',()=>{
+root.addEventListener('lostpointercapture',()=>{
   drag = null;
-  sheet.querySelector('.is-target')?.classList.remove('is-target');
+  root.querySelector('.is-target')?.classList.remove('is-target');
 });
 
 function offerLegacyExport() {

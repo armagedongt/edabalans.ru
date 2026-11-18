@@ -13,10 +13,12 @@
 </head>
 <body>
 <main id="week-board-final">
+  <div class="board-top">
   <header class="toolbar">
     <div class="group">
       <div class="group pager">
         <button type="button" id="today">Сегодня</button>
+        <button type="button" data-past aria-expanded="false">Прошедшее</button>
       </div>
       <div class="view-options" role="group" aria-label="Вид доски">
         <button type="button" data-mode="table">Таблица</button>
@@ -36,6 +38,8 @@
     </div>
   </header>
   <p class="status" id="status" role="status"></p>
+  <div class="column-heads"></div>
+  </div>
   <div class="scroll"><div class="sheet"></div></div>
   <button id="legacy-export" type="button" hidden>Скачать записи из этого браузера</button>
   <dialog class="editor" aria-labelledby="editor-title">
