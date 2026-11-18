@@ -91,19 +91,44 @@ def test_timeboard_public_read_and_atomic_admin_import(tmp_path, monkeypatch) ->
         assert client.post(api + "apply", json=credentials_in_url, auth=auth, headers=headers).status_code == 422
 
         result = client.post(api + "apply", json=packet, auth=auth, headers=headers)
-        assert result.json() == {"revision": 1, "applied": 1}
+        assert result.status_code == 200
+        committed = result.json()
+        assert committed["revision"] == committed["applied"] == 1
         assert client.post(api + "apply", json=packet, auth=auth, headers=headers).status_code == 409
         anonymous = TestClient(app).get(api + "state")
         assert anonymous.headers["cache-control"] == "no-store"
         entry = anonymous.json()["entries"][0]
         assert entry["title"] == operation["title"]
+        assert committed["changes"] == [{"op": "add", "before": None, "after": entry}]
 
         update = {**packet, "baseRevision": 1, "ops": [{"op": "update", "id": entry["id"], "flag": "blue"}]}
-        assert client.post(api + "apply", json=update, auth=auth, headers=headers).json()["revision"] == 2
-        assert client.get(api + "state").json()["entries"][0] == {**entry, "flag": "blue"}
+        changed_entry = {**entry, "flag": "blue"}
+        updated = client.post(api + "apply", json=update, auth=auth, headers=headers).json()
+        assert updated["revision"] == 2
+        assert updated["changes"] == [{"op": "update", "before": entry, "after": changed_entry}]
+        assert client.get(api + "state").json()["entries"][0] == changed_entry
         remove = {**packet, "baseRevision": 2, "ops": [{"op": "remove", "id": entry["id"]}]}
-        assert client.post(api + "apply", json=remove, auth=auth, headers=headers).json()["revision"] == 3
+        removed = client.post(api + "apply", json=remove, auth=auth, headers=headers).json()
+        assert removed["revision"] == 3
+        assert removed["changes"] == [{"op": "remove", "before": changed_entry, "after": None}]
         assert client.get(api + "state").json()["entries"] == []
+
+        restore = {**packet, "baseRevision": 3, "ops": [{"op": "add", **removed["changes"][0]["before"]}]}
+        assert client.post(api + "apply", json=restore, auth=auth, headers=headers).status_code == 200
+        assert client.get(api + "state").json()["entries"] == [changed_entry]
+        duplicate = {**restore, "baseRevision": 4}
+        assert client.post(api + "apply", json=duplicate, auth=auth, headers=headers).status_code == 422
+        wrong_category = {**duplicate, "ops": [{**operation, "sonyaRole": "weekly"}]}
+        assert client.post(api + "apply", json=wrong_category, auth=auth, headers=headers).status_code == 422
+        marker = {**operation, "cat": "sonya", "sonyaRole": "indicator"}
+        invalid_marker = {**duplicate, "ops": [marker]}
+        assert client.post(api + "apply", json=invalid_marker, auth=auth, headers=headers).status_code == 422
+        schedule = {**operation, "cat": "sonya", "sonyaRole": "weekly"}
+        popup_packet = {**duplicate, "ops": [schedule, {**marker, "phase": "period"}]}
+        assert client.post(api + "apply", json=popup_packet, auth=auth, headers=headers).status_code == 200
+        assert {e["sonyaRole"]: e["phase"] for e in client.get(api + "state").json()["entries"]} == {
+            "": "", "weekly": "", "indicator": "period",
+        }
 
         gate = Barrier(2)
         prepare = timeboard.prepare
@@ -119,14 +144,14 @@ def test_timeboard_public_read_and_atomic_admin_import(tmp_path, monkeypatch) ->
         monkeypatch.setattr(timeboard, "prepare", hold_first_revision)
 
         def write(title):
-            body = {**packet, "baseRevision": 3, "ops": [{**operation, "title": title}]}
+            body = {**packet, "baseRevision": 5, "ops": [{**operation, "title": title}]}
             return TestClient(app).post(api + "apply", json=body, auth=auth, headers=headers).status_code
 
         with ThreadPoolExecutor(max_workers=2) as pool:
             assert sorted(pool.map(write, ["Первая запись", "Вторая запись"])) == [200, 409]
         final_state = client.get(api + "state").json()
-        assert final_state["revision"] == 4
-        assert len(final_state["entries"]) == 1
+        assert final_state["revision"] == 6
+        assert len(final_state["entries"]) == 4
         backup = tmp_path / "restored.sqlite3"
         with backup.open("wb") as output:
             snapshot(tmp_path / "board.sqlite3", output)

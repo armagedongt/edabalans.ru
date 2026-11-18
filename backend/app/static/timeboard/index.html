@@ -14,10 +14,7 @@
 <main id="week-board-final">
   <header class="toolbar">
     <div class="group">
-      <div class="group pager" aria-label="Навигация по неделям">
-        <button type="button" id="previous" aria-label="Предыдущая неделя">←</button>
-        <strong id="week-label"></strong>
-        <button type="button" id="next" aria-label="Следующая неделя">→</button>
+      <div class="group pager">
         <button type="button" id="today">Сегодня</button>
       </div>
       <div class="view-options" role="group" aria-label="Вид доски">
@@ -31,6 +28,10 @@
       <a id="login" href="/admin?next=/timeboard/" hidden>Войти для правок</a>
       <button type="button" data-import hidden>Вставить изменения</button>
       <button type="button" class="primary" data-add hidden>+ Запись</button>
+      <div class="group" id="history-actions" role="group" aria-label="История правок" hidden>
+        <button type="button" data-history="undo" title="Ctrl+Z" aria-keyshortcuts="Control+Z" disabled>Отменить</button>
+        <button type="button" data-history="redo" title="Ctrl+Y" aria-keyshortcuts="Control+Y Control+Shift+Z" disabled>Повторить</button>
+      </div>
     </div>
   </header>
   <p class="status" id="status" role="status"></p>
@@ -39,7 +40,7 @@
   <dialog class="editor" aria-labelledby="editor-title">
     <div class="detail-head">
       <strong id="editor-title"></strong>
-      <button type="button" data-close-editor>Закрыть</button>
+      <button type="button" data-close-editor>Отменить</button>
     </div>
     <div class="editor-content"></div>
     <p class="status" id="editor-status" role="status"></p>

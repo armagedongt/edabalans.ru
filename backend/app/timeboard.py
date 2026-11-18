@@ -32,7 +32,8 @@ CATEGORIES = {
 Category = Literal["outside", "training", "work", "posts", "finance", "history", "sonya"]
 Title = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=160)]
 Clock = Annotated[str, StringConstraints(pattern=r"^(?:[01][0-9]|2[0-3]):[0-5][0-9]$")]
-MAX_PACKET_BYTES = 128_000
+EntryId = Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{32}$")]
+MAX_PACKET_BYTES = 800_000
 MAX_ENTRIES = 2_000
 
 
@@ -47,6 +48,7 @@ class EntryFields(BaseModel):
     url: str = Field(default="", max_length=2000)
     flag: Literal["", "blue", "green", "red"] = ""
     phase: Literal["", "period", "ovulation"] = ""
+    sonyaRole: Literal["", "weekly", "override", "indicator"] = ""
     done: bool = Field(default=False, strict=True)
 
     @field_validator("url")
@@ -68,6 +70,7 @@ class Entry(EntryFields):
 
 class Add(EntryFields):
     op: Literal["add"]
+    id: EntryId | None = None
     date: CalendarDate
     cat: Category
     title: Title
@@ -151,12 +154,15 @@ def prepare(packet: Packet, revision: int, entries: list[dict]) -> tuple[list[di
     changes = []
     seen = set()
     for index, op in enumerate(packet.ops, start=1):
-        identity = uuid4().hex if isinstance(op, Add) else op.id
+        identity = (op.id or uuid4().hex) if isinstance(op, Add) else op.id
         before = current.get(identity)
-        if not isinstance(op, Add):
-            if before is None or identity in seen:
-                raise HTTPException(422, f"Операция {index}: ID должен существовать и встречаться один раз.")
-            seen.add(identity)
+        if identity in seen:
+            raise HTTPException(422, f"Операция {index}: ID должен встречаться один раз.")
+        if isinstance(op, Add) and before is not None:
+            raise HTTPException(422, f"Операция {index}: ID новой записи уже существует.")
+        if not isinstance(op, Add) and before is None:
+            raise HTTPException(422, f"Операция {index}: ID записи не найден.")
+        seen.add(identity)
         if isinstance(op, Remove):
             del current[identity]
             after = None
@@ -166,8 +172,10 @@ def prepare(packet: Packet, revision: int, entries: list[dict]) -> tuple[list[di
                 entry = Entry.model_validate({**(before or {}), **fields, "id": identity})
             except ValidationError as error:
                 raise HTTPException(422, f"Операция {index}: проверьте дату, категорию и название.") from error
-            if entry.phase and entry.cat != "sonya":
-                raise HTTPException(422, f"Операция {index}: phase доступно только для категории sonya.")
+            if (entry.phase or entry.sonyaRole) and entry.cat != "sonya":
+                raise HTTPException(422, f"Операция {index}: phase и sonyaRole доступны только для категории sonya.")
+            if entry.sonyaRole == "indicator" and not entry.phase:
+                raise HTTPException(422, f"Операция {index}: индикатору нужна метка фазы.")
             after = entry.model_dump(mode="json")
             current[identity] = after
         changes.append({"op": op.op, "before": before, "after": after})
@@ -196,4 +204,4 @@ def apply(packet: Annotated[Packet, Depends(read_packet)]) -> JSONResponse:
             "INSERT INTO board VALUES (1, ?, ?) ON CONFLICT(id) DO UPDATE SET revision=excluded.revision, entries=excluded.entries",
             (revision + 1, json.dumps(updated, ensure_ascii=False)),
         )
-    return public_response({"revision": revision + 1, "applied": len(changes)})
+    return public_response({"revision": revision + 1, "applied": len(changes), "changes": changes})
