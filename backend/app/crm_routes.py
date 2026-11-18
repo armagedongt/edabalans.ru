@@ -112,6 +112,7 @@ class ImportedDiary(BaseModel):
 class PrivateDiarySnapshot(BaseModel):
     data: ImportedDiary
     prior_note_ids: list[uuid.UUID]
+    outdated: bool = False
 
 
 def _private_diary_path(user_id: uuid.UUID) -> Path:
@@ -529,6 +530,7 @@ def admin_client_diary(
         raise HTTPException(status_code=404, detail="diary snapshot not found")
     return {
         "history_available": snapshot is not None,
+        "history_outdated": snapshot.outdated if snapshot else False,
         "imported": snapshot.data if history and snapshot else None,
         "notes": _client_notes(db, user_id, snapshot.prior_note_ids if snapshot else None),
     }

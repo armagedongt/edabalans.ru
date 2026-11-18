@@ -966,7 +966,7 @@
       api(`/admin/api/apps/strength/users/${selected}`, { cache: "no-store" }),
       api(`/admin/api/users/${selected}/diary${history ? "?history=true" : ""}`, { cache: "no-store" })
     ]);
-    const { imported, notes, history_available: historyAvailable } = diary;
+    const { imported, notes, history_available: historyAvailable, history_outdated: historyOutdated } = diary;
     const oldCategories = imported?.categories ?? [];
     if (!dqsCategories.length && dqs.has_state) throw new Error("Не загрузились правила DQS");
     const name = dqs.user.display_name || dqs.user.email || "Дневник клиента";
@@ -1119,10 +1119,11 @@
         }).join("")}</tbody></table></div></section>`;
     }
     const diaryLink = history || historyAvailable
-      ? `<div class="admin-actions"><a class="admin-action alt" href="/admin/client-diary${history ? "" : "/history"}?user=${selected}">${history ? "Обычный дневник" : "Исторический дневник"}</a></div>`
+      ? `<div class="admin-actions"><a class="admin-action alt" href="/admin/client-diary${history ? "" : "/history"}?user=${selected}">${history ? "Обычный дневник" : historyOutdated ? "Исторический дневник (Неактуально)" : "Исторический дневник"}</a></div>`
       : "";
     root.innerHTML = `${managedApplicationToolbar("client-diary", dqs.user)}<div class="client-diary">
       ${diaryLink}
+      ${history && historyOutdated ? '<p class="admin-note"><strong>Неактуально.</strong> В данных старой Google-таблицы есть ошибки. Архив сохранён для справки.</p>' : ""}
       <div data-diary-summary></div>
       <section><div class="diary-heading"><h2>По дням</h2><div class="diary-controls"><button type="button" data-diary-categories aria-expanded="true">Скрыть категории</button><button type="button" data-diary-calories aria-expanded="false">Детали калорий</button></div></div><div data-diary-days>${dailyTable()}</div>
         ${showNativeDqs ? '<ul class="diary-legend" aria-label="Цвета таблицы"><li class="diversity-low">Низкое разнообразие</li><li class="zero">0 порций</li><li class="low">Мало порций</li><li class="high">Много порций</li></ul>' : ""}</section>
