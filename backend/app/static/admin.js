@@ -1123,7 +1123,7 @@
       : "";
     root.innerHTML = `${managedApplicationToolbar("client-diary", dqs.user)}<div class="client-diary">
       ${diaryLink}
-      ${history && historyOutdated ? '<p class="admin-note"><strong>Неактуально.</strong> В данных старой Google-таблицы есть ошибки. Архив сохранён для справки.</p>' : ""}
+      ${history && historyOutdated ? '<p class="admin-note"><strong>Неактуально.</strong> В данных исходной таблицы есть ошибки. Архив сохранён для справки.</p>' : ""}
       <div data-diary-summary></div>
       <section><div class="diary-heading"><h2>По дням</h2><div class="diary-controls"><button type="button" data-diary-categories aria-expanded="true">Скрыть категории</button><button type="button" data-diary-calories aria-expanded="false">Детали калорий</button></div></div><div data-diary-days>${dailyTable()}</div>
         ${showNativeDqs ? '<ul class="diary-legend" aria-label="Цвета таблицы"><li class="diversity-low">Низкое разнообразие</li><li class="zero">0 порций</li><li class="low">Мало порций</li><li class="high">Много порций</li></ul>' : ""}</section>
