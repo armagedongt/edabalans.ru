@@ -1392,10 +1392,10 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
     homepage_vsl_preset = response.text.split("const homepageVslPreset = {", 1)[1].split(
         "\n  };\n  const MEDIA_PRESETS", 1
     )[0]
-    assert "https://cdn-g.boomstream.com/balancer/3qGepzqy-9WmCBBoU.mp4" in homepage_vsl_preset
-    assert "https://cdn-g.boomstream.com/balancer/F5zqt5iQ-9WmCBBoU.mp4" in homepage_vsl_preset
-    assert "https://cdn-g.boomstream.com/balancer/IpVIy3yM-9WmCBBoU.mp4" in media_presets
-    assert "https://cdn-g.boomstream.com/balancer/RkqYeVnc-9WmCBBoU.mp4" in media_presets
+    assert "https://storage.yandexcloud.net/sergey-media-private/own-projects/public-site/video/vsl-preview-64b9e8315ef7.mp4" in homepage_vsl_preset
+    assert "https://storage.yandexcloud.net/sergey-media-private/own-projects/public-site/video/vsl-full-069d7a6a44ed.mp4" in homepage_vsl_preset
+    assert "https://storage.yandexcloud.net/sergey-media-private/own-projects/public-site/video/anya-preview-733ed14e9a75.mp4" in media_presets
+    assert "https://storage.yandexcloud.net/sergey-media-private/own-projects/public-site/video/anya-full-ffa5eb920df8.mp4" in media_presets
     anya_media_preset = media_presets.split("'anya-review': {", 1)[1].split(
         "\n    }", 1
     )[0]
@@ -1432,7 +1432,7 @@ def test_public_player_supports_intensive_single_source_seekable_mode() -> None:
 
     assert response.status_code == 200
     assert "'intensive-day-1': {" in response.text
-    assert "https://cdn-g.boomstream.com/balancer/SBDlvNgl-9WmCBBoU.mp4" in response.text
+    assert response.text.count("https://storage.yandexcloud.net/sergey-media-private/own-projects/public-site/video/intensive-day-1-e486a05fa7a1.mp4") == 2
     assert "videoId: 'intensive-day-1-2026-09-03'" in response.text
     assert "const PLAYER_CONTEXT = playerQuery.get('context')" in response.text
     assert "const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT];" in response.text

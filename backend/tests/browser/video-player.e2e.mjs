@@ -28,7 +28,7 @@ async function fixture(storage = 'normal') {
       paused: { get() { return state(this).paused } },
       ended: { get() { return state(this).ended } },
       readyState: { get() { return this.getAttribute('src') ? 4 : 0 } },
-      duration: { get() { return this.getAttribute('src') ? (this.getAttribute('src').includes('3qGepzqy') || this.getAttribute('src').includes('IpVIy3yM') ? 8 : 100) : NaN } },
+      duration: { get() { return this.getAttribute('src') ? (this.getAttribute('src').includes('vsl-preview-') || this.getAttribute('src').includes('anya-preview-') ? 8 : 100) : NaN } },
       currentTime: {
         get() { return state(this).time },
         set(value) { state(this).time = value; state(this).ended = false; queueMicrotask(() => this.dispatchEvent(new Event('seeked'))) }
@@ -126,7 +126,7 @@ try {
     const playback = await fixture(storage)
     await playback.page.goto(`${origin}/public?context=homepage-vsl`)
     assert.equal(await playback.page.locator('video').count(), 1)
-    assert.match(await playback.page.locator('video').getAttribute('src'), /3qGepzqy/)
+    assert.match(await playback.page.locator('video').getAttribute('src'), /vsl-preview-/)
     assert.deepEqual(playback.payloads, [])
     const engagedResponse = playback.page.waitForResponse(response => response.url().endsWith('/api/public/video-analytics'))
     await playback.page.getByRole('button', { name: 'Включить звук' }).click()
@@ -137,7 +137,7 @@ try {
     assert.match(playback.payloads[0].session_id, /^[0-9a-f-]{36}$/i)
     assert.equal(playback.payloads[0].page_path, '/public')
     const session = playback.payloads[0].session_id
-    assert.match(await playback.page.locator('video').getAttribute('src'), /F5zqt5iQ/)
+    assert.match(await playback.page.locator('video').getAttribute('src'), /vsl-full-/)
     assert.equal(await playback.page.locator('video').evaluate(video => video.currentTime), 0)
     const exitResponse = playback.page.waitForResponse(response => response.request().postDataJSON()?.event === 'video_exit')
     await playback.page.evaluate(() => dispatchEvent(new Event('pagehide')))
@@ -169,7 +169,7 @@ try {
     assert.equal(await profile.page.locator('.mvp').evaluate(root => root.classList.contains('mvp--seekable')), seekable)
     assert.equal(await profile.page.locator('.mvp__video--preview').evaluate(video => video.loop), false)
     assert.equal(await profile.page.locator('video').count(), 1)
-    assert.match(await profile.page.locator('video').getAttribute('src'), seekable ? /SBDlvNgl/ : context === 'anya-review' ? /RkqYeVnc/ : /F5zqt5iQ/)
+    assert.match(await profile.page.locator('video').getAttribute('src'), seekable ? /intensive-day-1-/ : context === 'anya-review' ? /anya-full-/ : /vsl-full-/)
     const result = await profile.page.locator('.mvp__progress').evaluate(progress => {
       const video = document.querySelector('.mvp__video--preview')
       video.currentTime = 50

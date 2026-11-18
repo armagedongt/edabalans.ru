@@ -555,12 +555,13 @@ Play/pause, громкость, `x1` и полноэкранный режим и
 фиксированный набор: `ResizeObserver` добавляет полосы с постоянным визуальным
 шагом по мере увеличения доступной ширины.
 
+Публичные версии хранятся в Yandex Object Storage. Первый день интенсива использует один MP4 из того же [профиля плеера](../../backend/app/static/homepage-preview/vsl-player.html).
 Главный VSL использует короткий MP4
-`https://cdn-g.boomstream.com/balancer/3qGepzqy-9WmCBBoU.mp4` и длинный MP4
-`https://cdn-g.boomstream.com/balancer/F5zqt5iQ-9WmCBBoU.mp4`. Видеоотзыв Ани
+`https://storage.yandexcloud.net/sergey-media-private/own-projects/public-site/video/vsl-preview-64b9e8315ef7.mp4` и длинный MP4
+`https://storage.yandexcloud.net/sergey-media-private/own-projects/public-site/video/vsl-full-069d7a6a44ed.mp4`. Видеоотзыв Ани
 использует короткий MP4
-`https://cdn-g.boomstream.com/balancer/IpVIy3yM-9WmCBBoU.mp4` и длинный MP4
-`https://cdn-g.boomstream.com/balancer/RkqYeVnc-9WmCBBoU.mp4`. После первого
+`https://storage.yandexcloud.net/sergey-media-private/own-projects/public-site/video/anya-preview-733ed14e9a75.mp4` и длинный MP4
+`https://storage.yandexcloud.net/sergey-media-private/own-projects/public-site/video/anya-full-ffa5eb920df8.mp4`. После первого
 ручного включения громкость главного VSL равна 85%, видеоотзыва Ани — 100%.
 
 ## Общая подложка и подвал
