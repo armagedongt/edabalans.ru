@@ -135,6 +135,7 @@ class ImportedDiaryDay(BaseModel):
 class ImportedDiary(BaseModel):
     categories: list[str]
     days: list[ImportedDiaryDay]
+    table_from: date | None = None
     energy_summaries: list[DiaryEnergySummary] = Field(default_factory=list)
 
     @model_validator(mode="after")

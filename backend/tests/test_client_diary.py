@@ -39,7 +39,7 @@ def test_current_shared_diary_shows_known_fields_and_preserves_missing_and_dqs(d
         {"date": "2026-11-09", "weight": 60, "kcal": 1900, "protein": 120, "fat": 60,
          "carbs": 220, "source": "report"},
         {"date": "2026-11-10", "steps": 0},
-    ]}, "prior_note_ids": []}), encoding="utf-8")
+    ], "table_from": "2026-11-10"}, "prior_note_ids": []}), encoding="utf-8")
     url = f"/admin/api/users/{user_id}/diary"
     assert client.get(url).status_code == 401
     login(client)
@@ -47,6 +47,8 @@ def test_current_shared_diary_shows_known_fields_and_preserves_missing_and_dqs(d
     assert response.status_code == 200
     assert response.headers["cache-control"] == "no-store"
     days = response.json()["imported"]["days"]
+    assert response.json()["imported"]["table_from"] == "2026-11-10"
+    assert len(days) == 2  # Display filtering must not discard source records.
     assert (days[0]["weight"], days[0]["kcal"], days[0]["protein"], days[0]["fat"], days[0]["carbs"]) == (60, 1900, 120, 60, 220)
     assert days[0]["steps"] is None
     assert days[1]["steps"] == 0

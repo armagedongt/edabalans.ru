@@ -1155,9 +1155,10 @@
     function dailyTable() {
       const daily = [...rows].sort(([a], [b]) => a.localeCompare(b));
       const weights = [];
+      let visibleIndex = 0;
       const metricText = value => Number.isFinite(value) ? number.format(value) : "";
       const stepNumber = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 0 });
-      const table = daily.map(([date, item], index) => {
+      const table = daily.map(([date, item]) => {
         const diversity = item.dqs?.d?.filter(value => value === true).length;
         const categories = dqsCategories.map(([, , , group, id], i) => {
           const value = item.dqs?.p?.[i];
@@ -1171,6 +1172,7 @@
         }).join("");
         if (Number.isFinite(item.weight)) weights.push(item.weight);
         const weightMean = Number.isFinite(item.weight) && weights.length >= 7 ? avg(weights.slice(-7)) : null;
+        if (imported?.table_from && date < imported.table_from) return "";
         const steps = Number.isFinite(item.steps) ? [item.steps_qualifier, stepNumber.format(item.steps)].filter(Boolean).join(" ") : "";
         const alcohol = item.alcohol ?? (item.dqs?.p?.[alcoholIndex] > 0 ? "Да" : item.dqs?.p?.[alcoholIndex] === 0 ? "Нет" : null);
         const sessions = item.training_sessions;
@@ -1182,7 +1184,7 @@
           return `${Math.floor(minutes / 60)} ч ${minutes % 60} мин`;
         };
         const training = sessions?.length ? `<details><summary>${esc([...new Set(sessions.map(s => s.type))].join(", "))}</summary>${sessions.map(s => `<p><a href="${esc(s.source_url)}" target="_blank" rel="noopener noreferrer">${esc(s.start)} · ${esc(s.type)}</a><br>Чистое: ${duration(s.moving_seconds)}; общее: ${duration(s.elapsed_seconds)}<br>Калории: ${metricText(s.kcal_total)} общие; ${s.active_estimated ? "≈ " : ""}${metricText(s.kcal_active)} активные${s.active_estimated ? `<br><small>Оценка: общие − БМР ${metricText(s.basal_kcal_day)} × ${s.duration_basis === "moving" ? "чистое" : "общее"} время / 24 ч.</small>` : ""}</p>`).join("")}</details>` : esc(item.activity === "" && !item.workouts ? "Нет" : item.activity ?? "");
-        return `<tr><td>${index + 1}</td><th class="diary-date" scope="row">${dayLabel(date)}</th>
+        return `<tr><td>${++visibleIndex}</td><th class="diary-date" scope="row">${dayLabel(date)}</th>
           ${oldCategories.length ? `<td>${metricText(legacy?.total)}</td><td>${legacy?.categories.filter(category => category.variety === true).length ?? ""}</td>${legacyCells}` : ""}
           ${showNativeDqs ? `<td>${item.dqs ? number.format(dqsDayScore(item.dqs)) : ""}</td><td><span class="${diversity === 0 ? "diversity-low" : ""}">${diversity ?? ""}</span></td>${categories}` : ""}
           <td class="diary-divider">${metricText(item.weight)}</td><td class="diary-separator">${metricText(weightMean)}</td><td class="diary-divider">${metricText(item.kcal)}</td>${["protein", "fat", "carbs"].map(key => `<td class="diary-calorie-detail">${metricText(item[key])}</td>`).join("")}${'<td class="diary-calorie-detail"></td>'.repeat(4)}
