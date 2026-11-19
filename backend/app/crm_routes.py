@@ -88,12 +88,17 @@ class DiaryOldDqs(BaseModel):
 
 class ImportedDiaryDay(BaseModel):
     date: date
-    weight: float = Field(gt=0, allow_inf_nan=False)
-    steps: int = Field(ge=0)
-    steps_qualifier: Literal["", ">", "≥"]
-    activity: str
-    alcohol: str
-    legacy_dqs: DiaryOldDqs | None
+    weight: float | None = Field(default=None, gt=0, allow_inf_nan=False)
+    steps: int | None = Field(default=None, ge=0)
+    steps_qualifier: Literal["", ">", "≥"] = ""
+    kcal: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    protein: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    fat: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    carbs: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    activity: str | None = None
+    alcohol: str | None = None
+    legacy_dqs: DiaryOldDqs | None = None
+    source: str = ""
 
 
 class ImportedDiary(BaseModel):
@@ -531,7 +536,7 @@ def admin_client_diary(
     return {
         "history_available": snapshot is not None,
         "history_outdated": snapshot.outdated if snapshot else False,
-        "imported": snapshot.data if history and snapshot else None,
+        "imported": snapshot.data if snapshot and (history or not snapshot.outdated) else None,
         "notes": _client_notes(db, user_id, snapshot.prior_note_ids if snapshot else None),
     }
 

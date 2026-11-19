@@ -1073,7 +1073,7 @@
         return `<tr><td>${index + 1}</td><th class="diary-date" scope="row">${dayLabel(date)}</th>
           ${oldCategories.length ? `<td>${metricText(legacy?.total)}</td><td>${legacy?.categories.filter(category => category.variety === true).length ?? ""}</td>${legacyCells}` : ""}
           ${showNativeDqs ? `<td>${item.dqs ? number.format(dqsDayScore(item.dqs)) : ""}</td><td><span class="${diversity === 0 ? "diversity-low" : ""}">${diversity ?? ""}</span></td>${categories}` : ""}
-          <td class="diary-divider">${metricText(item.weight)}</td><td class="diary-separator">${metricText(weightMean)}</td><td class="diary-divider">${metricText(item.kcal)}</td>${'<td class="diary-calorie-detail"></td>'.repeat(7)}
+          <td class="diary-divider">${metricText(item.weight)}</td><td class="diary-separator">${metricText(weightMean)}</td><td class="diary-divider">${metricText(item.kcal)}</td>${["protein", "fat", "carbs"].map(key => `<td class="diary-calorie-detail">${metricText(item[key])}</td>`).join("")}${'<td class="diary-calorie-detail"></td>'.repeat(4)}
           <td class="diary-divider">${esc(steps)}</td><td class="diary-divider">${item.workouts || ""}</td><td></td><td class="diary-activity">${esc(item.activity === "" && !item.workouts ? "Нет" : item.activity ?? "")}</td>
           <td class="diary-divider">${esc(alcohol === "" ? "Нет" : alcohol ?? "")}</td>
           <td class="diary-day-note">${esc(item.notes?.join("\n\n") || "")}</td></tr>`;
