@@ -12,6 +12,7 @@
     metabolism: "Два сохранённых варианта расчёта пользователя"
   };
   const pageParams = new URLSearchParams(location.search);
+  let clearDiarySelection = () => {};
   const strengthMobileMode = location.pathname === "/admin/strength" && pageParams.get("mobile") === "1";
   if (strengthMobileMode) document.body.classList.add("strength-mobile-admin");
   if (pageParams.get("view") === "apps" && location.pathname === "/admin/client-diary") document.body.classList.add("client-diary-app-view");
@@ -951,6 +952,105 @@
     root.querySelector('#channel-report-form').onsubmit=event=>{event.preventDefault();location.href='/admin/channel-links?'+new URLSearchParams(new FormData(event.currentTarget));};
   }
 
+  function bindDiaryCellSelection() {
+    let selection = null, selectedCells = [], tooltip = null;
+    const format = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 });
+    function clear() {
+      selectedCells.forEach(cell => cell.classList.remove("diary-cell-selected"));
+      selectedCells = [];
+      selection?.table.classList.remove("diary-selecting");
+      selection = null;
+      tooltip?.remove();
+      tooltip = null;
+    }
+    function cellAt(target) {
+      const cell = target instanceof Element ? target.closest(".diary-daily-grid tbody td") : null;
+      return cell && cell.cellIndex > 1 && !cell.matches(".diary-day-note,.diary-activity") ? cell : null;
+    }
+    function valueOf(cell) {
+      const text = cell.textContent.trim().replace(/^≈\s*/, "").replace(/\s/g, "").replace(",", ".");
+      return /^-?\d+(\.\d+)?$/.test(text) && Number.isFinite(Number(text)) ? Number(text) : null;
+    }
+    function position(x, y) {
+      if (!tooltip) return;
+      tooltip.style.left = `${Math.max(8, Math.min(x + 16, innerWidth - tooltip.offsetWidth - 8))}px`;
+      tooltip.style.top = `${Math.max(8, Math.min(y + 18, innerHeight - tooltip.offsetHeight - 8))}px`;
+    }
+    function draw(end, x, y) {
+      selectedCells.forEach(cell => cell.classList.remove("diary-cell-selected"));
+      selectedCells = [];
+      selection.end = end;
+      const firstRow = Math.min(selection.start.parentElement.rowIndex, end.parentElement.rowIndex);
+      const lastRow = Math.max(selection.start.parentElement.rowIndex, end.parentElement.rowIndex);
+      const firstCol = Math.min(selection.start.cellIndex, end.cellIndex);
+      const lastCol = Math.max(selection.start.cellIndex, end.cellIndex);
+      const groups = new Map();
+      for (const row of selection.table.tBodies[0].rows) {
+        if (row.rowIndex < firstRow || row.rowIndex > lastRow) continue;
+        for (const cell of row.cells) {
+          if (cell.cellIndex < firstCol || cell.cellIndex > lastCol || !cellAt(cell) || !cell.getClientRects().length) continue;
+          cell.classList.add("diary-cell-selected");
+          selectedCells.push(cell);
+          const value = valueOf(cell);
+          if (value === null) continue;
+          const group = groups.get(cell.cellIndex) || { sum: 0, count: 0, estimated: false };
+          group.sum += value;
+          group.count++;
+          group.estimated ||= cell.textContent.trim().startsWith("≈");
+          groups.set(cell.cellIndex, group);
+        }
+      }
+      tooltip.replaceChildren();
+      const heading = document.createElement("strong");
+      heading.textContent = "Среднее по выделению";
+      tooltip.append(heading);
+      if (!groups.size) tooltip.append(document.createTextNode("Нет числовых значений"));
+      for (const [column, group] of groups) {
+        const header = selection.table.tHead.rows[0].cells[column];
+        const label = header.getAttribute("aria-label") || header.title || header.textContent;
+        const line = document.createElement("span");
+        line.textContent = `${label}: ${group.estimated ? "≈ " : ""}${format.format(group.sum / group.count)} (${group.count} знач.)`;
+        tooltip.append(line);
+      }
+      position(x, y);
+    }
+    root.addEventListener("pointerdown", event => {
+      if (event.pointerType !== "mouse" || event.button !== 0 || event.target.closest("a,button,input,select,textarea,summary")) return;
+      const cell = cellAt(event.target);
+      if (!cell) return;
+      clear();
+      event.preventDefault();
+      const table = cell.closest("table");
+      selection = { table, start: cell, end: cell, dragging: true };
+      table.classList.add("diary-selecting");
+      tooltip = document.createElement("div");
+      tooltip.className = "diary-selection-tooltip";
+      tooltip.setAttribute("role", "status");
+      document.body.append(tooltip);
+      draw(cell, event.clientX, event.clientY);
+    });
+    document.addEventListener("pointermove", event => {
+      if (!selection?.dragging) return;
+      if (!selection.table.isConnected) { clear(); return; }
+      const cell = cellAt(document.elementFromPoint(event.clientX, event.clientY));
+      if (cell?.closest("table") === selection.table && cell !== selection.end) draw(cell, event.clientX, event.clientY);
+      else position(event.clientX, event.clientY);
+    });
+    document.addEventListener("pointerup", () => {
+      if (!selection) return;
+      selection.dragging = false;
+      selection.table.classList.remove("diary-selecting");
+    });
+    document.addEventListener("pointercancel", clear);
+    document.addEventListener("pointerdown", event => {
+      if (selection && !selection.table.contains(event.target)) clear();
+    }, true);
+    document.addEventListener("keydown", event => { if (event.key === "Escape") clear(); });
+    window.addEventListener("blur", clear);
+    window.addEventListener("resize", clear);
+    return clear;
+  }
+
   async function clientDiary() {
     const selected = pageParams.get("user") || "";
     const history = location.pathname === "/admin/client-diary/history";
@@ -994,7 +1094,10 @@
     for (const session of strength.state?.data?.workouts ?? []) {
       if (session?.status === "filled" && dqsEntryDate(session.date, 1) === session.date && session.date) day(session.date).workouts++;
     }
-    for (const record of imported?.days ?? []) Object.assign(day(record.date), record);
+    for (const record of imported?.days ?? []) {
+      Object.assign(day(record.date), record);
+      if (record.training_sessions) day(record.date).workouts = record.training_sessions.length;
+    }
     const showNativeDqs = !oldCategories.length || [...rows.values()].some(item => item.dqs);
     function addDailyNote(note) {
       const dated = parseDailyNote(note.body);
@@ -1070,11 +1173,20 @@
         const weightMean = Number.isFinite(item.weight) && weights.length >= 7 ? avg(weights.slice(-7)) : null;
         const steps = Number.isFinite(item.steps) ? [item.steps_qualifier, stepNumber.format(item.steps)].filter(Boolean).join(" ") : "";
         const alcohol = item.alcohol ?? (item.dqs?.p?.[alcoholIndex] > 0 ? "Да" : item.dqs?.p?.[alcoholIndex] === 0 ? "Нет" : null);
+        const sessions = item.training_sessions;
+        const activeKnown = sessions?.length && sessions.every(s => Number.isFinite(s.kcal_active));
+        const activeKcal = activeKnown ? sessions.reduce((sum, s) => sum + s.kcal_active, 0) : null;
+        const estimated = sessions?.some(s => s.active_estimated);
+        const duration = seconds => {
+          const minutes = Math.round(seconds / 60);
+          return `${Math.floor(minutes / 60)} ч ${minutes % 60} мин`;
+        };
+        const training = sessions?.length ? `<details><summary>${esc([...new Set(sessions.map(s => s.type))].join(", "))}</summary>${sessions.map(s => `<p><a href="${esc(s.source_url)}" target="_blank" rel="noopener noreferrer">${esc(s.start)} · ${esc(s.type)}</a><br>Чистое: ${duration(s.moving_seconds)}; общее: ${duration(s.elapsed_seconds)}<br>Калории: ${metricText(s.kcal_total)} общие; ${s.active_estimated ? "≈ " : ""}${metricText(s.kcal_active)} активные${s.active_estimated ? `<br><small>Оценка: общие − БМР ${metricText(s.basal_kcal_day)} × ${s.duration_basis === "moving" ? "чистое" : "общее"} время / 24 ч.</small>` : ""}</p>`).join("")}</details>` : esc(item.activity === "" && !item.workouts ? "Нет" : item.activity ?? "");
         return `<tr><td>${index + 1}</td><th class="diary-date" scope="row">${dayLabel(date)}</th>
           ${oldCategories.length ? `<td>${metricText(legacy?.total)}</td><td>${legacy?.categories.filter(category => category.variety === true).length ?? ""}</td>${legacyCells}` : ""}
           ${showNativeDqs ? `<td>${item.dqs ? number.format(dqsDayScore(item.dqs)) : ""}</td><td><span class="${diversity === 0 ? "diversity-low" : ""}">${diversity ?? ""}</span></td>${categories}` : ""}
           <td class="diary-divider">${metricText(item.weight)}</td><td class="diary-separator">${metricText(weightMean)}</td><td class="diary-divider">${metricText(item.kcal)}</td>${["protein", "fat", "carbs"].map(key => `<td class="diary-calorie-detail">${metricText(item[key])}</td>`).join("")}${'<td class="diary-calorie-detail"></td>'.repeat(4)}
-          <td class="diary-divider">${esc(steps)}</td><td class="diary-divider">${item.workouts || ""}</td><td></td><td class="diary-activity">${esc(item.activity === "" && !item.workouts ? "Нет" : item.activity ?? "")}</td>
+          <td class="diary-divider">${esc(steps)}</td><td class="diary-divider">${item.workouts || ""}</td><td title="${estimated ? "Расчётная оценка активных калорий. Исходные значения и формула — в подробностях тренировки." : "Активные калории тренировок"}">${activeKnown ? `${estimated ? "≈ " : ""}${metricText(activeKcal)}` : ""}</td><td class="diary-activity">${training}</td>
           <td class="diary-divider">${esc(alcohol === "" ? "Нет" : alcohol ?? "")}</td>
           <td class="diary-day-note">${esc(item.notes?.join("\n\n") || "")}</td></tr>`;
       }).join("");
@@ -1084,7 +1196,7 @@
         ${showNativeDqs ? `<th>DQS</th><th title="Разнообразие">Разн.</th>${dqsCategories.map(([label, , icon]) => `<th class="diary-category" aria-label="${esc(label)}" title="${esc(label)}">${esc(icon)}</th>`).join("")}` : ""}
         <th class="diary-divider">Вес</th><th class="diary-separator">SMA 7</th><th class="diary-divider">Ккал</th>
         ${["Белки", "Жиры", "Углеводы", "Расход", "Цель", "Дефицит", "SMA 5"].map(label => `<th class="diary-calorie-detail">${label}</th>`).join("")}
-        <th class="diary-divider">Шаги</th><th class="diary-divider">Тренировок</th><th>Ккал трен.</th><th>Тренировка</th>
+        <th class="diary-divider">Шаги</th><th class="diary-divider">Тренировок</th><th>Ккал трен. актив.</th><th>Тренировка</th>
         <th class="diary-divider">Алк.</th><th>Заметка</th></tr></thead><tbody>${table}</tbody></table></div>${table ? "" : "<p>Нет записей по дням.</p>"}`;
     }
     function historicalNutritionSummary(from, to) {
@@ -1121,10 +1233,13 @@
     const diaryLink = history || historyAvailable
       ? `<div class="admin-actions"><a class="admin-action alt" href="/admin/client-diary${history ? "" : "/history"}?user=${selected}">${history ? "Обычный дневник" : historyOutdated ? "Исторический дневник (Неактуально)" : "Исторический дневник"}</a></div>`
       : "";
+    const energySummaries = imported?.energy_summaries?.length ? `<section><h2>Расход по Garmin · среднее за день</h2><div class="diary-grid"><table><thead><tr><th>Период</th><th>Активные, ккал</th><th>В покое, ккал</th><th>Всего, ккал</th></tr></thead><tbody>${imported.energy_summaries.map(s => `<tr><th>${dayLabel(s.start)} — ${dayLabel(s.end)}</th><td>${metricTextSummary(s.active)}</td><td>${metricTextSummary(s.resting)}</td><td>${metricTextSummary(s.total)}</td></tr>`).join("")}</tbody></table></div><p>Активные калории здесь включают тренировки и остальное движение за день.</p></section>` : "";
+    function metricTextSummary(value) { return Number.isFinite(value) ? number.format(value) : ""; }
     root.innerHTML = `${managedApplicationToolbar("client-diary", dqs.user)}<div class="client-diary">
       ${diaryLink}
       ${history && historyOutdated ? '<p class="admin-note"><strong>Неактуально.</strong> В данных исходной таблицы есть ошибки. Архив сохранён для справки.</p>' : ""}
       <div data-diary-summary></div>
+      ${energySummaries}
       <section><div class="diary-heading"><h2>По дням</h2><div class="diary-controls"><button type="button" data-diary-categories aria-expanded="true">Скрыть категории</button><button type="button" data-diary-calories aria-expanded="false">Детали калорий</button></div></div><div data-diary-days>${dailyTable()}</div>
         ${showNativeDqs ? '<ul class="diary-legend" aria-label="Цвета таблицы"><li class="diversity-low">Низкое разнообразие</li><li class="zero">0 порций</li><li class="low">Мало порций</li><li class="high">Много порций</li></ul>' : ""}</section>
       <section><div class="diary-heading"><h2>Динамика</h2><div class="diary-controls"><label>С <input type="date" data-diary-from></label><label>По <input type="date" data-diary-to></label></div></div>
@@ -1139,6 +1254,7 @@
     wrapper.classList.add("diary-calories-collapsed");
     const calorieToggle = root.querySelector("[data-diary-calories]");
     calorieToggle.onclick = () => {
+      clearDiarySelection();
       const collapsed = wrapper.classList.toggle("diary-calories-collapsed");
       calorieToggle.setAttribute("aria-expanded", String(!collapsed));
     };
@@ -1168,6 +1284,7 @@
     window.EdabalansEmbed?.load(calculator);
     const categoryToggle = root.querySelector("[data-diary-categories]");
     categoryToggle.onclick = () => {
+      clearDiarySelection();
       const hidden = root.querySelector(".client-diary").classList.toggle("diary-categories-hidden");
       categoryToggle.setAttribute("aria-expanded", String(!hidden));
       categoryToggle.textContent = hidden ? "Показать категории" : "Скрыть категории";
@@ -1197,6 +1314,7 @@
         const note = { body, created_at: new Date().toISOString() };
         notes.unshift(note);
         addDailyNote(note);
+        clearDiarySelection();
         root.querySelector("[data-diary-days]").innerHTML = dailyTable();
         showNotes();
         form.reset();
@@ -1211,6 +1329,7 @@
   }
 
   async function run() {
+    clearDiarySelection();
     const active = section();
     selectNavigation(active);
     if (active === "client-diary") return clientDiary();
@@ -1236,5 +1355,6 @@
     if (event.state?.edStrengthScreen) return;
     run().catch(failure);
   });
+  clearDiarySelection = bindDiaryCellSelection();
   run().catch(failure);
 }());

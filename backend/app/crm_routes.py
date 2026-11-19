@@ -11,7 +11,7 @@ from urllib.parse import urlencode
 from fastapi import APIRouter, Depends, HTTPException, Path as ApiPath, Query, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.security import HTTPBasicCredentials
-from pydantic import BaseModel, Field, ValidationError, model_validator
+from pydantic import BaseModel, Field, HttpUrl, ValidationError, model_validator
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -86,6 +86,36 @@ class DiaryOldDqs(BaseModel):
     categories: list[DiaryCategory]
 
 
+class DiaryTrainingSession(BaseModel):
+    start: str = Field(pattern=r"^([01]\d|2[0-3]):[0-5]\d$")
+    type: str
+    moving_seconds: int = Field(ge=0)
+    elapsed_seconds: int = Field(ge=0)
+    kcal_total: float = Field(ge=0, allow_inf_nan=False)
+    kcal_active: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    active_estimated: bool = False
+    basal_kcal_day: float | None = Field(default=None, gt=0, allow_inf_nan=False)
+    duration_basis: Literal["elapsed", "moving"] = "elapsed"
+    source_url: HttpUrl
+
+    @model_validator(mode="after")
+    def check_active_calories(self):
+        if self.kcal_active is not None and self.kcal_active > self.kcal_total:
+            raise ValueError("active calories exceed total")
+        if self.active_estimated and (self.kcal_active is None or self.basal_kcal_day is None):
+            raise ValueError("estimated active calories require a value and basal rate")
+        return self
+
+
+class DiaryEnergySummary(BaseModel):
+    start: date
+    end: date
+    active: float = Field(ge=0, allow_inf_nan=False)
+    resting: float = Field(ge=0, allow_inf_nan=False)
+    total: float = Field(ge=0, allow_inf_nan=False)
+    source: str
+
+
 class ImportedDiaryDay(BaseModel):
     date: date
     weight: float | None = Field(default=None, gt=0, allow_inf_nan=False)
@@ -99,11 +129,13 @@ class ImportedDiaryDay(BaseModel):
     alcohol: str | None = None
     legacy_dqs: DiaryOldDqs | None = None
     source: str = ""
+    training_sessions: list[DiaryTrainingSession] | None = None
 
 
 class ImportedDiary(BaseModel):
     categories: list[str]
     days: list[ImportedDiaryDay]
+    energy_summaries: list[DiaryEnergySummary] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def check_days(self) -> ImportedDiary:
