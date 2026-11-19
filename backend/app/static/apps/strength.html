@@ -3990,7 +3990,8 @@ function bindJournalAxes(){
     if(target>=0)axis.scrollLeft=target*(width+gap)+width-axis.clientWidth;
   }
   axes.forEach(function(axis){
-    axis.scrollLeft=axis.scrollWidth;
+    var previous=app.axisPositions[axis.dataset.axis];
+    axis.scrollLeft=!app.axisResetRight && !app.axisTargetSession && Number.isFinite(previous)?previous:axis.scrollWidth;
     axis.addEventListener('pointerdown',function(){app.activeAxis=axis.dataset.axis;syncBar(axis);});
     axis.addEventListener('scroll',function(){app.axisPositions[axis.dataset.axis]=axis.scrollLeft;app.activeAxis=axis.dataset.axis;rememberTrainingAnchor(axis);syncDate(axis);if(!syncing)syncBar(axis);},{passive:true});
     app.trainingViewportWidth=axis.clientWidth;rememberTrainingAnchor(axis);

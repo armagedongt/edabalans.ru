@@ -95,6 +95,34 @@ async function entryGeometry(page){
   return {fields,doneWidth:done.width,leftGap:done.left-row.querySelector('[data-field=planReps]').getBoundingClientRect().right,rightGap:row.querySelector('[data-field=factWeight]').getBoundingClientRect().left-done.right,rpeWidth:rpe.getBoundingClientRect().width,rpeFont:parseFloat(getComputedStyle(rpe).fontSize)};
  });
 }
+if(process.env.QA_FOCUS==='viewport'){
+ for(const width of [430,1440])for(const view of ['training','exercise']){
+  const trial=await open(width),page=trial.page;
+  trial.state.sessions.slice(-2).forEach(session=>session.date='');
+  await page.reload();await page.locator('.st-view-toggle').waitFor();
+  if(view==='exercise')await page.locator('.st-view-toggle').click();
+  const card=page.locator('.st-history-row').first().locator('article[data-session-index="0"]');
+  const fact=card.locator('[data-field="factWeight"]').first();
+  await fact.scrollIntoViewIfNeeded();
+  const axis=page.locator('[data-axis]'),left=await axis.evaluate(el=>el.scrollLeft);
+  assert(await axis.evaluate(el=>el.scrollWidth-el.clientWidth-el.scrollLeft)>100,'editing a workout before two future plans');
+  await fact.fill('42');await fact.press('Tab');await page.waitForTimeout(550);
+  assert(Math.abs(await axis.evaluate(el=>el.scrollLeft)-left)<2,'fact entry preserves history position');
+  const saved=trial.writes.filter(write=>write.action==='saveSession').at(-1).session;
+  assert.equal(saved.session_id,'one');assert.equal(saved.exercises[0].sets[0].fact_weight,42);
+  await card.locator('.st-rpe-button').first().click();
+  assert(Math.abs(await axis.evaluate(el=>el.scrollLeft)-left)<2,'opening RPE stays on the edited workout');
+  await page.getByRole('button',{name:'RPE 8',exact:true}).click();await page.waitForTimeout(550);
+  assert(Math.abs(await axis.evaluate(el=>el.scrollLeft)-left)<2,'saving RPE stays on the edited workout');
+  assert.equal(trial.writes.filter(write=>write.action==='saveSession').at(-1).session.session_id,'one');
+  await card.locator('.st-set-done').first().click();await page.waitForTimeout(550);
+  assert(Math.abs(await axis.evaluate(el=>el.scrollLeft)-left)<2,'completion stays on the edited workout');
+  await page.getByRole('button',{name:'Новая тренировка',exact:true}).click();
+  await page.waitForFunction(()=>{const axis=document.querySelector('[data-axis]');return Math.abs(axis.scrollWidth-axis.clientWidth-axis.scrollLeft)<2;});
+  await trial.context.close();
+ }
+ assert.deepEqual(errors,[]);await browser.close();console.log('PASS: editing before two future plans preserves the journal viewport');process.exit(0);
+}
 if(process.env.QA_FOCUS==='date'){
  for(const width of [360,430,700,701,768,1440])for(const view of ['training','exercise']){
   const trial=await open(width),page=trial.page;
@@ -429,7 +457,7 @@ await navigationInfo.scrollIntoViewIfNeeded();
 const originalAxis=await bp.locator('[data-axis]').evaluate(e=>e.scrollLeft);
 await navigationInfo.click();await bp.goBack();
 await bp.locator('.st-guide-header').waitFor({state:'detached'});
-assert(await bp.locator('[data-axis]').evaluate(e=>Math.abs(e.scrollWidth-e.clientWidth-e.scrollLeft)<2));
+assert(Math.abs(await bp.locator('[data-axis]').evaluate(e=>e.scrollLeft)-originalAxis)<2,'returning from exercise information preserves the edited history position');
 await bp.screenshot({path:`${out}/back-restored.png`});
 await bp.goForward();await bp.locator('.st-guide-header').waitFor();
 await bp.getByRole('button',{name:'Закрыть информацию об упражнении'}).click();
