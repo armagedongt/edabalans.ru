@@ -6,6 +6,7 @@ const effort = row => number(row?.rpe);
 const rir = row => Math.min(3, Math.max(0, 10 - effort(row)));
 const capacity = row => Number(row.w) * (1 + (Number(row.r) + rir(row)) / 30);
 const complete = (row, mode) => row && known(row.r) && row.r > 0 && (mode === 'duration' || Number.isInteger(Number(row.r))) && (mode !== 'external' || known(row.w) && row.w > 0);
+const recorded = (row, mode) => row && known(row.w) && row.w >= 0 && known(row.r) && row.r > 0 && (mode === 'duration' || Number.isInteger(Number(row.r)));
 const attained = (row, base, mode) => complete(row, mode) && row.role === 'work' && row.w === base.w && row.r >= base.r;
 const cost = (row, actual, mode) => mode === 'duration' ? 0 : Math.max(0,
   Math.log((30 + row.r) / (30 + actual.r)) + (mode === 'external' ? Math.log(row.w / actual.w) : 0),
@@ -15,7 +16,8 @@ const cost = (row, actual, mode) => mode === 'duration' ? 0 : Math.max(0,
 export function recommend(input) {
   const p = input.profile, base = copy(input.baseline), mode = p.mode || 'external';
   const records = input.history.filter(h => h.date && h.date <= input.targetDate)
-    .toSorted((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id)).slice(-5);
+    .toSorted((a, b) => input.historyOrder === 'journal' ? a.id.localeCompare(b.id)
+      : a.date.localeCompare(b.date) || a.id.localeCompare(b.id)).slice(-5);
   const allWork = base.flatMap((row, i) => row.role === 'warmup' ? [] : [i]);
   const result = {version: VERSION, code: 'hold', next: base, changed: [], used: records.map(h => h.id),
     reasons: [], formulas: [], budget: 0, granularity: false};
@@ -184,15 +186,21 @@ const byExercise = (session, id) => session.exercises.find(exercise => String(ex
 export function cardRequest(sessions, targetIndex, exerciseId, profile) {
   const target = sessions[targetIndex], exercise = target && byExercise(target, exerciseId);
   if (!exercise) throw new Error('В этой тренировке нет сохранённой записи упражнения.');
-  const prior = sessions.slice(0, targetIndex).flatMap((session, order) => {
+  const fact = row => ({w:!filled(row.factWeight) && ['bodyweight','duration'].includes(profile.mode) ? 0 : uiNumber(row.factWeight),
+    r:uiNumber(row.factReps),rpe:uiNumber(row.rpe),role:row.role === 'warmup' ? 'warmup' : 'work'});
+  const previous = sessions.slice(0, targetIndex).flatMap((session, order) => {
     if (session.source === 'model_example_at_owner_request') return [];
     const item = byExercise(session, exerciseId);
-    return item && item.sets.some(row => row.role !== 'warmup' && (filled(row.factWeight) || filled(row.factReps))) ? [{session, exercise:item, order}] : [];
+    return item ? [{session, exercise:item, order}] : [];
   });
+  const prior = previous.filter(({exercise:item}) => item.sets.some(row => row.role !== 'warmup' && recorded(fact(row),profile.mode)));
   const dated = prior.filter(item => /^\d{4}-\d{2}-\d{2}$/.test(item.session.date || ''));
   const targetDate = target.date || dated.reduce((date,item)=>item.session.date > date ? item.session.date : date,'');
-  const comparable = dated.filter(item=>item.session.date<=targetDate).toSorted((a,b)=>a.session.date.localeCompare(b.session.date)||a.order-b.order);
+  const comparable = dated.filter(item=>item.session.date<=targetDate).toSorted((a,b)=>a.order-b.order);
   const latest = comparable.at(-1)?.exercise;
+  const warmupSource = previous.filter(({session}) => !target.date || !session.date || session.date <= target.date)
+    .findLast(({exercise:item}) => item.sets.some(row => recorded(fact(row),profile.mode)))?.exercise;
+  const warmupIndices = [];
   const hasPlan = exercise.sets.some(row => row.role !== 'warmup' && (filled(row.planWeight) || filled(row.planReps)));
   let limitation;
   const limit = (code, reason) => { limitation ??= {code,reason}; };
@@ -200,19 +208,22 @@ export function cardRequest(sessions, targetIndex, exerciseId, profile) {
   if (comparable.length && prior.some(item => item.order > comparable.at(-1).order && !dated.includes(item))) limit('undated', 'У более свежего результата нет даты. Оставляем план без прибавки.');
   if (profile.last_reduced && !hasPlan) limit('configuration', 'После облегчённого занятия нужен обычный план. Прибавку пока не предлагаем.');
   const baseline = exercise.sets.map((row, i) => {
-    const source = hasPlan || row.role === 'warmup' ? row : latest?.sets[i] || {};
-    let w = uiNumber(source.planWeight), r = uiNumber(source.planReps);
-    if (!hasPlan) {
-      if (!filled(w)) w = uiNumber(source.factWeight);
-      if (!filled(r)) r = uiNumber(source.factReps);
+    let w = uiNumber(row.planWeight), r = uiNumber(row.planReps);
+    if (row.role === 'warmup') {
+      const last = warmupSource?.sets[i] && fact(warmupSource.sets[i]);
+      if (recorded(last,profile.mode)) {
+        w = last.w; r = last.r; warmupIndices.push(i);
+      }
+    } else if (!hasPlan) {
+      const last = latest?.sets[i] && fact(latest.sets[i]);
+      w = last?.w ?? ''; r = last?.r ?? '';
     }
     if (!filled(w) && ['bodyweight','duration'].includes(profile.mode)) w = 0;
     return {w:Number.isFinite(w) && w >= 0 ? w : '',r:Number.isFinite(r) && r > 0 ? r : '',role:row.role === 'warmup' ? 'warmup' : 'work'};
   });
-  // The policy sorts ties by id. Supply journal order rather than random UUID order.
+  // Dates are editable labels; the journal's record order defines preceding facts.
   const history = comparable.map(({session,exercise:item,order}) => ({id:String(order).padStart(12,'0'),date:session.date,
-    sets:item.sets.map(row => ({w:!filled(row.factWeight) && ['bodyweight','duration'].includes(profile.mode) ? 0 : uiNumber(row.factWeight),
-      r:uiNumber(row.factReps),rpe:uiNumber(row.rpe),role:row.role === 'warmup' ? 'warmup' : 'work'}))}));
+    sets:item.sets.map(fact)}));
   if (history.length) Object.assign(history.at(-1),{reduced:!!profile.last_reduced,changedConditions:!!profile.changed_conditions,hold:!!profile.hold});
   const p = {mode:profile.mode,range:profile.rep_range,timeRange:profile.rep_range,timeStep:profile.time_step};
   if (p.mode === 'external') {
@@ -225,16 +236,36 @@ export function cardRequest(sessions, targetIndex, exerciseId, profile) {
     }
   }
   // A collision can only suppress an extra suggestion, never authorize one.
-  const facts = JSON.stringify(comparable.slice(-5).map(({session,exercise:item}) => [
+  const signature = records => {
+    const facts = JSON.stringify(records.slice(-5).map(({session,exercise:item}) => [
     session.session_id,
     item.sets.map(row => row.role === 'warmup' ? null : [
       uiNumber(row.factWeight), uiNumber(row.factReps), uiNumber(row.rpe),
     ]),
-  ]));
-  let signature = 2166136261;
-  for (let i=0; i<facts.length; i++) signature = Math.imul(signature ^ facts.charCodeAt(i), 16777619);
-  const evidence = 'facts-v1:' + (signature >>> 0).toString(16);
-  const input = {profile:p,baseline,history,targetDate,limitation,alreadyApplied:exercise.progressionEvidence===evidence,offerStarter:!hasPlan && !profile.last_reduced && !profile.changed_conditions && !profile.hold && !prior.length};
-  return {input,evidence,sourceIds:comparable.slice(-2).map(item=>({number:item.session.number,date:item.session.date})),
+    ]));
+    let hash = 2166136261;
+    for (let i=0; i<facts.length; i++) hash = Math.imul(hash ^ facts.charCodeAt(i), 16777619);
+    return 'facts-v1:' + (hash >>> 0).toString(16);
+  };
+  const evidence = signature(comparable);
+  // Keep pre-upgrade receipts valid when edited dates used to reorder the same facts.
+  const legacyPrior = previous.filter(({exercise:item}) => item.sets.some(row => row.role !== 'warmup' && (filled(row.factWeight) || filled(row.factReps))));
+  const legacyDated = legacyPrior.filter(item => /^\d{4}-\d{2}-\d{2}$/.test(item.session.date || ''));
+  const legacyDate = target.date || legacyDated.reduce((date,item)=>item.session.date > date ? item.session.date : date,'');
+  const legacyEvidence = signature(legacyDated.filter(item=>item.session.date<=legacyDate)
+    .toSorted((a,b)=>a.session.date.localeCompare(b.session.date)||a.order-b.order));
+  const input = {profile:p,baseline,history,historyOrder:'journal',targetDate,limitation,alreadyApplied:[evidence,legacyEvidence].includes(exercise.progressionEvidence),offerStarter:!hasPlan && !profile.last_reduced && !profile.changed_conditions && !profile.hold && !prior.length};
+  return {input,evidence,warmupIndices,sourceIds:comparable.slice(-2).map(item=>({number:item.session.number,date:item.session.date})),
     fingerprint:JSON.stringify({targetId:target.session_id,targetDate:target.date,sets:exercise.sets,input,profile,evidence})};
+}
+
+export function planApplication(request, result) {
+  const repeatable = request.input.history.length > 0 && !request.input.limitation
+    && !['unsupported','configuration','coach','reduced','conditions','context'].includes(result.code);
+  const rows = result.next.map((row,i) => {
+    if (row.role === 'warmup') return request.warmupIndices.includes(i) ? row : null;
+    return (result.changed.length > 0 || repeatable) && recorded(row,request.input.profile.mode) ? row : null;
+  });
+  return {rows, needsReview: !result.changed.length && !repeatable
+    && request.input.baseline.some(row=>row.role !== 'warmup')};
 }

@@ -8,7 +8,7 @@ const guides=JSON.parse(await readFile(new URL('../../app/strength_exercise_guid
 const output=process.env.QA_OUT;assert(output);await mkdir(output,{recursive:true});
 const browser=await chromium.launch(),evidence=[];
 try{
-for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['user','owner','managed','deleted','stale-messenger']:['user','owner','managed'])){
+for(const width of [360,430,700,701,768,1440])for(const role of (process.env.QA_FOCUS==='repeat'?['user','owner','managed']:width===430?['user','owner','managed','deleted','stale-messenger']:['user','owner','managed'])){
  const admin=role!=='user',managed=role==='managed'||role==='deleted'||role==='stale-messenger';
  const page=await browser.newPage({viewport:{width,height:900}}),errors=[],writes=[];page.on('pageerror',error=>errors.push(error.message));
  let linkedPlatform=null,failState=false,deliveryCount=0,linkRequests=0,reads=0,oldRelease;
@@ -52,8 +52,61 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
   if(!asset.href.startsWith(staticRoot.href))return route.abort();
   try{return route.fulfill({contentType:({'.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.woff2':'font/woff2','.svg':'image/svg+xml','.gif':'image/gif','.png':'image/png'})[path.extname(asset.pathname)]||'application/octet-stream',body:await readFile(asset)});}catch{return route.abort();}
  });
+ if(process.env.QA_FOCUS==='repeat'){
+  for(const row of state.sets){
+   if(row.session_id==='s1'){row.fact_weight=row.role==='warmup'?0:45;row.fact_reps=row.role==='warmup'?12:9;row.rpe=10;}
+   if(row.session_id==='s2'){row.plan_weight=180;row.plan_reps=20;row.fact_weight=row.fact_reps=row.rpe='';}
+  }
+ }
  await page.goto('http://127.0.0.1:8828/strength-progression-local');
  const card=()=>page.locator('article[data-session-index="2"][data-exercise-id="bench-press"]');await card().waitFor();
+ if(process.env.QA_FOCUS==='repeat'){
+  if(!admin){await page.evaluate(()=>ST.calculateProgression(2,'bench-press'));assert.equal(writes.length,0);await page.close();continue;}
+  for(const view of ['training','exercise']){
+   if(await page.locator('#strength-app').getAttribute('data-journal-view')!==view)await page.locator('.st-view-toggle').click();
+   const before=writes.length;
+   await card().getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();
+   await page.waitForFunction(()=>document.querySelector('.st-progression-info')&&!document.body.innerText.includes('Рассчитываю…'));
+   await page.waitForTimeout(900);
+   assert.equal(await page.getByRole('dialog').count(),0,'a valid repeat does not open a failure dialog');
+   assert.equal(writes.length,before+1);
+   const rows=writes.at(-1).session.exercises[0].sets;
+   assert.equal(rows.length,4);assert.deepEqual(rows.map(r=>[r.plan_weight,r.plan_reps]),[[0,12],[45,9],[45,9],[45,9]]);
+   assert.equal(rows[0].role,'warmup');assert.equal(rows[0].fact_weight,25);assert.equal(rows[0].fact_reps,20);assert.equal(rows[1].fact_weight,999);assert.equal(rows[1].rpe,9);
+   await card().getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();await page.waitForTimeout(900);
+   assert.equal(writes.length,before+1,'an already matching repeat does not save or add an undo entry');
+   assert.equal(await page.getByRole('dialog').count(),0);
+   await card().getByRole('button',{name:'Информация о расчёте прогрессии',exact:true}).click();
+   await page.getByRole('columnheader',{name:'Сохранено в плане'}).waitFor();
+   assert((await page.getByRole('dialog').innerText()).includes('Все рабочие подходы RPE9–10'));
+   await page.screenshot({path:path.join(output,`${width}-${role}-${view}-repeat.png`)});
+   await page.getByRole('button',{name:'Закрыть',exact:true}).click();
+   await page.getByRole('button',{name:'Отменить действие',exact:true}).click();await page.waitForTimeout(900);
+   assert(writes.at(-1).session.exercises[0].sets.every(row=>row.plan_weight===''&&row.plan_reps===''));
+  }
+  if(role==='owner' && [430,1440].includes(width)){
+   await page.evaluate(()=>ST.progressionSetting(2,'bench-press','hold',true));
+   await card().getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();
+   const review=page.getByRole('dialog');await review.getByRole('columnheader',{name:'Результат',exact:true}).waitFor();
+   await page.waitForTimeout(900);
+   assert((await review.innerText()).includes('решение тренера'));
+   const held=writes.at(-1).session.exercises[0].sets;
+   assert.deepEqual([held[0].plan_weight,held[0].plan_reps],[0,12]);
+   assert(held.slice(1).every(row=>row.plan_weight===''&&row.plan_reps===''));
+   assert((await review.getByRole('row').nth(2).innerText()).includes('Не записано'));
+   await page.getByRole('button',{name:'Закрыть',exact:true}).click();
+   await page.getByRole('button',{name:'Отменить действие',exact:true}).click();await page.waitForTimeout(900);
+   state.sets.filter(row=>row.session_id==='s1'&&row.role!=='warmup').forEach(row=>{row.fact_weight=row.fact_reps=row.rpe='';});
+   await page.reload();await card().getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();
+   await review.getByRole('columnheader',{name:'Результат',exact:true}).waitFor();await page.waitForTimeout(900);
+   assert((await review.getByRole('row').nth(1).innerText()).includes('Сохранено в плане'));
+   assert((await review.getByRole('row').nth(2).innerText()).includes('Не записано'));
+   assert.equal(await card().locator('[data-field="planReps"]').nth(1).inputValue(),'');
+   await page.screenshot({path:path.join(output,`${width}-owner-partial-draft.png`)});
+  }
+  assert.deepEqual(errors,[]);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  evidence.push({width,role,repeat:true});await page.close();continue;
+ }
  if(role==='user'){
   for(const view of ['training','exercise']){
    if(await page.locator('#strength-app').getAttribute('data-journal-view')!==view)await page.locator('.st-view-toggle').click();
@@ -180,7 +233,7 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
    assert.equal(await card().getByRole('button',{name:/Применить в план/}).count(),0);
    const saved=writes.at(-1).session.exercises[0].sets;
    assert.equal(saved[1].plan_reps,11);assert.equal(saved[1].fact_weight,999);assert.equal(saved[1].fact_reps,8);assert.equal(saved[1].rpe,9);assert.equal(saved[0].role,'warmup');
-   assert.equal(saved[0].plan_weight,'');assert.equal(saved[0].plan_reps,'');assert.equal(saved[0].fact_weight,25);assert.equal(saved[0].fact_reps,20);assert.equal(saved[0].rpe,7);
+   assert.equal(saved[0].plan_weight,20);assert.equal(saved[0].plan_reps,10);assert.equal(saved[0].fact_weight,25);assert.equal(saved[0].fact_reps,20);assert.equal(saved[0].rpe,7);
    const box=await control.boundingBox(),last=await card().locator('.st-grid-set').last().boundingBox();assert(box.y>=last.y+last.height+60,'calculation sits after spare set space');
    const noteBox=await card().getByRole('button',{name:'Примечание к упражнению'}).boundingBox(),cardBox=await card().boundingBox();
    assert(noteBox.y-box.y-box.height<=8,'calculation touches the note area');assert(cardBox.y+cardBox.height-noteBox.y-noteBox.height<=8,'note is at the card bottom');
@@ -195,7 +248,7 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
     await card().getByRole('button',{name:'Информация о расчёте прогрессии',exact:true}).click();
     assert.equal(await card().locator('.st-progression-details').count(),0,'details do not expand the exercise card');
     const step=dialog.locator('[data-calc-field="load_step"]');await step.fill('0');await dialog.getByRole('button',{name:'Рассчитать прогрессию',exact:true}).click();
-    await dialog.getByRole('status').filter({hasText:'План не изменён'}).waitFor();
+    await dialog.getByRole('columnheader',{name:'Сохранено в плане'}).waitFor();
     assert.equal(await dialog.locator('.st-progression-error').count(),0);
     assert((await dialog.locator('.st-progression-result').innerText()).includes('уже рассчитан'));
     assert(await dialog.getByRole('table').isVisible());
@@ -212,8 +265,11 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
   const control=card().getByRole('button',{name:'Рассчитать прогрессию',exact:true});
   const beforeRepeat=writes.length;
   await control.click();
+  await page.waitForTimeout(900);
+  assert.equal(await page.getByRole('dialog').count(),0);
+  await card().getByRole('button',{name:'Информация о расчёте прогрессии',exact:true}).click();
   await dialog.getByText(/уже рассчитан/).waitFor();
-  assert(await dialog.getByRole('columnheader',{name:'Расчёт — не записан'}).isVisible());
+  assert(await dialog.getByRole('columnheader',{name:'Сохранено в плане'}).isVisible());
   assert.equal(writes.length,beforeRepeat);
   await dialog.getByRole('button',{name:'Закрыть',exact:true}).click();
   const clearPlan=card().getByRole('button',{name:'Очистить план упражнения'});
@@ -304,7 +360,7 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
  assert((await page.locator('#st-note-text').boundingBox()).height>82);
  await page.screenshot({path:path.join(output,`${width}-${role}-comments.png`)});
  await page.getByRole('button',{name:'Закрыть',exact:true}).click();
- if(process.env.QA_FOCUS!=='messenger'){
+ if(!['messenger','progression'].includes(process.env.QA_FOCUS)){
  for(const action of [()=>page.locator('.st-view-toggle').click(),()=>page.evaluate(()=>ST.setScale(110)),async()=>{await page.evaluate(()=>ST.openTemplates());await page.getByRole('button',{name:'Готово',exact:true}).click();}]){
   await page.locator('[data-axis]').evaluate(el=>{el.scrollLeft=0;});await action();
   assert(await page.locator('[data-axis]').evaluate(el=>Math.abs(el.scrollWidth-el.clientWidth-el.scrollLeft)<2),'interaction returns to latest workout');

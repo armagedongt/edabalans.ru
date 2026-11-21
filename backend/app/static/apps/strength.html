@@ -3034,8 +3034,7 @@ function renderSavingOnly(){
   flushTemplateSave();
 
   updateTelegramButton();
-  var progressionLabel=root.querySelector('[data-progression-save]');
-  if(progressionLabel)progressionLabel.textContent=progressionSaveLabel();
+  root.querySelectorAll('[data-progression-save]').forEach(function(label){label.textContent=progressionSaveLabel();});
 
   var el =
     document.getElementById(
@@ -3929,10 +3928,12 @@ function renderProgressionControls(index,exercise,item,showDetails){
   [['last_reduced','Прошлая тренировка была облегчённой'],['changed_conditions','Изменились условия выполнения'],['hold','Повторить без прибавки']].forEach(function(pair){html+='<label class="st-progression-flag"><input type="checkbox" '+(settings[pair[0]]?'checked':'')+data+' onchange="ST.progressionSetting('+args+',\''+pair[0]+'\',this.checked,this)">'+pair[1]+'</label>';});
   html+='</details><div class="st-progression-result" aria-live="polite">';
   if(state.result){
-    html+=(state.request.sourceIds.length?'<p>Предыдущие записи: '+state.request.sourceIds.map(function(source){return '№'+esc(source.number)+' · '+esc(formatDate(source.date));}).join('; ')+'</p>':'')+'<table><thead><tr><th>Подход</th>'+(state.applied?'<th data-progression-save>'+progressionSaveLabel()+'</th>':'<th>Расчёт — не записан</th>')+'</tr></thead><tbody>';
+    var partialApplication=state.applied && state.application.rows.some(function(row){return !row;});
+    html+=(state.request.sourceIds.length?'<p>Предыдущие записи: '+state.request.sourceIds.map(function(source){return '№'+esc(source.number)+' · '+esc(formatDate(source.date));}).join('; ')+'</p>':'')+'<table><thead><tr><th>Подход</th>'+(partialApplication?'<th>Результат</th>':state.applied?'<th data-progression-save>'+progressionSaveLabel()+'</th>':'<th>Расчёт — не записан</th>')+'</tr></thead><tbody>';
     state.result.next.forEach(function(row,i){
       var value=settings.mode==='duration'?(blank(row.r)?'—':row.r)+' с':(settings.mode==='bodyweight'&&Number(row.w)===0?'Свой вес':(blank(row.w)?'—':row.w)+(settings.mode==='assisted'?' помощи':''))+' × '+(blank(row.r)?'—':row.r);
-      html+='<tr'+(state.result.changed.indexOf(i)>=0?' class="st-progression-changed"':'')+'><td>'+(i+1)+(row.role==='warmup'?' · разм.':'')+'</td><td>'+esc(value)+'</td></tr>';
+      var rowStatus=partialApplication?(state.application.rows[i]?'<span data-progression-save>'+progressionSaveLabel()+'</span>':'Не записано'):'';
+      html+='<tr'+(state.result.changed.indexOf(i)>=0?' class="st-progression-changed"':'')+'><td>'+(i+1)+(row.role==='warmup'?' · разм.':'')+'</td><td>'+esc(value)+(rowStatus?'<br>'+rowStatus:'')+'</td></tr>';
     });
     html+='</tbody></table>';
     state.result.reasons.forEach(function(reason){html+='<p>'+esc(reason)+'</p>';});
@@ -6251,7 +6252,7 @@ window.ST = {
     if(state.loading)return;
     var sessionsAtStart=cloneValue(currentWorkout().sessions),settingsAtStart=cloneValue(state.settings);
     state.loading=true;state.error='';state.notice='';state.applied=false;state.canApply=false;state.result=null;renderWithoutViewportJump();
-    import('/assets/strength-progression-model.mjs?v=20261114-progression-clear-plan').then(function(model){
+    import('/assets/strength-progression-model.mjs?v=20261121-repeat-facts').then(function(model){
       var currentIndex=currentWorkout().sessions.findIndex(function(session){return session.session_id===target.session.session_id;});
       if(currentIndex<0 || app.progressionPanels[target.key]!==state)return;
       state.request=model.cardRequest(sessionsAtStart,index,id,settingsAtStart);
@@ -6261,14 +6262,15 @@ window.ST = {
         return;
       }
       state.result=model.recommend(state.request.input);state.model=model;
-      state.canApply=state.result.changed.length>0;
+      state.application=model.planApplication(state.request,state.result);
+      state.canApply=state.application.rows.some(function(row){return !!row;});
       if(state.canApply)ST.applyProgression(currentIndex,id);
     }).catch(function(error){state.error='Не удалось выполнить расчёт. Попробуйте ещё раз.';}).finally(function(){
       state.loading=false;
       if(app.progressionPanels[target.key]!==state)return;
       var currentIndex=currentWorkout().sessions.findIndex(function(session){return session.session_id===target.session.session_id;});
       if(currentIndex<0)return;
-      if(state.error || !state.applied)app.modal={type:'progression',sessionIndex:currentIndex,exerciseId:id};
+      if(state.error || !state.applied || state.application && state.application.needsReview)app.modal={type:'progression',sessionIndex:currentIndex,exerciseId:id};
       renderWithoutViewportJump();
     });
   },
@@ -6283,16 +6285,25 @@ window.ST = {
         state.notice='Пока шёл расчёт, данные изменились. План не записан. Нажмите «Рассчитать прогрессию» ещё раз.';
         return;
       }
-      rememberUndo();
+      var changed=state.application.rows.some(function(row,i){
+        var set=target.exercise.sets[i];
+        return row && (blank(set.planWeight) || blank(set.planReps)
+          || Number(String(set.planWeight).replace(',','.'))!==row.w
+          || Number(String(set.planReps).replace(',','.'))!==row.r);
+      });
+      var markGrowth=state.result.changed.length>0 && target.exercise.progressionEvidence!==state.request.evidence;
+      if(changed || markGrowth)rememberUndo();
       target.exercise.sets.forEach(function(set,i){
-        var row=state.result.next[i];
-        if(set.role==='warmup' || blank(row.w) || blank(row.r))return;
+        var row=state.application.rows[i];
+        if(!row)return;
         set.planWeight=row.w;set.planReps=row.r;
       });
-      target.exercise.progressionEvidence=state.request.evidence;
-      target.exercise.planCleared=false;
+      if(markGrowth)target.exercise.progressionEvidence=state.request.evidence;
+      if(changed)target.exercise.planCleared=false;
       state.appliedSets=JSON.stringify(target.exercise.sets);
-      state.applied=true;state.canApply=false;scheduleSave(index);renderWithoutViewportJump();
+      state.applied=true;state.canApply=false;
+      if(changed || markGrowth)scheduleSave(index);
+      renderWithoutViewportJump();
     }catch(error){state.result=null;state.error=error.message;renderWithoutViewportJump();}
   },
 

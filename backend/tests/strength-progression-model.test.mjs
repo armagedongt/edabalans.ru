@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createCases} from './fixtures/strength-progression-cases.mjs';
 import {recommend} from '../app/static/strength-progression-model.mjs';
-import {cardRequest} from '../app/static/strength-progression-model.mjs';
+import {cardRequest,planApplication} from '../app/static/strength-progression-model.mjs';
 import {readFileSync} from 'node:fs';
 const sample=id=>createCases().find(c=>c.id===id);
 
@@ -38,8 +38,11 @@ test('card request uses earlier facts across templates, never the destination fa
 
 test('card request excludes later dates and planned-only empty records',()=>{
   const sessions=journal();sessions[2].date=sessions[0].date;
+  sessions[1].exercises[0].sets[0].factWeight=99;
   const r=cardRequest(sessions,2,'bench-press',benchProfile());assert.equal(r.input.history.length,1);
   assert.equal(r.sourceIds[0].number,1);
+  assert.equal(r.input.baseline[0].w,sessions[0].exercises[0].sets[0].factWeight);
+  assert.equal(planApplication(r,recommend(r.input)).rows[0].w,sessions[0].exercises[0].sets[0].factWeight);
   const futureEmpty={session_id:'empty',date:'2027-01-01',exercises:[{id:'bench-press',sets:[{planWeight:500,planReps:20}]}]};
   sessions.splice(1,0,futureEmpty);assert.equal(cardRequest(sessions,3,'bench-press',benchProfile()).input.history.length,1);
 });
@@ -191,12 +194,13 @@ test('an RPE9 position cannot use the above-budget real-step exception',()=>{
   const r=recommend(c);assert.equal(r.granularity,false);assert.equal(r.changed.length,0);
 });
 
-test('empty destination warm-ups remain empty and a workout needs no warm-ups',()=>{
+test('destination warm-ups repeat previous facts without progression and workouts need no warm-ups',()=>{
   const sessions=journal(),profile=benchProfile();
   const request=cardRequest(sessions,2,'bench-press',profile);
-  assert.deepEqual(request.input.baseline[0],{w:'',r:'',role:'warmup'});
+  const warmup=sessions[1].exercises[0].sets[0];
+  assert.deepEqual(request.input.baseline[0],{w:warmup.factWeight,r:warmup.factReps,role:'warmup'});
   const result=recommend(request.input);
-  assert.deepEqual(result.next[0],{w:'',r:'',role:'warmup'});
+  assert.deepEqual(result.next[0],request.input.baseline[0]);
   assert.equal(result.next.length,sessions[2].exercises[0].sets.length);
   sessions[2].exercises[0].sets[0].planWeight=20;
   sessions[2].exercises[0].sets[0].planReps=99;
@@ -205,6 +209,85 @@ test('empty destination warm-ups remain empty and a workout needs no warm-ups',(
   sessions.forEach(session=>session.exercises[0].sets=session.exercises[0].sets.filter(row=>row.role!=='warmup'));
   const allWork=recommend(cardRequest(sessions,2,'bench-press',profile).input);
   assert.deepEqual(allWork.next,result.next.filter(row=>row.role!=='warmup'));
+});
+
+test('a high-effort repeat is a usable plan, including the previous warm-up fact',()=>{
+  const sessions=journal();
+  for(const session of sessions.slice(0,2))for(const row of session.exercises[0].sets){row.rpe=10;row.factReps=9;row.planReps=14;}
+  const request=cardRequest(sessions,2,'bench-press',benchProfile()),result=recommend(request.input);
+  assert.equal(result.code,'all-high-rpe');assert.deepEqual(result.changed,[]);
+  const application=planApplication(request,result),rows=application.rows;
+  assert.equal(application.needsReview,false);
+  assert(rows.every(Boolean));assert.equal(rows.length,sessions[2].exercises[0].sets.length);
+  assert(rows.every(row=>row.r===9),'repeat facts, not unperformed old plan targets');
+  assert.equal(rows[0].role,'warmup');
+});
+
+test('no admissible equipment increment is a repeat rather than a failed calculation',()=>{
+  const sessions=journal(),profile=benchProfile();profile.load_step=100;
+  sessions.slice(0,2).forEach(s=>s.exercises[0].sets.forEach(row=>{if(row.role!=='warmup'){row.factReps=15;row.rpe=9;}}));
+  sessions[1].exercises[0].sets[1].rpe=8;
+  const request=cardRequest(sessions,2,'bench-press',profile),result=recommend(request.input);
+  assert.equal(result.code,'no-candidate');assert.deepEqual(result.changed,[]);
+  const application=planApplication(request,result);
+  assert.equal(application.needsReview,false);assert(application.rows.every(Boolean));
+  assert.equal(application.rows[1].w,sessions[1].exercises[0].sets[1].factWeight);
+});
+
+test('a zero factual load is a recorded performance, not an absent workout',()=>{
+  const sessions=journal();sessions[1].exercises[0].sets.forEach(row=>{row.factWeight=0;row.factReps=8;});
+  const request=cardRequest(sessions,2,'bench-press',benchProfile());
+  assert.equal(request.sourceIds.at(-1).number,2);
+  assert(planApplication(request,recommend(request.input)).rows.every(row=>row && row.w===0 && row.r===8));
+});
+
+test('planned-only and weight-only records are skipped; editable dates do not reorder journal facts',()=>{
+  const sessions=journal();sessions[0].date='2026-10-20';sessions[1].date='2026-10-10';
+  sessions[1].exercises[0].sets.forEach(row=>{row.factReps=8;});
+  const empty=structuredClone(sessions[1]);empty.session_id='unperformed';empty.number=3;empty.date='';
+  empty.exercises[0].sets.forEach(row=>{row.planWeight=100;row.planReps=19;row.factWeight='';row.factReps='';row.rpe='';});
+  sessions.splice(2,0,empty);
+  const target=sessions.at(-1);target.number=4;
+  const request=cardRequest(sessions,3,'bench-press',benchProfile());
+  assert.deepEqual(request.sourceIds.map(row=>row.number),[1,2]);
+  assert(request.input.baseline.every(row=>row.r===8));
+  assert.deepEqual(recommend(request.input).used,['000000000000','000000000001']);
+  empty.exercises[0].sets.forEach(row=>{row.factWeight=100;});
+  assert.deepEqual(cardRequest(sessions,3,'bench-press',benchProfile()).input.history,request.input.history);
+});
+
+test('warm-up-only facts can be repeated, but missing facts and draft starters are never invented',()=>{
+  const sessions=journal();sessions.forEach(s=>s.exercises[0].sets.forEach(row=>{row.role='warmup';}));
+  const request=cardRequest(sessions,2,'bench-press',benchProfile());
+  assert(planApplication(request,recommend(request.input)).rows.every(Boolean));
+  sessions[1].exercises[0].sets[0].factReps='';
+  const partial=cardRequest(sessions,2,'bench-press',benchProfile());
+  assert.equal(planApplication(partial,recommend(partial.input)).rows[0],null,'do not substitute older facts for a missing latest warm-up');
+  const starter=cardRequest(journal().slice(-1),0,'bench-press',benchProfile());
+  const application=planApplication(starter,recommend(starter.input));
+  assert(application.rows.every(row=>row===null));assert.equal(application.needsReview,true);
+});
+
+test('an existing dated-order evidence marker still prevents a second increment after upgrade',()=>{
+  const sessions=journal(),profile=benchProfile();
+  sessions[0].date='2026-10-20';sessions[1].date='2026-10-10';
+  const legacy=[sessions[1],sessions[0]].map(session=>[session.session_id,session.exercises[0].sets.map(row=>row.role==='warmup'?null:[row.factWeight,row.factReps,row.rpe])]);
+  let hash=2166136261;for(const char of JSON.stringify(legacy))hash=Math.imul(hash^char.charCodeAt(0),16777619);
+  sessions[2].exercises[0].progressionEvidence='facts-v1:'+(hash>>>0).toString(16);
+  assert.equal(recommend(cardRequest(sessions,2,'bench-press',profile).input).code,'already-applied');
+});
+
+test('a pre-upgrade receipt that included weight-only history still prevents extra increments',()=>{
+  const sessions=journal(),partial=structuredClone(sessions[0]);
+  partial.session_id='weight-only';partial.exercises[0].sets.forEach(row=>{row.factReps='';});
+  sessions.splice(1,0,partial);
+  const target=sessions.at(-1).exercises[0];
+  target.sets.forEach((row,i)=>{if(row.role!=='warmup'){row.planWeight=sample('bench').baseline[i].w;row.planReps=i===2?11:10;}});
+  // Receipt emitted by the released adapter before blank-repetition records were skipped.
+  target.progressionEvidence='facts-v1:105b079e';
+  const request=cardRequest(sessions,3,'bench-press',benchProfile()),result=recommend(request.input);
+  assert.equal(request.input.history.length,2);assert.equal(result.code,'already-applied');
+  assert.deepEqual(result.changed,[]);assert.equal(planApplication(request,result).rows[2].r,11);
 });
 
 
