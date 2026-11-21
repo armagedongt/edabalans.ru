@@ -1575,7 +1575,7 @@
 
 </style>
 
-<link rel="stylesheet" href="/assets/strength-journal.css?v=20261114-progression-one-line">
+<link rel="stylesheet" href="/assets/strength-journal.css?v=20261121-canvas-scale">
 <script src="/assets/strength-journal-model.js?v=20261022-set-role-inheritance"></script>
 <script>
 (function(){
@@ -3290,13 +3290,19 @@ function clientLocked(index){
    RENDER
 ========================================================= */
 
-function render(){
-  root.style.setProperty('--st-root-zoom',app.mainTab==='training' && app.journalView==='exercise'?app.scale/100:1);
-  root.style.zoom=app.mainTab==='training' && app.journalView==='exercise'?app.scale/100:1;
+function applyJournalScale(){
+  var zoom=app.mainTab==='training'?app.scale/100:1;
+  root.style.setProperty('--st-root-zoom',zoom);
+  root.style.zoom=zoom;
   root.dataset.scaled=String(app.scale>100);
   root.dataset.largeScale=String(app.scale>125);
-  root.style.setProperty('--st-scale',app.scale/100);
-  root.style.setProperty('--st-row-scale',app.journalView==='training'?app.scale/100:1);
+  // The root scales every current/future journal element once, on both axes.
+  root.style.setProperty('--st-scale',1);
+  root.style.setProperty('--st-row-scale',1);
+}
+
+function render(){
+  applyJournalScale();
 
   if(app.mode === 'loading'){
 
@@ -3392,7 +3398,7 @@ window.addEventListener('popstate',function(event){
 function applyJournalWidth(){
   var style=getComputedStyle(root),previous=app.trainingColumnWidth;
   var width=app.journalView==='training' && matchMedia('(max-width:700px)').matches
-    ? root.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight) : 228;
+    ? root.clientWidth*Number(root.style.zoom||1)-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight) : 228;
   if(previous && previous!==width && app.journalView==='training' && !app.axisTargetSession){
     app.axisTargetSession=app.trainingAnchor;
   }
@@ -3538,9 +3544,7 @@ function renderAdminList(){
 ========================================================= */
 
 function renderClient(){
-  root.style.setProperty('--st-root-zoom',app.mainTab==='training' && app.journalView==='exercise'?app.scale/100:1);
-  root.style.zoom=app.mainTab==='training' && app.journalView==='exercise'?app.scale/100:1;
-  root.style.setProperty('--st-row-scale',app.journalView==='training'?app.scale/100:1);
+  applyJournalScale();
   rememberAxisPositions();
   syncScreenHistory();
   root.dataset.journalView=app.journalView;
@@ -6624,7 +6628,7 @@ window.ST = {
       event.currentTarget
         .getBoundingClientRect();
 
-    var scale=app.journalView==='exercise'?app.scale/100:1;
+    var scale=Number(root.style.zoom||1);
     var height = 232*scale;
 
     var top =

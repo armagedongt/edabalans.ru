@@ -735,14 +735,14 @@ for(const width of [360,430,768,1440]){
  await page.evaluate(()=>ST.sendTelegram(8));assert.equal(unsaved.telegramWrites.length,0,'handler cannot send stale stored data after save failure');
  await unsaved.context.close();
 }
-// Scaling preserves whole-workout column width, but scales every compact-column proportion.
+// Both journal views zoom the complete workout canvas on both axes.
 for(const width of [360,430,701,768,1440]){
  const scaled=await open(width),page=scaled.page;
  const column=page.locator('.st-history-row article').last();
  const before=await column.boundingBox();const rowBefore=await column.locator('.st-grid-set').first().boundingBox();
  await page.locator('.st-scale-button').selectOption('105');
  const after=await column.boundingBox();const rowAfter=await column.locator('.st-grid-set').first().boundingBox();
- assert(Math.abs(before.width-after.width)<1,'whole view keeps physical column width at '+width);
+ assert(Math.abs(after.width/before.width-1.05)<.01,'whole view scales physical column width at '+width);
  assert(rowAfter.height>rowBefore.height,'whole view gains vertical size');
  await page.screenshot({path:`${out}/scale-training-105-${width}.png`});
  await page.locator('.st-view-toggle').click();const compactBefore=await column.boundingBox();
@@ -761,7 +761,7 @@ for(const width of [360,430,701,768,1440]){
  assert.equal(await page.locator('.st-scale-button').inputValue(),'50');
  await page.reload();assert.equal(await page.locator('.st-scale-button').inputValue(),'50');
  const wholeAt50=await column.boundingBox(),rowAt50=await column.locator('.st-grid-set').first().boundingBox();
- assert(Math.abs(wholeAt50.width-before.width)<1,'shrinking whole view preserves column width');
+ assert(Math.abs(wholeAt50.width/before.width-.5)<.01,'shrinking whole view reveals more columns');
  assert(rowAt50.height<rowBefore.height,'whole view really shrinks vertically below100%');
  await page.screenshot({path:`${out}/scale-packed-50-${width}.png`});
  await page.locator('.st-scale-button').selectOption('150');

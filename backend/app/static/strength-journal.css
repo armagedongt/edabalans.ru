@@ -157,7 +157,7 @@
  #strength-app[data-large-scale="true"] .st-session-toolbar>.st-toolbar-side:last-child{justify-content:flex-end}
 }
 
-/* Whole-workout view keeps every horizontal dimension; type is capped at each field's capacity. */
+/* Base whole-workout profile. Root zoom scales both axes; these legacy factors stay 1. */
 #strength-app[data-journal-view="training"] .st-top-email{font-size:min(calc(13px * var(--st-scale)),18px)!important}
 #strength-app[data-journal-view="training"] .st-help{font-size:min(calc(12px * var(--st-scale)),14px)!important;min-height:calc(36px * var(--st-scale))}
 #strength-app[data-journal-view="training"] .st-top .st-icon-link{height:calc(36px * var(--st-scale))}
@@ -198,7 +198,7 @@
 #strength-app[data-journal-view="exercise"] .st-session-sticky{border-bottom-color:#e4a161}
 #strength-app[data-journal-view] .st-top-email{font-size:calc(13px / var(--st-root-zoom,1))!important;line-height:1.35}
 #strength-app .st-help.st-icon-link{text-decoration:none;display:inline-grid;place-items:center;font-size:22px!important;font-weight:800;padding:0}
-#strength-app .st-modal-bg,#strength-app .st-exercise-guide{zoom:calc(1 / var(--st-root-zoom,1));font-family:var(--ed-font-body,Manrope,Arial,sans-serif);font-size:14px}
+#strength-app .st-modal-bg,#strength-app .st-exercise-guide,#strength-app .st-tutorial-frame{zoom:calc(1 / var(--st-root-zoom,1));font-family:var(--ed-font-body,Manrope,Arial,sans-serif);font-size:14px}
 #strength-app .st-modal,#strength-app .st-analysis,#strength-app .st-calendar-wrap{font-family:var(--ed-font-body,Manrope,Arial,sans-serif)}
 #strength-app .st-chart text{font-family:var(--ed-font-body,Manrope,Arial,sans-serif)}
 #strength-app .chart-label,#strength-app .chart-value{font-size:12px}
@@ -240,8 +240,8 @@
 .st-exercise-action-row{display:flex;gap:4px;margin-top:5px}
 .st-progression-bar{display:flex;flex:1;min-width:0;align-items:stretch;margin:0;border:1px solid var(--st-accent-line);border-radius:7px;background:var(--st-accent-soft);overflow:hidden;container-type:inline-size}
 #strength-app .st-progression-bar button{border:0;border-radius:0;background:transparent}
-/* Journal additions must use --st-row-scale: whole-workout rows scale here,
-   compact history already scales through root zoom and keeps this factor at 1. */
+/* New journal elements use base dimensions and inherit root zoom in both views.
+   Do not multiply sizes by the chosen scale again; --st-row-scale stays 1. */
 #strength-app .st-progression-bar button{min-height:calc(32px * var(--st-row-scale,1));padding-block:calc(5px * var(--st-row-scale,1));font-size:min(calc(11px * var(--st-row-scale,1)),15px)}
 .st-progression-bar:has(.st-progression-info){--st-progression-info-width:24px}
 #strength-app .st-progression-bar .st-progression-trigger{flex:1;min-width:0;padding-inline:3px;white-space:nowrap;font-size:min(calc(11px * var(--st-row-scale,1)),15px,calc((100cqi - var(--st-progression-info-width,0px) - 6px) / 12))}

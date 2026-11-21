@@ -137,7 +137,7 @@ for(const width of [360,430,700,701,768,1440])for(const role of (process.env.QA_
    }
    assert(sizes[0].height<sizes[1].height&&sizes[1].height<sizes[2].height,'progression button height follows '+view+' scale');
    assert(sizes[0].font<sizes[1].font&&sizes[1].font<sizes[2].font,'progression label follows '+view+' scale');
-   if(view==='exercise')for(const [index,factor] of [[0,.5],[2,1.5]])for(const dimension of ['height','font','width'])assert(Math.abs(sizes[index][dimension]-sizes[1][dimension]*factor)<=2,'compact progression '+dimension+' scales once');
+     for(const [index,factor] of [[0,.5],[2,1.5]])for(const dimension of ['height','font','width'])assert(Math.abs(sizes[index][dimension]-sizes[1][dimension]*factor)<=Math.max(2,dimension==='width'?sizes[1].width*.01:0),view+' progression '+dimension+' scales once');
   }
   await page.locator('.st-view-toggle').click();await page.locator('.st-scale-button').selectOption('100');
  }
