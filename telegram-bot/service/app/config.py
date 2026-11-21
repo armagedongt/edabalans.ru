@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     finance_telegram_recipient_ids: str = ""
     technical_telegram_bot_token: str = ""
     technical_telegram_recipient_ids: str = ""
+    strength_completion_bot_role: str = "product"
+    strength_completion_recipient_ids: str = ""
     marketing_telegram_bot_token: str = ""
     marketing_telegram_recipient_ids: str = ""
     max_bot_username: str = ""

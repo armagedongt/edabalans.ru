@@ -257,7 +257,12 @@ def apps_menu_graph(session: Session) -> dict[str, Any]:
     ]
     if admin_content:
         nodes[-2]["content"] = authoring_payload(admin_content, usage_map.get(admin_content.code, []))
+    nodes.extend([
+        {"id": "strength_completed", "kind": "event", "label": "Клиент заполнил рабочий факт тренировки", "subtitle": "Только собственный вход клиента; один раз на session_id", "position": 11, "details": {"Источник": "backend/app/strength_completion.py", "Факт": "tg_tracking_events: strength_workout_completed"}},
+        {"id": "strength_owner_alert", "kind": "message", "label": "Клиент потренировался", "subtitle": "Служебные факты Сергею в оба аккаунта", "position": 12, "details": {"Контент": "Технический payload: имя, номер, дата, шаблон, время завершения МСК", "Очередь": "masterclass_notifications", "Квитанции": "tg_owner_payment_alert_deliveries", "Маршрут": "STRENGTH_COMPLETION_BOT_ROLE / STRENGTH_COMPLETION_RECIPIENT_IDS"}},
+    ])
     edges = [
+        {"id": "apps:strength-completed", "source": "strength_completed", "target": "strength_owner_alert", "label": "strength_workout_completed", "branch": "event"},
         {"id": "apps:1", "source": "apps_entry", "target": "apps_identity", "label": "Telegram update", "branch": "default"},
         {"id": "apps:2", "source": "apps_identity", "target": "apps_access", "label": "user_id определён", "branch": "default"},
         {"id": "apps:3", "source": "apps_access", "target": "apps_buttons", "label": "Да", "branch": "true"},

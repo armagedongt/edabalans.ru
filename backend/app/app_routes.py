@@ -1769,6 +1769,8 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             payload = _messenger_state(db, user.id)
             destination = preferred_messenger_account(db, user.id)
             payload["destination"] = destination.platform if destination else None
+            payload["recipient"] = ({"name": user.display_name or "", "username": destination.username or "",
+                                     "platform_user_id": destination.platform_user_id} if destination else None)
             settings = get_settings()
             payload["bot_links"] = {
                 "telegram": "https://t.me/" + settings.account_telegram_bot_username.strip().lstrip("@"),
@@ -1888,6 +1890,12 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
                 workouts.append(item)
                 state.workouts = workouts
                 state.version += 1
+                if (request.method == "POST" and not admin_username and not can_coach
+                        and not request.headers.get(ACCOUNT_VIEW_HEADER)
+                        and request.headers.get("sec-fetch-site") != "cross-site"
+                        and body.get("restore_session_number") is not True):
+                    from app.strength_completion import record_client_completion
+                    record_client_completion(db, user, state, existing, item)
                 payload = {"ok": True, "session": item, "version": state.version}
         elif action == "saveExerciseSettings":
             workout_type = int(body.get("workout_type") or 0)

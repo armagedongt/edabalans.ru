@@ -3943,7 +3943,7 @@ function renderProgressionControls(index,exercise,item,showDetails){
 
 function mountDeliveryMessenger(pending){
   var host=root.querySelector('#st-delivery-messenger');
-  import('/assets/messenger-connection.mjs?v=20261025').then(function(component){
+  import('/assets/messenger-connection.mjs?v=20261121').then(function(component){
     if(app.modal!==pending || !host.isConnected)return;
     return component.mount(host,{
       state:function(){return getApi({action:'messengerState'});},

@@ -26,7 +26,7 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
    const request=route.request(),data=request.method()==='POST'?JSON.parse(request.postData()):Object.fromEntries(url.searchParams);
    const response={ok:true,version,user:{user_id:'demo',email:'synthetic@example.test',can_coach:admin,can_calculate_progression:admin}};
    if(data.action==='messengerState' && role==='stale-messenger' && ++reads===1){await oldGate;return route.fulfill({json:{ok:false,error:'Ошибка закрытого окна'}});}
-   if(data.action==='messengerState')return route.fulfill({json:failState?{ok:false,error:'Проверка недоступна'}:{ok:true,destination:linkedPlatform,require_link:!linkedPlatform,require_preferred:false,linked:{telegram:{linked:linkedPlatform==='telegram'},max:{linked:linkedPlatform==='max'}},bot_links:{telegram:'https://t.me/test_bot',max:'https://max.ru/test_bot'}}});
+   if(data.action==='messengerState')return route.fulfill({json:failState?{ok:false,error:'Проверка недоступна'}:{ok:true,destination:linkedPlatform,recipient:{name:'Клиент Тест',username:'client_fixture',platform_user_id:'123'},require_link:!linkedPlatform,require_preferred:false,linked:{telegram:{linked:linkedPlatform==='telegram'},max:{linked:linkedPlatform==='max'}},bot_links:{telegram:'https://t.me/test_bot',max:'https://max.ru/test_bot'}}});
    if(data.action==='createMessengerLink'){linkRequests++;return route.fulfill({json:{ok:true,deep_link:'https://'+(data.platform==='telegram'?'t.me':'max.ru')+'/test_bot?start=synthetic',expires_at:new Date(Date.now()+900000).toISOString()}});}
    if(data.action==='getWorkout')response.workout={...structuredClone(state),selected_type:1,version};
    if(data.action==='saveSession'){
@@ -108,7 +108,7 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
   await page.getByRole('button',{name:'Отправить',exact:true}).waitFor();
   oldRelease();await page.waitForTimeout(300);
   assert.equal(await page.getByRole('button',{name:'Отправить',exact:true}).isVisible(),true);
-  assert((await page.locator('#st-delivery-messenger').innerText()).includes('подключён'));
+  assert((await page.locator('#st-delivery-messenger').innerText()).includes('Получатель в Telegram: Клиент Тест · @client_fixture'));
   evidence.push({width,role});await page.close();continue;
  }
  await card().getByRole('button',{name:'Информация об упражнении',exact:true}).click();
@@ -282,6 +282,8 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
    linkedPlatform=platform;
    await page.getByRole('button',{name:'Проверить подключение',exact:true}).click();
    await page.getByRole('link',{name:platform==='telegram'?'Telegram':'MAX',exact:true}).waitFor();
+   assert((await page.locator('#st-delivery-messenger').innerText()).includes('Клиент Тест · @client_fixture'));
+   assert((await page.locator('#st-delivery-messenger').innerText()).includes('Бот-отправитель:'));
    assert.equal(await page.getByRole('button',{name:'Отправить',exact:true}).isEnabled(),true);
   }
   await page.screenshot({path:path.join(output,`${width}-messenger-linked.png`)});
@@ -302,9 +304,11 @@ for(const width of [360,430,700,701,768,1440])for(const role of (width===430?['u
  assert((await page.locator('#st-note-text').boundingBox()).height>82);
  await page.screenshot({path:path.join(output,`${width}-${role}-comments.png`)});
  await page.getByRole('button',{name:'Закрыть',exact:true}).click();
+ if(process.env.QA_FOCUS!=='messenger'){
  for(const action of [()=>page.locator('.st-view-toggle').click(),()=>page.evaluate(()=>ST.setScale(110)),async()=>{await page.evaluate(()=>ST.openTemplates());await page.getByRole('button',{name:'Готово',exact:true}).click();}]){
   await page.locator('[data-axis]').evaluate(el=>{el.scrollLeft=0;});await action();
   assert(await page.locator('[data-axis]').evaluate(el=>Math.abs(el.scrollWidth-el.clientWidth-el.scrollLeft)<2),'interaction returns to latest workout');
+ }
  }
  assert.deepEqual(errors,[]);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
  evidence.push({width,role,writes:writes.length});await page.close();

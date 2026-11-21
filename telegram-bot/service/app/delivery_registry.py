@@ -34,6 +34,7 @@ PROACTIVE_PRODUCERS = {
 }
 
 EXCLUDED_PRODUCERS = {
+    "strength_workout_completed": "owner_alert",
     "owner_closing_review": "owner_alert",
     "dqs_support": "owner_or_reactive_service",
     "review_followup": "owner_or_non_delivery_state",

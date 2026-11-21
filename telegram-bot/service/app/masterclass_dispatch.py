@@ -620,6 +620,27 @@ def dispatch_due_masterclass_notifications(
     progress = progress_callback or (lambda: None)
     for notification in due:
         progress()
+        if notification.notification_kind == "strength_workout_completed":
+            if platform != "telegram":
+                continue
+            if _notification_expired(notification, datetime.now(UTC)):
+                notification.status = "failed"
+                notification.error_message = "delivery expired before a confirmed send"
+                counters["failed"] += 1
+                continue
+            from app.config import get_settings
+            from app.strength_completion import deliver_completion
+            try:
+                deliver_completion(session, notification, get_settings())
+                notification.status = "sent"
+                notification.sent_at = datetime.now(UTC)
+                notification.error_message = None
+                counters["sent"] += 1
+            except Exception as exc:
+                _record_notification_send_failure(notification, exc, datetime.now(UTC))
+                counters["failed"] += 1
+            session.commit()
+            continue
         if _notification_expired(notification, datetime.now(UTC)):
             notification.status = "failed"
             notification.error_message = "delivery expired before a confirmed send"

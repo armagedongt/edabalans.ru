@@ -31,7 +31,9 @@ export async function mount(host, api) {
       api.onState(summary);
       if (summary.destination) {
         const platform = summary.destination;
-        host.innerHTML = '<p>К этому аккаунту подключён <a href="'+escape(summary.bot_links[platform])+'" target="_blank" rel="noopener">'+names[platform]+'</a>. Отправить туда план?</p>';
+        const recipient = summary.recipient;
+        const label = recipient ? [recipient.name, recipient.username ? '@'+recipient.username.replace(/^@/,'') : recipient.platform_user_id].filter(Boolean).join(' · ') : '';
+        host.innerHTML = '<p>Получатель в '+names[platform]+': '+escape(label || 'подключённый аккаунт')+'.</p><p>Бот-отправитель: <a href="'+escape(summary.bot_links[platform])+'" target="_blank" rel="noopener">'+names[platform]+'</a> ('+escape(summary.bot_links[platform])+').</p>';
       } else {
         const failures = [];
         await Promise.all(Object.keys(names).filter(platform => !summary.linked[platform].linked && (!links[platform] || Date.now() >= expires[platform])).map(async platform => {
