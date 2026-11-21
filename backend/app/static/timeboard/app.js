@@ -4,7 +4,7 @@ const sheet = $('.sheet');
 const dialog = $('.editor');
 const content = $('.editor-content');
 const icons = {outside:'📍',with_sonya:'💗',training:'🏋️',competitions:'🏁',work:'💼',posts:'✍️',finance:'💳',history:'📓'};
-const taskTitleLimit = 42;
+const taskTitleLimit = 30;
 const taskCharacters = new Intl.Segmenter('ru',{granularity:'grapheme'});
 const flags = {'':'Без цвета',blue:'Синий',green:'Зелёный',red:'Красный'};
 const weekdays = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
@@ -130,7 +130,7 @@ function column(key,cat,isExpanded) {
   const attrs = 'data-key="'+key+'" data-view="'+cat+'" aria-label="'+label+'"';
   if (isExpanded) {
     const add = canEdit ?
-      button('+','data-add data-key="'+key+'" data-cat="'+cat+'" aria-label="Добавить запись · '+label+'"','row-add') : '';
+      button('Добавить','data-add data-key="'+key+'" data-cat="'+cat+'" aria-label="Добавить запись · '+label+'"','row-add') : '';
     return '<div class="row-detail">'+entries.map(entry=>entryCard(entry,false)).join('')+add+'</div>';
   }
   if (mode==='compact') {
@@ -153,14 +153,18 @@ function removeButton(entry,cls='') {
   return button('×','data-remove="'+entry.id+'" title="Удалить запись" aria-label="Удалить запись · '+safe(entry.title)+'"','remove-record '+cls);
 }
 
-function entryCard(entry,showCategory=true,showTitle=true) {
-  const timing = [entry.time,entry.duration && entry.duration+' мин'].filter(Boolean).join(' · ');
-  const actions = canEdit ? '<div class="record-actions">'+button('Изменить','data-edit="'+entry.id+'"')+
-    removeButton(entry)+'</div>' : '';
-  return '<article class="record category-'+entry.cat+'">'+(showCategory?'<small>'+safe(state.categories[entry.cat])+'</small>':'')+
-    (showTitle?'<p>'+safe(entry.title)+(entry.done?' ✓':'')+'</p>':'')+(timing?'<small>'+safe(timing)+'</small>':'')+
-    (entry.note?'<p>'+safe(entry.note)+'</p>':'')+
-    (entry.url?'<a href="'+safe(entry.url)+'" rel="noreferrer noopener">'+(entry.cat==='finance'?'Открыть кабинет':'Открыть ссылку')+'</a>':'')+actions+'</article>';
+function editButton(entry) {
+  return button('✎','data-edit="'+entry.id+'" title="Изменить" aria-label="Изменить · '+safe(entry.title)+'"','edit-record');
+}
+
+function entryCard(entry,showCategory=true,showTitle=true,showActions=true) {
+  const timing = [entry.duration && entry.duration+' мин'].filter(Boolean).join(' · ');
+  const actions = canEdit && showActions ? editButton(entry)+removeButton(entry) : '';
+  const heading = (showCategory?'<small>'+safe(state.categories[entry.cat])+'</small>':'')+
+    (showTitle?'<span>'+safe(taskHeading(entry).full)+(entry.done?' ✓':'')+'</span>':'')+actions;
+  return '<article class="record category-'+entry.cat+'">'+(heading?'<div class="record-heading">'+heading+'</div>':'')+
+    (timing || entry.note ? '<p>'+[timing,safe(entry.note)].filter(Boolean).join(' · ')+'</p>':'')+
+    (entry.url?'<a class="record-link" href="'+safe(entry.url)+'" rel="noreferrer noopener">'+(entry.cat==='finance'?'Открыть кабинет':'Открыть ссылку')+'</a>':'')+'</article>';
 }
 
 function taskHeading(entry) {
@@ -184,18 +188,18 @@ function titleTasks(key,dayOpen) {
   return entriesFor(key).map(entry=>{
     const open = dayOpen || openTasks.has(entry.id);
     const heading = taskHeading(entry);
-    return '<div class="task category-'+entry.cat+'">'+button(
-      '<span aria-hidden="true">'+icons[entry.cat]+'</span><span class="task-text">'+safe(heading.text)+'</span>'+
+    return '<div class="task category-'+entry.cat+'"><div class="task-head">'+button(
+      '<span aria-hidden="true">'+icons[entry.cat]+'</span><span class="task-text">'+safe(open?heading.full:heading.text)+'</span>'+
       (heading.reminder?'<small class="task-reminder">'+safe(heading.reminder)+'</small>':'')+
       (entry.done?'<span aria-label="Выполнено">✓</span>':''),
-      'data-task="'+entry.id+'" title="'+safe(heading.full)+'" aria-label="'+safe(heading.full+(heading.reminder?' · '+heading.reminder:''))+'" aria-expanded="'+open+'" aria-controls="task-'+entry.id+'"','task-title')+
-      '<div id="task-'+entry.id+'"'+(open?'':' hidden')+'>'+ (open?entryCard(entry,false,heading.truncated):'')+'</div></div>';
-  }).join('')+(canEdit?button('+','data-add data-key="'+key+'" aria-label="Добавить запись, '+shortDate(key)+'"','row-add'):'');
+      'data-task="'+entry.id+'" title="'+safe(heading.full)+'" aria-label="'+safe(heading.full+(heading.reminder?' · '+heading.reminder:''))+'" aria-expanded="'+open+'" aria-controls="task-'+entry.id+'"','task-title')+(open && canEdit?editButton(entry)+removeButton(entry):'')+'</div>'+
+      '<div id="task-'+entry.id+'"'+(open?'':' hidden')+'>'+ (open?entryCard(entry,false,false,false):'')+'</div></div>';
+  }).join('')+(canEdit?button('Добавить','data-add data-key="'+key+'" aria-label="Добавить запись, '+shortDate(key)+'"','row-add'):'');
 }
 
 function compactDetails(key,view) {
   const entries = entriesFor(key,view==='all'?null:view);
-  const add = canEdit ? button('+ Запись','data-add data-key="'+key+'" data-cat="'+(view==='all'?'outside':view)+'"','row-add') : '';
+  const add = canEdit ? button('Добавить','data-add data-key="'+key+'" data-cat="'+(view==='all'?'outside':view)+'"','row-add') : '';
   return (entries.length?entries.map(entry=>entryCard(entry)).join(''):'<p class="details-empty">Записей нет</p>')+'<div class="row-actions">'+add+
     (view==='all'?'':button('Свернуть','data-collapse','row-add'))+'</div>';
 }
@@ -206,7 +210,7 @@ function openSonya(key) {
     weekday(entry.date)===weekday(key));
   const overridden = dated.some(entry=>entry.sonyaRole==='override');
   const cards = entries => '<div class="cards">'+entries.map(entry=>entryCard(entry)).join('')+'</div>';
-  const add = canEdit ? button('+ Запись Сони','data-add data-key="'+key+'" data-cat="sonya"') : '';
+  const add = canEdit ? button('Добавить запись Сони','data-add data-key="'+key+'" data-cat="sonya"') : '';
   openDialog('Соня · '+shortDate(key),
     '<div class="sonya-schedule">'+
     (dated.length ? '<h3>На эту дату</h3>'+cards(dated) : '')+

@@ -72,9 +72,9 @@
 #week-board-final .cycle .heart{color:transparent}
 #week-board-final .cycle .heart:before,#week-board-final .cycle .heart:after{content:"♥";color:#b65462;position:absolute;inset:0;clip-path:polygon(0 0,59% 0,45% 40%,57% 56%,42% 100%,0 100%);transform:translateX(-1px)}
 #week-board-final .cycle .heart:after{clip-path:polygon(59% 0,100% 0,100% 100%,42% 100%,57% 56%,45% 40%);transform:translateX(1px)}
-#week-board-final .flag-blue{--flag:#e6eef9}
+#week-board-final .flag-blue{--flag:#c7def8}
 #week-board-final .flag-green{--flag:#e8f5de}
-#week-board-final .flag-red{--flag:#f9e4e4}
+#week-board-final .flag-red{--flag:#f3bcbc}
 #week-board-final .cell,#week-board-final .record,#week-board-final button.emoji{background:var(--flag,#f5f5f7)}
 #week-board-final .cell:has(input:placeholder-shown){background:transparent}
 #week-board-final .record-actions{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
@@ -134,14 +134,14 @@ body{margin:0;background:#fff}
 #week-board-final .task-title .task-text{min-width:0}
 #week-board-final .task-reminder{font-size:11px;color:var(--muted);white-space:nowrap;flex:none}
 
-#week-board-final .category-outside{--flag:#e6eef9}
-#week-board-final :is(.category-with_sonya,.category-sonya){--flag:#fce4ef}
-#week-board-final .category-finance{--flag:#f9e4e4}
-#week-board-final .category-training{--flag:#fff2c9}
-#week-board-final .category-work{--flag:#e5f1e8}
-#week-board-final .category-posts{--flag:#eee6fa}
-#week-board-final .category-competitions{--flag:#ffead8}
-#week-board-final .category-history{--flag:#eef1f4}
+#week-board-final .category-outside{--flag:#c7def8}
+#week-board-final :is(.category-with_sonya,.category-sonya){--flag:#f1c5e8}
+#week-board-final .category-finance{--flag:#f3bcbc}
+#week-board-final .category-training{--flag:#ffe994}
+#week-board-final .category-work{--flag:#cde7c2}
+#week-board-final .category-posts{--flag:#d2c7f2}
+#week-board-final .category-competitions{--flag:#ddbb98}
+#week-board-final .category-history{--flag:#bde5e5}
 #week-board-final .row-actions{display:flex;gap:6px;flex-wrap:wrap}
 #week-board-final .status:empty{display:none}
 @media(max-width:600px){
@@ -149,3 +149,17 @@ body{margin:0;background:#fff}
   #week-board-final .titles .task{width:100%}
   #week-board-final .compact .sheet{max-width:none}
 }
+
+#week-board-final .task-head,#week-board-final .record-heading{display:flex;align-items:center;gap:5px;min-width:0}
+#week-board-final .record-heading{flex-wrap:nowrap}
+#week-board-final .task-head .task-title{min-width:0;flex:0 1 auto}
+#week-board-final :is(.task-head,.record-heading) .edit-record{flex:none;min-width:26px;height:26px;padding:1px 5px;border:1px solid #7775;border-radius:5px;background:#fff8;text-decoration:none;line-height:1}
+#week-board-final :is(.task-head,.record-heading) .remove-record{margin-left:0;flex:none}
+#week-board-final .task .record,#week-board-final .row-detail .record{white-space:normal}
+#week-board-final .record p{margin:2px 0}
+#week-board-final .record-link{display:block;margin-top:2px}
+#week-board-final .task-list>.row-add,#week-board-final .row-detail .row-add{min-height:26px;padding:2px 7px;align-self:center;font-size:12px}
+
+#week-board-final .record-heading>span{min-width:0}
+
+#week-board-final .record-heading>small{flex:none;white-space:nowrap}
