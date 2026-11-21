@@ -90,7 +90,7 @@ from app.models import (
 
 from app.finance_plans import router as finance_plans_router
 from app.finance_facts import router as finance_facts_router
-from app.timeboard import router as timeboard_router
+from app.timeboard import require_timeboard_admin, router as timeboard_router
 
 router = APIRouter()
 router.include_router(finance_plans_router)
@@ -249,17 +249,21 @@ TIMEBOARD_HEADERS = {
 }
 
 
-@router.get("/timeboard", include_in_schema=False, dependencies=[Depends(require_admin)])
-def timeboard_redirect() -> RedirectResponse:
+@router.get("/timeboard", include_in_schema=False)
+def timeboard_redirect(request: Request, credentials=Depends(security)) -> RedirectResponse:
+    if not admin_identity(request, credentials):
+        return RedirectResponse("/admin?next=/timeboard/", status_code=303, headers=TIMEBOARD_HEADERS)
     return RedirectResponse("/timeboard/", status_code=307, headers=TIMEBOARD_HEADERS)
 
 
-@router.get("/timeboard/", include_in_schema=False, dependencies=[Depends(require_admin)])
-def timeboard_page() -> FileResponse:
+@router.get("/timeboard/", include_in_schema=False)
+def timeboard_page(request: Request, credentials=Depends(security)) -> Response:
+    if not admin_identity(request, credentials):
+        return RedirectResponse("/admin?next=/timeboard/", status_code=303, headers=TIMEBOARD_HEADERS)
     return FileResponse(TIMEBOARD_DIR / "index.html", headers=TIMEBOARD_HEADERS)
 
 
-@router.get("/timeboard/{asset_name}", include_in_schema=False, dependencies=[Depends(require_admin)])
+@router.get("/timeboard/{asset_name}", include_in_schema=False, dependencies=[Depends(require_timeboard_admin)])
 def timeboard_asset(asset_name: str) -> FileResponse:
     if asset_name not in {"app.js", "style.css"}:
         raise HTTPException(status_code=404, detail="asset not found")

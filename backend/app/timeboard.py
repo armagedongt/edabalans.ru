@@ -12,14 +12,25 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, ValidationError, field_validator
 
-from app.auth import admin_identity, require_admin, security
+from app.auth import admin_identity, security
 
-router = APIRouter(prefix="/timeboard/api", include_in_schema=False, dependencies=[Depends(require_admin)])
 HEADERS = {
     "Cache-Control": "no-store",
     "X-Robots-Tag": "noindex, nofollow, noarchive",
     "Referrer-Policy": "no-referrer",
 }
+
+def require_timeboard_admin(request: Request, credentials=Depends(security)) -> str:
+    identity = admin_identity(request, credentials)
+    if not identity:
+        raise HTTPException(401, "Требуется вход администратора", headers=HEADERS)
+    return identity
+
+
+router = APIRouter(prefix="/timeboard/api", include_in_schema=False,
+                   dependencies=[Depends(require_timeboard_admin)])
+
+
 CATEGORIES = {
     "outside": "Дела в городе",
     "with_sonya": "С Соней",
@@ -186,14 +197,14 @@ def prepare(packet: Packet, revision: int, entries: list[dict]) -> tuple[list[di
     return list(current.values()), changes
 
 
-@router.post("/preview", dependencies=[Depends(require_admin)])
+@router.post("/preview", dependencies=[Depends(require_timeboard_admin)])
 def preview(packet: Annotated[Packet, Depends(read_packet)]) -> JSONResponse:
     revision, entries = state()
     _, changes = prepare(packet, revision, entries)
     return public_response({"revision": revision, "changes": changes})
 
 
-@router.post("/apply", dependencies=[Depends(require_admin)])
+@router.post("/apply", dependencies=[Depends(require_timeboard_admin)])
 def apply(packet: Annotated[Packet, Depends(read_packet)]) -> JSONResponse:
     with closing(sqlite3.connect(storage_path(), timeout=5)) as db, db:
         db.execute("BEGIN IMMEDIATE")

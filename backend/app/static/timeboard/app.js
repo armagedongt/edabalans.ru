@@ -54,7 +54,10 @@ async function request(path, packet) {
     body:JSON.stringify(packet),
   };
   const response = await fetch('api/'+path, options);
-  if (response.status === 401) throw Error('Сессия закончилась. Войдите для правок.');
+  if (response.status === 401) {
+    location.replace('/admin?next=/timeboard/');
+    throw Error('Сессия закончилась. Войдите снова.');
+  }
   const data = await response.json().catch(()=>null);
   if (!response.ok || !data) {
     const error = Error(typeof data?.detail==='string' ? data.detail : 'Не удалось получить ответ сервера.');

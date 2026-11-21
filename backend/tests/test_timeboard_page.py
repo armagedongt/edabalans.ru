@@ -35,8 +35,12 @@ def test_timeboard_requires_admin_for_every_entry_point(path):
     client = TestClient(app)
     for auth in [None, ("board-owner", "wrong-password")]:
         response = client.get(path, auth=auth, follow_redirects=False)
-        assert response.status_code == 401
-        assert "Basic" in response.headers["www-authenticate"]
+        if path in ("/timeboard", "/timeboard/"):
+            assert response.status_code == 303
+            assert response.headers["location"] == "/admin?next=/timeboard/"
+        else:
+            assert response.status_code == 401
+        assert "www-authenticate" not in response.headers
     client.cookies.set(ADMIN_COOKIE, admin_session_token(AUTH[0], 4102444800))
     assert client.get(path, follow_redirects=False).status_code in (200, 307)
 
@@ -216,3 +220,30 @@ def test_shared_sonya_plans_can_be_created_and_moved_without_becoming_schedule(t
     saved = client.get("/timeboard/api/state").json()["entries"][0]
     assert saved["cat"] == "with_sonya"
     assert not saved["phase"] and not saved["sonyaRole"]
+
+
+def test_timeboard_uses_shared_login_and_rejects_expired_session(tmp_path, monkeypatch):
+    monkeypatch.setenv("TIMEBOARD_DB", str(tmp_path / "board.sqlite3"))
+    client = TestClient(app, base_url="https://testserver")
+    login = client.get("/timeboard/", follow_redirects=True)
+    assert login.status_code == 200
+    assert login.url.path == "/admin"
+    assert login.url.params["next"] == "/timeboard/"
+    assert 'id="login-form"' in login.text
+    assert 'id="week-board-final"' not in login.text
+    assert "www-authenticate" not in login.headers
+    invalid = client.post("/admin/api/login", json={"username": AUTH[0], "password": "wrong"})
+    assert invalid.status_code == 401 and "www-authenticate" not in invalid.headers
+    assert client.get("/timeboard/", follow_redirects=False).status_code == 303
+    signed_in = client.post("/admin/api/login", json={"username": AUTH[0], "password": AUTH[1]})
+    assert signed_in.status_code == 200
+    assert "HttpOnly" in signed_in.headers["set-cookie"]
+    assert "Secure" in signed_in.headers["set-cookie"]
+    for path in ("/timeboard/", "/timeboard/app.js", "/timeboard/api/state"):
+        assert client.get(path).status_code == 200
+    assert client.post("/admin/api/logout").status_code == 200
+    assert client.get("/timeboard/", follow_redirects=False).status_code == 303
+    client.cookies.set(ADMIN_COOKIE, admin_session_token(AUTH[0], 1))
+    assert client.get("/timeboard/", follow_redirects=False).status_code == 303
+    blocked = client.get("/timeboard/api/state")
+    assert blocked.status_code == 401 and "www-authenticate" not in blocked.headers
