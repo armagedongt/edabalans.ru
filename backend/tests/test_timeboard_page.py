@@ -15,6 +15,31 @@ get_settings.cache_clear()
 from app.main import app
 from app import timeboard
 from app.timeboard_snapshot import snapshot
+from app.auth import ADMIN_COOKIE, admin_session_token
+
+
+@pytest.fixture(autouse=True)
+def board_credentials(monkeypatch):
+    monkeypatch.setenv("ADMIN_USERNAME", "board-owner")
+    monkeypatch.setenv("ADMIN_PASSWORD", "test-timeboard-password")
+    get_settings.cache_clear()
+    yield
+    get_settings.cache_clear()
+
+
+AUTH = ("board-owner", "test-timeboard-password")
+
+
+@pytest.mark.parametrize("path", ["/timeboard", "/timeboard/", "/timeboard/app.js", "/timeboard/style.css", "/timeboard/api/state", "/timeboard/api/session"])
+def test_timeboard_requires_admin_for_every_entry_point(path):
+    client = TestClient(app)
+    for auth in [None, ("board-owner", "wrong-password")]:
+        response = client.get(path, auth=auth, follow_redirects=False)
+        assert response.status_code == 401
+        assert "Basic" in response.headers["www-authenticate"]
+    client.cookies.set(ADMIN_COOKIE, admin_session_token(AUTH[0], 4102444800))
+    assert client.get(path, follow_redirects=False).status_code in (200, 307)
+
 
 
 class PageResources(HTMLParser):
@@ -30,8 +55,9 @@ class PageResources(HTMLParser):
             self.urls.append(values["href"])
 
 
-def test_timeboard_redirect_and_page_resources_work_without_a_session() -> None:
+def test_timeboard_redirect_and_page_resources_work_with_admin_session() -> None:
     client = TestClient(app)
+    client.auth = AUTH
     redirect = client.get("/timeboard", follow_redirects=False)
     assert redirect.status_code == 307
     assert redirect.headers["location"] == "/timeboard/"
@@ -57,10 +83,10 @@ def test_timeboard_redirect_and_page_resources_work_without_a_session() -> None:
 
 @pytest.mark.parametrize("name", ["README.md", "calendar.json", ".env", "app.js.map", "%2e%2e%2fconfig.py"])
 def test_timeboard_cannot_serve_unlisted_files(name: str) -> None:
-    assert TestClient(app).get(f"/timeboard/{name}").status_code == 404
+    assert TestClient(app).get(f"/timeboard/{name}", auth=AUTH).status_code == 404
 
 
-def test_timeboard_public_read_and_atomic_admin_import(tmp_path, monkeypatch) -> None:
+def test_timeboard_private_read_and_atomic_admin_import(tmp_path, monkeypatch) -> None:
     monkeypatch.setenv("TIMEBOARD_DB", str(tmp_path / "board.sqlite3"))
     monkeypatch.setenv("ADMIN_USERNAME", "board-owner")
     monkeypatch.setenv("ADMIN_PASSWORD", "test-timeboard-password")
@@ -72,8 +98,8 @@ def test_timeboard_public_read_and_atomic_admin_import(tmp_path, monkeypatch) ->
     operation = {"op": "add", "date": "2026-11-19", "cat": "training", "title": "Растяжка"}
     packet = {"v": 1, "baseRevision": 0, "ops": [operation]}
     try:
-        assert client.get(api + "state").json()["entries"] == []
-        assert client.get(api + "session").json() == {"canEdit": False}
+        assert client.get(api + "state", auth=auth).json()["entries"] == []
+        assert client.get(api + "session").status_code == 401
         assert client.get(api + "session", auth=auth).json() == {"canEdit": True}
         assert client.post(api + "apply", json=packet, headers=headers).status_code == 401
         assert client.post(api + "preview", json=packet, headers=headers).status_code == 401
@@ -82,11 +108,11 @@ def test_timeboard_public_read_and_atomic_admin_import(tmp_path, monkeypatch) ->
         preview = client.post(api + "preview", json=packet, auth=auth, headers=headers)
         assert preview.status_code == 200
         assert preview.json()["changes"][0]["after"]["title"] == operation["title"]
-        assert client.get(api + "state").json()["entries"] == []
+        assert client.get(api + "state", auth=auth).json()["entries"] == []
 
         invalid = {**packet, "ops": [operation, {"op": "update", "id": "missing", "title": "Чужая запись"}]}
         assert client.post(api + "apply", json=invalid, auth=auth, headers=headers).status_code == 422
-        assert client.get(api + "state").json()["revision"] == 0
+        assert client.get(api + "state", auth=auth).json()["revision"] == 0
         credentials_in_url = {**packet, "ops": [{**operation, "url": "https://:demo@example.org/"}]}
         assert client.post(api + "apply", json=credentials_in_url, auth=auth, headers=headers).status_code == 422
 
@@ -95,7 +121,7 @@ def test_timeboard_public_read_and_atomic_admin_import(tmp_path, monkeypatch) ->
         committed = result.json()
         assert committed["revision"] == committed["applied"] == 1
         assert client.post(api + "apply", json=packet, auth=auth, headers=headers).status_code == 409
-        anonymous = TestClient(app).get(api + "state")
+        anonymous = TestClient(app).get(api + "state", auth=auth)
         assert anonymous.headers["cache-control"] == "no-store"
         entry = anonymous.json()["entries"][0]
         assert entry["title"] == operation["title"]
@@ -106,16 +132,16 @@ def test_timeboard_public_read_and_atomic_admin_import(tmp_path, monkeypatch) ->
         updated = client.post(api + "apply", json=update, auth=auth, headers=headers).json()
         assert updated["revision"] == 2
         assert updated["changes"] == [{"op": "update", "before": entry, "after": changed_entry}]
-        assert client.get(api + "state").json()["entries"][0] == changed_entry
+        assert client.get(api + "state", auth=auth).json()["entries"][0] == changed_entry
         remove = {**packet, "baseRevision": 2, "ops": [{"op": "remove", "id": entry["id"]}]}
         removed = client.post(api + "apply", json=remove, auth=auth, headers=headers).json()
         assert removed["revision"] == 3
         assert removed["changes"] == [{"op": "remove", "before": changed_entry, "after": None}]
-        assert client.get(api + "state").json()["entries"] == []
+        assert client.get(api + "state", auth=auth).json()["entries"] == []
 
         restore = {**packet, "baseRevision": 3, "ops": [{"op": "add", **removed["changes"][0]["before"]}]}
         assert client.post(api + "apply", json=restore, auth=auth, headers=headers).status_code == 200
-        assert client.get(api + "state").json()["entries"] == [changed_entry]
+        assert client.get(api + "state", auth=auth).json()["entries"] == [changed_entry]
         duplicate = {**restore, "baseRevision": 4}
         assert client.post(api + "apply", json=duplicate, auth=auth, headers=headers).status_code == 422
         wrong_category = {**duplicate, "ops": [{**operation, "sonyaRole": "weekly"}]}
@@ -129,9 +155,9 @@ def test_timeboard_public_read_and_atomic_admin_import(tmp_path, monkeypatch) ->
         assert client.post(api + "apply", json=popup_packet, auth=auth, headers=headers).status_code == 200
         assert any(
             e["cat"] == "competitions" and e["title"] == competition["title"]
-            for e in client.get(api + "state").json()["entries"]
+            for e in client.get(api + "state", auth=auth).json()["entries"]
         )
-        assert {e["sonyaRole"]: e["phase"] for e in client.get(api + "state").json()["entries"]} == {
+        assert {e["sonyaRole"]: e["phase"] for e in client.get(api + "state", auth=auth).json()["entries"]} == {
             "": "", "weekly": "", "indicator": "period",
         }
 
@@ -154,13 +180,13 @@ def test_timeboard_public_read_and_atomic_admin_import(tmp_path, monkeypatch) ->
 
         with ThreadPoolExecutor(max_workers=2) as pool:
             assert sorted(pool.map(write, ["Первая запись", "Вторая запись"])) == [200, 409]
-        final_state = client.get(api + "state").json()
+        final_state = client.get(api + "state", auth=auth).json()
         assert final_state["revision"] == 6
         assert len(final_state["entries"]) == 5
         backup = tmp_path / "restored.sqlite3"
         with backup.open("wb") as output:
             snapshot(tmp_path / "board.sqlite3", output)
         monkeypatch.setenv("TIMEBOARD_DB", str(backup))
-        assert client.get(api + "state").json() == final_state
+        assert client.get(api + "state", auth=auth).json() == final_state
     finally:
         get_settings.cache_clear()

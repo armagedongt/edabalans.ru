@@ -14,7 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints, Validation
 
 from app.auth import admin_identity, require_admin, security
 
-router = APIRouter(prefix="/timeboard/api", include_in_schema=False)
+router = APIRouter(prefix="/timeboard/api", include_in_schema=False, dependencies=[Depends(require_admin)])
 HEADERS = {
     "Cache-Control": "no-store",
     "X-Robots-Tag": "noindex, nofollow, noarchive",

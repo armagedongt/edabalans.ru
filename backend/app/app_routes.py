@@ -249,17 +249,17 @@ TIMEBOARD_HEADERS = {
 }
 
 
-@router.get("/timeboard", include_in_schema=False)
+@router.get("/timeboard", include_in_schema=False, dependencies=[Depends(require_admin)])
 def timeboard_redirect() -> RedirectResponse:
     return RedirectResponse("/timeboard/", status_code=307, headers=TIMEBOARD_HEADERS)
 
 
-@router.get("/timeboard/", include_in_schema=False)
+@router.get("/timeboard/", include_in_schema=False, dependencies=[Depends(require_admin)])
 def timeboard_page() -> FileResponse:
     return FileResponse(TIMEBOARD_DIR / "index.html", headers=TIMEBOARD_HEADERS)
 
 
-@router.get("/timeboard/{asset_name}", include_in_schema=False)
+@router.get("/timeboard/{asset_name}", include_in_schema=False, dependencies=[Depends(require_admin)])
 def timeboard_asset(asset_name: str) -> FileResponse:
     if asset_name not in {"app.js", "style.css"}:
         raise HTTPException(status_code=404, detail="asset not found")
