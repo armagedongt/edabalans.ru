@@ -22,6 +22,7 @@ let state = {revision:0,categories:{},entries:[]};
 let canEdit = false;
 let mode = matchMedia('(max-width:1100px)').matches ? 'compact' : 'table';
 let expanded = null;
+const openTasks = new Set();
 let showPast = false;
 let columns = Object.keys(icons);
 let widths = Object.fromEntries(columns.map(key=>[key,1]));
@@ -113,10 +114,10 @@ function row(key) {
   const companion = button('<span class="heart" aria-hidden="true">'+(heart?'♥':'♡')+'</span>',
     'data-key="'+key+'" data-sonya aria-label="График Сони, '+shortDate(key)+'" aria-haspopup="dialog"',
     'tile sonya'+cycle);
-  const data = isExpanded && mode==='compact' ? compactDetails(key,expanded.view) :
+  const data = mode==='titles' ? titleTasks(key,isExpanded) : isExpanded && mode==='compact' ? compactDetails(key,expanded.view) :
     columns.map(cat=>column(key,cat,isExpanded)).join('');
   return '<div class="row'+(isExpanded?' expanded':'')+'" data-row="'+key+'"><div>'+date+'</div><div>'+companion+'</div>'+
-    (mode==='table'?data:'<div class="'+(isExpanded?'row-detail':'icons')+'">'+data+'</div>')+'</div>';
+    (mode==='table'?data:'<div class="'+(mode==='titles'?'task-list':isExpanded?'row-detail':'icons')+'">'+data+'</div>')+'</div>';
 }
 
 function column(key,cat,isExpanded) {
@@ -150,17 +151,24 @@ function removeButton(entry,cls='') {
   return button('×','data-remove="'+entry.id+'" title="Удалить запись" aria-label="Удалить запись · '+safe(entry.title)+'"','remove-record '+cls);
 }
 
-function entryCard(entry,showCategory=true) {
+function entryCard(entry,showCategory=true,showTitle=true) {
   const timing = [entry.time,entry.duration && entry.duration+' мин'].filter(Boolean).join(' · ');
-  const palette = Object.entries(flags).map(([color,label])=>button(color?'':'×',
-    'data-flag="'+color+'" data-id="'+entry.id+'" aria-label="'+label+'" aria-pressed="'+(entry.flag===color)+'"',
-    'swatch flag-'+color)).join('');
   const actions = canEdit ? '<div class="record-actions">'+button('Изменить','data-edit="'+entry.id+'"')+
-    '<div class="palette" role="group" aria-label="Цвет записи">'+palette+'</div>'+removeButton(entry)+'</div>' : '';
+    removeButton(entry)+'</div>' : '';
   return '<article class="record flag-'+entry.flag+'">'+(showCategory?'<small>'+safe(state.categories[entry.cat])+'</small>':'')+
-    '<p>'+safe(entry.title)+(entry.done?' ✓':'')+'</p>'+(timing?'<small>'+safe(timing)+'</small>':'')+
+    (showTitle?'<p>'+safe(entry.title)+(entry.done?' ✓':'')+'</p>':'')+(timing?'<small>'+safe(timing)+'</small>':'')+
     (entry.note?'<p>'+safe(entry.note)+'</p>':'')+
     (entry.url?'<a href="'+safe(entry.url)+'" rel="noreferrer noopener">'+safe(entry.url)+'</a>':'')+actions+'</article>';
+}
+
+function titleTasks(key,dayOpen) {
+  return entriesFor(key).map(entry=>{
+    const open = dayOpen || openTasks.has(entry.id);
+    return '<div class="task flag-'+entry.flag+'">'+button(
+      '<span aria-hidden="true">'+icons[entry.cat]+'</span><span>'+safe(entry.title)+(entry.done?' ✓':'')+'</span>',
+      'data-task="'+entry.id+'" aria-expanded="'+open+'" aria-controls="task-'+entry.id+'"','task-title')+
+      '<div id="task-'+entry.id+'"'+(open?'':' hidden')+'>'+ (open?entryCard(entry,false,false):'')+'</div></div>';
+  }).join('')+(canEdit?button('+','data-add data-key="'+key+'" aria-label="Добавить запись, '+shortDate(key)+'"','row-add'):'');
 }
 
 function compactDetails(key,view) {
@@ -187,8 +195,9 @@ function openSonya(key) {
 }
 
 function render() {
-  $('.scroll').classList.toggle('compact',mode==='compact');
-  $('[data-reset]').hidden = mode==='compact';
+  $('.scroll').classList.toggle('compact',mode!=='table');
+  $('.scroll').classList.toggle('titles',mode==='titles');
+  $('[data-reset]').hidden = mode!=='table';
   root.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
   const pastButton = $('[data-past]');
   pastButton.textContent = showPast ? 'Скрыть прошедшее' : 'Прошедшее';
@@ -385,6 +394,13 @@ root.addEventListener('click',event=>{
   if (d.mode) {
     mode = d.mode;
     render();
+  } else if (d.task) {
+    const wasOpen = b.getAttribute('aria-expanded')==='true';
+    expanded = null;
+    if (wasOpen) openTasks.delete(d.task);
+    else openTasks.add(d.task);
+    render();
+    sheet.querySelector('[data-task="'+d.task+'"]')?.focus({preventScroll:true});
   } else if ('past' in d) {
     showPast = !showPast;
     render();
@@ -410,8 +426,7 @@ root.addEventListener('click',event=>{
     editEntry(d.key || todayKey(),d.cat || 'outside');
   } else if (canEdit && d.edit) {
     editEntry(null,null,state.entries.find(entry=>entry.id===d.edit));
-  } else if (canEdit && 'flag' in d) {
-    run(()=>apply([{op:'update',id:d.id,flag:d.flag}]));
+
   } else if (canEdit && d.remove) {
     if (confirm('Удалить запись?')) run(()=>apply([{op:'remove',id:d.remove}],null,!!$('#entry-form')));
     else b.closest('.cell')?.querySelector('[data-inline]')?.focus();

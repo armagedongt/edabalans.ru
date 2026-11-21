@@ -77,9 +77,7 @@
 #week-board-final .flag-red{--flag:#f9e4e4}
 #week-board-final .cell,#week-board-final .record,#week-board-final button.emoji{background:var(--flag,#f5f5f7)}
 #week-board-final .cell:has(input:placeholder-shown){background:transparent}
-#week-board-final .record-actions,#week-board-final .palette{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
-#week-board-final .record .swatch{width:24px;height:24px;border:1px solid #bbbfc5;border-radius:5px;background:var(--flag,#fff);text-decoration:none;padding:0}
-#week-board-final .record .swatch[aria-pressed="true"]{border:2px solid #555}
+#week-board-final .record-actions{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
 #week-board-final .column-label{cursor:grab}
 #week-board-final .column-label.is-target{background:#e6eef9;box-shadow:inset 2px 0 #5d7ea6}
 #week-board-final .editor .payload{font:12px/1.4 ui-monospace,monospace;min-height:130px}
@@ -121,3 +119,14 @@ body{margin:0;background:#fff}
 #week-board-final .remove-record:hover{color:#a33b48}
 #week-board-final .cell:has(input:placeholder-shown):not(:focus-within) .cell-color{visibility:hidden}
 @media(max-width:600px){#week-board-final{padding:0 8px 8px}#week-board-final .board-top{padding-top:8px}#week-board-final .toolbar{gap:10px}}
+#week-board-final .titles .sheet{max-width:none}
+#week-board-final .task-list{display:flex;flex-wrap:wrap;gap:5px;align-content:center;align-items:flex-start}
+#week-board-final .task{min-width:0;max-width:100%;border-radius:7px;background:var(--flag,#f5f5f7)}
+#week-board-final .task .task-title{display:flex;align-items:center;gap:7px;min-height:38px;max-width:100%;border:0;background:transparent;text-align:left;white-space:normal;overflow-wrap:anywhere}
+#week-board-final .task-title>span:first-child{font-size:20px;flex:none}
+#week-board-final .task-title>span:last-child{min-width:0}
+#week-board-final .task:has([aria-expanded="true"]){flex:1 1 100%}
+#week-board-final .task .record{padding-top:0;white-space:pre-wrap}
+#week-board-final .task-list>.row-add{min-width:34px;min-height:38px}
+
+#week-board-final .titles .row>div{align-items:flex-start}
