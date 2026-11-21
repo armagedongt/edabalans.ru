@@ -515,6 +515,7 @@ def dispatch_masterclass_notifications(
         settings.masterclass_offers_url,
         notification_kinds={
             "strength_workout_completed",
+            "owner_planning_summary",
             "dqs_app_link",
             "metabolism_app_link",
             "closing_review_copy",

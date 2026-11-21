@@ -6,6 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "Edabalans API"
     app_version: str = "0.2.0"
+    planning_summaries_enabled: bool = False
     database_url: str
     admin_username: str = ""
     admin_password: str = ""

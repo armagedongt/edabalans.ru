@@ -834,6 +834,7 @@ def test_disabled_postpurchase_scheduler_dispatches_only_requested_service_deliv
     assert result == {"sent": 0}
     assert calls[0][1]["notification_kinds"] == {
         "strength_workout_completed",
+        "owner_planning_summary",
         "dqs_app_link",
         "metabolism_app_link",
         "closing_review_copy",

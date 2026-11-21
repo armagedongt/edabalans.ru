@@ -620,7 +620,7 @@ def dispatch_due_masterclass_notifications(
     progress = progress_callback or (lambda: None)
     for notification in due:
         progress()
-        if notification.notification_kind == "strength_workout_completed":
+        if notification.notification_kind in {"strength_workout_completed", "owner_planning_summary"}:
             if platform != "telegram":
                 continue
             if _notification_expired(notification, datetime.now(UTC)):
@@ -629,9 +629,9 @@ def dispatch_due_masterclass_notifications(
                 counters["failed"] += 1
                 continue
             from app.config import get_settings
-            from app.strength_completion import deliver_completion
+            from app.owner_notification_delivery import deliver_owner_notification
             try:
-                deliver_completion(session, notification, get_settings())
+                deliver_owner_notification(session, notification, get_settings())
                 notification.status = "sent"
                 notification.sent_at = datetime.now(UTC)
                 notification.error_message = None

@@ -88,6 +88,11 @@ async def lifespan(_: FastAPI):
     recurring_task = None
     stop_owner_payment_alerts = asyncio.Event()
     owner_payment_alerts_task = None
+    stop_planning = asyncio.Event()
+    planning_task = None
+    if settings.planning_summaries_enabled:
+        from app.timeboard_notifications import planning_worker
+        planning_task = asyncio.create_task(planning_worker(stop_planning))
     if settings.account_onboarding_enabled and settings.account_email_worker_enabled:
         email_task = asyncio.create_task(account_email_worker(settings, stop_email_worker))
     if settings.robokassa_recurring_worker_enabled:
@@ -108,6 +113,11 @@ async def lifespan(_: FastAPI):
         stop_email_worker.set()
         stop_recurring_worker.set()
         stop_owner_payment_alerts.set()
+        stop_planning.set()
+        if planning_task is not None:
+            planning_task.cancel()
+            with suppress(asyncio.CancelledError):
+                await planning_task
         if email_task is not None:
             email_task.cancel()
             with suppress(asyncio.CancelledError):

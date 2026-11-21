@@ -1,4 +1,4 @@
-"""Owner delivery for strength events, using the shared outbox and Telegram receipts."""
+"""Owner alerts through explicit bot roles, the shared outbox and durable receipts."""
 from datetime import UTC, datetime
 import hashlib
 from uuid import NAMESPACE_URL, uuid5
@@ -9,7 +9,8 @@ from app.models import OwnerPaymentAlertDelivery
 from app.telegram import TelegramClient, TelegramError
 
 
-def deliver_completion(session, notification, settings) -> None:
+def deliver_owner_notification(session, notification, settings) -> None:
+    planning = notification.notification_kind == "owner_planning_summary"
     role = (notification.payload or {}).get("delivery_role") or settings.strength_completion_bot_role
     tokens = {"product": settings.telegram_test_bot_token,
               "technical": settings.technical_telegram_bot_token,
@@ -17,6 +18,10 @@ def deliver_completion(session, notification, settings) -> None:
     token = tokens.get(role)
     recipients = list(dict.fromkeys(x.strip() for x in (
         settings.strength_completion_recipient_ids or settings.technical_telegram_recipient_ids).split(",") if x.strip()))
+    if planning:
+        role = "planning"
+        token = settings.planning_telegram_bot_token
+        recipients = [settings.planning_telegram_recipient_id]
     if not token or not recipients or any(not x.isdigit() for x in recipients):
         raise RuntimeError("strength owner notification route is not configured")
     telegram = TelegramClient(token, proxy_url=settings.telegram_proxy_url,
@@ -27,12 +32,16 @@ def deliver_completion(session, notification, settings) -> None:
     except Exception:
         raise ConnectionError("strength notification bot check temporarily unavailable") from None
     bot_id = str(bot["id"])
+    if planning and bot_id != settings.planning_telegram_bot_id:
+        raise RuntimeError("planning notification bot identity does not match configuration")
     if bot_id != token.split(":", 1)[0]:
         raise RuntimeError("strength notification bot identity does not match configuration")
     payload = dict(notification.payload or {})
     if payload.get("delivery_bot_id") and payload["delivery_bot_id"] != bot_id:
         raise RuntimeError("strength notification bot changed during delivery")
     recipients = payload.get("delivery_recipients") or recipients
+    if planning and recipients != [settings.planning_telegram_recipient_id]:
+        raise RuntimeError("planning notification recipient changed during delivery")
     payload.update(delivery_role=role, delivery_bot_id=bot_id,
                    delivery_bot_username=bot["username"], delivery_recipients=recipients)
     notification.payload = payload
@@ -42,7 +51,8 @@ def deliver_completion(session, notification, settings) -> None:
     deliveries = dict(payload.get("deliveries") or {})
     failures = []
     for recipient in recipients:
-        receipt_id = str(uuid5(NAMESPACE_URL, f"strength-completion:{notification.id}:{bot_id}:{recipient}"))
+        prefix = "planning-summary" if planning else "strength-completion"
+        receipt_id = str(uuid5(NAMESPACE_URL, f"{prefix}:{notification.id}:{bot_id}:{recipient}"))
         receipt = session.get(OwnerPaymentAlertDelivery, receipt_id)
         if receipt:
             if receipt.message_digest != digest:
