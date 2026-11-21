@@ -3,7 +3,9 @@ const $ = selector => root.querySelector(selector);
 const sheet = $('.sheet');
 const dialog = $('.editor');
 const content = $('.editor-content');
-const icons = {outside:'📍',training:'🏋️',competitions:'🏁',work:'💼',posts:'✍️',finance:'💳',history:'📓'};
+const icons = {outside:'📍',with_sonya:'💗',training:'🏋️',competitions:'🏁',work:'💼',posts:'✍️',finance:'💳',history:'📓'};
+const taskTitleLimit = 42;
+const taskCharacters = new Intl.Segmenter('ru',{granularity:'grapheme'});
 const flags = {'':'Без цвета',blue:'Синий',green:'Зелёный',red:'Красный'};
 const weekdays = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
 const fields = {date:'Дата',cat:'Категория',title:'Действие',time:'Время',duration:'Минуты',note:'Комментарий',url:'Ссылка',flag:'Цвет',phase:'Цикл',sonyaRole:'Тип записи Сони',done:'Выполнено'};
@@ -20,7 +22,7 @@ const weekday = key => (dateAt(key).getUTCDay()+6)%7;
 
 let state = {revision:0,categories:{},entries:[]};
 let canEdit = false;
-let mode = matchMedia('(max-width:1100px)').matches ? 'compact' : 'table';
+let mode = 'titles';
 let expanded = null;
 const openTasks = new Set();
 let showPast = false;
@@ -71,7 +73,8 @@ async function reload() {
 
 function entriesFor(key, cat) {
   return state.entries.filter(entry => entry.date === key && (cat ? entry.cat === cat : entry.cat !== 'sonya'))
-    .sort((a,b)=>(a.time || '99').localeCompare(b.time || '99') || a.id.localeCompare(b.id));
+    .sort((a,b)=>(cat?0:columns.indexOf(a.cat)-columns.indexOf(b.cat)) ||
+      (a.time || '99').localeCompare(b.time || '99') || a.id.localeCompare(b.id));
 }
 
 function boardDates() {
@@ -132,19 +135,18 @@ function column(key,cat,isExpanded) {
   }
   if (mode==='compact') {
     return first ? button(icons[cat]+(entries.length>1?' <small>'+entries.length+'</small>':''),attrs,
-      'emoji flag-'+(entries.find(entry=>entry.flag)?.flag||'')) : '';
+      'emoji category-'+cat) : '';
   }
   const count = entries.length>1 ? button('+'+(entries.length-1),attrs,'count') : '';
   if (!canEdit) {
-    return '<div>'+ (first ? '<div class="cell flag-'+first.flag+'">'+
+    return '<div>'+ (first ? '<div class="cell category-'+cat+'">'+
       button(safe(first.title),attrs+' title="'+safe(first.title)+'"','read-cell')+count+'</div>' : '')+'</div>';
   }
   const flag = first?.flag || '';
   const remove = first ? removeButton(first,'cell-remove') : '';
-  return '<div><div class="cell flag-'+flag+'"><input data-inline data-key="'+key+'" data-cat="'+cat+'" data-id="'+(first?.id||'')+
+  return '<div><div class="cell category-'+cat+'"><input data-inline data-key="'+key+'" data-cat="'+cat+'" data-id="'+(first?.id||'')+
     '" data-current-flag="'+flag+'" maxlength="160" aria-label="'+label+'" placeholder="Введите текст" value="'+safe(first?.title)+'">'+
-    '<label class="cell-color" title="Цвет важности"><span aria-hidden="true"></span><select data-inline-flag aria-label="Цвет важности · '+label+'">'+
-    selectOptions(flags,flag)+'</select></label>'+remove+count+'</div></div>';
+remove+count+'</div></div>';
 }
 
 function removeButton(entry,cls='') {
@@ -155,27 +157,47 @@ function entryCard(entry,showCategory=true,showTitle=true) {
   const timing = [entry.time,entry.duration && entry.duration+' мин'].filter(Boolean).join(' · ');
   const actions = canEdit ? '<div class="record-actions">'+button('Изменить','data-edit="'+entry.id+'"')+
     removeButton(entry)+'</div>' : '';
-  return '<article class="record flag-'+entry.flag+'">'+(showCategory?'<small>'+safe(state.categories[entry.cat])+'</small>':'')+
+  return '<article class="record category-'+entry.cat+'">'+(showCategory?'<small>'+safe(state.categories[entry.cat])+'</small>':'')+
     (showTitle?'<p>'+safe(entry.title)+(entry.done?' ✓':'')+'</p>':'')+(timing?'<small>'+safe(timing)+'</small>':'')+
     (entry.note?'<p>'+safe(entry.note)+'</p>':'')+
-    (entry.url?'<a href="'+safe(entry.url)+'" rel="noreferrer noopener">'+safe(entry.url)+'</a>':'')+actions+'</article>';
+    (entry.url?'<a href="'+safe(entry.url)+'" rel="noreferrer noopener">'+(entry.cat==='finance'?'Открыть кабинет':'Открыть ссылку')+'</a>':'')+actions+'</article>';
+}
+
+function taskHeading(entry) {
+  const reminder = entry.title.startsWith('Через 7 дней · ') ? 'за 7 дн.' :
+    entry.title.startsWith('Завтра · ') ? 'завтра' : '';
+  const title = entry.title.replace(/^(?:Через 7 дней|Завтра) · /,'')
+    .replace(/^(?:Встреча|Звонок|Созвон|Консультация) с /i,'');
+  const parts = title.split(' · ');
+  const timeIndex = entry.cat==='finance' ? Math.min(2,parts.length) : 1;
+  let full = entry.time && !title.includes(entry.time) ?
+    [...parts.slice(0,timeIndex),entry.time,...parts.slice(timeIndex)].join(' · ') : title;
+  if (entry.cat==='finance') full = full.replace(/(\d) (?=\d{3}(?:[^\d]|$))/g,'$1\u202f')
+    .replace(/(\d)\s+(₽|\$|RUB|USD|GEL)(?=$|[\s·])/g,'$1\u00a0$2');
+  const characters = [...taskCharacters.segment(full)].map(item=>item.segment);
+  const truncated = characters.length>taskTitleLimit;
+  const text = truncated ? characters.slice(0,taskTitleLimit-1).join('')+'…' : full;
+  return {full,text,truncated,reminder};
 }
 
 function titleTasks(key,dayOpen) {
   return entriesFor(key).map(entry=>{
     const open = dayOpen || openTasks.has(entry.id);
-    return '<div class="task flag-'+entry.flag+'">'+button(
-      '<span aria-hidden="true">'+icons[entry.cat]+'</span><span>'+safe(entry.title)+(entry.done?' ✓':'')+'</span>',
-      'data-task="'+entry.id+'" aria-expanded="'+open+'" aria-controls="task-'+entry.id+'"','task-title')+
-      '<div id="task-'+entry.id+'"'+(open?'':' hidden')+'>'+ (open?entryCard(entry,false,false):'')+'</div></div>';
+    const heading = taskHeading(entry);
+    return '<div class="task category-'+entry.cat+'">'+button(
+      '<span aria-hidden="true">'+icons[entry.cat]+'</span><span class="task-text">'+safe(heading.text)+'</span>'+
+      (heading.reminder?'<small class="task-reminder">'+safe(heading.reminder)+'</small>':'')+
+      (entry.done?'<span aria-label="Выполнено">✓</span>':''),
+      'data-task="'+entry.id+'" title="'+safe(heading.full)+'" aria-label="'+safe(heading.full+(heading.reminder?' · '+heading.reminder:''))+'" aria-expanded="'+open+'" aria-controls="task-'+entry.id+'"','task-title')+
+      '<div id="task-'+entry.id+'"'+(open?'':' hidden')+'>'+ (open?entryCard(entry,false,heading.truncated):'')+'</div></div>';
   }).join('')+(canEdit?button('+','data-add data-key="'+key+'" aria-label="Добавить запись, '+shortDate(key)+'"','row-add'):'');
 }
 
 function compactDetails(key,view) {
   const entries = entriesFor(key,view==='all'?null:view);
   const add = canEdit ? button('+ Запись','data-add data-key="'+key+'" data-cat="'+(view==='all'?'outside':view)+'"','row-add') : '';
-  return (entries.length?entries.map(entry=>entryCard(entry)).join(''):'<p class="details-empty">Записей нет</p>')+add+
-    (view==='all'?'':button('Свернуть','data-collapse','row-add'));
+  return (entries.length?entries.map(entry=>entryCard(entry)).join(''):'<p class="details-empty">Записей нет</p>')+'<div class="row-actions">'+add+
+    (view==='all'?'':button('Свернуть','data-collapse','row-add'))+'</div>';
 }
 
 function openSonya(key) {
@@ -232,7 +254,7 @@ function editEntry(key,cat,entry) {
     '<label class="wide">Действие<input name="title" required maxlength="160" value="'+safe(e.title)+'"></label>'+
     '<label class="wide">Комментарий<textarea name="note">'+safe(e.note)+'</textarea></label>'+
     '<label class="wide">Ссылка<input name="url" type="url" value="'+safe(e.url)+'"></label>'+
-    '<label>Цвет<select name="flag">'+selectOptions(flags,e.flag||'')+'</select></label>'+
+    '<input type="hidden" name="flag" value="'+safe(e.flag||'')+'">'+
     '<label data-phase '+(e.cat==='sonya'?'':'hidden')+'>Цикл<select name="phase">'+selectOptions(periods,e.phase||'')+'</select></label>'+
     '<label data-sonya-role '+(e.cat==='sonya'?'':'hidden')+'>График<select name="sonyaRole">'+selectOptions(sonyaRoles,e.sonyaRole||'')+'</select></label>'+
     '<label>Выполнено<select name="done">'+selectOptions({'false':'Нет','true':'Да'},String(e.done??false))+'</select></label></div>'+
@@ -471,10 +493,10 @@ function saveCell(cell) {
   const picker = cell.querySelector('[data-inline-flag]');
   const {id,key,cat,currentFlag} = field.dataset;
   const title = field.value.trim();
-  const flag = picker.value;
+  const flag = picker?.value ?? currentFlag;
   if (!title) {
     field.value = field.defaultValue;
-    picker.value = currentFlag;
+    if (picker) picker.value = currentFlag;
     return;
   }
   if (title===field.defaultValue && flag===currentFlag) return;
@@ -483,7 +505,7 @@ function saveCell(cell) {
       await apply([id?{op:'update',id,title,flag}:{op:'add',date:key,cat,title,flag}]);
     } catch(error) {
       field.value = field.defaultValue;
-      picker.value = currentFlag;
+      if (picker) picker.value = currentFlag;
       throw error;
     }
   });
@@ -537,7 +559,8 @@ root.addEventListener('keydown',event=>{
   if ('inline' in d && event.key==='Enter') event.target.blur();
   if ('inline' in d && event.key==='Escape') {
     event.target.value = event.target.defaultValue;
-    event.target.closest('.cell').querySelector('[data-inline-flag]').value = d.currentFlag;
+    const picker = event.target.closest('.cell').querySelector('[data-inline-flag]');
+    if (picker) picker.value = d.currentFlag;
     event.target.blur();
   }
   if (!['ArrowLeft','ArrowRight'].includes(event.key)) return;

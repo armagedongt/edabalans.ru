@@ -130,3 +130,22 @@ body{margin:0;background:#fff}
 #week-board-final .task-list>.row-add{min-width:34px;min-height:38px}
 
 #week-board-final .titles .row>div{align-items:flex-start}
+
+#week-board-final .task-title .task-text{min-width:0}
+#week-board-final .task-reminder{font-size:11px;color:var(--muted);white-space:nowrap;flex:none}
+
+#week-board-final .category-outside{--flag:#e6eef9}
+#week-board-final :is(.category-with_sonya,.category-sonya){--flag:#fce4ef}
+#week-board-final .category-finance{--flag:#f9e4e4}
+#week-board-final .category-training{--flag:#fff2c9}
+#week-board-final .category-work{--flag:#e5f1e8}
+#week-board-final .category-posts{--flag:#eee6fa}
+#week-board-final .category-competitions{--flag:#ffead8}
+#week-board-final .category-history{--flag:#eef1f4}
+#week-board-final .row-actions{display:flex;gap:6px;flex-wrap:wrap}
+#week-board-final .status:empty{display:none}
+@media(max-width:600px){
+  #week-board-final .compact .row>:nth-child(3){grid-column:1/-1;border-left:0;padding-top:2px;padding-bottom:10px}
+  #week-board-final .titles .task{width:100%}
+  #week-board-final .compact .sheet{max-width:none}
+}

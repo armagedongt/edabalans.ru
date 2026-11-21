@@ -190,3 +190,29 @@ def test_timeboard_private_read_and_atomic_admin_import(tmp_path, monkeypatch) -
         assert client.get(api + "state", auth=auth).json() == final_state
     finally:
         get_settings.cache_clear()
+
+
+def test_shared_sonya_plans_can_be_created_and_moved_without_becoming_schedule(tmp_path, monkeypatch):
+    monkeypatch.setenv("TIMEBOARD_DB", str(tmp_path / "board.sqlite3"))
+    client = TestClient(app)
+    client.auth = AUTH
+    headers = {"X-Timeboard-Request": "1"}
+    packet = {"v": 1, "baseRevision": 0, "ops": [
+        {"op": "add", "date": "2026-11-23", "cat": "with_sonya", "title": "Ужин"}
+    ]}
+    assert client.post("/timeboard/api/preview", json=packet, headers=headers).status_code == 200
+    result = client.post("/timeboard/api/apply", json=packet, headers=headers)
+    assert result.status_code == 200
+    entry = result.json()["changes"][0]["after"]
+    assert entry["cat"] == "with_sonya"
+    packet = {"v": 1, "baseRevision": 1, "ops": [
+        {"op": "update", "id": entry["id"], "cat": "outside"}
+    ]}
+    assert client.post("/timeboard/api/apply", json=packet, headers=headers).status_code == 200
+    packet = {"v": 1, "baseRevision": 2, "ops": [
+        {"op": "update", "id": entry["id"], "cat": "with_sonya"}
+    ]}
+    assert client.post("/timeboard/api/apply", json=packet, headers=headers).status_code == 200
+    saved = client.get("/timeboard/api/state").json()["entries"][0]
+    assert saved["cat"] == "with_sonya"
+    assert not saved["phase"] and not saved["sonyaRole"]
