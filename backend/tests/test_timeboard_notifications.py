@@ -22,19 +22,20 @@ def test_only_current_moscow_slot_and_bounded_restart_catchup(utc, expected):
     assert (slot.hour if slot else None) == expected
 
 
-def test_morning_today_evening_tomorrow_links_done_history_and_seven_day_reminder():
+def test_morning_today_evening_tomorrow_links_done_history_and_explicit_reminder_dates():
     entries = [entry(title="Сегодня <встреча>", note="Адрес & время", url="https://example.test/pay?a=1&b=2"),
         entry("tomorrow", date="2026-11-22", title="Завтра"), entry("done", done=True, title="Сделано"),
         entry("history", cat="history", title="История"),
-        entry("payment", cat="finance", date="2026-11-28", title="Подписка 500 ₽", note="Карта 1234")]
+        entry("reminder", cat="finance", title="Через 7 дней: подписка 500 ₽", note="Карта 1234"),
+        entry("payment", cat="finance", date="2026-11-28", title="Будущий платёж 500 ₽")]
     morning = current_slot(datetime(2026, 11, 21, 3, tzinfo=UTC))
     messages, ids, day = render_messages(entries, morning)
     text = "\n".join(messages)
-    assert day.isoformat() == "2026-11-21" and ids == ["one", "payment"]
+    assert day.isoformat() == "2026-11-21" and ids == ["one", "reminder"]
     for expected in ["Сегодня &lt;встреча&gt;", "Адрес &amp; время", 'href="https://example.test/pay?a=1&amp;b=2"',
-                     "Через 7 дней", "Подписка 500 ₽", "Карта 1234", "статус оплаты проверьте отдельно"]:
+                     "Через 7 дней: подписка 500 ₽", "Карта 1234"]:
         assert expected in text
-    assert all(x not in text for x in ["Сделано", "История", "Завтра"])
+    assert all(x not in text for x in ["Сделано", "История", "Завтра", "Будущий платёж"])
     evening = current_slot(datetime(2026, 11, 21, 17, tzinfo=UTC))
     messages, ids, day = render_messages(entries, evening)
     assert day.isoformat() == "2026-11-22" and ids == ["tomorrow"]

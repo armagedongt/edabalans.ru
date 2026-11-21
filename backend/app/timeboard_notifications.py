@@ -50,15 +50,6 @@ def render_messages(entries, slot):
                      (f"\n{entry['note']}" if entry.get("note") else ""))
         if entry.get("url"):
             lines.append(("Открыть запись", entry["url"]))
-    # One advance reminder per important finance entry, seven days before its date.
-    advance = [e for e in entries if slot.hour == 6 and e.get("cat") == "finance" and
-               e.get("date") == (day + timedelta(days=7)).isoformat() and not e.get("done")]
-    if advance:
-        lines.append("Через 7 дней — финансовые записи доски (статус оплаты проверьте отдельно):")
-        for entry in sorted(advance, key=lambda e: e["id"]):
-            lines.append(f"{entry['date']} · {entry['title']}\n{entry.get('note') or ''}")
-            if entry.get("url"):
-                lines.append(("Открыть запись", entry["url"]))
     # Escape before packing. Small pieces bound Telegram's UTF-16 text length,
     # including hostile HTML and emoji; no note is silently truncated.
     parts, text = [], ""
@@ -79,7 +70,7 @@ def render_messages(entries, slot):
     if text:
         parts.append(text.rstrip())
     board = '<a href="https://похудение-это-есть.рф/timeboard/">Открыть доску</a>'
-    return [part + "\n\n" + board for part in parts], [e["id"] for e in selected + advance], day
+    return [part + "\n\n" + board for part in parts], [e["id"] for e in selected], day
 
 
 def enqueue_summary(db, now, snapshot=state):
