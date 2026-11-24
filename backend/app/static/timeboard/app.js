@@ -25,7 +25,7 @@ let canEdit = false;
 let mode = 'titles';
 let expanded = null;
 const openTasks = new Set();
-const openReminderGroups = new Set();
+const openTaskGroups = new Set();
 let showPast = false;
 let columns = Object.keys(icons);
 let widths = Object.fromEntries(columns.map(key=>[key,1]));
@@ -204,26 +204,33 @@ function titleTask(entry,dayOpen,showReminder=true) {
     '<div id="task-'+entry.id+'"'+(open?'':' hidden')+'>'+ (open?entryCard(entry,false,false,false):'')+'</div></div>';
 }
 
-function reminderGroup(key,entries,dayOpen) {
-  const open = dayOpen || openReminderGroups.has(key);
+function taskGroup(key,kind,entries,dayOpen) {
+  const groupKey = kind+'-'+key;
+  const open = dayOpen || openTaskGroups.has(groupKey);
+  const label = kind==='payments' ? 'Оплаты' : 'Напоминания за 7 дней';
+  const icon = kind==='payments' ? '💳' : '🔔';
   const sameCategory = entries.every(entry=>entry.cat===entries[0].cat);
   const tint = sameCategory ? ' category-'+entries[0].cat : '';
-  return '<div class="task reminder-group'+tint+'"><div class="task-head">'+button(
-    '<span aria-hidden="true">🔔</span><span class="task-text">Напоминания за 7 дней</span><small>'+entries.length+'</small>',
-    'data-week-group="'+key+'" aria-expanded="'+open+'" aria-controls="week-group-'+key+'"','task-title')+'</div>'+
-    '<div id="week-group-'+key+'" class="week-items"'+(open?'':' hidden')+'>'+
-    (open?entries.map(entry=>titleTask(entry,dayOpen,false)).join(''):'')+'</div></div>';
+  return '<div class="task task-group'+tint+'"><div class="task-head">'+button(
+    '<span aria-hidden="true">'+icon+'</span><span class="task-text">'+label+'</span><small>· '+entries.length+'</small>',
+    'data-entry-group="'+groupKey+'" aria-expanded="'+open+'" aria-controls="entry-group-'+groupKey+'"','task-title')+'</div>'+
+    '<ol id="entry-group-'+groupKey+'" class="group-items"'+(open?'':' hidden')+'>'+
+    (open?entries.map(entry=>'<li>'+titleTask(entry,dayOpen,false)+'</li>').join(''):'')+'</ol></div>';
 }
 
 function titleTasks(key,dayOpen) {
   const entries = entriesFor(key);
+  const payments = entries.filter(entry=>entry.cat==='finance' && !isWeekReminder(entry) &&
+    !entry.title.startsWith('Завтра · '));
   const upcoming = entries.filter(isWeekReminder);
-  let grouped = false;
+  const emitted = new Set();
   return entries.map(entry=>{
-    if (upcoming.length>=3 && isWeekReminder(entry)) {
-      if (grouped) return '';
-      grouped = true;
-      return reminderGroup(key,upcoming,dayOpen);
+    const kind = isWeekReminder(entry) ? 'week' : payments.includes(entry) ? 'payments' : null;
+    const grouped = kind==='week' ? upcoming : payments;
+    if (kind && grouped.length>=3) {
+      if (emitted.has(kind)) return '';
+      emitted.add(kind);
+      return taskGroup(key,kind,grouped,dayOpen);
     }
     return titleTask(entry,dayOpen);
   }).join('')+(canEdit?button('Добавить','data-add data-key="'+key+'" aria-label="Добавить запись, '+shortDate(key)+'"','row-add'):'');
@@ -452,16 +459,16 @@ root.addEventListener('click',event=>{
   if (d.mode) {
     mode = d.mode;
     render();
-  } else if (d.weekGroup) {
+  } else if (d.entryGroup) {
     const wasOpen = b.getAttribute('aria-expanded')==='true';
     expanded = null;
-    if (wasOpen) openReminderGroups.delete(d.weekGroup);
-    else openReminderGroups.add(d.weekGroup);
+    if (wasOpen) openTaskGroups.delete(d.entryGroup);
+    else openTaskGroups.add(d.entryGroup);
     render();
-    sheet.querySelector('[data-week-group="'+d.weekGroup+'"]')?.focus({preventScroll:true});
+    sheet.querySelector('[data-entry-group="'+d.entryGroup+'"]')?.focus({preventScroll:true});
   } else if (d.task) {
-    const parentGroup = b.closest('.reminder-group')?.querySelector('[data-week-group]');
-    if (parentGroup) openReminderGroups.add(parentGroup.dataset.weekGroup);
+    const parentGroup = b.closest('.task-group')?.querySelector('[data-entry-group]');
+    if (parentGroup) openTaskGroups.add(parentGroup.dataset.entryGroup);
     const wasOpen = b.getAttribute('aria-expanded')==='true';
     expanded = null;
     if (wasOpen) openTasks.delete(d.task);
