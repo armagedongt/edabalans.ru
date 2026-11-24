@@ -163,3 +163,6 @@ body{margin:0;background:#fff}
 #week-board-final .record-heading>span{min-width:0}
 
 #week-board-final .record-heading>small{flex:none;white-space:nowrap}
+
+#week-board-final .reminder-group .week-items{display:flex;flex-wrap:wrap;align-items:flex-start;gap:5px;padding:6px;background:var(--paper);border-top:1px solid var(--line);border-radius:0 0 7px 7px;width:100%}
+#week-board-final .reminder-group>.task-head small{flex:none;color:var(--muted)}

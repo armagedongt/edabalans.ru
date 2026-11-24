@@ -25,6 +25,7 @@ let canEdit = false;
 let mode = 'titles';
 let expanded = null;
 const openTasks = new Set();
+const openReminderGroups = new Set();
 let showPast = false;
 let columns = Object.keys(icons);
 let widths = Object.fromEntries(columns.map(key=>[key,1]));
@@ -170,10 +171,14 @@ function entryCard(entry,showCategory=true,showTitle=true,showActions=true) {
     (entry.url?'<a class="record-link" href="'+safe(entry.url)+'" rel="noreferrer noopener">'+(entry.cat==='finance'?'Открыть кабинет':'Открыть ссылку')+'</a>':'')+'</article>';
 }
 
+function isWeekReminder(entry) {
+  return /^(?:Через 7 дней)(?: · |: )/.test(entry.title);
+}
+
 function taskHeading(entry) {
-  const reminder = entry.title.startsWith('Через 7 дней · ') ? 'за 7 дн.' :
+  const reminder = isWeekReminder(entry) ? 'за 7 дн.' :
     entry.title.startsWith('Завтра · ') ? 'завтра' : '';
-  const title = entry.title.replace(/^(?:Через 7 дней|Завтра) · /,'')
+  const title = entry.title.replace(/^(?:Через 7 дней(?: · |: )|Завтра · )/,'')
     .replace(/^(?:Встреча|Звонок|Созвон|Консультация) с /i,'');
   const parts = title.split(' · ');
   const timeIndex = entry.cat==='finance' ? Math.min(2,parts.length) : 1;
@@ -187,16 +192,40 @@ function taskHeading(entry) {
   return {full,text,truncated,reminder};
 }
 
+function titleTask(entry,dayOpen,showReminder=true) {
+  const open = dayOpen || openTasks.has(entry.id);
+  const heading = taskHeading(entry);
+  const marker = showReminder ? heading.reminder : '';
+  return '<div class="task category-'+entry.cat+'"><div class="task-head">'+button(
+    '<span aria-hidden="true">'+icons[entry.cat]+'</span><span class="task-text">'+safe(open?heading.full:heading.text)+'</span>'+
+    (marker?'<small class="task-reminder">'+safe(marker)+'</small>':'')+
+    (entry.done?'<span aria-label="Выполнено">✓</span>':''),
+    'data-task="'+entry.id+'" title="'+safe(heading.full)+'" aria-label="'+safe(heading.full+(marker?' · '+marker:''))+'" aria-expanded="'+open+'" aria-controls="task-'+entry.id+'"','task-title')+(open && canEdit?editButton(entry)+removeButton(entry):'')+'</div>'+
+    '<div id="task-'+entry.id+'"'+(open?'':' hidden')+'>'+ (open?entryCard(entry,false,false,false):'')+'</div></div>';
+}
+
+function reminderGroup(key,entries,dayOpen) {
+  const open = dayOpen || openReminderGroups.has(key);
+  const sameCategory = entries.every(entry=>entry.cat===entries[0].cat);
+  const tint = sameCategory ? ' category-'+entries[0].cat : '';
+  return '<div class="task reminder-group'+tint+'"><div class="task-head">'+button(
+    '<span aria-hidden="true">🔔</span><span class="task-text">Напоминания за 7 дней</span><small>'+entries.length+'</small>',
+    'data-week-group="'+key+'" aria-expanded="'+open+'" aria-controls="week-group-'+key+'"','task-title')+'</div>'+
+    '<div id="week-group-'+key+'" class="week-items"'+(open?'':' hidden')+'>'+
+    (open?entries.map(entry=>titleTask(entry,dayOpen,false)).join(''):'')+'</div></div>';
+}
+
 function titleTasks(key,dayOpen) {
-  return entriesFor(key).map(entry=>{
-    const open = dayOpen || openTasks.has(entry.id);
-    const heading = taskHeading(entry);
-    return '<div class="task category-'+entry.cat+'"><div class="task-head">'+button(
-      '<span aria-hidden="true">'+icons[entry.cat]+'</span><span class="task-text">'+safe(open?heading.full:heading.text)+'</span>'+
-      (heading.reminder?'<small class="task-reminder">'+safe(heading.reminder)+'</small>':'')+
-      (entry.done?'<span aria-label="Выполнено">✓</span>':''),
-      'data-task="'+entry.id+'" title="'+safe(heading.full)+'" aria-label="'+safe(heading.full+(heading.reminder?' · '+heading.reminder:''))+'" aria-expanded="'+open+'" aria-controls="task-'+entry.id+'"','task-title')+(open && canEdit?editButton(entry)+removeButton(entry):'')+'</div>'+
-      '<div id="task-'+entry.id+'"'+(open?'':' hidden')+'>'+ (open?entryCard(entry,false,false,false):'')+'</div></div>';
+  const entries = entriesFor(key);
+  const upcoming = entries.filter(isWeekReminder);
+  let grouped = false;
+  return entries.map(entry=>{
+    if (upcoming.length>=3 && isWeekReminder(entry)) {
+      if (grouped) return '';
+      grouped = true;
+      return reminderGroup(key,upcoming,dayOpen);
+    }
+    return titleTask(entry,dayOpen);
   }).join('')+(canEdit?button('Добавить','data-add data-key="'+key+'" aria-label="Добавить запись, '+shortDate(key)+'"','row-add'):'');
 }
 
@@ -423,7 +452,16 @@ root.addEventListener('click',event=>{
   if (d.mode) {
     mode = d.mode;
     render();
+  } else if (d.weekGroup) {
+    const wasOpen = b.getAttribute('aria-expanded')==='true';
+    expanded = null;
+    if (wasOpen) openReminderGroups.delete(d.weekGroup);
+    else openReminderGroups.add(d.weekGroup);
+    render();
+    sheet.querySelector('[data-week-group="'+d.weekGroup+'"]')?.focus({preventScroll:true});
   } else if (d.task) {
+    const parentGroup = b.closest('.reminder-group')?.querySelector('[data-week-group]');
+    if (parentGroup) openReminderGroups.add(parentGroup.dataset.weekGroup);
     const wasOpen = b.getAttribute('aria-expanded')==='true';
     expanded = null;
     if (wasOpen) openTasks.delete(d.task);
