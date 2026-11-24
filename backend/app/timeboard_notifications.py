@@ -45,14 +45,24 @@ def render_messages(entries, slot):
     lines = [f"{title}\nВремя — МСК (UTC+3)."]
     if not selected:
         lines.append("Незавершённых дел на эту дату в доске нет.")
-    for category, label in CATEGORIES.items():
-        grouped = [entry for entry in selected if entry["cat"] == category]
+    week_prefixes = ("Через 7 дней · ", "Через 7 дней: ")
+    regular = [entry for entry in selected if not entry["title"].startswith(week_prefixes)]
+    groups = [(label, [entry for entry in regular if entry["cat"] == category])
+              for category, label in CATEGORIES.items()]
+    upcoming = [entry for category in CATEGORIES for entry in selected
+                if entry["cat"] == category and entry["title"].startswith(week_prefixes)]
+    if upcoming:
+        groups.append(("За 7 дней", upcoming))
+    for label, grouped in groups:
         if not grouped:
             continue
         lines.extend(["", ("heading", label)])
         for number, entry in enumerate(grouped, 1):
             timing = f"{entry['time']} · " if entry.get("time") else ""
-            lines.append(f"{number}. {timing}{entry['title']}" +
+            entry_title = entry["title"]
+            for prefix in week_prefixes:
+                entry_title = entry_title.removeprefix(prefix)
+            lines.append(f"{number}. {timing}{entry_title}" +
                          (f"\n{entry['note']}" if entry.get("note") else ""))
             if entry.get("url"):
                 lines.append(("Открыть запись", entry["url"]))

@@ -33,7 +33,7 @@ def test_morning_today_evening_tomorrow_links_done_history_and_explicit_reminder
     text = "\n".join(messages)
     assert day.isoformat() == "2026-11-21" and ids == ["one", "reminder"]
     for expected in ["Сегодня &lt;встреча&gt;", "Адрес &amp; время", 'href="https://example.test/pay?a=1&amp;b=2"',
-                     "Через 7 дней: подписка 500 ₽", "Карта 1234"]:
+                     "<b>За 7 дней</b>", "1. подписка 500 ₽", "Карта 1234"]:
         assert expected in text
     assert all(x not in text for x in ["Сделано", "История", "Завтра", "Будущий платёж"])
     evening = current_slot(datetime(2026, 11, 21, 17, tzinfo=UTC))
@@ -120,3 +120,26 @@ def test_summary_groups_topics_with_bold_headings_blank_lines_and_numbered_items
     assert "Без времени" not in text
     assert "<b>Тренировки</b>" not in text
     assert text.endswith('>Открыть доску</a>')
+
+
+def test_week_reminders_share_one_section_without_repeating_marker_across_categories():
+    slot = current_slot(datetime(2026, 11, 21, 3, tzinfo=UTC))
+    messages, ids, _ = render_messages([
+        entry("payment", cat="finance", title="Счёт сегодня"),
+        entry("week-bank", cat="finance", title="Через 7 дней · Ozon · 13 100 ₽",
+              note="До 28.11.2026", url="https://example.test/ozon"),
+        entry("week-sim", cat="outside", title="Через 7 дней: Обновить SIM"),
+        entry("week-cloud", cat="finance", title="Через 7 дней · Облако · 500 ₽"),
+    ], slot)
+    text = "\n".join(messages)
+    assert len(ids) == 4
+    assert text.count("<b>За 7 дней</b>") == 1
+    assert "Через 7 дней" not in text
+    for title in ["Обновить SIM", "Ozon · 13 100 ₽", "Облако · 500 ₽"]:
+        assert text.count(title) == 1
+        assert title not in text.split("<b>За 7 дней</b>", 1)[0]
+    assert "<b>Финансы</b>\n1. Счёт сегодня" in text
+    section = text.split("<b>За 7 дней</b>\n", 1)[1]
+    assert section.startswith("1. Обновить SIM\n2. Ozon · 13 100 ₽\nДо 28.11.2026")
+    assert 'Открыть запись</a>\n3. Облако · 500 ₽' in section
+    assert text.index("Счёт сегодня") < text.index("<b>За 7 дней</b>")
