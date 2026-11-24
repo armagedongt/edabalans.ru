@@ -45,23 +45,31 @@ def render_messages(entries, slot):
     lines = [f"{title}\nВремя — МСК (UTC+3)."]
     if not selected:
         lines.append("Незавершённых дел на эту дату в доске нет.")
-    for entry in selected:
-        lines.append(f"{entry.get('time') or 'Без времени'} · {CATEGORIES[entry['cat']]}\n{entry['title']}" +
-                     (f"\n{entry['note']}" if entry.get("note") else ""))
-        if entry.get("url"):
-            lines.append(("Открыть запись", entry["url"]))
+    for category, label in CATEGORIES.items():
+        grouped = [entry for entry in selected if entry["cat"] == category]
+        if not grouped:
+            continue
+        lines.extend(["", ("heading", label)])
+        for number, entry in enumerate(grouped, 1):
+            timing = f"{entry['time']} · " if entry.get("time") else ""
+            lines.append(f"{number}. {timing}{entry['title']}" +
+                         (f"\n{entry['note']}" if entry.get("note") else ""))
+            if entry.get("url"):
+                lines.append(("Открыть запись", entry["url"]))
     # Escape before packing. Small pieces bound Telegram's UTF-16 text length,
     # including hostile HTML and emoji; no note is silently truncated.
     parts, text = [], ""
     for line in lines:
-        if isinstance(line, tuple):
+        if isinstance(line, tuple) and line[0] == "heading":
+            pieces = [f"<b>{escape(line[1], quote=False)}</b>"]
+        elif isinstance(line, tuple):
             label, url = line
             parsed = urlsplit(url)
             if parsed.scheme not in ("http", "https") or not parsed.hostname or parsed.username is not None:
                 continue
             pieces = [f'<a href="{escape(url, quote=True)}">{label}</a>']
         else:
-            pieces = [escape(line[start:start + 400], quote=False) for start in range(0, len(line), 400)]
+            pieces = [escape(line[start:start + 400], quote=False) for start in range(0, len(line), 400)] or [""]
         for piece in pieces:
             if len((text + piece).encode("utf-16-le")) // 2 > 3300:
                 parts.append(text.rstrip())

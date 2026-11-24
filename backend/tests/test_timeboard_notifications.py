@@ -61,6 +61,7 @@ def test_long_hostile_notes_preserved_without_broken_entities_or_links():
     decoded = "".join(unescape(m.split('\n\n<a href="https://похудение-это-есть.рф/timeboard/">')[0]).replace("\n", "") for m in messages)
     assert note in decoded
     assert "<script>" not in "".join(messages)
+    assert all(m.count("<b>") == m.count("</b>") for m in messages)
     assert decoded.count("🏋️") == 180
 
 
@@ -97,3 +98,25 @@ def test_snapshot_failure_never_queues_false_empty_day():
         with pytest.raises(OSError):
             enqueue_summary(db, datetime(2026, 11, 21, 3, tzinfo=UTC), failed)
         assert db.scalar(select(MasterclassNotification)) is None
+
+
+def test_summary_groups_topics_with_bold_headings_blank_lines_and_numbered_items():
+    slot = current_slot(datetime(2026, 11, 21, 3, tzinfo=UTC))
+    entries = [
+        entry("late-payment", cat="finance", title="Облако · 500 ₽", time="19:00"),
+        entry("call", cat="work", title="Валентина", time="12:30"),
+        entry("early-payment", cat="finance", title="Банк · 1 000 ₽", time="08:00",
+              note="До 28.11.2026", url="https://example.test/pay"),
+        entry("no-time", cat="finance", title="Связь · 700 ₽"),
+    ]
+    messages, _, _ = render_messages(entries, slot)
+    assert len(messages) == 1
+    text = messages[0]
+    assert "\n\n<b>Работа</b>\n1. 12:30 · Валентина" in text
+    assert "\n\n<b>Финансы</b>\n1. 08:00 · Банк · 1 000 ₽\nДо 28.11.2026" in text
+    assert text.count("<b>Финансы</b>") == 1
+    assert text.index("<b>Работа</b>") < text.index("<b>Финансы</b>")
+    assert 'Открыть запись</a>\n2. 19:00 · Облако · 500 ₽\n3. Связь · 700 ₽' in text
+    assert "Без времени" not in text
+    assert "<b>Тренировки</b>" not in text
+    assert text.endswith('>Открыть доску</a>')
