@@ -2,6 +2,7 @@ import json
 import os
 import sqlite3
 from contextlib import closing
+from datetime import datetime
 from datetime import date as CalendarDate
 from pathlib import Path
 from typing import Annotated, Literal
@@ -61,8 +62,13 @@ class EntryFields(BaseModel):
     url: str = Field(default="", max_length=2000)
     flag: Literal["", "blue", "green", "red"] = ""
     phase: Literal["", "period", "ovulation"] = ""
-    sonyaRole: Literal["", "weekly", "override", "indicator"] = ""
+    sonyaRole: Literal["", "weekly", "override", "indicator", "comment"] = ""
     done: bool = Field(default=False, strict=True)
+    sonyaComment: str = Field(default="", max_length=2000)
+    shareWithSonya: bool = Field(default=False, strict=True)
+    sonyaTimeConfirmed: bool = Field(default=False, strict=True)
+    endDate: CalendarDate | None = None
+    createdAt: datetime | None = None
 
     @field_validator("url")
     @classmethod
@@ -185,6 +191,8 @@ def prepare(packet: Packet, revision: int, entries: list[dict]) -> tuple[list[di
                 entry = Entry.model_validate({**(before or {}), **fields, "id": identity})
             except ValidationError as error:
                 raise HTTPException(422, f"Операция {index}: проверьте дату, категорию и название.") from error
+            if entry.endDate and (entry.endDate < entry.date or (entry.endDate-entry.date).days > 366):
+                raise HTTPException(422, "Дата окончания должна быть в пределах года после начала.")
             if (entry.phase or entry.sonyaRole) and entry.cat != "sonya":
                 raise HTTPException(422, f"Операция {index}: phase и sonyaRole доступны только для категории sonya.")
             if entry.sonyaRole == "indicator" and not entry.phase:

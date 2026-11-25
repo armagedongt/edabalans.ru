@@ -15,6 +15,28 @@ def entry(id="one", **values):
     return {"id": id, "cat": "work", "title": "Работа", "date": "2026-11-21", **values}
 
 
+def test_sonya_comment_alerts_outside_daily_slots_are_safe_and_deduplicated(monkeypatch):
+    from app import timeboard_notifications as notifications
+    _, factory = make_client()
+    comment = entry("comment-id", cat="sonya", sonyaRole="comment", note="<>&♥" * 500, done=True)
+    monkeypatch.setattr(notifications, "state", lambda: (42, [comment]))
+    now = datetime(2026, 11, 21, 12, tzinfo=UTC)
+    with factory() as db:
+        add_user(db, "armagedongt@gmail.com", "Владелец")
+        db.commit()
+        count = notifications.enqueue_sonya_comments(db, now)
+        assert count > 1
+        assert notifications.enqueue_sonya_comments(db, now) == 0
+        rows = list(db.scalars(select(MasterclassNotification).order_by(MasterclassNotification.due_at)))
+        assert len(rows) == count
+        assert {r.payload["delivery_role"] for r in rows} == {"planning"}
+        assert all(r.payload["entry_ids"] == ["comment-id"] and r.payload["source"] == "sonya_comment" for r in rows)
+        assert all("<>&" not in r.payload["message_text"] and len(r.payload["message_text"].encode("utf-16-le")) // 2 < 4000 for r in rows)
+    with factory() as db:
+        assert notifications.enqueue_sonya_comments(db, now) == 0
+    assert notifications.day_entries([{**comment, "done": False}], now.date()) == []
+
+
 @pytest.mark.parametrize("utc,expected", [("2026-11-21T03:00:00", 6), ("2026-11-21T17:29:59", 20),
     ("2026-11-21T03:30:00", None), ("2026-11-21T16:59:59", None), ("2026-11-20T23:00:00", None)])
 def test_only_current_moscow_slot_and_bounded_restart_catchup(utc, expected):

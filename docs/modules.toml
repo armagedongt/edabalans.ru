@@ -1084,6 +1084,7 @@ owns_files = [
   "backend/app/static/private-game/**", "backend/tests/test_game_page.py",
   "backend/app/static/timeboard/**", "backend/tests/test_timeboard_page.py",
   "backend/app/timeboard.py", "backend/app/timeboard_snapshot.py", "docs/TIMEBOARD_IMPORT.md",
+  "backend/app/sonya_timeboard.py", "backend/app/static/sonya-timeboard/**", "backend/tests/test_sonya_timeboard.py",
     "backend/app/timeboard_notifications.py", "backend/tests/test_timeboard_notifications.py",
 ]
 owns_routes = [

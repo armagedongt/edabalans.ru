@@ -29,7 +29,7 @@ def current_slot(now):
 def day_entries(entries, day):
     key = day.isoformat()
     dated = [e for e in entries if e.get("date") == key and
-             e.get("sonyaRole") not in ("weekly", "indicator")]
+             e.get("sonyaRole") not in ("weekly", "indicator", "comment")]
     overridden = any(e.get("cat") == "sonya" and e.get("sonyaRole") == "override" for e in dated)
     regular = [] if overridden else [e for e in entries if e.get("cat") == "sonya" and
         e.get("sonyaRole") == "weekly" and e["date"] <= key and
@@ -66,6 +66,10 @@ def render_messages(entries, slot):
                          (f"\n{entry['note']}" if entry.get("note") else ""))
             if entry.get("url"):
                 lines.append(("Открыть запись", entry["url"]))
+    return pack_message_lines(lines), [e["id"] for e in selected], day
+
+
+def pack_message_lines(lines):
     # Escape before packing. Small pieces bound Telegram's UTF-16 text length,
     # including hostile HTML and emoji; no note is silently truncated.
     parts, text = [], ""
@@ -88,7 +92,7 @@ def render_messages(entries, slot):
     if text:
         parts.append(text.rstrip())
     board = '<a href="https://похудение-это-есть.рф/timeboard/">Открыть доску</a>'
-    return [part + "\n\n" + board for part in parts], [e["id"] for e in selected], day
+    return [part + "\n\n" + board for part in parts]
 
 
 def enqueue_summary(db, now, snapshot=state):
@@ -125,11 +129,43 @@ def enqueue_summary(db, now, snapshot=state):
     return len(messages)
 
 
+def enqueue_sonya_comments(db, now):
+    revision, entries = state()
+    comments = [e for e in entries if e.get("sonyaRole") == "comment"]
+    if not comments:
+        return 0
+    owner = db.scalar(select(UserEmail.user_id).where(UserEmail.email_normalized == ACCOUNT_MANAGER_EMAIL))
+    if owner is None:
+        raise RuntimeError("planning owner account is not configured")
+    keys = {"sonya-comment:"+e["id"]+":1":e for e in comments}
+    known = set(db.scalars(select(MasterclassNotification.deduplication_key).where(
+        MasterclassNotification.user_id == owner, MasterclassNotification.deduplication_key.in_(list(keys)))))
+    pending = [(key,e) for key,e in keys.items() if key not in known][:10]
+    total = 0
+    for key, entry in pending:
+        day = datetime.fromisoformat(entry["date"]).strftime("%d.%m.%Y")
+        messages = pack_message_lines([("heading", "Новый комментарий в календаре Сони · "+day), entry.get("note", "")])
+        for index, text in enumerate(messages, 1):
+            db.add(MasterclassNotification(user_id=owner, notification_kind=KIND,
+                deduplication_key=key[:-1]+str(index), due_at=now+timedelta(milliseconds=total), expires_at=now+timedelta(days=7),
+                payload={"delivery_role":"planning", "message_text":text, "board_revision":revision,
+                         "entry_ids":[entry["id"]], "source":"sonya_comment", "part":index,"parts":len(messages)}))
+            total += 1
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise
+    return total
+
+
 def enqueue_current_summary():
     if not storage_path().is_file():
         raise RuntimeError("timeboard storage is unavailable")
     with SessionLocal() as db:
-        return enqueue_summary(db, datetime.now(UTC))
+        now = datetime.now(UTC)
+        comments = enqueue_sonya_comments(db, now)
+        return comments + enqueue_summary(db, now)
 
 
 async def planning_worker(stop):

@@ -8,9 +8,9 @@ const taskTitleLimit = 30;
 const taskCharacters = new Intl.Segmenter('ru',{granularity:'grapheme'});
 const flags = {'':'Без цвета',blue:'Синий',green:'Зелёный',red:'Красный'};
 const weekdays = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-const fields = {date:'Дата',cat:'Категория',title:'Действие',time:'Время',duration:'Минуты',note:'Комментарий',url:'Ссылка',flag:'Цвет',phase:'Цикл',sonyaRole:'Тип записи Сони',done:'Выполнено'};
+const fields = {date:'Дата',cat:'Категория',title:'Действие',time:'Время',duration:'Минуты',note:'Комментарий',url:'Ссылка',flag:'Цвет',phase:'Цикл',sonyaRole:'Тип записи Сони',done:'Выполнено',sonyaComment:'Комментарий для Сони',shareWithSonya:'Показать встречу Соне',sonyaTimeConfirmed:'Время подтверждено',endDate:'Дата окончания'};
 const periods = {'':'Нет метки',period:'Месячные',ovulation:'Овуляция'};
-const sonyaRoles = {'':'Событие',weekly:'Обычный график',override:'Замена графика на день',indicator:'Индикатор'};
+const sonyaRoles = {'':'Событие',weekly:'Обычный график',override:'Замена графика на день',indicator:'Индикатор',comment:'Комментарий Сони'};
 const shortDate = key => key.slice(8)+'.'+key.slice(5,7);
 const dayKey = day => day.toISOString().slice(0,10);
 const todayKey = () => new Intl.DateTimeFormat('sv-SE', {timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
@@ -270,6 +270,8 @@ function render() {
   $('.column-heads').innerHTML = mode==='table'?header():'';
   sheet.innerHTML = boardDates().filter(key=>showPast || key>=todayKey()).map(row).join('');
   setWidths();
+  const unread=state.entries.filter(e=>e.sonyaRole==='comment'&&!e.done);
+  const notice=$('[data-sonya-comments]');notice.hidden=!unread.length;notice.textContent='Комментарии Сони · '+unread.length;
 }
 
 function openDialog(title,body,closeLabel='Отменить') {
@@ -297,6 +299,10 @@ function editEntry(key,cat,entry) {
     '<label class="wide">Действие<input name="title" required maxlength="160" value="'+safe(e.title)+'"></label>'+
     '<label class="wide">Комментарий<textarea name="note">'+safe(e.note)+'</textarea></label>'+
     '<label class="wide">Ссылка<input name="url" type="url" value="'+safe(e.url)+'"></label>'+
+    '<label class="wide">Комментарий для Сони<textarea name="sonyaComment">'+safe(e.sonyaComment)+'</textarea></label>'+
+    '<label>Дата окончания встречи<input type="date" name="endDate" value="'+safe(e.endDate)+'"></label>'+
+    '<label>Показывать Соне<select name="shareWithSonya">'+selectOptions({'false':'Только если категория «С Соней»','true':'Да'},String(e.shareWithSonya??false))+'</select></label>'+
+    '<label>Время для Сони подтверждено<select name="sonyaTimeConfirmed">'+selectOptions({'false':'Нет','true':'Да'},String(e.sonyaTimeConfirmed??false))+'</select></label>'+
     '<input type="hidden" name="flag" value="'+safe(e.flag||'')+'">'+
     '<label data-phase '+(e.cat==='sonya'?'':'hidden')+'>Цикл<select name="phase">'+selectOptions(periods,e.phase||'')+'</select></label>'+
     '<label data-sonya-role '+(e.cat==='sonya'?'':'hidden')+'>График<select name="sonyaRole">'+selectOptions(sonyaRoles,e.sonyaRole||'')+'</select></label>'+
@@ -380,7 +386,7 @@ function historyOperation(from,to) {
   if (!to) return {op:'remove',id:from.id};
   if (!from) return {op:'add',...to};
   const changed = Object.fromEntries(Object.keys(fields).filter(key=>from[key]!==to[key])
-    .map(key=>[key,to[key]===undefined ? '' : to[key]]));
+    .map(key=>[key,to[key]===undefined ? (key==='endDate'?null:({shareWithSonya:false,sonyaTimeConfirmed:false}[key] ?? '')) : to[key]]));
   return {op:'update',id:to.id,...changed};
 }
 
@@ -475,6 +481,11 @@ root.addEventListener('click',event=>{
     else openTasks.add(d.task);
     render();
     sheet.querySelector('[data-task="'+d.task+'"]')?.focus({preventScroll:true});
+  } else if ('sonyaComments' in d) {
+    const comments=state.entries.filter(e=>e.sonyaRole==='comment'&&!e.done).sort((a,b)=>b.date.localeCompare(a.date));
+    openDialog('Комментарии Сони',comments.map(e=>'<h3>'+safe(shortDate(e.date))+'.'+e.date.slice(0,4)+'</h3>'+entryCard(e)+button('Прочитано','data-comment-read="'+e.id+'"')).join(''),'Закрыть');
+  } else if (canEdit && d.commentRead) {
+    run(()=>apply([{op:'update',id:d.commentRead,done:true}],null,true));
   } else if ('past' in d) {
     showPast = !showPast;
     render();
@@ -578,7 +589,7 @@ root.addEventListener('submit',event=>{
     return;
   }
   const data = {...values,time:values.time||null,duration:values.duration?Number(values.duration):null,
-    done:values.done==='true',phase:values.cat==='sonya'?values.phase:'',
+    done:values.done==='true',shareWithSonya:values.shareWithSonya==='true',sonyaTimeConfirmed:values.sonyaTimeConfirmed==='true',endDate:values.endDate||null,phase:values.cat==='sonya'?values.phase:'',
     sonyaRole:values.cat==='sonya'?values.sonyaRole:''};
   const op = form.dataset.id ? {op:'update',id:form.dataset.id,...data} : {op:'add',...data};
   run(()=>apply([op],data,true));
@@ -691,3 +702,8 @@ run(async()=>{
   render();
   scrollToDate(todayKey());
 });
+
+setInterval(()=>{
+  if(canEdit && !dialog.open && !submitting && document.visibilityState==='visible' &&
+     !document.activeElement?.matches('input,textarea,select') && !drag) run(reload);
+},60000);
