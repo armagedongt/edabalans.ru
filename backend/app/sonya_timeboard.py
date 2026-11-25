@@ -14,7 +14,8 @@ END = date(2027, 2, 11)
 
 
 def shared(entry):
-    return entry["cat"] == "with_sonya" or entry.get("shareWithSonya", False)
+    return (entry["cat"] == "with_sonya" or entry.get("shareWithSonya", False)) and not entry["title"].startswith(
+        ("Через 7 дней · ", "Через 7 дней: ", "Завтра · "))
 
 
 def public_projection(entries):

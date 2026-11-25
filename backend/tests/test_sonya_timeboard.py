@@ -52,6 +52,15 @@ def test_dated_override_and_append_comment_do_not_rewrite_weekly_schedule():
     assert [e["title"] for e in days["2026-12-11"]["schedule"]] == ["Работа"]
 
 
+def test_owner_reminders_are_not_shown_as_actual_meetings():
+    records = [entry(cat="with_sonya", title="Через 7 дней · Поездка"),
+        entry("2", cat="with_sonya", title="Завтра · Поездка"),
+        entry("3", cat="with_sonya", title="Поездка", date="2026-12-11")]
+    days = {d["date"]: d for d in public_projection(records)}
+    assert days["2026-12-04"]["meetings"] == []
+    assert len(days["2026-12-11"]["meetings"]) == 1
+
+
 def test_public_page_and_resources_need_no_login_but_owner_data_stays_private(client):
     response = client.get("/timeboard/sonya", follow_redirects=False)
     assert response.status_code == 307 and response.headers["location"] == "/timeboard/sonya/"
