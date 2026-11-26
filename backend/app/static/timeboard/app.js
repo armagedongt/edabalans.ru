@@ -107,6 +107,10 @@ function header() {
   }).join('')+'</div>';
 }
 
+function heartIcon() {
+  return '<svg class="heart" aria-hidden="true" viewBox="0 0 24 24"><path class="heart-shape" d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/><path class="heart-crack" d="m13 3-3 6 4 4-4 8"/></svg>';
+}
+
 function row(key) {
   const index = weekday(key);
   const sonya = entriesFor(key,'sonya');
@@ -118,8 +122,9 @@ function row(key) {
   const date = button('<span>'+shortDate(key)+'</span><small>'+weekdays[index]+'</small>',
     'data-key="'+key+'" data-view="all" aria-label="Планы дня, '+shortDate(key)+'" aria-expanded="'+dayExpanded+'"',
     'tile date'+(index>4?' weekend':''));
-  const companion = button('<span class="heart" aria-hidden="true">'+(heart?'♥':'♡')+'</span>',
-    'data-key="'+key+'" data-sonya aria-label="График Сони, '+shortDate(key)+'" aria-haspopup="dialog"',
+  const unread = sonya.some(entry=>entry.sonyaRole==='comment' && !entry.done);
+  const companion = button(heartIcon()+(unread?'<span class="sonya-unread" aria-hidden="true"></span>':''),
+    'data-key="'+key+'" data-sonya aria-label="График Сони, '+shortDate(key)+(unread?', новый комментарий':'')+'" aria-haspopup="dialog"',
     'tile sonya'+cycle);
   const data = mode==='titles' ? titleTasks(key,isExpanded) : isExpanded && mode==='compact' ? compactDetails(key,expanded.view) :
     columns.map(cat=>column(key,cat,isExpanded)).join('');
@@ -244,18 +249,15 @@ function compactDetails(key,view) {
 }
 
 function openSonya(key) {
-  const dated = entriesFor(key,'sonya').filter(entry=>!['weekly','indicator'].includes(entry.sonyaRole));
-  const regular = state.entries.filter(entry=>entry.sonyaRole==='weekly' && entry.date<=key &&
-    weekday(entry.date)===weekday(key));
-  const overridden = dated.some(entry=>entry.sonyaRole==='override');
-  const cards = entries => '<div class="cards">'+entries.map(entry=>entryCard(entry)).join('')+'</div>';
+  const dated = entriesFor(key,'sonya').filter(entry=>!['weekly','indicator','comment'].includes(entry.sonyaRole));
+  const regular = state.entries.filter(entry=>entry.cat==='sonya' && entry.sonyaRole==='weekly' && entry.date<=key && weekday(entry.date)===weekday(key));
+  const schedule = (dated.some(entry=>entry.sonyaRole==='override') ? [] : regular).concat(dated);
+  const comments = entriesFor(key,'sonya').filter(entry=>entry.sonyaRole==='comment');
+  const line = entry=>[entry.title,entry.time && !entry.note?.includes(entry.time)?entry.time:null,entry.note].filter(Boolean).map(safe).join(' · ');
+  const work = schedule.map(entry=>'<p>'+line(entry)+'</p>').join('') || '<p class="details-empty">График не указан</p>';
+  const notes = comments.map(entry=>'<p>'+safe(entry.note).replace(/\n/g,'<br>')+'</p>'+(!entry.done && canEdit?button('Прочитано','data-comment-read="'+entry.id+'"'):'' )).join('') || '<p class="details-empty">Комментариев пока нет</p>';
   const add = canEdit ? button('Добавить запись Сони','data-add data-key="'+key+'" data-cat="sonya"') : '';
-  openDialog('Соня · '+shortDate(key),
-    '<div class="sonya-schedule">'+
-    (dated.length ? '<h3>На эту дату</h3>'+cards(dated) : '')+
-    (regular.length ? '<h3>'+(overridden?'Обычно в этот день':'Обычный график')+'</h3>'+cards(regular) : '')+
-    (!dated.length && !regular.length ? '<p class="details-empty">График не указан</p>' : '')+
-    add+'</div>', 'Закрыть');
+  openDialog('Соня · '+shortDate(key),'<div class="sonya-schedule"><section class="sonya-block"><h3>Работа и расписание</h3>'+work+'</section><section class="sonya-block sonya-notes"><h3>Комментарий Сони</h3>'+notes+'</section>'+add+'</div>','Закрыть');
   dialog.dataset.sonyaDate = key;
 }
 
