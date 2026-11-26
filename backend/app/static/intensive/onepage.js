@@ -1,4 +1,5 @@
 'use strict';
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 const header = document.querySelector('.reading-header');
 const progress = document.querySelector('.reading-track');
 const fill = document.querySelector('.reading-fill');
@@ -25,3 +26,13 @@ window.addEventListener('resize', scheduleUpdate);
 window.addEventListener('load', scheduleUpdate);
 new ResizeObserver(scheduleUpdate).observe(document.getElementById('article'));
 updateReading();
+
+const article = document.getElementById('article');
+window.EdabalansReadingPosition?.attach({
+  article, target: 'intensive:onepage', account: article.dataset.readingAccount,
+  anchor: location.hash, resume: true,
+  controls: document.querySelector('.intensive-reading-controls'),
+  topOffset: () => header.getBoundingClientRect().bottom + 12,
+  end,
+  onRestore: () => window.dispatchEvent(new Event('edabalans:reading-restore')),
+});

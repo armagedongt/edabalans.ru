@@ -4,11 +4,14 @@ from app.site_links import public_site_origin
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+from hashlib import sha256
+from urllib.parse import unquote
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, Field
-from sqlalchemy import select
+from sqlalchemy import select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.access_service import (
@@ -40,6 +43,7 @@ from app.models import (
     OfferCheckout,
     AccountCredential,
     PersonalAccessLink,
+    ReadingPosition,
     Resource,
     User,
     UserAccess,
@@ -680,6 +684,106 @@ def resolve_account_resource_link(
     return resource_link_response(
         "unavailable", target=normalized, reason_code="course_not_registered"
     )
+
+
+class ReadingBlock(BaseModel):
+    index: int = Field(ge=0, le=10000)
+    fingerprint: str = Field(pattern=r"^[0-9a-z]{1,7}$")
+
+
+class ReadingPositionIn(BaseModel):
+    version: int = Field(ge=0)
+    position: ReadingBlock | None
+
+
+def reading_position_user(request: Request, db: Session, target: str, settings: Settings) -> User:
+    from app.account_auth_routes import ACCOUNT_VIEW_HEADER, native_session_actor, primary_email
+
+    if request.headers.get(ACCOUNT_VIEW_HEADER):
+        raise HTTPException(403, "Недоступно в режиме просмотра клиента")
+    user = native_session_actor(request, db)
+    if target == "intensive:onepage" and user is None:
+        from app.intensive_web_access import session_identity
+
+        identity = session_identity(request, settings.app_auth_secret)
+        if identity is not None:
+            user = db.get(User, identity[0])
+    if user is None or user.merged_into_user_id is not None or user.status != "active":
+        raise HTTPException(401, "Требуется вход")
+    scope = (sha256(user.id.bytes).hexdigest() if target == "intensive:onepage"
+             else primary_email(db, user.id))
+    if not scope or unquote(request.headers.get("X-Reading-Account", "")) != scope:
+        raise HTTPException(409, "reading_account_changed")
+    if target == "intensive:onepage":
+        return user
+    if len(target) > 180 or ":" not in target:
+        raise HTTPException(404)
+    course, step = target.split(":", 1)
+    if course == "masterclass-21":
+        result = resolve_masterclass_resource_link(db, user, target, step, settings)
+    elif course == "calories":
+        result = resolve_calorie_resource_link(db, user, target, step)
+    else:
+        raise HTTPException(404)
+    if result["action"] != "open":
+        raise HTTPException(404)
+    return user
+
+
+def reading_position_payload(row: ReadingPosition | None) -> dict:
+    if row is None:
+        return {"version": 0, "position": None, "saved_at": 0}
+    saved_at = row.saved_at
+    if saved_at.tzinfo is None:
+        saved_at = saved_at.replace(tzinfo=timezone.utc)
+    position = row.position if datetime.now(timezone.utc) - saved_at < timedelta(days=3) else None
+    return {"version": row.version, "position": position, "saved_at": int(saved_at.timestamp() * 1000)}
+
+
+@router.get("/api/account/reading-position")
+def read_reading_position(
+    target: str, request: Request, response: Response,
+    db: Session = Depends(get_db), settings: Settings = Depends(get_settings),
+) -> dict:
+    user = reading_position_user(request, db, target, settings)
+    response.headers["Cache-Control"] = "no-store"
+    return reading_position_payload(db.get(ReadingPosition, (user.id, target)))
+
+
+@router.put("/api/account/reading-position")
+def write_reading_position(
+    target: str, body: ReadingPositionIn, request: Request, response: Response,
+    db: Session = Depends(get_db), settings: Settings = Depends(get_settings),
+) -> dict:
+    user = reading_position_user(request, db, target, settings)
+    key = (user.id, target)
+    values = {
+        "position": body.position.model_dump() if body.position is not None else None,
+        "version": body.version + 1,
+        "saved_at": datetime.now(timezone.utc),
+    }
+    if body.version == 0:
+        db.add(ReadingPosition(user_id=user.id, target=target, **values))
+        try:
+            db.flush()
+        except IntegrityError as exc:
+            db.rollback()
+            if db.get(ReadingPosition, key) is None:
+                raise
+            raise HTTPException(409, "reading_position_changed") from exc
+    else:
+        updated = db.execute(update(ReadingPosition).where(
+            ReadingPosition.user_id == user.id,
+            ReadingPosition.target == target,
+            ReadingPosition.version == body.version,
+        ).values(**values))
+        if updated.rowcount != 1:
+            raise HTTPException(409, "reading_position_changed")
+    row = db.get(ReadingPosition, key)
+    payload = reading_position_payload(row)
+    db.commit()
+    response.headers["Cache-Control"] = "no-store"
+    return payload
 
 
 @router.post("/api/account/legal-acceptances")

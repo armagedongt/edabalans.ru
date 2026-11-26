@@ -188,7 +188,7 @@ def hero_title(title: str) -> str:
     return escape(title)
 
 
-def page(*, identified: bool = False):
+def page(*, identified: bool = False, reading_account: str = ""):
     source = SOURCE.read_text(encoding='utf-8')
     revision = hashlib.sha256(source.encode('utf-8')).hexdigest()[:12]
     title, body, toc = render_article(source)
@@ -210,12 +210,13 @@ def page(*, identified: bool = False):
 <link rel="stylesheet" href="/assets/site-typography.css?v=20261018-brand-hero">
 <link rel="stylesheet" href="/assets/article-typography.css?v=20261018-typography">
 <link rel="stylesheet" href="/intensive/onepage.css?v=20261018-brand-hero">
-<link rel="stylesheet" href="/public-site-assets/site-menu.css?v=20261018-brand-hero"><script defer src="/public-site-assets/site-menu.js?v=20261018"></script><script defer src="/intensive/onepage.js?v=20261018"></script>
-<script defer src="/intensive/onepage-tracking.js?v=20261018-menu"></script></head><body>
+<link rel="stylesheet" href="/public-site-assets/site-menu.css?v=20261018-brand-hero"><script defer src="/public-site-assets/site-menu.js?v=20261018"></script><link rel="stylesheet" href="/assets/reading-position.css?v=1"><script defer src="/assets/reading-position.js?v=1"></script><script defer src="/intensive/onepage.js?v=20261126"></script>
+<script defer src="/intensive/onepage-tracking.js?v=20261126"></script></head><body>
 <header class="reading-header"><nav aria-label="Разделы интенсива">{tabs}</nav>
 <div class="reading-track" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="reading-fill"></div></div></header>
-<main id="article" data-intensive-onepage data-intensive-revision="{revision}" data-intensive-identified="{str(identified).lower()}"><h1 class="intensive-title">{hero_title(title)}</h1>{body}</main>
+<main id="article" data-intensive-onepage data-reading-account="{escape(reading_account)}" data-intensive-revision="{revision}" data-intensive-identified="{str(identified).lower()}"><h1 class="intensive-title">{hero_title(title)}</h1>{body}</main>
 {menu}
+<div class="intensive-reading-controls"></div>
 <div data-edabalans-site-footer></div><script defer src="/site-footer.js"></script>
 <script src="/cookie-notice.js" defer></script></body></html>'''.encode('utf-8')
 

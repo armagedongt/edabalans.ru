@@ -390,6 +390,9 @@ owns_files = [
   "backend/app/static/app-shell.css",
   "backend/app/static/account-theme.css", "backend/app/static/account-theme.js",
   "backend/app/static/course-product-popup.js", "backend/app/static/course-product-popup.css",
+  "backend/app/static/reading-position.js", "backend/app/static/reading-position.css",
+  "backend/migrations/versions/20261126_0053_reading_positions.py",
+  "backend/tests/test_reading_position.py",
   "backend/tests/browser/account-theme.e2e.mjs",
   "backend/tests/browser/course-shell.e2e.mjs",
   "backend/tests/browser/account-offers-layout.e2e.mjs",
@@ -403,8 +406,11 @@ owns_files = [
 owns_routes = [
   "*/apps/*", "*/assets/*", "*/lk/install", "*/lk/install/v1", "*/max-app", "*/finance*", "*/admin/api/finance/plans*",
   "*/api/apps/manager/*", "*/api/apps/activity",
+  "*/api/account/reading-position",
   "*/admin/api/finance/facts*", "*/admin/api/finance/expenses*",
 ]
+
+owns_tables = ["reading_positions"]
 
 [[modules]]
 id = "products.public-site"

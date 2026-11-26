@@ -1662,3 +1662,13 @@ class PublicHomepageEvent(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+
+
+class ReadingPosition(Base):
+    __tablename__ = "reading_positions"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    target: Mapped[str] = mapped_column(String(180), primary_key=True)
+    position: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    version: Mapped[int] = mapped_column(Integer)
+    saved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))

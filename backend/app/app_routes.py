@@ -917,7 +917,7 @@ def app_asset(asset_name: str) -> FileResponse:
         "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png", "site-typography.css",
         "content-gallery.js", "public-program-card.css", "public-program-card.js",
         "account-visual.css", "account-legacy-offer.js", "course-visual.css", "calories-course.css",
-        "course-product-popup.js", "course-product-popup.css",
+        "course-product-popup.js", "course-product-popup.css", "reading-position.js", "reading-position.css",
         "account-theme.css", "account-theme.js",
         "questionnaire-person.js", "questionnaire-person.css",
         "masterclass-feedback.js", "masterclass-feedback.css",
@@ -1034,7 +1034,15 @@ def intensive_onepage(
     else:
         identity = session_identity(request, settings.app_auth_secret)
         identified = identity is not None and db.get(User, identity[0]) is not None
-        response = HTMLResponse(render_intensive_onepage(identified=identified))
+        from app.account_auth_routes import native_session_actor
+
+        reader = native_session_actor(request, db)
+        if reader is None and identified:
+            reader = db.get(User, identity[0])
+        reading_account = hashlib.sha256(reader.id.bytes).hexdigest() if reader else ""
+        response = HTMLResponse(render_intensive_onepage(
+            identified=identified, reading_account=reading_account,
+        ))
     response.headers["Cache-Control"] = "no-store"
     response.headers["Referrer-Policy"] = "no-referrer"
     return response

@@ -1,0 +1,68 @@
+.reading-start {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #bed3ea;
+  border-radius: 12px;
+  background: #eaf8ff;
+  color: #097cbd;
+  font: 700 14px var(--ed-font-body, sans-serif);
+  cursor: pointer;
+}
+@media (min-width: 901px) {
+  .course-shell:has(#article-toc-dock:not([hidden])) .reading-start { bottom: 74px; }
+}
+.reading-start[hidden] { display: none; }
+.reading-start svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.reading-start:focus-visible { outline: 2px solid #118ed8; outline-offset: 3px; }
+.intensive-reading-controls .reading-start { top: var(--header-offset, 94px); right: 24px; bottom: auto; }
+@media (max-width: 900px) {
+  .course-shell .reading-start, .intensive-reading-controls .reading-start {
+    top: auto;
+    right: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom));
+    width: 40px;
+    min-height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #171717;
+    color: #fafafa;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .1);
+  }
+  .reading-start span { display: none; }
+  html[data-theme=dark] .reading-start { background: #fafafa; color: #171717; }
+  body:has([data-cookie-notice][data-cookie-ready=true]:not([hidden])) .reading-start {
+    bottom: calc(120px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 899px) {
+  .intensive-reading-controls .reading-start {
+    top: auto;
+    right: 24px;
+    bottom: calc(85px + env(safe-area-inset-bottom));
+  }
+  body:has([data-cookie-notice][data-cookie-ready=true]:not([hidden])) .intensive-reading-controls .reading-start {
+    bottom: calc(165px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (width: 900px) {
+  .intensive-reading-controls .reading-start { top: var(--header-offset, 94px); bottom: auto; }
+}

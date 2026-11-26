@@ -116,9 +116,11 @@
     lastTick = now;
     if (activeMs >= 60000) track("intensive_onepage_active_60", {}, "active60");
   }
+  let awaitingReadingInput = false;
+  window.addEventListener('edabalans:reading-restore', () => { awaitingReadingInput = true; });
   function sample() {
     frame = 0;
-    if (document.hidden || !document.hasFocus() || suspended || contentsOpen()) return;
+    if (document.hidden || !document.hasFocus() || suspended || contentsOpen() || awaitingReadingInput) return;
     const top = Math.max(0, header ? header.getBoundingClientRect().bottom : 0);
     const bottom = window.innerHeight;
     for (const block of blocks) {
@@ -197,7 +199,7 @@
     });
     if (event.target.closest(".toc-trigger")?.getAttribute("aria-expanded") === "true") track("intensive_onepage_contents_open");
   });
-  ["pointerdown", "keydown", "wheel", "touchstart"].forEach(type => document.addEventListener(type, activity, {passive: true}));
+  ["pointerdown", "keydown", "wheel", "touchstart"].forEach(type => document.addEventListener(type, () => { awaitingReadingInput = false; activity(); schedule(); }, {passive: true}));
   window.addEventListener("scroll", () => { activity(); schedule(); }, {passive: true});
   window.addEventListener("resize", schedule);
   window.addEventListener("hashchange", schedule);
