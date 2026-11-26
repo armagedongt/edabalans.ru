@@ -3,8 +3,10 @@ function heartIcon() {
 }
 
 const days = document.querySelector('#days'), dialog = document.querySelector('#editor'), status = document.querySelector('#status');
-let data = [], past = false, loadSequence = 0;
+const noteDialog = document.querySelector('#note-editor'), noteForm = document.querySelector('#note-form'), noteText = document.querySelector('#note-text');
+let data = [], past = false, editingDate = null;
 const drafts = new Map();
+const mobile = () => matchMedia('(pointer:coarse)').matches;
 const today = () => new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
 const label = key => new Intl.DateTimeFormat('ru',{day:'2-digit',month:'2-digit',weekday:'short',timeZone:'Europe/Moscow'}).format(new Date(key+'T12:00:00Z'));
 function el(tag,text,cls) {
@@ -14,95 +16,110 @@ function el(tag,text,cls) {
   return node;
 }
 function draftFor(key) {
-  if (!drafts.has(key)) drafts.set(key,{text:'',id:null,pending:false,message:'',error:false});
+  if (!drafts.has(key)) {
+    const current = data.find(day=>day.date===key)?.comments[0];
+    const text = current?.note || '';
+    drafts.set(key,{text,saved:text,version:current?.version || current?.createdAt || null,id:null,pending:false});
+  }
   return drafts.get(key);
 }
-function commentForm(day) {
-  const draft = draftFor(day.date), form = el('form',null,'inline-note');
-  const input = el('input'), save = el('button','Сохранить'), feedback = el('small',draft.message,'note-feedback'+(draft.error?' error':''));
-  input.type = 'text'; input.maxLength = 2000; input.value = draft.text;
-  input.placeholder = 'Примечание на этот день';
+function changeDraft(draft,text) {
+  if (draft.text!==text) draft.id = null;
+  draft.text = text; status.textContent = '';
+}
+function commentField(day) {
+  const draft = draftFor(day.date);
+  if (mobile()) {
+    const cell = el('button',draft.saved,'note-cell'); cell.type = 'button';
+    cell.setAttribute('aria-label','Примечание Сони · '+label(day.date));
+    cell.onclick = () => openNote(day.date);
+    return cell;
+  }
+  const form = el('form',null,'inline-note'), input = el('textarea'), save = el('button','Сохранить');
+  input.rows = 1; input.maxLength = 2000; input.value = draft.text;
   input.setAttribute('aria-label','Примечание Сони · '+label(day.date));
   input.disabled = save.disabled = draft.pending;
-  save.type = 'submit'; save.hidden = !draft.text.trim();
-  save.setAttribute('aria-label','Сохранить примечание · '+label(day.date));
-  feedback.setAttribute('role',draft.error?'alert':'status');
-  input.oninput = () => {
-    if (draft.text!==input.value) draft.id = null;
-    draft.text = input.value; draft.message = ''; feedback.textContent = '';
-    save.hidden = !input.value.trim();
-  };
-  form.onsubmit = event => {event.preventDefault(); saveComment(day.date,form);};
-  form.append(input,save,feedback);
-  return form;
+  save.type = 'submit'; save.hidden = draft.text===draft.saved;
+  function fit() {input.style.height='36px'; input.style.height=Math.min(160,Math.max(36,input.scrollHeight+2))+'px';}
+  input.onfocus = fit;
+  input.onblur = () => {input.style.height='36px';};
+  input.oninput = () => {changeDraft(draft,input.value); save.hidden=draft.text===draft.saved; fit();};
+  form.onsubmit = event => {event.preventDefault(); saveNote(day.date,form);};
+  form.append(input,save); return form;
 }
 function createDay(day) {
-    const row = el('div',null,'day'); row.dataset.date = day.date;
-    const weekend = [0,6].includes(new Date(day.date+'T12:00Z').getUTCDay());
-    const date = el('button',label(day.date),'date'+(weekend?' weekend':''));
-    const heart = el('button',null,'heart-button '+day.phase); heart.innerHTML = heartIcon();
-    heart.setAttribute('aria-label','Расписание '+label(day.date));
-    date.onclick = heart.onclick = () => openDay(day);
-    const content = el('div',null,'day-content'), events = el('div',null,'events');
-    for (const meeting of day.meetings) {
-      const button = el('button','Наша встреча'+(meeting.time?' · '+meeting.time:''),'meeting');
-      button.onclick = () => openDay(day); events.append(button);
-    }
-    if (events.childElementCount) content.append(events);
-    for (const comment of day.comments) content.append(el('p',comment.note,'saved-note'));
-    content.append(commentForm(day)); row.append(date,heart,content); return row;
+  const row = el('div',null,'day'); row.dataset.date = day.date;
+  const weekend = [0,6].includes(new Date(day.date+'T12:00Z').getUTCDay());
+  const date = el('button',label(day.date),'date'+(weekend?' weekend':''));
+  const heart = el('button',null,'heart-button '+day.phase); heart.innerHTML=heartIcon();
+  heart.setAttribute('aria-label','Расписание '+label(day.date));
+  date.onclick = heart.onclick = () => openDay(day);
+  const content = el('div',null,'day-content'), events = el('div',null,'events');
+  for (const meeting of day.meetings) {
+    const button = el('button','Наша встреча'+(meeting.time?' · '+meeting.time:''),'meeting');
+    button.onclick = () => openDay(day,true); events.append(button);
+  }
+  if (events.childElementCount) content.append(events);
+  content.append(commentField(day)); row.append(date,heart,content); return row;
 }
 function render() {
   days.replaceChildren(...data.filter(day=>past || day.date>=today()).map(createDay));
 }
-
-function openDay(day) {
-  document.querySelector('#date-title').textContent = label(day.date);
-  const schedule = document.querySelector('#schedule'); schedule.replaceChildren(el('h3','Работа и расписание'));
+function refreshRow(key) {
+  const day = data.find(item=>item.date===key);
+  if (day) days.querySelector('[data-date="'+key+'"]')?.replaceWith(createDay(day));
+}
+function openDay(day,meetingOnly=false) {
+  document.querySelector('#date-title').textContent=label(day.date);
+  const schedule=document.querySelector('#schedule'); schedule.hidden=meetingOnly;
+  schedule.replaceChildren(el('h3','Работа и расписание'));
   if (!day.schedule.length) schedule.append(el('p','График не указан'));
   for (const record of day.schedule) schedule.append(el('p',[record.title,record.time && !record.note?.includes(record.time)?record.time:null,record.note].filter(Boolean).join(' · ')));
-  const meetings = document.querySelector('#meetings'); meetings.replaceChildren();
+  const meetings=document.querySelector('#meetings'); meetings.hidden=!meetingOnly; meetings.replaceChildren();
   for (const meeting of day.meetings) {
     meetings.append(el('h3','Наша встреча'+(meeting.time?' · '+meeting.time:'')));
     if (meeting.comment) meetings.append(el('p',meeting.comment));
   }
-  if (!dialog.open) dialog.showModal();
+  dialog.showModal();
 }
-async function load() {
-  const sequence = ++loadSequence;
-  const response = await fetch('api/state');
-  if (!response.ok) throw Error('Не удалось загрузить календарь');
-  const snapshot = await response.json();
-  // A late refresh from another saved row must not replace a newer snapshot.
-  if (sequence===loadSequence) data = snapshot.days;
+function openNote(key) {
+  editingDate=key;
+  document.querySelector('#note-title').textContent=label(key);
+  document.querySelector('#note-error').textContent='';
+  noteText.value=draftFor(key).text;
+  noteDialog.showModal(); noteText.focus();
 }
-async function saveComment(key,form) {
-  const draft = draftFor(key), note = draft.text.trim();
-  if (draft.pending || !note) return;
-  draft.pending = true; draft.error = false; draft.message = '';
-  draft.id = draft.id || crypto.randomUUID().replaceAll('-','');
-  for (const control of form.querySelectorAll('input,button')) control.disabled = true;
+function cancelNote() {
+  if (editingDate && draftFor(editingDate).pending) return;
+  if (editingDate) {const draft=draftFor(editingDate); draft.text=draft.saved; draft.id=null;}
+  const key=editingDate; noteDialog.close(); editingDate=null; if(key) refreshRow(key);
+}
+async function saveNote(key,form) {
+  const draft=draftFor(key), note=draft.text.trim();
+  if (draft.pending) return;
+  if (note===draft.saved) {draft.text=draft.saved; if(noteDialog.open) {noteDialog.close(); editingDate=null;} refreshRow(key); return;}
+  draft.pending=true; draft.id=draft.id || crypto.randomUUID().replaceAll('-','');
+  const errorOutput=noteDialog.open?document.querySelector('#note-error'):status;
+  errorOutput.textContent='';
+  for (const control of form.querySelectorAll('textarea,button')) control.disabled=true;
   try {
-    const response = await fetch('api/comments',{method:'POST',headers:{'Content-Type':'application/json','X-Sonya-Request':'1'},body:JSON.stringify({id:draft.id,date:key,note})});
-    if (!response.ok) {
-      const error = await response.json().catch(()=>null);
-      throw Error(typeof error?.detail==='string'?error.detail:'Не удалось сохранить примечание');
-    }
-    draft.text = ''; draft.id = null; draft.message = 'Сохранено';
-    const day = data.find(day=>day.date===key);
-    // Another row's refresh may already include this accepted comment.
-    if (day && !day.comments.some(comment=>comment.note===note)) day.comments.push({note});
-    try {await load();} catch {draft.message = 'Сохранено. Обновите страницу для актуального расписания.';}
-  } catch(error) {
-    draft.message = error.message; draft.error = true;
-  } finally {
-    draft.pending = false;
-    const current = data.find(day=>day.date===key);
-    if (current) days.querySelector('[data-date="'+key+'"]')?.replaceWith(createDay(current));
+    const response=await fetch('api/comments',{method:'POST',headers:{'Content-Type':'application/json','X-Sonya-Request':'1'},body:JSON.stringify({id:draft.id,date:key,note,expectedVersion:draft.version})});
+    const result=await response.json().catch(()=>null);
+    if (!response.ok || !result) throw Error(typeof result?.detail==='string'?result.detail:'Не удалось сохранить примечание');
+    draft.saved=draft.text=result.note; draft.version=result.version; draft.id=null;
+    data.find(day=>day.date===key).comments=[{note:result.note,version:result.version}];
+    status.textContent='Сохранено';
+    if (noteDialog.open && editingDate===key) {noteDialog.close(); editingDate=null;}
+  } catch(error) {errorOutput.textContent=error.message;}
+  finally {
+    draft.pending=false;
+    for (const control of form.querySelectorAll('textarea,button')) control.disabled=false;
+    refreshRow(key);
   }
 }
-document.querySelector('#past').onclick = () => {
-  past = !past; document.querySelector('#past').textContent = past?'Скрыть прошедшее':'Прошедшее'; render();
-};
-document.querySelector('#close').onclick = () => dialog.close();
-load().then(render).catch(error=>{status.textContent=error.message;});
+noteForm.onsubmit=event=>{event.preventDefault(); const draft=draftFor(editingDate); changeDraft(draft,noteText.value); saveNote(editingDate,noteForm);};
+document.querySelector('#note-cancel').onclick=cancelNote;
+noteDialog.addEventListener('cancel',event=>{if(editingDate && draftFor(editingDate).pending) event.preventDefault();else cancelNote();});
+document.querySelector('#past').onclick=()=>{past=!past; document.querySelector('#past').textContent=past?'Скрыть прошедшее':'Прошедшее'; render();};
+document.querySelector('#close').onclick=()=>dialog.close();
+fetch('api/state').then(async response=>{if(!response.ok)throw Error('Не удалось загрузить календарь'); data=(await response.json()).days; render();}).catch(error=>{status.textContent=error.message;});

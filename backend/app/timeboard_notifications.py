@@ -1,6 +1,7 @@
 """Scheduled, read-only board snapshots in the existing notification outbox."""
 import asyncio
 import logging
+from hashlib import sha256
 from datetime import UTC, datetime, timedelta, timezone
 from html import escape
 from urllib.parse import urlsplit
@@ -11,7 +12,7 @@ from sqlalchemy.exc import IntegrityError
 from app.account_auth_routes import ACCOUNT_MANAGER_EMAIL
 from app.database import SessionLocal
 from app.models import MasterclassNotification, UserEmail
-from app.timeboard import CATEGORIES, state, storage_path
+from app.timeboard import CATEGORIES, state, storage_path, current_sonya_comments
 
 KIND = "owner_planning_summary"
 MSK = timezone(timedelta(hours=3))
@@ -131,20 +132,20 @@ def enqueue_summary(db, now, snapshot=state):
 
 def enqueue_sonya_comments(db, now):
     revision, entries = state()
-    comments = [e for e in entries if e.get("sonyaRole") == "comment"]
+    comments = list(current_sonya_comments(entries).values())
     if not comments:
         return 0
     owner = db.scalar(select(UserEmail.user_id).where(UserEmail.email_normalized == ACCOUNT_MANAGER_EMAIL))
     if owner is None:
         raise RuntimeError("planning owner account is not configured")
-    keys = {"sonya-comment:"+e["id"]+":1":e for e in comments}
+    keys = {"sonya-comment:"+e["id"]+(":"+sha256(e['updatedAt'].encode()).hexdigest()[:16] if e.get('updatedAt') else '')+":1":e for e in comments}
     known = set(db.scalars(select(MasterclassNotification.deduplication_key).where(
         MasterclassNotification.user_id == owner, MasterclassNotification.deduplication_key.in_(list(keys)))))
     pending = [(key,e) for key,e in keys.items() if key not in known][:10]
     total = 0
     for key, entry in pending:
         day = datetime.fromisoformat(entry["date"]).strftime("%d.%m.%Y")
-        messages = pack_message_lines([("heading", "Новый комментарий в календаре Сони · "+day), entry.get("note", "")])
+        messages = pack_message_lines([("heading", "Примечание Сони · "+day), entry.get("note") or "Примечание очищено"])
         for index, text in enumerate(messages, 1):
             db.add(MasterclassNotification(user_id=owner, notification_kind=KIND,
                 deduplication_key=key[:-1]+str(index), due_at=now+timedelta(milliseconds=total), expires_at=now+timedelta(days=7),

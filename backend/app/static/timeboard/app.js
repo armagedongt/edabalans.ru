@@ -81,6 +81,16 @@ function entriesFor(key, cat) {
       (a.time || '99').localeCompare(b.time || '99') || a.id.localeCompare(b.id));
 }
 
+function currentSonyaComments(key) {
+  const current = new Map();
+  for (const entry of state.entries) {
+    if(entry.cat!=='sonya' || entry.sonyaRole!=='comment' || (key && entry.date!==key)) continue;
+    const before=current.get(entry.date);
+    if(!before || (Date.parse(entry.updatedAt || entry.createdAt) || 0)>=(Date.parse(before.updatedAt || before.createdAt) || 0)) current.set(entry.date,entry);
+  }
+  return [...current.values()];
+}
+
 function boardDates() {
   const dates = new Set(state.entries.map(entry=>entry.date));
   for (let day=dateAt(firstDay); dayKey(day)<=lastDay; day=plusDays(day,1)) dates.add(dayKey(day));
@@ -122,7 +132,7 @@ function row(key) {
   const date = button('<span>'+shortDate(key)+'</span><small>'+weekdays[index]+'</small>',
     'data-key="'+key+'" data-view="all" aria-label="Планы дня, '+shortDate(key)+'" aria-expanded="'+dayExpanded+'"',
     'tile date'+(index>4?' weekend':''));
-  const unread = sonya.some(entry=>entry.sonyaRole==='comment' && !entry.done);
+  const unread = currentSonyaComments(key).some(entry=>!entry.done);
   const companion = button(heartIcon()+(unread?'<span class="sonya-unread" aria-hidden="true"></span>':''),
     'data-key="'+key+'" data-sonya aria-label="График Сони, '+shortDate(key)+(unread?', новый комментарий':'')+'" aria-haspopup="dialog"',
     'tile sonya'+cycle);
@@ -155,7 +165,7 @@ function column(key,cat,isExpanded) {
   const remove = first ? removeButton(first,'cell-remove') : '';
   return '<div><div class="cell category-'+cat+'"><input data-inline data-key="'+key+'" data-cat="'+cat+'" data-id="'+(first?.id||'')+
     '" data-current-flag="'+flag+'" maxlength="160" aria-label="'+label+'" placeholder="Введите текст" value="'+safe(first?.title)+'">'+
-(first?doneButton(first):'')+remove+count+'</div></div>';
+remove+count+'</div></div>';
 }
 
 function removeButton(entry,cls='') {
@@ -165,7 +175,7 @@ function removeButton(entry,cls='') {
 function doneButton(entry) {
   if (entry.cat==='sonya') return '';
   const label = entry.done ? 'Вернуть в планы' : 'Отметить выполненным';
-  return button('<span aria-hidden="true">✓</span>','data-complete="'+entry.id+'" aria-pressed="'+!!entry.done+'" title="'+label+'" aria-label="'+label+' · '+safe(entry.title)+'"','done-toggle');
+  return button('<span class="done-check" aria-hidden="true">✓</span><span>Выполнено</span>','data-complete="'+entry.id+'" aria-pressed="'+!!entry.done+'" title="'+label+'" aria-label="'+label+' · '+safe(entry.title)+'"','done-toggle');
 }
 
 function editButton(entry) {
@@ -174,12 +184,13 @@ function editButton(entry) {
 
 function entryCard(entry,showCategory=true,showTitle=true,showActions=true) {
   const timing = [entry.duration && entry.duration+' мин'].filter(Boolean).join(' · ');
-  const actions = canEdit && showActions ? doneButton(entry)+editButton(entry)+removeButton(entry) : '';
+  const actions = canEdit && showActions ? editButton(entry)+removeButton(entry) : '';
+  const completion = canEdit && showActions && mode!=='table' && entry.cat!=='sonya' ? '<div class="completion-actions">'+doneButton(entry)+'</div>' : '';
   const heading = (showCategory?'<small>'+safe(state.categories[entry.cat])+'</small>':'')+
     (showTitle?'<span>'+safe(taskHeading(entry).full)+(entry.done?' ✓':'')+'</span>':'')+actions;
   return '<article class="record category-'+entry.cat+(entry.done && entry.cat!=='sonya'?' is-completed':'')+'">'+(heading?'<div class="record-heading">'+heading+'</div>':'')+
     (timing || entry.note ? '<p>'+[timing,safe(entry.note)].filter(Boolean).join(' · ')+'</p>':'')+
-    (entry.url?'<a class="record-link" href="'+safe(entry.url)+'" rel="noreferrer noopener">'+(entry.cat==='finance'?'Открыть кабинет':'Открыть ссылку')+'</a>':'')+'</article>';
+    (entry.url?'<a class="record-link" href="'+safe(entry.url)+'" rel="noreferrer noopener">'+(entry.cat==='finance'?'Открыть кабинет':'Открыть ссылку')+'</a>':'')+completion+'</article>';
 }
 
 function isWeekReminder(entry) {
@@ -211,8 +222,8 @@ function titleTask(entry,dayOpen,showReminder=true) {
     '<span aria-hidden="true">'+icons[entry.cat]+'</span><span class="task-text">'+safe(open?heading.full:heading.text)+'</span>'+
     (marker?'<small class="task-reminder">'+safe(marker)+'</small>':'')+
     (entry.done?'<span aria-label="Выполнено">✓</span>':''),
-    'data-task="'+entry.id+'" title="'+safe(heading.full)+'" aria-label="'+safe(heading.full+(marker?' · '+marker:''))+'" aria-expanded="'+open+'" aria-controls="task-'+entry.id+'"','task-title')+(canEdit?doneButton(entry):'')+(open && canEdit?editButton(entry)+removeButton(entry):'')+'</div>'+
-    '<div id="task-'+entry.id+'"'+(open?'':' hidden')+'>'+ (open?entryCard(entry,false,false,false):'')+'</div></div>';
+    'data-task="'+entry.id+'" title="'+safe(heading.full)+'" aria-label="'+safe(heading.full+(marker?' · '+marker:''))+'" aria-expanded="'+open+'" aria-controls="task-'+entry.id+'"','task-title')+(open && canEdit?editButton(entry)+removeButton(entry):'')+'</div>'+
+    '<div id="task-'+entry.id+'"'+(open?'':' hidden')+'>'+ (open?entryCard(entry,false,false,false)+(canEdit?'<div class="completion-actions">'+doneButton(entry)+'</div>':''):'')+'</div></div>';
 }
 
 function taskGroup(key,kind,entries,dayOpen) {
@@ -259,10 +270,10 @@ function openSonya(key) {
   const dated = entriesFor(key,'sonya').filter(entry=>!['weekly','indicator','comment'].includes(entry.sonyaRole));
   const regular = state.entries.filter(entry=>entry.cat==='sonya' && entry.sonyaRole==='weekly' && entry.date<=key && weekday(entry.date)===weekday(key));
   const schedule = (dated.some(entry=>entry.sonyaRole==='override') ? [] : regular).concat(dated);
-  const comments = entriesFor(key,'sonya').filter(entry=>entry.sonyaRole==='comment');
+  const comments = currentSonyaComments(key);
   const line = entry=>[entry.title,entry.time && !entry.note?.includes(entry.time)?entry.time:null,entry.note].filter(Boolean).map(safe).join(' · ');
   const work = schedule.map(entry=>'<p>'+line(entry)+'</p>').join('') || '<p class="details-empty">График не указан</p>';
-  const notes = comments.map(entry=>'<p>'+safe(entry.note).replace(/\n/g,'<br>')+'</p>'+(!entry.done && canEdit?button('Прочитано','data-comment-read="'+entry.id+'"'):'' )).join('') || '<p class="details-empty">Комментариев пока нет</p>';
+  const notes = comments.map(entry=>'<p>'+safe(entry.note || 'Примечание очищено').replace(/\n/g,'<br>')+'</p>'+(!entry.done && canEdit?button('Прочитано','data-comment-read="'+entry.id+'"'):'' )).join('') || '<p class="details-empty">Комментариев пока нет</p>';
   const add = canEdit ? button('Добавить запись Сони','data-add data-key="'+key+'" data-cat="sonya"') : '';
   openDialog('Соня · '+shortDate(key),'<div class="sonya-schedule"><section class="sonya-block"><h3>Работа и расписание</h3>'+work+'</section><section class="sonya-block sonya-notes"><h3>Комментарий Сони</h3>'+notes+'</section>'+add+'</div>','Закрыть');
   dialog.dataset.sonyaDate = key;
@@ -279,7 +290,7 @@ function render() {
   $('.column-heads').innerHTML = mode==='table'?header():'';
   sheet.innerHTML = boardDates().filter(key=>showPast || key>=todayKey()).map(row).join('');
   setWidths();
-  const unread=state.entries.filter(e=>e.sonyaRole==='comment'&&!e.done);
+  const unread=currentSonyaComments().filter(e=>!e.done);
   const notice=$('[data-sonya-comments]');notice.hidden=!unread.length;notice.textContent='Комментарии Сони · '+unread.length;
 }
 
@@ -492,14 +503,9 @@ root.addEventListener('click',event=>{
     sheet.querySelector('[data-task="'+d.task+'"]')?.focus({preventScroll:true});
   } else if (canEdit && d.complete) {
     const entry = state.entries.find(item=>item.id===d.complete && item.cat!=='sonya');
-    if (entry) {
-      const field = b.closest('.cell')?.querySelector('[data-inline]');
-      const title = field?.value.trim();
-      const changedTitle = title && title!==field.defaultValue ? {title} : {};
-      run(()=>apply([{op:'update',id:entry.id,done:!entry.done,...changedTitle}],null));
-    }
+    if (entry) run(()=>apply([{op:'update',id:entry.id,done:!entry.done}],null));
   } else if ('sonyaComments' in d) {
-    const comments=state.entries.filter(e=>e.sonyaRole==='comment'&&!e.done).sort((a,b)=>b.date.localeCompare(a.date));
+    const comments=currentSonyaComments().filter(e=>!e.done).sort((a,b)=>b.date.localeCompare(a.date));
     openDialog('Комментарии Сони',comments.map(e=>'<h3>'+safe(shortDate(e.date))+'.'+e.date.slice(0,4)+'</h3>'+entryCard(e)+button('Прочитано','data-comment-read="'+e.id+'"')).join(''),'Закрыть');
   } else if (canEdit && d.commentRead) {
     run(()=>apply([{op:'update',id:d.commentRead,done:true}],null,true));

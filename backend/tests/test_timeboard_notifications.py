@@ -165,3 +165,30 @@ def test_week_reminders_share_one_section_without_repeating_marker_across_catego
     assert section.startswith("1. Обновить SIM\n2. Ozon · 13 100 ₽\nДо 28.11.2026")
     assert 'Открыть запись</a>\n3. Облако · 500 ₽' in section
     assert text.index("Счёт сегодня") < text.index("<b>За 7 дней</b>")
+
+
+
+def test_note_edits_notify_once_per_version_without_replaying_legacy(monkeypatch):
+    from app import timeboard_notifications as notifications
+    _,factory=make_client()
+    comment=entry('single',cat='sonya',sonyaRole='comment',note='Первое',createdAt='2026-11-21T10:00:00Z')
+    older=entry('old',cat='sonya',sonyaRole='comment',note='Старая история',createdAt='2026-11-20T10:00:00Z')
+    monkeypatch.setattr(notifications,'state',lambda:(42,[older,comment]))
+    now=datetime(2026,11,21,12,tzinfo=UTC)
+    with factory() as db:
+        add_user(db,'armagedongt@gmail.com','Владелец');db.commit()
+        assert notifications.enqueue_sonya_comments(db,now)==1
+        first=list(db.scalars(select(MasterclassNotification)))
+        assert first[0].deduplication_key=='sonya-comment:single:1'
+        assert notifications.enqueue_sonya_comments(db,now)==0
+        comment.update(note='Второе',updatedAt='2026-11-21T12:01:00Z',done=False)
+        assert notifications.enqueue_sonya_comments(db,now)==1
+        assert notifications.enqueue_sonya_comments(db,now)==0
+        comment['done']=True
+        assert notifications.enqueue_sonya_comments(db,now)==0
+        comment.update(note='',updatedAt='2026-11-21T12:02:00Z')
+        assert notifications.enqueue_sonya_comments(db,now)==1
+        rows=list(db.scalars(select(MasterclassNotification)))
+        assert len(rows)==3 and len({r.deduplication_key for r in rows})==3
+        assert all(r.payload['entry_ids']==['single'] for r in rows)
+        assert any('Примечание очищено' in r.payload['message_text'] for r in rows)

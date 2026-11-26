@@ -2,7 +2,7 @@ import json
 import os
 import sqlite3
 from contextlib import closing
-from datetime import datetime
+from datetime import datetime, UTC
 from datetime import date as CalendarDate
 from pathlib import Path
 from typing import Annotated, Literal
@@ -69,6 +69,7 @@ class EntryFields(BaseModel):
     sonyaTimeConfirmed: bool = Field(default=False, strict=True)
     endDate: CalendarDate | None = None
     createdAt: datetime | None = None
+    updatedAt: datetime | None = None
 
     @field_validator("url")
     @classmethod
@@ -111,6 +112,20 @@ class Packet(BaseModel):
     v: Literal[1]
     baseRevision: int = Field(ge=0, strict=True)
     ops: list[Annotated[Add | Update | Remove, Field(discriminator="op")]] = Field(min_length=1, max_length=30)
+
+
+def current_sonya_comments(entries):
+    current = {}
+    for entry in entries:
+        if entry['cat']!='sonya' or entry.get('sonyaRole')!='comment':
+            continue
+        stamp = entry.get('updatedAt') or entry.get('createdAt')
+        moment = datetime.fromisoformat(stamp) if stamp else datetime.min.replace(tzinfo=UTC)
+        moment = moment.replace(tzinfo=UTC) if moment.tzinfo is None else moment.astimezone(UTC)
+        previous = current.get(entry['date'])
+        if previous is None or moment>=previous[0]:
+            current[entry['date']] = (moment,entry)
+    return {key:item[1] for key,item in current.items()}
 
 
 def storage_path() -> Path:
@@ -191,6 +206,12 @@ def prepare(packet: Packet, revision: int, entries: list[dict]) -> tuple[list[di
                 entry = Entry.model_validate({**(before or {}), **fields, "id": identity})
             except ValidationError as error:
                 raise HTTPException(422, f"Операция {index}: проверьте дату, категорию и название.") from error
+            if entry.cat=='sonya' and entry.sonyaRole=='comment':
+                if not before and entry.createdAt is None:
+                    entry=entry.model_copy(update={'createdAt':datetime.now(UTC)})
+                elif before and (before.get('cat')!='sonya' or before.get('sonyaRole')!='comment'
+                      or before.get('note','')!=entry.note or before['date']!=entry.date.isoformat()):
+                    entry=entry.model_copy(update={'updatedAt':datetime.now(UTC),'done':False})
             if entry.endDate and (entry.endDate < entry.date or (entry.endDate-entry.date).days > 366):
                 raise HTTPException(422, "Дата окончания должна быть в пределах года после начала.")
             if (entry.phase or entry.sonyaRole) and entry.cat != "sonya":
