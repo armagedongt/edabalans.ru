@@ -1577,7 +1577,7 @@
 
 <link rel="stylesheet" href="/assets/strength-journal.css?v=20261126-template-board">
 <script src="/assets/strength-journal-model.js?v=20261022-set-role-inheritance"></script>
-<script src="/assets/strength-template-board.js?v=20261126"></script>
+<script src="/assets/strength-template-board.js?v=20261126-catalog2"></script>
 <script>
 (function(){
 
@@ -5650,7 +5650,7 @@ function renderManager(){
     i++
   ){
 
-    if(catalog[i].catalog_active === false){
+    if(catalog[i].catalog_active === false || (catalog[i].source!=='base' && catalog[i].source!=='custom' && catalog[i].active!==true)){
       continue;
     }
 
@@ -6090,7 +6090,7 @@ window.ST = {
   boardCloseSearch:function(){var type=app.boardSearchType;app.boardSearchType=null;app.boardSearchQuery='';render();var column=root.querySelector('[data-board-column="'+type+'"]');if(column){var button=column.querySelector('.st-template-add-button');if(button)button.focus({preventScroll:true});}},
   boardSearch:function(input){app.boardSearchQuery=input.value;var results=input.parentNode.querySelector('[data-board-results]');if(results)results.innerHTML=templateBoardResults(Number(input.dataset.boardSearch),input.value);},
   boardAdd:function(type,id){
-    if(!templateBoardReady()||hasSaveConflict()||!templateBoardCatalog().some(function(item){return item.exercise_id===id&&item.catalog_active!==false;}))return;
+    if(!templateBoardReady()||hasSaveConflict()||!templateBoardCatalog().some(function(item){return item.exercise_id===id&&item.catalog_active!==false&&(item.source==='base'||item.source==='custom');}))return;
     var lists=templateBoardLists();if(!lists[type]||lists[type].includes(id))return;
     lists[type].push(id);app.boardSearchQuery='';app.boardFocus={type:type,search:true};applyTemplateBoardLists(lists);
   },
@@ -7002,8 +7002,6 @@ window.ST = {
         String(id)
       ){
 
-        rememberManagerChange();
-
         var active =
           !(
             catalog[i].active ===
@@ -7014,6 +7012,8 @@ window.ST = {
               'false'
           );
 
+        if(!active && catalog[i].source!=='base' && catalog[i].source!=='custom')return;
+        rememberManagerChange();
         catalog[i].active =
           !active;
 

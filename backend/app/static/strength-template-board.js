@@ -18,7 +18,7 @@
     var tokens=String(query||'').toLocaleLowerCase('ru').replace(/ё/g,'е').trim().split(/\s+/).filter(Boolean);
     return catalog.filter(function(item){
       var text=[item.exercise_name,item.full_name,item.short_name].join(' ').toLocaleLowerCase('ru').replace(/ё/g,'е');
-      return item.catalog_active!==false&&!excluded.includes(String(item.exercise_id))&&tokens.every(function(token){return text.includes(token);});
+      return (item.source==='base'||item.source==='custom')&&item.catalog_active!==false&&!excluded.includes(String(item.exercise_id))&&tokens.every(function(token){return text.includes(token);});
     }).sort(function(a,b){return String(a.full_name||a.exercise_name).localeCompare(String(b.full_name||b.exercise_name),'ru');}).slice(0,15);
   }
   function mount(board,onMove){

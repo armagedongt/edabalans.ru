@@ -14,6 +14,11 @@ async function open(width,managed=false,options={}){
   {session_id:'archived',session_number:2,workout_type:4,date:'2026-11-19'}];
  const types=[{workout_type:1,title:'Верх',active:true,sort_order:1},{workout_type:2,title:'Низ',active:true,sort_order:2},{workout_type:3,title:'Пустой',active:true,sort_order:3},{workout_type:4,title:'Архив',active:false,sort_order:4}];
  let lists={1:ids.slice(0,options.longList?14:6),2:ids.slice(5,9),3:[]},version=1,failRead=!!options.failRead,failSave=false,conflict=false,hold=null,release,concurrent=0;
+ const extra=options.sources?[{exercise_id:'custom-own',exercise_name:'Личное упражнение',source:'custom'},
+  {exercise_id:'legacy-unused',exercise_name:'Старая тяга из истории',source:'history'},
+  {exercise_id:'legacy-active',exercise_name:'Историческое назначенное',source:'history'},
+  {exercise_id:'custom-deleted',exercise_name:'Удалённое личное',source:'custom',catalog_active:false}]:[];
+ if(options.sources)lists[1].push('legacy-active');
  const sourceHistory=JSON.stringify(history);
  page.on('pageerror',error=>errors.push(error.message));
  await page.route('**/*',async route=>{
@@ -27,9 +32,18 @@ async function open(width,managed=false,options={}){
     if(failRead&&Number(data.type)===2)return route.fulfill({json:{ok:false,error:'SYNTHETIC_CATALOG_ERROR'}});
     const type=Number(data.type)||1,selected=lists[type]||[];
     response.workout={selected_type:type,version,workout_types:structuredClone(types),sessions:structuredClone(history),
-     exercise_catalog:guides.map((g,i)=>({exercise_id:g.code,exercise_name:g.name,full_name:g.full_name,short_name:g.short_name,source:'base',catalog_active:true,active:selected.includes(g.code),sort_order:selected.includes(g.code)?selected.indexOf(g.code)+1:100+i,guide:g.guide})),
+     exercise_catalog:guides.map((g,i)=>({exercise_id:g.code,exercise_name:g.name,full_name:g.full_name,short_name:g.short_name,source:'base',catalog_active:true,active:selected.includes(g.code),sort_order:selected.includes(g.code)?selected.indexOf(g.code)+1:100+i,guide:g.guide})).concat(extra.map((g,i)=>({...g,active:selected.includes(g.exercise_id),sort_order:selected.includes(g.exercise_id)?selected.indexOf(g.exercise_id)+1:200+i}))),
      session_exercises:[{session_id:'old',exercise_id:ids[0],exercise_name:guides[0].name,sort_order:1}],
      sets:[{session_id:'old',exercise_id:ids[0],set_number:1,plan_weight:35,plan_reps:12,fact_weight:35,fact_reps:13,rpe:8}]};
+    if(options.sources){
+     response.workout.session_exercises.push({session_id:'old',exercise_id:'legacy-unused',exercise_name:'Старая тяга из истории',sort_order:2});
+     response.workout.sets.push({session_id:'old',exercise_id:'legacy-unused',set_number:1,fact_weight:20,fact_reps:12,rpe:7});
+    }
+   }
+   if(options.sources&&data.action==='saveExerciseCatalog'){
+    writes.push(structuredClone(data));assert.equal(data.version,version);
+    lists[data.workout_type]=data.exercises.filter(e=>e.active).sort((a,b)=>a.sort_order-b.sort_order).map(e=>e.exercise_id);
+    version++;assert.equal(JSON.stringify(history),sourceHistory);return route.fulfill({json:{ok:true,version}});
    }
    if(request.method()==='POST'){
     writes.push(structuredClone(data));assert.equal(data.action,'saveWorkoutTypes','board edits never rewrite workout snapshots');
@@ -152,6 +166,29 @@ try{
   await page.reload();await page.locator('.st-view-toggle').waitFor();await page.getByRole('button',{name:'Управление шаблонами',exact:true}).click();await list(page,active.at(-1)).waitFor();
   for(const type of active)assert.deepEqual(await entries(page,type),snapshot[type]);
   results.push({width,managed,touch,version:test.version});await test.context.close();
+ }
+ for(const width of widths.filter(width=>width===430||width===1440))for(const managed of [false,true]){
+  const test=await open(width,managed,{sources:true}),page=test.page;
+  assert((await entries(page,1)).includes('legacy-active'),'assigned historical exercise remains in its template');
+  const column=page.locator('[data-board-column="3"]');await column.getByRole('button',{name:'Добавить упражнение',exact:false}).click();
+  const field=column.locator('[data-board-search]');await field.fill('из истории');assert.equal(await column.locator('[data-board-add-id]').count(),0);
+  await page.evaluate(()=>ST.boardAdd(3,'legacy-unused'));assert.deepEqual(await entries(page,3),[]);assert.equal(test.writes.length,0);
+  await field.fill('Личное');assert.equal(await column.locator('[data-board-add-id="custom-own"]').count(),1);assert.equal(await column.locator('[data-board-add-id="custom-deleted"]').count(),0);
+  await page.screenshot({path:path.join(out,`${engine}-${width}-${managed?'managed':'self'}-own-search.png`)});
+  await column.locator('[data-board-add-id="custom-own"]').click();await saved(page);assert.deepEqual(await entries(page,3),['custom-own']);
+  await page.getByRole('button',{name:'Состав упражнений шаблона 1',exact:true}).click();await page.locator('.st-manager-modal').waitFor();
+  assert.equal(await page.getByText('Старая тяга из истории',{exact:true}).count(),0);
+  const active=page.locator('.st-manager-row').filter({hasText:'Историческое назначенное'});assert.equal(await active.getByRole('button',{name:'Убрать',exact:true}).count(),1);
+  const writes=test.writes.length;await page.evaluate(()=>ST.toggleExercise('legacy-unused'));assert.equal(test.writes.length,writes);
+  await active.getByRole('button',{name:'Убрать',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelector('#st-manager-save-state')?.textContent==='Сохранено');
+  assert.equal(await page.getByText('Историческое назначенное',{exact:true}).count(),0);
+  assert.equal(test.writes.at(-1).action,'saveExerciseCatalog');assert(!test.lists[1].includes('legacy-active'));
+  await page.getByRole('button',{name:'Назад к шаблонам',exact:false}).click();await list(page,1).waitFor();assert(!(await entries(page,1)).includes('legacy-active'));
+  await page.reload();await page.locator('.st-view-toggle').waitFor();
+  await page.evaluate(()=>{ST.openExerciseStats('legacy-unused');ST.setStatsTab('analysis');});
+  assert.equal(await page.locator('.st-analysis option[value="legacy-unused"]').count(),1,'historical exercise remains available in statistics');
+  assert.deepEqual(test.errors,[]);await test.context.close();
  }
  if(widths.includes(430)){
   const failing=await open(430,false,{failRead:true});assert.equal(failing.writes.length,0,'incomplete catalogues cannot be saved as empty columns');

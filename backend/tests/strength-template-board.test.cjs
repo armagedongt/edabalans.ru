@@ -18,11 +18,23 @@ test('cross-template move inserts between existing exercises and merges a duplic
  assert.equal(move({1:['a'],2:[]},1,3,'a',null),null);
 });
 test('search matches full names and aliases, normalizes ё, excludes selected and archived items',()=>{
- const data=[{exercise_id:'a',exercise_name:'Жим',full_name:'Жим штанги лёжа',short_name:'Грудь'},
-  {exercise_id:'b',exercise_name:'Жим ногами',full_name:'Жим ногами в тренажёре'},
-  {exercise_id:'c',exercise_name:'Жим скрытый',catalog_active:false}];
+ const data=[{exercise_id:'a',source:'base',exercise_name:'Жим',full_name:'Жим штанги лёжа',short_name:'Грудь'},
+  {exercise_id:'b',source:'base',exercise_name:'Жим ногами',full_name:'Жим ногами в тренажёре'},
+  {exercise_id:'c',source:'custom',exercise_name:'Жим скрытый',catalog_active:false}];
  assert.deepEqual(search(data,'ЛЕЖА жим',[]).map(i=>i.exercise_id),['a']);
  assert.deepEqual(search(data,'грудь',[]).map(i=>i.exercise_id),['a']);
  assert.deepEqual(search(data,'жим',['a']).map(i=>i.exercise_id),['b']);
  assert.deepEqual(search(data,'нет такого',[]),[]);
+});
+
+test('only the base catalogue and own custom exercises can be selected; history remains intact',()=>{
+ const data=[{exercise_id:'base',source:'base',full_name:'Тяга блока'},
+  {exercise_id:'custom-own',source:'custom',exercise_name:'Моя тяга'},
+  {exercise_id:'legacy',source:'history',exercise_name:'Тяга из истории'},
+  {exercise_id:'hidden',source:'custom',exercise_name:'Тяга удалённая',catalog_active:false},
+  {exercise_id:'unknown',exercise_name:'Тяга без источника'}];
+ const before=structuredClone(data);
+ assert.deepEqual(search(data,'тяга',[]).map(i=>i.exercise_id),['custom-own','base']);
+ assert.deepEqual(search(data,'',[]).map(i=>i.exercise_id),['custom-own','base']);
+ assert.deepEqual(data,before);
 });
