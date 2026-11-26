@@ -38,12 +38,13 @@ CATEGORIES = {
     "training": "Тренировки",
     "competitions": "Соревнования",
     "work": "Работа",
+    "client_payments": "Оплаты клиентов",
     "posts": "Публикации",
     "finance": "Финансы",
     "history": "Дневник",
     "sonya": "Соня",
 }
-Category = Literal["outside", "with_sonya", "training", "competitions", "work", "posts", "finance", "history", "sonya"]
+Category = Literal["outside", "with_sonya", "training", "competitions", "work", "client_payments", "posts", "finance", "history", "sonya"]
 Title = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=160)]
 Clock = Annotated[str, StringConstraints(pattern=r"^(?:[01][0-9]|2[0-3]):[0-5][0-9]$")]
 EntryId = Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{32}$")]

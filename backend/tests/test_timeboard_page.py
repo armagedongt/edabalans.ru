@@ -30,6 +30,26 @@ def board_credentials(monkeypatch):
 AUTH = ("board-owner", "test-timeboard-password")
 
 
+def test_client_payment_category_preview_apply_and_read(tmp_path, monkeypatch):
+    monkeypatch.setenv("TIMEBOARD_DB", str(tmp_path / "board.sqlite3"))
+    client = TestClient(app)
+    client.auth = AUTH
+    packet = {"v": 1, "baseRevision": 0, "ops": [{
+        "op": "add", "date": "2026-11-26", "cat": "client_payments",
+        "title": "Клиент · 5000 ₽", "note": "За консультацию",
+    }]}
+    headers = {"X-Timeboard-Request": "1"}
+    preview = client.post("/timeboard/api/preview", json=packet, headers=headers)
+    assert preview.status_code == 200
+    assert client.get("/timeboard/api/state").json()["entries"] == []
+    result = client.post("/timeboard/api/apply", json=packet, headers=headers)
+    assert result.status_code == 200
+    current = client.get("/timeboard/api/state").json()
+    assert current["categories"]["client_payments"] == "Оплаты клиентов"
+    assert current["entries"][0]["cat"] == "client_payments"
+    assert current["entries"][0]["title"] == "Клиент · 5000 ₽"
+
+
 @pytest.mark.parametrize("path", ["/timeboard", "/timeboard/", "/timeboard/app.js", "/timeboard/style.css", "/timeboard/api/state", "/timeboard/api/session"])
 def test_timeboard_requires_admin_for_every_entry_point(path):
     client = TestClient(app)

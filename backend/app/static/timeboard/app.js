@@ -3,7 +3,9 @@ const $ = selector => root.querySelector(selector);
 const sheet = $('.sheet');
 const dialog = $('.editor');
 const content = $('.editor-content');
-const icons = {outside:'📍',with_sonya:'💗',training:'🏋️',competitions:'🏁',work:'💼',posts:'✍️',finance:'💳',history:'📓'};
+const icons = {outside:'📍',with_sonya:'💗',training:'🏋️',competitions:'🏁',work:'💼',client_payments:'💰',posts:'✍️',finance:'💳',history:'📓'};
+const filterLabels = {training:'Тренировки',with_sonya:'Свидания',work:'Консультации',client_payments:'Оплаты клиентов',finance:'Мои расходы',outside:'Дела в городе',posts:'Публикации',competitions:'Соревнования',history:'Дневник'};
+const selectedCategories = new Set();
 const taskTitleLimit = 30;
 const taskCharacters = new Intl.Segmenter('ru',{granularity:'grapheme'});
 const flags = {'':'Без цвета',blue:'Синий',green:'Зелёный',red:'Красный'};
@@ -76,7 +78,8 @@ async function reload() {
 }
 
 function entriesFor(key, cat) {
-  return state.entries.filter(entry => entry.date === key && (cat ? entry.cat === cat : entry.cat !== 'sonya'))
+  return state.entries.filter(entry => entry.date === key && (cat ? entry.cat === cat :
+    entry.cat !== 'sonya' && (!selectedCategories.size || selectedCategories.has(entry.cat))))
     .sort((a,b)=>(cat?0:columns.indexOf(a.cat)-columns.indexOf(b.cat)) ||
       (a.time || '99').localeCompare(b.time || '99') || a.id.localeCompare(b.id));
 }
@@ -292,6 +295,15 @@ function render() {
   setWidths();
   const unread=currentSonyaComments().filter(e=>!e.done);
   const notice=$('[data-sonya-comments]');notice.hidden=!unread.length;notice.textContent='Комментарии Сони · '+unread.length;
+  renderFilters();
+}
+
+function renderFilters() {
+  $('.category-filters').innerHTML = button('Все','data-filter="all" aria-pressed="'+!selectedCategories.size+'"')+
+    Object.entries(filterLabels).map(([key,label])=>button(icons[key]+' '+safe(label),
+      'data-filter="'+key+'" aria-pressed="'+selectedCategories.has(key)+'"','category-'+key)).join('');
+  $('#filter-label').textContent = !selectedCategories.size ? 'Все' :
+    selectedCategories.size===1 ? filterLabels[[...selectedCategories][0]] : 'Категории · '+selectedCategories.size;
 }
 
 function openDialog(title,body,closeLabel='Отменить') {
@@ -488,7 +500,15 @@ root.addEventListener('click',event=>{
   const b = event.target.closest('button');
   if (!b) return;
   const d = b.dataset;
-  if (d.mode) {
+  if (!d.filter) $('.tools-menu').open=false;
+  if (d.filter) {
+    if (d.filter==='all') selectedCategories.clear();
+    else if (selectedCategories.has(d.filter)) selectedCategories.delete(d.filter);
+    else selectedCategories.add(d.filter);
+    expanded=null;
+    render();
+    $('[data-filter="'+d.filter+'"]').focus({preventScroll:true});
+  } else if (d.mode) {
     mode = d.mode;
     render();
   } else if (d.entryGroup) {
@@ -562,6 +582,18 @@ root.addEventListener('click',event=>{
   } else if ('apply' in d && pending) {
     const {packet,target} = pending;
     run(()=>apply(packet,target,true));
+  }
+});
+
+document.addEventListener('click',event=>{
+  for (const menu of root.querySelectorAll('.toolbar details')) {
+    if (!event.composedPath().includes(menu)) menu.open=false;
+  }
+});
+document.addEventListener('keydown',event=>{
+  if (event.key!=='Escape' || dialog.open) return;
+  for (const menu of root.querySelectorAll('.toolbar details[open]')) {
+    menu.open=false; menu.querySelector('summary').focus();
   }
 });
 
