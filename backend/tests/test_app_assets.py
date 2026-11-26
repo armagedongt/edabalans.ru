@@ -1436,7 +1436,7 @@ def test_strength_application_loads_shared_journal_assets() -> None:
     response = client.get("/apps/strength.html")
     assert response.status_code == 200
     assert '<div id="strength-app">' in response.text
-    for name, mime in [("strength-journal.css", "text/css"), ("strength-journal-model.js", "javascript")]:
+    for name, mime in [("strength-journal.css", "text/css"), ("strength-journal-model.js", "javascript"), ("strength-template-board.js", "javascript")]:
         assert f'/assets/{name}' in response.text
         asset = client.get(f"/assets/{name}")
         assert asset.status_code == 200

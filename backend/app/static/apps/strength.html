@@ -1575,8 +1575,9 @@
 
 </style>
 
-<link rel="stylesheet" href="/assets/strength-journal.css?v=20261121-canvas-scale">
+<link rel="stylesheet" href="/assets/strength-journal.css?v=20261126-template-board">
 <script src="/assets/strength-journal-model.js?v=20261022-set-role-inheritance"></script>
+<script src="/assets/strength-template-board.js?v=20261126"></script>
 <script>
 (function(){
 
@@ -1669,6 +1670,12 @@ var app = {
   managerUndoStack:[],
   managerSavePending:null,
   managerSaveRunning:false,
+  boardError:'',
+  boardDispose:null,
+  boardScroll:{left:0,top:0},
+  boardSearchType:null,
+  boardSearchQuery:'',
+  boardFocus:null,
   modalScrollState:null,
   rpeMenu:null,
 
@@ -2536,7 +2543,8 @@ function loadAdminUsers(){
 function loadClient(user){
   var generation=++clientLoadGeneration;
   Object.keys(app.saveTimers).forEach(function(key){clearTimeout(app.saveTimers[key]);});
-  app.saveTimers={};app.sessionSaveQueues={};app.managerSavePending=null;app.saving=false;app.creatingSession=false;app.saveError='';
+  app.saveTimers={};app.sessionSaveQueues={};app.managerSavePending=null;app.templateSavePending=null;app.templateSaveRunning=false;app.saving=false;app.creatingSession=false;app.saveError='';
+  app.modal=null;app.boardSearchType=null;app.boardSearchQuery='';app.boardScroll={left:0,top:0};app.boardError='';
   app.canCoach=user.can_coach===true;
   app.canCalculateProgression=user.can_calculate_progression===true;
   app.selectedUser=user;app.mode='loading';app.workouts={};app.templateLoads={};app.templateErrors={};app.progressionPanels={};render();
@@ -2562,7 +2570,7 @@ function ensureTemplate(type){
   delete app.templateErrors[type];
   function readCatalogue(){
     if(generation!==clientLoadGeneration)return Promise.resolve(null);
-    if(app.managerSaveRunning || app.managerSavePending)return new Promise(function(resolve){setTimeout(resolve,50);}).then(readCatalogue);
+    if(app.managerSaveRunning || app.managerSavePending || app.templateSaveRunning || app.templateSavePending)return new Promise(function(resolve){setTimeout(resolve,50);}).then(readCatalogue);
     var epoch=app.catalogEditEpoch;
     return getWorkoutType(app.selectedUser,type,'catalog').then(function(workout){return epoch===app.catalogEditEpoch?workout:readCatalogue();});
   }
@@ -3032,6 +3040,7 @@ function progressionSaveLabel(){
 
 function renderSavingOnly(){
   flushTemplateSave();
+  renderTemplateBoardStatus();
 
   updateTelegramButton();
   root.querySelectorAll('[data-progression-save]').forEach(function(label){label.textContent=progressionSaveLabel();});
@@ -3303,6 +3312,7 @@ function applyJournalScale(){
 
 function render(){
   applyJournalScale();
+  if(app.boardDispose&&(app.mode!=='client'||!app.modal||app.modal.type!=='templates')){app.boardDispose();app.boardDispose=null;}
 
   if(app.mode === 'loading'){
 
@@ -3558,6 +3568,9 @@ function renderClient(){
   }
   html+=renderModal()+renderFloatingRpe();
   if(app.deliveryDispose){app.deliveryDispose();app.deliveryDispose=null;}
+  var oldBoard=root.querySelector('.st-template-board');
+  if(oldBoard)app.boardScroll={left:oldBoard.scrollLeft,top:oldBoard.scrollTop};
+  if(app.boardDispose){app.boardDispose();app.boardDispose=null;}
   root.innerHTML=html;
   root.querySelectorAll('button[aria-label],input[aria-label],a[aria-label]').forEach(function(control){
     if(!control.hasAttribute('title'))control.title=control.getAttribute('aria-label');
@@ -3565,6 +3578,7 @@ function renderClient(){
   renderManagedActions();renderSavingOnly();syncModalLock();bindJournalAxes();
   root.querySelectorAll('.st-note-field textarea').forEach(function(field){ST.autoGrow(field);});
   if(app.modal && app.modal.type==='confirmDelivery')mountDeliveryMessenger(app.modal);
+  if(app.modal && app.modal.type==='templates')mountTemplateBoard();
   observeJournalWidth();
 }
 
@@ -4018,28 +4032,120 @@ function bindJournalAxes(){
 
 function renderTemplateManager(){
   var active=app.templates.filter(function(t){return t.active!==false;});
-  var html='<div class="st-modal-bg"><section class="st-modal" role="dialog" aria-modal="true" aria-label="Шаблоны"><button class="st-modal-btn st-manager-back" onclick="ST.closeModal()">← К тренировкам</button><div class="st-modal-title">Шаблоны</div>';
-  active.forEach(function(t,index){var id=Number(t.workout_type);html+='<div class="st-template-manager-row"><input aria-label="Название шаблона '+id+'" value="'+esc(t.title)+'" onchange="ST.renameTemplate('+id+',this.value)"><button onclick="ST.moveTemplate('+id+',-1)" '+(index===0?'disabled':'')+' aria-label="Поднять шаблон">↑</button><button onclick="ST.moveTemplate('+id+',1)" '+(index===active.length-1?'disabled':'')+' aria-label="Опустить шаблон">↓</button><button onclick="ST.openManager('+id+')" aria-label="Состав упражнений шаблона '+id+'">✎</button><button onclick="ST.removeTemplate('+id+')" aria-label="Удалить шаблон '+id+'">×</button></div>';});
-  return html+'<div class="st-modal-actions"><button class="st-modal-btn" onclick="ST.addTemplate()">＋ Шаблон</button><button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Готово</button></div></section></div>';
+  var ready=typeof StrengthTemplateBoard!=='undefined'&&templateBoardReady();
+  var html='<div class="st-modal-bg"><section class="st-modal st-template-board-modal" role="dialog" aria-modal="true" aria-label="Шаблоны"><header class="st-template-board-heading"><button class="st-modal-btn st-manager-back" onclick="ST.closeModal()">← К тренировкам</button><div class="st-modal-title">Шаблоны</div><p>Перетаскивайте упражнения за ручку. Можно переносить между шаблонами и менять порядок внутри.</p></header>';
+  if(!ready){
+    var retry=typeof StrengthTemplateBoard==='undefined'?'<button class="st-modal-btn" onclick="location.reload()">Обновить страницу</button>':'<button class="st-modal-btn" onclick="ST.openTemplates()">Повторить</button>';
+    html+='<div class="st-template-board-loading" role="status">'+(app.boardError?esc(app.boardError)+' '+retry:'Загружаю состав шаблонов…')+'</div>';
+  }else{
+    html+='<div class="st-template-board" aria-label="Состав шаблонов">';
+    active.forEach(function(t,index){
+      var id=Number(t.workout_type),items=templateBoardItems(id);
+      html+='<section class="st-template-column" data-board-column="'+id+'"><header class="st-template-column-head"><input aria-label="Название шаблона '+id+'" value="'+esc(t.title)+'" onchange="ST.renameTemplate('+id+',this.value)"><div class="st-template-column-tools">'+
+        '<button onclick="ST.moveTemplate('+id+',-1)" '+(index===0?'disabled':'')+' aria-label="Поднять шаблон">←</button><button onclick="ST.moveTemplate('+id+',1)" '+(index===active.length-1?'disabled':'')+' aria-label="Опустить шаблон">→</button><button onclick="ST.openManager('+id+')" aria-label="Состав упражнений шаблона '+id+'" title="Каталог и свои упражнения">✎</button><button onclick="ST.removeTemplate('+id+')" aria-label="Удалить шаблон '+id+'">×</button></div></header>';
+      html+='<div class="st-template-exercises" data-board-list="'+id+'" aria-label="Упражнения · '+esc(t.title)+'">';
+      items.forEach(function(item){var ex=esc(item.exercise_id);html+='<div class="st-template-exercise" data-board-exercise="'+ex+'"><button type="button" class="st-template-drag" data-board-handle aria-grabbed="false" aria-label="Переместить '+esc(exerciseDisplayName(item,item.exercise_name))+'" title="Перетащите или используйте стрелки">⋮⋮</button><span>'+exerciseNameHtml(item,item.exercise_name)+'</span><button class="st-template-remove" data-exercise-id="'+ex+'" onclick="ST.boardRemove('+id+',this.dataset.exerciseId)" aria-label="Убрать из шаблона">×</button></div>';});
+      html+='</div><div class="st-template-add">'+(app.boardSearchType===id?'<input class="st-template-search" data-board-search="'+id+'" aria-label="Найти упражнение для '+esc(t.title)+'" placeholder="Название упражнения" value="'+esc(app.boardSearchQuery)+'" oninput="ST.boardSearch(this)" onkeydown="if(event.key===\'ArrowDown\'){event.preventDefault();var first=this.parentNode.querySelector(\'[data-board-add-id]\');if(first)first.focus();}else if(event.key===\'Escape\'){event.stopPropagation();ST.boardCloseSearch();}"><div class="st-template-search-results" data-board-results="'+id+'">'+templateBoardResults(id,app.boardSearchQuery)+'</div>':'<button class="st-template-add-button" onclick="ST.boardOpenSearch('+id+')">＋ Добавить упражнение</button>')+'</div></section>';
+    });
+    html+='</div>';
+  }
+  return html+'<div class="st-template-board-actions"><span id="st-template-board-status" role="status"></span><button class="st-modal-btn" '+(!ready?'disabled':'')+' onclick="ST.addTemplate()">＋ Шаблон</button><button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Готово</button></div></section></div>';
+}
+
+function templateBoardReady(){return app.templates.filter(function(t){return t.active!==false;}).every(function(t){return !!app.workouts[Number(t.workout_type)];});}
+function templateBoardItems(type){return (app.workouts[type].catalog||[]).filter(function(item){return item.active===true&&item.catalog_active!==false;}).slice().sort(function(a,b){return Number(a.sort_order)-Number(b.sort_order);});}
+function templateBoardLists(){var lists={};app.templates.filter(function(t){return t.active!==false;}).forEach(function(t){lists[t.workout_type]=templateBoardItems(t.workout_type).map(function(item){return String(item.exercise_id);});});return lists;}
+function templateBoardCatalog(){var map=new Map();app.accountCatalog.forEach(function(item){map.set(item.exercise_id,item);});Object.values(app.workouts).forEach(function(workout){(workout.catalog||[]).forEach(function(item){map.set(item.exercise_id,item);});});return Array.from(map.values());}
+function templateBoardResults(type,query){
+  var ids=templateBoardItems(type).map(function(item){return String(item.exercise_id);});
+  var matches=StrengthTemplateBoard.search(templateBoardCatalog(),query,ids);
+  return matches.length?matches.map(function(item){return '<button type="button" data-board-add-id="'+esc(item.exercise_id)+'" onclick="ST.boardAdd('+type+',this.dataset.boardAddId)">'+exerciseNameHtml(item,item.exercise_name)+'</button>';}).join(''):'<p>Упражнения не найдены</p>';
+}
+function applyTemplateBoardLists(lists){
+  app.catalogEditEpoch++;
+  var catalog=templateBoardCatalog();
+  Object.keys(lists).forEach(function(type){
+    var order=lists[type];app.workouts[type].catalog=copyCatalog(catalog).map(function(item,index){var position=order.indexOf(String(item.exercise_id));item.active=position>=0;item.sort_order=position>=0?position+1:order.length+index+1;return item;});
+  });
+  queueTemplateSave();render();
+}
+function mountTemplateBoard(){
+  var board=root.querySelector('.st-template-board');if(!board)return;
+  board.scrollLeft=app.boardScroll.left;board.scrollTop=app.boardScroll.top;
+  var disposeDrag=StrengthTemplateBoard.mount(board,function(from,to,id,before){
+    if(hasSaveConflict())return;
+    var lists=StrengthTemplateBoard.move(templateBoardLists(),from,to,id,before);
+    if(lists){app.boardFocus={type:Number(to),id:id};applyTemplateBoardLists(lists);}
+  });
+  var viewport=window.visualViewport,modal=board.closest('.st-template-board-modal'),overlay=modal.parentNode,resizeFrame=0;
+  function fitSearch(){
+    var field=board.querySelector('[data-board-search]');if(!field)return;
+    field.scrollIntoView({block:'nearest',inline:'nearest'});
+    var results=field.parentNode.querySelector('[data-board-results]');
+    if(results)results.style.maxHeight=Math.max(0,Math.min(310,field.getBoundingClientRect().top-board.getBoundingClientRect().top-12))+'px';
+  }
+  function fitViewport(){
+    var height=viewport&&viewport.scale===1?viewport.height:window.innerHeight;
+    overlay.style.height=height+'px';overlay.style.top=(viewport&&viewport.scale===1?viewport.offsetTop:0)+'px';overlay.style.bottom='auto';
+    modal.style.setProperty('--st-board-viewport-height',height+'px');
+    cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(fitSearch);
+  }
+  window.addEventListener('resize',fitViewport);
+  if(viewport){viewport.addEventListener('resize',fitViewport);viewport.addEventListener('scroll',fitViewport);}
+  app.boardDispose=function(){disposeDrag();cancelAnimationFrame(resizeFrame);window.removeEventListener('resize',fitViewport);if(viewport){viewport.removeEventListener('resize',fitViewport);viewport.removeEventListener('scroll',fitViewport);}};
+  fitViewport();
+  board.addEventListener('pointerdown',function(event){
+    if(app.boardSearchType===null||event.target.closest('.st-template-add'))return;
+    var type=app.boardSearchType,field=board.querySelector('[data-board-search="'+type+'"]');
+    app.boardSearchType=null;app.boardSearchQuery='';
+    if(field)field.parentNode.innerHTML='<button class="st-template-add-button" onclick="ST.boardOpenSearch('+type+')">＋ Добавить упражнение</button>';
+  });
+  board.addEventListener('keydown',function(event){
+    if(app.boardSearchType===null||!event.target.closest('.st-template-add'))return;
+    if(event.key==='Escape'){event.preventDefault();event.stopPropagation();ST.boardCloseSearch();return;}
+    if(!event.target.matches('[data-board-add-id]')||!['ArrowUp','ArrowDown'].includes(event.key))return;
+    var footer=event.target.closest('.st-template-add'),buttons=Array.from(footer.querySelectorAll('[data-board-add-id]'));
+    var index=buttons.indexOf(event.target)+(event.key==='ArrowDown'?1:-1);
+    event.preventDefault();if(index<0)footer.querySelector('input').focus();else buttons[Math.min(index,buttons.length-1)].focus();
+  });
+  if(app.boardFocus){
+    var focus=app.boardFocus;app.boardFocus=null;
+    if(focus.search){var field=board.querySelector('[data-board-search="'+focus.type+'"]');if(field){field.focus({preventScroll:true});field.setSelectionRange(field.value.length,field.value.length);}}
+    else{var list=board.querySelector('[data-board-list="'+focus.type+'"]');if(list){var row=Array.from(list.children).find(function(item){return item.dataset.boardExercise===focus.id;});if(row){row.querySelector('[data-board-handle]').focus({preventScroll:true});row.scrollIntoView({block:'nearest',inline:'nearest'});}}}
+  }
+  renderTemplateBoardStatus();
+}
+function renderTemplateBoardStatus(){
+  var el=root.querySelector('#st-template-board-status');if(!el)return;
+  if(typeof StrengthTemplateBoard==='undefined'||!templateBoardReady()){el.className=app.boardError?'error':'';el.textContent=app.boardError?'Редактор не загружен':'Загружаю…';return;}
+  el.className=app.saveError?'error':'';
+  el.innerHTML=app.saveError?'Изменения не сохранены · '+esc(saveErrorText())+(hasSaveConflict()?' <button onclick="ST.reloadCurrent()">Загрузить актуальное</button>':' <button onclick="ST.retrySave()">Повторить</button>'):(app.templateSavePending||app.templateSaveRunning||app.managerSaveRunning?'Сохраняю…':'Сохранено');
 }
 
 function queueTemplateSave(){
   app.templates.forEach(function(t,index){t.sort_order=index+1;});
-  app.templateSavePending=cloneValue(app.templates);app.saving=true;app.saveError='';flushTemplateSave();
+  app.templateSavePending={workout_types:cloneValue(app.templates)};
+  if(templateBoardReady()){
+    var lists=templateBoardLists();app.templateSavePending.template_exercises=Object.keys(lists).map(function(type){return {workout_type:Number(type),exercise_ids:lists[type]};});
+  }
+  app.saving=true;app.saveError='';flushTemplateSave();renderTemplateBoardStatus();
 }
 
 function flushTemplateSave(){
   if(!app.templateSavePending || app.templateSaveRunning || app.managerSaveRunning || app.saveRequests>0 || hasSaveConflict())return;
   var pending=app.templateSavePending;app.templateSavePending=null;app.templateSaveRunning=true;app.saving=true;app.saveError='';
-  var body={action:'saveWorkoutTypes',workout_types:pending,version:app.version};
+  var generation=clientLoadGeneration;
+  var body=Object.assign({action:'saveWorkoutTypes',version:app.version},pending);
   if(MANAGED_TARGET)body.target_user_id=MANAGED_TARGET;
   postApi(body).then(function(result){
+    if(generation!==clientLoadGeneration)return;
     app.version=Number(result.version || app.version);app.templateSaveRunning=false;app.saveError='';app.saving=!!app.templateSavePending || Object.keys(app.saveTimers).length>0 || app.saveRequests>0;
     renderSavingOnly();flushManagerSave();Object.keys(app.sessionSaveQueues).forEach(flushSessionSave);
-  }).catch(function(error){app.templateSaveRunning=false;app.templateSavePending=app.templateSavePending || pending;app.saving=false;app.saveError=String(error.message || error);renderTemplateError();});
+  }).catch(function(error){if(generation!==clientLoadGeneration)return;app.templateSaveRunning=false;app.templateSavePending=app.templateSavePending || pending;app.saving=false;app.saveError=String(error.message || error);renderTemplateError();});
 }
 
 function renderTemplateError(){
+  renderTemplateBoardStatus();
   var el=root.querySelector('#st-save-state');if(el){el.className='st-saving error';el.textContent='Ошибка: изменения не сохранены';el.title=app.saveError;}
 }
 
@@ -5971,7 +6077,28 @@ window.ST = {
     if(value===null){app.modal.dateError='Введите существующую дату в формате дд.мм.гггг';document.getElementById('st-session-date-error').textContent=app.modal.dateError;field.focus();return;}
     var index=app.modal.sessionIndex;app.modal=null;ST.setDate(index,value);
   },
-  openTemplates:function(){app.modal={type:'templates'};render();},
+  openTemplates:function(){
+    app.modal={type:'templates'};app.boardError='';app.boardSearchType=null;app.boardSearchQuery='';
+    var generation=clientLoadGeneration;
+    if(typeof StrengthTemplateBoard==='undefined'){app.boardError='Не удалось загрузить редактор. Обновите страницу.';render();return;}
+    render();
+    Promise.all(app.templates.filter(function(t){return t.active!==false;}).map(function(t){return ensureTemplate(Number(t.workout_type));})).then(function(){
+      if(generation!==clientLoadGeneration)return;if(app.modal&&app.modal.type==='templates')render();
+    }).catch(function(error){if(generation!==clientLoadGeneration)return;app.boardError=error.message||String(error);if(app.modal&&app.modal.type==='templates')render();});
+  },
+  boardOpenSearch:function(type){app.boardSearchType=type;app.boardSearchQuery='';app.boardFocus={type:type,search:true};render();},
+  boardCloseSearch:function(){var type=app.boardSearchType;app.boardSearchType=null;app.boardSearchQuery='';render();var column=root.querySelector('[data-board-column="'+type+'"]');if(column){var button=column.querySelector('.st-template-add-button');if(button)button.focus({preventScroll:true});}},
+  boardSearch:function(input){app.boardSearchQuery=input.value;var results=input.parentNode.querySelector('[data-board-results]');if(results)results.innerHTML=templateBoardResults(Number(input.dataset.boardSearch),input.value);},
+  boardAdd:function(type,id){
+    if(!templateBoardReady()||hasSaveConflict()||!templateBoardCatalog().some(function(item){return item.exercise_id===id&&item.catalog_active!==false;}))return;
+    var lists=templateBoardLists();if(!lists[type]||lists[type].includes(id))return;
+    lists[type].push(id);app.boardSearchQuery='';app.boardFocus={type:type,search:true};applyTemplateBoardLists(lists);
+  },
+  boardRemove:function(type,id){
+    if(!templateBoardReady()||hasSaveConflict())return;
+    var lists=templateBoardLists();if(!lists[type]||!lists[type].includes(id))return;
+    lists[type]=lists[type].filter(function(value){return value!==id;});applyTemplateBoardLists(lists);
+  },
   renameTemplate:function(id,value){var t=app.templates.find(function(t){return Number(t.workout_type)===id;});if(t){t.title=String(value).trim().slice(0,120) || 'Шаблон '+id;queueTemplateSave();}},
   moveTemplate:function(id,direction){
     var active=app.templates.filter(function(t){return t.active!==false;}),index=active.findIndex(function(t){return Number(t.workout_type)===id;}),target=index+direction;

@@ -504,6 +504,8 @@ depends_on = ["platform.auth", "platform.commerce", "messaging.telegram.engine",
 owns_files = [
   "backend/app/static/apps/strength.html", "legacy/google/strength/**",
   "backend/app/static/strength-journal.css", "backend/app/static/strength-journal-model.js",
+  "backend/app/static/strength-template-board.js", "backend/tests/strength-template-board.test.cjs",
+  "backend/tests/test_strength_template_board.py", "backend/tests/browser/strength-template-board.e2e.mjs",
   "backend/app/static/strength-progression-model.mjs",
   "backend/app/static/strength-tutorial/**", "backend/tests/browser/strength-tutorial.e2e.mjs",
   "backend/tests/test_strength_tutorial_assets.py",

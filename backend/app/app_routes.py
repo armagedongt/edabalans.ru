@@ -911,7 +911,7 @@ def app_asset(asset_name: str) -> FileResponse:
         return public_asset(STATIC_DIR.parents[2] / "content" / "article-components" / filename)
     if asset_name not in {
         "dqs-favicon.svg", "strength-favicon.svg", "metabolism-favicon.svg",
-        "strength-journal.css", "strength-journal-model.js", "strength-progression-model.mjs", "app-client-picker.mjs", "messenger-connection.mjs",
+        "strength-journal.css", "strength-journal-model.js", "strength-template-board.js", "strength-progression-model.mjs", "app-client-picker.mjs", "messenger-connection.mjs",
         "strength.webmanifest", "strength-pwa-180.png", "strength-pwa-192.png", "strength-pwa-512.png",
         "account-pwa-512.png",
         "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png", "site-typography.css",
@@ -1924,7 +1924,7 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             state.version += 1
             payload = {"ok": True, "version": state.version}
         elif action == "saveWorkoutTypes":
-            from app.strength_templates import normalize_templates
+            from app.strength_templates import normalize_templates, template_exercise_settings
 
             state = db.scalar(select(StrengthState).where(StrengthState.id == state.id)
                               .execution_options(populate_existing=True).with_for_update())
@@ -1937,6 +1937,11 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
                 raise ValueError("STRENGTH_STATE_CONFLICT")
             previous = state.workout_types or empty_strength_state(user.id).workout_types
             state.workout_types = normalize_templates(body.get("workout_types"), previous, state.workouts or [])
+            if "template_exercises" in body:
+                state.hidden_exercises = template_exercise_settings(
+                    body["template_exercises"], state.workout_types,
+                    strength_account_catalog(db, state), state.hidden_exercises or [],
+                )
             state.version += 1
             payload = {"ok": True, "version": state.version, "workout_types": state.workout_types}
         elif action == "saveExerciseCatalog":
