@@ -1575,9 +1575,9 @@
 
 </style>
 
-<link rel="stylesheet" href="/assets/strength-journal.css?v=20261126-template-board">
+<link rel="stylesheet" href="/assets/strength-journal.css?v=20261126-page3">
 <script src="/assets/strength-journal-model.js?v=20261022-set-role-inheritance"></script>
-<script src="/assets/strength-template-board.js?v=20261126-catalog2"></script>
+<script src="/assets/strength-template-board.js?v=20261126-page3"></script>
 <script>
 (function(){
 
@@ -1672,7 +1672,7 @@ var app = {
   managerSaveRunning:false,
   boardError:'',
   boardDispose:null,
-  boardScroll:{left:0,top:0},
+  boardScroll:{left:0,top:0,pageY:0},
   boardSearchType:null,
   boardSearchQuery:'',
   boardFocus:null,
@@ -2202,7 +2202,7 @@ function copyCatalog(catalog){
 
 
 function syncModalLock(){
-  var locked = Boolean(app.modal);
+  var locked = Boolean(app.modal && app.modal.type!=='templates');
   if(locked && !app.modalScrollState){
     app.modalScrollState={
       html:document.documentElement.style.overflow,
@@ -3300,7 +3300,8 @@ function clientLocked(index){
 ========================================================= */
 
 function applyJournalScale(){
-  var zoom=app.mainTab==='training'?app.scale/100:1;
+  var zoom=app.mainTab==='training'&&!(app.modal&&app.modal.type==='templates')?app.scale/100:1;
+  root.dataset.templatePage=String(!!(app.modal&&app.modal.type==='templates'));
   root.style.setProperty('--st-root-zoom',zoom);
   root.style.zoom=zoom;
   root.dataset.scaled=String(app.scale>100);
@@ -3554,22 +3555,24 @@ function renderAdminList(){
 ========================================================= */
 
 function renderClient(){
+  if(app.modal&&app.modal.type==='manager')app.modal={type:'templates'};
   applyJournalScale();
   rememberAxisPositions();
   syncScreenHistory();
   root.dataset.journalView=app.journalView;
   applyJournalWidth();
   var html='';
-  if(app.mainTab === 'stats'){
+  if(app.modal&&app.modal.type==='templates'){html=renderTemplateManager();}
+  else if(app.mainTab === 'stats'){
     html='<header class="st-stats-return"><button onclick="ST.setMainTab(\'training\')">← Вернуться к тренировкам</button></header>'+renderStatsTabs()+(app.statsTab==='calendar' ? renderCalendar() : renderAnalysis());
   }else{
     html=commonHeader()+'</div><div class="st-session-panel">'+renderJournalHeader()+renderJournal()+'</div>'+renderSessionSaveState()+
       '<div class="st-history-bottom-bar" aria-label="Прокрутка истории тренировок" tabindex="0"><div style="height:1px"></div></div>';
   }
-  html+=renderModal()+renderFloatingRpe();
+  if(!(app.modal&&app.modal.type==='templates'))html+=renderModal()+renderFloatingRpe();
   if(app.deliveryDispose){app.deliveryDispose();app.deliveryDispose=null;}
   var oldBoard=root.querySelector('.st-template-board');
-  if(oldBoard)app.boardScroll={left:oldBoard.scrollLeft,top:oldBoard.scrollTop};
+  if(oldBoard)app.boardScroll={left:oldBoard.scrollLeft,top:oldBoard.scrollTop,pageY:window.scrollY};
   if(app.boardDispose){app.boardDispose();app.boardDispose=null;}
   root.innerHTML=html;
   root.querySelectorAll('button[aria-label],input[aria-label],a[aria-label]').forEach(function(control){
@@ -4033,7 +4036,7 @@ function bindJournalAxes(){
 function renderTemplateManager(){
   var active=app.templates.filter(function(t){return t.active!==false;});
   var ready=typeof StrengthTemplateBoard!=='undefined'&&templateBoardReady();
-  var html='<div class="st-modal-bg"><section class="st-modal st-template-board-modal" role="dialog" aria-modal="true" aria-label="Шаблоны"><header class="st-template-board-heading"><button class="st-modal-btn st-manager-back" onclick="ST.closeModal()">← К тренировкам</button><div class="st-modal-title">Шаблоны</div><p>Перетаскивайте упражнения за ручку. Можно переносить между шаблонами и менять порядок внутри.</p></header>';
+  var html='<section class="st-template-page" aria-label="Редактирование шаблонов"><header class="st-template-board-heading"><button class="st-modal-btn st-manager-back" onclick="ST.closeModal()">← К тренировкам</button><h1>Редактирование шаблонов</h1><div class="st-template-board-actions"><span id="st-template-board-status" role="status"></span><button class="st-modal-btn" '+(!ready?'disabled':'')+' onclick="ST.addTemplate()">＋ Шаблон</button><button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Готово</button></div><p>Перетаскивайте упражнения за ручку внутри шаблона или между шаблонами.</p></header>';
   if(!ready){
     var retry=typeof StrengthTemplateBoard==='undefined'?'<button class="st-modal-btn" onclick="location.reload()">Обновить страницу</button>':'<button class="st-modal-btn" onclick="ST.openTemplates()">Повторить</button>';
     html+='<div class="st-template-board-loading" role="status">'+(app.boardError?esc(app.boardError)+' '+retry:'Загружаю состав шаблонов…')+'</div>';
@@ -4042,14 +4045,15 @@ function renderTemplateManager(){
     active.forEach(function(t,index){
       var id=Number(t.workout_type),items=templateBoardItems(id);
       html+='<section class="st-template-column" data-board-column="'+id+'"><header class="st-template-column-head"><input aria-label="Название шаблона '+id+'" value="'+esc(t.title)+'" onchange="ST.renameTemplate('+id+',this.value)"><div class="st-template-column-tools">'+
-        '<button onclick="ST.moveTemplate('+id+',-1)" '+(index===0?'disabled':'')+' aria-label="Поднять шаблон">←</button><button onclick="ST.moveTemplate('+id+',1)" '+(index===active.length-1?'disabled':'')+' aria-label="Опустить шаблон">→</button><button onclick="ST.openManager('+id+')" aria-label="Состав упражнений шаблона '+id+'" title="Каталог и свои упражнения">✎</button><button onclick="ST.removeTemplate('+id+')" aria-label="Удалить шаблон '+id+'">×</button></div></header>';
+        '<button onclick="ST.moveTemplate('+id+',-1)" '+(index===0?'disabled':'')+' aria-label="Поднять шаблон">←</button><button onclick="ST.moveTemplate('+id+',1)" '+(index===active.length-1?'disabled':'')+' aria-label="Опустить шаблон">→</button><button onclick="ST.removeTemplate('+id+')" aria-label="Удалить шаблон '+id+'">×</button></div></header>';
       html+='<div class="st-template-exercises" data-board-list="'+id+'" aria-label="Упражнения · '+esc(t.title)+'">';
       items.forEach(function(item){var ex=esc(item.exercise_id);html+='<div class="st-template-exercise" data-board-exercise="'+ex+'"><button type="button" class="st-template-drag" data-board-handle aria-grabbed="false" aria-label="Переместить '+esc(exerciseDisplayName(item,item.exercise_name))+'" title="Перетащите или используйте стрелки">⋮⋮</button><span>'+exerciseNameHtml(item,item.exercise_name)+'</span><button class="st-template-remove" data-exercise-id="'+ex+'" onclick="ST.boardRemove('+id+',this.dataset.exerciseId)" aria-label="Убрать из шаблона">×</button></div>';});
-      html+='</div><div class="st-template-add">'+(app.boardSearchType===id?'<input class="st-template-search" data-board-search="'+id+'" aria-label="Найти упражнение для '+esc(t.title)+'" placeholder="Название упражнения" value="'+esc(app.boardSearchQuery)+'" oninput="ST.boardSearch(this)" onkeydown="if(event.key===\'ArrowDown\'){event.preventDefault();var first=this.parentNode.querySelector(\'[data-board-add-id]\');if(first)first.focus();}else if(event.key===\'Escape\'){event.stopPropagation();ST.boardCloseSearch();}"><div class="st-template-search-results" data-board-results="'+id+'">'+templateBoardResults(id,app.boardSearchQuery)+'</div>':'<button class="st-template-add-button" onclick="ST.boardOpenSearch('+id+')">＋ Добавить упражнение</button>')+'</div></section>';
+      html+='</div><div class="st-template-add">'+(app.boardCustomType===id?'<form onsubmit="event.preventDefault();ST.boardCreate('+id+')"><label>Своё упражнение<input class="st-template-search" data-board-custom="'+id+'" required maxlength="120" placeholder="Полное название упражнения" value="'+esc(app.boardCustomName||'')+'" oninput="ST.boardCustomName(this.value)"></label><div class="st-template-create-actions"><button class="st-modal-btn st-modal-save" type="submit">Добавить</button><button class="st-modal-btn" type="button" onclick="ST.boardCloseSearch()">Отмена</button></div></form>':app.boardSearchType===id?'<input class="st-template-search" data-board-search="'+id+'" aria-label="Найти упражнение для '+esc(t.title)+'" placeholder="Название упражнения" value="'+esc(app.boardSearchQuery)+'" oninput="ST.boardSearch(this)" onkeydown="if(event.key===\'ArrowDown\'){event.preventDefault();var first=this.parentNode.querySelector(\'[data-board-option]\');if(first)first.focus();}else if(event.key===\'Escape\'){event.stopPropagation();ST.boardCloseSearch();}"><div class="st-template-search-results" data-board-results="'+id+'">'+templateBoardResults(id,app.boardSearchQuery)+'</div>':'<button class="st-template-add-button" onclick="ST.boardOpenSearch('+id+')">＋ Добавить упражнение</button>')+'</div></section>';
+
     });
     html+='</div>';
   }
-  return html+'<div class="st-template-board-actions"><span id="st-template-board-status" role="status"></span><button class="st-modal-btn" '+(!ready?'disabled':'')+' onclick="ST.addTemplate()">＋ Шаблон</button><button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Готово</button></div></section></div>';
+  return html+'</section>';
 }
 
 function templateBoardReady(){return app.templates.filter(function(t){return t.active!==false;}).every(function(t){return !!app.workouts[Number(t.workout_type)];});}
@@ -4059,7 +4063,7 @@ function templateBoardCatalog(){var map=new Map();app.accountCatalog.forEach(fun
 function templateBoardResults(type,query){
   var ids=templateBoardItems(type).map(function(item){return String(item.exercise_id);});
   var matches=StrengthTemplateBoard.search(templateBoardCatalog(),query,ids);
-  return matches.length?matches.map(function(item){return '<button type="button" data-board-add-id="'+esc(item.exercise_id)+'" onclick="ST.boardAdd('+type+',this.dataset.boardAddId)">'+exerciseNameHtml(item,item.exercise_name)+'</button>';}).join(''):'<p>Упражнения не найдены</p>';
+  return '<button type="button" data-board-option data-board-create onclick="ST.boardOpenCustom('+type+')">＋ Добавить своё упражнение</button>'+(matches.length?matches.map(function(item){return '<button type="button" data-board-option data-board-add-id="'+esc(item.exercise_id)+'" onclick="ST.boardAdd('+type+',this.dataset.boardAddId)">'+exerciseNameHtml(item,item.exercise_name)+'</button>';}).join(''):'<p>Упражнения не найдены</p>');
 }
 function applyTemplateBoardLists(lists){
   app.catalogEditEpoch++;
@@ -4077,40 +4081,35 @@ function mountTemplateBoard(){
     var lists=StrengthTemplateBoard.move(templateBoardLists(),from,to,id,before);
     if(lists){app.boardFocus={type:Number(to),id:id};applyTemplateBoardLists(lists);}
   });
-  var viewport=window.visualViewport,modal=board.closest('.st-template-board-modal'),overlay=modal.parentNode,resizeFrame=0;
-  function fitSearch(){
-    var field=board.querySelector('[data-board-search]');if(!field)return;
-    field.scrollIntoView({block:'nearest',inline:'nearest'});
-    var results=field.parentNode.querySelector('[data-board-results]');
-    if(results)results.style.maxHeight=Math.max(0,Math.min(310,field.getBoundingClientRect().top-board.getBoundingClientRect().top-12))+'px';
+  var resizeFrame=0,viewport=window.visualViewport;
+  function fitSearch(){var field=board.querySelector('[data-board-search],[data-board-custom]');if(field)field.scrollIntoView({block:'nearest',inline:'nearest'});}
+  function fitViewport(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(fitSearch);}
+  function outside(event){
+    if(app.boardSearchType===null)return;
+    var area=event.target.closest('.st-template-add'),column=area&&area.closest('[data-board-column]');
+    if(column&&Number(column.dataset.boardColumn)===app.boardSearchType)return;
+    var type=app.boardSearchType,field=board.querySelector('[data-board-search],[data-board-custom]');
+    app.boardSearchType=null;app.boardSearchQuery='';app.boardCustomType=null;app.boardCustomName='';
+    if(field)field.closest('.st-template-add').innerHTML='<button class="st-template-add-button" onclick="ST.boardOpenSearch('+type+')">＋ Добавить упражнение</button>';
   }
-  function fitViewport(){
-    var height=viewport&&viewport.scale===1?viewport.height:window.innerHeight;
-    overlay.style.height=height+'px';overlay.style.top=(viewport&&viewport.scale===1?viewport.offsetTop:0)+'px';overlay.style.bottom='auto';
-    modal.style.setProperty('--st-board-viewport-height',height+'px');
-    cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(fitSearch);
-  }
-  window.addEventListener('resize',fitViewport);
-  if(viewport){viewport.addEventListener('resize',fitViewport);viewport.addEventListener('scroll',fitViewport);}
-  app.boardDispose=function(){disposeDrag();cancelAnimationFrame(resizeFrame);window.removeEventListener('resize',fitViewport);if(viewport){viewport.removeEventListener('resize',fitViewport);viewport.removeEventListener('scroll',fitViewport);}};
+  document.addEventListener('click',outside);
+  function outsidePointer(event){if(!event.target.closest('button,a,input,textarea,select,label'))outside(event);}
+  document.addEventListener('pointerup',outsidePointer);
+  window.addEventListener('resize',fitViewport);if(viewport)viewport.addEventListener('resize',fitViewport);
+  app.boardDispose=function(){disposeDrag();cancelAnimationFrame(resizeFrame);document.removeEventListener('click',outside);document.removeEventListener('pointerup',outsidePointer);window.removeEventListener('resize',fitViewport);if(viewport)viewport.removeEventListener('resize',fitViewport);};
+  window.scrollTo(window.scrollX,app.boardScroll.pageY||0);
   fitViewport();
-  board.addEventListener('pointerdown',function(event){
-    if(app.boardSearchType===null||event.target.closest('.st-template-add'))return;
-    var type=app.boardSearchType,field=board.querySelector('[data-board-search="'+type+'"]');
-    app.boardSearchType=null;app.boardSearchQuery='';
-    if(field)field.parentNode.innerHTML='<button class="st-template-add-button" onclick="ST.boardOpenSearch('+type+')">＋ Добавить упражнение</button>';
-  });
   board.addEventListener('keydown',function(event){
     if(app.boardSearchType===null||!event.target.closest('.st-template-add'))return;
     if(event.key==='Escape'){event.preventDefault();event.stopPropagation();ST.boardCloseSearch();return;}
-    if(!event.target.matches('[data-board-add-id]')||!['ArrowUp','ArrowDown'].includes(event.key))return;
-    var footer=event.target.closest('.st-template-add'),buttons=Array.from(footer.querySelectorAll('[data-board-add-id]'));
+    if(!event.target.matches('[data-board-option]')||!['ArrowUp','ArrowDown'].includes(event.key))return;
+    var footer=event.target.closest('.st-template-add'),buttons=Array.from(footer.querySelectorAll('[data-board-option]'));
     var index=buttons.indexOf(event.target)+(event.key==='ArrowDown'?1:-1);
     event.preventDefault();if(index<0)footer.querySelector('input').focus();else buttons[Math.min(index,buttons.length-1)].focus();
   });
   if(app.boardFocus){
     var focus=app.boardFocus;app.boardFocus=null;
-    if(focus.search){var field=board.querySelector('[data-board-search="'+focus.type+'"]');if(field){field.focus({preventScroll:true});field.setSelectionRange(field.value.length,field.value.length);}}
+    if(focus.search){var field=board.querySelector('[data-board-search="'+focus.type+'"],[data-board-custom="'+focus.type+'"]');if(field){field.focus({preventScroll:true});field.setSelectionRange(field.value.length,field.value.length);}}
     else{var list=board.querySelector('[data-board-list="'+focus.type+'"]');if(list){var row=Array.from(list.children).find(function(item){return item.dataset.boardExercise===focus.id;});if(row){row.querySelector('[data-board-handle]').focus({preventScroll:true});row.scrollIntoView({block:'nearest',inline:'nearest'});}}}
   }
   renderTemplateBoardStatus();
@@ -4119,7 +4118,7 @@ function renderTemplateBoardStatus(){
   var el=root.querySelector('#st-template-board-status');if(!el)return;
   if(typeof StrengthTemplateBoard==='undefined'||!templateBoardReady()){el.className=app.boardError?'error':'';el.textContent=app.boardError?'Редактор не загружен':'Загружаю…';return;}
   el.className=app.saveError?'error':'';
-  el.innerHTML=app.saveError?'Изменения не сохранены · '+esc(saveErrorText())+(hasSaveConflict()?' <button onclick="ST.reloadCurrent()">Загрузить актуальное</button>':' <button onclick="ST.retrySave()">Повторить</button>'):(app.templateSavePending||app.templateSaveRunning||app.managerSaveRunning?'Сохраняю…':'Сохранено');
+  el.innerHTML=app.saveError?'Изменения не сохранены · '+esc(saveErrorText())+(hasSaveConflict()?' <button onclick="ST.reloadCurrent()">Загрузить актуальное</button>':' <button onclick="ST.retrySave()">Повторить</button>'):(app.templateSavePending||app.templateSaveRunning||app.managerSaveRunning||app.managerSavePending?'Сохраняю…':'Сохранено');
 }
 
 function queueTemplateSave(){
@@ -4132,7 +4131,7 @@ function queueTemplateSave(){
 }
 
 function flushTemplateSave(){
-  if(!app.templateSavePending || app.templateSaveRunning || app.managerSaveRunning || app.saveRequests>0 || hasSaveConflict())return;
+  if(!app.templateSavePending || app.templateSaveRunning || app.managerSaveRunning || app.managerSavePending || app.saveRequests>0 || hasSaveConflict())return;
   var pending=app.templateSavePending;app.templateSavePending=null;app.templateSaveRunning=true;app.saving=true;app.saveError='';
   var generation=clientLoadGeneration;
   var body=Object.assign({action:'saveWorkoutTypes',version:app.version},pending);
@@ -5508,7 +5507,7 @@ function renderModal(){
     'manager'
   ){
 
-    return renderManager();
+    return renderTemplateManager();
 
   }
 
@@ -5606,97 +5605,6 @@ function renderModal(){
   }
 
   return '';
-
-}
-
-
-function renderManager(){
-
-  var catalog = app.managerDraft || [];
-
-  catalog.sort(
-    function(a,b){
-
-      var aActive = a.active === true;
-      var bActive = b.active === true;
-      if(aActive !== bActive){
-        return aActive ? -1 : 1;
-      }
-
-      return (
-        Number(
-          a.sort_order ||
-          0
-        ) -
-        Number(
-          b.sort_order ||
-          0
-        )
-      );
-
-    }
-  );
-
-  var html =
-    '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeManager()">'+
-      '<div class="st-modal st-manager-modal">'+
-        '<div class="st-manager-heading"><button class="st-modal-btn st-manager-back" onclick="ST.closeManager()">← Назад к шаблонам</button><div class="st-modal-title">Редактировать · Шаблон '+app.workoutType+'</div></div>'+
-        '<div class="st-modal-sub">Каталог общий для аккаунта. Добавляйте упражнения в этот шаблон, убирайте их и меняйте порядок. Изменения применяются сразу.</div>'+
-        '<div class="st-manager-scroll"><div class="st-manager-list">';
-
-  for(
-    var i=0;
-    i<catalog.length;
-    i++
-  ){
-
-    if(catalog[i].catalog_active === false || (catalog[i].source!=='base' && catalog[i].source!=='custom' && catalog[i].active!==true)){
-      continue;
-    }
-
-    var active =
-      !(
-        catalog[i].active === false ||
-        String(
-          catalog[i].active
-        ).toLowerCase() ===
-        'false'
-      );
-
-    html +=
-      '<div class="st-manager-row '+(active?'in-template':'out-template')+'">'+
-        '<div class="st-manager-name">'+
-          exerciseNameHtml(catalog[i],catalog[i].exercise_name)+
-        '</div>'+
-        '<div class="st-manager-actions">'+
-          (active ? '<button class="st-mini" data-exercise-id="'+esc(catalog[i].exercise_id)+'" onclick="ST.moveExercise(this.dataset.exerciseId,-1)" aria-label="Выше">↑</button><button class="st-mini" data-exercise-id="'+esc(catalog[i].exercise_id)+'" onclick="ST.moveExercise(this.dataset.exerciseId,1)" aria-label="Ниже">↓</button>' : '')+
-          (catalog[i].source === 'custom' ? '<button class="st-mini" data-exercise-id="'+esc(catalog[i].exercise_id)+'" onclick="ST.renameExercise(this.dataset.exerciseId)">Изменить</button><button class="st-mini danger" data-exercise-id="'+esc(catalog[i].exercise_id)+'" onclick="ST.deleteExercise(this.dataset.exerciseId)">Удалить</button>' : '')+
-          '<button class="st-mini" data-exercise-id="'+esc(catalog[i].exercise_id)+'" onclick="ST.toggleExercise(this.dataset.exerciseId)">'+
-            (
-              active
-              ?
-              'Убрать'
-              :
-              'Добавить'
-            )+
-          '</button>'+
-        '</div>'+
-      '</div>';
-
-  }
-
-  html +=
-        '</div>'+
-        '<div class="st-custom-add"><div class="st-custom-add-row"><input id="st-new-exercise" class="st-modal-input" placeholder="Название своего упражнения"><button class="st-modal-btn st-modal-save" onclick="ST.addExercise()">Добавить своё</button></div></div></div>'+
-        '<div class="st-modal-actions">'+
-          '<span id="st-manager-save-state" class="st-manager-save-state'+(app.saveError?' error':'')+'">'+(app.saveError?'Не удалось сохранить':(app.managerSaveRunning||app.managerSavePending||app.saveRequests>0?'Сохраняю…':'Сохранено'))+'</span>'+
-          '<button class="st-modal-btn st-manager-undo" onclick="ST.undoManagerChange()" '+(app.managerUndoStack.length?'':'disabled')+'>↶ Отменить</button>'+
-          '<button class="st-modal-btn st-modal-close" onclick="ST.closeManager()">Закрыть</button>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
-
-  return html;
 
 }
 
@@ -5810,10 +5718,10 @@ function rememberManagerChange(){
 }
 
 
-function managerCatalogBody(catalog){
+function managerCatalogBody(catalog,type){
   var body = {
     action:'saveExerciseCatalog',
-    workout_type:app.workoutType,
+    workout_type:Number(type||app.workoutType),
     version:app.version,
     exercises:catalog.slice().sort(function(a,b){return Number(a.sort_order)-Number(b.sort_order);}).map(function(item,index){
       return {
@@ -5836,7 +5744,8 @@ function managerCatalogBody(catalog){
 }
 
 
-function applyManagerDraft(catalog){
+function applyManagerDraft(catalog,type){
+  type=Number(type||app.workoutType);
   app.catalogEditEpoch++;
   for(var workoutType of Object.keys(app.workouts).map(Number)){
     var accountWorkout = app.workouts[workoutType];
@@ -5850,8 +5759,8 @@ function applyManagerDraft(catalog){
       var local = byId[String(item.exercise_id)];
       if(!local){
         local = copyCatalog([item])[0];
-        local.active = workoutType === app.workoutType ? item.active === true : false;
-        local.sort_order = workoutType === app.workoutType ? index+1 : accountWorkout.catalog.length+1;
+        local.active = workoutType === type ? item.active === true : false;
+        local.sort_order = workoutType === type ? index+1 : accountWorkout.catalog.length+1;
         accountWorkout.catalog.push(local);
         byId[String(item.exercise_id)] = local;
       }
@@ -5865,7 +5774,7 @@ function applyManagerDraft(catalog){
       local.media_url = item.media_url;
       local.guide = item.guide ? cloneValue(item.guide) : null;
       local.training = item.training ? cloneValue(item.training) : null;
-      if(workoutType === app.workoutType){
+      if(workoutType === type){
         local.active = item.active === true;
         local.sort_order = index+1;
       }
@@ -5884,6 +5793,7 @@ function applyManagerDraft(catalog){
 
 
 function renderManagerSavingOnly(){
+  renderTemplateBoardStatus();
   var el = document.getElementById('st-manager-save-state');
   if(!el){ return; }
   el.className = 'st-manager-save-state'+(app.saveError?' error':'');
@@ -5970,14 +5880,15 @@ function flushManagerSave(){
 }
 
 
-function queueManagerSave(){
-  var catalog = copyCatalog(app.managerDraft || []);
-  app.managerDraft = catalog;
-  applyManagerDraft(catalog);
+function queueManagerSave(override,type){
+  type=Number(type||app.workoutType);
+  var catalog = copyCatalog(override || app.managerDraft || []);
+  if(!override)app.managerDraft = catalog;
+  applyManagerDraft(catalog,type);
   if(!hasSaveConflict()){ app.saveError = ''; }
   var pending = {
-    catalogBody:managerCatalogBody(catalog),
-    workoutType:app.workoutType,
+    catalogBody:managerCatalogBody(catalog,type),
+    workoutType:type,
     retryCount:0
   };
   app.managerSavePending = app.managerSavePending || [];
@@ -6078,7 +5989,7 @@ window.ST = {
     var index=app.modal.sessionIndex;app.modal=null;ST.setDate(index,value);
   },
   openTemplates:function(){
-    app.modal={type:'templates'};app.boardError='';app.boardSearchType=null;app.boardSearchQuery='';
+    app.modal={type:'templates'};app.boardError='';app.boardSearchType=null;app.boardCustomType=null;app.boardSearchQuery='';app.boardScroll={left:0,top:0,pageY:0};
     var generation=clientLoadGeneration;
     if(typeof StrengthTemplateBoard==='undefined'){app.boardError='Не удалось загрузить редактор. Обновите страницу.';render();return;}
     render();
@@ -6086,8 +5997,18 @@ window.ST = {
       if(generation!==clientLoadGeneration)return;if(app.modal&&app.modal.type==='templates')render();
     }).catch(function(error){if(generation!==clientLoadGeneration)return;app.boardError=error.message||String(error);if(app.modal&&app.modal.type==='templates')render();});
   },
-  boardOpenSearch:function(type){app.boardSearchType=type;app.boardSearchQuery='';app.boardFocus={type:type,search:true};render();},
-  boardCloseSearch:function(){var type=app.boardSearchType;app.boardSearchType=null;app.boardSearchQuery='';render();var column=root.querySelector('[data-board-column="'+type+'"]');if(column){var button=column.querySelector('.st-template-add-button');if(button)button.focus({preventScroll:true});}},
+  boardOpenSearch:function(type){app.boardCustomType=null;app.boardSearchType=type;app.boardSearchQuery='';app.boardFocus={type:type,search:true};render();},
+  boardCloseSearch:function(){app.boardCustomType=null;app.boardCustomName='';var type=app.boardSearchType;app.boardSearchType=null;app.boardSearchQuery='';render();var column=root.querySelector('[data-board-column="'+type+'"]');if(column){var button=column.querySelector('.st-template-add-button');if(button)button.focus({preventScroll:true});}},
+  boardOpenCustom:function(type){app.boardCustomType=type;app.boardCustomName=app.boardSearchQuery;app.boardFocus={type:type,search:true};render();},
+  boardCustomName:function(value){app.boardCustomName=value;},
+  boardCreate:function(type){
+    var name=String(app.boardCustomName||'').trim();
+    if(!name||name.length>120||!templateBoardReady()||hasSaveConflict())return;
+    var catalog=copyCatalog(app.workouts[type].catalog).sort(function(a,b){return Number(a.sort_order)-Number(b.sort_order);}),id='custom-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);
+    catalog.push({exercise_id:id,exercise_name:name,full_name:name,short_name:name,source:'custom',active:true,catalog_active:true,sort_order:catalog.length+1});
+    app.boardCustomType=null;app.boardCustomName='';app.boardSearchType=null;app.boardSearchQuery='';
+    queueManagerSave(catalog,type);if(app.templateSavePending)queueTemplateSave();render();
+  },
   boardSearch:function(input){app.boardSearchQuery=input.value;var results=input.parentNode.querySelector('[data-board-results]');if(results)results.innerHTML=templateBoardResults(Number(input.dataset.boardSearch),input.value);},
   boardAdd:function(type,id){
     if(!templateBoardReady()||hasSaveConflict()||!templateBoardCatalog().some(function(item){return item.exercise_id===id&&item.catalog_active!==false&&(item.source==='base'||item.source==='custom');}))return;
@@ -6913,26 +6834,7 @@ window.ST = {
   },
 
 
-  openManager:function(type){
-    if(type && !app.workouts[Number(type)]){ensureTemplate(Number(type)).then(function(){ST.openManager(type);}).catch(function(error){showDeliveryNotice(error.message,true);});return;}
-
-    app.managerReturnToTemplates = !!(app.modal && app.modal.type==='templates');
-
-    if(type && app.workouts[Number(type)]){
-      app.workoutType = Number(type);
-      selectLatestTemplateSession();
-      app.statsExerciseId = '';
-    }
-
-    app.managerDraft = copyCatalog(templateWorkout().catalog);
-    app.managerUndoStack = [];
-    app.modal = {
-      type:'manager'
-    };
-
-    render();
-
-  },
+  openManager:function(){return ST.openTemplates();},
 
 
   hideExercise:function(id){

@@ -66,12 +66,12 @@ async function open(width,managed=false,longNotes=false,manyExercises=false,same
     timeoutSession=false;return;
    }
    active++;if(active>1)overlap=true;
-   writes.push(data);if(data.action==='saveExerciseCatalog'&&catalogGate){const gate=catalogGate;catalogGate=null;await gate;}if(data.action==='saveSession'&&sessionGate){const gate=sessionGate;sessionGate=null;await gate;}await new Promise(resolve=>setTimeout(resolve,30));
+   writes.push(data);if((data.action==='saveExerciseCatalog'||data.action==='saveWorkoutTypes')&&catalogGate){const gate=catalogGate;catalogGate=null;await gate;}if(data.action==='saveSession'&&sessionGate){const gate=sessionGate;sessionGate=null;await gate;}await new Promise(resolve=>setTimeout(resolve,30));
    if(failSession && data.action==='saveSession'){failSession=false;reply={ok:false,error:'SYNTHETIC_SAVE_ERROR'};}
    else if(failTemplate && data.action==='saveWorkoutTypes'){failTemplate=false;reply={ok:false,error:'NETWORK_TEMPORARY'};}
    else if(data.action==='saveExerciseCatalog'&&!state.workout_types.some(t=>Number(t.workout_type)===data.workout_type&&t.active!==false))reply={ok:false,error:'INVALID_WORKOUT_TEMPLATE'};
    else if(data.version!==state.version)reply={ok:false,error:'STRENGTH_STATE_CONFLICT'};
-   else{reply.version=++state.version;if(data.action==='saveWorkoutTypes')state.workout_types=data.workout_types;if(data.action==='saveExerciseCatalog'){
+   else{reply.version=++state.version;if(data.action==='saveWorkoutTypes'){state.workout_types=data.workout_types;for(const list of data.template_exercises||[]){const items=structuredClone(catalogs.get(list.workout_type)||state.exercise_catalog);for(const item of items){item.active=list.exercise_ids.includes(item.exercise_id);item.sort_order=item.active?list.exercise_ids.indexOf(item.exercise_id)+1:100;}catalogs.set(list.workout_type,items);}}if(data.action==='saveExerciseCatalog'){
     const incoming=data.exercises.map(e=>({...state.exercise_catalog.find(item=>item.exercise_id===e.exercise_id),...e}));
     catalogs.set(data.workout_type,incoming);
     for(const [type,existing] of catalogs){if(type===data.workout_type)continue;for(const item of incoming){const shared=existing.find(e=>e.exercise_id===item.exercise_id);if(shared){shared.exercise_name=item.exercise_name;shared.short_name=item.short_name||item.exercise_name;}else if(item.source==='custom')existing.push({...item,active:false});}}
@@ -336,6 +336,17 @@ const savedRpeSession=scale.writes.filter(w=>w.action==='saveSession').at(-1).se
 for(const exercise of savedRpeSession.exercises)for(const set of exercise.sets){const stored=scale.state.sets.find(row=>row.session_id===savedRpeSession.session_id&&row.exercise_id===exercise.exercise_id&&row.set_number===set.set_number);if(stored)stored.rpe=set.rpe;}
 await sp.reload();await rpeSource.waitFor();assert.equal(await rpeSource.textContent(),'—','cleared rating survives reloading');
 await scale.context.close();
+// The full-page editor stays inside the available admin content, beside the sidebar.
+for(const width of [430,1440]){
+ const trial=await open(width,true,false,false,false,false,true),page=trial.page;
+ await page.getByRole('button',{name:'Управление шаблонами',exact:true}).click();await page.locator('[data-board-list="1"]').waitFor();
+ assert.equal(await page.locator('.st-modal-bg').count(),0);
+ assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ const back=page.getByRole('button',{name:'К тренировкам',exact:false});
+ assert(await back.evaluate(e=>{const r=e.getBoundingClientRect();return e.contains(document.elementFromPoint(r.left+r.width/2,r.top+r.height/2));}),'back button is not covered by the sidebar');
+ await page.screenshot({path:`${out}/admin-template-page-${width}.png`,fullPage:true});
+ await page.goBack();await page.locator('.st-template-page').waitFor({state:'detached'});await trial.context.close();
+}
 // Re-rendering rows with expanded notes must not move the viewport on +/- sets.
 const stable=await open(430,false,true),vp=stable.page;await vp.setViewportSize({width:430,height:400});
 const target=vp.locator('.st-history-row').nth(1).locator('article').last();
@@ -354,43 +365,35 @@ assert.equal(await target.locator('.st-grid-set').count(),initialSets,'remove de
 assert.equal(stable.writes.filter(w=>w.action==='saveSession').at(-1).session.exercises.find(e=>e.exercise_id===guide[1].code).sets.length,initialSets,'removed set is persisted');
 assert(Math.abs(await vp.evaluate(()=>scrollY)-y)<1,'removing set preserves vertical scroll');
 await vp.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
-await vp.getByRole('button',{name:'Состав упражнений шаблона 1',exact:true}).click();
-assert(await vp.locator('.st-manager-modal').isVisible());
-await vp.getByRole('button',{name:'← Назад к шаблонам',exact:true}).click();
-assert(await vp.getByRole('dialog',{name:'Шаблоны',exact:true}).isVisible(),'composition returns to template management');
+assert(await vp.getByRole('region',{name:'Редактирование шаблонов',exact:true}).isVisible());
+assert.equal(await vp.locator('.st-manager-modal').count(),0);
 await stable.context.close();
 // A new template's composition and order survive reload without rewriting workout history.
 const composition=await open(768),cp=composition.page;
 const historyBefore=JSON.stringify([composition.state.sessions,composition.state.session_exercises,composition.state.sets]);
 await cp.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
 await cp.getByRole('button',{name:'＋ Шаблон',exact:true}).click();await cp.waitForTimeout(100);
-await cp.getByRole('button',{name:'Состав упражнений шаблона 4',exact:true}).click();
-await cp.locator('.st-manager-row').nth(0).getByRole('button',{name:'Добавить',exact:true}).click();
-await cp.locator('.st-manager-row').nth(1).getByRole('button',{name:'Добавить',exact:true}).click();
-await cp.locator('.st-manager-row').nth(1).getByRole('button',{name:'Выше',exact:true}).click();await cp.waitForTimeout(250);
-const catalogSave=composition.writes.filter(w=>w.action==='saveExerciseCatalog').at(-1);
-assert.equal(catalogSave.workout_type,4);
-assert.deepEqual(catalogSave.exercises.filter(e=>e.active).map(e=>e.exercise_id),[guide[1].code,guide[0].code]);
-await cp.reload();await cp.getByRole('button',{name:'Шаблон 4',exact:true}).click();
-await cp.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
-await cp.getByRole('button',{name:'Состав упражнений шаблона 4',exact:true}).click();
-assert.deepEqual(await cp.locator('.st-manager-row.in-template .st-manager-name').allTextContents(),[guide[1].full_name,guide[0].full_name]);
+await cp.evaluate(ids=>{ST.boardAdd(4,ids[0]);ST.boardAdd(4,ids[1]);},guide.slice(0,2).map(g=>g.code));
+await cp.locator('[data-board-list="4"] [data-board-handle]').last().focus();await cp.keyboard.press('ArrowUp');
+await cp.waitForFunction(()=>document.querySelector('#st-template-board-status')?.textContent==='Сохранено');
+const catalogSave=composition.writes.filter(w=>w.action==='saveWorkoutTypes').at(-1);
+assert.deepEqual(catalogSave.template_exercises.find(t=>t.workout_type===4).exercise_ids,[guide[1].code,guide[0].code]);
+await cp.reload();await cp.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
+assert.deepEqual(await cp.locator('[data-board-list="4"] .st-template-exercise>span').allTextContents(),[guide[1].full_name,guide[0].full_name]);
 assert.equal(composition.writes.some(w=>w.action==='saveSession'),false,'composition edits never rewrite workout history');
 assert.equal(JSON.stringify([composition.state.sessions,composition.state.session_exercises,composition.state.sets]),historyBefore);
 await composition.context.close();
 // Deleting a template discards its pending composition writes after the in-flight save settles.
 const deletion=await open(768),dp=deletion.page;dp.on('dialog',d=>d.accept());
 await dp.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
-await dp.getByRole('button',{name:'Состав упражнений шаблона 1',exact:true}).click();
 const releaseCatalog=deletion.holdNextCatalog();
-await dp.locator('.st-manager-row').nth(0).getByRole('button',{name:'Убрать',exact:true}).click();
-await dp.waitForFunction(()=>document.querySelector('#st-manager-save-state').textContent.includes('Сохраняю'));
-await dp.locator('.st-manager-row.in-template').first().getByRole('button',{name:'Убрать',exact:true}).click();
-await dp.getByRole('button',{name:'← Назад к шаблонам',exact:true}).click();
-await dp.getByRole('button',{name:'Удалить шаблон 1',exact:true}).click();releaseCatalog();await dp.waitForTimeout(1100);
-assert.equal(deletion.writes.filter(w=>w.action==='saveExerciseCatalog').length,1,'deleted template has no further queued catalogue writes');
+await dp.evaluate(id=>ST.boardRemove(1,id),guide[0].code);
+await dp.waitForFunction(()=>document.querySelector('#st-template-board-status').textContent.includes('Сохраняю'));
+await dp.evaluate(id=>ST.boardRemove(1,id),guide[1].code);
+await dp.getByRole('button',{name:'Удалить шаблон 1',exact:true}).click();releaseCatalog();
+await dp.waitForFunction(()=>document.querySelector('#st-template-board-status')?.textContent==='Сохранено');
 assert.equal(deletion.state.workout_types.find(t=>t.workout_type===1).active,false);
-assert.equal(await dp.locator('#st-save-state').innerText(),'Сохранено');assert.equal(deletion.getOverlap(),false);
+assert.equal(deletion.getOverlap(),false);
 await deletion.context.close();
 // Missing historical cards and stored two-set cards share the same height.
 const short=await open(1440,false,false,false,false,true),sh=short.page;
@@ -401,15 +404,15 @@ await short.context.close();
 const replacement=await open(430),rp=replacement.page;
 rp.on('dialog',d=>d.accept());await rp.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
 for(const id of [1,2,3])await rp.getByRole('button',{name:'Удалить шаблон '+id,exact:true}).click();
-await rp.getByRole('button',{name:'＋ Шаблон',exact:true}).click();await rp.getByRole('button',{name:'Состав упражнений шаблона 4',exact:true}).click();
-assert.equal(await rp.locator('.st-manager-name').count(),2,'replacement can select the account catalogue');await replacement.context.close();
+await rp.getByRole('button',{name:'＋ Шаблон',exact:true}).click();await rp.locator('[data-board-column="4"] .st-template-add-button').click();
+assert.equal(await rp.locator('[data-board-add-id]').count(),2,'replacement can select the account catalogue');await replacement.context.close();
 // A successful retry clears the unsaved error indicator.
 const retry=await open(430),ep=retry.page;retry.failNextTemplate();
 await ep.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
 await ep.getByRole('textbox',{name:'Название шаблона 1',exact:true}).fill('Переименован');await ep.getByRole('textbox',{name:'Название шаблона 1',exact:true}).press('Tab');
-await ep.waitForTimeout(100);assert.match(await ep.locator('#st-save-state').innerText(),/Ошибка/);
-await ep.getByRole('button',{name:'Готово',exact:true}).click();await ep.waitForTimeout(100);
-assert.equal(await ep.locator('#st-save-state').innerText(),'Сохранено');await retry.context.close();
+await ep.waitForTimeout(100);assert.match(await ep.locator('#st-template-board-status').innerText(),/не сохранены/);
+await ep.getByRole('button',{name:'Повторить',exact:true}).click();
+await ep.waitForFunction(()=>document.querySelector('#st-template-board-status')?.textContent==='Сохранено');await retry.context.close();
 // Position colours repeat after seven within a template; different templates use different sets.
 const palette=await open(1440,false,false,true),pp=palette.page;
 const tones=await pp.locator('.st-history-row').evaluateAll(es=>es.map(e=>getComputedStyle(e.querySelector('.st-modern-head')).backgroundColor));
@@ -429,11 +432,9 @@ assert.equal(await np.locator('#st-guide-title').innerText(),guide[1].full_name)
 await np.screenshot({path:`${out}/exercise-full-name.png`});
 await np.getByRole('button',{name:'Закрыть информацию об упражнении',exact:true}).click();
 await np.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
-await np.getByRole('button',{name:'Состав упражнений шаблона 1',exact:true}).click();
-await np.locator('.st-manager-row.in-template').filter({hasText:guide[1].full_name}).getByRole('button',{name:'Убрать',exact:true}).click();
-await np.waitForFunction(()=>document.querySelector('#st-manager-save-state').textContent==='Сохранено');
-await np.getByRole('button',{name:'← Назад к шаблонам',exact:true}).click();
-await np.getByRole('button',{name:'Готово',exact:true}).click();
+await np.evaluate(id=>ST.boardRemove(1,id),guide[1].code);
+await np.waitForFunction(()=>document.querySelector('#st-template-board-status').textContent==='Сохранено');
+await np.evaluate(()=>new Promise(resolve=>{window.addEventListener('popstate',()=>resolve(),{once:true});ST.closeModal();}));
 await np.getByRole('button',{name:'Статистика',exact:true}).click();
 await np.getByRole('button',{name:'Анализ',exact:true}).click();
 assert.equal(await np.locator('.st-select option').filter({hasText:guide[1].full_name}).count(),1);
@@ -462,9 +463,7 @@ await bp.screenshot({path:`${out}/back-restored.png`});
 await bp.goForward();await bp.locator('.st-guide-header').waitFor();
 await bp.getByRole('button',{name:'Закрыть информацию об упражнении'}).click();
 await bp.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
-await bp.getByRole('button',{name:'Состав упражнений шаблона 1',exact:true}).click();
-await bp.goBack();await bp.getByRole('dialog',{name:'Шаблоны',exact:true}).waitFor();
-await bp.goBack();await bp.locator('.st-modal-bg').waitFor({state:'detached'});
+await bp.goBack();await bp.locator('.st-template-page').waitFor({state:'detached'});
 const note=bp.locator('.st-history-row').first().locator('article').first().getByRole('button',{name:'Примечание к упражнению'});
 assert.equal(await note.evaluate(e=>getComputedStyle(e.querySelector('span')).textOverflow),'ellipsis');
 assert(await note.evaluate(e=>e.classList.contains('has-note')));
@@ -843,28 +842,8 @@ for(const width of [360,430,700,701,768,1440]){
  assert(trial.readRequests.filter(r=>r.catalog_only==='1').length>=1);
  assert.equal(trial.writes.length,0);await trial.context.close();
 }
-// A stale catalogue read is retried after editing the account catalogue in the first template.
-{
- const trial=await open(430,false,false,false,false,false,false,false,true),page=trial.page;
- await page.waitForFunction(()=>document.querySelector('.st-history-row'));
- await page.waitForTimeout(60);
- await page.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
- await page.getByRole('button',{name:'Состав упражнений шаблона 1',exact:true}).click();
- await page.getByPlaceholder('Название своего упражнения').fill('Своё упражнение после старого чтения');
- await page.getByRole('button',{name:'Добавить своё',exact:true}).click();
- await page.waitForFunction(()=>document.querySelector('#st-manager-save-state')?.textContent==='Сохранено');
- assert(trial.writes.some(w=>w.action==='saveExerciseCatalog'));
- await page.getByRole('button',{name:'Закрыть',exact:true}).click();
- await page.getByRole('button',{name:'Готово',exact:true}).click();
- trial.releaseCatalogueReads();
- await page.getByRole('button',{name:'Шаблон 2',exact:true}).click();
- await page.locator('.st-template-loading').waitFor({state:'detached'});
- await page.getByRole('button',{name:'Управление шаблонами',exact:true}).click();
- await page.getByRole('button',{name:'Состав упражнений шаблона 2',exact:true}).click();
- assert(await page.locator('.st-manager-row').filter({hasText:'Своё упражнение после старого чтения'}).isVisible());
- assert(trial.readRequests.filter(r=>r.catalog_only==='1'&&r.type==='2').length>=2,'old snapshot is discarded and re-read');
- await trial.context.close();
-}
+// Template editing now waits for all catalogues. Load failure, creation during writes,
+// and refreshed personal catalogue persistence are covered by strength-template-board.e2e.mjs.
 // Plan field tint compares with the last actual execution across templates, not the old plan.
 {
  const trial=await open(430),page=trial.page;

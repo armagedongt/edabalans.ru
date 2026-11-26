@@ -42,6 +42,8 @@ async function open(width,managed=false,options={}){
    }
    if(options.sources&&data.action==='saveExerciseCatalog'){
     writes.push(structuredClone(data));assert.equal(data.version,version);
+    if(failSave){failSave=false;return route.fulfill({json:{ok:false,error:'SYNTHETIC_SAVE_ERROR'}});}
+    for(const item of data.exercises.filter(e=>e.source==='custom')){const old=extra.find(e=>e.exercise_id===item.exercise_id);if(old)Object.assign(old,item);else extra.push({...item});}
     lists[data.workout_type]=data.exercises.filter(e=>e.active).sort((a,b)=>a.sort_order-b.sort_order).map(e=>e.exercise_id);
     version++;assert.equal(JSON.stringify(history),sourceHistory);return route.fulfill({json:{ok:true,version}});
    }
@@ -51,7 +53,7 @@ async function open(width,managed=false,options={}){
     if(failSave){failSave=false;concurrent--;return route.fulfill({json:{ok:false,error:'SYNTHETIC_SAVE_ERROR'}});}
     if(conflict||data.version!==version){conflict=false;concurrent--;return route.fulfill({json:{ok:false,error:'STRENGTH_STATE_CONFLICT'}});}
     assert.deepEqual(data.template_exercises.map(t=>t.workout_type).sort(),data.workout_types.filter(t=>t.active!==false).map(t=>t.workout_type).sort());
-    for(const t of data.template_exercises){assert.equal(new Set(t.exercise_ids).size,t.exercise_ids.length);lists[t.workout_type]=t.exercise_ids.slice();}
+    for(const t of data.template_exercises){assert.equal(new Set(t.exercise_ids).size,t.exercise_ids.length);for(const id of t.exercise_ids)assert(ids.includes(id)||extra.some(e=>e.exercise_id===id),'custom catalogue must be saved before using its ID');lists[t.workout_type]=t.exercise_ids.slice();}
     types.splice(0,types.length,...structuredClone(data.workout_types));version++;response.version=version;response.workout_types=types;concurrent--;
    }
    assert.equal(JSON.stringify(history),sourceHistory);
@@ -81,7 +83,7 @@ async function drag(page,from,id,to,before,touch=false,cancel=false,capture=null
  const move=async(x,y)=>{if(cdp)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y,id:1}]});else await page.mouse.move(x,y);};
  if(cdp)await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:start.x+start.width/2,y:start.y+start.height/2,id:1}]});else {await page.mouse.move(start.x+start.width/2,start.y+start.height/2);await page.mouse.down();}
  await move(start.x+start.width/2+8,start.y+start.height/2+8);await page.locator('.st-board-ghost').waitFor();
- const frame=await board.boundingBox(),target=list(page,to),targetBox=await target.boundingBox();
+ const frame=await board.boundingBox(),target=list(page,to),targetBox=await target.boundingBox();frame.height=Math.min(frame.height,page.viewportSize().height-frame.y);
  if(targetBox.x>=frame.x+frame.width-25){
   await move(frame.x+frame.width-5,Math.min(frame.y+200,frame.y+frame.height-45));
   await page.waitForFunction(type=>{const b=document.querySelector('.st-template-board').getBoundingClientRect(),t=document.querySelector('[data-board-list="'+type+'"]').getBoundingClientRect();return t.left<b.left+45;},to);
@@ -89,7 +91,7 @@ async function drag(page,from,id,to,before,touch=false,cancel=false,capture=null
  const destination=before?await (await exerciseRow(page,to,before)).boundingBox():await target.boundingBox();
  if(destination.y+destination.height>frame.y+frame.height-30){
   await move(Math.min(frame.x+frame.width-40,Math.max(frame.x+40,destination.x+destination.width/2)),frame.y+frame.height-5);
-  await page.waitForFunction(({type,id})=>{const board=document.querySelector('.st-template-board'),b=board.getBoundingClientRect(),list=document.querySelector('[data-board-list="'+type+'"]');const row=id?[...list.querySelectorAll('[data-board-exercise]')].find(e=>e.dataset.boardExercise===id):list;return row.getBoundingClientRect().bottom<b.bottom-70||board.scrollTop>=board.scrollHeight-board.clientHeight-1;},{type:to,id:before});
+  await page.waitForFunction(({type,id})=>{const board=document.querySelector('.st-template-board'),b=board.getBoundingClientRect(),list=document.querySelector('[data-board-list="'+type+'"]');const row=id?[...list.querySelectorAll('[data-board-exercise]')].find(e=>e.dataset.boardExercise===id):list;return row.getBoundingClientRect().bottom<Math.min(innerHeight,b.bottom)-70||document.scrollingElement.scrollTop>=document.scrollingElement.scrollHeight-innerHeight-1;},{type:to,id:before});
  }
  for(let i=0;i<3;i++){
   const box=before?await (await exerciseRow(page,to,before)).boundingBox():await target.boundingBox();
@@ -106,6 +108,9 @@ try{
  const widths=process.env.QA_WIDTHS?process.env.QA_WIDTHS.split(',').map(Number):[360,430,700,701,768,1440,1919];
  for(const width of widths)for(const managed of (width===430||width===1440?[false,true]:[false])){
   const test=await open(width,managed),{page}=test,touch=engine==='chromium'&&width<=700;
+  assert.equal(await page.locator('.st-modal-bg').count(),0,'template editor is a page');
+  assert.equal(await page.locator('.st-template-board-heading .st-template-board-actions').count(),1);
+  assert.notEqual(await page.evaluate(()=>getComputedStyle(document.documentElement).overflow),'hidden');
   await page.screenshot({path:path.join(out,`${engine}-${width}-${managed?'managed':'self'}-board.png`)});
   assert.equal(await page.locator('[data-board-column]').count(),3);
   const before=test.writes.length;
@@ -116,20 +121,23 @@ try{
   await drag(page,1,ids[5],2,ids[7],touch);await saved(page);
   assert.deepEqual(await entries(page,2),[ids[6],ids[0],ids[5],ids[7],ids[8]],'existing destination exercise is repositioned, not duplicated');
   await drag(page,2,ids[0],3,null,touch);await saved(page);assert.deepEqual(await entries(page,3),[ids[0]]);
-  const cancelled=test.writes.length;await drag(page,3,ids[0],3,null,touch,true);assert.equal(test.writes.length,cancelled);assert.equal(await page.getByRole('dialog',{name:'Шаблоны',exact:true}).count(),1);
+  const cancelled=test.writes.length;await drag(page,3,ids[0],3,null,touch,true);assert.equal(test.writes.length,cancelled);assert.equal(await page.getByRole('region',{name:'Редактирование шаблонов',exact:true}).count(),1);
   const column=page.locator('[data-board-column="3"]');await column.getByRole('button',{name:'Добавить упражнение',exact:false}).click();
+  await column.getByRole('button',{name:'Добавить своё упражнение',exact:false}).click();
+  await page.screenshot({path:path.join(out,`${engine}-${width}-${managed?'managed':'self'}-custom-form-all-widths.png`),fullPage:true});
+  await column.getByRole('button',{name:'Отмена',exact:true}).click();await column.getByRole('button',{name:'Добавить упражнение',exact:false}).click();
   if(width===430&&!managed){
    await page.setViewportSize({width,height:500});await page.waitForTimeout(100);
-   const dropdown=await column.locator('[data-board-results]').boundingBox(),viewport=await page.locator('.st-template-board').boundingBox();
+   await column.locator('[data-board-search]').scrollIntoViewIfNeeded();
+   assert.notEqual(await page.evaluate(()=>getComputedStyle(document.documentElement).overflow),'hidden');
    await page.screenshot({path:path.join(out,engine+'-search-short-viewport.png')});
-   assert(dropdown.y>=viewport.y&&dropdown.y+dropdown.height<=viewport.y+viewport.height,'dropdown remains usable when the keyboard reduces available height: '+JSON.stringify({dropdown,viewport}));
    await page.setViewportSize({width,height:1000});
   }
   const search=column.locator('[data-board-search]');await search.fill(guides[10].name);
   assert(await column.locator('[data-board-results] button').count()>0);await page.screenshot({path:path.join(out,`${engine}-${width}-${managed?'managed':'self'}-search.png`)});
   await column.locator('[data-board-add-id="'+ids[10]+'"]').click();await saved(page);
   assert((await entries(page,3)).includes(ids[10]));
-  const escape=column.locator('[data-board-search]');await escape.press('Escape');assert.equal(await page.getByRole('dialog',{name:'Шаблоны',exact:true}).count(),1);
+  const escape=column.locator('[data-board-search]');await escape.press('Escape');assert.equal(await page.getByRole('region',{name:'Редактирование шаблонов',exact:true}).count(),1);
   const order=await entries(page,3),last=await exerciseRow(page,3,order.at(-1));await last.locator('[data-board-handle]').focus();await page.keyboard.press('ArrowUp');await saved(page);
   assert.deepEqual(await entries(page,3),order.slice().reverse());
   const keyboard=order.at(-1);await (await exerciseRow(page,3,keyboard)).locator('[data-board-handle]').focus();await page.keyboard.press('ArrowLeft');await saved(page);
@@ -154,11 +162,10 @@ try{
    await page.getByRole('button',{name:'＋ Шаблон',exact:true}).click();await list(page,5).waitFor();await saved(page);assert.deepEqual(await entries(page,5),[]);
   }
   if(width===430&&!managed){
-   const before=await page.locator('.st-template-board-modal').boundingBox();
-   for(const scale of [60,150]){await page.evaluate(scale=>ST.setScale(scale),scale);const box=await page.locator('.st-template-board-modal').boundingBox();assert(Math.abs(box.width-before.width)<2&&Math.abs(box.height-before.height)<2,'template editor has its own unscaled profile');await page.screenshot({path:path.join(out,engine+'-board-scale-'+scale+'.png')});}
+   const before=await page.locator('.st-template-page').boundingBox();
+   for(const scale of [60,150]){await page.evaluate(scale=>ST.setScale(scale),scale);const box=await page.locator('.st-template-page').boundingBox();assert(Math.abs(box.width-before.width)<2,'template editor has its own unscaled profile');await page.screenshot({path:path.join(out,engine+'-board-scale-'+scale+'.png')});}
    await page.evaluate(()=>ST.setScale(100));
-   await page.getByRole('button',{name:'Состав упражнений шаблона 3',exact:true}).click();await page.locator('.st-manager-modal').waitFor();
-   await page.getByRole('button',{name:'Назад к шаблонам',exact:false}).click();await list(page,3).waitFor();
+
   }
   assert(test.writes.length>before);assert.deepEqual(test.errors,[]);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
@@ -176,16 +183,53 @@ try{
   await field.fill('Личное');assert.equal(await column.locator('[data-board-add-id="custom-own"]').count(),1);assert.equal(await column.locator('[data-board-add-id="custom-deleted"]').count(),0);
   await page.screenshot({path:path.join(out,`${engine}-${width}-${managed?'managed':'self'}-own-search.png`)});
   await column.locator('[data-board-add-id="custom-own"]').click();await saved(page);assert.deepEqual(await entries(page,3),['custom-own']);
-  await page.getByRole('button',{name:'Состав упражнений шаблона 1',exact:true}).click();await page.locator('.st-manager-modal').waitFor();
-  assert.equal(await page.getByText('Старая тяга из истории',{exact:true}).count(),0);
-  const active=page.locator('.st-manager-row').filter({hasText:'Историческое назначенное'});assert.equal(await active.getByRole('button',{name:'Убрать',exact:true}).count(),1);
-  const writes=test.writes.length;await page.evaluate(()=>ST.toggleExercise('legacy-unused'));assert.equal(test.writes.length,writes);
-  await active.getByRole('button',{name:'Убрать',exact:true}).click();
-  await page.waitForFunction(()=>document.querySelector('#st-manager-save-state')?.textContent==='Сохранено');
-  assert.equal(await page.getByText('Историческое назначенное',{exact:true}).count(),0);
-  assert.equal(test.writes.at(-1).action,'saveExerciseCatalog');assert(!test.lists[1].includes('legacy-active'));
-  await page.getByRole('button',{name:'Назад к шаблонам',exact:false}).click();await list(page,1).waitFor();assert(!(await entries(page,1)).includes('legacy-active'));
+  assert.equal(await page.locator('.st-manager-modal').count(),0);
+  assert.equal(await page.locator('[aria-label^="Состав упражнений шаблона"]').count(),0);
+  await (await exerciseRow(page,2,ids[5])).locator('[data-board-handle]').focus();await page.keyboard.press('ArrowDown');await saved(page);
+  const beforeCreation=await entries(page,2),customName='Новое <img src=x> упражнение';
+  const other=page.locator('[data-board-column="2"]');await other.getByRole('button',{name:'Добавить упражнение',exact:false}).click();
+  await other.locator('[data-board-search]').fill('Новое личное');
+  assert.equal(await other.locator('[data-board-results] button').first().textContent(),'＋ Добавить своё упражнение');
+  await other.getByRole('button',{name:'Добавить своё упражнение',exact:false}).click();
+  await page.screenshot({path:path.join(out,`${engine}-${width}-${managed?'managed':'self'}-custom-form.png`)});
+  if(width===430&&!managed)test.failNext();
+  assert.equal(await other.locator('[data-board-custom]').inputValue(),'Новое личное');
+  await other.locator('[data-board-custom]').fill(customName);await other.getByRole('button',{name:'Добавить',exact:true}).click();
+  if(width===430&&!managed){await page.locator('#st-template-board-status.error').waitFor();await page.getByRole('button',{name:'Повторить',exact:true}).click();}
+  await saved(page);const created=(await entries(page,2)).find(id=>id.startsWith('custom-'));
+  assert(created);assert.equal(test.writes.at(-1).action,'saveExerciseCatalog');assert.deepEqual(test.lists[3],['custom-own']);
+  assert.deepEqual((await entries(page,2)).slice(0,-1),beforeCreation,'creation preserves the saved drag order');
+  assert.deepEqual(test.lists[2].slice(0,-1),beforeCreation,'the server receives the saved drag order');
+  assert.equal(test.writes.at(-1).exercises.find(e=>e.exercise_id===created).exercise_name,customName);
+  assert.equal(await (await exerciseRow(page,2,created)).locator(':scope > span').evaluate(e=>e.firstChild.textContent.trim()),customName);assert.equal(await other.locator('img').count(),0);
+  if(width===1440&&managed){
+   const release=test.holdNext(),start=test.writes.length;
+   await (await exerciseRow(page,1,ids[0])).locator('[data-board-handle]').focus();await page.keyboard.press('ArrowDown');
+   await other.getByRole('button',{name:'Добавить упражнение',exact:false}).click();await other.getByRole('button',{name:'Добавить своё упражнение',exact:false}).click();
+   await other.locator('[data-board-custom]').fill('Второе личное');await other.getByRole('button',{name:'Добавить',exact:true}).click();
+   const second=(await entries(page,2)).find(id=>id.startsWith('custom-')&&id!==created);
+   await (await exerciseRow(page,2,second)).locator('[data-board-handle]').focus();await page.keyboard.press('ArrowRight');
+   assert.equal(test.writes.length,start+1);release();await saved(page);
+   assert.equal(test.writes[start+1].action,'saveExerciseCatalog');assert.equal(test.writes[start+2].action,'saveWorkoutTypes');assert(test.lists[3].includes(second));
+   const releaseAgain=test.holdNext();
+   const first=await exerciseRow(page,1,ids[0]);await first.locator('[data-board-handle]').focus();await page.keyboard.press('ArrowUp');await page.keyboard.press('ArrowDown');
+   await other.getByRole('button',{name:'Добавить упражнение',exact:false}).click();await other.getByRole('button',{name:'Добавить своё упражнение',exact:false}).click();
+   await other.locator('[data-board-custom]').fill('Третье личное');await other.getByRole('button',{name:'Добавить',exact:true}).click();
+   const third=(await entries(page,2)).find(id=>id.startsWith('custom-')&&id!==created);
+   releaseAgain();await saved(page);assert(test.lists[2].includes(third),'a pre-existing pending snapshot cannot undo custom creation');
+  }
+  await column.getByRole('button',{name:'Добавить упражнение',exact:false}).click();
+  if(width===430)await other.locator('.st-template-add').tap({position:{x:2,y:2}});else await other.locator('.st-template-add').click({position:{x:2,y:2}});
+  assert.equal(await page.locator('[data-board-search]').count(),0,'padding in another column is outside the active search');
+  await column.getByRole('button',{name:'Добавить упражнение',exact:false}).click();
+  const heading=page.getByRole('heading',{name:'Редактирование шаблонов',exact:true});if(width===430)await heading.tap();else await heading.click();
+  assert.equal(await page.locator('[data-board-search]').count(),0,'click outside the board dismisses search');
+  await (await exerciseRow(page,1,'legacy-active')).getByRole('button',{name:'Убрать из шаблона',exact:true}).click();await saved(page);
+  assert(!(await entries(page,1)).includes('legacy-active'));
   await page.reload();await page.locator('.st-view-toggle').waitFor();
+  await page.getByRole('button',{name:'Управление шаблонами',exact:true}).click();await list(page,2).waitFor();
+  assert.deepEqual((await entries(page,2)).slice(0,beforeCreation.length),beforeCreation,'existing order survives reloading after creation');
+  assert.equal(await (await exerciseRow(page,2,created)).locator(':scope > span').evaluate(e=>e.firstChild.textContent.trim()),customName,'the entered name survives reloading');
   await page.evaluate(()=>{ST.openExerciseStats('legacy-unused');ST.setStatsTab('analysis');});
   assert.equal(await page.locator('.st-analysis option[value="legacy-unused"]').count(),1,'historical exercise remains available in statistics');
   assert.deepEqual(test.errors,[]);await test.context.close();
@@ -203,6 +247,8 @@ try{
   }
   await failing.context.close();
   const long=await open(430,false,{longList:true});await drag(long.page,1,ids[0],1,ids[13],engine==='chromium',false,engine+'-vertical-drag.png');await saved(long.page);
+  assert(await long.page.evaluate(()=>scrollY>0),'long board scrolls the document');
+  assert.equal(await long.page.locator('.st-template-board').evaluate(e=>e.scrollTop),0,'no inner vertical scrolling');
   assert.deepEqual(await entries(long.page,1),[...ids.slice(1,13),ids[0],ids[13]]);await long.context.close();
   const options={moduleFail:true},missing=await open(430,false,options);assert.deepEqual(missing.errors,[]);assert.equal(missing.writes.length,0);
   options.moduleFail=false;await missing.page.getByRole('button',{name:'Обновить страницу',exact:true}).click();await missing.page.locator('.st-view-toggle').waitFor();

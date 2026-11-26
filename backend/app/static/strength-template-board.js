@@ -41,8 +41,8 @@
       if(!drag||!drag.started)return;
       var rect=board.getBoundingClientRect(),x=drag.x,y=drag.y;
       var dx=x<rect.left+36?-9:x>rect.right-36?9:0;
-      var dy=y<rect.top+36?-9:y>rect.bottom-36?9:0;
-      if(dx||dy){board.scrollLeft+=dx;board.scrollTop+=dy;target();}
+      var dy=y<36?-9:y>window.innerHeight-36?9:0;
+      if(dx||dy){board.scrollLeft+=dx;if(dy)window.scrollBy(0,dy);target();}
       frame=requestAnimationFrame(tick);
     }
     function cleanup(){
