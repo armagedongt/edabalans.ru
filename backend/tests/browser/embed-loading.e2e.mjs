@@ -14,6 +14,8 @@ const personFields=[{key:'gender',code:'person_gender',title:'Пол',options:['
 const personParameters={gender:'Женщина',age:35,height:170,weight:80}
 const manifest = JSON.parse(await readFile(new URL('../../../content/masterclass/course/course.json', import.meta.url), 'utf8'))
 const visualCss = await readFile(new URL('../../app/static/course-visual.css', import.meta.url), 'utf8')
+const readingPositionJs = await readFile(new URL('../../app/static/reading-position.js', import.meta.url), 'utf8')
+const readingPositionCss = await readFile(new URL('../../app/static/reading-position.css', import.meta.url), 'utf8')
 const galleryJs = await readFile(new URL('../../app/static/content-gallery.js', import.meta.url), 'utf8')
 const sliderJs = await readFile(new URL('../../../content/masterclass/components/dqs-image-slider/slider.js', import.meta.url), 'utf8')
 const homepageLoader = await readFile(new URL('../../app/static/homepage.js', import.meta.url), 'utf8')
@@ -126,7 +128,7 @@ try {
     d.topics=d.steps.map(step=>({stepId:step.id,title:step.id,contentLoaded:true}));const days=Array(15).fill(null);days[14]=d
     const courseManifest={courseCode:'masterclass-21'},state={day:15},calls=[]
     const run=new Function('courseManifest','stepIndexById','stepNavigable','stepUnlocked','days','state','openCourseStep','previousVisibleStep','linearNeighbor','openLinearMaterial','advanceCourseStep','returnToDay','openMenu','writeCourseRoute','materialMenu','materialMetaHtml','materialButtonText','renderMenu','renderArticleTopic',
-      'var currentStep,current;function openedDay(){return true};'+source+openSource+handlers.join('\n')+';return function(i){openArticle(i)}')(
+      'var currentStep,current,readingPosition=null;function openedDay(){return true};'+source+openSource+handlers.join('\n')+';return function(i){openArticle(i)}')(
         courseManifest,(day,id)=>day.steps.findIndex(s=>s.id===id),(day,i)=>!day.steps[i].hidden&&!day.steps[i].locked,()=>true,days,state,
         (day,i)=>calls.push(day.steps[i].id),()=>0,()=>null,()=>{},()=>calls.push('advance'),()=>calls.push('day'),()=>calls.push('menu'),()=>{},()=>false,()=>'',()=> 'Далее',()=>{},()=>{})
     const result=[]
@@ -287,6 +289,9 @@ try {
       if(path==='/apps/dqs-category-rules.js')return route.fulfill({contentType:'application/javascript; charset=utf-8',body:dqsRules})
       if(path==='/apps/masterclass-offers.html'){if(delays.special)await delays.special.promise;return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div id="masterclass-offers-app">Готовые предложения</div>'})}
       if(path==='/assets/course-visual.css')return route.fulfill({contentType:'text/css',body:visualCss})
+      if(path==='/assets/reading-position.css')return route.fulfill({contentType:'text/css',body:readingPositionCss})
+      if(path==='/assets/reading-position.js')return route.fulfill({contentType:'application/javascript',body:readingPositionJs})
+      if(path==='/api/account/reading-position')return route.fulfill({json:{version:0,position:null,saved_at:0}})
       if(path==='/assets/account-theme.css')return route.fulfill({contentType:'text/css',body:accountTheme})
       if(path==='/assets/account-theme.js')return route.fulfill({contentType:'application/javascript',body:accountThemeJs})
       if(path==='/assets/app-client-picker.mjs')return route.fulfill({contentType:'application/javascript',body:clientPickerJs})
