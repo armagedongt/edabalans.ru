@@ -204,23 +204,33 @@ body{margin:0;background:#fff}
 @media(pointer:coarse){#week-board-final .row :is(.date,.sonya){height:44px;min-height:44px}}
 
 #week-board-final .board-top{padding-top:6px;padding-bottom:6px}
-#week-board-final .toolbar{display:grid;grid-template-columns:minmax(72px,1fr) auto auto auto;gap:6px;margin:0;flex-wrap:nowrap;align-items:center}
-#week-board-final .toolbar>button,#week-board-final .toolbar summary,#week-board-final .category-filters button{height:36px;white-space:nowrap}
+#week-board-final{--board-control-height:36px}
+#week-board-final .toolbar{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:6px;margin:0;flex-wrap:nowrap;align-items:center}
+#week-board-final .toolbar>button,#week-board-final .toolbar summary,#week-board-final .category-filters button{height:var(--board-control-height);white-space:nowrap}
 #week-board-final .toolbar details{min-width:0}
 #week-board-final .toolbar summary{display:flex;align-items:center;gap:7px;list-style:none;border:1px solid var(--line);border-radius:6px;padding:5px 8px;cursor:pointer;background:var(--paper)}
 #week-board-final .toolbar summary::-webkit-details-marker{display:none}
 #week-board-final .tools-menu summary{justify-content:center;width:36px;font-size:23px;line-height:1}
-#week-board-final .category-filters{display:flex;flex-wrap:nowrap;gap:6px;min-width:0;padding:2px;overflow-x:auto;scrollbar-width:none}
-#week-board-final .category-filters::-webkit-scrollbar{display:none}
+#week-board-final .category-picker{display:flex;align-items:center;min-width:0;height:var(--board-control-height);overflow:clip}
+#week-board-final [data-categories]{display:none}
+#week-board-final .category-filters{display:flex;flex:none;flex-wrap:nowrap;gap:6px;width:max-content;transform-origin:left center}
 #week-board-final .category-filters button{flex:none;background:var(--flag,var(--paper));white-space:nowrap}
-#week-board-final .category-filters button[aria-pressed="true"]{background:#292929;color:white;box-shadow:0 0 0 2px var(--flag,#92979e)}
+#week-board-final .category-filters.two-rows{display:grid;grid-template-columns:repeat(5,max-content);gap:2px 6px}
+#week-board-final .category-filters.two-rows button{height:calc((var(--board-control-height) - 2px)/2);padding:0 6px;font-size:12px;line-height:1.1}
+#week-board-final .category-filters button[aria-pressed="true"]{background:#292929;color:white}
 #week-board-final .tools-panel{position:absolute;top:100%;right:0;z-index:6;display:flex;flex-direction:column;align-items:stretch;gap:8px;width:min(280px,100%);padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);box-shadow:0 5px 16px #0002;max-height:75dvh;overflow:auto}
 #week-board-final .tools-panel a{padding:5px 8px}
 #week-board-final .category-client_payments{--flag:#b5ead7}
-#week-board-final .import-icon{display:none}
 #week-board-final .task-head .task-title{flex:0 1 auto}
 #week-board-final :is(.task-head,.record-heading) .done-toggle{margin-right:6px}
 #week-board-final .task-head{flex-wrap:nowrap}
-@media(max-width:1100px){#week-board-final [data-import] .action-label{display:none}#week-board-final .import-icon{display:inline}}
 @media(max-width:600px){#week-board-final .task-head .done-toggle>span:last-child{display:none}}
-@media(pointer:coarse){#week-board-final .toolbar>button,#week-board-final .toolbar summary,#week-board-final .category-filters button{height:44px}}
+@media(pointer:coarse){#week-board-final{--board-control-height:44px}}
+@media(max-width:600px),(pointer:coarse){
+ #week-board-final .toolbar{grid-template-columns:auto minmax(0,1fr) auto auto}
+ #week-board-final .category-picker{overflow:visible}
+ #week-board-final [data-categories]{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;height:var(--board-control-height);white-space:nowrap}
+ #week-board-final [data-categories]>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
+ #week-board-final .category-filters{display:none;position:absolute;top:100%;left:0;right:0;width:auto;flex-wrap:wrap;gap:7px;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);box-shadow:0 5px 16px #0002;max-height:75dvh;overflow:auto}
+ #week-board-final .category-picker.is-open .category-filters{display:flex}
+}

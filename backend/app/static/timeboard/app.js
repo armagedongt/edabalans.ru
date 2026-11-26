@@ -296,9 +296,29 @@ function render() {
 }
 
 function renderFilters() {
-  $('.category-filters').innerHTML = button('Все','data-filter="all" aria-pressed="'+!selectedCategories.size+'"')+
-    Object.entries(filterLabels).map(([key,label])=>button(icons[key]+' '+safe(label),
+  $('[data-filter="all"]').setAttribute('aria-pressed',String(!selectedCategories.size));
+  $('.category-filters').innerHTML = Object.entries(filterLabels).map(([key,label])=>button(icons[key]+' '+safe(label),
       'data-filter="'+key+'" aria-pressed="'+selectedCategories.has(key)+'"','category-'+key)).join('');
+  $('[data-categories]>span').textContent='Категории'+(selectedCategories.size?' · '+selectedCategories.size:'');
+  fitCategoryTags();
+}
+
+function setCategoriesOpen(open) {
+  $('.category-picker').classList.toggle('is-open',open);
+  $('[data-categories]').setAttribute('aria-expanded',String(open));
+}
+
+function fitCategoryTags() {
+  const tags=$('.category-filters'), picker=$('.category-picker');
+  tags.style.transform='none';
+  tags.classList.remove('two-rows');
+  if (matchMedia('(max-width:600px), (pointer:coarse)').matches || !tags.childElementCount) return;
+  setCategoriesOpen(false);
+  const available=picker.clientWidth-1;
+  if (available<=0) return;
+  if (available/tags.getBoundingClientRect().width<0.5) tags.classList.add('two-rows');
+  const scale=Math.min(1,available/tags.getBoundingClientRect().width);
+  tags.style.transform='scale('+scale+')';
 }
 
 function openDialog(title,body,closeLabel='Отменить') {
@@ -495,6 +515,8 @@ $('#today').onclick = ()=>{
 new ResizeObserver(entries=>{
   root.style.setProperty('--board-top-height',entries[0].borderBoxSize[0].blockSize+'px');
 }).observe($('.board-top'));
+new ResizeObserver(fitCategoryTags).observe($('.category-picker'));
+document.fonts.ready.then(fitCategoryTags);
 dialog.addEventListener('cancel',event=>{
   if (submitting) event.preventDefault();
 });
@@ -521,7 +543,9 @@ root.addEventListener('click',event=>{
   if (!b) return;
   const d = b.dataset;
   if (!d.filter) $('.tools-menu').open=false;
-  if (d.filter) {
+  if ('categories' in d) {
+    setCategoriesOpen(b.getAttribute('aria-expanded')!=='true');
+  } else if (d.filter) {
     if (d.filter==='all') selectedCategories.clear();
     else if (selectedCategories.has(d.filter)) selectedCategories.delete(d.filter);
     else selectedCategories.add(d.filter);
@@ -606,9 +630,13 @@ document.addEventListener('click',event=>{
   for (const menu of root.querySelectorAll('.toolbar details')) {
     if (!event.composedPath().includes(menu)) menu.open=false;
   }
+  if (!event.composedPath().includes($('.category-picker'))) setCategoriesOpen(false);
 });
 document.addEventListener('keydown',event=>{
   if (event.key!=='Escape' || dialog.open) return;
+  if ($('.category-picker').classList.contains('is-open')) {
+    setCategoriesOpen(false); $('[data-categories]').focus();
+  }
   for (const menu of root.querySelectorAll('.toolbar details[open]')) {
     menu.open=false; menu.querySelector('summary').focus();
   }

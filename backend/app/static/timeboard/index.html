@@ -15,12 +15,16 @@
 <main id="week-board-final">
   <div class="board-top">
   <header class="toolbar">
-    <nav class="category-filters" aria-label="Категории"></nav>
-    <button type="button" data-import hidden title="Вставить изменения" aria-label="Вставить изменения"><span class="import-icon" aria-hidden="true">📋</span><span class="action-label">Вставить изменения</span></button>
-    <button type="button" class="primary" data-add hidden>Добавить</button>
+    <button type="button" data-filter="all" aria-pressed="true">Все</button>
+    <div class="category-picker">
+      <button type="button" data-categories aria-expanded="false" aria-controls="category-tags"><span>Категории</span><span aria-hidden="true">⌄</span></button>
+      <nav id="category-tags" class="category-filters" aria-label="Категории"></nav>
+    </div>
+    <button type="button" class="primary" data-import hidden title="Вставить изменения" aria-label="Добавить изменения из JSON">Добавить</button>
     <details class="tools-menu">
       <summary aria-label="Меню доски" title="Меню доски">⋯</summary>
       <div class="tools-panel">
+      <button type="button" data-add hidden>Вставить вручную</button>
       <button type="button" id="today">Сегодня</button>
       <button type="button" data-past aria-expanded="false">Прошедшее</button>
       <div class="view-options" role="group" aria-label="Вид доски" hidden>
