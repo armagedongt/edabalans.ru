@@ -122,4 +122,12 @@ document.querySelector('#note-cancel').onclick=cancelNote;
 noteDialog.addEventListener('cancel',event=>{if(editingDate && draftFor(editingDate).pending) event.preventDefault();else cancelNote();});
 document.querySelector('#past').onclick=()=>{past=!past; document.querySelector('#past').textContent=past?'Скрыть прошедшее':'Прошедшее'; render();};
 document.querySelector('#close').onclick=()=>dialog.close();
+for (const modal of [dialog,noteDialog]) modal.addEventListener('click',event=>{
+  if (event.target!==modal) return;
+  const bounds=modal.getBoundingClientRect();
+  if (event.clientX<bounds.left || event.clientX>bounds.right ||
+      event.clientY<bounds.top || event.clientY>bounds.bottom) {
+    if (modal===noteDialog) cancelNote(); else modal.close();
+  }
+});
 fetch('api/state').then(async response=>{if(!response.ok)throw Error('Не удалось загрузить календарь'); data=(await response.json()).days; render();}).catch(error=>{status.textContent=error.message;});

@@ -466,6 +466,12 @@ new ResizeObserver(entries=>{
 dialog.addEventListener('cancel',event=>{
   if (submitting) event.preventDefault();
 });
+dialog.addEventListener('click',event=>{
+  if (event.target!==dialog || submitting) return;
+  const bounds=dialog.getBoundingClientRect();
+  if (event.clientX<bounds.left || event.clientX>bounds.right ||
+      event.clientY<bounds.top || event.clientY>bounds.bottom) dialog.close();
+});
 
 document.addEventListener('keydown',event=>{
   if (!canEdit || dialog.open || event.defaultPrevented || event.altKey ||
