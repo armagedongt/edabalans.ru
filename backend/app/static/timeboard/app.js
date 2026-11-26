@@ -187,13 +187,12 @@ function editButton(entry) {
 
 function entryCard(entry,showCategory=true,showTitle=true,showActions=true) {
   const timing = [entry.duration && entry.duration+' мин'].filter(Boolean).join(' · ');
-  const actions = canEdit && showActions ? editButton(entry)+removeButton(entry) : '';
-  const completion = canEdit && showActions && mode!=='table' && entry.cat!=='sonya' ? '<div class="completion-actions">'+doneButton(entry)+'</div>' : '';
+  const actions = canEdit && showActions ? editButton(entry)+removeButton(entry)+(mode!=='table'?doneButton(entry):'') : '';
   const heading = (showCategory?'<small>'+safe(state.categories[entry.cat])+'</small>':'')+
     (showTitle?'<span>'+safe(taskHeading(entry).full)+(entry.done?' ✓':'')+'</span>':'')+actions;
   return '<article class="record category-'+entry.cat+(entry.done && entry.cat!=='sonya'?' is-completed':'')+'">'+(heading?'<div class="record-heading">'+heading+'</div>':'')+
     (timing || entry.note ? '<p>'+[timing,safe(entry.note)].filter(Boolean).join(' · ')+'</p>':'')+
-    (entry.url?'<a class="record-link" href="'+safe(entry.url)+'" rel="noreferrer noopener">'+(entry.cat==='finance'?'Открыть кабинет':'Открыть ссылку')+'</a>':'')+completion+'</article>';
+    (entry.url?'<a class="record-link" href="'+safe(entry.url)+'" rel="noreferrer noopener">'+(entry.cat==='finance'?'Открыть кабинет':'Открыть ссылку')+'</a>':'')+'</article>';
 }
 
 function isWeekReminder(entry) {
@@ -225,8 +224,8 @@ function titleTask(entry,dayOpen,showReminder=true) {
     '<span aria-hidden="true">'+icons[entry.cat]+'</span><span class="task-text">'+safe(open?heading.full:heading.text)+'</span>'+
     (marker?'<small class="task-reminder">'+safe(marker)+'</small>':'')+
     (entry.done?'<span aria-label="Выполнено">✓</span>':''),
-    'data-task="'+entry.id+'" title="'+safe(heading.full)+'" aria-label="'+safe(heading.full+(marker?' · '+marker:''))+'" aria-expanded="'+open+'" aria-controls="task-'+entry.id+'"','task-title')+(open && canEdit?editButton(entry)+removeButton(entry):'')+'</div>'+
-    '<div id="task-'+entry.id+'"'+(open?'':' hidden')+'>'+ (open?entryCard(entry,false,false,false)+(canEdit?'<div class="completion-actions">'+doneButton(entry)+'</div>':''):'')+'</div></div>';
+    'data-task="'+entry.id+'" title="'+safe(heading.full)+'" aria-label="'+safe(heading.full+(marker?' · '+marker:''))+'" aria-expanded="'+open+'" aria-controls="task-'+entry.id+'"','task-title')+(open && canEdit?editButton(entry)+removeButton(entry)+doneButton(entry):'')+'</div>'+
+    '<div id="task-'+entry.id+'"'+(open?'':' hidden')+'>'+ (open?entryCard(entry,false,false,false):'')+'</div></div>';
 }
 
 function taskGroup(key,kind,entries,dayOpen) {
@@ -293,8 +292,6 @@ function render() {
   $('.column-heads').innerHTML = mode==='table'?header():'';
   sheet.innerHTML = boardDates().filter(key=>showPast || key>=todayKey()).map(row).join('');
   setWidths();
-  const unread=currentSonyaComments().filter(e=>!e.done);
-  const notice=$('[data-sonya-comments]');notice.hidden=!unread.length;notice.textContent='Комментарии Сони · '+unread.length;
   renderFilters();
 }
 
@@ -302,8 +299,6 @@ function renderFilters() {
   $('.category-filters').innerHTML = button('Все','data-filter="all" aria-pressed="'+!selectedCategories.size+'"')+
     Object.entries(filterLabels).map(([key,label])=>button(icons[key]+' '+safe(label),
       'data-filter="'+key+'" aria-pressed="'+selectedCategories.has(key)+'"','category-'+key)).join('');
-  $('#filter-label').textContent = !selectedCategories.size ? 'Все' :
-    selectedCategories.size===1 ? filterLabels[[...selectedCategories][0]] : 'Категории · '+selectedCategories.size;
 }
 
 function openDialog(title,body,closeLabel='Отменить') {
@@ -347,7 +342,7 @@ function editEntry(key,cat,entry) {
 function openImport() {
   openDialog('Вставить изменения',
     '<label>Пакет JSON<textarea class="payload" id="packet" spellcheck="false"></textarea></label>'+
-    '<p class="note">Записи, которые вы примените, будут видны по открытой ссылке.</p>'+
+    '<p class="note">Пакет содержит только изменения. Сначала проверьте их, затем примените.</p>'+
     '<div class="group import-actions">'+button('Вставить из буфера','data-paste')+button('Проверить','data-preview','primary')+
     '</div><div class="import-preview"></div>');
 }
@@ -377,9 +372,13 @@ async function previewImport() {
     const source = editor.value.trim().replace(/^```(?:json)?\s*([\s\S]+?)\s*```$/i,'$1');
     packet = JSON.parse(source);
   } catch {
-    throw Error('Вставьте целый JSON из ChatGPT.');
+    throw Error('Вставьте JSON с командами изменений из ChatGPT.');
   }
-  if (packet?.baseRevision>state.revision) await reload();
+  if (packet && typeof packet==='object' && !Array.isArray(packet)) {
+    if (packet.baseRevision===undefined || packet.baseRevision>state.revision ||
+        (Array.isArray(packet.ops) && packet.ops.some(op=>op?.match))) await reload();
+    packet = resolveImport(packet);
+  }
   const dates = new Set(boardDates());
   if (Array.isArray(packet?.ops) && packet.ops.some(op=>op?.date && !dates.has(op.date))) {
     throw Error('В пакете есть новая дата. Добавьте её через Codex.');
@@ -390,6 +389,27 @@ async function previewImport() {
     pending = {packet,target:first.after || first.before};
     showChanges(preview.changes);
   }
+}
+
+function resolveImport(source) {
+  const packet={...source};
+  if (packet.baseRevision===undefined) packet.baseRevision=state.revision;
+  if (!Array.isArray(packet.ops)) return packet;
+  packet.ops=packet.ops.map((op,index)=>{
+    if (!op || !Object.hasOwn(op,'match')) return op;
+    const match=op.match;
+    const allowed=['date','cat','title','time','sonyaRole'];
+    if (!['update','remove'].includes(op.op) || Object.hasOwn(op,'id') || !match ||
+        typeof match!=='object' || Array.isArray(match) || typeof match.date!=='string' ||
+        typeof match.cat!=='string' || Object.keys(match).some(key=>!allowed.includes(key))) {
+      throw Error('Команда '+(index+1)+': match должен содержать дату, категорию и при необходимости заголовок, время или sonyaRole; используйте match вместо id для изменения или удаления.');
+    }
+    const found=state.entries.filter(entry=>Object.entries(match).every(([key,value])=>entry[key]===value));
+    if (found.length!==1) throw Error('Команда '+(index+1)+': '+(found.length?'найдено несколько записей, уточните заголовок или время.':'запись не найдена. Проверьте дату и категорию.'));
+    const {match:ignored,...resolved}=op;
+    return {...resolved,id:found[0].id};
+  });
+  return packet;
 }
 
 async function apply(operations, target, closeEditor=false, recordHistory=true) {
@@ -530,9 +550,6 @@ root.addEventListener('click',event=>{
   } else if (canEdit && d.complete) {
     const entry = state.entries.find(item=>item.id===d.complete && item.cat!=='sonya');
     if (entry) run(()=>apply([{op:'update',id:entry.id,done:!entry.done}],null));
-  } else if ('sonyaComments' in d) {
-    const comments=currentSonyaComments().filter(e=>!e.done).sort((a,b)=>b.date.localeCompare(a.date));
-    openDialog('Комментарии Сони',comments.map(e=>'<h3>'+safe(shortDate(e.date))+'.'+e.date.slice(0,4)+'</h3>'+entryCard(e)+button('Прочитано','data-comment-read="'+e.id+'"')).join(''),'Закрыть');
   } else if (canEdit && d.commentRead) {
     run(()=>apply([{op:'update',id:d.commentRead,done:true}],null,true));
   } else if ('past' in d) {

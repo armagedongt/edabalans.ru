@@ -15,15 +15,13 @@
 <main id="week-board-final">
   <div class="board-top">
   <header class="toolbar">
-    <button type="button" id="today">Сегодня</button>
-    <details class="category-menu">
-      <summary aria-label="Фильтр категорий"><span id="filter-label">Все</span><span aria-hidden="true">⌄</span></summary>
-      <div class="category-filters" role="group" aria-label="Категории"></div>
-    </details>
+    <nav class="category-filters" aria-label="Категории"></nav>
+    <button type="button" data-import hidden title="Вставить изменения" aria-label="Вставить изменения"><span class="import-icon" aria-hidden="true">📋</span><span class="action-label">Вставить изменения</span></button>
     <button type="button" class="primary" data-add hidden>Добавить</button>
     <details class="tools-menu">
       <summary aria-label="Меню доски" title="Меню доски">⋯</summary>
       <div class="tools-panel">
+      <button type="button" id="today">Сегодня</button>
       <button type="button" data-past aria-expanded="false">Прошедшее</button>
       <div class="view-options" role="group" aria-label="Вид доски" hidden>
         <button type="button" data-mode="table">Таблица</button>
@@ -31,13 +29,11 @@
         <button type="button" data-mode="titles">Значок + заголовок</button>
       </div>
       <button type="button" data-reset>Сбросить ширину</button>
-      <a href="api/state">Данные JSON</a>
       <a id="login" href="/admin?next=/timeboard/" hidden>Войти для правок</a>
-      <button type="button" data-sonya-comments hidden>Комментарии Сони</button>
-      <button type="button" data-import hidden>Вставить изменения</button>
       <div class="group" id="history-actions" role="group" aria-label="История правок" hidden>
         <button type="button" data-history="undo" title="Ctrl+Z" aria-keyshortcuts="Control+Z" disabled>Отменить</button>
         <button type="button" data-history="redo" title="Ctrl+Y" aria-keyshortcuts="Control+Y Control+Shift+Z" disabled>Повторить</button>
+        <a href="api/state" title="Текущее состояние доски">JSON</a>
       </div>
       </div>
     </details>
