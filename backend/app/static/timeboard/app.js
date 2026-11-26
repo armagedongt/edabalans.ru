@@ -133,7 +133,7 @@ function row(key) {
 }
 
 function column(key,cat,isExpanded) {
-  const entries = entriesFor(key,cat);
+  const entries = entriesFor(key,cat).filter(entry=>isExpanded || !entry.done);
   const first = entries[0];
   const label = safe(state.categories[cat])+', '+shortDate(key);
   const attrs = 'data-key="'+key+'" data-view="'+cat+'" aria-label="'+label+'"';
@@ -155,11 +155,17 @@ function column(key,cat,isExpanded) {
   const remove = first ? removeButton(first,'cell-remove') : '';
   return '<div><div class="cell category-'+cat+'"><input data-inline data-key="'+key+'" data-cat="'+cat+'" data-id="'+(first?.id||'')+
     '" data-current-flag="'+flag+'" maxlength="160" aria-label="'+label+'" placeholder="Введите текст" value="'+safe(first?.title)+'">'+
-remove+count+'</div></div>';
+(first?doneButton(first):'')+remove+count+'</div></div>';
 }
 
 function removeButton(entry,cls='') {
   return button('×','data-remove="'+entry.id+'" title="Удалить запись" aria-label="Удалить запись · '+safe(entry.title)+'"','remove-record '+cls);
+}
+
+function doneButton(entry) {
+  if (entry.cat==='sonya') return '';
+  const label = entry.done ? 'Вернуть в планы' : 'Отметить выполненным';
+  return button('<span aria-hidden="true">✓</span>','data-complete="'+entry.id+'" aria-pressed="'+!!entry.done+'" title="'+label+'" aria-label="'+label+' · '+safe(entry.title)+'"','done-toggle');
 }
 
 function editButton(entry) {
@@ -168,10 +174,10 @@ function editButton(entry) {
 
 function entryCard(entry,showCategory=true,showTitle=true,showActions=true) {
   const timing = [entry.duration && entry.duration+' мин'].filter(Boolean).join(' · ');
-  const actions = canEdit && showActions ? editButton(entry)+removeButton(entry) : '';
+  const actions = canEdit && showActions ? doneButton(entry)+editButton(entry)+removeButton(entry) : '';
   const heading = (showCategory?'<small>'+safe(state.categories[entry.cat])+'</small>':'')+
     (showTitle?'<span>'+safe(taskHeading(entry).full)+(entry.done?' ✓':'')+'</span>':'')+actions;
-  return '<article class="record category-'+entry.cat+'">'+(heading?'<div class="record-heading">'+heading+'</div>':'')+
+  return '<article class="record category-'+entry.cat+(entry.done && entry.cat!=='sonya'?' is-completed':'')+'">'+(heading?'<div class="record-heading">'+heading+'</div>':'')+
     (timing || entry.note ? '<p>'+[timing,safe(entry.note)].filter(Boolean).join(' · ')+'</p>':'')+
     (entry.url?'<a class="record-link" href="'+safe(entry.url)+'" rel="noreferrer noopener">'+(entry.cat==='finance'?'Открыть кабинет':'Открыть ссылку')+'</a>':'')+'</article>';
 }
@@ -201,11 +207,11 @@ function titleTask(entry,dayOpen,showReminder=true) {
   const open = dayOpen || openTasks.has(entry.id);
   const heading = taskHeading(entry);
   const marker = showReminder ? heading.reminder : '';
-  return '<div class="task category-'+entry.cat+'"><div class="task-head">'+button(
+  return '<div class="task category-'+entry.cat+(entry.done?' is-completed':'')+'"><div class="task-head">'+button(
     '<span aria-hidden="true">'+icons[entry.cat]+'</span><span class="task-text">'+safe(open?heading.full:heading.text)+'</span>'+
     (marker?'<small class="task-reminder">'+safe(marker)+'</small>':'')+
     (entry.done?'<span aria-label="Выполнено">✓</span>':''),
-    'data-task="'+entry.id+'" title="'+safe(heading.full)+'" aria-label="'+safe(heading.full+(marker?' · '+marker:''))+'" aria-expanded="'+open+'" aria-controls="task-'+entry.id+'"','task-title')+(open && canEdit?editButton(entry)+removeButton(entry):'')+'</div>'+
+    'data-task="'+entry.id+'" title="'+safe(heading.full)+'" aria-label="'+safe(heading.full+(marker?' · '+marker:''))+'" aria-expanded="'+open+'" aria-controls="task-'+entry.id+'"','task-title')+(canEdit?doneButton(entry):'')+(open && canEdit?editButton(entry)+removeButton(entry):'')+'</div>'+
     '<div id="task-'+entry.id+'"'+(open?'':' hidden')+'>'+ (open?entryCard(entry,false,false,false):'')+'</div></div>';
 }
 
@@ -224,7 +230,8 @@ function taskGroup(key,kind,entries,dayOpen) {
 }
 
 function titleTasks(key,dayOpen) {
-  const entries = entriesFor(key);
+  const all = entriesFor(key);
+  const entries = all.filter(entry=>!entry.done);
   const payments = entries.filter(entry=>entry.cat==='finance' && !isWeekReminder(entry) &&
     !entry.title.startsWith('Завтра · '));
   const upcoming = entries.filter(isWeekReminder);
@@ -238,7 +245,7 @@ function titleTasks(key,dayOpen) {
       return taskGroup(key,kind,grouped,dayOpen);
     }
     return titleTask(entry,dayOpen);
-  }).join('')+(canEdit?button('Добавить','data-add data-key="'+key+'" aria-label="Добавить запись, '+shortDate(key)+'"','row-add'):'');
+  }).join('')+(dayOpen?all.filter(entry=>entry.done).map(entry=>titleTask(entry,true)).join(''):'')+(canEdit?button('Добавить','data-add data-key="'+key+'" aria-label="Добавить запись, '+shortDate(key)+'"','row-add'):'');
 }
 
 function compactDetails(key,view) {
@@ -483,6 +490,14 @@ root.addEventListener('click',event=>{
     else openTasks.add(d.task);
     render();
     sheet.querySelector('[data-task="'+d.task+'"]')?.focus({preventScroll:true});
+  } else if (canEdit && d.complete) {
+    const entry = state.entries.find(item=>item.id===d.complete && item.cat!=='sonya');
+    if (entry) {
+      const field = b.closest('.cell')?.querySelector('[data-inline]');
+      const title = field?.value.trim();
+      const changedTitle = title && title!==field.defaultValue ? {title} : {};
+      run(()=>apply([{op:'update',id:entry.id,done:!entry.done,...changedTitle}],null));
+    }
   } else if ('sonyaComments' in d) {
     const comments=state.entries.filter(e=>e.sonyaRole==='comment'&&!e.done).sort((a,b)=>b.date.localeCompare(a.date));
     openDialog('Комментарии Сони',comments.map(e=>'<h3>'+safe(shortDate(e.date))+'.'+e.date.slice(0,4)+'</h3>'+entryCard(e)+button('Прочитано','data-comment-read="'+e.id+'"')).join(''),'Закрыть');

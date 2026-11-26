@@ -185,3 +185,14 @@ body{margin:0;background:#fff}
  #week-board-final .compact .row:not(.expanded)>div:nth-child(3){display:contents;border:0}
  #week-board-final .compact .row:not(.expanded) .task{max-width:100%}
 }
+
+#week-board-final button.done-toggle{display:grid;place-items:center;flex:none;width:26px;min-height:26px;height:26px;padding:1px;border:1px solid #92979e;border-radius:5px;background:#fff9;text-decoration:none;color:#697079}
+#week-board-final .done-toggle[aria-pressed="false"] span{visibility:hidden}
+#week-board-final button.done-toggle[aria-pressed="true"]{background:#737982;color:white}
+#week-board-final :is(.task,.record).is-completed{--flag:#eceef0;background:#eceef0;color:#717780}
+#week-board-final .is-completed .task-title>span:first-child{filter:grayscale(1)}
+#week-board-final .is-completed .record-link{color:#717780}
+#week-board-final .cell .done-toggle{width:22px;min-height:24px;height:24px;margin-right:3px;padding:0;border:1px solid #92979e}
+
+#week-board-final .scroll:not(.compact) .record-heading{flex-wrap:wrap}
+#week-board-final .scroll:not(.compact) .record-heading>span{flex:1 1 110px}
