@@ -37,6 +37,19 @@
 		reverse_proxy abricos-recordings:8000
 	}
 
+	# The webhook authenticates using its URL; keep that URL out of access logs.
+	log_skip /abricos-registration/hook/*
+	@abricos_registration {
+		host {$SITE_DOMAIN}
+		path /abricos-registration /abricos-registration/*
+	}
+	handle @abricos_registration {
+		request_body {
+			max_size 32KB
+		}
+		reverse_proxy abricos-registration:8769
+	}
+
 	@personal_calendar {
 		host {$SITE_DOMAIN}
 		path /sonya-calendar /sonya-calendar/

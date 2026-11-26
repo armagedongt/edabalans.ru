@@ -59,6 +59,14 @@ python3 /opt/edabalans/infra/caddy/calendar/render.py \
 
 Исходники развёрнутого сервиса, ключи сопоставления S3 и зависимости лежат в `/srv/abricos-recordings/app`. Секреты хранятся в `/srv/abricos-recordings/service.env` (0600). Авторизация хранит SQLite в `/srv/abricos-recordings/state/access.sqlite3`, резерв исходного реестра — в `/srv/abricos-recordings/backups/access.sqlite3`. При восстановлении сервиса из образа сохранить отдельный bind mount `state` и UID 10151. Для отката маршрута вернуть предыдущую конфигурацию Caddy, а данные сервиса оставить на диске.
 
+Реестр регистрации «Абрикоса» обслуживает отдельный контейнер
+`abricos-registration` в сети `edabalans_edge` без опубликованного порта.
+Caddy передаёт `/abricos-registration` на основном HTTPS-домене в этот контейнер
+и исключает запросы к `/abricos-registration/hook/*` из журнала доступа.
+Реестр использует отдельный вход, а URL приёмщика предназначен только для Tilda.
+Данные находятся в `/srv/abricos-registration/state` (UID 10152), код в `app`,
+секреты в `service.env` (0600). При откате маршрута сохранить данные на месте.
+
 ## Учебные видео Мастер-класса на сервере
 
 С 22.10.2026 MP4 дней 3/4/9 размещаются вне Git и образов в
