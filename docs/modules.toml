@@ -767,6 +767,10 @@ owns_files = [
   "backend/app/masterclass_routes.py", "backend/app/static/masterclass.css",
   "backend/app/static/masterclass.js", "backend/app/static/apps/closing-review.html",
   "backend/app/static/masterclass-feedback.js", "backend/app/static/masterclass-feedback.css",
+  "backend/app/masterclass_discussion.py", "backend/app/masterclass_discussion_push.py",
+  "backend/app/static/masterclass-discussion.*", "backend/app/static/masterclass-discussion-sw.js",
+  "backend/tests/test_masterclass_discussion.py",
+  "backend/migrations/versions/20261128_0054_masterclass_discussion.py",
   "backend/app/static/video-player-development/**",
   "backend/tests/test_masterclass_journey.py",
   "backend/tests/test_recipe_catalog_access.py",
@@ -780,8 +784,10 @@ owns_files = [
 owns_tables = [
   "masterclass_events", "masterclass_day_progress", "masterclass_step_progress",
   "masterclass_notifications", "masterclass_test_profiles",
+  "masterclass_discussion_posts", "masterclass_discussion_reads", "masterclass_discussion_profiles",
+  "masterclass_discussion_subscriptions", "masterclass_discussion_pushes",
 ]
-owns_routes = ["*/api/masterclass*", "*/admin/api/masterclass*", "*/admin/masterclass*"]
+owns_routes = ["*/api/masterclass*", "*/admin/api/masterclass*", "*/admin/masterclass*", "*/masterclass-discussion-sw.js"]
 reads_from = ["platform.web_design", "platform", "products.masterclass.course", "products.dqs"]
 
 [[modules]]

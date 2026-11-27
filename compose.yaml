@@ -118,6 +118,7 @@ services:
       - /srv/sergey-travel/calculator:/srv/sergey-travel/calculator
       - /srv/edabalans-media/masterclass:/srv/edabalans-media/masterclass:ro
       - timeboard_data:/var/lib/timeboard
+      - masterclass_discussion_data:/var/lib/masterclass-discussion
       - /var/lib/edabalans/client-diaries:/var/lib/edabalans/client-diaries:ro
     depends_on:
       postgres:
@@ -271,3 +272,4 @@ volumes:
   postgres_data:
   nocodb_data:
   timeboard_data:
+  masterclass_discussion_data:

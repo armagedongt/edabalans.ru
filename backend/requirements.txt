@@ -8,5 +8,8 @@ SQLAlchemy==2.0.52
 uvicorn==0.52.4
 Markdown==3.8.2
 Pillow==12.3.0
+pillow-heif==1.8.0
+python-multipart==0.0.34
+pywebpush==2.5.0
 mcp==1.29.1
 cryptography==50.0.0

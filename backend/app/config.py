@@ -39,6 +39,8 @@ class Settings(BaseSettings):
     account_email_worker_enabled: bool = True
     account_email_poll_seconds: float = 15.0
     masterclass_course_url: str = "https://похудение-это-есть.рф/lk"
+    masterclass_discussion_pilot: bool = True
+    masterclass_discussion_media_dir: str = "/var/lib/masterclass-discussion"
     personal_access_page_url: str = "https://похудение-это-есть.рф/personal-access"
     pricing_catalog_enabled: bool = False
     robokassa_checkout_enabled: bool = False

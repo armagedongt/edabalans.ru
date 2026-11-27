@@ -1,0 +1,278 @@
+.course-shell .day-discussion-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 15px 17px;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--card);
+}
+.course-shell .day-discussion-entry p,
+.course-shell .day-discussion-note { margin: 4px 0; color: var(--muted); font-size: 13px; }
+.course-shell .day-discussion-entry .next-button:disabled { cursor: default; opacity: .55; }
+.course-shell .day-discussion-entry .next-button { position: relative; overflow: visible; }
+.course-shell .content:has(> #day.day-discussion-open),
+.course-shell #day.day-discussion-open,
+.course-shell #day.day-discussion-open > .day-discussion-panel { max-width: none; }
+.course-shell .main:has(> .content > #day.day-discussion-open) { padding-right: 0 !important; }
+.course-shell .content:has(> #day.day-discussion-open) { padding: 0 !important; }
+.course-shell .content:has(> #day.day-discussion-open) > .account-theme-toggle { display: none; }
+.course-shell .main:has(#day.day-discussion-open) {
+  --discussion-surface: color-mix(in srgb,var(--paper) 91%,var(--violet));
+  --discussion-pattern:
+    radial-gradient(circle at 8px 8px, color-mix(in srgb,var(--violet) 14%, transparent) 1px, transparent 1.5px),
+    radial-gradient(circle at 16px 16px, color-mix(in srgb,var(--violet) 7%, transparent) 1px, transparent 1.5px);
+  background-color: var(--discussion-surface);
+  background-image: var(--discussion-pattern);
+  background-size: 24px 24px;
+}
+.course-shell .main:has(#day.day-discussion-open) > .topbar {
+  max-width: none;
+  background-color: var(--discussion-surface) !important;
+  background-image: var(--discussion-pattern) !important;
+  background-size: 24px 24px !important;
+  backdrop-filter: none;
+}
+.course-shell #day.day-discussion-open > :not(.day-discussion-panel) { display: none; }
+.course-shell .day-discussion-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  overflow-wrap: anywhere;
+}
+.course-shell .day-discussion-panel .day-discussion-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap !important;
+  gap: 8px 13px;
+  max-width: none !important;
+  margin: 0;
+  padding: 12px clamp(12px,2vw,24px);
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+}
+.course-shell .day-discussion-panel h1 { flex: 1; margin: 0; font-size: clamp(17px,2.5vw,28px); line-height: 1.2; }
+.course-shell .day-discussion-theme {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ink);
+  background: transparent;
+  cursor: pointer;
+}
+.course-shell .day-discussion-theme svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.course-shell .day-discussion-panel > p { padding-inline: clamp(12px,2vw,24px); }
+.course-shell .day-discussion-panel .article-head .back { scroll-margin-top: 18px; }
+.course-shell .day-discussion-timeline {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px clamp(12px,2vw,24px) 14px;
+}
+.course-shell .day-discussion-divider,
+.course-shell .day-discussion-date {
+  align-self: center;
+  margin: 0;
+  padding: 2px 10px;
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+}
+.course-shell .day-discussion-divider.new-questions { margin-top: 8px; }
+.course-shell .day-discussion-message,
+.course-shell .day-discussion-compose {
+  margin: 0;
+  padding: 9px 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.course-shell .day-discussion-message {
+  align-self: flex-start;
+  width: fit-content;
+  max-width: min(87%,500px);
+  border-bottom-left-radius: 4px;
+  scroll-margin: 80px 0;
+}
+.course-shell .day-discussion-message.own {
+  align-self: flex-end;
+  border-radius: 14px 14px 4px 14px;
+  background: color-mix(in srgb,var(--card) 86%,var(--violet));
+}
+.course-shell .day-discussion-message.by-author { background: color-mix(in srgb,#f97726 24%,var(--card)); }
+.course-shell .day-discussion-message.quoted-message { outline: 2px solid var(--violet); outline-offset: 2px; }
+.course-shell .day-discussion-message p { margin: 0; }
+.course-shell .day-discussion-name { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.course-shell .day-discussion-name { margin-bottom: 2px; color: var(--muted); font-size: 13px; }
+.course-shell .day-discussion-avatar {
+  display: inline-grid;
+  place-items: center;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 999px;
+  color: var(--ink);
+  background: color-mix(in srgb,var(--paper) 76%,var(--violet));
+  font-size: 14px;
+}
+.course-shell .day-discussion-label { display: flex; align-items: center; gap: 9px; }
+.course-shell .day-discussion-unread {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-width: 23px;
+  min-height: 23px;
+  padding: 1px 5px;
+  border: 2px solid var(--paper);
+  border-radius: 999px;
+  background: #c82236;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+}
+.course-shell .day-discussion-unread[hidden] { display: none; }
+.course-shell .day-discussion-profile-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.course-shell .day-discussion-profile { padding: 0 0 5px; color: var(--muted); }
+.course-shell .day-discussion-meta { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 0 9px; color: var(--muted); font-size: 11px; }
+.course-shell .day-discussion-text-action {
+  padding: 4px 1px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+.course-shell .day-discussion-quote {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  gap: 1px;
+  margin: 0 0 5px;
+  padding: 4px 7px;
+  border: 0;
+  border-inline-start: 2px solid var(--violet);
+  border-radius: 4px 7px 7px 4px;
+  background: color-mix(in srgb,var(--violet) 10%,transparent);
+  color: var(--ink);
+  text-align: left;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.course-shell .day-discussion-quote-name { color: var(--muted); }
+.course-shell .day-discussion-quote-text { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.course-shell .day-discussion-answer {
+  margin-top: 6px;
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: color-mix(in srgb,#f47724 23%,var(--card));
+}
+.course-shell .day-discussion-panel summary { cursor: pointer; color: var(--ink); font-size: 13px; }
+.course-shell .day-discussion-answer[open] summary { margin-bottom: 4px; }
+.course-shell .day-discussion-panel audio,
+.course-shell .day-discussion-panel img { display: block; width: min(100%,340px); margin: 5px 0; }
+.course-shell .day-discussion-panel img { height: auto; border-radius: 8px; }
+.course-shell .day-discussion-compose {
+  width: 100%;
+  padding-inline: clamp(12px,2vw,24px);
+  border-inline: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.course-shell .day-discussion-compose textarea {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb,var(--paper) 80%,var(--discussion-surface));
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+}
+.course-shell .day-discussion-actions {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto auto auto;
+  align-items: end;
+  gap: clamp(4px,1.25vw,10px);
+}
+.course-shell .day-discussion-icon {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: color-mix(in srgb,var(--paper) 60%,transparent);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.course-shell .day-discussion-icon svg { display: block; width: 22px; height: 22px; margin: auto; }
+.course-shell .day-discussion-mark { display: flex; align-items: center; gap: 7px; margin: 6px 0; cursor: pointer; }
+.course-shell .day-voice-frame { display: block; width: min(100%,380px); height: 128px; border: 0; }
+.course-shell .day-discussion-message:has(.day-voice-frame) { width: min(87%,405px); }
+
+.course-shell .day-discussion-icon:last-child {
+  background: var(--violet);
+  color: var(--card);
+}
+.course-shell .day-discussion-icon:disabled { opacity: .45; cursor: default; }
+.course-shell .day-discussion-icon:focus-visible {
+  outline: 2px solid var(--violet);
+  outline-offset: 2px;
+}
+.course-shell .day-discussion-draft:not(:empty) {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 8px;
+}
+.course-shell .day-discussion-draft img { width: 56px; height: 56px; margin: 0; object-fit: cover; }
+.course-shell .day-discussion-avatar img { width: 32px; height: 32px; margin: 0; border-radius: 50%; object-fit: cover; }
+.course-shell .day-discussion-profile-photo { max-width: 120px; }
+.course-shell .day-discussion-options { display: flex; flex-wrap: wrap; gap: 14px; }
+.course-shell .day-discussion-profile-dialog {
+  max-width: min(95%,460px);
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--ink);
+}
+.course-shell .day-discussion-profile-dialog label { display: flex; align-items: center; gap: 8px; margin: 5px 0; flex-wrap: wrap; }
+.course-shell .day-discussion-profile-dialog input:not([type="checkbox"]) { max-width: 100%; }
+.course-shell .day-discussion-profile-dialog .back { margin: 4px 6px 4px 0; }
+@media (max-width: 900px) {
+  .course-shell .day-discussion-panel { min-height: calc(100dvh - 62px); }
+  .course-shell .day-discussion-panel .article-head .back { scroll-margin-top: 78px; }
+}
+@media (max-width: 480px) {
+  .course-shell .day-discussion-entry .next-button { width: 100%; }
+}

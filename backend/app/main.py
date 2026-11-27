@@ -17,6 +17,8 @@ from app.strength_telegram import router as strength_telegram_router
 from app.strength_delivery import router as strength_delivery_router
 from app.tilda_routes import router as tilda_router
 from app.masterclass_routes import router as masterclass_router
+from app.masterclass_discussion import require_owner as require_discussion_owner
+from app.masterclass_discussion import router as masterclass_discussion_router
 from app.app_auth import router as app_auth_router
 from app.account_auth_routes import (
     ACCOUNT_VIEW_HEADER,
@@ -81,7 +83,12 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     from app.browser_journey_service import browser_history_worker
+    from app.masterclass_discussion_push import worker as discussion_push_worker
     history_task = asyncio.create_task(browser_history_worker())
+    stop_discussion_push = asyncio.Event()
+    discussion_push_task = (
+        asyncio.create_task(discussion_push_worker(stop_discussion_push)) if settings.masterclass_discussion_pilot else None
+    )
     stop_email_worker = asyncio.Event()
     email_task = None
     stop_recurring_worker = asyncio.Event()
@@ -107,6 +114,10 @@ async def lifespan(_: FastAPI):
         async with knowledge_mcp.session_manager.run():
             yield
     finally:
+        stop_discussion_push.set()
+        if discussion_push_task is not None:
+            with suppress(asyncio.CancelledError):
+                await discussion_push_task
         history_task.cancel()
         with suppress(asyncio.CancelledError):
             await history_task
@@ -179,6 +190,13 @@ async def protect_blog_draft_responses(request: Request, call_next):
 async def protect_native_account_host(request: Request, call_next):
     host = (request.url.hostname or "").casefold()
     path = request.url.path
+    if path.startswith(masterclass_discussion_router.prefix + "/") and path != masterclass_discussion_router.prefix + "/status":
+        with SessionLocal() as db:
+            try:
+                require_discussion_owner(request, db)
+            except HTTPException as exc:
+                return JSONResponse({"detail": exc.detail}, status_code=exc.status_code, headers={"Cache-Control":"no-store"})
+        return await call_next(request)
     view_actor_id = view_user_id = None
     if request.headers.get(ACCOUNT_VIEW_HEADER) and path.startswith("/api/"):
         with SessionLocal() as db:
@@ -265,6 +283,7 @@ app.include_router(strength_telegram_router)
 app.include_router(strength_delivery_router)
 app.include_router(tilda_router)
 app.include_router(masterclass_router)
+app.include_router(masterclass_discussion_router)
 app.include_router(app_auth_router)
 app.include_router(account_auth_router)
 app.include_router(access_router)

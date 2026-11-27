@@ -900,6 +900,12 @@ def typography_font(font_name: str) -> FileResponse:
     return response
 
 
+@router.get("/masterclass-discussion-sw.js", include_in_schema=False)
+def discussion_service_worker() -> FileResponse:
+    return FileResponse(STATIC_DIR / "masterclass-discussion-sw.js", media_type="application/javascript",
+                        headers={"Cache-Control": "no-cache", "Service-Worker-Allowed": "/lk"})
+
+
 @router.get("/assets/{asset_name}", include_in_schema=False)
 def app_asset(asset_name: str) -> FileResponse:
     if asset_name in {"strength.webmanifest", "account.webmanifest"}:
@@ -921,6 +927,7 @@ def app_asset(asset_name: str) -> FileResponse:
         "account-theme.css", "account-theme.js",
         "questionnaire-person.js", "questionnaire-person.css",
         "masterclass-feedback.js", "masterclass-feedback.css",
+        "masterclass-discussion.js", "masterclass-discussion.css",
     }:
         raise HTTPException(status_code=404, detail="asset not found")
     return public_asset(STATIC_DIR / asset_name)

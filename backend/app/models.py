@@ -1664,6 +1664,67 @@ class PublicHomepageEvent(Base):
     )
 
 
+class MasterclassDiscussionPost(Base):
+    __tablename__ = "masterclass_discussion_posts"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    day_number: Mapped[int] = mapped_column(Integer, index=True)
+    author_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    client_nonce: Mapped[str] = mapped_column(String(64), unique=True)
+    source_label: Mapped[str | None] = mapped_column(String(100))
+    body: Mapped[str] = mapped_column(Text, default="")
+    photo: Mapped[bool] = mapped_column(Boolean, default=False)
+    voice: Mapped[bool] = mapped_column(Boolean, default=False)
+    archived: Mapped[bool] = mapped_column(Boolean, default=False)
+    reply_to_id: Mapped[int | None] = mapped_column(ForeignKey("masterclass_discussion_posts.id", ondelete="SET NULL"))
+    featured: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class MasterclassDiscussionRead(Base):
+    __tablename__ = "masterclass_discussion_reads"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    post_id: Mapped[int] = mapped_column(
+        ForeignKey("masterclass_discussion_posts.id", ondelete="CASCADE"), primary_key=True
+    )
+
+
+class MasterclassDiscussionProfile(Base):
+    __tablename__ = "masterclass_discussion_profiles"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    display_name: Mapped[str] = mapped_column(String(80), default="")
+    about: Mapped[str] = mapped_column(String(500), default="")
+    visible: Mapped[bool] = mapped_column(Boolean, default=False)
+    photo_key: Mapped[uuid.UUID | None] = mapped_column()
+
+
+class MasterclassDiscussionSubscription(Base):
+    __tablename__ = "masterclass_discussion_subscriptions"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    endpoint_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    subscription: Mapped[dict] = mapped_column(JSON)
+    replies: Mapped[bool] = mapped_column(Boolean)
+    new_posts: Mapped[bool] = mapped_column(Boolean)
+
+
+class MasterclassDiscussionPush(Base):
+    __tablename__ = "masterclass_discussion_pushes"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    subscription_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("masterclass_discussion_subscriptions.id", ondelete="CASCADE"), index=True
+    )
+    dedupe: Mapped[str] = mapped_column(String(180), unique=True)
+    payload: Mapped[dict] = mapped_column(JSON)
+    due_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    processed: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
 class ReadingPosition(Base):
     __tablename__ = "reading_positions"
 

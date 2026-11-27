@@ -29,6 +29,13 @@
 		host {$SITE_DOMAIN}
 		path /abricos-access/api/login /abricos-access/api/logout /abricos-access/api/me /abricos-access/api/years/* /abricos-access/api/videos/*
 	}
+	@masterclass_discussion path /api/masterclass/discussion/day-04/*
+	handle @masterclass_discussion {
+		request_body {
+			max_size 22MB
+		}
+		reverse_proxy backend:8000
+	}
 	handle @abricos_recordings {
 		request_body {
 			max_size 8KB
@@ -175,6 +182,10 @@ www.{$PUBLIC_DOMAIN} {
 
 {$API_DOMAIN} {
 	encode zstd gzip
+	@discussion_suite path /api/masterclass/discussion/* /masterclass-discussion-sw.js
+	handle @discussion_suite {
+		respond 404
+	}
 
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
@@ -216,6 +227,10 @@ www.{$PUBLIC_DOMAIN} {
 
 {$APP_DOMAIN} {
 	encode zstd gzip
+	@discussion_suite path /api/masterclass/discussion/* /masterclass-discussion-sw.js
+	handle @discussion_suite {
+		respond 404
+	}
 
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"

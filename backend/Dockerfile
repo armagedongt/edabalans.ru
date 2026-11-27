@@ -7,6 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app/backend
 
 RUN addgroup --system app && adduser --system --ingroup app app
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
 
 COPY backend/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
@@ -30,7 +31,7 @@ COPY content/public-site /app/content/public-site
 COPY content/service-messages /app/content/service-messages
 COPY prototypes/private-weather /app/prototypes/private-weather
 
-RUN chmod -R a+rX /app && install -d -o app -g app -m 0700 /var/lib/timeboard
+RUN chmod -R a+rX /app && install -d -o app -g app -m 0700 /var/lib/timeboard /var/lib/masterclass-discussion
 
 USER app
 
