@@ -736,7 +736,12 @@
       form.append(composeOptions, context, photo, voiceFile, photoDraft, voiceDraft, actions, status, audioFallback);
       panel.append(form);
       renderTimeline();
-      if (wanted) jump(wanted);
+      if (wanted) {
+        if (matchMedia('(max-width: 900px)').matches) {
+          document.querySelector('#sidebar.open #close')?.click();
+        }
+        jump(wanted);
+      }
       return;
     }
     mountPanel();
