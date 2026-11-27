@@ -54,6 +54,8 @@ implementation_status: implemented
   Unbounded для публичного hero и существующих фирменных надписей.
 
 - `content/design-workflow/skill/sergey-web-design/SKILL.md` — обязательный маршрут;
+- `content/design-workflow/skill/sergey-web-design/references/web-interface-standard.md` —
+  общий стандарт сайтов и веб-приложений, включая мобильные таблицы и реестры;
 - `content/design-workflow/skill/sergey-web-design/references/design-preferences.md` —
   устойчивые визуальные предпочтения;
 - `content/design-workflow/skill/sergey-web-design/references/collaboration-workflow.md` —
