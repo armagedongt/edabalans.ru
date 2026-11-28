@@ -154,7 +154,8 @@
     window.EdabalansFooterObserver.observe(document.documentElement, {childList: true, subtree: true});
   }
 
-  window.EdabalansFooter = {boot: boot, mount: mount, prepareMedia: prepareMedia, mountDiscussionLinks: mountDiscussionLinks};
+  window.EdabalansFooter = {boot: boot, mount: mount, prepareMedia: prepareMedia};
+  window.EdabalansFooter.mountDiscussionLinks = mountDiscussionLinks;
   window.EdabalansSiteFooter = window.EdabalansFooter;
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () { boot(); observe(); });
