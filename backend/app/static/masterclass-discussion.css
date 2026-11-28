@@ -257,7 +257,7 @@
 }
 .course-shell .day-discussion-icon svg { display: block; width: 22px; height: 22px; margin: auto; }
 .course-shell .day-discussion-mark { display: flex; align-items: center; gap: 7px; margin: 6px 0; cursor: pointer; }
-.course-shell .day-voice-frame { display: block; width: min(100%,380px); height: 83px; border: 0; }
+.course-shell .day-voice-frame { display: block; width: min(100%,380px); height: 83px; border: 0; color-scheme: light; }
 .course-shell .day-discussion-message:has(> .day-voice-frame) { width: min(87%,380px); padding-block: 6px; }
 
 .course-shell .day-discussion-actions .day-discussion-icon:last-child {
