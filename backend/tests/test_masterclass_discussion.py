@@ -176,6 +176,26 @@ def test_paginated_thread_counts_all_posts_and_finds_first_unread(pilot):
     assert len(thread["posts"]) == discussion.PAGE_SIZE
     assert thread["total"] == discussion.PAGE_SIZE + 1 and thread["more"]
     assert thread["firstUnread"] == 2
+    assert thread["latestId"] == discussion.PAGE_SIZE + 1
+    with factory.begin() as db:
+        db.add(MasterclassDiscussionPost(day_number=5, client_nonce="other-day", body="Другой день"))
+        db.add(MasterclassDiscussionPost(day_number=4, client_nonce="new-post", body="Новое сообщение"))
+    update = owner.get(BASE + "/thread", params={"after": thread["latestId"]}).json()
+    assert [post["text"] for post in update["posts"]] == ["Новое сообщение"]
+    assert not update["more"]
+
+
+def test_empty_thread_uses_zero_cursor_without_reloading_profile(pilot):
+    client, factory, _ = pilot
+    owner = client("owner")
+    base = discussion.day_path(5)
+    initial = owner.get(base + "/thread").json()
+    assert initial["posts"] == [] and initial["latestId"] == 0
+    with factory.begin() as db:
+        db.add(MasterclassDiscussionPost(day_number=5, client_nonce="first-message", body="Первое сообщение"))
+    update = owner.get(base + "/thread", params={"after": 0}).json()
+    assert [post["text"] for post in update["posts"]] == ["Первое сообщение"]
+    assert "profile" not in update and "player" not in update
 
 
 def test_profile_and_private_photo_are_bound_to_native_account(pilot):

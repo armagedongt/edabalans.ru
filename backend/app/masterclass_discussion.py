@@ -312,10 +312,13 @@ def status(day_number: int, request: Request, db: Session = Depends(get_db)) -> 
 
 
 @router.get("/day-{day_number}/thread")
-def thread(day_number: int, request: Request, response: Response, db: Session = Depends(get_db), after: int = Query(default=0, ge=0),
+def thread(day_number: int, request: Request, response: Response, db: Session = Depends(get_db), after: int | None = Query(default=None, ge=0),
            around: int | None = Query(default=None, ge=1)) -> dict:
     actor = require_owner(request, db)
     require_day(db, day_number)
+    initial = after is None and around is None
+    # Capture the live cursor before fetching the archive so concurrent inserts are still picked up.
+    latest_id = db.scalar(select(func.max(Post.id)).where(Post.day_number == day_number)) if initial else None
     if around is not None:
         if db.scalar(select_day(day_number).where(Post.id == around)) is None:
             raise HTTPException(404, "Сообщение недоступно.")
@@ -323,13 +326,14 @@ def thread(day_number: int, request: Request, response: Response, db: Session = 
         rows.reverse()
         rows.extend(db.scalars(select_day(day_number).where(Post.id >= around).order_by(Post.id).limit(PAGE_SIZE + 1 - len(rows))))
     else:
-        rows = list(db.scalars(select_day(day_number).where(Post.id > after).order_by(Post.id).limit(PAGE_SIZE + 1)))
+        rows = list(db.scalars(select_day(day_number).where(Post.id > (after or 0)).order_by(Post.id).limit(PAGE_SIZE + 1)))
     response.headers.update(PRIVATE_HEADERS)
     result = payload(db, request, day_number, rows[:PAGE_SIZE], actor.id, len(rows) > PAGE_SIZE)
-    if not after and around is None:
+    if initial:
         profile = db.get(Profile, actor.id)
         result["profile"] = own_profile(profile, actor.id, day_number, result["canAuthor"])
         result["player"] = voice_template()
+        result["latestId"] = latest_id or 0
     return result
 
 

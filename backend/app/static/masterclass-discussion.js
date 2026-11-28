@@ -197,6 +197,16 @@
     const cardEntry = Number(returnEntry.dataset.dayNumber) === dayNumber ? returnEntry : null;
     const base = dayPath(dayNumber);
     if (day.querySelector('.day-discussion-panel')) return;
+    function writeDiscussionRoute(opened) {
+      const link = new URL(location.href);
+      link.searchParams.set('course_day', String(opened ? dayNumber : returnEntry.dataset.dayNumber));
+      link.searchParams.delete('course_material');
+      link.searchParams.delete('discussion_post');
+      link.hash = '';
+      if (opened) link.searchParams.set('discussion_open', '1');
+      else link.searchParams.delete('discussion_open');
+      history.replaceState(history.state, '', link);
+    }
     const panel = element('section', 'day-discussion-panel');
     if (cardEntry) panelsByCard.set(cardEntry, panel);
     function updateCard(total, unread) {
@@ -217,6 +227,7 @@
       day.classList.remove('day-discussion-open');
     }
     const back = button('← К дню ' + returnEntry.dataset.dayNumber, () => {
+      if (mode === 'owner') writeDiscussionRoute(false);
       dismiss();
       entry.scrollIntoView({block:'center',behavior:'instant'});
       entry.focus({preventScroll:true});
@@ -256,6 +267,8 @@
     if (mode !== 'owner') {
       panel.append(element('p', 'day-discussion-access-note', notice));
     } else {
+      const fromLink = wanted || new URL(location.href).searchParams.has('discussion_open');
+      if (!wanted) writeDiscussionRoute(true);
       const loading = element('p', 'day-discussion-access-note', 'Загружаем обсуждение…');
       panel.append(loading);
       mountPanel();
@@ -270,9 +283,12 @@
       const posts = new Map();
       const related = new Map();
       const answers = {};
+      const renderedMessages = new Map();
       let unreadStart = initial.firstUnread;
       let more = initial.more;
-      let cursor = 0;
+      let cursor = initial.posts.at(-1)?.id || 0;
+      let liveCursor = Math.max(cursor, initial.latestId ?? 0);
+      let refreshing = false;
       let pendingNonce = null;
       let replyTarget = null;
       let authorAnswer = false;
@@ -489,7 +505,7 @@
           }
         }
       }
-      const readObserver = new IntersectionObserver(entries => {
+      function recordVisibleMessages(entries) {
         if (document.hidden || panel.querySelector('.day-discussion-guide[open]')) return;
         for (const entry of entries) {
           const id = Number(entry.target.closest('.day-discussion-message').id.replace('day-discussion-message-', ''));
@@ -502,16 +518,49 @@
           clearTimeout(readTimer);
           readTimer = setTimeout(flushRead, 150);
         }
-      }, {threshold:0.2, rootMargin:'-65px 0px 0px'});
+      }
+      function createReadObserver() {
+        return new IntersectionObserver(recordVisibleMessages, {
+          threshold:0.2, rootMargin:`-65px 0px -${form.offsetHeight + keyboardInset}px 0px`,
+        });
+      }
+      const viewport = window.visualViewport;
+      let keyboardInset = 0;
+      let readObserver = createReadObserver();
       function observeTimeline() {
         readObserver.disconnect();
-        if (document.hidden || panel.querySelector('.day-discussion-guide[open]')) return;
+        if (document.hidden || timeline.hidden || panel.querySelector('.day-discussion-guide[open]')) return;
         for (const messageName of timeline.querySelectorAll('.day-discussion-name')) readObserver.observe(messageName);
       }
-      document.addEventListener('visibilitychange', observeTimeline);
+      function updateReadObserver() {
+        readObserver.disconnect();
+        readObserver = createReadObserver();
+        observeTimeline();
+      }
+      function positionComposer() {
+        const inset = viewport?.scale === 1
+          ? Math.max(0, Math.round(document.documentElement.clientHeight - viewport.height - viewport.offsetTop))
+          : 0;
+        if (inset === keyboardInset) return;
+        keyboardInset = inset;
+        form.style.setProperty('--discussion-keyboard-inset', inset + 'px');
+        updateReadObserver();
+      }
+      function visibilityChanged() {
+        observeTimeline();
+        if (!document.hidden) refresh();
+      }
+      const composerObserver = new ResizeObserver(updateReadObserver);
+      composerObserver.observe(form);
+      viewport?.addEventListener('resize', positionComposer);
+      viewport?.addEventListener('scroll', positionComposer);
+      document.addEventListener('visibilitychange', visibilityChanged);
       releaseComposer = () => {
         themeObserver.disconnect();
-        document.removeEventListener('visibilitychange', observeTimeline);
+        document.removeEventListener('visibilitychange', visibilityChanged);
+        viewport?.removeEventListener('resize', positionComposer);
+        viewport?.removeEventListener('scroll', positionComposer);
+        composerObserver.disconnect();
         if (recorder?.state === 'recording') recorder.stop();
         clearTimeout(readTimer);
         flushRead();
@@ -584,27 +633,41 @@
       function renderTimeline() {
         const items = [...posts.values()].sort((a,b) => a.id-b.id);
         const byId = new Map([...related, ...posts]);
+        const children = [];
         readObserver.disconnect();
-        pausePlayers(timeline);
-        timeline.replaceChildren();
         function appendMessage(item) {
-          if (item.id === unreadStart) timeline.append(element('p', 'day-discussion-unread-line', 'Непрочитанные сообщения'));
-          timeline.append(message(item, byId, answers, jump, selectReply, editProfile));
+          if (more && item.id > cursor && !children.includes(nextPage)) children.push(nextPage);
+          if (item.id === unreadStart) children.push(element('p', 'day-discussion-unread-line', 'Непрочитанные сообщения'));
+          const content = JSON.stringify([item, byId.get(item.replyTo), byId.get(answers[item.id])]);
+          let rendered = renderedMessages.get(item.id);
+          if (rendered?.content !== content) {
+            rendered = {content, node:message(item, byId, answers, jump, selectReply, editProfile)};
+            renderedMessages.set(item.id, rendered);
+          }
+          children.push(rendered.node);
         }
         const old = items.filter(item => item.archived);
         if (old.length) {
-          timeline.append(element('h2', 'day-discussion-divider', 'Старые обсуждения'));
+          children.push(element('h2', 'day-discussion-divider', 'Старые обсуждения'));
           for (const item of old) appendMessage(item);
         }
-        timeline.append(element('h2', 'day-discussion-divider new-questions', 'Новые вопросы'));
+        children.push(element('h2', 'day-discussion-divider new-questions', 'Новые вопросы'));
         let lastDate = '';
         for (const item of items.filter(post => !post.archived)) {
           const date = dateLabel(item.at);
-          if (date && date !== lastDate) timeline.append(element('p', 'day-discussion-date', date));
+          if (date && date !== lastDate) children.push(element('p', 'day-discussion-date', date));
           lastDate = date;
           appendMessage(item);
         }
-        if (more) timeline.append(nextPage);
+        if (more && !children.includes(nextPage)) children.push(nextPage);
+        // Keep existing message nodes connected so incoming posts don't reset voice playback or focus.
+        const retained = new Set(children);
+        for (const child of [...timeline.children]) if (!retained.has(child)) child.remove();
+        let position = timeline.firstChild;
+        for (const child of children) {
+          if (child === position) position = position.nextSibling;
+          else timeline.insertBefore(child, position);
+        }
         observeTimeline();
       }
 
@@ -634,7 +697,6 @@
           if (!panel.isConnected) return;
           merge(data);
           const posted = data.posts.at(-1);
-          if (!more) cursor = Math.max(cursor, posted.id);
           pendingNonce = null;
           replyTarget = null;
           authorAnswer = false;
@@ -910,24 +972,36 @@
       }
 
       merge(initial);
-      cursor = initial.posts.at(-1)?.id || 0;
-      const refreshTimer = setInterval(async () => {
-        if (!panel.isConnected || document.hidden || more) return;
+      async function refresh() {
+        if (!panel.isConnected || document.hidden || refreshing) return;
+        refreshing = true;
+        let changed = false;
         try {
-          const result = await fetchTimeline('/thread?after=' + cursor);
-          if (!panel.isConnected) return;
-          merge(result);
-          if (result.posts.length) {
-            cursor = result.posts.at(-1).id;
-            more = result.more;
-            renderTimeline();
-          }
+          let result;
+          do {
+            result = await fetchTimeline('/thread?after=' + liveCursor);
+            if (!panel.isConnected) return;
+            changed ||= result.posts.some(item => !posts.has(item.id));
+            merge(result);
+            liveCursor = result.posts.at(-1)?.id || liveCursor;
+          } while (result.more && !document.hidden);
         } catch { /* Keep the last loaded page and retry on the next interval. */ }
-      }, 15000);
+        finally {
+          refreshing = false;
+          if (changed && panel.isConnected) {
+            const page = document.documentElement;
+            const follow = !more && !timeline.hidden && page.scrollHeight - page.clientHeight - scrollY < 40;
+            renderTimeline();
+            if (follow) scrollTo({top:page.scrollHeight, behavior:'instant'});
+          }
+        }
+      }
+      const refreshTimer = setInterval(refresh, 15000);
 
       actions.append(textarea, attach, mic, submit);
       form.append(context, photo, voiceFile, photoDraft, voiceDraft, actions, status, audioFallback);
       panel.append(form, contact, settings);
+      positionComposer();
       renderTimeline();
       try {
         if (!localStorage.getItem('masterclass-discussion-guide-v1')) {
@@ -935,15 +1009,13 @@
           localStorage.setItem('masterclass-discussion-guide-v1', 'seen');
         }
       } catch { /* Keep the guide available from My profile when storage is unavailable. */ }
-      if (wanted || new URL(location.href).searchParams.has('discussion_open')) {
+      if (fromLink) {
         if (matchMedia('(max-width: 900px)').matches) {
           document.querySelector('#sidebar.open #close')?.click();
         }
-        const link = new URL(location.href);
-        link.searchParams.delete('discussion_open');
-        link.searchParams.delete('discussion_post');
-        history.replaceState(history.state, '', link);
-        if (wanted) jump(wanted);
+        if (wanted) jump(wanted).then(() => {
+          if (panel.isConnected) writeDiscussionRoute(true);
+        });
       }
       return;
     }

@@ -224,12 +224,18 @@
 .course-shell .day-discussion-panel img { display: block; width: min(100%,340px); margin: 5px 0; }
 .course-shell .day-discussion-panel img { height: auto; border-radius: 8px; }
 .course-shell .day-discussion-compose {
+  position: sticky;
+  bottom: var(--discussion-keyboard-inset, 0px);
+  z-index: 28;
   width: 100%;
   padding-inline: clamp(12px,2vw,24px);
+  padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
   border-inline: 0;
   border-bottom: 0;
   border-radius: 0;
-  background: transparent;
+  background-color: var(--discussion-surface);
+  background-image: var(--discussion-pattern);
+  background-size: 24px 24px;
 }
 .course-shell .day-discussion-compose textarea {
   box-sizing: border-box;

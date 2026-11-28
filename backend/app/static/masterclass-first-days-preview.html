@@ -17,8 +17,8 @@
 <link rel="stylesheet" href="/assets/course-visual.css?v=20261026-course-shell">
 <link rel="stylesheet" href="/assets/questionnaire-person.css?v=20260917a">
 <link rel="stylesheet" href="/assets/masterclass-feedback.css?v=20261018-typography">
-<link rel="stylesheet" href="/assets/masterclass-discussion.css?v=20261128-discussion-footer">
-<script src="/assets/masterclass-discussion.js?v=20261128-discussion-voice"></script>
+<link rel="stylesheet" href="/assets/masterclass-discussion.css?v=20261128-discussion-live">
+<script src="/assets/masterclass-discussion.js?v=20261128-discussion-live"></script>
 <script src="/assets/questionnaire-person.js?v=20260917a"></script>
 <link rel="stylesheet" href="/assets/account-theme.css?v=20261128-course-day">
   <script src="/assets/account-theme.js?v=20261128-course-day"></script>
@@ -188,7 +188,7 @@ function buildFromManifest(manifest){courseManifest=manifest;document.querySelec
       if(!courseRoot.isConnected)stopReadingPosition();
     });
     function readCourseRoute(){var params=new URL(location.href).searchParams,day=Number(params.get('course_day')),material=params.get('course_material');return{day:day>0?day:null,material:material||null}}
-    function writeCourseRoute(materialId,replace,anchor){var url=new URL(location.href);if(!replace||url.searchParams.get('course_material')!==materialId)url.hash=anchor||'';url.searchParams.set('course_day',String(state.day));if(!materialId)url.searchParams.delete('course_material');else url.searchParams.set('course_material',materialId);var target=url.pathname+url.search+url.hash,current=location.pathname+location.search+location.hash;if(target===current)return;history[replace?'replaceState':'pushState'](Object.assign({},history.state,{courseDay:state.day,courseMaterial:materialId,readingMaterial:null}),'',target)}
+    function writeCourseRoute(materialId,replace,anchor){var url=new URL(location.href);if(!replace||url.searchParams.get('course_material')!==materialId)url.hash=anchor||'';url.searchParams.set('course_day',String(state.day));url.searchParams.delete('discussion_open');url.searchParams.delete('discussion_post');if(!materialId)url.searchParams.delete('course_material');else url.searchParams.set('course_material',materialId);var target=url.pathname+url.search+url.hash,current=location.pathname+location.search+location.hash;if(target===current)return;history[replace?'replaceState':'pushState'](Object.assign({},history.state,{courseDay:state.day,courseMaterial:materialId,readingMaterial:null}),'',target)}
     function stepIndexById(d,id){return d.steps.findIndex(function(step){return step.id===id})}
     function topicIndexForStep(d,stepIndex){var id=d.steps[stepIndex]&&d.steps[stepIndex].id;return d.topics.findIndex(function(topic){return topic.stepId===id})}
     function materialButtonText(d,stepIndex){if(courseManifest.linearNavigation)return linearNeighbor(d,stepIndex,1)?'Далее →':'К оглавлению';var step=d.steps[stepIndex]||{};if(step.nested&&step.parentStepId)return'К подборке рецептов ←';return nextVisibleStep(d,stepIndex)<0?'К заданиям ↓':'Далее →'}
