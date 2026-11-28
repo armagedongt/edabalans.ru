@@ -8,6 +8,7 @@
   background: var(--card);
 }
 .course-shell .day-discussion-note { margin: 4px 0; color: var(--muted); font-size: 13px; }
+.course-shell .day-discussion-total { font-weight: 400; }
 .course-shell .day-discussion-entry-copy p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
 .course-shell .day-discussion-entry .next-button:disabled { cursor: default; opacity: .55; }
 .course-shell .day-discussion-entry .next-button { position: relative; width: 100%; overflow: visible; }

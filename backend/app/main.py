@@ -190,7 +190,8 @@ async def protect_blog_draft_responses(request: Request, call_next):
 async def protect_native_account_host(request: Request, call_next):
     host = (request.url.hostname or "").casefold()
     path = request.url.path
-    if path.startswith(masterclass_discussion_router.prefix + "/") and path != masterclass_discussion_router.prefix + "/status":
+    discussion_path = path.removeprefix(masterclass_discussion_router.prefix + "/")
+    if discussion_path != path and not (request.method == "GET" and discussion_path.split("/")[1:] == ["status"]):
         with SessionLocal() as db:
             try:
                 require_discussion_owner(request, db)

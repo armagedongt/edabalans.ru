@@ -1,15 +1,18 @@
 (() => {
   if (window.EdabalansMasterclassDiscussion) return;
-  const base = '/api/masterclass/discussion/day-04';
   const authorName = 'Сергей Воронцов';
-  const notice = 'Обсуждение работает в тестовом режиме. У вас пока нет доступа. Ожидайте уведомления.';
+  const notice = 'Обсуждения пока доступны только автору курса. Дождитесь уведомления об открытии.';
+  const panelsByCard = new WeakMap();
   let activePanel = null;
   let releaseComposer = () => {};
   let voiceTemplate = '';
-  let dayEntry = null;
 
-  async function api(path, options = {}) {
-    const response = await fetch(base + path, {cache:'no-store', ...options});
+  function dayPath(number) {
+    return '/api/masterclass/discussion/day-' + String(number).padStart(2, '0');
+  }
+
+  async function requestForDay(number, path, options = {}) {
+    const response = await fetch(dayPath(number) + path, {cache:'no-store', ...options});
     const data = await response.json();
     if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'Проверьте поля и повторите.');
     return data;
@@ -87,14 +90,14 @@
   }
 
   function isOwnMessage(item) {
-    return item.isAuthor;
+    return item.isOwn;
   }
 
   function quote(target, jump) {
     const text = quoteText(target);
     const node = button('', () => jump(target.id), 'day-discussion-quote');
     node.setAttribute('aria-label', 'Перейти к сообщению: ' + text);
-    node.append(element('span', 'day-discussion-quote-name', isOwnMessage(target) ? authorName : target.name || 'Вопрос из обсуждения'),
+    node.append(element('span', 'day-discussion-quote-name', target.isAuthor ? authorName : target.name || 'Вопрос из обсуждения'),
       element('span', 'day-discussion-quote-text', text));
     return node;
   }
@@ -105,7 +108,7 @@
     card.id = 'day-discussion-message-' + item.id;
     card.tabIndex = -1;
     if (item.name) {
-      const displayName = own ? authorName : item.name;
+      const displayName = item.isAuthor ? authorName : item.name;
       const author = element('div', 'day-discussion-name');
       const avatar = element('span', 'day-discussion-avatar', displayName[0]);
       avatar.setAttribute('aria-hidden', 'true');
@@ -173,17 +176,33 @@
     return control;
   }
 
-  async function open(day, entry, mode, wanted = 0) {
+  async function open(day, entry, dayNumber, mode, wanted = 0) {
+    const api = (path, options) => requestForDay(dayNumber, path, options);
+    const returnEntry = entry.closest('.day-discussion-entry');
+    const cardEntry = Number(returnEntry.dataset.dayNumber) === dayNumber ? returnEntry : null;
+    const base = dayPath(dayNumber);
     if (day.querySelector('.day-discussion-panel')) return;
     const panel = element('section', 'day-discussion-panel');
+    if (cardEntry) panelsByCard.set(cardEntry, panel);
+    function updateCard(total, unread) {
+      if (cardEntry && panelsByCard.get(cardEntry) === panel) updateMessageCount(cardEntry, total, unread);
+    }
     activePanel = panel;
     const head = element('div', 'article-head');
-    const back = button('← К дню 4', () => {
+    const dayObserver = new MutationObserver(() => {
+      if (day.hidden || !panel.isConnected) dismiss();
+    });
+    function dismiss() {
+      dayObserver.disconnect();
+      if (activePanel !== panel) return;
       pausePlayers(panel);
       panel.remove();
       releaseComposer();
       activePanel = null;
       day.classList.remove('day-discussion-open');
+    }
+    const back = button('← К дню ' + returnEntry.dataset.dayNumber, () => {
+      dismiss();
       entry.scrollIntoView({block:'center',behavior:'instant'});
       entry.focus({preventScroll:true});
       document.querySelector('.course-shell #sidebar.open #close')?.click();
@@ -206,7 +225,7 @@
       'day-discussion-outline back');
     const headActions = element('div', 'day-discussion-head-actions');
     headActions.append(theme);
-    head.append(back, outline, element('h1', '', 'Обсуждение дня № 4'), headActions);
+    head.append(back, outline, element('h1', '', 'Обсуждение дня № ' + dayNumber), headActions);
     panel.append(head);
     const themeObserver = new MutationObserver(syncTheme);
     themeObserver.observe(document.documentElement, {attributes:true, attributeFilter:['data-account-theme']});
@@ -231,6 +250,7 @@
       if (!panel.isConnected) return;
       loading.remove();
       voiceTemplate = initial.player;
+      const canAuthor = initial.canAuthor;
       let profileData = initial.profile;
       const posts = new Map();
       const related = new Map();
@@ -262,6 +282,7 @@
       photo.setAttribute('aria-label', 'Файл фотографии');
       const attach = composerButton('paperclip', 'Прикрепить фото', () => photo.click());
       const mic = composerButton('mic', 'Записать голосовое', recordVoice);
+      mic.disabled = !canAuthor;
 
       const submit = composerButton('send', 'Отправить', send);
       const actions = element('div', 'day-discussion-actions');
@@ -299,14 +320,14 @@
         voiceDraft.replaceChildren();
       }
 
-      function draftVoice(audio) {
+      function draftVoice(audio, preview = audio) {
         if (!audio?.size || audio.size > 12_000_000) {
           status.textContent = 'Не удалось сохранить голосовое. Максимальный размер — 12 МБ.';
           return;
         }
         clearVoice();
         voiceRecording = audio;
-        voiceDraftUrl = URL.createObjectURL(audio);
+        voiceDraftUrl = URL.createObjectURL(preview);
         voiceDraft.append(player(voiceDraftUrl), button('Удалить запись', clearVoice, 'day-discussion-text-action'));
       }
       voiceFile.onchange = () => {
@@ -337,7 +358,7 @@
       });
 
       function finishCapture() {
-        mic.disabled = false;
+        mic.disabled = !canAuthor;
         setIcon(mic, 'mic');
         mic.title = 'Записать голосовое';
         mic.setAttribute('aria-label', mic.title);
@@ -386,7 +407,7 @@
                 const ready = await response.blob();
                 if (panel.isConnected) {
                   status.textContent = '';
-                  draftVoice(ready);
+                  draftVoice(recording, ready);
                 }
               } catch {
                 if (panel.isConnected) {
@@ -401,7 +422,7 @@
           };
           recorder.start();
           submit.disabled = true;
-          mic.disabled = false;
+          mic.disabled = !canAuthor;
           setIcon(mic, 'stop');
           mic.title = 'Остановить запись';
           mic.setAttribute('aria-label', mic.title);
@@ -418,10 +439,19 @@
         }
       }
 
+      let readRevision = 0;
+      async function fetchTimeline(path, options) {
+        const revision = readRevision;
+        const response = await api(path, options);
+        return {...response, readRevision:revision};
+      }
       let pendingRead = [];
       let readTimer = 0;
+      let readInFlight = false;
       async function flushRead() {
-        if (!pendingRead.length) return;
+        if (readInFlight || !pendingRead.length) return;
+        readInFlight = true;
+        let retry = false;
         const ids = pendingRead.splice(0, 100);
         try {
           const result = await api('/read', {
@@ -429,12 +459,18 @@
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({ids}),
           });
-          updateMessageCount(dayEntry, null, result.unread);
+          readRevision += 1;
+          updateCard(null, result.unread);
         } catch {
           if (panel.isConnected) {
             pendingRead.unshift(...ids);
+            retry = true;
+          }
+        } finally {
+          readInFlight = false;
+          if (pendingRead.length) {
             clearTimeout(readTimer);
-            readTimer = setTimeout(flushRead, 3000);
+            readTimer = setTimeout(flushRead, retry ? 3000 : 0);
           }
         }
       }
@@ -474,7 +510,7 @@
         let target = panel.querySelector('#day-discussion-message-' + id);
         if (!target) {
           try {
-            merge(await api('/thread?around=' + encodeURIComponent(id)));
+            merge(await fetchTimeline('/thread?around=' + encodeURIComponent(id)));
             renderTimeline();
           } catch (error) { status.textContent = error.message; }
           target = panel.querySelector('#day-discussion-message-' + id);
@@ -498,7 +534,7 @@
             textarea.focus();
           }, 'day-discussion-text-action')
         );
-        if (!isOwnMessage(item)) {
+        if (canAuthor && !isOwnMessage(item)) {
           const label = element('label', 'day-discussion-mark', 'Пометить как ответ Сергея');
           const check = element('input');
           check.type = 'checkbox';
@@ -514,13 +550,14 @@
         for (const item of data.related) if (!posts.has(item.id)) related.set(item.id, item);
         Object.assign(answers, data.answers);
         if (!unreadStart) unreadStart = data.firstUnread;
-        updateMessageCount(dayEntry, data.total, data.unread);
+        updateCard(data.total,
+          data.readRevision == null || data.readRevision === readRevision ? data.unread : null);
       }
 
       const nextPage = button('Ещё сообщения', async () => {
         nextPage.disabled = true;
         try {
-          const result = await api('/thread?after=' + cursor);
+          const result = await fetchTimeline('/thread?after=' + cursor);
           cursor = result.posts.at(-1)?.id || cursor;
           more = result.more;
           merge(result);
@@ -578,7 +615,7 @@
         mic.disabled = true;
         status.textContent = 'Отправляем…';
         try {
-          const data = await api('/posts', {method:'POST',body:formData});
+          const data = await fetchTimeline('/posts', {method:'POST',body:formData});
           if (!panel.isConnected) return;
           merge(data);
           const posted = data.posts.at(-1);
@@ -599,7 +636,7 @@
           submit.disabled = false;
           textarea.readOnly = false;
           attach.disabled = false;
-          mic.disabled = false;
+          mic.disabled = !canAuthor;
         }
       }
 
@@ -727,9 +764,9 @@
           data.set('visible', Boolean(data.get('name').trim() || data.get('about').trim() || selected || (!remove && profileData.avatar)));
           try {
             const saved = await api('/profile', {method:'PUT',body:data});
-            profileData = {name:data.get('name').trim(), about:data.get('about').trim(), avatar:saved.avatar};
-            for (const item of [...posts.values(), ...related.values()]) if (item.isAuthor) {
-              item.name = saved.profile?.name || authorName;
+            profileData = {...profileData, name:data.get('name').trim(), about:data.get('about').trim(), avatar:saved.avatar};
+            for (const item of [...posts.values(), ...related.values()]) if (item.isOwn) {
+              item.name = item.isAuthor ? authorName : saved.profile?.name || profileData.defaultName;
               item.profile = saved.profile;
             }
             renderTimeline();
@@ -862,11 +899,12 @@
       const refreshTimer = setInterval(async () => {
         if (!panel.isConnected || document.hidden || more) return;
         try {
-          const result = await api('/thread?after=' + cursor);
-          if (result.posts.length && panel.isConnected) {
+          const result = await fetchTimeline('/thread?after=' + cursor);
+          if (!panel.isConnected) return;
+          merge(result);
+          if (result.posts.length) {
             cursor = result.posts.at(-1).id;
             more = result.more;
-            merge(result);
             renderTimeline();
           }
         } catch { /* Keep the last loaded page and retry on the next interval. */ }
@@ -882,11 +920,15 @@
           localStorage.setItem('masterclass-discussion-guide-v1', 'seen');
         }
       } catch { /* Keep the guide available from My profile when storage is unavailable. */ }
-      if (wanted) {
+      if (wanted || new URL(location.href).searchParams.has('discussion_open')) {
         if (matchMedia('(max-width: 900px)').matches) {
           document.querySelector('#sidebar.open #close')?.click();
         }
-        jump(wanted);
+        const link = new URL(location.href);
+        link.searchParams.delete('discussion_open');
+        link.searchParams.delete('discussion_post');
+        history.replaceState(history.state, '', link);
+        if (wanted) jump(wanted);
       }
       return;
     }
@@ -895,6 +937,7 @@
     function mountPanel() {
       day.classList.add('day-discussion-open');
       day.append(panel);
+      dayObserver.observe(day, {attributes:true, attributeFilter:['hidden'], childList:true});
       scrollTo(0, 0);
       syncTheme();
       (matchMedia('(max-width: 900px)').matches ? outline : back).focus({preventScroll:true});
@@ -902,17 +945,21 @@
   }
 
   function updateMessageCount(entry, total, unread) {
+    const label = entry?.querySelector('.day-discussion-total');
     const badge = entry?.querySelector('.day-discussion-count');
-    if (!badge) return;
+    if (!label || !badge) return;
     if (total != null) {
-      badge.textContent = String(total);
-      badge.hidden = false;
+      label.dataset.total = total;
+      label.textContent = ' (сообщений: ' + total + ')';
     }
-    const button = badge.parentElement;
-    button.setAttribute('aria-label', 'Обсуждение. Сообщений: ' + badge.textContent + ', непрочитанных: ' + (unread ?? 0));
+    if (unread != null) badge.textContent = String(unread);
+    const unreadCount = Number(badge.textContent);
+    badge.hidden = unreadCount === 0;
+    badge.parentElement.setAttribute('aria-label', 'Обсуждение. Сообщений: ' +
+      label.dataset.total + ', непрочитанных: ' + unreadCount);
   }
 
-  async function mount(day, assignment) {
+  async function mount(day, assignment, dayNumber) {
     if (activePanel && !activePanel.isConnected) {
       pausePlayers(activePanel);
       releaseComposer();
@@ -920,33 +967,39 @@
     }
     day.classList.remove('day-discussion-open');
     if (!assignment) return;
+    const link = new URL(location.href);
+    const wanted = Number(link.searchParams.get('discussion_post'));
+    const openOnLoad = wanted || link.searchParams.has('discussion_open');
+    const requested = openOnLoad ? Number(link.searchParams.get('course_day')) || dayNumber : dayNumber;
     let access;
-    try { access = await api('/status'); }
+    try { access = await requestForDay(dayNumber, '/status'); }
     catch { return; }
     if (!assignment.isConnected || assignment.previousElementSibling?.classList.contains('day-discussion-entry') ||
         !['owner', 'locked'].includes(access.mode)) return;
     const entry = element('section', 'day-discussion-entry');
     entry.setAttribute('aria-label', 'Обсуждение дня');
+    entry.dataset.dayNumber = dayNumber;
     const copy = element('div', 'day-discussion-entry-copy');
-    copy.append(element('strong', '', 'Обсуждение дня'), element('p', '', access.mode === 'locked'
-      ? 'Тестовый режим'
+    const heading = element('div', 'day-discussion-entry-heading');
+    heading.append(element('strong', '', 'Обсуждение дня'));
+    copy.append(heading, element('p', '', access.mode === 'locked'
+      ? 'Доступ пока закрыт'
       : 'Прочитайте вопросы, которые задавали другие участники, и ответы на них. Либо задайте свой личный вопрос.'));
-    const go = button('Обсуждение →', () => open(day, go, access.mode), 'next-button ready');
+    const go = button('Обсуждение →', () => open(day, go, dayNumber, access.mode), 'next-button ready');
+    entry.append(copy, go);
     if (access.mode === 'owner') {
       const count = element('span', 'day-discussion-count');
       count.setAttribute('aria-hidden', 'true');
       go.append(count);
-      updateMessageCount(go, access.total ?? 0, access.unread);
+      heading.append(element('span', 'day-discussion-total'));
+      updateMessageCount(entry, access.total ?? 0, access.unread);
     }
-    entry.append(copy, go);
     assignment.before(entry);
-    dayEntry = entry;
-    const link = new URL(location.href);
-    const wanted = Number(link.searchParams.get('discussion_post'));
-    if (wanted && access.mode === 'owner') {
-      link.searchParams.delete('discussion_post');
-      history.replaceState(history.state, '', link);
-      open(day, go, access.mode, wanted);
+    if (openOnLoad && access.mode === 'owner') {
+      const requestedAccess = requested === dayNumber ? access : await requestForDay(requested, '/status').catch(() => null);
+      if (assignment.isConnected && requestedAccess?.mode === 'owner') {
+        open(day, go, requested, requestedAccess.mode, wanted);
+      }
     }
   }
 

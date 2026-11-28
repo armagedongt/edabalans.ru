@@ -1,4 +1,4 @@
-"""Web Push for the owner-only pilot. Delivery remains off for other accounts."""
+"""Web Push deliveries for day discussions."""
 from __future__ import annotations
 
 import asyncio
@@ -24,10 +24,11 @@ from sqlalchemy.orm import Session
 from app.account_auth_routes import ACCOUNT_MANAGER_EMAIL, primary_email
 from app.config import get_settings
 from app.database import SessionLocal
+from app.models import MasterclassDiscussionPost as Post
 from app.models import MasterclassDiscussionPush as Delivery
 from app.models import MasterclassDiscussionSubscription as Subscription
 
-PUSH_TITLES = {"reply": "Сергей ответил на ваш вопрос", "day": "Новое сообщение в обсуждении дня 4"}
+PUSH_TITLES = {"reply": "Сергей ответил на ваш вопрос", "day": "Новое сообщение в обсуждении дня {day}"}
 logger = logging.getLogger(__name__)
 
 
@@ -80,17 +81,40 @@ def public_key() -> str:
     return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
 
 
-def enqueue_test(db: Session, subscription: Subscription, kind: str, nonce: UUID, post_id: int | None) -> None:
-    dedupe = f"pilot:{subscription.id}:{kind}:{nonce}"
-    if db.scalar(select(Delivery.id).where(Delivery.dedupe == dedupe)):
-        return
-    url = "/lk?account_app=masterclass-course&course_day=4&discussion_post=" + str(post_id or 0)
+def add_delivery(db: Session, subscription: Subscription, kind: str, day: int, post_id: int | None,
+                 dedupe: str, *, probe: bool = False) -> None:
+    url = f"/lk?account_app=masterclass-course&course_day={day}&discussion_open=1"
+    if post_id is not None:
+        url += f"&discussion_post={post_id}"
     db.add(Delivery(
         subscription_id=subscription.id,
         dedupe=dedupe,
-        payload={"kind":kind, "title":PUSH_TITLES[kind], "body":"Проверка уведомлений", "url":url},
+        payload={"kind": kind, "title": PUSH_TITLES[kind].format(day=day),
+                 "body": "Проверка уведомлений" if probe else "Открыть обсуждение", "url": url},
         due_at=datetime.now(UTC),
     ))
+
+
+def enqueue_test(db: Session, subscription: Subscription, kind: str, nonce: UUID, day: int, post_id: int | None) -> None:
+    dedupe = f"pilot:{subscription.id}:{kind}:{nonce}"
+    if not db.scalar(select(Delivery.id).where(Delivery.dedupe == dedupe)):
+        add_delivery(db, subscription, kind, day, post_id, dedupe, probe=True)
+
+
+def enqueue_post(db: Session, post: Post, question: Post | None, *, is_author: bool) -> None:
+    subscriptions = db.scalars(select(Subscription).where(Subscription.user_id != post.author_id))
+    for subscription in subscriptions:
+        # Match the current owner-only access gate, including delivery of existing subscriptions.
+        if primary_email(db, subscription.user_id) != ACCOUNT_MANAGER_EMAIL:
+            continue
+        reply_to_subscriber = is_author and question is not None and question.author_id == subscription.user_id
+        if reply_to_subscriber and subscription.replies:
+            kind = "reply"
+        elif subscription.new_posts:
+            kind = "day"
+        else:
+            continue
+        add_delivery(db, subscription, kind, post.day_number, post.id, f"post:{subscription.id}:{post.id}")
 
 
 class NoRedirectSession(requests.Session):

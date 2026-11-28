@@ -23,9 +23,9 @@ from app.account_security import token_hash
 from app.database import Base, get_db
 from app import masterclass_discussion as discussion
 from app import masterclass_discussion_push as push
-from app.models import AccountCredential, AccountSession, MasterclassDiscussionPost, User, UserEmail
+from app.models import AccountCredential, AccountSession, MasterclassDiscussionPost, MasterclassDiscussionProfile, User, UserEmail
 
-BASE = discussion.router.prefix
+BASE = discussion.day_path(4)
 ORIGIN = "https://testserver"
 
 
@@ -93,6 +93,56 @@ def test_pilot_allows_only_direct_owner(pilot):
     assert direct.get(BASE + "/thread").status_code == 403
 
 
+def test_registered_account_profiles_are_initialized_once(pilot):
+    client, factory, _ = pilot
+    owner = client("owner")
+    with factory.begin() as db:
+        unregistered = User(display_name="CRM only", status="active")
+        db.add(unregistered)
+        db.flush()
+        assert discussion.populate_registered_profiles(db) == 3
+        assert db.get(MasterclassDiscussionProfile, unregistered.id) is None
+    profile = owner.get(BASE + "/thread").json()["profile"]
+    assert profile["name"] == "Сергей Воронцов" and profile["defaultName"] == "Сергей Воронцов"
+    assert owner.put(BASE + "/profile", data={"name":"Сергей","about":"Мой профиль","visible":"true"}).status_code == 200
+    with factory.begin() as db:
+        assert discussion.populate_registered_profiles(db) == 0
+    assert owner.get(BASE + "/thread").json()["profile"]["about"] == "Мой профиль"
+
+
+def test_discussions_are_independent_and_private_for_all_days(pilot):
+    client, factory, _ = pilot
+    owner = client("owner")
+    other_day = discussion.day_path(5)
+    empty = owner.get(other_day + "/status")
+    assert empty.json() == {"mode": "owner", "unread": 0, "total": 0}
+    assert owner.get(discussion.day_path(999) + "/thread").status_code == 404
+    assert client("member").get(other_day + "/status").json()["mode"] == "locked"
+    assert client("member").get(other_day + "/thread").status_code == 403
+    with factory.begin() as db:
+        source = MasterclassDiscussionPost(day_number=5, client_nonce="other-archive", source_label="Архив",
+                                           body="Другой день", archived=True)
+        db.add(source)
+        db.flush()
+        other_post = source.id
+
+    assert owner.get(other_day + "/thread").json()["firstUnread"] == other_post
+    assert owner.post(other_day + "/read", json={"ids":[1]}).json()["unread"] == 1
+    assert owner.post(other_day + "/read", json={"ids":[other_post]}).json()["unread"] == 0
+    assert owner.get(other_day + "/status").json()["total"] == 1
+    assert owner.get(BASE + "/status").json() == {"mode":"owner","unread":1,"total":1}
+    assert owner.get(BASE + f"/thread?around={other_post}").status_code == 404
+    assert owner.post(BASE + "/posts", data={"text":"Ответ","reply_to":other_post,"nonce":str(uuid.uuid4())}).status_code == 404
+
+    first_data = {"text":"Сообщение пятого дня","nonce":str(uuid.uuid4())}
+    sent = owner.post(other_day + "/posts", data=first_data).json()
+    assert sent["total"] == 2 and sent["unread"] == 0
+    assert sent["posts"][0]["isAuthor"] and sent["posts"][0]["isOwn"]
+    assert owner.post(BASE + "/posts", data=first_data).json()["total"] == 2
+    assert owner.post(BASE + "/posts", data=first_data).json()["total"] == 2
+    assert owner.get(other_day + "/status").json()["total"] == 2
+
+
 def test_marked_reply_is_one_post_and_read_is_idempotent(pilot):
     client, _, _ = pilot
     owner = client("owner")
@@ -138,11 +188,15 @@ def test_profile_and_private_photo_are_bound_to_native_account(pilot):
     assert profile["name"] == "Сергей" and profile["about"] == "Мой профиль"
     assert client("member").get(profile["avatar"]).status_code == 403
     assert owner.get(profile["avatar"]).headers["content-type"] == "image/webp"
+    profile_on_another_day = owner.get(discussion.day_path(5) + "/thread").json()["profile"]
+    assert profile_on_another_day["name"] == "Сергей" and profile_on_another_day["about"] == "Мой профиль"
+    assert owner.get(profile_on_another_day["avatar"]).status_code == 200
     entry = owner.post(BASE + "/posts", data={"nonce":str(uuid.uuid4())}, files={"photo":picture}).json()["posts"][0]
     content = owner.get(entry["photo"], headers={"Range":"bytes=0-9"})
     assert content.status_code == 206 and len(content.content) == 10
     assert content.headers["cache-control"] == "private, no-store"
     assert client("member").get(entry["photo"]).status_code == 403
+    assert owner.get(entry["photo"].replace(BASE, discussion.day_path(5))).status_code == 404
     assert owner.put(BASE + "/profile", data={"name":"Сергей","visible":"false"}).json()["profile"] is None
     assert owner.get(profile["avatar"]).status_code == 404
     removed = owner.put(BASE + "/profile", data={"name":"Сергей","visible":"true","remove_photo":"true"})
@@ -196,6 +250,41 @@ def test_voice_transcodes_and_supports_ranges(pilot):
     uri = answer.json()["posts"][0]["voice"]
     assert owner.get(uri, headers={"Range":"bytes=0-31"}).status_code == 206
     assert client("member").get(uri).status_code == 403
+
+
+def test_participant_flow_uses_account_defaults_and_queues_owner_notice(pilot, monkeypatch):
+    client, _, _ = pilot
+    owner, participant = client("owner"), client("member")
+    day = discussion.day_path(5)
+    key = owner.post(day + "/push/key").json()["key"]
+    subscription = {
+        "endpoint":"https://fcm.googleapis.com/fcm/send/discussion-owner",
+        "keys":{"p256dh":key, "auth":base64.urlsafe_b64encode(b"1" * 16).decode().rstrip("=")},
+        "replies":True, "new_posts":True,
+    }
+    assert owner.put(day + "/push/subscription", json=subscription).status_code == 200
+    assert participant.get(day + "/thread").status_code == 403
+
+    # Exercise participant behavior in the isolated test app while keeping the production gate closed.
+    monkeypatch.setattr(discussion, "owner", discussion.native_session_actor)
+    initial = participant.get(day + "/thread").json()
+    default = initial["profile"]["defaultName"]
+    assert len(default.split()) == 2 and not initial["canAuthor"]
+    outgoing = participant.post(day + "/posts", data={"text":"Вопрос участника","nonce":str(uuid.uuid4())})
+    assert outgoing.status_code == 200
+    question = outgoing.json()["posts"][0]
+    assert question["isOwn"] and not question["isAuthor"] and question["name"] == default
+    denied = participant.post(day + "/posts", data={
+        "text":"Недопустимая отметка","nonce":str(uuid.uuid4()),"reply_to":question["id"],"featured":"true",
+    })
+    assert denied.status_code == 403
+    received = owner.get(day + "/thread").json()
+    assert received["unread"] == 1 and not received["posts"][0]["isOwn"]
+    sent = []
+    monkeypatch.setattr(push, "webpush", lambda **kwargs: sent.append(kwargs))
+    assert push.deliver_one()
+    assert len(sent) == 1 and "course_day=5" in sent[0]["data"]
+    assert not push.deliver_one()
 
 
 def test_webpush_checks_provider_and_delivers_synchronously_in_test_queue(pilot, monkeypatch):

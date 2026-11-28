@@ -29,7 +29,7 @@
 		host {$SITE_DOMAIN}
 		path /abricos-access/api/login /abricos-access/api/logout /abricos-access/api/me /abricos-access/api/years/* /abricos-access/api/videos/*
 	}
-	@masterclass_discussion path /api/masterclass/discussion/day-04/*
+	@masterclass_discussion path /api/masterclass/discussion/*
 	handle @masterclass_discussion {
 		request_body {
 			max_size 22MB
