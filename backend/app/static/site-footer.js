@@ -64,7 +64,7 @@
   }
 
   function mountDiscussionLinks(root) {
-    root.innerHTML = '<span>Написать мне лично</span> ' + contactPair(LINKS.telegram, LINKS.max) +
+    root.innerHTML = '<span>Написать мне лично:</span> ' + contactPair(LINKS.telegram, LINKS.max) +
       ' <span class="day-discussion-privacy">' + link(LINKS.privacy, 'Политика обработки персональных данных') + '</span>';
   }
 

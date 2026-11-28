@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from datetime import UTC
 from functools import lru_cache
+from hashlib import sha256
 from io import BytesIO
 from pathlib import Path
 import subprocess
@@ -84,11 +85,26 @@ def profile_avatar(profile: Profile | None) -> str | None:
     return f"{router.prefix}/profile/photo/{profile.photo_key}" if profile and profile.photo_key else None
 
 
+def discussion_alias(user_id: UUID) -> str:
+    adjectives = (
+        "Бодрый", "Весёлый", "Добрый", "Зоркий", "Ловкий", "Любопытный", "Мечтательный",
+        "Отважный", "Проворный", "Пушистый", "Радостный", "Смелый", "Солнечный",
+        "Спокойный", "Тёплый", "Улыбчивый", "Шустрый", "Яркий", "Дружелюбный", "Находчивый",
+    )
+    animals = (
+        "барсук", "бобр", "волк", "енот", "заяц", "ирбис", "кот", "крот", "лев", "леопард",
+        "лемур", "лисёнок", "лось", "манул", "медведь", "окапи", "пёс", "суслик", "тигр",
+        "тушканчик", "хомяк", "шакал", "ящер", "сурикат",
+    )
+    first, second = sha256(user_id.bytes).digest()[:2]
+    return f"{adjectives[first % len(adjectives)]} {animals[second % len(animals)]}"
+
+
 def public_profile(profile: Profile | None, user_id: UUID) -> dict | None:
     if not profile or not profile.visible:
         return None
     return {
-        "name": profile.display_name or "Сергей Воронцов",
+        "name": profile.display_name or discussion_alias(user_id),
         "about": profile.about,
         "avatar": profile_avatar(profile),
     }
@@ -97,9 +113,13 @@ def public_profile(profile: Profile | None, user_id: UUID) -> dict | None:
 def serialize(post: Post, user_id: UUID, profile: Profile | None) -> dict:
     own = post.author_id == user_id
     card = public_profile(profile, user_id) if own else None
+    if own:
+        name = card["name"] if card else "Сергей Воронцов"
+    else:
+        name = post.source_label or (discussion_alias(post.author_id) if post.author_id else "Участник")
     return {
         "id": post.id,
-        "name": (card["name"] if card else "Сергей Воронцов") if own else post.source_label or "Участник",
+        "name": name,
         "isAuthor": own,
         "profile": card,
         "text": post.body,

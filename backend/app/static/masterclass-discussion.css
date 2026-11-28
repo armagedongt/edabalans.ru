@@ -1,8 +1,5 @@
 .course-shell .day-discussion-entry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  display: grid;
   gap: 12px;
   padding: 15px 17px;
   margin-top: 14px;
@@ -11,10 +8,9 @@
   background: var(--card);
 }
 .course-shell .day-discussion-note { margin: 4px 0; color: var(--muted); font-size: 13px; }
-.course-shell .day-discussion-entry > div { flex: 1 1 400px; min-width: 0; }
-.course-shell .day-discussion-total { display: block; margin-top: 3px; color: var(--muted); font-size: 13px; }
+.course-shell .day-discussion-entry-copy p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
 .course-shell .day-discussion-entry .next-button:disabled { cursor: default; opacity: .55; }
-.course-shell .day-discussion-entry .next-button { position: relative; width: auto; overflow: visible; }
+.course-shell .day-discussion-entry .next-button { position: relative; width: 100%; overflow: visible; }
 .course-shell .content:has(> #day.day-discussion-open:not([hidden])),
 .course-shell #day.day-discussion-open,
 .course-shell #day.day-discussion-open > .day-discussion-panel { max-width: none; }
@@ -148,7 +144,7 @@
   font-size: 14px;
 }
 .course-shell .day-discussion-label { display: flex; align-items: center; gap: 9px; }
-.course-shell .day-discussion-unread {
+.course-shell .day-discussion-count {
   position: absolute;
   top: -8px;
   right: -8px;
@@ -165,7 +161,7 @@
   font-size: 11px;
   line-height: 1;
 }
-.course-shell .day-discussion-unread[hidden] { display: none; }
+.course-shell .day-discussion-count[hidden] { display: none; }
 .course-shell .day-discussion-profile-name {
   display: inline-flex;
   align-items: center;
@@ -221,6 +217,7 @@
   width: 100%;
   padding-inline: clamp(12px,2vw,24px);
   border-inline: 0;
+  border-bottom: 0;
   border-radius: 0;
   background: transparent;
 }
@@ -308,7 +305,9 @@
   padding: clamp(14px,3vw,30px);
   color: var(--ink);
 }
-.course-shell .day-discussion-settings :is(h2,h3) { margin: 0 0 12px; }
+.course-shell .day-discussion-settings-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 10px; margin-bottom: 12px; }
+.course-shell .day-discussion-settings-head > h2 { margin: 0; }
+.course-shell .day-discussion-settings h3 { margin: 0 0 12px; }
 .course-shell .day-discussion-settings-form { display: grid; gap: 10px; }
 .course-shell .day-discussion-settings-form label { display: grid; gap: 6px; }
 .course-shell .day-discussion-settings-form :is(input:not([type=file]),textarea) {
@@ -322,6 +321,30 @@
 }
 .course-shell .day-discussion-settings-form textarea { min-height: 84px; resize: vertical; }
 .course-shell .day-discussion-settings-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.course-shell .day-discussion-settings-submit { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.course-shell .day-discussion-settings-submit > button { width: 100%; margin: 0; }
+.course-shell .day-discussion-push-switch {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto auto;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  min-height: 44px;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.course-shell .day-discussion-push-switch:disabled { opacity: .55; cursor: default; }
+.course-shell .day-discussion-push-switch:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; }
+.course-shell .day-discussion-push-state { min-width: 3em; color: var(--muted); font-size: 13px; text-align: right; }
+.course-shell .day-discussion-push-track { width: 40px; height: 24px; padding: 2px; border-radius: 20px; background: var(--muted); }
+.course-shell .day-discussion-push-track::before { content: ''; display: block; width: 20px; height: 20px; border-radius: 50%; background: #fff; }
+.course-shell .day-discussion-push-switch[aria-checked=true] .day-discussion-push-track { background: var(--violet); }
+.course-shell .day-discussion-push-switch[aria-checked=true] .day-discussion-push-track::before { transform: translateX(16px); }
 .course-shell .day-discussion-push { margin: 16px 0; padding-block: 12px; border-block: 1px solid var(--line); }
 .course-shell .day-discussion-push-options { display: grid; gap: 6px; margin-bottom: 10px; }
 .course-shell .day-discussion-push-options label { display: flex; align-items: center; gap: 7px; }
@@ -348,7 +371,4 @@
   .course-shell .day-discussion-panel h1 { font-size: clamp(14px,3.9vw,20px); }
   .course-shell .day-discussion-head .back { padding-inline: 7px; font-size: 12px; }
   .course-shell .day-discussion-theme { width: 36px; height: 38px; padding: 7px; }
-}
-@media (max-width: 480px) {
-  .course-shell .day-discussion-entry .next-button { width: 100%; }
 }

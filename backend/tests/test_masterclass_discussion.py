@@ -150,6 +150,36 @@ def test_profile_and_private_photo_are_bound_to_native_account(pilot):
     assert owner.get(profile["avatar"]).status_code == 404
 
 
+def test_empty_display_name_has_stable_two_word_alias(pilot):
+    client, _, _ = pilot
+    owner = client("owner")
+    names = []
+    for about in ("Первое описание", "Другое описание"):
+        saved = owner.put(BASE + "/profile", data={"name":"", "about":about, "visible":"true"})
+        assert saved.status_code == 200
+        names.append(saved.json()["profile"]["name"])
+    assert names[0] == names[1]
+    assert len(names[0].split()) == 2
+    assert names[0] != "Сергей Воронцов"
+
+
+def test_posts_from_participants_without_profiles_have_distinct_aliases(pilot):
+    client, factory, _ = pilot
+    with factory.begin() as db:
+        for number in (1, 2):
+            user = User(id=uuid.UUID(int=number), display_name=f"Имя из аккаунта {number}", status="active")
+            db.add(user)
+            db.flush()
+            db.add(MasterclassDiscussionPost(day_number=4, author_id=user.id, client_nonce=f"alias-{number}",
+                                              body=f"Вопрос {number}", archived=False))
+    owner = client("owner")
+    entries = owner.get(BASE + "/thread").json()["posts"]
+    aliases = [entry["name"] for entry in entries if entry["text"].startswith("Вопрос ")]
+    assert len(set(aliases)) == 2 and all(len(name.split()) == 2 for name in aliases)
+    assert owner.get(BASE + "/thread").json()["posts"] == entries
+    assert entries[0]["name"] == "Учебный пример"
+
+
 @pytest.mark.skipif(not shutil.which("ffmpeg"), reason="audio conversion is installed in target image")
 def test_voice_transcodes_and_supports_ranges(pilot):
     client, _, _ = pilot

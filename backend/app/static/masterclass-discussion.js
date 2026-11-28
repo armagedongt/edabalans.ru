@@ -66,7 +66,7 @@
     }
     frame.srcdoc = voiceTemplate.replace(/{{(src|author|duration)}}/g,
       (placeholder, key) => escape(values[key])).replace('</style>',
-        'body{padding-inline:5px 9px}.voice-widget{grid-template-columns:minmax(0,1fr)}.voice-widget__avatar,.voice-widget__author>span:first-child{display:none}.voice-widget__author{position:absolute;bottom:8px;left:calc(69px + var(--bubble-tail));min-height:0;line-height:14px;pointer-events:none}.voice-widget__bubble-shadow{margin-left:0}.voice-widget__bubble{min-height:0;padding-block:8px}.voice-widget__player{margin-top:0}</style>');
+        'html,body{overflow:hidden}body{padding:5px 9px 9px 5px}.voice-widget{grid-template-columns:minmax(0,1fr)}.voice-widget__avatar,.voice-widget__author>span:first-child{display:none}.voice-widget__author{position:absolute;bottom:8px;left:calc(69px + var(--bubble-tail));min-height:0;line-height:14px;pointer-events:none}.voice-widget__bubble-shadow{margin-left:0}.voice-widget__bubble{min-height:0;padding-block:8px}.voice-widget__player{margin-top:0}</style>');
     frame.onload = () => {
       const audio = frame.contentDocument?.querySelector('[data-voice-audio]');
       audio?.addEventListener('play', () => pausePlayers(activePanel, audio));
@@ -429,7 +429,7 @@
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({ids}),
           });
-          setBadge(dayEntry, result.unread);
+          updateMessageCount(dayEntry, null, result.unread);
         } catch {
           if (panel.isConnected) {
             pendingRead.unshift(...ids);
@@ -514,9 +514,7 @@
         for (const item of data.related) if (!posts.has(item.id)) related.set(item.id, item);
         Object.assign(answers, data.answers);
         if (!unreadStart) unreadStart = data.firstUnread;
-        setBadge(dayEntry, data.unread);
-        const total = dayEntry?.querySelector('.day-discussion-total');
-        if (total && data.total != null) total.textContent = 'Сообщений: ' + data.total;
+        updateMessageCount(dayEntry, data.total, data.unread);
       }
 
       const nextPage = button('Ещё сообщения', async () => {
@@ -656,22 +654,30 @@
         pausePlayers(timeline);
         timeline.hidden = form.hidden = contact.hidden = true;
         settings.hidden = false;
-        settings.replaceChildren(
-          element('h2', '', 'Мой профиль'),
-          element('p', 'day-discussion-note', 'Эти данные видны в обсуждении. Поля можно оставить пустыми.')
-        );
+        const settingsHead = element('div', 'day-discussion-settings-head');
+        settingsHead.append(element('h2', '', 'Мой профиль'),
+          button('Как устроен раздел обсуждения?', openGuide, 'day-discussion-text-action'));
+        settings.replaceChildren(settingsHead);
         const formFields = element('form', 'day-discussion-settings-form');
-        const field = (caption, tag, key, value, max) => {
+        const field = (caption, placeholder, tag, key, value, max) => {
           const label = element('label', '', caption);
           const input = element(tag);
           input.name = key;
+          input.setAttribute('aria-label', caption);
+          input.placeholder = placeholder;
           input.value = value || '';
           input.maxLength = max;
           label.append(input);
           formFields.append(label);
         };
-        field('Ваше отображаемое имя', 'input', 'name', profileData.name, 80);
-        field('Пару слов о себе', 'textarea', 'about', profileData.about, 500);
+        field('Ваше имя (его увидят другие участники)', 'Введите ваше имя', 'input', 'name', profileData.name, 80);
+        const about = element('textarea');
+        about.name = 'about';
+        about.value = profileData.about || '';
+        about.maxLength = 500;
+        about.placeholder = 'Пару слов о себе (если хотите)';
+        about.setAttribute('aria-label', about.placeholder);
+        formFields.append(about);
         const file = element('input');
         file.type = 'file';
         file.name = 'photo';
@@ -694,7 +700,9 @@
         };
         const photoActions = element('div', 'day-discussion-settings-actions');
         photoActions.append(button('Выбрать файл', () => file.click()), removePhoto);
-        formFields.append(element('span', '', 'Фотография'), file, photoActions, filename);
+        const privacy = element('a', 'day-discussion-text-action', 'Политика обработки персональных данных');
+        privacy.href = '/legal/privacy';
+        formFields.append(element('span', '', 'Фотография'), file, photoActions, filename, privacy);
         notifications ??= notificationSettings();
         settings.append(formFields, notifications);
         const feedback = element('p', 'day-discussion-note');
@@ -729,12 +737,9 @@
           } catch(error) { feedback.textContent = error.message; }
           finally { save.disabled = close.disabled = false; }
         };
-        const actions = element('div', 'day-discussion-settings-actions');
+        const actions = element('div', 'day-discussion-settings-submit');
         actions.append(save, close);
-        settings.append(actions, feedback, button('Как устроено обсуждение', openGuide, 'day-discussion-text-action'));
-        const links = element('div', 'day-discussion-contact');
-        window.EdabalansFooter?.mountDiscussionLinks?.(links);
-        settings.append(links);
+        settings.append(actions, feedback);
         scrollTo(0, 0);
         settings.querySelector('h2').tabIndex = -1;
         settings.querySelector('h2').focus({preventScroll:true});
@@ -742,7 +747,7 @@
 
       function notificationSettings() {
         const section = element('section', 'day-discussion-push');
-        section.append(element('h3', '', 'Уведомления'));
+        section.append(element('h3', '', 'Уведомления:'));
         const info = element('p', 'day-discussion-note');
         info.setAttribute('role', 'status');
         const options = element('div', 'day-discussion-push-options');
@@ -764,9 +769,17 @@
         let busy = true;
         let savedChoices;
         const preferences = () => Object.fromEntries(choices.map(({key,input}) => [key,input.checked]));
-        const toggle = button('', () => update(enabled ? disable : enable), 'back');
+        const toggle = button('', () => update(enabled ? disable : enable), 'day-discussion-push-switch');
+        const state = element('span', 'day-discussion-push-state');
+        const track = element('span', 'day-discussion-push-track');
+        state.setAttribute('aria-hidden', 'true');
+        track.setAttribute('aria-hidden', 'true');
+        toggle.setAttribute('role', 'switch');
+        toggle.setAttribute('aria-label', 'Уведомления на этом устройстве');
+        toggle.append(element('span', '', 'Уведомления на этом устройстве'), state, track);
         function sync() {
-          toggle.textContent = enabled ? 'Отключить уведомления на этом устройстве' : 'Включить уведомления на этом устройстве';
+          toggle.setAttribute('aria-checked', String(enabled));
+          state.textContent = enabled ? 'Вкл' : 'Выкл';
           toggle.disabled = busy || (!enabled && choices.every(({input}) => !input.checked));
           for (const {input} of choices) input.disabled = busy;
         }
@@ -838,9 +851,7 @@
         }
         const install = element('a', 'day-discussion-text-action', 'Как установить кабинет');
         install.href = '/lk/install';
-        install.target = '_blank';
-        install.rel = 'noopener';
-        section.append(options, toggle, install, info);
+        section.append(toggle, options, install, info);
         sync();
         loadSettings();
         return section;
@@ -890,12 +901,15 @@
     }
   }
 
-  function setBadge(entry, count) {
-    const badge = entry?.querySelector('.day-discussion-unread');
+  function updateMessageCount(entry, total, unread) {
+    const badge = entry?.querySelector('.day-discussion-count');
     if (!badge) return;
-    badge.hidden = !count;
-    badge.textContent = String(count || 0);
-    badge.setAttribute('aria-label', 'Непрочитанных: ' + (count || 0));
+    if (total != null) {
+      badge.textContent = String(total);
+      badge.hidden = false;
+    }
+    const button = badge.parentElement;
+    button.setAttribute('aria-label', 'Обсуждение. Сообщений: ' + badge.textContent + ', непрочитанных: ' + (unread ?? 0));
   }
 
   async function mount(day, assignment) {
@@ -913,21 +927,20 @@
         !['owner', 'locked'].includes(access.mode)) return;
     const entry = element('section', 'day-discussion-entry');
     entry.setAttribute('aria-label', 'Обсуждение дня');
-    const copy = element('div');
-    copy.append(element('strong', '', access.mode === 'locked'
-      ? 'Обсуждение дня · Тестовый режим'
-      : 'Обсуждение дня. Прочитайте вопросы, которые задавали другие участники Мастер-класса, и ответы на них, либо задайте свой вопрос.'));
+    const copy = element('div', 'day-discussion-entry-copy');
+    copy.append(element('strong', '', 'Обсуждение дня'), element('p', '', access.mode === 'locked'
+      ? 'Тестовый режим'
+      : 'Прочитайте вопросы, которые задавали другие участники, и ответы на них. Либо задайте свой личный вопрос.'));
     const go = button('Обсуждение →', () => open(day, go, access.mode), 'next-button ready');
-    go.append(element('span', 'day-discussion-unread'));
     if (access.mode === 'owner') {
-      const total = element('span', 'day-discussion-total');
-      total.textContent = 'Сообщений: ' + (access.total || 0);
-      copy.append(total);
+      const count = element('span', 'day-discussion-count');
+      count.setAttribute('aria-hidden', 'true');
+      go.append(count);
+      updateMessageCount(go, access.total ?? 0, access.unread);
     }
     entry.append(copy, go);
     assignment.before(entry);
     dayEntry = entry;
-    setBadge(entry, access.unread);
     const link = new URL(location.href);
     const wanted = Number(link.searchParams.get('discussion_post'));
     if (wanted && access.mode === 'owner') {
