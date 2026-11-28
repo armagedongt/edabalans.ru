@@ -80,6 +80,8 @@
 .course-shell .day-discussion-panel > p { padding-inline: clamp(12px,2vw,24px); }
 .course-shell .day-discussion-panel .article-head .back { scroll-margin-top: 18px; }
 .course-shell .day-discussion-timeline {
+  --discussion-avatar-size: clamp(36px,5vw,44px);
+  --discussion-avatar-space: calc(var(--discussion-avatar-size) + 8px);
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -98,6 +100,17 @@
   font-size: 13px;
 }
 .course-shell .day-discussion-divider.new-questions { margin-top: 8px; }
+.course-shell .day-discussion-intro {
+  align-self: center;
+  width: min(100%,500px);
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--ink);
+}
+.course-shell .day-discussion-intro h2 { margin: 0; font-size: 16px; }
+.course-shell .day-discussion-intro p { margin: 6px 0 0; }
 .course-shell .day-discussion-unread-line {
   display: flex;
   align-items: center;
@@ -118,11 +131,15 @@
   border-radius: 14px;
 }
 .course-shell .day-discussion-message {
+  position: relative;
   align-self: flex-start;
   width: fit-content;
-  max-width: min(87%,500px);
+  max-width: min(87%,500px,100% - var(--discussion-avatar-space));
   border-bottom-left-radius: 4px;
   scroll-margin: 80px 0;
+}
+.course-shell .day-discussion-message:not(.own):has(.day-discussion-avatar) {
+  margin-inline-start: var(--discussion-avatar-space);
 }
 .course-shell .day-discussion-message.own {
   align-self: flex-end;
@@ -135,10 +152,13 @@
 .course-shell .day-discussion-name { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .course-shell .day-discussion-name { margin-bottom: 2px; color: var(--muted); font-size: 13px; }
 .course-shell .day-discussion-avatar {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: calc(100% + 8px);
   display: inline-grid;
   place-items: center;
-  min-width: 32px;
-  min-height: 32px;
+  width: var(--discussion-avatar-size);
+  height: var(--discussion-avatar-size);
   border-radius: 999px;
   color: var(--ink);
   background: color-mix(in srgb,var(--paper) 76%,var(--violet));
@@ -290,7 +310,7 @@
   margin: 0 0 8px;
 }
 .course-shell .day-discussion-draft img { width: 56px; height: 56px; margin: 0; object-fit: cover; }
-.course-shell .day-discussion-avatar img { width: 32px; height: 32px; margin: 0; border-radius: 50%; object-fit: cover; }
+.course-shell .day-discussion-avatar img { width: 100%; height: 100%; margin: 0; border-radius: 50%; object-fit: cover; }
 .course-shell .day-discussion-profile-photo { max-width: 120px; }
 .course-shell .day-discussion-profile-dialog {
   max-width: min(95%,460px);

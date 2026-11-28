@@ -294,6 +294,12 @@
       let authorAnswer = false;
       const readIds = new Set();
       const timeline = element('div', 'day-discussion-timeline');
+      const introduction = dayNumber === 1 ? element('section', 'day-discussion-intro') : null;
+      introduction?.append(
+        element('h2', '', 'Давайте знакомиться'),
+        element('p', '', 'Расскажите о себе. Что привело вас сюда? С чем вам было труднее всего, что помогает двигаться дальше и чего вы хотите добиться за мастер-класс?'),
+        element('p', '', 'Если у вас уже что-то получилось, поделитесь этим. Ваш опыт может помочь кому-то сделать первый шаг. А если вам откликнулась чужая история, ответьте на сообщение.')
+      );
       const settings = element('section', 'day-discussion-settings');
       settings.hidden = true;
       const contact = element('div', 'day-discussion-contact');
@@ -635,6 +641,7 @@
         const byId = new Map([...related, ...posts]);
         const children = [];
         readObserver.disconnect();
+        if (introduction) children.push(introduction);
         function appendMessage(item) {
           if (more && item.id > cursor && !children.includes(nextPage)) children.push(nextPage);
           if (item.id === unreadStart) children.push(element('p', 'day-discussion-unread-line', 'Непрочитанные сообщения'));
