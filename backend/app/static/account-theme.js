@@ -14,14 +14,19 @@
   var button = document.createElement('button');
   button.type = 'button';
   button.className = 'account-theme-toggle';
+  var dayButton = document.createElement('button');
+  dayButton.type = 'button';
+  dayButton.className = 'account-theme-toggle course-day-theme';
   function update() {
     var dark = document.documentElement.dataset.accountTheme === 'dark';
-    button.innerHTML = dark ? sun : moon;
-    button.setAttribute('aria-label', dark ? 'Включить светлую тему' : 'Включить тёмную тему');
-    button.setAttribute('aria-pressed', String(dark));
-    button.title = button.getAttribute('aria-label');
+    [button, dayButton].forEach(function (control) {
+      control.innerHTML = dark ? sun : moon;
+      control.setAttribute('aria-label', dark ? 'Включить светлую тему' : 'Включить тёмную тему');
+      control.setAttribute('aria-pressed', String(dark));
+      control.title = control.getAttribute('aria-label');
+    });
   }
-  button.onclick = function () {
+  button.onclick = dayButton.onclick = function () {
     var next = document.documentElement.dataset.accountTheme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.accountTheme = next;
     try { localStorage.setItem(key, next); } catch (_) {}
@@ -34,6 +39,9 @@
   var mobile = matchMedia('(max-width: 900px)');
   function place() {
     var course = document.querySelector('.course-shell .content');
+    var masterclass = course && course.closest('#masterclass-course-app,[data-edabalans-app="masterclass-course"]');
+    var topbar = masterclass && course.parentElement.querySelector(':scope > .topbar');
+    if (topbar && dayButton.parentElement !== topbar) topbar.append(dayButton);
     var target = course && mobile.matches
       ? document.querySelector('.course-shell .preview-sidebar-header')
       : course || document.querySelector('.account-shell');

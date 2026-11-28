@@ -33,6 +33,24 @@ html[data-account-theme="light"] .course-shell{background:#fff!important}
   .course-shell .preview-sidebar-brand{gap:3px!important;font-size:clamp(6.8px,calc(4.5vw - 7.5px),11px)!important}
   .course-shell .preview-sidebar-brand img{width:28px;height:28px;flex-basis:28px}
 }
+.course-shell:is(#masterclass-course-app,[data-edabalans-app="masterclass-course"]) .topbar .course-day-theme { display: none; }
+@media (max-width: 900px) {
+  .course-shell:is(#masterclass-course-app,[data-edabalans-app="masterclass-course"]) .main:has(#day:not([hidden], .day-discussion-open)) > .topbar .course-day-theme {
+    display: grid;
+    grid-area: 1 / 3;
+    justify-self: end;
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 7px;
+    border-radius: 10px;
+  }
+  .course-shell:is(#masterclass-course-app,[data-edabalans-app="masterclass-course"]) .topbar .course-day-theme svg { width: 19px; height: 19px; }
+  .course-shell:is(#masterclass-course-app,[data-edabalans-app="masterclass-course"]) .preview-sidebar-header .close-menu::before,
+  .course-shell:is(#masterclass-course-app,[data-edabalans-app="masterclass-course"]) .preview-sidebar-header .close-menu::after { background: #bd2943; }
+  html[data-account-theme="dark"] .course-shell:is(#masterclass-course-app,[data-edabalans-app="masterclass-course"]) .preview-sidebar-header .close-menu::before,
+  html[data-account-theme="dark"] .course-shell:is(#masterclass-course-app,[data-edabalans-app="masterclass-course"]) .preview-sidebar-header .close-menu::after { background: #ff8d9e; }
+}
 html[data-account-theme="dark"]{color-scheme:dark;--account-theme-bg:#171a20;--account-theme-card:#222831;--account-theme-hover:#283846;--account-theme-border:#3d5366;--account-theme-ink:#edf1f5;--account-theme-muted:#bdc7d1;--account-theme-blue:#69c9ff;--account-theme-side:#202329}
 html[data-account-theme="dark"],html[data-account-theme="dark"] body{background:var(--account-theme-bg)!important;color:var(--account-theme-ink)!important}
 html[data-account-theme="dark"] body:has(#account-app):not(:has(.course-shell)),

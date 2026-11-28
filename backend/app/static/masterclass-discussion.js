@@ -1,6 +1,7 @@
 (() => {
   if (window.EdabalansMasterclassDiscussion) return;
   const base = '/api/masterclass/discussion/day-04';
+  const authorName = 'Сергей Воронцов';
   const notice = 'Обсуждение работает в тестовом режиме. У вас пока нет доступа. Ожидайте уведомления.';
   let activePanel = null;
   let releaseComposer = () => {};
@@ -27,6 +28,7 @@
     paperclip: '<path d="M13.234 20.252 21 12.3"/><path d="m16 7-8.414 8.586a2 2 0 0 0 2.828 2.828L19 9.828a4 4 0 1 0-5.657-5.656L4.757 12.757a6 6 0 0 0 8.477 8.495"/>',
     mic: '<path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/>',
     send: '<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 22v-2a5 5 0 0 1 5-5h6a5 5 0 0 1 5 5v2"/>',
     stop: '<rect x="6" y="6" width="12" height="12" rx="1"/>',
   };
   function element(tag, cls, text) {
@@ -54,7 +56,7 @@
     });
   }
 
-  function player(src, author = 'Сергей') {
+  function player(src, author = authorName) {
     const frame = element('iframe', 'day-voice-frame');
     frame.title = 'Голосовое сообщение';
     const values = {src, author, avatar:'', duration:'—:—'};
@@ -64,7 +66,7 @@
     }
     frame.srcdoc = voiceTemplate.replace(/{{(src|author|duration)}}/g,
       (placeholder, key) => escape(values[key])).replace('</style>',
-        'body{padding-inline:5px 9px}.voice-widget{grid-template-columns:minmax(0,1fr)}.voice-widget__avatar,.voice-widget__author>span:first-child{display:none}.voice-widget__bubble-shadow{margin-left:0}</style>');
+        'body{padding-inline:5px 9px}.voice-widget{grid-template-columns:minmax(0,1fr)}.voice-widget__avatar,.voice-widget__author>span:first-child{display:none}.voice-widget__author{position:absolute;bottom:8px;left:calc(69px + var(--bubble-tail));min-height:0;line-height:14px;pointer-events:none}.voice-widget__bubble-shadow{margin-left:0}.voice-widget__bubble{min-height:0;padding-block:8px}.voice-widget__player{margin-top:0}</style>');
     frame.onload = () => {
       const audio = frame.contentDocument?.querySelector('[data-voice-audio]');
       audio?.addEventListener('play', () => pausePlayers(activePanel, audio));
@@ -92,7 +94,7 @@
     const text = quoteText(target);
     const node = button('', () => jump(target.id), 'day-discussion-quote');
     node.setAttribute('aria-label', 'Перейти к сообщению: ' + text);
-    node.append(element('span', 'day-discussion-quote-name', isOwnMessage(target) ? 'Вы' : target.name || 'Вопрос из обсуждения'),
+    node.append(element('span', 'day-discussion-quote-name', isOwnMessage(target) ? authorName : target.name || 'Вопрос из обсуждения'),
       element('span', 'day-discussion-quote-text', text));
     return node;
   }
@@ -103,8 +105,9 @@
     card.id = 'day-discussion-message-' + item.id;
     card.tabIndex = -1;
     if (item.name) {
+      const displayName = own ? authorName : item.name;
       const author = element('div', 'day-discussion-name');
-      const avatar = element('span', 'day-discussion-avatar', item.name[0]);
+      const avatar = element('span', 'day-discussion-avatar', displayName[0]);
       avatar.setAttribute('aria-hidden', 'true');
       if (item.profile?.avatar) {
         const photo = element('img');
@@ -120,7 +123,7 @@
           photo.alt = '';
           profile.append(photo);
         }
-        profile.append(element('strong', '', item.name));
+        profile.append(element('strong', '', item.name || displayName));
         if (item.profile?.about) profile.append(element('p','',item.profile.about));
         if (own) profile.append(button('Мой профиль', editProfile, 'day-discussion-text-action'));
         profile.hidden = true;
@@ -128,12 +131,12 @@
           profile.hidden = !profile.hidden;
           name.setAttribute('aria-expanded', String(!profile.hidden));
         }, 'day-discussion-profile-name');
-        name.append(avatar, element('span', '', item.name));
+        name.append(avatar, element('span', '', displayName));
         name.setAttribute('aria-expanded', 'false');
         author.append(name);
         card.append(author, profile);
       } else {
-        author.append(avatar, element('span', '', own ? 'Вы' : item.name));
+        author.append(avatar, element('span', '', displayName));
         card.append(author);
       }
     }
@@ -183,22 +186,39 @@
       day.classList.remove('day-discussion-open');
       entry.scrollIntoView({block:'center',behavior:'instant'});
       entry.focus({preventScroll:true});
+      document.querySelector('.course-shell #sidebar.open #close')?.click();
     });
     head.classList.add('day-discussion-head');
     const theme = button('', () => {
-      document.querySelector('.account-theme-toggle')?.click();
+      document.querySelector('.course-shell .account-theme-toggle:not(.course-day-theme)')?.click();
       syncTheme();
     }, 'day-discussion-theme');
     function syncTheme() {
-      const original = document.querySelector('.account-theme-toggle');
+      const original = document.querySelector('.course-shell .account-theme-toggle:not(.course-day-theme)');
       if (!original) return;
       theme.innerHTML = original.innerHTML;
       theme.setAttribute('aria-label', original.getAttribute('aria-label'));
       theme.setAttribute('aria-pressed', original.getAttribute('aria-pressed'));
     }
     syncTheme();
-    head.append(back, element('h1', '', 'Обсуждение дня 4'), theme);
+    back.classList.add('day-discussion-back');
+    const outline = button('☰ Оглавление', () => document.querySelector('.course-shell .topbar #menu')?.click(),
+      'day-discussion-outline back');
+    const headActions = element('div', 'day-discussion-head-actions');
+    headActions.append(theme);
+    head.append(back, outline, element('h1', '', 'Обсуждение дня № 4'), headActions);
     panel.append(head);
+    const themeObserver = new MutationObserver(syncTheme);
+    themeObserver.observe(document.documentElement, {attributes:true, attributeFilter:['data-account-theme']});
+    releaseComposer = () => themeObserver.disconnect();
+    panel.addEventListener('click', event => {
+      const clickedMessage = event.target.closest('.day-discussion-profile-name, .day-discussion-profile')?.closest('article');
+      for (const shown of panel.querySelectorAll('.day-discussion-profile:not([hidden])')) {
+        if (shown.closest('article') === clickedMessage) continue;
+        shown.hidden = true;
+        shown.parentElement.querySelector('.day-discussion-profile-name').setAttribute('aria-expanded', 'false');
+      }
+    });
     if (mode !== 'owner') {
       panel.append(element('p', 'day-discussion-access-note', notice));
     } else {
@@ -215,6 +235,7 @@
       const posts = new Map();
       const related = new Map();
       const answers = {};
+      let unreadStart = initial.firstUnread;
       let more = initial.more;
       let cursor = 0;
       let pendingNonce = null;
@@ -222,6 +243,10 @@
       let authorAnswer = false;
       const readIds = new Set();
       const timeline = element('div', 'day-discussion-timeline');
+      const settings = element('section', 'day-discussion-settings');
+      settings.hidden = true;
+      const contact = element('div', 'day-discussion-contact');
+      window.EdabalansFooter?.mountDiscussionLinks?.(contact);
       panel.append(timeline);
       const form = element('div', 'day-discussion-compose');
       const textarea = element('textarea');
@@ -414,8 +439,9 @@
         }
       }
       const readObserver = new IntersectionObserver(entries => {
+        if (document.hidden || panel.querySelector('.day-discussion-guide[open]')) return;
         for (const entry of entries) {
-          const id = Number(entry.target.id.replace('day-discussion-message-', ''));
+          const id = Number(entry.target.closest('.day-discussion-message').id.replace('day-discussion-message-', ''));
           if (!entry.isIntersecting || readIds.has(id)) continue;
           readIds.add(id);
           pendingRead.push(id);
@@ -426,7 +452,15 @@
           readTimer = setTimeout(flushRead, 150);
         }
       }, {threshold:0.2, rootMargin:'-65px 0px 0px'});
+      function observeTimeline() {
+        readObserver.disconnect();
+        if (document.hidden || panel.querySelector('.day-discussion-guide[open]')) return;
+        for (const messageName of timeline.querySelectorAll('.day-discussion-name')) readObserver.observe(messageName);
+      }
+      document.addEventListener('visibilitychange', observeTimeline);
       releaseComposer = () => {
+        themeObserver.disconnect();
+        document.removeEventListener('visibilitychange', observeTimeline);
         if (recorder?.state === 'recording') recorder.stop();
         clearTimeout(readTimer);
         flushRead();
@@ -479,7 +513,10 @@
         for (const item of data.posts) posts.set(item.id, item);
         for (const item of data.related) if (!posts.has(item.id)) related.set(item.id, item);
         Object.assign(answers, data.answers);
+        if (!unreadStart) unreadStart = data.firstUnread;
         setBadge(dayEntry, data.unread);
+        const total = dayEntry?.querySelector('.day-discussion-total');
+        if (total && data.total != null) total.textContent = 'Сообщений: ' + data.total;
       }
 
       const nextPage = button('Ещё сообщения', async () => {
@@ -500,10 +537,14 @@
         readObserver.disconnect();
         pausePlayers(timeline);
         timeline.replaceChildren();
+        function appendMessage(item) {
+          if (item.id === unreadStart) timeline.append(element('p', 'day-discussion-unread-line', 'Непрочитанные сообщения'));
+          timeline.append(message(item, byId, answers, jump, selectReply, editProfile));
+        }
         const old = items.filter(item => item.archived);
         if (old.length) {
           timeline.append(element('h2', 'day-discussion-divider', 'Старые обсуждения'));
-          for (const item of old) timeline.append(message(item, byId, answers, jump, selectReply, editProfile));
+          for (const item of old) appendMessage(item);
         }
         timeline.append(element('h2', 'day-discussion-divider new-questions', 'Новые вопросы'));
         let lastDate = '';
@@ -511,10 +552,10 @@
           const date = dateLabel(item.at);
           if (date && date !== lastDate) timeline.append(element('p', 'day-discussion-date', date));
           lastDate = date;
-          timeline.append(message(item, byId, answers, jump, selectReply, editProfile));
+          appendMessage(item);
         }
         if (more) timeline.append(nextPage);
-        for (const item of timeline.querySelectorAll('.day-discussion-message')) readObserver.observe(item);
+        observeTimeline();
       }
 
       async function send() {
@@ -564,154 +605,245 @@
         }
       }
 
-      function editProfile() {
-        const dialog = element('dialog','day-discussion-profile-dialog');
-        dialog.append(element('h2','','Мой профиль'));
-        const controls = [
-          ['Имя для обсуждения', 'input', 'name', profileData.name, 80],
-          ['О себе', 'textarea', 'about', profileData.about, 500],
-          ['Показывать карточку в обсуждении', 'input', 'visible', profileData.visible],
-          ['Фотография', 'input', 'photo'],
-          ['Удалить фотографию', 'input', 'remove_photo', false],
+      let settingsScroll = 0;
+      let notifications;
+      const profileControl = composerButton('user', 'Мой профиль', editProfile);
+      profileControl.classList.add('day-discussion-theme');
+      headActions.append(profileControl);
+
+      function openGuide() {
+        const guide = element('dialog', 'day-discussion-profile-dialog day-discussion-guide');
+        guide.append(element('h2', '', 'Как устроено обсуждение'));
+        const tips = [
+          ['Мой профиль', 'Нажмите на значок человека вверху. Там можно изменить имя и фото и выбрать, какие уведомления получать на этом устройстве.'],
+          ['Старые обсуждения', 'Здесь собраны прежние вопросы и ответы. Нажмите «Ответ Сергея», чтобы раскрыть ответ под вопросом.'],
+          ['Новые вопросы', 'Здесь идёт текущая переписка. Сообщения Сергея Воронцова выделены оранжевым. Нажмите на цитату, чтобы перейти к исходному сообщению.'],
+          ['Ваше сообщение', 'Поле ввода внизу. Нажмите скрепку, чтобы добавить фото. Голосовые записывает Сергей Воронцов. Метка «Непрочитанные сообщения» показывает, где вы остановились.'],
         ];
-        const fields = new Map();
-        for (const [caption, tag, key, value, max] of controls) {
-          const label = element('label','',caption);
-          const input = element(tag);
-          if (typeof value === 'boolean') {
-            input.type = 'checkbox';
-            input.checked = value;
-          } else if (key === 'photo') {
-            input.type = 'file';
-            input.accept = photo.accept;
-          } else {
-            input.value = value || '';
-            input.maxLength = max;
+        for (const [title, copy] of tips) {
+          const heading = element('h3', '', title);
+          if (title === 'Мой профиль') {
+            const icon = element('span', 'day-discussion-guide-icon');
+            setIcon(icon, 'user');
+            heading.prepend(icon);
           }
-          label.append(input);
-          fields.set(key,input);
-          dialog.append(label);
+          guide.append(heading, element('p', '', copy));
+          if (title === 'Новые вопросы') {
+            const preview = element('div', 'day-discussion-guide-example');
+            preview.append(element('span', '', authorName), element('p', '', 'Ответ на вопрос участника'));
+            guide.append(preview);
+          }
         }
-        const feedback = element('p','day-discussion-note');
-        const save = button('Сохранить', async () => {
-          save.disabled = true;
-          const data = new FormData();
-          for (const [key,input] of fields) {
-            if (input.type === 'file') {
-              if (input.files[0]) data.set(key,input.files[0]);
-            } else data.set(key, input.type === 'checkbox' ? input.checked : input.value);
+        guide.append(button('Понятно', () => guide.close()));
+        guide.addEventListener('click', event => {
+          if (event.target === guide) {
+            const box = guide.getBoundingClientRect();
+            if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) guide.close();
           }
+        });
+        guide.addEventListener('close', () => {
+          guide.remove();
+          if (panel.isConnected) observeTimeline();
+        }, {once:true});
+        panel.append(guide);
+        guide.showModal();
+        readObserver.disconnect();
+      }
+
+      function editProfile() {
+        if (!settings.hidden) return;
+        settingsScroll = scrollY;
+        pausePlayers(timeline);
+        timeline.hidden = form.hidden = contact.hidden = true;
+        settings.hidden = false;
+        settings.replaceChildren(
+          element('h2', '', 'Мой профиль'),
+          element('p', 'day-discussion-note', 'Эти данные видны в обсуждении. Поля можно оставить пустыми.')
+        );
+        const formFields = element('form', 'day-discussion-settings-form');
+        const field = (caption, tag, key, value, max) => {
+          const label = element('label', '', caption);
+          const input = element(tag);
+          input.name = key;
+          input.value = value || '';
+          input.maxLength = max;
+          label.append(input);
+          formFields.append(label);
+        };
+        field('Ваше отображаемое имя', 'input', 'name', profileData.name, 80);
+        field('Пару слов о себе', 'textarea', 'about', profileData.about, 500);
+        const file = element('input');
+        file.type = 'file';
+        file.name = 'photo';
+        file.accept = photo.accept;
+        file.hidden = true;
+        const filename = element('span', 'day-discussion-note', profileData.avatar ? 'Фото профиля загружено' : '');
+        let remove = false;
+        const removePhoto = button('Удалить фотографию', () => {
+          file.value = '';
+          remove = true;
+          removePhoto.hidden = true;
+          filename.textContent = 'Фото будет удалено после сохранения.';
+        }, 'day-discussion-text-action');
+        removePhoto.hidden = !profileData.avatar;
+        file.onchange = () => {
+          if (!file.files.length) return;
+          remove = false;
+          filename.textContent = file.files[0].name;
+          removePhoto.hidden = false;
+        };
+        const photoActions = element('div', 'day-discussion-settings-actions');
+        photoActions.append(button('Выбрать файл', () => file.click()), removePhoto);
+        formFields.append(element('span', '', 'Фотография'), file, photoActions, filename);
+        notifications ??= notificationSettings();
+        settings.append(formFields, notifications);
+        const feedback = element('p', 'day-discussion-note');
+        feedback.setAttribute('role', 'status');
+        function closeSettings() {
+          settings.hidden = true;
+          settings.replaceChildren();
+          timeline.hidden = form.hidden = contact.hidden = false;
+          scrollTo(0, settingsScroll);
+          profileControl.focus({preventScroll:true});
+        }
+        const save = button('Сохранить', () => formFields.requestSubmit(), 'next-button ready');
+        const close = button('Закрыть', closeSettings);
+        formFields.onsubmit = async event => {
+          event.preventDefault();
+          save.disabled = close.disabled = true;
+          feedback.textContent = '';
+          const data = new FormData(formFields);
+          const selected = file.files[0];
+          if (!selected) data.delete('photo');
+          data.set('remove_photo', remove);
+          data.set('visible', Boolean(data.get('name').trim() || data.get('about').trim() || selected || (!remove && profileData.avatar)));
           try {
             const saved = await api('/profile', {method:'PUT',body:data});
-            dialog.close();
-            const refreshed = await api('/thread');
-            profileData = refreshed.profile;
-            for (const item of posts.values()) {
-              if (item.isAuthor) {
-                item.name = profileData.visible ? profileData.name || 'Сергей' : 'Сергей';
-                item.profile = saved.profile;
-              }
+            profileData = {name:data.get('name').trim(), about:data.get('about').trim(), avatar:saved.avatar};
+            for (const item of [...posts.values(), ...related.values()]) if (item.isAuthor) {
+              item.name = saved.profile?.name || authorName;
+              item.profile = saved.profile;
             }
-            merge(refreshed);
             renderTimeline();
+            closeSettings();
           } catch(error) { feedback.textContent = error.message; }
-          finally { save.disabled = false; }
-        });
-        dialog.append(save,button('Закрыть', () => dialog.close()),feedback);
-        dialog.addEventListener('close', () => dialog.remove(), {once:true});
-        panel.append(dialog);
-        dialog.showModal();
+          finally { save.disabled = close.disabled = false; }
+        };
+        const actions = element('div', 'day-discussion-settings-actions');
+        actions.append(save, close);
+        settings.append(actions, feedback, button('Как устроено обсуждение', openGuide, 'day-discussion-text-action'));
+        const links = element('div', 'day-discussion-contact');
+        window.EdabalansFooter?.mountDiscussionLinks?.(links);
+        settings.append(links);
+        scrollTo(0, 0);
+        settings.querySelector('h2').tabIndex = -1;
+        settings.querySelector('h2').focus({preventScroll:true});
       }
 
       function notificationSettings() {
-        const dialog = element('dialog', 'day-discussion-profile-dialog');
-        dialog.append(element('h2', '', 'Уведомления'));
+        const section = element('section', 'day-discussion-push');
+        section.append(element('h3', '', 'Уведомления'));
         const info = element('p', 'day-discussion-note');
+        info.setAttribute('role', 'status');
         const options = element('div', 'day-discussion-push-options');
         const choices = [
-          ['replies', 'Ответы на мои вопросы', true],
-          ['new_posts', 'Новые сообщения дня 4', false],
-        ].map(([key, caption, checked]) => {
+          ['replies', 'Ответы на мои вопросы'],
+          ['new_posts', 'Новые сообщения от других участников'],
+        ].map(([key, caption]) => {
           const label = element('label', '', caption);
           const input = element('input');
           input.type = 'checkbox';
-          input.checked = checked;
+          input.checked = true;
+          input.onchange = () => subscription && enabled ? update(savePreferences) : sync();
           label.prepend(input);
           options.append(label);
           return {key, input};
         });
-        let registration;
-        let subscription;
-        const prefs = () => Object.fromEntries(choices.map(({key,input}) => [key,input.checked]));
-        const save = button('Сохранить подписку', async () => {
-          save.disabled = true;
-          try {
-            if (!('Notification' in window) || !('serviceWorker' in navigator) || !window.isSecureContext ||
-                !location.pathname.startsWith('/lk')) {
-              throw new Error('Откройте уведомления в личном кабинете через HTTPS. На iPhone добавьте кабинет на экран «Домой».');
-            }
-            const permission = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
-            if (permission !== 'granted') throw new Error('Разрешите уведомления для кабинета в настройках браузера.');
-            registration = await navigator.serviceWorker.register('/masterclass-discussion-sw.js', {scope:'/lk'});
-            registration = await navigator.serviceWorker.ready;
-            subscription = await registration.pushManager.getSubscription();
-            if (!subscription) {
-              const {key} = await api('/push/key', {method:'POST'});
-              const bytes = Uint8Array.from(atob(key.replace(/-/g,'+').replace(/_/g,'/')), char => char.charCodeAt(0));
-              subscription = await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:bytes});
-            }
-            await api('/push/subscription', {
-              method:'PUT', headers:{'Content-Type':'application/json'},
-              body:JSON.stringify({...subscription.toJSON(), ...prefs()}),
-            });
-            info.textContent = 'Настройки этого устройства сохранены.';
-          } catch (error) { info.textContent = error.message; }
-          finally { save.disabled = false; }
-        });
-        const stop = button('Отключить на этом устройстве', async () => {
-          if (!subscription) return;
-          try {
-            await api('/push/subscription', {
-              method:'DELETE', headers:{'Content-Type':'application/json'},
-              body:JSON.stringify({endpoint:subscription.endpoint}),
-            });
-            await subscription.unsubscribe();
-            subscription = null;
-            info.textContent = 'Уведомления отключены.';
-          } catch (error) { info.textContent = error.message; }
-        });
-        function test(kind) {
-          return async () => {
-            if (!subscription) {
-              info.textContent = 'Сначала включите подписку на этом устройстве.';
-              return;
-            }
-            try {
-              await api('/push/test', {
-                method:'POST', headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({endpoint:subscription.endpoint,kind,nonce:crypto.randomUUID(),post_id:cursor || null}),
-              });
-              info.textContent = 'Тестовое уведомление поставлено в очередь.';
-            } catch (error) { info.textContent = error.message; }
-          };
+        let registration, subscription;
+        let enabled = false;
+        let busy = true;
+        let savedChoices;
+        const preferences = () => Object.fromEntries(choices.map(({key,input}) => [key,input.checked]));
+        const toggle = button('', () => update(enabled ? disable : enable), 'back');
+        function sync() {
+          toggle.textContent = enabled ? 'Отключить уведомления на этом устройстве' : 'Включить уведомления на этом устройстве';
+          toggle.disabled = busy || (!enabled && choices.every(({input}) => !input.checked));
+          for (const {input} of choices) input.disabled = busy;
         }
-        dialog.append(options,save,stop,button('Проверить пуш об ответе', test('reply')),
-          button('Проверить пуш о сообщении', test('day')),button('Закрыть', () => dialog.close()),info);
-        dialog.addEventListener('close', () => dialog.remove(), {once:true});
-        panel.append(dialog);
-        dialog.showModal();
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.getRegistration('/lk').then(async current => {
-            if (!current) return;
-            subscription = await current.pushManager.getSubscription();
-            if (!subscription || !dialog.isConnected) return;
+        async function update(action) {
+          if (busy) return;
+          busy = true;
+          sync();
+          try { await action(); }
+          catch (error) {
+            if (savedChoices) for (const {key,input} of choices) input.checked = savedChoices[key];
+            info.textContent = error.message;
+          } finally { busy = false; sync(); }
+        }
+        async function savePreferences() {
+          const prefs = preferences();
+          await api('/push/subscription', {
+            method:'PUT', headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({...subscription.toJSON(), ...prefs}),
+          });
+          savedChoices = prefs;
+          enabled = true;
+          info.textContent = 'Настройки этого устройства сохранены.';
+        }
+        async function enable() {
+          if (!('Notification' in window) || !('PushManager' in window) || !('serviceWorker' in navigator) ||
+              !window.isSecureContext || !location.pathname.startsWith('/lk')) {
+            throw new Error('Откройте кабинет в поддерживаемом браузере. На iPhone откройте его с иконки на экране «Домой».');
+          }
+          const permission = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+          if (permission !== 'granted') throw new Error('Разрешите уведомления для кабинета в настройках устройства или браузера.');
+          registration = await navigator.serviceWorker.register('/masterclass-discussion-sw.js', {scope:'/lk'});
+          registration = await navigator.serviceWorker.ready;
+          subscription = await registration.pushManager.getSubscription();
+          if (!subscription) {
+            const {key} = await api('/push/key', {method:'POST'});
+            const bytes = Uint8Array.from(atob(key.replace(/-/g,'+').replace(/_/g,'/')), char => char.charCodeAt(0));
+            subscription = await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:bytes});
+          }
+          await savePreferences();
+        }
+        async function disable() {
+          await api('/push/subscription', {
+            method:'DELETE', headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({endpoint:subscription.endpoint}),
+          });
+          enabled = false;
+          savedChoices = null;
+          info.textContent = 'Уведомления отключены.';
+          await subscription.unsubscribe();
+          subscription = null;
+        }
+        async function loadSettings() {
+          try {
+            if (!('serviceWorker' in navigator)) return;
+            const current = await navigator.serviceWorker.getRegistration('/lk');
+            subscription = await current?.pushManager?.getSubscription();
+            if (!subscription) return;
             const stored = await api('/push/preferences', {
               method:'POST', headers:{'Content-Type':'application/json'},
               body:JSON.stringify({endpoint:subscription.endpoint}),
             });
-            for (const {key,input} of choices) input.checked = stored[key];
-          }).catch(() => {});
+            enabled = stored.enabled;
+            if (enabled) {
+              savedChoices = stored;
+              for (const {key,input} of choices) input.checked = stored[key];
+            }
+          } catch (error) { info.textContent = error.message; }
+          finally { busy = false; sync(); }
         }
+        const install = element('a', 'day-discussion-text-action', 'Как установить кабинет');
+        install.href = '/lk/install';
+        install.target = '_blank';
+        install.rel = 'noopener';
+        section.append(options, toggle, install, info);
+        sync();
+        loadSettings();
+        return section;
       }
 
       merge(initial);
@@ -730,12 +862,15 @@
       }, 15000);
 
       actions.append(textarea, attach, mic, submit);
-      const composeOptions = element('div', 'day-discussion-options');
-      composeOptions.append(button('Мой профиль', editProfile, 'day-discussion-text-action'),
-        button('Уведомления', notificationSettings, 'day-discussion-text-action'));
-      form.append(composeOptions, context, photo, voiceFile, photoDraft, voiceDraft, actions, status, audioFallback);
-      panel.append(form);
+      form.append(context, photo, voiceFile, photoDraft, voiceDraft, actions, status, audioFallback);
+      panel.append(form, contact, settings);
       renderTimeline();
+      try {
+        if (!localStorage.getItem('masterclass-discussion-guide-v1')) {
+          openGuide();
+          localStorage.setItem('masterclass-discussion-guide-v1', 'seen');
+        }
+      } catch { /* Keep the guide available from My profile when storage is unavailable. */ }
       if (wanted) {
         if (matchMedia('(max-width: 900px)').matches) {
           document.querySelector('#sidebar.open #close')?.click();
@@ -749,8 +884,9 @@
     function mountPanel() {
       day.classList.add('day-discussion-open');
       day.append(panel);
-      back.scrollIntoView({block:'start',behavior:'instant'});
-      back.focus({preventScroll:true});
+      scrollTo(0, 0);
+      syncTheme();
+      (matchMedia('(max-width: 900px)').matches ? outline : back).focus({preventScroll:true});
     }
   }
 
@@ -778,10 +914,16 @@
     const entry = element('section', 'day-discussion-entry');
     entry.setAttribute('aria-label', 'Обсуждение дня');
     const copy = element('div');
-    copy.append(element('strong', '', 'Обсуждение дня'), element('p', '',
-      access.mode === 'locked' ? 'Тестовый режим' : 'Вопросы и ответы по материалам дня.'));
+    copy.append(element('strong', '', access.mode === 'locked'
+      ? 'Обсуждение дня · Тестовый режим'
+      : 'Обсуждение дня. Прочитайте вопросы, которые задавали другие участники Мастер-класса, и ответы на них, либо задайте свой вопрос.'));
     const go = button('Обсуждение →', () => open(day, go, access.mode), 'next-button ready');
     go.append(element('span', 'day-discussion-unread'));
+    if (access.mode === 'owner') {
+      const total = element('span', 'day-discussion-total');
+      total.textContent = 'Сообщений: ' + (access.total || 0);
+      copy.append(total);
+    }
     entry.append(copy, go);
     assignment.before(entry);
     dayEntry = entry;

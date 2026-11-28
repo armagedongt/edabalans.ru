@@ -76,13 +76,21 @@ def count_unread(db: Session, user_id: UUID) -> int:
     return db.scalar(select(func.count()).select_from(unread_query(user_id).subquery())) or 0
 
 
+def total_posts(db: Session) -> int:
+    return db.scalar(select(func.count()).select_from(Post).where(Post.day_number == DAY)) or 0
+
+
+def profile_avatar(profile: Profile | None) -> str | None:
+    return f"{router.prefix}/profile/photo/{profile.photo_key}" if profile and profile.photo_key else None
+
+
 def public_profile(profile: Profile | None, user_id: UUID) -> dict | None:
     if not profile or not profile.visible:
         return None
     return {
-        "name": profile.display_name or "Сергей",
+        "name": profile.display_name or "Сергей Воронцов",
         "about": profile.about,
-        "avatar": f"{router.prefix}/profile/photo/{profile.photo_key}" if profile.photo_key else None,
+        "avatar": profile_avatar(profile),
     }
 
 
@@ -91,7 +99,7 @@ def serialize(post: Post, user_id: UUID, profile: Profile | None) -> dict:
     card = public_profile(profile, user_id) if own else None
     return {
         "id": post.id,
-        "name": (card["name"] if card else "Сергей") if own else post.source_label or "Участник",
+        "name": (card["name"] if card else "Сергей Воронцов") if own else post.source_label or "Участник",
         "isAuthor": own,
         "profile": card,
         "text": post.body,
@@ -119,6 +127,7 @@ def payload(db: Session, posts: list[Post], user_id: UUID, has_more: bool) -> di
         "answers": answers,
         "more": has_more,
         "unread": count_unread(db, user_id),
+        "total": total_posts(db),
         "firstUnread": first_unread,
     }
 
@@ -181,7 +190,7 @@ def status(request: Request, db: Session = Depends(get_db)) -> dict:
     actor = owner(request, db)
     if actor is None:
         return {"mode": "locked", "notice": NOTICE}
-    return {"mode": "owner", "unread": count_unread(db, actor.id)}
+    return {"mode": "owner", "unread": count_unread(db, actor.id), "total": total_posts(db)}
 
 
 @router.get("/thread")
@@ -199,7 +208,11 @@ def thread(request: Request, db: Session = Depends(get_db), after: int = Query(d
     result = payload(db, rows[:PAGE_SIZE], actor.id, len(rows) > PAGE_SIZE)
     if not after and around is None:
         profile = db.get(Profile, actor.id)
-        result["profile"] = {"name": profile.display_name, "about": profile.about, "visible": profile.visible} if profile else {"name": "", "about": "", "visible": False}
+        result["profile"] = {
+            "name": profile.display_name if profile else "",
+            "about": profile.about if profile else "",
+            "avatar": profile_avatar(profile),
+        }
         result["player"] = voice_template()
     return result
 
@@ -318,7 +331,7 @@ def update_profile(
         raise
     if previous and previous != profile.photo_key:
         (root() / f"profile-{previous}.webp").unlink(missing_ok=True)
-    return {"profile": public_profile(profile, actor.id)}
+    return {"profile": public_profile(profile, actor.id), "avatar": profile_avatar(profile)}
 
 
 @router.get("/profile/photo/{key}")
@@ -377,7 +390,11 @@ def find_subscription(db: Session, actor: User, endpoint: str) -> Subscription |
 def push_preferences(data: PushEndpoint, request: Request, db: Session = Depends(get_db)) -> dict:
     actor = require_owner(request, db)
     stored = find_subscription(db, actor, data.endpoint)
-    return {"replies": stored.replies if stored else True, "new_posts": stored.new_posts if stored else False}
+    return {
+        "enabled": stored is not None,
+        "replies": stored.replies if stored else True,
+        "new_posts": stored.new_posts if stored else True,
+    }
 
 
 @router.put("/push/subscription")

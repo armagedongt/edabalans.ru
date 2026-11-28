@@ -10,17 +10,18 @@
   border-radius: 18px;
   background: var(--card);
 }
-.course-shell .day-discussion-entry p,
 .course-shell .day-discussion-note { margin: 4px 0; color: var(--muted); font-size: 13px; }
+.course-shell .day-discussion-entry > div { flex: 1 1 400px; min-width: 0; }
+.course-shell .day-discussion-total { display: block; margin-top: 3px; color: var(--muted); font-size: 13px; }
 .course-shell .day-discussion-entry .next-button:disabled { cursor: default; opacity: .55; }
-.course-shell .day-discussion-entry .next-button { position: relative; overflow: visible; }
-.course-shell .content:has(> #day.day-discussion-open),
+.course-shell .day-discussion-entry .next-button { position: relative; width: auto; overflow: visible; }
+.course-shell .content:has(> #day.day-discussion-open:not([hidden])),
 .course-shell #day.day-discussion-open,
 .course-shell #day.day-discussion-open > .day-discussion-panel { max-width: none; }
-.course-shell .main:has(> .content > #day.day-discussion-open) { padding-right: 0 !important; }
-.course-shell .content:has(> #day.day-discussion-open) { padding: 0 !important; }
-.course-shell .content:has(> #day.day-discussion-open) > .account-theme-toggle { display: none; }
-.course-shell .main:has(#day.day-discussion-open) {
+.course-shell .main:has(> .content > #day.day-discussion-open:not([hidden])) { padding-right: 0 !important; }
+.course-shell .content:has(> #day.day-discussion-open:not([hidden])) { padding: 0 !important; overflow: clip visible !important; }
+.course-shell .content:has(> #day.day-discussion-open:not([hidden])) > .account-theme-toggle { display: none; }
+.course-shell .main:has(#day.day-discussion-open:not([hidden])) {
   --discussion-surface: color-mix(in srgb,var(--paper) 91%,var(--violet));
   --discussion-pattern:
     radial-gradient(circle at 8px 8px, color-mix(in srgb,var(--violet) 14%, transparent) 1px, transparent 1.5px),
@@ -29,12 +30,8 @@
   background-image: var(--discussion-pattern);
   background-size: 24px 24px;
 }
-.course-shell .main:has(#day.day-discussion-open) > .topbar {
-  max-width: none;
-  background-color: var(--discussion-surface) !important;
-  background-image: var(--discussion-pattern) !important;
-  background-size: 24px 24px !important;
-  backdrop-filter: none;
+.course-shell .main:has(#day.day-discussion-open:not([hidden])) > :is(.topbar, [data-edabalans-footer="private"]) {
+  display: none !important;
 }
 .course-shell #day.day-discussion-open > :not(.day-discussion-panel) { display: none; }
 .course-shell .day-discussion-panel {
@@ -44,17 +41,31 @@
   overflow-wrap: anywhere;
 }
 .course-shell .day-discussion-panel .day-discussion-head {
-  display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 29;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto minmax(0,1fr);
   align-items: center;
-  flex-wrap: nowrap !important;
-  gap: 8px 13px;
+  gap: 8px;
   max-width: none !important;
   margin: 0;
-  padding: 12px clamp(12px,2vw,24px);
+  padding: 8px clamp(8px,2vw,24px);
   border-bottom: 1px solid var(--line);
-  background: transparent;
+  background-color: var(--discussion-surface);
+  background-image: var(--discussion-pattern);
+  background-size: 24px 24px;
 }
-.course-shell .day-discussion-panel h1 { flex: 1; margin: 0; font-size: clamp(17px,2.5vw,28px); line-height: 1.2; }
+.course-shell .day-discussion-panel h1 {
+  margin: 0;
+  font-size: clamp(17px,2.5vw,28px);
+  line-height: 1.2;
+  text-align: center;
+}
+.course-shell .day-discussion-outline { display: none; }
+.course-shell .day-discussion-back { justify-self: start; }
+.course-shell .day-discussion-head-actions { display: flex; justify-self: end; gap: 5px; }
+.course-shell .day-discussion-panel [hidden] { display: none !important; }
 .course-shell .day-discussion-theme {
   display: grid;
   place-items: center;
@@ -90,6 +101,17 @@
   font-size: 13px;
 }
 .course-shell .day-discussion-divider.new-questions { margin-top: 8px; }
+.course-shell .day-discussion-unread-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0;
+  color: var(--ink);
+  font-size: 13px;
+  text-align: center;
+}
+.course-shell .day-discussion-unread-line::before,
+.course-shell .day-discussion-unread-line::after { content: ''; flex: 1; border-top: 1px solid var(--violet); }
 .course-shell .day-discussion-message,
 .course-shell .day-discussion-compose {
   margin: 0;
@@ -235,10 +257,10 @@
 }
 .course-shell .day-discussion-icon svg { display: block; width: 22px; height: 22px; margin: auto; }
 .course-shell .day-discussion-mark { display: flex; align-items: center; gap: 7px; margin: 6px 0; cursor: pointer; }
-.course-shell .day-voice-frame { display: block; width: min(100%,380px); height: 128px; border: 0; }
-.course-shell .day-discussion-message:has(.day-voice-frame) { width: min(87%,405px); }
+.course-shell .day-voice-frame { display: block; width: min(100%,380px); height: 83px; border: 0; }
+.course-shell .day-discussion-message:has(> .day-voice-frame) { width: min(87%,380px); padding-block: 6px; }
 
-.course-shell .day-discussion-icon:last-child {
+.course-shell .day-discussion-actions .day-discussion-icon:last-child {
   background: var(--violet);
   color: var(--card);
 }
@@ -257,7 +279,6 @@
 .course-shell .day-discussion-draft img { width: 56px; height: 56px; margin: 0; object-fit: cover; }
 .course-shell .day-discussion-avatar img { width: 32px; height: 32px; margin: 0; border-radius: 50%; object-fit: cover; }
 .course-shell .day-discussion-profile-photo { max-width: 120px; }
-.course-shell .day-discussion-options { display: flex; flex-wrap: wrap; gap: 14px; }
 .course-shell .day-discussion-profile-dialog {
   max-width: min(95%,460px);
   padding: 16px;
@@ -269,9 +290,64 @@
 .course-shell .day-discussion-profile-dialog label { display: flex; align-items: center; gap: 8px; margin: 5px 0; flex-wrap: wrap; }
 .course-shell .day-discussion-profile-dialog input:not([type="checkbox"]) { max-width: 100%; }
 .course-shell .day-discussion-profile-dialog .back { margin: 4px 6px 4px 0; }
+.course-shell .day-discussion-contact {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 3px 8px;
+  padding: 8px 12px 13px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.course-shell .day-discussion-contact a { color: var(--violet); }
+.course-shell .day-discussion-privacy { font-size: 12px; }
+.course-shell .day-discussion-settings {
+  width: min(100%,620px);
+  margin: 0 auto;
+  padding: clamp(14px,3vw,30px);
+  color: var(--ink);
+}
+.course-shell .day-discussion-settings :is(h2,h3) { margin: 0 0 12px; }
+.course-shell .day-discussion-settings-form { display: grid; gap: 10px; }
+.course-shell .day-discussion-settings-form label { display: grid; gap: 6px; }
+.course-shell .day-discussion-settings-form :is(input:not([type=file]),textarea) {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+}
+.course-shell .day-discussion-settings-form textarea { min-height: 84px; resize: vertical; }
+.course-shell .day-discussion-settings-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.course-shell .day-discussion-push { margin: 16px 0; padding-block: 12px; border-block: 1px solid var(--line); }
+.course-shell .day-discussion-push-options { display: grid; gap: 6px; margin-bottom: 10px; }
+.course-shell .day-discussion-push-options label { display: flex; align-items: center; gap: 7px; }
+.course-shell .day-discussion-push > a { display: block; width: fit-content; margin-top: 4px; }
+.course-shell .day-discussion-guide { max-height: 86dvh; overflow: auto; }
+.course-shell .day-discussion-guide::backdrop { background: #17263d80; }
+.course-shell .day-discussion-guide h3 { display: flex; align-items: center; gap: 6px; margin: 10px 0 0; font-size: 15px; }
+.course-shell .day-discussion-guide-icon { display: flex; width: 20px; height: 20px; }
+.course-shell .day-discussion-guide-example {
+  width: fit-content;
+  margin-block: 5px;
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: color-mix(in srgb,#f97726 24%,var(--card));
+  font-size: 13px;
+}
+.course-shell .day-discussion-guide-example span { color: var(--muted); }
+.course-shell .day-discussion-guide p { margin: 2px 0 6px; }
 @media (max-width: 900px) {
-  .course-shell .day-discussion-panel { min-height: calc(100dvh - 62px); }
-  .course-shell .day-discussion-panel .article-head .back { scroll-margin-top: 78px; }
+  .course-shell .day-discussion-back { display: none; }
+  .course-shell .day-discussion-outline { display: inline-block; justify-self: start; white-space: nowrap; }
+  .course-shell .day-discussion-panel .day-discussion-head { grid-template-columns: auto minmax(0,1fr) auto; }
+  .course-shell .day-discussion-panel h1 { font-size: clamp(14px,3.9vw,20px); }
+  .course-shell .day-discussion-head .back { padding-inline: 7px; font-size: 12px; }
+  .course-shell .day-discussion-theme { width: 36px; height: 38px; padding: 7px; }
 }
 @media (max-width: 480px) {
   .course-shell .day-discussion-entry .next-button { width: 100%; }

@@ -63,6 +63,11 @@
       ' / ' + link(max, 'MAX') + '</span>';
   }
 
+  function mountDiscussionLinks(root) {
+    root.innerHTML = '<span>Написать мне лично</span> ' + contactPair(LINKS.telegram, LINKS.max) +
+      ' <span class="day-discussion-privacy">' + link(LINKS.privacy, 'Политика обработки персональных данных') + '</span>';
+  }
+
   function footerMarkup(mode) {
     return '<footer class="eb-footer eb-footer--' + mode + '" aria-label="Подвал сайта">' +
       '<div class="eb-footer__inner"><div class="eb-footer__row">' +
@@ -149,7 +154,7 @@
     window.EdabalansFooterObserver.observe(document.documentElement, {childList: true, subtree: true});
   }
 
-  window.EdabalansFooter = {boot: boot, mount: mount, prepareMedia: prepareMedia};
+  window.EdabalansFooter = {boot: boot, mount: mount, prepareMedia: prepareMedia, mountDiscussionLinks: mountDiscussionLinks};
   window.EdabalansSiteFooter = window.EdabalansFooter;
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () { boot(); observe(); });

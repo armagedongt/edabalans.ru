@@ -86,7 +86,7 @@ def test_pilot_allows_only_direct_owner(pilot):
         member = db.scalar(select(User).where(User.display_name == "member"))
     direct = client("owner")
     assert direct.get(BASE + "/thread", headers={ACCOUNT_VIEW_HEADER:str(member.id)}).status_code == 403
-    assert direct.get(BASE + "/status").json() == {"mode":"owner","unread":1}
+    assert direct.get(BASE + "/status").json() == {"mode":"owner","unread":1,"total":1}
     assert direct.post(BASE + "/read", headers={"Origin":"https://elsewhere.test"}, json={"ids":[1]}).status_code == 403
     settings.masterclass_discussion_pilot = False
     assert direct.get(BASE + "/status").json() == {"mode":"off"}
@@ -103,7 +103,7 @@ def test_marked_reply_is_one_post_and_read_is_idempotent(pilot):
     assert answer["marked"] and answer["replyTo"] == 1
     assert owner.post(BASE + "/posts", data=data).json()["posts"][-1]["id"] == answer["id"]
     thread = owner.get(BASE + "/thread").json()
-    assert len(thread["posts"]) == 2
+    assert len(thread["posts"]) == thread["total"] == 2
     assert thread["answers"] == {"1":answer["id"]}
     assert thread["firstUnread"] == 1 and thread["unread"] == 1
     new = owner.post(BASE + "/posts", data=dict(data, nonce=str(uuid.uuid4()), text="Новый ответ")).json()
@@ -112,6 +112,19 @@ def test_marked_reply_is_one_post_and_read_is_idempotent(pilot):
     assert not older["marked"]
     for _ in range(2):
         assert owner.post(BASE + "/read", json={"ids":[1, answer["id"], 999]}).json() == {"unread":0}
+
+
+def test_paginated_thread_counts_all_posts_and_finds_first_unread(pilot):
+    client, factory, _ = pilot
+    owner = client("owner")
+    with factory.begin() as db:
+        db.add_all(MasterclassDiscussionPost(day_number=4, client_nonce=f"old-{number}", body="Архив", archived=True)
+                   for number in range(discussion.PAGE_SIZE))
+    assert owner.post(BASE + "/read", json={"ids":[1]}).status_code == 200
+    thread = owner.get(BASE + "/thread").json()
+    assert len(thread["posts"]) == discussion.PAGE_SIZE
+    assert thread["total"] == discussion.PAGE_SIZE + 1 and thread["more"]
+    assert thread["firstUnread"] == 2
 
 
 def test_profile_and_private_photo_are_bound_to_native_account(pilot):
@@ -131,6 +144,9 @@ def test_profile_and_private_photo_are_bound_to_native_account(pilot):
     assert content.headers["cache-control"] == "private, no-store"
     assert client("member").get(entry["photo"]).status_code == 403
     assert owner.put(BASE + "/profile", data={"name":"Сергей","visible":"false"}).json()["profile"] is None
+    assert owner.get(profile["avatar"]).status_code == 404
+    removed = owner.put(BASE + "/profile", data={"name":"Сергей","visible":"true","remove_photo":"true"})
+    assert removed.json()["avatar"] is None
     assert owner.get(profile["avatar"]).status_code == 404
 
 
@@ -162,6 +178,9 @@ def test_webpush_checks_provider_and_delivers_synchronously_in_test_queue(pilot,
     assert owner.put(BASE + "/push/subscription", json=body).status_code == 422
     body["endpoint"] = "https://fcm.googleapis.com/fcm/send/test"
     assert owner.put(BASE + "/push/subscription", json=body).status_code == 200
+    endpoint = {"endpoint":body["endpoint"]}
+    options = owner.post(BASE + "/push/preferences", json=endpoint).json()
+    assert options == {"enabled":True,"replies":True,"new_posts":False}
     message = {"endpoint":body["endpoint"],"kind":"reply","nonce":str(uuid.uuid4())}
     assert client("member").post(BASE + "/push/test", json=message).status_code == 403
     for _ in range(2):
@@ -171,3 +190,13 @@ def test_webpush_checks_provider_and_delivers_synchronously_in_test_queue(pilot,
     assert push.deliver_one()
     assert len(sent) == 1 and "discussion_post=1" in sent[0]["data"]
     assert not push.deliver_one()
+    other_endpoint = {"endpoint":"https://fcm.googleapis.com/fcm/send/other-device"}
+    assert owner.put(BASE + "/push/subscription", json=dict(body, **other_endpoint)).status_code == 200
+    assert owner.put(BASE + "/push/subscription", json=dict(body, replies=False, new_posts=True)).status_code == 200
+    assert owner.post(BASE + "/push/preferences", json=endpoint).json() == {
+        "enabled":True,"replies":False,"new_posts":True,
+    }
+    assert owner.request("DELETE", BASE + "/push/subscription", json=endpoint).status_code == 200
+    defaults = owner.post(BASE + "/push/preferences", json=endpoint).json()
+    assert defaults == {"enabled":False,"replies":True,"new_posts":True}
+    assert owner.post(BASE + "/push/preferences", json=other_endpoint).json() == options
