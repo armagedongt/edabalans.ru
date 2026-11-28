@@ -2,6 +2,7 @@ import io
 import base64
 import os
 import shutil
+import subprocess
 import uuid
 import wave
 from datetime import UTC, datetime, timedelta
@@ -23,7 +24,7 @@ from app.account_security import token_hash
 from app.database import Base, get_db
 from app import masterclass_discussion as discussion
 from app import masterclass_discussion_push as push
-from app.models import AccountCredential, AccountSession, MasterclassDiscussionPost, MasterclassDiscussionProfile, User, UserEmail
+from app.models import AccountCredential, AccountSession, MasterclassDiscussionPost, MasterclassDiscussionProfile, MessengerAccount, User, UserEmail
 
 BASE = discussion.day_path(4)
 ORIGIN = "https://testserver"
@@ -204,6 +205,52 @@ def test_profile_and_private_photo_are_bound_to_native_account(pilot):
     assert owner.get(profile["avatar"]).status_code == 404
 
 
+def test_participant_identity_is_visible_only_in_owner_session(pilot, monkeypatch):
+    client, factory, _ = pilot
+    owner, member = client("owner"), client("member")
+    now = datetime.now(UTC)
+    with factory.begin() as db:
+        participant = db.scalar(select(User).where(User.display_name == "member"))
+        participant.display_name = "Имя из аккаунта"
+        member_id = participant.id
+        db.add_all([
+            UserEmail(user_id=member_id, email_original="Secondary@example.test",
+                      email_normalized="secondary@example.test", is_primary=False, source="test"),
+            MasterclassDiscussionProfile(user_id=member_id, display_name="Смелая лиса", visible=True),
+            MessengerAccount(user_id=member_id, platform="telegram", platform_user_id="100",
+                             username="old_nick", linked_at=now - timedelta(days=1), is_deliverable=False, source="test"),
+            MessengerAccount(user_id=member_id, platform="telegram", platform_user_id="101",
+                             username="linked_nick", linked_at=now, is_deliverable=True, source="test"),
+            MessengerAccount(user_id=member_id, platform="max", platform_user_id="102",
+                             username="max_nick", linked_at=now, is_deliverable=True, source="test"),
+            MasterclassDiscussionPost(day_number=4, author_id=member_id, client_nonce="identity", body="Вопрос"),
+        ])
+
+    thread = owner.get(BASE + "/thread")
+    assert thread.headers["cache-control"] == "private, no-store"
+    assert "ownerIdentity" not in thread.json()["posts"][0]
+    question = thread.json()["posts"][1]
+    assert question["name"] == "Смелая лиса"
+    identity = {"name":"Имя из аккаунта","email":"member@example.test","telegram":"linked_nick","telegramLinked":True}
+    assert question["ownerIdentity"] == identity
+    answer = owner.post(BASE + "/posts", data={
+        "text":"Ответ", "reply_to":question["id"], "nonce":str(uuid.uuid4()),
+    })
+    assert answer.headers["cache-control"] == "private, no-store"
+    assert answer.json()["posts"][0]["ownerIdentity"] == identity
+    assert member.get(BASE + "/thread").status_code == 403
+
+    # Simulate participant access in the isolated test app without changing the deployment gate.
+    monkeypatch.setattr(discussion, "owner", discussion.native_session_actor)
+    for viewer, headers in [(member, {}), (owner, {ACCOUNT_VIEW_HEADER:str(member_id)})]:
+        public_thread = viewer.get(BASE + "/thread", headers=headers)
+        assert public_thread.status_code == 200
+        assert public_thread.json()["posts"][1]["name"] == "Смелая лиса"
+        for post in public_thread.json()["posts"] + public_thread.json()["related"]:
+            assert "ownerIdentity" not in post
+        assert "linked_nick" not in public_thread.text and "member@example.test" not in public_thread.text
+
+
 def test_empty_display_name_has_stable_two_word_alias(pilot):
     client, _, _ = pilot
     owner = client("owner")
@@ -234,14 +281,15 @@ def test_posts_from_participants_without_profiles_have_distinct_aliases(pilot):
     assert entries[0]["name"] == "Учебный пример"
 
 
-@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="audio conversion is installed in target image")
+@pytest.mark.skipif(not (shutil.which("ffmpeg") and shutil.which("ffprobe")),
+                    reason="audio conversion and inspection are installed in the target image")
 def test_voice_transcodes_and_supports_ranges(pilot):
     client, _, _ = pilot
     owner = client("owner")
     buffer = io.BytesIO()
     with wave.open(buffer, "wb") as out:
-        out.setparams((1, 2, 16000, 0, "NONE", "not compressed"))
-        out.writeframes(b"\x10\x02" * 16000)
+        out.setparams((1, 2, 8000, 0, "NONE", "not compressed"))
+        out.writeframes(b"\x10\x02" * 8000)
     sample = ("test.wav", buffer.getvalue(), "audio/wav")
     preview = owner.post(BASE + "/voice-preview", files={"voice":sample})
     assert preview.status_code == 200 and preview.headers["content-type"] == "audio/mpeg"
@@ -249,6 +297,13 @@ def test_voice_transcodes_and_supports_ranges(pilot):
     assert answer.status_code == 200, answer.text
     uri = answer.json()["posts"][0]["voice"]
     assert owner.get(uri, headers={"Range":"bytes=0-31"}).status_code == 206
+    for audio in (preview.content, owner.get(uri).content):
+        bitrate = subprocess.check_output(
+            ["ffprobe", "-v", "error", "-select_streams", "a:0", "-show_entries", "stream=bit_rate",
+             "-of", "default=noprint_wrappers=1:nokey=1", "pipe:0"],
+            input=audio,
+        )
+        assert bitrate.strip() == b"128000"
     assert client("member").get(uri).status_code == 403
 
 

@@ -10,7 +10,7 @@ import subprocess
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from PIL import Image, ImageOps, UnidentifiedImageError
 from pillow_heif import register_heif_opener
 from pydantic import BaseModel, Field
@@ -29,13 +29,16 @@ from app.models import MasterclassDiscussionPost as Post
 from app.models import MasterclassDiscussionProfile as Profile
 from app.models import MasterclassDiscussionRead as Read
 from app.models import MasterclassDiscussionSubscription as Subscription
-from app.models import AccountCredential, AccountSession, User, UserEmail
+from app.models import AccountCredential, AccountSession, MessengerAccount, User, UserEmail
 
 router = APIRouter(prefix="/api/masterclass/discussion", tags=["masterclass-discussion"])
 PAGE_SIZE = 30
 PHOTO_LIMIT = 8_000_000
-VOICE_LIMIT = 12_000_000
+VOICE_LIMIT = 16_000_000
 VOICE_SECONDS = 900
+VOICE_BITRATE = 128_000
+# Lower-rate AAC encoders can pad the last frame by a fraction of a second.
+VOICE_PADDING_BYTES = VOICE_BITRATE // 8 // 3
 NOTICE = "Обсуждения пока доступны только автору курса. Дождитесь уведомления об открытии."
 PRIVATE_HEADERS = {"Cache-Control": "private, no-store", "X-Robots-Tag": "noindex, nofollow"}
 
@@ -153,7 +156,39 @@ def own_profile(profile: Profile | None, user_id: UUID, day_number: int, is_auth
     }
 
 
-def serialize(post: Post, user_id: UUID, author_id: UUID | None, profile: Profile | None) -> dict:
+def participant_identities(db: Session, user_ids: set[UUID]) -> dict[UUID, dict]:
+    if not user_ids:
+        return {}
+    email = (
+        select(UserEmail.email_original)
+        .where(UserEmail.user_id == User.id)
+        .order_by(UserEmail.is_primary.desc(), UserEmail.created_at, UserEmail.id)
+        .limit(1).correlate(User).scalar_subquery()
+    )
+    telegram = (
+        select(MessengerAccount.id)
+        .where(
+            MessengerAccount.user_id == User.id,
+            MessengerAccount.platform == "telegram",
+            MessengerAccount.linked_at.is_not(None),
+            MessengerAccount.is_deliverable.is_(True),
+        )
+        .order_by(MessengerAccount.is_preferred.desc(), MessengerAccount.linked_at.desc(), MessengerAccount.id.desc())
+        .limit(1).correlate(User).scalar_subquery()
+    )
+    rows = db.execute(
+        select(User.id, User.display_name, email, MessengerAccount.id, MessengerAccount.username)
+        .outerjoin(MessengerAccount, MessengerAccount.id == telegram)
+        .where(User.id.in_(user_ids))
+    )
+    return {
+        user_id: {"name": name, "email": address, "telegram": username, "telegramLinked": linked_id is not None}
+        for user_id, name, address, linked_id, username in rows
+    }
+
+
+def serialize(post: Post, user_id: UUID, author_id: UUID | None, profile: Profile | None,
+              identity: dict | None) -> dict:
     is_author = post.author_id is not None and post.author_id == author_id
     card = public_profile(profile, post.author_id, post.day_number) if post.author_id else None
     if is_author:
@@ -163,7 +198,7 @@ def serialize(post: Post, user_id: UUID, author_id: UUID | None, profile: Profil
     else:
         name = post.source_label or "Участник"
     base = day_path(post.day_number)
-    return {
+    message = {
         "id": post.id,
         "name": name,
         "isAuthor": is_author,
@@ -177,9 +212,12 @@ def serialize(post: Post, user_id: UUID, author_id: UUID | None, profile: Profil
         "replyTo": post.reply_to_id,
         "marked": post.featured,
     }
+    if identity is not None:
+        message["ownerIdentity"] = identity
+    return message
 
 
-def payload(db: Session, day_number: int, posts: list[Post], user_id: UUID, has_more: bool) -> dict:
+def payload(db: Session, request: Request, day_number: int, posts: list[Post], user_id: UUID, has_more: bool) -> dict:
     known = {post.id for post in posts}
     parent_ids = {post.reply_to_id for post in posts if post.reply_to_id and post.reply_to_id not in known}
     related = list(db.scalars(
@@ -188,11 +226,19 @@ def payload(db: Session, day_number: int, posts: list[Post], user_id: UUID, has_
     authors = {post.author_id for post in [*posts, *related] if post.author_id}
     profiles = {profile.user_id: profile for profile in db.scalars(select(Profile).where(Profile.user_id.in_(authors)))}
     author_id = discussion_author(db)
+    identities = (
+        participant_identities(db, authors - {user_id})
+        if user_id == author_id and not request.headers.get(ACCOUNT_VIEW_HEADER) else {}
+    )
+
+    def serialize_message(post: Post) -> dict:
+        return serialize(post, user_id, author_id, profiles.get(post.author_id), identities.get(post.author_id))
+
     answers = {post.reply_to_id: post.id for post in sorted([*posts, *related], key=lambda row: row.id) if post.featured}
     first_unread = db.scalar(unread_query(user_id, day_number).order_by(Post.id).limit(1))
     return {
-        "posts": [serialize(post, user_id, author_id, profiles.get(post.author_id)) for post in posts],
-        "related": [serialize(post, user_id, author_id, profiles.get(post.author_id)) for post in related if post.id not in known],
+        "posts": [serialize_message(post) for post in posts],
+        "related": [serialize_message(post) for post in related if post.id not in known],
         "answers": answers,
         "more": has_more,
         "unread": count_unread(db, user_id, day_number),
@@ -221,18 +267,19 @@ def read_image(raw: bytes) -> bytes:
 
 def read_voice(raw: bytes) -> bytes:
     if not raw or len(raw) > VOICE_LIMIT:
-        raise HTTPException(413, "Голосовое должно быть до 12 МБ.")
+        raise HTTPException(413, "Голосовое должно быть до 16 МБ.")
     try:
         result = subprocess.run(
             ["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-protocol_whitelist", "pipe",
-             "-i", "pipe:0", "-vn", "-ac", "1", "-b:a", "48k", "-t", str(VOICE_SECONDS + 1), "-f", "mp3", "pipe:1"],
+             "-i", "pipe:0", "-vn", "-ac", "1", "-ar", "48000", "-b:a", str(VOICE_BITRATE),
+             "-t", str(VOICE_SECONDS + 1), "-f", "mp3", "pipe:1"],
             input=raw, capture_output=True, timeout=20, check=True,
         )
     except (OSError, subprocess.SubprocessError):
         raise HTTPException(422, "Не удалось подготовить аудио. Попробуйте записать его снова.") from None
     if not result.stdout:
         raise HTTPException(422, "В записи нет звука или она пуста.")
-    if len(result.stdout) > VOICE_SECONDS * 6000 + 1024:
+    if len(result.stdout) > VOICE_SECONDS * VOICE_BITRATE // 8 + VOICE_PADDING_BYTES:
         raise HTTPException(413, "Голосовое должно быть короче 15 минут.")
     return result.stdout
 
@@ -265,7 +312,7 @@ def status(day_number: int, request: Request, db: Session = Depends(get_db)) -> 
 
 
 @router.get("/day-{day_number}/thread")
-def thread(day_number: int, request: Request, db: Session = Depends(get_db), after: int = Query(default=0, ge=0),
+def thread(day_number: int, request: Request, response: Response, db: Session = Depends(get_db), after: int = Query(default=0, ge=0),
            around: int | None = Query(default=None, ge=1)) -> dict:
     actor = require_owner(request, db)
     require_day(db, day_number)
@@ -277,7 +324,8 @@ def thread(day_number: int, request: Request, db: Session = Depends(get_db), aft
         rows.extend(db.scalars(select_day(day_number).where(Post.id >= around).order_by(Post.id).limit(PAGE_SIZE + 1 - len(rows))))
     else:
         rows = list(db.scalars(select_day(day_number).where(Post.id > after).order_by(Post.id).limit(PAGE_SIZE + 1)))
-    result = payload(db, day_number, rows[:PAGE_SIZE], actor.id, len(rows) > PAGE_SIZE)
+    response.headers.update(PRIVATE_HEADERS)
+    result = payload(db, request, day_number, rows[:PAGE_SIZE], actor.id, len(rows) > PAGE_SIZE)
     if not after and around is None:
         profile = db.get(Profile, actor.id)
         result["profile"] = own_profile(profile, actor.id, day_number, result["canAuthor"])
@@ -287,7 +335,7 @@ def thread(day_number: int, request: Request, db: Session = Depends(get_db), aft
 
 @router.post("/day-{day_number}/posts")
 def create_post(
-    day_number: int, request: Request, db: Session = Depends(get_db), nonce: UUID = Form(),
+    day_number: int, request: Request, response: Response, db: Session = Depends(get_db), nonce: UUID = Form(),
     text: str = Form(default="", max_length=2000), reply_to: int | None = Form(default=None),
     featured: bool = Form(default=False), photo: UploadFile | None = File(default=None),
     voice: UploadFile | None = File(default=None),
@@ -295,12 +343,13 @@ def create_post(
     actor = require_owner(request, db)
     require_day(db, day_number)
     lock_owner(db, actor.id)
+    response.headers.update(PRIVATE_HEADERS)
     client_key = sha256(f"{actor.id}:{day_number}:{nonce}".encode()).hexdigest()
     existing = db.scalar(select_day(day_number).where(
         Post.author_id == actor.id, Post.client_nonce.in_([client_key, str(nonce)])
     ))
     if existing:
-        return payload(db, day_number, [existing], actor.id, False)
+        return payload(db, request, day_number, [existing], actor.id, False)
     question = db.scalar(select_day(day_number).where(Post.id == reply_to)) if reply_to is not None else None
     if reply_to is not None and question is None:
         raise HTTPException(404, "Исходное сообщение недоступно.")
@@ -340,7 +389,7 @@ def create_post(
             path.unlink(missing_ok=True)
         raise
     rows = [question, post] if question is not None else [post]
-    return payload(db, day_number, rows, actor.id, False)
+    return payload(db, request, day_number, rows, actor.id, False)
 
 
 class ReadBatch(BaseModel):
@@ -429,8 +478,6 @@ def profile_photo(day_number: int, key: UUID, request: Request, db: Session = De
 
 @router.post("/day-{day_number}/voice-preview")
 def voice_preview(day_number: int, request: Request, voice: UploadFile = File(), db: Session = Depends(get_db)):
-    from fastapi.responses import Response
-
     actor = require_owner(request, db)
     require_day(db, day_number)
     if actor.id != discussion_author(db):

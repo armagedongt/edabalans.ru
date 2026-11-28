@@ -1,6 +1,8 @@
 (() => {
   if (window.EdabalansMasterclassDiscussion) return;
   const authorName = 'Сергей Воронцов';
+  const voiceLimit = 16_000_000;
+  const voiceBitrate = 128_000;
   const notice = 'Обсуждения пока доступны только автору курса. Дождитесь уведомления об открытии.';
   const panelsByCard = new WeakMap();
   let activePanel = null;
@@ -93,11 +95,16 @@
     return item.isOwn;
   }
 
+  function messageName(message) {
+    if (message.isAuthor) return authorName;
+    return message.ownerIdentity ? message.ownerIdentity.name || 'Имя не указано' : message.name;
+  }
+
   function quote(target, jump) {
     const text = quoteText(target);
     const node = button('', () => jump(target.id), 'day-discussion-quote');
     node.setAttribute('aria-label', 'Перейти к сообщению: ' + text);
-    node.append(element('span', 'day-discussion-quote-name', target.isAuthor ? authorName : target.name || 'Вопрос из обсуждения'),
+    node.append(element('span', 'day-discussion-quote-name', messageName(target) || 'Вопрос из обсуждения'),
       element('span', 'day-discussion-quote-text', text));
     return node;
   }
@@ -108,7 +115,7 @@
     card.id = 'day-discussion-message-' + item.id;
     card.tabIndex = -1;
     if (item.name) {
-      const displayName = item.isAuthor ? authorName : item.name;
+      const displayName = messageName(item);
       const author = element('div', 'day-discussion-name');
       const avatar = element('span', 'day-discussion-avatar', displayName[0]);
       avatar.setAttribute('aria-hidden', 'true');
@@ -126,7 +133,7 @@
           photo.alt = '';
           profile.append(photo);
         }
-        profile.append(element('strong', '', item.name || displayName));
+        profile.append(element('strong', '', displayName));
         if (item.profile?.about) profile.append(element('p','',item.profile.about));
         if (own) profile.append(button('Мой профиль', editProfile, 'day-discussion-text-action'));
         profile.hidden = true;
@@ -142,6 +149,14 @@
         author.append(avatar, element('span', '', displayName));
         card.append(author);
       }
+    }
+    if (item.ownerIdentity) {
+      const {email, telegram, telegramLinked} = item.ownerIdentity;
+      const contact = element('div', 'day-discussion-identity');
+      const username = telegram?.trim().replace(/^@+/, '');
+      contact.append(element('span', '', email || 'Почта не указана'),
+        element('span', '', username ? '@' + username : telegramLinked ? 'В Telegram нет ника' : 'Telegram не привязан'));
+      card.append(contact);
     }
     const target = byId.get(item.replyTo);
     if (target) card.append(quote(target, jump));
@@ -321,8 +336,8 @@
       }
 
       function draftVoice(audio, preview = audio) {
-        if (!audio?.size || audio.size > 12_000_000) {
-          status.textContent = 'Не удалось сохранить голосовое. Максимальный размер — 12 МБ.';
+        if (!audio?.size || audio.size > voiceLimit) {
+          status.textContent = 'Не удалось сохранить голосовое. Максимальный размер — 16 МБ.';
           return;
         }
         clearVoice();
@@ -388,7 +403,7 @@
             stream.getTracks().forEach(track => track.stop());
             return;
           }
-          recorder = new MediaRecorder(stream);
+          recorder = new MediaRecorder(stream, {audioBitsPerSecond:voiceBitrate});
           const chunks = [];
           recorder.ondataavailable = (event) => {
             if (event.data.size) chunks.push(event.data);
@@ -397,7 +412,7 @@
             stream.getTracks().forEach(track => track.stop());
             if (!panel.isConnected) return;
             const recording = new Blob(chunks, {type:recorder.mimeType});
-            if (recording.size && recording.size <= 12_000_000) {
+            if (recording.size && recording.size <= voiceLimit) {
               status.textContent = 'Готовим голосовое…';
               try {
                 const data = new FormData();

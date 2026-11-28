@@ -32,7 +32,7 @@
 	@masterclass_discussion path /api/masterclass/discussion/*
 	handle @masterclass_discussion {
 		request_body {
-			max_size 22MB
+			max_size 26MB
 		}
 		reverse_proxy backend:8000
 	}
