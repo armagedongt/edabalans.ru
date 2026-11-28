@@ -313,6 +313,20 @@
   color: var(--muted);
   text-decoration: underline;
 }
+@media (max-width: 900px) {
+  .course-shell .day-discussion-contact {
+    display: grid;
+    grid-template-columns: auto auto;
+    font-size: clamp(11px,3.2vw,13px);
+    white-space: nowrap;
+  }
+  .course-shell .day-discussion-contact > :first-child { justify-self: end; }
+  .course-shell .day-discussion-contact > .day-discussion-privacy {
+    grid-column: 1 / -1;
+    justify-self: center;
+    font-size: clamp(9px,2.8vw,12px);
+  }
+}
 .course-shell .day-discussion-settings {
   width: min(100%,620px);
   margin: 0 auto;
