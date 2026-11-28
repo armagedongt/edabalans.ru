@@ -231,6 +231,7 @@ def test_account_portal_uses_one_request_for_login_check_and_account_data() -> N
     assert "fetch('/api/account-auth/account'" in portal
     assert "window.EdabalansAccountPayload=account" in portal
     assert "var initialAccount=window.EdabalansAccountPayload" in account
+    assert '<script src="/embed.js" data-edabalans-loader-only="true"></script>' in portal
 
 
 def test_course_footer_contract_is_shared_and_minimal() -> None:
