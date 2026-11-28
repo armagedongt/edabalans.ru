@@ -95,7 +95,7 @@ def populate_registered_profiles(db: Session) -> int:
     statement = insert(Profile).from_select(
         ["user_id", "display_name", "about", "visible"], defaults, include_defaults=False,
     ).on_conflict_do_nothing(index_elements=[Profile.user_id])
-    return db.execute(statement).rowcount
+    return len(db.scalars(statement.returning(Profile.user_id)).all())
 
 
 def select_day(day_number: int):
