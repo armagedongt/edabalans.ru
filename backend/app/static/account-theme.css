@@ -6,10 +6,10 @@ html[data-account-theme="light"] body:has(.course-shell),
 html[data-account-theme="light"] #account-app,
 html[data-account-theme="light"] .course-shell{background:#fff!important}
 .account-shell,.content{position:relative}
-.account-theme-toggle{display:grid;place-items:center;width:44px;height:44px;margin:0 0 18px auto;padding:10px;border:1px solid #a8d7ef;border-radius:12px;background:#eaf8ff;color:#118ed8;cursor:pointer}
-.account-theme-toggle svg{display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.account-theme-toggle:hover{background:#d6efff}
-.account-theme-toggle:focus-visible{outline:3px solid #f39a2f;outline-offset:3px}
+:is(.account-theme-toggle,.course-day-theme){display:grid;place-items:center;width:44px;height:44px;margin:0 0 18px auto;padding:10px;border:1px solid #a8d7ef;border-radius:12px;background:#eaf8ff;color:#118ed8;cursor:pointer}
+:is(.account-theme-toggle,.course-day-theme) svg{display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+:is(.account-theme-toggle,.course-day-theme):hover{background:#d6efff}
+:is(.account-theme-toggle,.course-day-theme):focus-visible{outline:3px solid #f39a2f;outline-offset:3px}
 @media(min-width:901px){
   .account-theme-toggle{position:fixed;top:20px;right:20px;margin:0;z-index:60}
   .course-shell .content{padding-top:40px!important}
@@ -57,8 +57,8 @@ html[data-account-theme="dark"] body:has(#account-app):not(:has(.course-shell)),
 html[data-account-theme="dark"] body:has(.course-shell){background:var(--account-theme-bg)!important;color:var(--account-theme-ink)!important}
 html[data-account-theme="dark"] #account-app,
 html[data-account-theme="dark"] .course-shell{--ink:var(--account-theme-ink);--muted:var(--account-theme-muted);--paper:var(--account-theme-bg);--card:var(--account-theme-card);--line:var(--account-theme-border);--violet:var(--account-theme-blue);--article-link:var(--account-theme-blue);--article-note-bg:#51472b;--shadow:0 12px 28px -18px #0009;color:var(--account-theme-ink)!important;background:transparent!important}
-html[data-account-theme="dark"] .account-theme-toggle{background:#263442;color:var(--account-theme-blue);border-color:var(--account-theme-border)}
-html[data-account-theme="dark"] .account-theme-toggle:hover{background:#324859}
+html[data-account-theme="dark"] :is(.account-theme-toggle,.course-day-theme){background:#263442;color:var(--account-theme-blue);border-color:var(--account-theme-border)}
+html[data-account-theme="dark"] :is(.account-theme-toggle,.course-day-theme):hover{background:#324859}
 
 /* Personal cabinet */
 html[data-account-theme="dark"] #account-app .account-head{border-color:var(--account-theme-border)}

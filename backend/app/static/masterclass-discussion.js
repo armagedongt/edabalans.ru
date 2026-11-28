@@ -190,11 +190,11 @@
     });
     head.classList.add('day-discussion-head');
     const theme = button('', () => {
-      document.querySelector('.course-shell .account-theme-toggle:not(.course-day-theme)')?.click();
+      document.querySelector('.course-shell .account-theme-toggle')?.click();
       syncTheme();
     }, 'day-discussion-theme');
     function syncTheme() {
-      const original = document.querySelector('.course-shell .account-theme-toggle:not(.course-day-theme)');
+      const original = document.querySelector('.course-shell .account-theme-toggle');
       if (!original) return;
       theme.innerHTML = original.innerHTML;
       theme.setAttribute('aria-label', original.getAttribute('aria-label'));

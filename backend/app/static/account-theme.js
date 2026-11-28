@@ -16,7 +16,7 @@
   button.className = 'account-theme-toggle';
   var dayButton = document.createElement('button');
   dayButton.type = 'button';
-  dayButton.className = 'account-theme-toggle course-day-theme';
+  dayButton.className = 'course-day-theme';
   function update() {
     var dark = document.documentElement.dataset.accountTheme === 'dark';
     [button, dayButton].forEach(function (control) {
